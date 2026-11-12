@@ -1,5 +1,7 @@
 # Migration, Backup and Restore
 
+**Development branch notice:** Schema 11 on `milestone-1` preserves existing accounts and configured grants, assigns Staff Member without inventory rights and revokes all old sessions. This intermediate batch is not ready to deploy. Before a future authorised upgrade, back up the complete private `/data` directory and retain the matching v2.1 image. Rollback requires restoring both together; never run v2.1 against a schema-11 database. See [Shared Roles And Account Permissions](../../development-guide/Role-Permissions.md).
+
 [← All feature guides](README.md)
 
 ## Two different jobs

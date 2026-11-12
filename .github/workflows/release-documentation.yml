@@ -4,7 +4,7 @@ name: Release documentation consistency
 # A reusable check also protects manual releases, without version-specific edits.
 on:
   push:
-    branches: [feat/approved-html-full-interface]
+    branches: [feat/approved-html-full-interface, milestone-1]
   pull_request:
   workflow_dispatch:
   workflow_call:

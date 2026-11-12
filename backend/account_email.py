@@ -19,6 +19,7 @@ from .accounts import hash_password, verify_password
 from .audit_events import record_actor_event
 from .login_throttle import LoginThrottle
 from .mfa import verify_code
+from .role_policy import evaluate_role_policy
 from .smtp_settings import send_account_email
 
 TOKEN_SECONDS = 15 * 60
@@ -166,8 +167,8 @@ def confirm_email_proof(connection, token, purpose, *, challenge_id, account_id=
             valid = False
         if purpose == "recover":
             profile = connection.execute("SELECT email_verified FROM account_profiles WHERE account_id=?", (target,)).fetchone()
-            editing = connection.execute("SELECT 1 FROM account_permissions WHERE account_id=? AND level='edit'", (target,)).fetchone()
-            valid = valid and bool(profile[0]) and (not (admin or editing or confirmed) or bool(confirmed and secret and verify_code(secret, mfa_code, timestamp=now)))
+            policy = evaluate_role_policy(connection, target)
+            valid = valid and bool(profile[0]) and (not policy.requires_mfa or bool(confirmed and secret and verify_code(secret, mfa_code, timestamp=now)))
         elif purpose == "verify":
             valid = valid and account_id == target
         else:
@@ -212,6 +213,8 @@ _NOTICE_NEXT = {}
 
 
 def notify_security_change(path, recipients):
+    """Report queue admission only; delivery remains optional and untracked."""
+    result = {"queued": 0, "coalesced": 0, "notQueued": 0}
     for address in recipients:
         now = time.monotonic()
         with _NOTICE_LOCK:
@@ -219,13 +222,45 @@ def notify_security_change(path, recipients):
                 if _NOTICE_NEXT[key] <= now:
                     del _NOTICE_NEXT[key]
             if _NOTICE_NEXT.get(address, 0) > now:
+                result["coalesced"] += 1
                 continue
             # Coalesce frequent security changes into a single Audit Trail prompt.
             _NOTICE_NEXT[address] = now + 60
-        queue_email(path, address, "Caffoot Lite account security notice",
+        try:
+            queued = queue_email(path, address, "Caffoot Lite account security notice",
                     "An important account, password, email, MFA, role or permission change occurred. "
+                    "Active sessions may have ended and MFA may be required before continuing. "
                     "Sign in to your Caffoot Lite installation to review its protected Audit Trail. "
                     "Contact your administrator if you did not expect this change.")
+        except Exception:
+            queued = False
+        result["queued" if queued else "notQueued"] += 1
+    return result
+
+
+def role_change_notifications(connection, path, account_ids):
+    """Attempt existing notices after commit without affecting the saved change."""
+    from .smtp_settings import public_settings
+
+    result = {"smtpConfigured": False, "eligibleAccountCount": 0,
+              "accountCount": len(account_ids), "recipientCount": 0,
+              "queued": 0, "coalesced": 0, "notQueued": 0,
+              "guidance": "Use Settings → Email/SMTP and verify account email addresses."}
+    try:
+        recipients = set()
+        for account_id in account_ids:
+            addresses = security_recipients(connection, account_id)
+            result["eligibleAccountCount"] += bool(addresses)
+            recipients.update(addresses)
+        recipients.update(security_recipients(connection, administrators=True))
+        result["recipientCount"] = len(recipients)
+        result["smtpConfigured"] = public_settings(path)["configured"]
+        if result["smtpConfigured"] and recipients:
+            result.update(notify_security_change(path, recipients))
+    except Exception:
+        # Notification configuration, queue and mail failures cannot undo access.
+        result["notQueued"] = result["recipientCount"]
+    return result
 
 
 _ALERT_LOCK = threading.Lock()

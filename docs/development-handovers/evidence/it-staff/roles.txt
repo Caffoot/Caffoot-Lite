@@ -1,0 +1,71 @@
+test_confirmation_contract_and_retired_direct_write (test_role_admin_http.RoleHttpTests.test_confirmation_contract_and_retired_direct_write) ... 127.0.0.1 - - [12/Nov/2026 07:58:51] "POST /api/users/roles/preview HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2026 07:58:51] "POST /api/users/roles/confirm HTTP/1.1" 409 -
+127.0.0.1 - - [12/Nov/2026 07:58:51] "POST /api/users/roles/confirm HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2026 07:58:51] "POST /api/users/permission HTTP/1.1" 410 -
+127.0.0.1 - - [12/Nov/2026 07:58:51] "POST /api/users/roles/confirm HTTP/1.1" 409 -
+127.0.0.1 - - [12/Nov/2026 07:58:51] "GET /api/users HTTP/1.1" 200 -
+ok
+test_request_limits_csrf_origin_and_actor_spoofing (test_role_admin_http.RoleHttpTests.test_request_limits_csrf_origin_and_actor_spoofing) ... 127.0.0.1 - - [12/Nov/2026 07:58:52] "POST /api/users/roles/preview HTTP/1.1" 403 -
+127.0.0.1 - - [12/Nov/2026 07:58:52] "POST /api/users/roles/preview HTTP/1.1" 403 -
+127.0.0.1 - - [12/Nov/2026 07:58:52] "POST /api/users/roles/preview HTTP/1.1" 403 -
+127.0.0.1 - - [12/Nov/2026 07:58:52] "POST /api/users/roles/preview HTTP/1.1" 403 -
+127.0.0.1 - - [12/Nov/2026 07:58:52] "POST /api/users/roles/confirm HTTP/1.1" 403 -
+127.0.0.1 - - [12/Nov/2026 07:58:52] "POST /api/users/roles/confirm HTTP/1.1" 403 -
+127.0.0.1 - - [12/Nov/2026 07:58:52] "POST /api/users/roles/confirm HTTP/1.1" 403 -
+127.0.0.1 - - [12/Nov/2026 07:58:52] "POST /api/users/roles/confirm HTTP/1.1" 403 -
+127.0.0.1 - - [12/Nov/2026 07:58:52] "POST /api/users/permission HTTP/1.1" 403 -
+127.0.0.1 - - [12/Nov/2026 07:58:52] "POST /api/users/permission HTTP/1.1" 403 -
+127.0.0.1 - - [12/Nov/2026 07:58:52] "POST /api/users/permission HTTP/1.1" 403 -
+127.0.0.1 - - [12/Nov/2026 07:58:52] "POST /api/users/permission HTTP/1.1" 403 -
+127.0.0.1 - - [12/Nov/2026 07:58:52] "POST /api/users/roles/preview HTTP/1.1" 400 -
+127.0.0.1 - - [12/Nov/2026 07:58:52] "POST /api/users/roles/preview HTTP/1.1" 400 -
+127.0.0.1 - - [12/Nov/2026 07:58:52] "POST /api/users/roles/preview HTTP/1.1" 403 -
+127.0.0.1 - - [12/Nov/2026 07:58:52] "POST /api/users/roles/preview HTTP/1.1" 415 -
+127.0.0.1 - - [12/Nov/2026 07:58:52] "POST /api/users/roles/preview HTTP/1.1" 400 -
+ok
+test_server_revalidates_deleted_actor_and_stale_target (test_role_admin_http.RoleHttpTests.test_server_revalidates_deleted_actor_and_stale_target) ... 127.0.0.1 - - [12/Nov/2026 07:58:53] "POST /api/users/roles/preview HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2026 07:58:53] "POST /api/users/roles/confirm HTTP/1.1" 403 -
+ok
+test_two_parallel_confirmations_apply_once (test_role_concurrency.RoleConcurrencyTests.test_two_parallel_confirmations_apply_once) ... ok
+test_waiting_confirmation_rechecks_grants_membership_overrides_and_account (test_role_concurrency.RoleConcurrencyTests.test_waiting_confirmation_rechecks_grants_membership_overrides_and_account) ... ok
+test_waiting_confirmation_rejects_revoked_administrator_session (test_role_concurrency.RoleConcurrencyTests.test_waiting_confirmation_rejects_revoked_administrator_session) ... ok
+test_waiting_for_writer_does_not_extend_confirmation_expiry (test_role_concurrency.RoleConcurrencyTests.test_waiting_for_writer_does_not_extend_confirmation_expiry) ... ok
+test_all_legacy_combinations_preserve_data_and_missing_rows (test_role_migration.RoleMigrationTests.test_all_legacy_combinations_preserve_data_and_missing_rows) ... ok
+test_bootstrap_and_ordinary_creation_assign_only_staff (test_role_migration.RoleMigrationTests.test_bootstrap_and_ordinary_creation_assign_only_staff) ... ok
+test_corrupt_mapping_or_baseline_fails_before_commit (test_role_migration.RoleMigrationTests.test_corrupt_mapping_or_baseline_fails_before_commit) ... ok
+test_creation_failure_does_not_leave_partial_accounts (test_role_migration.RoleMigrationTests.test_creation_failure_does_not_leave_partial_accounts) ... ok
+test_failure_after_session_revocation_rolls_back_entire_upgrade (test_role_migration.RoleMigrationTests.test_failure_after_session_revocation_rolls_back_entire_upgrade) ... ok
+test_missing_legacy_grant_can_later_inherit_without_losing_read_override (test_role_migration.RoleMigrationTests.test_missing_legacy_grant_can_later_inherit_without_losing_read_override) ... ok
+test_role_constraints_and_foreign_keys (test_role_migration.RoleMigrationTests.test_role_constraints_and_foreign_keys) ... ok
+test_sqlite_failure_rolls_back_created_tables_and_old_sessions (test_role_migration.RoleMigrationTests.test_sqlite_failure_rolls_back_created_tables_and_old_sessions) ... ok
+test_administrator_recipient_deduplicates_and_settings_failure_is_optional (test_role_notifications.RoleNotificationTests.test_administrator_recipient_deduplicates_and_settings_failure_is_optional) ... ok
+test_real_bounded_queue_and_delivery_exception_release_capacity (test_role_notifications.RoleNotificationTests.test_real_bounded_queue_and_delivery_exception_release_capacity) ... ok
+test_smtp_absent_and_queue_failures_do_not_change_commit (test_role_notifications.RoleNotificationTests.test_smtp_absent_and_queue_failures_do_not_change_commit) ... ok
+test_verified_active_recipients_generic_content_and_coalescing (test_role_notifications.RoleNotificationTests.test_verified_active_recipients_generic_content_and_coalescing) ... ok
+test_administrator_is_independent_and_requires_mfa (test_role_policy.RolePolicyTests.test_administrator_is_independent_and_requires_mfa) ... ok
+test_empty_additional_role_requires_mfa_and_disabled_role_does_not (test_role_policy.RolePolicyTests.test_empty_additional_role_requires_mfa_and_disabled_role_does_not) ... ok
+test_existing_session_rechecks_additional_role_and_read_policy (test_role_policy.RolePolicyTests.test_existing_session_rechecks_additional_role_and_read_policy) ... ok
+test_inactive_unknown_and_new_sections_fail_closed (test_role_policy.RolePolicyTests.test_inactive_unknown_and_new_sections_fail_closed) ... ok
+test_individual_deny_read_edit_and_inherit_supersede_roles (test_role_policy.RolePolicyTests.test_individual_deny_read_edit_and_inherit_supersede_roles) ... ok
+test_legacy_table_cannot_supply_access_or_receive_permission_writes (test_role_policy.RolePolicyTests.test_legacy_table_cannot_supply_access_or_receive_permission_writes) ... ok
+test_multiple_enabled_roles_take_maximum_grant (test_role_policy.RolePolicyTests.test_multiple_enabled_roles_take_maximum_grant) ... ok
+test_read_requires_mfa_from_override_or_inherited_grant (test_role_policy.RolePolicyTests.test_read_requires_mfa_from_override_or_inherited_grant) ... ok
+test_recovery_uses_the_same_role_and_mfa_policy (test_role_policy.RolePolicyTests.test_recovery_uses_the_same_role_and_mfa_policy) ... ok
+test_staff_baseline_and_voluntary_mfa (test_role_policy.RolePolicyTests.test_staff_baseline_and_voluntary_mfa) ... ok
+test_atomic_rollback_on_audit_or_revocation_failure (test_roles.RoleAdministrationTests.test_atomic_rollback_on_audit_or_revocation_failure) ... ok
+test_cookie_holder_cannot_sign_a_proof_and_restart_requires_new_preview (test_roles.RoleAdministrationTests.test_cookie_holder_cannot_sign_a_proof_and_restart_requires_new_preview) ... ok
+test_exact_session_revocation_and_hidden_grants (test_roles.RoleAdministrationTests.test_exact_session_revocation_and_hidden_grants) ... ok
+test_historical_non_account_history_does_not_block_role_administration (test_roles.RoleAdministrationTests.test_historical_non_account_history_does_not_block_role_administration) ... ok
+test_multiple_roles_overrides_and_retained_access (test_roles.RoleAdministrationTests.test_multiple_roles_overrides_and_retained_access) ... ok
+test_new_session_invalidates_displayed_session_count_and_rename_keeps_sessions (test_roles.RoleAdministrationTests.test_new_session_invalidates_displayed_session_count_and_rename_keeps_sessions) ... ok
+test_reversing_an_intervening_change_does_not_renew_old_preview (test_roles.RoleAdministrationTests.test_reversing_an_intervening_change_does_not_renew_old_preview) ... ok
+test_role_lifecycle_stable_key_and_historical_audit (test_roles.RoleAdministrationTests.test_role_lifecycle_stable_key_and_historical_audit) ... ok
+test_session_actor_action_forgery_expiry_and_replay (test_roles.RoleAdministrationTests.test_session_actor_action_forgery_expiry_and_replay) ... ok
+test_staff_admin_and_validation_safeguards (test_roles.RoleAdministrationTests.test_staff_admin_and_validation_safeguards) ... ok
+test_stale_security_dependencies_and_refreshed_impact (test_roles.RoleAdministrationTests.test_stale_security_dependencies_and_refreshed_impact) ... ok
+test_zero_grant_mfa_and_voluntary_enrolment_retained (test_roles.RoleAdministrationTests.test_zero_grant_mfa_and_voluntary_enrolment_retained) ... ok
+
+----------------------------------------------------------------------
+Ran 41 tests in 15.184s
+
+OK

@@ -37,7 +37,7 @@ class CleanInventoryResetTests(unittest.TestCase):
             "VALUES('owner','passwordhash',1,'secret',1)"
         )
         self.db.execute(
-            "INSERT INTO account_permissions(account_id,section,level) "
+            "INSERT INTO account_permission_overrides(account_id,section,level) "
             "VALUES(1,'Devices','edit')"
         )
         self.db.execute(
@@ -67,7 +67,7 @@ class CleanInventoryResetTests(unittest.TestCase):
             "FROM accounts"
         ).fetchall(), account)
         self.assertEqual(self.db.execute(
-            "SELECT section,level FROM account_permissions"
+            "SELECT section,level FROM account_permission_overrides"
         ).fetchall(), [("Devices", "edit")])
         events = [json.loads(raw) for (raw,) in self.db.execute(
             "SELECT record_json FROM inventory_change_history ORDER BY id"

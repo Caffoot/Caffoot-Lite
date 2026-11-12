@@ -8,6 +8,7 @@ import secrets
 import time
 
 from backend.authentication import authenticate
+from backend.role_policy import evaluate_role_policy
 
 SESSION_SECONDS = 12 * 60 * 60
 
@@ -22,18 +23,23 @@ def _digest(token):
     return hashlib.sha256(token.encode("ascii")).hexdigest()
 
 
-def login_session(connection, username, password, *, mfa_code=None, now=None):
+def login_session(connection, username, password, *, mfa_code=None, now=None,
+                  report_enrolment=False):
     """Issue a fresh session only after credential and MFA verification."""
     if now is None:
         now = time.time()
-    account_id = authenticate(
-        connection, username, password, mfa_code=mfa_code, timestamp=now
-    )
-    if account_id is None:
-        return None
-    token = secrets.token_hex(32)
     connection.execute("BEGIN IMMEDIATE")
     try:
+        # Check credentials and current access together, so account changes cannot
+        # slip between verification and creation of the session.
+        account_id = authenticate(
+            connection, username, password, mfa_code=mfa_code, timestamp=now,
+            report_enrolment=report_enrolment,
+        )
+        if account_id is None:
+            connection.rollback()
+            return None
+        token = secrets.token_hex(32)
         connection.execute(
             "INSERT INTO account_sessions(token_hash,account_id,expires_at,created_at) "
             "VALUES(?,?,?,?)",
@@ -60,11 +66,8 @@ def session_account(connection, token, *, now=None):
     ).fetchone()
     if not row or not row[1] or row[4] <= now:
         return None
-    editing = connection.execute(
-        "SELECT 1 FROM account_permissions WHERE account_id=? AND level='edit' LIMIT 1",
-        (row[0],),
-    ).fetchone() is not None
-    if (row[2] or editing) and not row[3]:
+    policy = evaluate_role_policy(connection, row[0])
+    if not policy.active or (policy.requires_mfa and not policy.mfa_enrolled):
         return None
     return row[0]
 

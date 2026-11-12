@@ -183,7 +183,7 @@ class ImportBoundaryTests(unittest.TestCase):
             "VALUES('admin','hash',1,'secret',1)"
         )
         self.db.execute(
-            "INSERT INTO account_permissions(account_id,section,level) "
+            "INSERT INTO account_permission_overrides(account_id,section,level) "
             "VALUES(1,'Devices','edit')"
         )
         self.db.execute(
@@ -198,7 +198,7 @@ class ImportBoundaryTests(unittest.TestCase):
         original = inspect_export(json.dumps(fixture()).encode())
         stage_inventory(self.db, original)
         security_tables = (
-            "accounts", "account_permissions", "account_sessions",
+            "accounts", "account_permissions", "account_permission_overrides", "roles", "role_grants", "account_roles", "account_sessions",
             "inventory_change_history",
         )
         before_security = {
@@ -232,7 +232,7 @@ class ImportBoundaryTests(unittest.TestCase):
             "VALUES('admin','hash',1,'secret',1)"
         )
         self.db.execute(
-            "INSERT INTO account_permissions(account_id,section,level) "
+            "INSERT INTO account_permission_overrides(account_id,section,level) "
             "VALUES(1,'IPAM','edit')"
         )
         self.db.execute(
@@ -246,7 +246,7 @@ class ImportBoundaryTests(unittest.TestCase):
         self.db.commit()
         stage_inventory(self.db, inspect_export(json.dumps(fixture()).encode()))
         before_inventory = reconstruct_inventory(self.db)
-        protected = ("accounts", "account_permissions", "account_sessions",
+        protected = ("accounts", "account_permissions", "account_permission_overrides", "roles", "role_grants", "account_roles", "account_sessions",
                      "inventory_change_history")
         before_protected = {
             table: self.db.execute("SELECT * FROM " + table).fetchall()

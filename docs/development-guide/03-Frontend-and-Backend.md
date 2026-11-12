@@ -37,18 +37,19 @@ The live route list is defined by the conditions in `Handler.do_GET` and `Handle
 
 | Purpose | Existing routes |
 | --- | --- |
-| Pages and health | `/setup`, `/inventory`, `/health` |
+| Pages and health | `/setup`, `/inventory`, authenticated own-account `/account`, `/health` |
 | Setup and sign-in | `/api/setup/status`, `/api/setup`, `/api/setup/mfa-secret`, `/api/setup/mfa`, `/api/login`, `/api/logout`, `/api/session` |
-| User accounts | `/api/users`, `/api/users/create`, `/api/users/permission`, `/api/users/active`, `/api/users/admin`, `/api/users/delete` |
+| Existing-account pre-login MFA | `/api/login/mfa/start`, `/api/login/mfa/confirm` |
+| User accounts | `/api/users`, `/api/users/create`, `/api/users/roles/preview`, `/api/users/roles/confirm`, `/api/users/active`, `/api/users/admin`, `/api/users/delete` |
 | Personal details and mail | `/api/account/profile`, `/api/account/photo`, `/api/account/photo/remove`, `/api/account/email/request`, `/api/account/email/confirm`, `/api/recovery/request`, `/api/recovery/confirm`, `/api/settings/email`, `/api/settings/email/test` |
-| Own account | `/api/account/password`, `/api/account/mfa/start`, `/api/account/mfa/confirm` |
+| Own account | `/api/account/password`, `/api/account/mfa/start`, `/api/account/mfa/confirm`, `/api/account/mfa/remove` |
 | Read inventory | `/api/inventory/state`, `/api/inventory/sections`, `/api/inventory/devices`, `/api/inventory/ipam`, `/api/inventory/racks`, `/api/inventory/settings`, `/api/inventory/history` |
 | Device changes | `/api/devices/create`, `/api/devices/edit/start`, `/api/devices/edit/save`, `/api/devices/edit/cancel`, `/api/devices/delete` |
 | IPAM | `/api/ipam/allocation/save`, `/api/ipam/allocation/delete`, `/api/ipam/allocation/bulk`, `/api/ipam/subnets/save`, `/api/ipam/subnets/delete`, `/api/inventory/ipam/repair` |
 | Other established inventory | `/api/inventory/record/save`, `/api/inventory/record/delete`, `/api/inventory/settings/save`, `/api/inventory/device-catalogue/change`, `/api/inventory/reset` |
 | v1.3.3 import | `/api/import/preview`, `/api/import/access-point-choices`, `/api/import/confirm`, `/api/import/cancel` |
 
-These routes use the same HTTPS server, not a second service. The backend derives the user from the validated session rather than trusting a browser-supplied user ID. The exact JSON request/response fields should always be read from the handler and its matching UI caller.
+The `milestone-1` development branch integrates mandatory enrolment and eligible MFA removal into the existing sign-in and My Account screens in Batch 04. See the [exact fields and security contract](Role-Permissions.md#existing-account-mfa-operations). Authenticated `/account` serves the existing interface for own-account operations without inventory grants; `/api/session` reports server-derived `mfa_removal_eligible`. Static interface resources contain templates/code only; inventory and administrator data still require their established API permissions. The [administrator role contract](Role-Permissions.md#administrator-role-operations) covers server-computed previews and atomic confirmation. The old direct-permission route returns HTTP 410 and cannot mutate access. These routes use the same HTTPS server, not a second service. The backend derives the user from the validated session rather than trusting a browser-supplied user ID. The exact JSON request/response fields should always be read from the handler and its matching UI caller.
 
 ## Example: editing a device
 

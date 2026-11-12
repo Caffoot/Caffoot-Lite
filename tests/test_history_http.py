@@ -1,4 +1,5 @@
 """HTTP regression for both inventory history response paths (isolated DB)."""
+from confirmed_permissions import set_permission
 import http.client
 import json
 import sqlite3
@@ -13,7 +14,7 @@ from unittest.mock import patch
 from backend.accounts import bootstrap_first_admin, confirm_admin_mfa
 from backend.http_security import COOKIE_NAME
 from backend.mfa import code_at
-from backend.permissions import create_user, set_permission
+from backend.permissions import create_user
 from backend.schema import initialise_database
 from backend.server import Handler
 from backend.sessions import login_session
@@ -32,8 +33,11 @@ class HistoryHttpPermissionTests(unittest.TestCase):
             self.admin_token = login_session(db, "owner", "password",
                                              mfa_code=code_at(secret, now), now=now)
             self.viewer_id = create_user(db, admin, "viewer", "password")
+            self.viewer_secret = "JBSWY3DPEHPK3PXPJBSWY3DPEHPK3PXP"
+            db.execute("UPDATE accounts SET mfa_secret=?,mfa_confirmed=1 WHERE id=?", (self.viewer_secret, self.viewer_id))
+            db.commit()
             set_permission(db, admin, self.viewer_id, "Devices", "read")
-            self.viewer_token = login_session(db, "viewer", "password")
+            self.viewer_token = login_session(db, "viewer", "password", mfa_code=code_at(self.viewer_secret, now), now=now)
             self.assertTrue(self.viewer_token)
             event = {"at": "2026-11-02T12:00:00Z", "reason": "Inventory saved",
                      "changes": [
@@ -93,7 +97,7 @@ class HistoryHttpPermissionTests(unittest.TestCase):
             db.execute("PRAGMA foreign_keys=ON")
             admin = db.execute("SELECT id FROM accounts WHERE username='owner'").fetchone()[0]
             set_permission(db, admin, self.viewer_id, "Devices", None)
-            new_token = login_session(db, "viewer", "password")
+            new_token = login_session(db, "viewer", "password", mfa_code=code_at(self.viewer_secret, time.time()))
         for path in ("/api/inventory/state", "/api/inventory/history"):
             with self.subTest(path=path):
                 self.assertEqual(self.get(path, self.viewer_token)[0], 401)

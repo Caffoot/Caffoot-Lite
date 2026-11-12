@@ -1,0 +1,289 @@
+{
+  "action": {
+    "type": "role.update",
+    "roleId": 2,
+    "name": "Readers Disabled",
+    "enabled": false,
+    "grants": {
+      "Devices": "read",
+      "IPAM": "read"
+    }
+  },
+  "available": true,
+  "users": [
+    {
+      "userId": 2,
+      "username": "colleague",
+      "before": {
+        "roles": [
+          {
+            "id": 1,
+            "roleKey": "staff_member",
+            "name": "Staff Member",
+            "enabled": true,
+            "grants": {}
+          },
+          {
+            "id": 2,
+            "roleKey": "custom_3a7fcc31c2824e939fa45718d1b20897",
+            "name": "Renamed Readers",
+            "enabled": true,
+            "grants": {
+              "Devices": "read",
+              "IPAM": "read"
+            }
+          }
+        ],
+        "sections": {
+          "Devices": {
+            "sources": [
+              {
+                "roleId": 2,
+                "level": "read"
+              }
+            ],
+            "inherited": "read",
+            "override": null,
+            "effective": "read",
+            "canRead": false,
+            "canEdit": false
+          },
+          "IPAM": {
+            "sources": [
+              {
+                "roleId": 2,
+                "level": "read"
+              }
+            ],
+            "inherited": "read",
+            "override": null,
+            "effective": "read",
+            "canRead": false,
+            "canEdit": false
+          },
+          "Racks": {
+            "sources": [],
+            "inherited": null,
+            "override": null,
+            "effective": null,
+            "canRead": false,
+            "canEdit": false
+          }
+        },
+        "active": true,
+        "isAdmin": false,
+        "mfaEnrolled": false,
+        "mfaMandatory": true,
+        "requiresMfa": true,
+        "mfaPending": true
+      },
+      "after": {
+        "roles": [
+          {
+            "id": 1,
+            "roleKey": "staff_member",
+            "name": "Staff Member",
+            "enabled": true,
+            "grants": {}
+          },
+          {
+            "id": 2,
+            "roleKey": "custom_3a7fcc31c2824e939fa45718d1b20897",
+            "name": "Readers Disabled",
+            "enabled": false,
+            "grants": {
+              "Devices": "read",
+              "IPAM": "read"
+            }
+          }
+        ],
+        "sections": {
+          "Devices": {
+            "sources": [],
+            "inherited": null,
+            "override": null,
+            "effective": null,
+            "canRead": false,
+            "canEdit": false
+          },
+          "IPAM": {
+            "sources": [],
+            "inherited": null,
+            "override": null,
+            "effective": null,
+            "canRead": false,
+            "canEdit": false
+          },
+          "Racks": {
+            "sources": [],
+            "inherited": null,
+            "override": null,
+            "effective": null,
+            "canRead": false,
+            "canEdit": false
+          }
+        },
+        "active": true,
+        "isAdmin": false,
+        "mfaEnrolled": false,
+        "mfaMandatory": false,
+        "requiresMfa": false,
+        "mfaPending": false
+      },
+      "retainedPermissions": {},
+      "sessionCount": 0,
+      "revokeSessions": true,
+      "revokedSessionCount": 0
+    },
+    {
+      "userId": 3,
+      "username": "second-colleague",
+      "before": {
+        "roles": [
+          {
+            "id": 1,
+            "roleKey": "staff_member",
+            "name": "Staff Member",
+            "enabled": true,
+            "grants": {}
+          },
+          {
+            "id": 2,
+            "roleKey": "custom_3a7fcc31c2824e939fa45718d1b20897",
+            "name": "Renamed Readers",
+            "enabled": true,
+            "grants": {
+              "Devices": "read",
+              "IPAM": "read"
+            }
+          }
+        ],
+        "sections": {
+          "Devices": {
+            "sources": [
+              {
+                "roleId": 2,
+                "level": "read"
+              }
+            ],
+            "inherited": "read",
+            "override": null,
+            "effective": "read",
+            "canRead": false,
+            "canEdit": false
+          },
+          "IPAM": {
+            "sources": [
+              {
+                "roleId": 2,
+                "level": "read"
+              }
+            ],
+            "inherited": "read",
+            "override": null,
+            "effective": "read",
+            "canRead": false,
+            "canEdit": false
+          },
+          "Racks": {
+            "sources": [],
+            "inherited": null,
+            "override": null,
+            "effective": null,
+            "canRead": false,
+            "canEdit": false
+          }
+        },
+        "active": true,
+        "isAdmin": false,
+        "mfaEnrolled": false,
+        "mfaMandatory": true,
+        "requiresMfa": true,
+        "mfaPending": true
+      },
+      "after": {
+        "roles": [
+          {
+            "id": 1,
+            "roleKey": "staff_member",
+            "name": "Staff Member",
+            "enabled": true,
+            "grants": {}
+          },
+          {
+            "id": 2,
+            "roleKey": "custom_3a7fcc31c2824e939fa45718d1b20897",
+            "name": "Readers Disabled",
+            "enabled": false,
+            "grants": {
+              "Devices": "read",
+              "IPAM": "read"
+            }
+          }
+        ],
+        "sections": {
+          "Devices": {
+            "sources": [],
+            "inherited": null,
+            "override": null,
+            "effective": null,
+            "canRead": false,
+            "canEdit": false
+          },
+          "IPAM": {
+            "sources": [],
+            "inherited": null,
+            "override": null,
+            "effective": null,
+            "canRead": false,
+            "canEdit": false
+          },
+          "Racks": {
+            "sources": [],
+            "inherited": null,
+            "override": null,
+            "effective": null,
+            "canRead": false,
+            "canEdit": false
+          }
+        },
+        "active": true,
+        "isAdmin": false,
+        "mfaEnrolled": false,
+        "mfaMandatory": false,
+        "requiresMfa": false,
+        "mfaPending": false
+      },
+      "retainedPermissions": {},
+      "sessionCount": 0,
+      "revokeSessions": true,
+      "revokedSessionCount": 0
+    }
+  ],
+  "accountCount": 2,
+  "revokedSessionCount": 0,
+  "roleBefore": {
+    "id": 2,
+    "roleKey": "custom_3a7fcc31c2824e939fa45718d1b20897",
+    "name": "Renamed Readers",
+    "enabled": true,
+    "isBuiltin": false,
+    "grants": {
+      "Devices": "read",
+      "IPAM": "read"
+    },
+    "accountCount": 2
+  },
+  "roleAfter": {
+    "id": 2,
+    "roleKey": "custom_3a7fcc31c2824e939fa45718d1b20897",
+    "name": "Readers Disabled",
+    "enabled": false,
+    "isBuiltin": false,
+    "grants": {
+      "Devices": "read",
+      "IPAM": "read"
+    },
+    "accountCount": 2
+  }
+}

@@ -1,0 +1,105 @@
+test_account_deleted_after_request_authentication_has_generic_removal_error (test_required_mfa_http.RequiredMfaHttpTests.test_account_deleted_after_request_authentication_has_generic_removal_error) ... 127.0.0.1 - - [12/Nov/2026 08:04:28] "POST /api/account/mfa/remove HTTP/1.1" 403 -
+ok
+test_bad_password_budget_is_shared_between_all_prelogin_routes (test_required_mfa_http.RequiredMfaHttpTests.test_bad_password_budget_is_shared_between_all_prelogin_routes) ... 127.0.0.1 - - [12/Nov/2026 08:04:29] "POST /api/login HTTP/1.1" 401 -
+127.0.0.1 - - [12/Nov/2026 08:04:29] "POST /api/login/mfa/start HTTP/1.1" 401 -
+127.0.0.1 - - [12/Nov/2026 08:04:29] "POST /api/login/mfa/confirm HTTP/1.1" 401 -
+127.0.0.1 - - [12/Nov/2026 08:04:29] "POST /api/login HTTP/1.1" 401 -
+127.0.0.1 - - [12/Nov/2026 08:04:29] "POST /api/login/mfa/start HTTP/1.1" 401 -
+127.0.0.1 - - [12/Nov/2026 08:04:29] "POST /api/login/mfa/start HTTP/1.1" 401 -
+ok
+test_bad_password_unknown_and_inactive_are_generic_and_do_not_leak_secret (test_required_mfa_http.RequiredMfaHttpTests.test_bad_password_unknown_and_inactive_are_generic_and_do_not_leak_secret) ... 127.0.0.1 - - [12/Nov/2026 08:04:30] "POST /api/login HTTP/1.1" 401 -
+127.0.0.1 - - [12/Nov/2026 08:04:30] "POST /api/login HTTP/1.1" 401 -
+127.0.0.1 - - [12/Nov/2026 08:04:30] "POST /api/login/mfa/start HTTP/1.1" 401 -
+127.0.0.1 - - [12/Nov/2026 08:04:30] "POST /api/login/mfa/start HTTP/1.1" 401 -
+127.0.0.1 - - [12/Nov/2026 08:04:30] "POST /api/login/mfa/confirm HTTP/1.1" 401 -
+127.0.0.1 - - [12/Nov/2026 08:04:30] "POST /api/login/mfa/confirm HTTP/1.1" 401 -
+127.0.0.1 - - [12/Nov/2026 08:04:30] "POST /api/login HTTP/1.1" 401 -
+127.0.0.1 - - [12/Nov/2026 08:04:31] "POST /api/login/mfa/start HTTP/1.1" 401 -
+ok
+test_prelogin_origin_content_size_and_field_guards (test_required_mfa_http.RequiredMfaHttpTests.test_prelogin_origin_content_size_and_field_guards) ... 127.0.0.1 - - [12/Nov/2026 08:04:31] "POST /api/login/mfa/start HTTP/1.1" 403 -
+127.0.0.1 - - [12/Nov/2026 08:04:31] "POST /api/login/mfa/start HTTP/1.1" 403 -
+127.0.0.1 - - [12/Nov/2026 08:04:31] "POST /api/login/mfa/start HTTP/1.1" 415 -
+127.0.0.1 - - [12/Nov/2026 08:04:31] "POST /api/login/mfa/start HTTP/1.1" 400 -
+127.0.0.1 - - [12/Nov/2026 08:04:31] "POST /api/login/mfa/start HTTP/1.1" 400 -
+127.0.0.1 - - [12/Nov/2026 08:04:31] "POST /api/login/mfa/confirm HTTP/1.1" 403 -
+127.0.0.1 - - [12/Nov/2026 08:04:31] "POST /api/login/mfa/confirm HTTP/1.1" 403 -
+127.0.0.1 - - [12/Nov/2026 08:04:31] "POST /api/login/mfa/confirm HTTP/1.1" 415 -
+127.0.0.1 - - [12/Nov/2026 08:04:31] "POST /api/login/mfa/confirm HTTP/1.1" 400 -
+127.0.0.1 - - [12/Nov/2026 08:04:31] "POST /api/login/mfa/confirm HTTP/1.1" 400 -
+ok
+test_removal_failures_are_throttled_and_permission_assignment_blocks_removal (test_required_mfa_http.RequiredMfaHttpTests.test_removal_failures_are_throttled_and_permission_assignment_blocks_removal) ... 127.0.0.1 - - [12/Nov/2026 08:04:32] "POST /api/account/mfa/remove HTTP/1.1" 403 -
+127.0.0.1 - - [12/Nov/2026 08:04:32] "POST /api/account/mfa/remove HTTP/1.1" 403 -
+127.0.0.1 - - [12/Nov/2026 08:04:32] "POST /api/account/mfa/remove HTTP/1.1" 403 -
+127.0.0.1 - - [12/Nov/2026 08:04:32] "POST /api/account/mfa/remove HTTP/1.1" 403 -
+127.0.0.1 - - [12/Nov/2026 08:04:32] "POST /api/account/mfa/remove HTTP/1.1" 403 -
+127.0.0.1 - - [12/Nov/2026 08:04:32] "POST /api/account/mfa/remove HTTP/1.1" 403 -
+127.0.0.1 - - [12/Nov/2026 08:04:32] "GET /api/session HTTP/1.1" 200 -
+ok
+test_removal_protects_origin_csrf_and_proofs_then_revokes_session (test_required_mfa_http.RequiredMfaHttpTests.test_removal_protects_origin_csrf_and_proofs_then_revokes_session) ... 127.0.0.1 - - [12/Nov/2026 08:04:33] "POST /api/account/mfa/remove HTTP/1.1" 403 -
+127.0.0.1 - - [12/Nov/2026 08:04:33] "POST /api/account/mfa/remove HTTP/1.1" 403 -
+127.0.0.1 - - [12/Nov/2026 08:04:33] "POST /api/account/mfa/remove HTTP/1.1" 403 -
+127.0.0.1 - - [12/Nov/2026 08:04:33] "POST /api/account/mfa/remove HTTP/1.1" 403 -
+127.0.0.1 - - [12/Nov/2026 08:04:34] "POST /api/account/mfa/remove HTTP/1.1" 403 -
+127.0.0.1 - - [12/Nov/2026 08:04:34] "POST /api/account/mfa/remove HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2026 08:04:34] "GET /api/session HTTP/1.1" 401 -
+127.0.0.1 - - [12/Nov/2026 08:04:34] "POST /api/login HTTP/1.1" 200 -
+ok
+test_required_response_no_cookie_no_session_and_no_normal_api_access (test_required_mfa_http.RequiredMfaHttpTests.test_required_response_no_cookie_no_session_and_no_normal_api_access) ... 127.0.0.1 - - [12/Nov/2026 08:04:34] "POST /api/login HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2026 08:04:35] "POST /api/login HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2026 08:04:35] "POST /api/login HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2026 08:04:35] "POST /api/login HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2026 08:04:35] "POST /api/login HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2026 08:04:35] "POST /api/login HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2026 08:04:35] "POST /api/login HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2026 08:04:35] "GET /api/session HTTP/1.1" 401 -
+127.0.0.1 - - [12/Nov/2026 08:04:35] "GET /api/session HTTP/1.1" 401 -
+127.0.0.1 - - [12/Nov/2026 08:04:35] "GET /api/inventory/state HTTP/1.1" 401 -
+127.0.0.1 - - [12/Nov/2026 08:04:35] "GET /api/inventory/state HTTP/1.1" 401 -
+127.0.0.1 - - [12/Nov/2026 08:04:35] "GET /api/users HTTP/1.1" 401 -
+127.0.0.1 - - [12/Nov/2026 08:04:35] "GET /api/users HTTP/1.1" 401 -
+127.0.0.1 - - [12/Nov/2026 08:04:35] "POST /api/account/mfa/start HTTP/1.1" 403 -
+127.0.0.1 - - [12/Nov/2026 08:04:35] "POST /api/setup/mfa-secret HTTP/1.1" 400 -
+ok
+test_role_assignment_after_login_refuses_removal_without_altering_grants (test_required_mfa_http.RequiredMfaHttpTests.test_role_assignment_after_login_refuses_removal_without_altering_grants) ... 127.0.0.1 - - [12/Nov/2026 08:04:36] "POST /api/account/mfa/remove HTTP/1.1" 403 -
+ok
+test_start_and_valid_password_login_do_not_reset_failed_code_budget (test_required_mfa_http.RequiredMfaHttpTests.test_start_and_valid_password_login_do_not_reset_failed_code_budget) ... 127.0.0.1 - - [12/Nov/2026 08:04:37] "POST /api/login/mfa/start HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2026 08:04:37] "POST /api/login/mfa/start HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2026 08:04:37] "POST /api/login HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2026 08:04:37] "POST /api/login/mfa/confirm HTTP/1.1" 401 -
+127.0.0.1 - - [12/Nov/2026 08:04:37] "POST /api/login/mfa/start HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2026 08:04:37] "POST /api/login HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2026 08:04:37] "POST /api/login/mfa/confirm HTTP/1.1" 401 -
+127.0.0.1 - - [12/Nov/2026 08:04:37] "POST /api/login/mfa/start HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2026 08:04:37] "POST /api/login HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2026 08:04:37] "POST /api/login/mfa/confirm HTTP/1.1" 401 -
+127.0.0.1 - - [12/Nov/2026 08:04:37] "POST /api/login/mfa/start HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2026 08:04:38] "POST /api/login HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2026 08:04:38] "POST /api/login/mfa/confirm HTTP/1.1" 401 -
+127.0.0.1 - - [12/Nov/2026 08:04:38] "POST /api/login/mfa/start HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2026 08:04:38] "POST /api/login HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2026 08:04:38] "POST /api/login/mfa/confirm HTTP/1.1" 401 -
+127.0.0.1 - - [12/Nov/2026 08:04:38] "POST /api/login/mfa/confirm HTTP/1.1" 401 -
+127.0.0.1 - - [12/Nov/2026 08:04:38] "POST /api/login/mfa/start HTTP/1.1" 401 -
+127.0.0.1 - - [12/Nov/2026 08:04:38] "POST /api/login HTTP/1.1" 401 -
+ok
+test_start_reuses_secret_and_confirm_requires_fresh_normal_login (test_required_mfa_http.RequiredMfaHttpTests.test_start_reuses_secret_and_confirm_requires_fresh_normal_login) ... 127.0.0.1 - - [12/Nov/2026 08:04:39] "POST /api/login/mfa/start HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2026 08:04:39] "POST /api/login/mfa/start HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2026 08:04:39] "POST /api/login/mfa/start HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2026 08:04:39] "POST /api/login/mfa/confirm HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2026 08:04:39] "GET /api/session HTTP/1.1" 401 -
+127.0.0.1 - - [12/Nov/2026 08:04:39] "POST /api/login HTTP/1.1" 401 -
+127.0.0.1 - - [12/Nov/2026 08:04:39] "POST /api/login HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2026 08:04:39] "POST /api/login/mfa/start HTTP/1.1" 401 -
+127.0.0.1 - - [12/Nov/2026 08:04:39] "POST /api/login/mfa/confirm HTTP/1.1" 401 -
+ok
+test_upgraded_legacy_reader_enrols_without_losing_existing_access (test_required_mfa_http.RequiredMfaHttpTests.test_upgraded_legacy_reader_enrols_without_losing_existing_access) ... 127.0.0.1 - - [12/Nov/2026 08:04:40] "POST /api/login HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2026 08:04:40] "POST /api/login/mfa/start HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2026 08:04:40] "POST /api/login/mfa/confirm HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2026 08:04:40] "POST /api/login HTTP/1.1" 200 -
+127.0.0.1 - - [12/Nov/2026 08:04:40] "GET /api/inventory/sections HTTP/1.1" 200 -
+ok
+
+----------------------------------------------------------------------
+Ran 11 tests in 13.593s
+
+OK

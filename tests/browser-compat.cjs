@@ -28,6 +28,23 @@ async function state(page){
     return r.json();
   });
 }
+async function confirmPermission(page,userId,section,level){
+  // Prepare test accounts through the confirmed API while the approved Users
+  // interface waits for its separately authorised integration.
+  await page.evaluate(async action=>{
+    const session=await (await fetch('/api/session')).json();
+    const headers={'Content-Type':'application/json','X-CSRF-Token':session.csrf_token};
+    const preview=await fetch('/api/users/roles/preview',{
+      method:'POST',headers,body:JSON.stringify({action})
+    });
+    if(!preview.ok)throw Error('Permission preview failed: '+preview.status);
+    const {proof}=await preview.json();
+    const confirmation=await fetch('/api/users/roles/confirm',{
+      method:'POST',headers,body:JSON.stringify({action,proof})
+    });
+    if(!confirmation.ok)throw Error('Permission confirmation failed: '+confirmation.status);
+  },{type:'override.set',userId,section,level});
+}
 async function persisted(page,test,label){
   for(let i=0;i<45;i++){
     const value=await state(page);
@@ -1955,6 +1972,7 @@ async function run(){
   await page.locator('#main-content .section-page-header [data-action="select-users-section"][data-tab="add"]').click();
   await page.locator('#next-user-create-form input[name="username"]').fill('editor');
   await page.locator('#next-user-create-form input[name="password"]').fill(password+'-Editor');
+  await page.locator('#next-user-create-form input[name="confirmPassword"]').fill(password+'-Editor');
   await page.locator('#next-user-create-form input[name="firstName"]').fill('Taylor');
   await page.locator('#next-user-create-form input[name="lastName"]').fill('Example');
   await page.locator('#next-user-create-form input[name="displayName"]').fill('Taylor E');
@@ -1990,23 +2008,25 @@ async function run(){
   await editor.locator('#username').fill('editor');
   await editor.locator('#password').fill(password+'-Editor');
   await editor.locator('#submit').click();
-  await editor.locator('#signed-in:not([hidden])').waitFor();
-  assert.ok(editor.url().endsWith('/setup'),'Users without inventory access must remain on account page');
+  await editor.waitForURL('**/account');
+  await editor.locator('#app[aria-busy="false"]').waitFor();
+  assert.ok(editor.url().endsWith('/account'),'Staff users must reach only their approved account page');
   assert.equal((await second.request.get(address+'/inventory')).status(),403,
     'Newly created user must have no access');
-  await editor.locator('#mfa-panel:not([hidden])').waitFor();
-  await editor.locator('#mfa-password').fill(password+'-Editor');
-  await editor.locator('#start-mfa button[type="submit"]').click();
-  await editor.locator('#confirm-mfa:not([hidden])').waitFor();
-  const editorSecret=(await editor.locator('#user-mfa-secret').textContent()).trim();
+  await editor.locator('.account-screen .subnav [data-section="security"]').click();
+  await editor.locator('#next-account-mfa-start').waitFor();
+  await editor.locator('#next-account-mfa-start [name="password"]').fill(password+'-Editor');
+  await editor.locator('#next-account-mfa-start button[type="submit"]').click();
+  await editor.locator('#next-account-mfa-details:not([hidden])').waitFor();
+  const editorSecret=(await editor.locator('#next-account-mfa-secret').textContent()).trim();
   assert.ok(editorSecret.length>=16,'Editor MFA secret missing');
   await editor.waitForFunction(()=>{
-    const img=document.querySelector('#user-mfa-qr img');
+    const img=document.querySelector('#next-account-mfa-qr img');
     return img && img.complete && img.naturalWidth>0;
   });
-  await editor.locator('#user-mfa-code').fill(mfaCode(editorSecret));
-  await editor.locator('#confirm-mfa button[type="submit"]').click();
-  await editor.waitForFunction(()=>document.querySelector('#signed-in')?.hidden===true);
+  await editor.locator('#next-account-mfa-confirm [name="code"]').fill(mfaCode(editorSecret));
+  await editor.locator('#next-account-mfa-confirm button[type="submit"]').click();
+  await editor.waitForURL('**/setup');
 
   await page.locator('#main-content [data-action="users-open-editor"][data-user-id="'+editorId+'"]').click();
   await page.locator('#main-content .users-management-modal').waitFor();
@@ -2016,9 +2036,9 @@ async function run(){
     const r=await fetch('/api/users',{cache:'no-store'});
     return r.ok && (await r.json()).users.find(u=>u.id===id)?.profile.displayName==='Taylor Updated';
   },editorId);
-  await page.locator('[data-next-user-permission][data-user-id="'+editorId+'"][data-section="Devices"]').selectOption('edit');
-  await page.locator('[data-next-user-permission][data-user-id="'+editorId+'"][data-section="IPAM"]').selectOption('read');
-  await page.locator('[data-next-user-permission][data-user-id="'+editorId+'"][data-section="Racks"]').selectOption('read');
+  await confirmPermission(page,editorId,'Devices','edit');
+  await confirmPermission(page,editorId,'IPAM','read');
+  await confirmPermission(page,editorId,'Racks','read');
   await page.waitForFunction(async id=>{
     const r=await fetch('/api/users',{cache:'no-store'});
     return r.ok && (await r.json()).users.find(user=>user.id===id)?.permissions.Devices==='edit';
@@ -2112,11 +2132,12 @@ async function run(){
   assert.equal((await editorCancelled).status(),200);
   await second.close();
   console.log('Two-user exclusive device edit reservations passed');
-  // Read-only account must be able to sign in without MFA.
+  // Staff Member alone may sign in without MFA; wider Read access requires it.
   await page.evaluate(()=>switchTab('users'));
   await page.locator('#main-content .section-page-header [data-action="select-users-section"][data-tab="add"]').click();
   await page.locator('#next-user-create-form input[name="username"]').fill('viewer');
   await page.locator('#next-user-create-form input[name="password"]').fill(password+'-Viewer');
+  await page.locator('#next-user-create-form input[name="confirmPassword"]').fill(password+'-Viewer');
   await page.locator('#next-user-create-form button[type="submit"]').click();
   await page.waitForFunction(()=>[...document.querySelectorAll('#main-content h3')].some(node=>node.textContent.trim()==='viewer'));
   const viewerId=await page.evaluate(async()=>{
@@ -2128,19 +2149,13 @@ async function run(){
   await page.locator('#main-content .users-management-modal').waitFor();
   const blockedEdit=page.locator('[data-next-user-permission][data-user-id="'+viewerId+'"][data-section="Devices"]');
   await blockedEdit.selectOption('edit');
-  await page.waitForFunction(()=>document.querySelector('#toast-message')?.textContent.includes('must set up MFA in My account'));
+  await page.locator('[data-role-command="confirm"]').waitFor();
+  await page.locator('[data-role-layer] [data-role-command="close"]').first().click();
   await page.waitForFunction(id=>document.querySelector('[data-next-user-permission][data-user-id="'+id+'"][data-section="Devices"]')?.value==='',viewerId);
   assert.equal(await page.evaluate(async id=>{
     const user=(await (await fetch('/api/users')).json()).users.find(u=>u.id===id);
     return user?.permissions?.Devices||null;
-  },viewerId),null,'Unenrolled users must not receive Edit permissions');
-  for(const section of ['Devices','IPAM','Racks'])
-    await page.locator('[data-next-user-permission][data-user-id="'+viewerId+'"][data-section="'+section+'"]').selectOption('read');
-  await page.waitForFunction(async id=>{
-    const user=(await (await fetch('/api/users')).json()).users.find(u=>u.id===id);
-    return ['Devices','IPAM','Racks'].every(key=>user?.permissions[key]==='read');
-  },viewerId);
-  await page.locator('#main-content .users-management-modal [data-action="users-close-editor"]').first().click();
+  },viewerId),null,'Cancelling the preview must not change permissions');
   const readContext=await browser.newContext({ignoreHTTPSErrors:true});
   const viewer=await readContext.newPage();
   await viewer.goto(address+'/setup');
@@ -2148,13 +2163,36 @@ async function run(){
   await viewer.locator('#password').fill(password+'-Viewer');
   assert.ok(await viewer.locator('#code-field').evaluate(e=>e.hidden));
   await viewer.locator('#submit').click();
-  await viewer.waitForURL('**/inventory');
-  await viewer.locator('#next-dashboard-mfa-notice').waitFor();
-  await viewer.locator('#next-dashboard-mfa-notice [data-action="select-account-section"]').click();
-  assert.equal(await viewer.locator('#page-title').textContent(),'My Account');
+  await viewer.waitForURL('**/account');
+  await viewer.locator('#app[aria-busy="false"]').waitFor();
+  assert.equal((await readContext.request.get(address+'/inventory')).status(),403,
+    'Staff Member alone must not receive inventory access');
+  await viewer.locator('.account-screen .subnav [data-section="security"]').click();
   await viewer.locator('#next-account-mfa-start').waitFor();
-  await viewer.locator('#sidebar [data-action="tab-dashboard"]').click();
-  await viewer.locator('#next-dashboard-mfa-notice').waitFor();
+  await viewer.locator('#next-account-mfa-start [name="password"]').fill(password+'-Viewer');
+  await viewer.locator('#next-account-mfa-start button[type="submit"]').click();
+  await viewer.locator('#next-account-mfa-details:not([hidden])').waitFor();
+  const viewerSecret=(await viewer.locator('#next-account-mfa-secret').textContent()).trim();
+  await viewer.locator('#next-account-mfa-confirm [name="code"]').fill(mfaCode(viewerSecret));
+  await viewer.locator('#next-account-mfa-confirm button[type="submit"]').click();
+  await viewer.waitForURL('**/setup');
+
+  for(const section of ['Devices','IPAM','Racks'])
+    await confirmPermission(page,viewerId,section,'read');
+  await page.waitForFunction(async id=>{
+    const user=(await (await fetch('/api/users')).json()).users.find(u=>u.id===id);
+    return ['Devices','IPAM','Racks'].every(key=>user?.permissions[key]==='read');
+  },viewerId);
+  await page.locator('#main-content .users-management-modal [data-action="users-close-editor"]').first().click();
+  await viewer.locator('#username').fill('viewer');
+  await viewer.locator('#password').fill(password+'-Viewer');
+  await viewer.locator('#submit').click();
+  await viewer.locator('#code-field:not([hidden])').waitFor();
+  await viewer.locator('#code').fill(mfaCode(viewerSecret));
+  await viewer.waitForURL('**/inventory');
+  await viewer.locator('#app[aria-busy="false"]').waitFor();
+  assert.equal(await viewer.locator('#next-dashboard-mfa-notice').count(),0,
+    'An enrolled reader must not receive an enrolment reminder');
   await viewer.evaluate(()=>{appState.devices.push({...appState.devices[0]});renderContent();});
   assert.equal(await viewer.locator('#next-dashboard-inventory-health').count(),0,
     'Read-only viewer must not see inventory health warnings');
@@ -2187,7 +2225,7 @@ async function run(){
   });
   assert.equal(denied,403,'System maintenance must require administrator access');
   await readContext.close();
-  console.log('Password-only read access, hidden editing controls and administrator-only maintenance passed');
+  console.log('Staff sign-in, required MFA for Read access, hidden editing controls and administrator-only maintenance passed');
 
   await page.evaluate(()=>switchTab('settings'));
   await page.locator('.settings-screen .subnav [data-tab="maintenance"]').click();

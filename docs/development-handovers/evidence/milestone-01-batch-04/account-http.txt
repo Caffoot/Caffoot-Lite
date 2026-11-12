@@ -1,0 +1,47 @@
+test_account_management_and_password_change_http (test_session_http.SessionHttpTests.test_account_management_and_password_change_http) ... 127.0.0.1 - - [11/Nov/2026 11:02:45] "POST /api/users/create HTTP/1.1" 200 -
+ok
+test_admin_inventory_page_contains_users_and_migration_navigation (test_session_http.SessionHttpTests.test_admin_inventory_page_contains_users_and_migration_navigation) ... 127.0.0.1 - - [11/Nov/2026 11:02:46] "GET /inventory HTTP/1.1" 200 -
+ok
+test_anonymous_request_is_rejected (test_session_http.SessionHttpTests.test_anonymous_request_is_rejected) ... 127.0.0.1 - - [11/Nov/2026 11:02:48] "GET /api/session HTTP/1.1" 401 -
+ok
+test_device_create_edit_delete_through_authenticated_http (test_session_http.SessionHttpTests.test_device_create_edit_delete_through_authenticated_http) ... 127.0.0.1 - - [11/Nov/2026 11:02:49] "POST /api/devices/create HTTP/1.1" 200 -
+ok
+test_device_edit_reservation_conflict_cancel_and_expiry (test_session_http.SessionHttpTests.test_device_edit_reservation_conflict_cancel_and_expiry) ... 127.0.0.1 - - [11/Nov/2026 11:02:50] "POST /api/users/create HTTP/1.1" 200 -
+ok
+test_device_editor_name_visible_and_competing_edit_still_refused (test_session_http.SessionHttpTests.test_device_editor_name_visible_and_competing_edit_still_refused) ... 127.0.0.1 - - [11/Nov/2026 11:02:51] "GET /api/inventory/state HTTP/1.1" 200 -
+ok
+test_inventory_assets_are_served_from_existing_published_files (test_session_http.SessionHttpTests.test_inventory_assets_are_served_from_existing_published_files) ... 127.0.0.1 - - [11/Nov/2026 11:02:52] "GET /assets/favicon.ico HTTP/1.1" 200 -
+ok
+test_inventory_requires_authenticated_inventory_access (test_session_http.SessionHttpTests.test_inventory_requires_authenticated_inventory_access) ... 127.0.0.1 - - [11/Nov/2026 11:02:53] "GET /inventory HTTP/1.1" 401 -
+ok
+test_inventory_snapshot_is_sqlite_owned_and_permission_filtered (test_session_http.SessionHttpTests.test_inventory_snapshot_is_sqlite_owned_and_permission_filtered) ... 127.0.0.1 - - [11/Nov/2026 11:02:54] "GET /api/inventory/state HTTP/1.1" 200 -
+ok
+test_ipam_editor_does_not_receive_hidden_device_revisions (test_session_http.SessionHttpTests.test_ipam_editor_does_not_receive_hidden_device_revisions) ... 127.0.0.1 - - [11/Nov/2026 11:02:55] "POST /api/users/create HTTP/1.1" 200 -
+ok
+test_ipam_notes_on_device_primary_ip_http (test_session_http.SessionHttpTests.test_ipam_notes_on_device_primary_ip_http) ... 127.0.0.1 - - [11/Nov/2026 11:02:56] "POST /api/ipam/allocation/save HTTP/1.1" 200 -
+ok
+test_legacy_device_vlan_metadata_survives_reserved_save_http (test_session_http.SessionHttpTests.test_legacy_device_vlan_metadata_survives_reserved_save_http) ... 127.0.0.1 - - [11/Nov/2026 11:02:57] "POST /api/devices/create HTTP/1.1" 200 -
+ok
+test_linked_shelf_removal_http_auth_permissions_and_atomic_result (test_session_http.SessionHttpTests.test_linked_shelf_removal_http_auth_permissions_and_atomic_result) ... 127.0.0.1 - - [11/Nov/2026 11:02:58] "POST /api/inventory/rack-shelves/remove HTTP/1.1" 403 -
+ok
+test_packaged_account_resources_require_authentication_without_inventory_data (test_session_http.SessionHttpTests.test_packaged_account_resources_require_authentication_without_inventory_data) ... 127.0.0.1 - - [11/Nov/2026 11:02:59] "GET /interface/application.js HTTP/1.1" 401 -
+ok
+test_published_device_notes_exceed_login_request_limit (test_session_http.SessionHttpTests.test_published_device_notes_exceed_login_request_limit) ... 127.0.0.1 - - [11/Nov/2026 11:03:00] "POST /api/devices/create HTTP/1.1" 200 -
+ok
+test_same_tab_print_direct_entry_and_reload_keep_inventory_security (test_session_http.SessionHttpTests.test_same_tab_print_direct_entry_and_reload_keep_inventory_security) ... 127.0.0.1 - - [11/Nov/2026 11:03:00] "GET /inventory HTTP/1.1" 200 -
+ok
+test_software_service_name_boundary_through_settings_api (test_session_http.SessionHttpTests.test_software_service_name_boundary_through_settings_api) ... 127.0.0.1 - - [11/Nov/2026 11:03:02] "POST /api/inventory/settings/save HTTP/1.1" 200 -
+ok
+test_staff_account_route_and_mfa_eligibility_preserve_data_boundaries (test_session_http.SessionHttpTests.test_staff_account_route_and_mfa_eligibility_preserve_data_boundaries) ... 127.0.0.1 - - [11/Nov/2026 11:03:03] "GET /account HTTP/1.1" 401 -
+ok
+test_subnet_first_batch_permissions_atomicity_and_visible_count_http (test_session_http.SessionHttpTests.test_subnet_first_batch_permissions_atomicity_and_visible_count_http) ... 127.0.0.1 - - [11/Nov/2026 11:03:04] "POST /api/ipam/subnets/save HTTP/1.1" 403 -
+ok
+test_user_mfa_start_supplies_authenticator_qr_uri (test_session_http.SessionHttpTests.test_user_mfa_start_supplies_authenticator_qr_uri) ... 127.0.0.1 - - [11/Nov/2026 11:03:06] "POST /api/users/create HTTP/1.1" 200 -
+ok
+test_valid_session_and_no_inventory_exposure (test_session_http.SessionHttpTests.test_valid_session_and_no_inventory_exposure) ... 127.0.0.1 - - [11/Nov/2026 11:03:07] "GET /api/session HTTP/1.1" 200 -
+ok
+
+----------------------------------------------------------------------
+Ran 21 tests in 22.153s
+
+OK

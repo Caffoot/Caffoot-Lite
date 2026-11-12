@@ -1,0 +1,15 @@
+test_assignment_revokes_session_and_requires_existing_enrolment_flow (test_builtin_roles.BuiltinRoleAdministrationTests.test_assignment_revokes_session_and_requires_existing_enrolment_flow) ... ok
+test_configurable_grants_disable_membership_and_dave_tim_overrides (test_builtin_roles.BuiltinRoleAdministrationTests.test_configurable_grants_disable_membership_and_dave_tim_overrides) ... ok
+test_fresh_defaults_and_new_accounts_remain_staff_only (test_builtin_roles.BuiltinRoleAdministrationTests.test_fresh_defaults_and_new_accounts_remain_staff_only) ... ok
+test_upgrade_staff_only_requires_mfa_even_with_three_preserved_denials (test_builtin_roles.BuiltinRoleAdministrationTests.test_upgrade_staff_only_requires_mfa_even_with_three_preserved_denials) ... ok
+test_active_matrix_preserves_exact_levels_and_only_adds_necessary_overrides (test_builtin_roles.BuiltinRoleMigrationTests.test_active_matrix_preserves_exact_levels_and_only_adds_necessary_overrides) ... ok
+test_configurable_builtin_constraints_and_staff_protections (test_builtin_roles.BuiltinRoleMigrationTests.test_configurable_builtin_constraints_and_staff_protections) ... ok
+test_existing_custom_identity_collision_fails_without_reinterpretation (test_builtin_roles.BuiltinRoleMigrationTests.test_existing_custom_identity_collision_fails_without_reinterpretation) ... ok
+test_failure_after_assignment_restores_tables_triggers_sessions_and_proofs (test_builtin_roles.BuiltinRoleMigrationTests.test_failure_after_assignment_restores_tables_triggers_sessions_and_proofs) ... ok
+test_schema_ten_reaches_twelve_sequentially_and_preserves_legacy_levels (test_builtin_roles.BuiltinRoleMigrationTests.test_schema_ten_reaches_twelve_sequentially_and_preserves_legacy_levels) ... ok
+test_upgrade_without_foreign_key_pragma_preserves_dependent_rows (test_builtin_roles.BuiltinRoleMigrationTests.test_upgrade_without_foreign_key_pragma_preserves_dependent_rows) ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 2.466s
+
+OK

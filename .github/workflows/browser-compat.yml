@@ -2,10 +2,11 @@ name: Caffoot Lite browser compatibility
 
 on:
   push:
-    branches: [main, feat/approved-html-full-interface, feat/approved-modular-html-282]
+    branches: [main, feat/approved-html-full-interface, feat/approved-modular-html-282, milestone-1]
     paths:
       - "interface/**"
       - "tests/browser-compat.cjs"
+      - "tests/users-roles-interface.cjs"
       - "tests/device-editor-approved.cjs"
       - "tests/rack-shelf-associations.cjs"
       - "tests/contextual-device-catalogue.cjs"
@@ -26,6 +27,7 @@ on:
     paths:
       - "interface/**"
       - "tests/browser-compat.cjs"
+      - "tests/users-roles-interface.cjs"
       - "tests/device-editor-approved.cjs"
       - "tests/rack-shelf-associations.cjs"
       - "tests/contextual-device-catalogue.cjs"
@@ -64,8 +66,22 @@ jobs:
           node-version: "24"
       - name: Install isolated Chromium test tools
         run: |
-          npm install --prefix "$RUNNER_TEMP/caffoot-browser-tests" --no-save --no-package-lock --no-audit --no-fund playwright@1.56.1
+          npm install --prefix "$RUNNER_TEMP/caffoot-browser-tests" --no-save --no-package-lock --no-audit --no-fund playwright@1.56.1 axe-core@4.14.0
           "$RUNNER_TEMP/caffoot-browser-tests/node_modules/.bin/playwright" install --with-deps chromium
+      - name: Check Users roles, MFA and Staff My Account
+        env:
+          NODE_PATH: ${{ runner.temp }}/caffoot-browser-tests/node_modules
+          CAFFOOT_AXE_SOURCE: ${{ runner.temp }}/caffoot-browser-tests/node_modules/axe-core/axe.min.js
+          CAFFOOT_ROLES_OUTPUT: ${{ runner.temp }}/users-roles-evidence
+        run: node tests/users-roles-interface.cjs
+      - name: Save Users roles and MFA evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: users-roles-${{ github.sha }}
+          path: ${{ runner.temp }}/users-roles-evidence
+          if-no-files-found: ignore
+          retention-days: 14
       - name: Exercise approved first-run MFA and inventory UI
         working-directory: .
         env:
@@ -168,8 +184,23 @@ jobs:
           node-version: "24"
       - name: Install isolated browser test tools
         run: |
-          npm install --prefix "$RUNNER_TEMP/caffoot-browser-tests" --no-save --no-package-lock --no-audit --no-fund playwright@1.62.1
+          npm install --prefix "$RUNNER_TEMP/caffoot-browser-tests" --no-save --no-package-lock --no-audit --no-fund playwright@1.62.1 axe-core@4.14.0
           "$RUNNER_TEMP/caffoot-browser-tests/node_modules/.bin/playwright" install --with-deps "${{ matrix.engine }}"
+      - name: Check Users roles, MFA and Staff My Account in each engine
+        env:
+          NODE_PATH: ${{ runner.temp }}/caffoot-browser-tests/node_modules
+          CAFFOOT_ROLES_ENGINE: ${{ matrix.engine }}
+          CAFFOOT_AXE_SOURCE: ${{ runner.temp }}/caffoot-browser-tests/node_modules/axe-core/axe.min.js
+          CAFFOOT_ROLES_OUTPUT: ${{ runner.temp }}/users-roles-evidence
+        run: node tests/users-roles-interface.cjs
+      - name: Save Users roles engine evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: users-roles-${{ matrix.engine }}-${{ github.sha }}
+          path: ${{ runner.temp }}/users-roles-evidence
+          if-no-files-found: ignore
+          retention-days: 14
       - name: Check native selection, rack feedback and pinned select appearance
         env:
           NODE_PATH: ${{ runner.temp }}/caffoot-browser-tests/node_modules

@@ -1,0 +1,13 @@
+test_all_legacy_combinations_preserve_data_and_missing_rows (test_role_migration.RoleMigrationTests.test_all_legacy_combinations_preserve_data_and_missing_rows) ... ok
+test_bootstrap_and_ordinary_creation_assign_only_staff (test_role_migration.RoleMigrationTests.test_bootstrap_and_ordinary_creation_assign_only_staff) ... ok
+test_corrupt_mapping_or_baseline_fails_before_commit (test_role_migration.RoleMigrationTests.test_corrupt_mapping_or_baseline_fails_before_commit) ... ok
+test_creation_failure_does_not_leave_partial_accounts (test_role_migration.RoleMigrationTests.test_creation_failure_does_not_leave_partial_accounts) ... ok
+test_failure_after_session_revocation_rolls_back_entire_upgrade (test_role_migration.RoleMigrationTests.test_failure_after_session_revocation_rolls_back_entire_upgrade) ... ok
+test_missing_legacy_grant_can_later_inherit_without_losing_read_override (test_role_migration.RoleMigrationTests.test_missing_legacy_grant_can_later_inherit_without_losing_read_override) ... ok
+test_role_constraints_and_foreign_keys (test_role_migration.RoleMigrationTests.test_role_constraints_and_foreign_keys) ... ok
+test_sqlite_failure_rolls_back_created_tables_and_old_sessions (test_role_migration.RoleMigrationTests.test_sqlite_failure_rolls_back_created_tables_and_old_sessions) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 0.514s
+
+OK

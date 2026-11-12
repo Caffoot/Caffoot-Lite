@@ -2,7 +2,7 @@ name: Caffoot Lite Docker Compose lifecycle
 
 on:
   push:
-    branches: [feat/approved-html-full-interface, feat/approved-modular-html-282]
+    branches: [feat/approved-html-full-interface, feat/approved-modular-html-282, milestone-1]
     paths:
       - "interface/**"
       - "backend/**"

@@ -1,0 +1,2788 @@
+[
+  {
+    "source": "original",
+    "screen": "overview",
+    "width": 1440,
+    "overflow": false,
+    "sizes": {
+      ".sidebar": {
+        "width": 215,
+        "height": 950,
+        "columns": "none",
+        "padding": "20px 13px 15px",
+        "gap": "10px"
+      },
+      ".topbar": {
+        "width": 1225,
+        "height": 64,
+        "columns": "none",
+        "padding": "0px 43.2px",
+        "gap": "normal"
+      },
+      ".main": {
+        "width": 1225,
+        "height": 1153,
+        "columns": "none",
+        "padding": "30px 43.2px 48px",
+        "gap": "normal"
+      },
+      ".tabs": {
+        "width": 1139,
+        "height": 36,
+        "columns": "none",
+        "padding": "0px",
+        "gap": "25px"
+      },
+      ".cards4": {
+        "width": 1139,
+        "height": 158,
+        "columns": "272.656px 272.656px 272.656px 272.656px",
+        "padding": "0px",
+        "gap": "16px"
+      },
+      ".two-col": {
+        "width": 1139,
+        "height": 298,
+        "columns": "599.938px 521.672px",
+        "padding": "0px",
+        "gap": "17px"
+      }
+    },
+    "visibleButtons": [
+      "Dashboard",
+      "Devices",
+      "IPAM",
+      "Network Racks",
+      "Audit Trail",
+      "Users",
+      "Settings & Data",
+      "Collapse Menu\n«",
+      "A\nMy Account",
+      "Overview",
+      "User List",
+      "Manage Roles",
+      "Add User",
+      "＋ Add User",
+      "Manage Roles →",
+      "Review not enrolled →"
+    ],
+    "visibleInputs": [],
+    "errors": [],
+    "screenshot": "prototype-original-overview-1440.png"
+  },
+  {
+    "source": "original",
+    "screen": "list",
+    "width": 1440,
+    "overflow": false,
+    "sizes": {
+      ".sidebar": {
+        "width": 215,
+        "height": 950,
+        "columns": "none",
+        "padding": "20px 13px 15px",
+        "gap": "10px"
+      },
+      ".topbar": {
+        "width": 1225,
+        "height": 64,
+        "columns": "none",
+        "padding": "0px 43.2px",
+        "gap": "normal"
+      },
+      ".main": {
+        "width": 1225,
+        "height": 1347,
+        "columns": "none",
+        "padding": "30px 43.2px 48px",
+        "gap": "normal"
+      },
+      ".tabs": {
+        "width": 1139,
+        "height": 36,
+        "columns": "none",
+        "padding": "0px",
+        "gap": "25px"
+      },
+      ".list-header": {
+        "width": 1137,
+        "height": 42,
+        "columns": "271.594px 242.516px 184.297px 252.203px 98px",
+        "padding": "14px 20px",
+        "gap": "12px"
+      },
+      ".userrow": {
+        "width": 1137,
+        "height": 87,
+        "columns": "271.594px 242.516px 184.297px 252.203px 98px",
+        "padding": "14px 20px",
+        "gap": "12px"
+      }
+    },
+    "visibleButtons": [
+      "Dashboard",
+      "Devices",
+      "IPAM",
+      "Network Racks",
+      "Audit Trail",
+      "Users",
+      "Settings & Data",
+      "Collapse Menu\n«",
+      "A\nMy Account",
+      "Overview",
+      "User List",
+      "Manage Roles",
+      "Add User",
+      "＋ Add User",
+      "View",
+      "Manage",
+      "Manage",
+      "Manage",
+      "Manage",
+      "Manage",
+      "Manage",
+      "Manage"
+    ],
+    "visibleInputs": [
+      {
+        "id": "search",
+        "type": "search",
+        "disabled": false
+      },
+      {
+        "id": "status-filter",
+        "type": "select-one",
+        "disabled": false
+      },
+      {
+        "id": "mfa-filter",
+        "type": "select-one",
+        "disabled": false
+      }
+    ],
+    "errors": [],
+    "screenshot": "prototype-original-list-1440.png"
+  },
+  {
+    "source": "original",
+    "screen": "add",
+    "width": 1440,
+    "overflow": false,
+    "sizes": {
+      ".sidebar": {
+        "width": 215,
+        "height": 950,
+        "columns": "none",
+        "padding": "20px 13px 15px",
+        "gap": "10px"
+      },
+      ".topbar": {
+        "width": 1225,
+        "height": 64,
+        "columns": "none",
+        "padding": "0px 43.2px",
+        "gap": "normal"
+      },
+      ".main": {
+        "width": 1225,
+        "height": 1218,
+        "columns": "none",
+        "padding": "30px 43.2px 48px",
+        "gap": "normal"
+      },
+      ".tabs": {
+        "width": 1139,
+        "height": 36,
+        "columns": "none",
+        "padding": "0px",
+        "gap": "25px"
+      },
+      ".form-grid": {
+        "width": 928,
+        "height": 176,
+        "columns": "456.5px 456.5px",
+        "padding": "0px",
+        "gap": "15px"
+      }
+    },
+    "visibleButtons": [
+      "Dashboard",
+      "Devices",
+      "IPAM",
+      "Network Racks",
+      "Audit Trail",
+      "Users",
+      "Settings & Data",
+      "Collapse Menu\n«",
+      "A\nMy Account",
+      "Overview",
+      "User List",
+      "Manage Roles",
+      "Add User",
+      "Clear Form",
+      "Create User"
+    ],
+    "visibleInputs": [
+      {
+        "id": "new-username",
+        "type": "text",
+        "disabled": false
+      },
+      {
+        "id": "new-password",
+        "type": "password",
+        "disabled": false
+      },
+      {
+        "id": "new-password-confirm",
+        "type": "password",
+        "disabled": false
+      },
+      {
+        "id": "new-first",
+        "type": "text",
+        "disabled": false
+      },
+      {
+        "id": "new-last",
+        "type": "text",
+        "disabled": false
+      },
+      {
+        "id": "new-display",
+        "type": "text",
+        "disabled": false
+      },
+      {
+        "id": "new-email",
+        "type": "email",
+        "disabled": false
+      }
+    ],
+    "errors": [],
+    "screenshot": "prototype-original-add-1440.png"
+  },
+  {
+    "source": "original",
+    "screen": "roles",
+    "width": 1440,
+    "overflow": false,
+    "sizes": {
+      ".sidebar": {
+        "width": 215,
+        "height": 950,
+        "columns": "none",
+        "padding": "20px 13px 15px",
+        "gap": "10px"
+      },
+      ".topbar": {
+        "width": 1225,
+        "height": 64,
+        "columns": "none",
+        "padding": "0px 43.2px",
+        "gap": "normal"
+      },
+      ".main": {
+        "width": 1225,
+        "height": 1217,
+        "columns": "none",
+        "padding": "30px 43.2px 48px",
+        "gap": "normal"
+      },
+      ".tabs": {
+        "width": 1139,
+        "height": 36,
+        "columns": "none",
+        "padding": "0px",
+        "gap": "25px"
+      }
+    },
+    "visibleButtons": [
+      "Dashboard",
+      "Devices",
+      "IPAM",
+      "Network Racks",
+      "Audit Trail",
+      "Users",
+      "Settings & Data",
+      "Collapse Menu\n«",
+      "A\nMy Account",
+      "Overview",
+      "User List",
+      "Manage Roles",
+      "Add User",
+      "＋ Create Role",
+      "Manage",
+      "Disable",
+      "Manage",
+      "Disable",
+      "Manage",
+      "Disable",
+      "Manage",
+      "Enable",
+      "Preview SMTP enabled"
+    ],
+    "visibleInputs": [],
+    "errors": [],
+    "screenshot": "prototype-original-roles-1440.png"
+  },
+  {
+    "source": "original",
+    "screen": "manage",
+    "width": 1440,
+    "overflow": false,
+    "sizes": {
+      ".sidebar": {
+        "width": 215,
+        "height": 950,
+        "columns": "none",
+        "padding": "20px 13px 15px",
+        "gap": "10px"
+      },
+      ".topbar": {
+        "width": 1225,
+        "height": 64,
+        "columns": "none",
+        "padding": "0px 43.2px",
+        "gap": "normal"
+      },
+      ".main": {
+        "width": 1225,
+        "height": 1347,
+        "columns": "none",
+        "padding": "30px 43.2px 48px",
+        "gap": "normal"
+      },
+      ".tabs": {
+        "width": 1139,
+        "height": 36,
+        "columns": "none",
+        "padding": "0px",
+        "gap": "25px"
+      },
+      ".list-header": {
+        "width": 1137,
+        "height": 42,
+        "columns": "271.594px 242.516px 184.297px 252.203px 98px",
+        "padding": "14px 20px",
+        "gap": "12px"
+      },
+      ".userrow": {
+        "width": 1137,
+        "height": 87,
+        "columns": "271.594px 242.516px 184.297px 252.203px 98px",
+        "padding": "14px 20px",
+        "gap": "12px"
+      },
+      ".form-grid": {
+        "width": 666,
+        "height": 60,
+        "columns": "325.5px 325.5px",
+        "padding": "0px",
+        "gap": "15px"
+      },
+      ".modal": {
+        "width": 750,
+        "height": 855,
+        "columns": "none",
+        "padding": "0px",
+        "gap": "normal"
+      },
+      ".modal-head": {
+        "width": 750,
+        "height": 93,
+        "columns": "none",
+        "padding": "21px 25px",
+        "gap": "15px"
+      },
+      ".modal-body": {
+        "width": 750,
+        "height": 692,
+        "columns": "none",
+        "padding": "22px 25px",
+        "gap": "normal"
+      },
+      ".modal-footer": {
+        "width": 750,
+        "height": 70,
+        "columns": "none",
+        "padding": "16px 25px",
+        "gap": "9px"
+      }
+    },
+    "visibleButtons": [
+      "Dashboard",
+      "Devices",
+      "IPAM",
+      "Network Racks",
+      "Audit Trail",
+      "Users",
+      "Settings & Data",
+      "Collapse Menu\n«",
+      "A\nMy Account",
+      "Overview",
+      "User List",
+      "Manage Roles",
+      "Add User",
+      "＋ Add User",
+      "View",
+      "Manage",
+      "Manage",
+      "Manage",
+      "Manage",
+      "Manage",
+      "Manage",
+      "Manage",
+      "×",
+      "Close",
+      "Review Changes"
+    ],
+    "visibleInputs": [
+      {
+        "id": "search",
+        "type": "search",
+        "disabled": false
+      },
+      {
+        "id": "status-filter",
+        "type": "select-one",
+        "disabled": false
+      },
+      {
+        "id": "mfa-filter",
+        "type": "select-one",
+        "disabled": false
+      },
+      {
+        "id": "",
+        "type": "checkbox",
+        "disabled": true
+      },
+      {
+        "id": "check-it",
+        "type": "checkbox",
+        "disabled": false
+      },
+      {
+        "id": "check-purchasing",
+        "type": "checkbox",
+        "disabled": false
+      },
+      {
+        "id": "check-viewer",
+        "type": "checkbox",
+        "disabled": false
+      },
+      {
+        "id": "check-legacy",
+        "type": "checkbox",
+        "disabled": false
+      },
+      {
+        "id": "",
+        "type": "select-one",
+        "disabled": false
+      },
+      {
+        "id": "",
+        "type": "select-one",
+        "disabled": false
+      },
+      {
+        "id": "",
+        "type": "select-one",
+        "disabled": false
+      },
+      {
+        "id": "",
+        "type": "text",
+        "disabled": true
+      },
+      {
+        "id": "",
+        "type": "text",
+        "disabled": true
+      }
+    ],
+    "errors": [],
+    "screenshot": "prototype-original-manage-1440.png"
+  },
+  {
+    "source": "original",
+    "screen": "preview",
+    "width": 1440,
+    "overflow": false,
+    "sizes": {
+      ".sidebar": {
+        "width": 215,
+        "height": 950,
+        "columns": "none",
+        "padding": "20px 13px 15px",
+        "gap": "10px"
+      },
+      ".topbar": {
+        "width": 1225,
+        "height": 64,
+        "columns": "none",
+        "padding": "0px 43.2px",
+        "gap": "normal"
+      },
+      ".main": {
+        "width": 1225,
+        "height": 1347,
+        "columns": "none",
+        "padding": "30px 43.2px 48px",
+        "gap": "normal"
+      },
+      ".tabs": {
+        "width": 1139,
+        "height": 36,
+        "columns": "none",
+        "padding": "0px",
+        "gap": "25px"
+      },
+      ".list-header": {
+        "width": 1137,
+        "height": 42,
+        "columns": "271.594px 242.516px 184.297px 252.203px 98px",
+        "padding": "14px 20px",
+        "gap": "12px"
+      },
+      ".userrow": {
+        "width": 1137,
+        "height": 87,
+        "columns": "271.594px 242.516px 184.297px 252.203px 98px",
+        "padding": "14px 20px",
+        "gap": "12px"
+      },
+      ".form-grid": {
+        "width": 666,
+        "height": 60,
+        "columns": "325.5px 325.5px",
+        "padding": "0px",
+        "gap": "15px"
+      },
+      ".modal": {
+        "width": 750,
+        "height": 855,
+        "columns": "none",
+        "padding": "0px",
+        "gap": "normal"
+      },
+      ".modal-head": {
+        "width": 750,
+        "height": 93,
+        "columns": "none",
+        "padding": "21px 25px",
+        "gap": "15px"
+      },
+      ".modal-body": {
+        "width": 750,
+        "height": 692,
+        "columns": "none",
+        "padding": "22px 25px",
+        "gap": "normal"
+      },
+      ".modal-footer": {
+        "width": 750,
+        "height": 70,
+        "columns": "none",
+        "padding": "16px 25px",
+        "gap": "9px"
+      }
+    },
+    "visibleButtons": [
+      "Dashboard",
+      "Devices",
+      "IPAM",
+      "Network Racks",
+      "Audit Trail",
+      "Users",
+      "Settings & Data",
+      "Collapse Menu\n«",
+      "A\nMy Account",
+      "Overview",
+      "User List",
+      "Manage Roles",
+      "Add User",
+      "＋ Add User",
+      "View",
+      "Manage",
+      "Manage",
+      "Manage",
+      "Manage",
+      "Manage",
+      "Manage",
+      "Manage",
+      "×",
+      "Close",
+      "Review Changes",
+      "×",
+      "Simulate outdated preview",
+      "Cancel",
+      "Confirm Change"
+    ],
+    "visibleInputs": [
+      {
+        "id": "search",
+        "type": "search",
+        "disabled": false
+      },
+      {
+        "id": "status-filter",
+        "type": "select-one",
+        "disabled": false
+      },
+      {
+        "id": "mfa-filter",
+        "type": "select-one",
+        "disabled": false
+      },
+      {
+        "id": "",
+        "type": "checkbox",
+        "disabled": true
+      },
+      {
+        "id": "check-it",
+        "type": "checkbox",
+        "disabled": false
+      },
+      {
+        "id": "check-purchasing",
+        "type": "checkbox",
+        "disabled": false
+      },
+      {
+        "id": "check-viewer",
+        "type": "checkbox",
+        "disabled": false
+      },
+      {
+        "id": "check-legacy",
+        "type": "checkbox",
+        "disabled": false
+      },
+      {
+        "id": "",
+        "type": "select-one",
+        "disabled": false
+      },
+      {
+        "id": "",
+        "type": "select-one",
+        "disabled": false
+      },
+      {
+        "id": "",
+        "type": "select-one",
+        "disabled": false
+      },
+      {
+        "id": "",
+        "type": "text",
+        "disabled": true
+      },
+      {
+        "id": "",
+        "type": "text",
+        "disabled": true
+      }
+    ],
+    "errors": [],
+    "screenshot": "prototype-original-preview-1440.png"
+  },
+  {
+    "source": "original",
+    "screen": "overview",
+    "width": 390,
+    "overflow": false,
+    "sizes": {
+      ".sidebar": {
+        "width": 65,
+        "height": 844,
+        "columns": "none",
+        "padding": "16px 8px",
+        "gap": "12px"
+      },
+      ".topbar": {
+        "width": 325,
+        "height": 54,
+        "columns": "none",
+        "padding": "0px 14px",
+        "gap": "normal"
+      },
+      ".main": {
+        "width": 325,
+        "height": 2159,
+        "columns": "none",
+        "padding": "24px 16px 40px",
+        "gap": "normal"
+      },
+      ".tabs": {
+        "width": 293,
+        "height": 33,
+        "columns": "none",
+        "padding": "0px",
+        "gap": "14px"
+      },
+      ".cards4": {
+        "width": 293,
+        "height": 341,
+        "columns": "142px 142px",
+        "padding": "0px",
+        "gap": "9px"
+      },
+      ".two-col": {
+        "width": 293,
+        "height": 681,
+        "columns": "293px",
+        "padding": "0px",
+        "gap": "17px"
+      }
+    },
+    "visibleButtons": [
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "«",
+      "A\nMy Account",
+      "Overview",
+      "User List",
+      "Manage Roles",
+      "Add User",
+      "＋ Add User",
+      "Manage Roles →",
+      "Review not enrolled →"
+    ],
+    "visibleInputs": [],
+    "errors": [],
+    "screenshot": "prototype-original-overview-390.png"
+  },
+  {
+    "source": "original",
+    "screen": "list",
+    "width": 390,
+    "overflow": false,
+    "sizes": {
+      ".sidebar": {
+        "width": 65,
+        "height": 844,
+        "columns": "none",
+        "padding": "16px 8px",
+        "gap": "12px"
+      },
+      ".topbar": {
+        "width": 325,
+        "height": 54,
+        "columns": "none",
+        "padding": "0px 14px",
+        "gap": "normal"
+      },
+      ".main": {
+        "width": 325,
+        "height": 2761,
+        "columns": "none",
+        "padding": "24px 16px 40px",
+        "gap": "normal"
+      },
+      ".tabs": {
+        "width": 293,
+        "height": 33,
+        "columns": "none",
+        "padding": "0px",
+        "gap": "14px"
+      },
+      ".userrow": {
+        "width": 291,
+        "height": 222,
+        "columns": "267px",
+        "padding": "14px 12px",
+        "gap": "12px"
+      }
+    },
+    "visibleButtons": [
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "«",
+      "A\nMy Account",
+      "Overview",
+      "User List",
+      "Manage Roles",
+      "Add User",
+      "＋ Add User",
+      "View",
+      "Manage",
+      "Manage",
+      "Manage",
+      "Manage",
+      "Manage",
+      "Manage",
+      "Manage"
+    ],
+    "visibleInputs": [
+      {
+        "id": "search",
+        "type": "search",
+        "disabled": false
+      },
+      {
+        "id": "status-filter",
+        "type": "select-one",
+        "disabled": false
+      },
+      {
+        "id": "mfa-filter",
+        "type": "select-one",
+        "disabled": false
+      }
+    ],
+    "errors": [],
+    "screenshot": "prototype-original-list-390.png"
+  },
+  {
+    "source": "original",
+    "screen": "add",
+    "width": 390,
+    "overflow": false,
+    "sizes": {
+      ".sidebar": {
+        "width": 65,
+        "height": 844,
+        "columns": "none",
+        "padding": "16px 8px",
+        "gap": "12px"
+      },
+      ".topbar": {
+        "width": 325,
+        "height": 54,
+        "columns": "none",
+        "padding": "0px 14px",
+        "gap": "normal"
+      },
+      ".main": {
+        "width": 325,
+        "height": 1865,
+        "columns": "none",
+        "padding": "24px 16px 40px",
+        "gap": "normal"
+      },
+      ".tabs": {
+        "width": 293,
+        "height": 33,
+        "columns": "none",
+        "padding": "0px",
+        "gap": "14px"
+      },
+      ".form-grid": {
+        "width": 241,
+        "height": 301,
+        "columns": "241px",
+        "padding": "0px",
+        "gap": "15px"
+      }
+    },
+    "visibleButtons": [
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "«",
+      "A\nMy Account",
+      "Overview",
+      "User List",
+      "Manage Roles",
+      "Add User",
+      "Clear Form",
+      "Create User"
+    ],
+    "visibleInputs": [
+      {
+        "id": "new-username",
+        "type": "text",
+        "disabled": false
+      },
+      {
+        "id": "new-password",
+        "type": "password",
+        "disabled": false
+      },
+      {
+        "id": "new-password-confirm",
+        "type": "password",
+        "disabled": false
+      },
+      {
+        "id": "new-first",
+        "type": "text",
+        "disabled": false
+      },
+      {
+        "id": "new-last",
+        "type": "text",
+        "disabled": false
+      },
+      {
+        "id": "new-display",
+        "type": "text",
+        "disabled": false
+      },
+      {
+        "id": "new-email",
+        "type": "email",
+        "disabled": false
+      }
+    ],
+    "errors": [],
+    "screenshot": "prototype-original-add-390.png"
+  },
+  {
+    "source": "original",
+    "screen": "roles",
+    "width": 390,
+    "overflow": false,
+    "sizes": {
+      ".sidebar": {
+        "width": 65,
+        "height": 844,
+        "columns": "none",
+        "padding": "16px 8px",
+        "gap": "12px"
+      },
+      ".topbar": {
+        "width": 325,
+        "height": 54,
+        "columns": "none",
+        "padding": "0px 14px",
+        "gap": "normal"
+      },
+      ".main": {
+        "width": 325,
+        "height": 2019,
+        "columns": "none",
+        "padding": "24px 16px 40px",
+        "gap": "normal"
+      },
+      ".tabs": {
+        "width": 293,
+        "height": 33,
+        "columns": "none",
+        "padding": "0px",
+        "gap": "14px"
+      }
+    },
+    "visibleButtons": [
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "«",
+      "A\nMy Account",
+      "Overview",
+      "User List",
+      "Manage Roles",
+      "Add User",
+      "＋ Create Role",
+      "Manage",
+      "Disable",
+      "Manage",
+      "Disable",
+      "Manage",
+      "Disable",
+      "Manage",
+      "Enable",
+      "Preview SMTP enabled"
+    ],
+    "visibleInputs": [],
+    "errors": [],
+    "screenshot": "prototype-original-roles-390.png"
+  },
+  {
+    "source": "original",
+    "screen": "manage",
+    "width": 390,
+    "overflow": false,
+    "sizes": {
+      ".sidebar": {
+        "width": 65,
+        "height": 844,
+        "columns": "none",
+        "padding": "16px 8px",
+        "gap": "12px"
+      },
+      ".topbar": {
+        "width": 325,
+        "height": 54,
+        "columns": "none",
+        "padding": "0px 14px",
+        "gap": "normal"
+      },
+      ".main": {
+        "width": 325,
+        "height": 2761,
+        "columns": "none",
+        "padding": "24px 16px 40px",
+        "gap": "normal"
+      },
+      ".tabs": {
+        "width": 293,
+        "height": 33,
+        "columns": "none",
+        "padding": "0px",
+        "gap": "14px"
+      },
+      ".userrow": {
+        "width": 291,
+        "height": 222,
+        "columns": "267px",
+        "padding": "14px 12px",
+        "gap": "12px"
+      },
+      ".form-grid": {
+        "width": 304,
+        "height": 135,
+        "columns": "304px",
+        "padding": "0px",
+        "gap": "15px"
+      },
+      ".modal": {
+        "width": 370,
+        "height": 793,
+        "columns": "none",
+        "padding": "0px",
+        "gap": "normal"
+      },
+      ".modal-head": {
+        "width": 370,
+        "height": 101,
+        "columns": "none",
+        "padding": "16px",
+        "gap": "15px"
+      },
+      ".modal-body": {
+        "width": 370,
+        "height": 629,
+        "columns": "none",
+        "padding": "16px",
+        "gap": "normal"
+      },
+      ".modal-footer": {
+        "width": 370,
+        "height": 64,
+        "columns": "none",
+        "padding": "13px 16px",
+        "gap": "9px"
+      }
+    },
+    "visibleButtons": [
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "«",
+      "A\nMy Account",
+      "Overview",
+      "User List",
+      "Manage Roles",
+      "Add User",
+      "＋ Add User",
+      "View",
+      "Manage",
+      "Manage",
+      "Manage",
+      "Manage",
+      "Manage",
+      "Manage",
+      "Manage",
+      "×",
+      "Close",
+      "Review Changes"
+    ],
+    "visibleInputs": [
+      {
+        "id": "search",
+        "type": "search",
+        "disabled": false
+      },
+      {
+        "id": "status-filter",
+        "type": "select-one",
+        "disabled": false
+      },
+      {
+        "id": "mfa-filter",
+        "type": "select-one",
+        "disabled": false
+      },
+      {
+        "id": "",
+        "type": "checkbox",
+        "disabled": true
+      },
+      {
+        "id": "check-it",
+        "type": "checkbox",
+        "disabled": false
+      },
+      {
+        "id": "check-purchasing",
+        "type": "checkbox",
+        "disabled": false
+      },
+      {
+        "id": "check-viewer",
+        "type": "checkbox",
+        "disabled": false
+      },
+      {
+        "id": "check-legacy",
+        "type": "checkbox",
+        "disabled": false
+      },
+      {
+        "id": "",
+        "type": "select-one",
+        "disabled": false
+      },
+      {
+        "id": "",
+        "type": "select-one",
+        "disabled": false
+      },
+      {
+        "id": "",
+        "type": "select-one",
+        "disabled": false
+      },
+      {
+        "id": "",
+        "type": "text",
+        "disabled": true
+      },
+      {
+        "id": "",
+        "type": "text",
+        "disabled": true
+      }
+    ],
+    "errors": [],
+    "screenshot": "prototype-original-manage-390.png"
+  },
+  {
+    "source": "original",
+    "screen": "preview",
+    "width": 390,
+    "overflow": false,
+    "sizes": {
+      ".sidebar": {
+        "width": 65,
+        "height": 844,
+        "columns": "none",
+        "padding": "16px 8px",
+        "gap": "12px"
+      },
+      ".topbar": {
+        "width": 325,
+        "height": 54,
+        "columns": "none",
+        "padding": "0px 14px",
+        "gap": "normal"
+      },
+      ".main": {
+        "width": 325,
+        "height": 2761,
+        "columns": "none",
+        "padding": "24px 16px 40px",
+        "gap": "normal"
+      },
+      ".tabs": {
+        "width": 293,
+        "height": 33,
+        "columns": "none",
+        "padding": "0px",
+        "gap": "14px"
+      },
+      ".userrow": {
+        "width": 291,
+        "height": 222,
+        "columns": "267px",
+        "padding": "14px 12px",
+        "gap": "12px"
+      },
+      ".form-grid": {
+        "width": 304,
+        "height": 135,
+        "columns": "304px",
+        "padding": "0px",
+        "gap": "15px"
+      },
+      ".modal": {
+        "width": 370,
+        "height": 793,
+        "columns": "none",
+        "padding": "0px",
+        "gap": "normal"
+      },
+      ".modal-head": {
+        "width": 370,
+        "height": 101,
+        "columns": "none",
+        "padding": "16px",
+        "gap": "15px"
+      },
+      ".modal-body": {
+        "width": 370,
+        "height": 629,
+        "columns": "none",
+        "padding": "16px",
+        "gap": "normal"
+      },
+      ".modal-footer": {
+        "width": 370,
+        "height": 64,
+        "columns": "none",
+        "padding": "13px 16px",
+        "gap": "9px"
+      }
+    },
+    "visibleButtons": [
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "«",
+      "A\nMy Account",
+      "Overview",
+      "User List",
+      "Manage Roles",
+      "Add User",
+      "＋ Add User",
+      "View",
+      "Manage",
+      "Manage",
+      "Manage",
+      "Manage",
+      "Manage",
+      "Manage",
+      "Manage",
+      "×",
+      "Close",
+      "Review Changes",
+      "×",
+      "Simulate outdated preview",
+      "Cancel",
+      "Confirm Change"
+    ],
+    "visibleInputs": [
+      {
+        "id": "search",
+        "type": "search",
+        "disabled": false
+      },
+      {
+        "id": "status-filter",
+        "type": "select-one",
+        "disabled": false
+      },
+      {
+        "id": "mfa-filter",
+        "type": "select-one",
+        "disabled": false
+      },
+      {
+        "id": "",
+        "type": "checkbox",
+        "disabled": true
+      },
+      {
+        "id": "check-it",
+        "type": "checkbox",
+        "disabled": false
+      },
+      {
+        "id": "check-purchasing",
+        "type": "checkbox",
+        "disabled": false
+      },
+      {
+        "id": "check-viewer",
+        "type": "checkbox",
+        "disabled": false
+      },
+      {
+        "id": "check-legacy",
+        "type": "checkbox",
+        "disabled": false
+      },
+      {
+        "id": "",
+        "type": "select-one",
+        "disabled": false
+      },
+      {
+        "id": "",
+        "type": "select-one",
+        "disabled": false
+      },
+      {
+        "id": "",
+        "type": "select-one",
+        "disabled": false
+      },
+      {
+        "id": "",
+        "type": "text",
+        "disabled": true
+      },
+      {
+        "id": "",
+        "type": "text",
+        "disabled": true
+      }
+    ],
+    "errors": [],
+    "screenshot": "prototype-original-preview-390.png"
+  },
+  {
+    "source": "revised",
+    "screen": "overview",
+    "width": 1440,
+    "overflow": false,
+    "sizes": {
+      ".sidebar": {
+        "width": 215,
+        "height": 950,
+        "columns": "none",
+        "padding": "20px 13px 15px",
+        "gap": "10px"
+      },
+      ".topbar": {
+        "width": 1225,
+        "height": 64,
+        "columns": "none",
+        "padding": "0px 43.2px",
+        "gap": "normal"
+      },
+      ".main": {
+        "width": 1225,
+        "height": 1153,
+        "columns": "none",
+        "padding": "30px 43.2px 48px",
+        "gap": "normal"
+      },
+      ".tabs": {
+        "width": 1139,
+        "height": 36,
+        "columns": "none",
+        "padding": "0px",
+        "gap": "25px"
+      },
+      ".cards4": {
+        "width": 1139,
+        "height": 158,
+        "columns": "272.656px 272.656px 272.656px 272.656px",
+        "padding": "0px",
+        "gap": "16px"
+      },
+      ".two-col": {
+        "width": 1139,
+        "height": 298,
+        "columns": "599.938px 521.672px",
+        "padding": "0px",
+        "gap": "17px"
+      }
+    },
+    "visibleButtons": [
+      "Dashboard",
+      "Devices",
+      "IPAM",
+      "Network Racks",
+      "Audit Trail",
+      "Users",
+      "Settings & Data",
+      "Collapse Menu\n«",
+      "A\nMy Account",
+      "Overview",
+      "User List",
+      "Add User",
+      "Manage Roles",
+      "＋ Add User",
+      "Manage Roles →",
+      "Review not enrolled →"
+    ],
+    "visibleInputs": [],
+    "errors": [],
+    "screenshot": "prototype-revised-overview-1440.png"
+  },
+  {
+    "source": "revised",
+    "screen": "list",
+    "width": 1440,
+    "overflow": false,
+    "sizes": {
+      ".sidebar": {
+        "width": 215,
+        "height": 950,
+        "columns": "none",
+        "padding": "20px 13px 15px",
+        "gap": "10px"
+      },
+      ".topbar": {
+        "width": 1225,
+        "height": 64,
+        "columns": "none",
+        "padding": "0px 43.2px",
+        "gap": "normal"
+      },
+      ".main": {
+        "width": 1225,
+        "height": 1347,
+        "columns": "none",
+        "padding": "30px 43.2px 48px",
+        "gap": "normal"
+      },
+      ".tabs": {
+        "width": 1139,
+        "height": 36,
+        "columns": "none",
+        "padding": "0px",
+        "gap": "25px"
+      },
+      ".list-header": {
+        "width": 1137,
+        "height": 42,
+        "columns": "271.594px 242.516px 184.297px 252.203px 98px",
+        "padding": "14px 20px",
+        "gap": "12px"
+      },
+      ".userrow": {
+        "width": 1137,
+        "height": 87,
+        "columns": "271.594px 242.516px 184.297px 252.203px 98px",
+        "padding": "14px 20px",
+        "gap": "12px"
+      }
+    },
+    "visibleButtons": [
+      "Dashboard",
+      "Devices",
+      "IPAM",
+      "Network Racks",
+      "Audit Trail",
+      "Users",
+      "Settings & Data",
+      "Collapse Menu\n«",
+      "A\nMy Account",
+      "Overview",
+      "User List",
+      "Add User",
+      "Manage Roles",
+      "＋ Add User",
+      "View",
+      "Manage",
+      "Manage",
+      "Manage",
+      "Manage",
+      "Manage",
+      "Manage",
+      "Manage"
+    ],
+    "visibleInputs": [
+      {
+        "id": "search",
+        "type": "search",
+        "disabled": false
+      },
+      {
+        "id": "status-filter",
+        "type": "select-one",
+        "disabled": false
+      },
+      {
+        "id": "mfa-filter",
+        "type": "select-one",
+        "disabled": false
+      }
+    ],
+    "errors": [],
+    "screenshot": "prototype-revised-list-1440.png"
+  },
+  {
+    "source": "revised",
+    "screen": "add",
+    "width": 1440,
+    "overflow": false,
+    "sizes": {
+      ".sidebar": {
+        "width": 215,
+        "height": 950,
+        "columns": "none",
+        "padding": "20px 13px 15px",
+        "gap": "10px"
+      },
+      ".topbar": {
+        "width": 1225,
+        "height": 64,
+        "columns": "none",
+        "padding": "0px 43.2px",
+        "gap": "normal"
+      },
+      ".main": {
+        "width": 1225,
+        "height": 1218,
+        "columns": "none",
+        "padding": "30px 43.2px 48px",
+        "gap": "normal"
+      },
+      ".tabs": {
+        "width": 1139,
+        "height": 36,
+        "columns": "none",
+        "padding": "0px",
+        "gap": "25px"
+      },
+      ".form-grid": {
+        "width": 928,
+        "height": 176,
+        "columns": "456.5px 456.5px",
+        "padding": "0px",
+        "gap": "15px"
+      }
+    },
+    "visibleButtons": [
+      "Dashboard",
+      "Devices",
+      "IPAM",
+      "Network Racks",
+      "Audit Trail",
+      "Users",
+      "Settings & Data",
+      "Collapse Menu\n«",
+      "A\nMy Account",
+      "Overview",
+      "User List",
+      "Add User",
+      "Manage Roles",
+      "Clear Form",
+      "Create User"
+    ],
+    "visibleInputs": [
+      {
+        "id": "new-username",
+        "type": "text",
+        "disabled": false
+      },
+      {
+        "id": "new-password",
+        "type": "password",
+        "disabled": false
+      },
+      {
+        "id": "new-password-confirm",
+        "type": "password",
+        "disabled": false
+      },
+      {
+        "id": "new-first",
+        "type": "text",
+        "disabled": false
+      },
+      {
+        "id": "new-last",
+        "type": "text",
+        "disabled": false
+      },
+      {
+        "id": "new-display",
+        "type": "text",
+        "disabled": false
+      },
+      {
+        "id": "new-email",
+        "type": "email",
+        "disabled": false
+      }
+    ],
+    "errors": [],
+    "screenshot": "prototype-revised-add-1440.png"
+  },
+  {
+    "source": "revised",
+    "screen": "roles",
+    "width": 1440,
+    "overflow": false,
+    "sizes": {
+      ".sidebar": {
+        "width": 215,
+        "height": 950,
+        "columns": "none",
+        "padding": "20px 13px 15px",
+        "gap": "10px"
+      },
+      ".topbar": {
+        "width": 1225,
+        "height": 64,
+        "columns": "none",
+        "padding": "0px 43.2px",
+        "gap": "normal"
+      },
+      ".main": {
+        "width": 1225,
+        "height": 1217,
+        "columns": "none",
+        "padding": "30px 43.2px 48px",
+        "gap": "normal"
+      },
+      ".tabs": {
+        "width": 1139,
+        "height": 36,
+        "columns": "none",
+        "padding": "0px",
+        "gap": "25px"
+      }
+    },
+    "visibleButtons": [
+      "Dashboard",
+      "Devices",
+      "IPAM",
+      "Network Racks",
+      "Audit Trail",
+      "Users",
+      "Settings & Data",
+      "Collapse Menu\n«",
+      "A\nMy Account",
+      "Overview",
+      "User List",
+      "Add User",
+      "Manage Roles",
+      "＋ Create Role",
+      "Manage",
+      "Disable",
+      "Manage",
+      "Disable",
+      "Manage",
+      "Disable",
+      "Manage",
+      "Enable",
+      "Preview SMTP enabled"
+    ],
+    "visibleInputs": [],
+    "errors": [],
+    "screenshot": "prototype-revised-roles-1440.png"
+  },
+  {
+    "source": "revised",
+    "screen": "manage",
+    "width": 1440,
+    "overflow": false,
+    "sizes": {
+      ".sidebar": {
+        "width": 215,
+        "height": 950,
+        "columns": "none",
+        "padding": "20px 13px 15px",
+        "gap": "10px"
+      },
+      ".topbar": {
+        "width": 1225,
+        "height": 64,
+        "columns": "none",
+        "padding": "0px 43.2px",
+        "gap": "normal"
+      },
+      ".main": {
+        "width": 1225,
+        "height": 1347,
+        "columns": "none",
+        "padding": "30px 43.2px 48px",
+        "gap": "normal"
+      },
+      ".tabs": {
+        "width": 1139,
+        "height": 36,
+        "columns": "none",
+        "padding": "0px",
+        "gap": "25px"
+      },
+      ".list-header": {
+        "width": 1137,
+        "height": 42,
+        "columns": "271.594px 242.516px 184.297px 252.203px 98px",
+        "padding": "14px 20px",
+        "gap": "12px"
+      },
+      ".userrow": {
+        "width": 1137,
+        "height": 87,
+        "columns": "271.594px 242.516px 184.297px 252.203px 98px",
+        "padding": "14px 20px",
+        "gap": "12px"
+      },
+      ".form-grid": {
+        "width": 666,
+        "height": 132,
+        "columns": "327px 327px",
+        "padding": "0px",
+        "gap": "12px"
+      },
+      ".modal": {
+        "width": 750,
+        "height": 855,
+        "columns": "none",
+        "padding": "0px",
+        "gap": "normal"
+      },
+      ".modal-head": {
+        "width": 750,
+        "height": 93,
+        "columns": "none",
+        "padding": "21px 25px",
+        "gap": "15px"
+      },
+      ".modal-body": {
+        "width": 750,
+        "height": 692,
+        "columns": "none",
+        "padding": "22px 25px",
+        "gap": "normal"
+      },
+      ".modal-footer": {
+        "width": 750,
+        "height": 70,
+        "columns": "none",
+        "padding": "16px 25px",
+        "gap": "9px"
+      }
+    },
+    "visibleButtons": [
+      "Dashboard",
+      "Devices",
+      "IPAM",
+      "Network Racks",
+      "Audit Trail",
+      "Users",
+      "Settings & Data",
+      "Collapse Menu\n«",
+      "A\nMy Account",
+      "Overview",
+      "User List",
+      "Add User",
+      "Manage Roles",
+      "＋ Add User",
+      "View",
+      "Manage",
+      "Manage",
+      "Manage",
+      "Manage",
+      "Manage",
+      "Manage",
+      "Manage",
+      "×",
+      "Save Personal Details",
+      "Disable",
+      "Make admin",
+      "Delete User",
+      "Close",
+      "Review Role & Permission Changes"
+    ],
+    "visibleInputs": [
+      {
+        "id": "search",
+        "type": "search",
+        "disabled": false
+      },
+      {
+        "id": "status-filter",
+        "type": "select-one",
+        "disabled": false
+      },
+      {
+        "id": "mfa-filter",
+        "type": "select-one",
+        "disabled": false
+      },
+      {
+        "id": "v21-first",
+        "type": "text",
+        "disabled": false
+      },
+      {
+        "id": "v21-last",
+        "type": "text",
+        "disabled": false
+      },
+      {
+        "id": "v21-display",
+        "type": "text",
+        "disabled": false
+      },
+      {
+        "id": "v21-email",
+        "type": "email",
+        "disabled": false
+      },
+      {
+        "id": "",
+        "type": "checkbox",
+        "disabled": true
+      },
+      {
+        "id": "check-it",
+        "type": "checkbox",
+        "disabled": false
+      },
+      {
+        "id": "check-purchasing",
+        "type": "checkbox",
+        "disabled": false
+      },
+      {
+        "id": "check-viewer",
+        "type": "checkbox",
+        "disabled": false
+      },
+      {
+        "id": "check-legacy",
+        "type": "checkbox",
+        "disabled": false
+      },
+      {
+        "id": "",
+        "type": "select-one",
+        "disabled": false
+      },
+      {
+        "id": "",
+        "type": "select-one",
+        "disabled": false
+      },
+      {
+        "id": "",
+        "type": "select-one",
+        "disabled": false
+      }
+    ],
+    "errors": [],
+    "screenshot": "prototype-revised-manage-1440.png"
+  },
+  {
+    "source": "revised",
+    "screen": "preview",
+    "width": 1440,
+    "overflow": false,
+    "sizes": {
+      ".sidebar": {
+        "width": 215,
+        "height": 950,
+        "columns": "none",
+        "padding": "20px 13px 15px",
+        "gap": "10px"
+      },
+      ".topbar": {
+        "width": 1225,
+        "height": 64,
+        "columns": "none",
+        "padding": "0px 43.2px",
+        "gap": "normal"
+      },
+      ".main": {
+        "width": 1225,
+        "height": 1347,
+        "columns": "none",
+        "padding": "30px 43.2px 48px",
+        "gap": "normal"
+      },
+      ".tabs": {
+        "width": 1139,
+        "height": 36,
+        "columns": "none",
+        "padding": "0px",
+        "gap": "25px"
+      },
+      ".list-header": {
+        "width": 1137,
+        "height": 42,
+        "columns": "271.594px 242.516px 184.297px 252.203px 98px",
+        "padding": "14px 20px",
+        "gap": "12px"
+      },
+      ".userrow": {
+        "width": 1137,
+        "height": 87,
+        "columns": "271.594px 242.516px 184.297px 252.203px 98px",
+        "padding": "14px 20px",
+        "gap": "12px"
+      },
+      ".form-grid": {
+        "width": 666,
+        "height": 132,
+        "columns": "327px 327px",
+        "padding": "0px",
+        "gap": "12px"
+      },
+      ".modal": {
+        "width": 750,
+        "height": 855,
+        "columns": "none",
+        "padding": "0px",
+        "gap": "normal"
+      },
+      ".modal-head": {
+        "width": 750,
+        "height": 93,
+        "columns": "none",
+        "padding": "21px 25px",
+        "gap": "15px"
+      },
+      ".modal-body": {
+        "width": 750,
+        "height": 692,
+        "columns": "none",
+        "padding": "22px 25px",
+        "gap": "normal"
+      },
+      ".modal-footer": {
+        "width": 750,
+        "height": 70,
+        "columns": "none",
+        "padding": "16px 25px",
+        "gap": "9px"
+      }
+    },
+    "visibleButtons": [
+      "Dashboard",
+      "Devices",
+      "IPAM",
+      "Network Racks",
+      "Audit Trail",
+      "Users",
+      "Settings & Data",
+      "Collapse Menu\n«",
+      "A\nMy Account",
+      "Overview",
+      "User List",
+      "Add User",
+      "Manage Roles",
+      "＋ Add User",
+      "View",
+      "Manage",
+      "Manage",
+      "Manage",
+      "Manage",
+      "Manage",
+      "Manage",
+      "Manage",
+      "×",
+      "Save Personal Details",
+      "Disable",
+      "Make admin",
+      "Delete User",
+      "Close",
+      "Review Role & Permission Changes",
+      "×",
+      "Simulate outdated preview",
+      "Cancel",
+      "Confirm Change"
+    ],
+    "visibleInputs": [
+      {
+        "id": "search",
+        "type": "search",
+        "disabled": false
+      },
+      {
+        "id": "status-filter",
+        "type": "select-one",
+        "disabled": false
+      },
+      {
+        "id": "mfa-filter",
+        "type": "select-one",
+        "disabled": false
+      },
+      {
+        "id": "v21-first",
+        "type": "text",
+        "disabled": false
+      },
+      {
+        "id": "v21-last",
+        "type": "text",
+        "disabled": false
+      },
+      {
+        "id": "v21-display",
+        "type": "text",
+        "disabled": false
+      },
+      {
+        "id": "v21-email",
+        "type": "email",
+        "disabled": false
+      },
+      {
+        "id": "",
+        "type": "checkbox",
+        "disabled": true
+      },
+      {
+        "id": "check-it",
+        "type": "checkbox",
+        "disabled": false
+      },
+      {
+        "id": "check-purchasing",
+        "type": "checkbox",
+        "disabled": false
+      },
+      {
+        "id": "check-viewer",
+        "type": "checkbox",
+        "disabled": false
+      },
+      {
+        "id": "check-legacy",
+        "type": "checkbox",
+        "disabled": false
+      },
+      {
+        "id": "",
+        "type": "select-one",
+        "disabled": false
+      },
+      {
+        "id": "",
+        "type": "select-one",
+        "disabled": false
+      },
+      {
+        "id": "",
+        "type": "select-one",
+        "disabled": false
+      }
+    ],
+    "errors": [],
+    "screenshot": "prototype-revised-preview-1440.png"
+  },
+  {
+    "source": "revised",
+    "screen": "overview",
+    "width": 390,
+    "overflow": false,
+    "sizes": {
+      ".sidebar": {
+        "width": 65,
+        "height": 844,
+        "columns": "none",
+        "padding": "16px 8px",
+        "gap": "12px"
+      },
+      ".topbar": {
+        "width": 325,
+        "height": 54,
+        "columns": "none",
+        "padding": "0px 14px",
+        "gap": "normal"
+      },
+      ".main": {
+        "width": 325,
+        "height": 2178,
+        "columns": "none",
+        "padding": "24px 16px 40px",
+        "gap": "normal"
+      },
+      ".tabs": {
+        "width": 293,
+        "height": 33,
+        "columns": "none",
+        "padding": "0px",
+        "gap": "14px"
+      },
+      ".cards4": {
+        "width": 293,
+        "height": 341,
+        "columns": "142px 142px",
+        "padding": "0px",
+        "gap": "9px"
+      },
+      ".two-col": {
+        "width": 293,
+        "height": 681,
+        "columns": "293px",
+        "padding": "0px",
+        "gap": "17px"
+      }
+    },
+    "visibleButtons": [
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "«",
+      "A\nMy Account",
+      "Overview",
+      "User List",
+      "Add User",
+      "Manage Roles",
+      "＋ Add User",
+      "Manage Roles →",
+      "Review not enrolled →"
+    ],
+    "visibleInputs": [],
+    "errors": [],
+    "screenshot": "prototype-revised-overview-390.png"
+  },
+  {
+    "source": "revised",
+    "screen": "list",
+    "width": 390,
+    "overflow": false,
+    "sizes": {
+      ".sidebar": {
+        "width": 65,
+        "height": 844,
+        "columns": "none",
+        "padding": "16px 8px",
+        "gap": "12px"
+      },
+      ".topbar": {
+        "width": 325,
+        "height": 54,
+        "columns": "none",
+        "padding": "0px 14px",
+        "gap": "normal"
+      },
+      ".main": {
+        "width": 325,
+        "height": 2780,
+        "columns": "none",
+        "padding": "24px 16px 40px",
+        "gap": "normal"
+      },
+      ".tabs": {
+        "width": 293,
+        "height": 33,
+        "columns": "none",
+        "padding": "0px",
+        "gap": "14px"
+      },
+      ".userrow": {
+        "width": 291,
+        "height": 222,
+        "columns": "267px",
+        "padding": "14px 12px",
+        "gap": "12px"
+      }
+    },
+    "visibleButtons": [
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "«",
+      "A\nMy Account",
+      "Overview",
+      "User List",
+      "Add User",
+      "Manage Roles",
+      "＋ Add User",
+      "View",
+      "Manage",
+      "Manage",
+      "Manage",
+      "Manage",
+      "Manage",
+      "Manage",
+      "Manage"
+    ],
+    "visibleInputs": [
+      {
+        "id": "search",
+        "type": "search",
+        "disabled": false
+      },
+      {
+        "id": "status-filter",
+        "type": "select-one",
+        "disabled": false
+      },
+      {
+        "id": "mfa-filter",
+        "type": "select-one",
+        "disabled": false
+      }
+    ],
+    "errors": [],
+    "screenshot": "prototype-revised-list-390.png"
+  },
+  {
+    "source": "revised",
+    "screen": "add",
+    "width": 390,
+    "overflow": false,
+    "sizes": {
+      ".sidebar": {
+        "width": 65,
+        "height": 844,
+        "columns": "none",
+        "padding": "16px 8px",
+        "gap": "12px"
+      },
+      ".topbar": {
+        "width": 325,
+        "height": 54,
+        "columns": "none",
+        "padding": "0px 14px",
+        "gap": "normal"
+      },
+      ".main": {
+        "width": 325,
+        "height": 1884,
+        "columns": "none",
+        "padding": "24px 16px 40px",
+        "gap": "normal"
+      },
+      ".tabs": {
+        "width": 293,
+        "height": 33,
+        "columns": "none",
+        "padding": "0px",
+        "gap": "14px"
+      },
+      ".form-grid": {
+        "width": 241,
+        "height": 301,
+        "columns": "241px",
+        "padding": "0px",
+        "gap": "15px"
+      }
+    },
+    "visibleButtons": [
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "«",
+      "A\nMy Account",
+      "Overview",
+      "User List",
+      "Add User",
+      "Manage Roles",
+      "Clear Form",
+      "Create User"
+    ],
+    "visibleInputs": [
+      {
+        "id": "new-username",
+        "type": "text",
+        "disabled": false
+      },
+      {
+        "id": "new-password",
+        "type": "password",
+        "disabled": false
+      },
+      {
+        "id": "new-password-confirm",
+        "type": "password",
+        "disabled": false
+      },
+      {
+        "id": "new-first",
+        "type": "text",
+        "disabled": false
+      },
+      {
+        "id": "new-last",
+        "type": "text",
+        "disabled": false
+      },
+      {
+        "id": "new-display",
+        "type": "text",
+        "disabled": false
+      },
+      {
+        "id": "new-email",
+        "type": "email",
+        "disabled": false
+      }
+    ],
+    "errors": [],
+    "screenshot": "prototype-revised-add-390.png"
+  },
+  {
+    "source": "revised",
+    "screen": "roles",
+    "width": 390,
+    "overflow": false,
+    "sizes": {
+      ".sidebar": {
+        "width": 65,
+        "height": 844,
+        "columns": "none",
+        "padding": "16px 8px",
+        "gap": "12px"
+      },
+      ".topbar": {
+        "width": 325,
+        "height": 54,
+        "columns": "none",
+        "padding": "0px 14px",
+        "gap": "normal"
+      },
+      ".main": {
+        "width": 325,
+        "height": 2037,
+        "columns": "none",
+        "padding": "24px 16px 40px",
+        "gap": "normal"
+      },
+      ".tabs": {
+        "width": 293,
+        "height": 33,
+        "columns": "none",
+        "padding": "0px",
+        "gap": "14px"
+      }
+    },
+    "visibleButtons": [
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "«",
+      "A\nMy Account",
+      "Overview",
+      "User List",
+      "Add User",
+      "Manage Roles",
+      "＋ Create Role",
+      "Manage",
+      "Disable",
+      "Manage",
+      "Disable",
+      "Manage",
+      "Disable",
+      "Manage",
+      "Enable",
+      "Preview SMTP enabled"
+    ],
+    "visibleInputs": [],
+    "errors": [],
+    "screenshot": "prototype-revised-roles-390.png"
+  },
+  {
+    "source": "revised",
+    "screen": "manage",
+    "width": 390,
+    "overflow": false,
+    "sizes": {
+      ".sidebar": {
+        "width": 65,
+        "height": 844,
+        "columns": "none",
+        "padding": "16px 8px",
+        "gap": "12px"
+      },
+      ".topbar": {
+        "width": 325,
+        "height": 54,
+        "columns": "none",
+        "padding": "0px 14px",
+        "gap": "normal"
+      },
+      ".main": {
+        "width": 325,
+        "height": 2780,
+        "columns": "none",
+        "padding": "24px 16px 40px",
+        "gap": "normal"
+      },
+      ".tabs": {
+        "width": 293,
+        "height": 33,
+        "columns": "none",
+        "padding": "0px",
+        "gap": "14px"
+      },
+      ".userrow": {
+        "width": 291,
+        "height": 222,
+        "columns": "267px",
+        "padding": "14px 12px",
+        "gap": "12px"
+      },
+      ".form-grid": {
+        "width": 304,
+        "height": 276,
+        "columns": "304px",
+        "padding": "0px",
+        "gap": "12px"
+      },
+      ".modal": {
+        "width": 370,
+        "height": 793,
+        "columns": "none",
+        "padding": "0px",
+        "gap": "normal"
+      },
+      ".modal-head": {
+        "width": 370,
+        "height": 101,
+        "columns": "none",
+        "padding": "16px",
+        "gap": "15px"
+      },
+      ".modal-body": {
+        "width": 370,
+        "height": 629,
+        "columns": "none",
+        "padding": "16px",
+        "gap": "normal"
+      },
+      ".modal-footer": {
+        "width": 370,
+        "height": 64,
+        "columns": "none",
+        "padding": "13px 16px",
+        "gap": "9px"
+      }
+    },
+    "visibleButtons": [
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "«",
+      "A\nMy Account",
+      "Overview",
+      "User List",
+      "Add User",
+      "Manage Roles",
+      "＋ Add User",
+      "View",
+      "Manage",
+      "Manage",
+      "Manage",
+      "Manage",
+      "Manage",
+      "Manage",
+      "Manage",
+      "×",
+      "Save Personal Details",
+      "Disable",
+      "Make admin",
+      "Delete User",
+      "Close",
+      "Review Role & Permission Changes"
+    ],
+    "visibleInputs": [
+      {
+        "id": "search",
+        "type": "search",
+        "disabled": false
+      },
+      {
+        "id": "status-filter",
+        "type": "select-one",
+        "disabled": false
+      },
+      {
+        "id": "mfa-filter",
+        "type": "select-one",
+        "disabled": false
+      },
+      {
+        "id": "v21-first",
+        "type": "text",
+        "disabled": false
+      },
+      {
+        "id": "v21-last",
+        "type": "text",
+        "disabled": false
+      },
+      {
+        "id": "v21-display",
+        "type": "text",
+        "disabled": false
+      },
+      {
+        "id": "v21-email",
+        "type": "email",
+        "disabled": false
+      },
+      {
+        "id": "",
+        "type": "checkbox",
+        "disabled": true
+      },
+      {
+        "id": "check-it",
+        "type": "checkbox",
+        "disabled": false
+      },
+      {
+        "id": "check-purchasing",
+        "type": "checkbox",
+        "disabled": false
+      },
+      {
+        "id": "check-viewer",
+        "type": "checkbox",
+        "disabled": false
+      },
+      {
+        "id": "check-legacy",
+        "type": "checkbox",
+        "disabled": false
+      },
+      {
+        "id": "",
+        "type": "select-one",
+        "disabled": false
+      },
+      {
+        "id": "",
+        "type": "select-one",
+        "disabled": false
+      },
+      {
+        "id": "",
+        "type": "select-one",
+        "disabled": false
+      }
+    ],
+    "errors": [],
+    "screenshot": "prototype-revised-manage-390.png"
+  },
+  {
+    "source": "revised",
+    "screen": "preview",
+    "width": 390,
+    "overflow": false,
+    "sizes": {
+      ".sidebar": {
+        "width": 65,
+        "height": 844,
+        "columns": "none",
+        "padding": "16px 8px",
+        "gap": "12px"
+      },
+      ".topbar": {
+        "width": 325,
+        "height": 54,
+        "columns": "none",
+        "padding": "0px 14px",
+        "gap": "normal"
+      },
+      ".main": {
+        "width": 325,
+        "height": 2780,
+        "columns": "none",
+        "padding": "24px 16px 40px",
+        "gap": "normal"
+      },
+      ".tabs": {
+        "width": 293,
+        "height": 33,
+        "columns": "none",
+        "padding": "0px",
+        "gap": "14px"
+      },
+      ".userrow": {
+        "width": 291,
+        "height": 222,
+        "columns": "267px",
+        "padding": "14px 12px",
+        "gap": "12px"
+      },
+      ".form-grid": {
+        "width": 304,
+        "height": 276,
+        "columns": "304px",
+        "padding": "0px",
+        "gap": "12px"
+      },
+      ".modal": {
+        "width": 370,
+        "height": 793,
+        "columns": "none",
+        "padding": "0px",
+        "gap": "normal"
+      },
+      ".modal-head": {
+        "width": 370,
+        "height": 101,
+        "columns": "none",
+        "padding": "16px",
+        "gap": "15px"
+      },
+      ".modal-body": {
+        "width": 370,
+        "height": 629,
+        "columns": "none",
+        "padding": "16px",
+        "gap": "normal"
+      },
+      ".modal-footer": {
+        "width": 370,
+        "height": 64,
+        "columns": "none",
+        "padding": "13px 16px",
+        "gap": "9px"
+      }
+    },
+    "visibleButtons": [
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "«",
+      "A\nMy Account",
+      "Overview",
+      "User List",
+      "Add User",
+      "Manage Roles",
+      "＋ Add User",
+      "View",
+      "Manage",
+      "Manage",
+      "Manage",
+      "Manage",
+      "Manage",
+      "Manage",
+      "Manage",
+      "×",
+      "Save Personal Details",
+      "Disable",
+      "Make admin",
+      "Delete User",
+      "Close",
+      "Review Role & Permission Changes",
+      "×",
+      "Simulate outdated preview",
+      "Cancel",
+      "Confirm Change"
+    ],
+    "visibleInputs": [
+      {
+        "id": "search",
+        "type": "search",
+        "disabled": false
+      },
+      {
+        "id": "status-filter",
+        "type": "select-one",
+        "disabled": false
+      },
+      {
+        "id": "mfa-filter",
+        "type": "select-one",
+        "disabled": false
+      },
+      {
+        "id": "v21-first",
+        "type": "text",
+        "disabled": false
+      },
+      {
+        "id": "v21-last",
+        "type": "text",
+        "disabled": false
+      },
+      {
+        "id": "v21-display",
+        "type": "text",
+        "disabled": false
+      },
+      {
+        "id": "v21-email",
+        "type": "email",
+        "disabled": false
+      },
+      {
+        "id": "",
+        "type": "checkbox",
+        "disabled": true
+      },
+      {
+        "id": "check-it",
+        "type": "checkbox",
+        "disabled": false
+      },
+      {
+        "id": "check-purchasing",
+        "type": "checkbox",
+        "disabled": false
+      },
+      {
+        "id": "check-viewer",
+        "type": "checkbox",
+        "disabled": false
+      },
+      {
+        "id": "check-legacy",
+        "type": "checkbox",
+        "disabled": false
+      },
+      {
+        "id": "",
+        "type": "select-one",
+        "disabled": false
+      },
+      {
+        "id": "",
+        "type": "select-one",
+        "disabled": false
+      },
+      {
+        "id": "",
+        "type": "select-one",
+        "disabled": false
+      }
+    ],
+    "errors": [],
+    "screenshot": "prototype-revised-preview-390.png"
+  }
+]

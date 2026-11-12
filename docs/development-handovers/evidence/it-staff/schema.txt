@@ -1,0 +1,8 @@
+test_device_identity_and_json_constraints (test_schema.SchemaTests.test_device_identity_and_json_constraints) ... ok
+test_initialisation_is_repeatable (test_schema.SchemaTests.test_initialisation_is_repeatable) ... ok
+test_reject_newer_database_without_downgrade (test_schema.SchemaTests.test_reject_newer_database_without_downgrade) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.015s
+
+OK

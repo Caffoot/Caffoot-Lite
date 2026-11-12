@@ -1,12 +1,13 @@
 import sqlite3
 import unittest
 
+from confirmed_permissions import set_permission
 from backend.accounts import bootstrap_first_admin, confirm_admin_mfa, verify_password
 from backend.account_security import (
     change_own_password, begin_mfa_enrolment, complete_mfa_enrolment,
 )
 from backend.mfa import code_at, provisioning_uri
-from backend.permissions import create_user, set_permission, can_access
+from backend.permissions import create_user, can_access
 from backend.schema import initialise_database
 
 
@@ -32,8 +33,8 @@ class AccountSecurityTests(unittest.TestCase):
         self.assertFalse(verify_password("initial", stored))
 
     def test_user_enrols_mfa_before_editor_permission(self):
-        with self.assertRaises(ValueError):
-            set_permission(self.db, self.admin, self.user, "Devices", "edit")
+        set_permission(self.db, self.admin, self.user, "Devices", "edit")
+        self.assertFalse(can_access(self.db, self.user, "Devices", edit=True))
         with self.assertRaises(PermissionError):
             begin_mfa_enrolment(self.db, self.user, "wrong")
         secret = begin_mfa_enrolment(self.db, self.user, "initial")

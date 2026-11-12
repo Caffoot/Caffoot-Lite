@@ -1,0 +1,23 @@
+{
+  "batch05_start_sha": "689afd827ef3192379b6baf7ef6d289d8f73da04",
+  "files": [
+    "INSTALLATION.md",
+    "docs/development-guide/07-Function-and-Code-Reference.md",
+    "docs/development-guide/08-Testing-and-Maintenance.md",
+    "docs/development-guide/README.md",
+    "docs/development-guide/Role-Permissions.md",
+    "docs/development-guide/Upgrade-And-Restore-Rehearsal.md",
+    "docs/development-handovers/evidence/milestone-01-batch-05/Report.md",
+    "docs/development-handovers/evidence/milestone-01-batch-05/approved-html.txt",
+    "docs/development-handovers/evidence/milestone-01-batch-05/backend.txt",
+    "docs/development-handovers/evidence/milestone-01-batch-05/changed-files.json",
+    "docs/development-handovers/evidence/milestone-01-batch-05/chromium.txt",
+    "docs/development-handovers/evidence/milestone-01-batch-05/focused-migration.txt",
+    "docs/development-handovers/evidence/milestone-01-batch-05/source-audit.json",
+    "docs/development-handovers/evidence/milestone-01-batch-05/source-fidelity.txt",
+    "docs/development-handovers/evidence/milestone-01-batch-05/upgrade-restore.txt",
+    "docs/development-handovers/milestone-01.md",
+    "tests/fixtures/upgrade_restore.py",
+    "tests/test_upgrade_restore.py"
+  ]
+}

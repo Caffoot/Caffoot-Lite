@@ -11,6 +11,7 @@ Before changing Caffoot Lite, identify the existing behaviour that must remain i
 | [`tests/`](../../tests/) | Python unit checks for schema, users, sessions, access, imports, device/IPAM/rack operations and validation |
 | [`tests/browser-compat.cjs`](../../tests/browser-compat.cjs) | Chromium/Playwright checks of approved browser workflows |
 | [`tests/test_compose_lifecycle.py`](../../tests/test_compose_lifecycle.py) | Optional Docker lifecycle test for port and persistent database/certificate |
+| [`tests/test_upgrade_restore.py`](../../tests/test_upgrade_restore.py) | Opt-in two-image, complete-volume schema-10→11 upgrade and matching v2.1 restore; see [rehearsal instructions](Upgrade-And-Restore-Rehearsal.md) |
 | [`app/` at the published v1.3.3 tag](https://github.com/Caffoot/Caffoot-Lite/tree/v1.3.3/app) | Original HTML application's historical source and tests, excluded from the current Docker source |
 | [Published v1.3.3 source and tests](https://github.com/Caffoot/Caffoot-Lite/tree/v1.3.3/app) | Authoritative published inventory compatibility baseline; check later fixes before using older audit findings |
 

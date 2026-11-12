@@ -24,18 +24,25 @@ from .ipam_repair import apply_ipam_repairs
 from .audit_events import record_actor_event
 from .account_email import (MAIL_REQUESTS, REQUEST_MESSAGE, issue_email_proof,
                             confirm_email_proof, queue_email, security_recipients,
-                            notify_security_change, record_blocked_sign_in)
+                            notify_security_change, record_blocked_sign_in,
+                            role_change_notifications)
 from .profiles import (read_profile, save_profile, read_profile_photo,
                        save_profile_photo, remove_profile_photo, MAX_PHOTO_BYTES)
 from .schema import initialise_database as migrate_database
 from .accounts import bootstrap_first_admin, confirm_admin_mfa, verify_password, hash_password
+from .authentication import MFAEnrolmentRequired
+from .account_security import (start_required_mfa_enrolment,
+                               confirm_required_mfa_enrolment, remove_own_mfa)
 from .mfa import new_secret, provisioning_uri, verify_code
 from .import_drafts import ImportDrafts
 from .request_auth import authenticated_account, csrf_for_session
 from .http_security import read_session_cookie, session_cookie, clear_session_cookie
 from .request_auth import login, logout, THROTTLE
-from .permissions import (can_access, create_user, set_permission,
+from .permissions import (can_access, create_user,
                           set_account_active, set_administrator, delete_user)
+from .role_policy import evaluate_role_policy
+from .roles import (preview_role_change, confirm_role_change, role_catalogue,
+                    account_access_details)
 from .history_permissions import visible_change_history
 from .request_auth import authorised_mutation
 from .http_security import require_same_origin
@@ -129,10 +136,9 @@ class Handler(BaseHTTPRequestHandler):
                 if account_id is None:
                     self.respond(401, {"error": "unauthorised"})
                     return
-                if not any(can_access(connection, account_id, section)
-                           for section in ("Devices", "IPAM", "Racks")):
-                    self.respond(403, {"error": "forbidden"})
-                    return
+                # These packaged files contain interface code and templates only.
+                # Staff accounts need them for their own approved My Account screen;
+                # inventory and administrator data retain their separate API checks.
             path = INTERFACE_FILES[self.path]
             body = path.read_bytes()
             content_type = {".html": "text/html", ".css": "text/css",
@@ -170,13 +176,13 @@ class Handler(BaseHTTPRequestHandler):
             self.end_headers()
             self.wfile.write(body)
             return
-        if self.path in ("/inventory", "/inventory?rack-print=same-tab"):
+        if self.path in ("/inventory", "/inventory?rack-print=same-tab", "/account"):
             with connect() as connection:
                 account_id = authenticated_account(connection, self.headers.get("Cookie"))
                 if account_id is None:
                     self.respond(401, {"error": "unauthorised"})
                     return
-                if not any(can_access(connection, account_id, section)
+                if self.path != "/account" and not any(can_access(connection, account_id, section)
                            for section in ("Devices", "IPAM", "Racks")):
                     self.respond(403, {"error": "forbidden"})
                     return
@@ -259,18 +265,16 @@ class Handler(BaseHTTPRequestHandler):
                 for user_id, username, is_admin, active, mfa_confirmed in connection.execute(
                     "SELECT id,username,is_admin,active,mfa_confirmed FROM accounts ORDER BY id"
                 ):
-                    permissions = {section: level for section, level in connection.execute(
-                        "SELECT section,level FROM account_permissions WHERE account_id=?",
-                        (user_id,),
-                    )}
+                    permissions = evaluate_role_policy(connection, user_id).permissions
                     users.append({
                         "id": user_id, "username": username,
                         "isAdmin": bool(is_admin), "active": bool(active),
                         "mfaEnrolled": bool(mfa_confirmed),
                         "permissions": permissions,
+                        "accessDetails": account_access_details(connection, user_id),
                         "profile": read_profile(connection, account_id, user_id),
                     })
-                self.respond(200, {"users": users})
+                self.respond(200, {"users": users, "roles": role_catalogue(connection)})
         elif self.path == "/api/inventory/sections":
             with connect() as connection:
                 account_id = authenticated_account(connection, self.headers.get("Cookie"))
@@ -427,7 +431,11 @@ class Handler(BaseHTTPRequestHandler):
                 self.respond(200, {
                     "username": account[0],
                     "is_admin": bool(account[1]),
+                    "assigned_roles": [{"name": role["name"], "enabled": role["enabled"]}
+                                       for role in account_access_details(connection, account_id)["roles"]],
                     "mfa_enrolled": bool(account[2]),
+                    "mfa_removal_eligible": bool(account[2]) and not evaluate_role_policy(
+                        connection, account_id).mfa_mandatory,
                     "can_enter_inventory": any(
                         can_access(connection, account_id, section)
                         for section in ("Devices", "IPAM", "Racks")
@@ -438,6 +446,10 @@ class Handler(BaseHTTPRequestHandler):
             self.respond(404, {"error": "not found"})
 
     def do_POST(self):
+        if self.path in ("/api/users/roles/preview", "/api/users/roles/confirm",
+                         "/api/users/permission"):
+            self.handle_role_change()
+            return
         if self.path in ("/api/account/email/request", "/api/account/email/confirm",
                          "/api/recovery/request", "/api/recovery/confirm"):
             self.handle_account_email()
@@ -446,10 +458,10 @@ class Handler(BaseHTTPRequestHandler):
             self.handle_profile_photo()
             return
         if self.path in ("/api/account/profile", "/api/account/photo/remove",
-                         "/api/users/create", "/api/users/profile", "/api/users/permission", "/api/users/active",
+                         "/api/users/create", "/api/users/profile", "/api/users/active",
                          "/api/users/admin", "/api/users/delete", "/api/settings/email",
                          "/api/settings/email/test", "/api/account/password",
-                         "/api/account/mfa/start", "/api/account/mfa/confirm",
+                         "/api/account/mfa/start", "/api/account/mfa/confirm", "/api/account/mfa/remove",
                          "/api/devices/edit/start", "/api/devices/edit/cancel",
                          "/api/devices/edit/save", "/api/devices/create",
                          "/api/devices/delete", "/api/ipam/allocation/save",
@@ -464,7 +476,8 @@ class Handler(BaseHTTPRequestHandler):
         if self.path in IMPORT_ROUTES:
             self.handle_import()
             return
-        if self.path not in ("/api/login", "/api/logout", "/api/setup", "/api/setup/mfa", "/api/setup/mfa-secret"):
+        if self.path not in ("/api/login", "/api/login/mfa/start", "/api/login/mfa/confirm",
+                             "/api/logout", "/api/setup", "/api/setup/mfa", "/api/setup/mfa-secret"):
             self.respond(404, {"error": "not found"})
             return
         origin = self.headers.get("Origin")
@@ -500,6 +513,40 @@ class Handler(BaseHTTPRequestHandler):
             return
         if len(payload["username"]) > 256 or len(payload["password"]) > 4096 or not isinstance(payload.get("mfa_code"), (str, type(None))):
             self.respond(400, {"error": "invalid credentials"})
+            return
+        if self.path in ("/api/login/mfa/start", "/api/login/mfa/confirm"):
+            expected = {"username", "password"}
+            if self.path.endswith("/confirm"):
+                expected.add("mfa_code")
+            if set(payload) != expected:
+                self.respond(400, {"error": "invalid request"})
+                return
+            peer, username = self.client_address[0], payload["username"]
+            if not THROTTLE.allowed(peer, username):
+                self.respond(401, {"error": "invalid credentials or MFA request"})
+                return
+            with connect() as connection:
+                try:
+                    if self.path.endswith("/start"):
+                        account_name, secret = start_required_mfa_enrolment(
+                            connection, username, payload["password"],
+                        )
+                        # Showing a pending key must not reset failed code attempts.
+                        self.respond(200, {"mfaSecret": secret,
+                                           "mfaUri": provisioning_uri(account_name, secret)})
+                        return
+                    account_id = confirm_required_mfa_enrolment(
+                        connection, username, payload["password"], payload["mfa_code"],
+                    )
+                    recipients = security_recipients(connection, account_id)
+                    recipients.update(security_recipients(connection, administrators=True))
+                except (PermissionError, ValueError):
+                    THROTTLE.failed(peer, username)
+                    self.respond(401, {"error": "invalid credentials or MFA request"})
+                    return
+            THROTTLE.succeeded(peer, username)
+            notify_security_change(smtp_config_path(DB_PATH), recipients)
+            self.respond(200, {"status": "mfa enrolled"})
             return
         if self.path in ("/api/setup", "/api/setup/mfa", "/api/setup/mfa-secret"):
             if set(payload) - ({"username", "password"} if self.path == "/api/setup" else {"username", "password", "mfa_code"} if self.path == "/api/setup/mfa" else {"username", "password"}):
@@ -549,11 +596,15 @@ class Handler(BaseHTTPRequestHandler):
                 except sqlite3.IntegrityError:
                     self.respond(400, {"error": "administrator already exists"})
             return
-        with connect() as connection:
-            token = login(
-                connection, self.client_address[0], payload["username"],
-                payload["password"], mfa_code=payload.get("mfa_code"),
-            )
+        try:
+            with connect() as connection:
+                token = login(
+                    connection, self.client_address[0], payload["username"],
+                    payload["password"], mfa_code=payload.get("mfa_code"),
+                )
+        except MFAEnrolmentRequired:
+            self.respond(200, {"status": "mfa enrolment required"})
+            return
         if token is None:
             if not THROTTLE.allowed(self.client_address[0], payload["username"]):
                 with connect() as connection:
@@ -564,6 +615,48 @@ class Handler(BaseHTTPRequestHandler):
             self.respond(401, {"error": "invalid credentials"})
             return
         self.respond(200, {"status": "signed in"}, cookie=session_cookie(token))
+
+    def handle_role_change(self):
+        """Require the existing request safeguards before preview or confirmation."""
+        if not PUBLIC_ORIGIN or not require_same_origin(self.headers.get("Origin"), PUBLIC_ORIGIN):
+            self.respond(403, {"error": "forbidden"})
+            return
+        length = self.headers.get("Content-Length", "")
+        if not length.isdecimal() or not 0 < int(length) <= MAX_LOGIN_BYTES:
+            self.respond(400, {"error": "invalid request size"})
+            return
+        if self.headers.get("Content-Type", "").split(";")[0].strip().lower() != "application/json":
+            self.respond(415, {"error": "JSON required"})
+            return
+        try:
+            payload = json.loads(self.rfile.read(int(length)))
+            expected = {"action", "proof"} if self.path.endswith("/confirm") else {"action"}
+            with connect() as connection:
+                actor = authorised_mutation(connection, self.headers.get("Cookie"),
+                    self.headers.get("Origin"), PUBLIC_ORIGIN, self.headers.get("X-CSRF-Token"))
+                if actor is None or connection.execute(
+                        "SELECT is_admin,active,mfa_confirmed FROM accounts WHERE id=?", (actor,)).fetchone() != (1, 1, 1):
+                    raise PermissionError("Verified active administrator required")
+                if self.path == "/api/users/permission":
+                    self.respond(410, {"error": "Permission changes require a role preview and confirmation.",
+                                       "previewEndpoint": "/api/users/roles/preview"})
+                    return
+                if not isinstance(payload, dict) or set(payload) != expected:
+                    raise ValueError("Invalid role request fields")
+                token = read_session_cookie(self.headers.get("Cookie"))
+                if self.path.endswith("/preview"):
+                    result = preview_role_change(connection, actor, token, payload["action"])
+                else:
+                    result = confirm_role_change(connection, actor, token, payload["action"], payload["proof"])
+                    if result["status"] == "updated":
+                        account_ids = result.pop("notificationAccountIds")
+                        result["notifications"] = role_change_notifications(
+                            connection, smtp_config_path(DB_PATH), account_ids)
+                self.respond(409 if result.get("status") == "confirmation required" else 200, result)
+        except PermissionError:
+            self.respond(403, {"error": "forbidden"})
+        except (ValueError, TypeError, sqlite3.IntegrityError) as exc:
+            self.respond(400, {"error": str(exc)})
 
     def handle_user_mutation(self):
         """Administrator-only account creation and section permission changes."""
@@ -582,8 +675,8 @@ class Handler(BaseHTTPRequestHandler):
             return
         notice_recipients = set()
         security_change = self.path in (
-            "/api/account/profile", "/api/account/password", "/api/account/mfa/confirm",
-            "/api/users/profile", "/api/users/permission", "/api/users/active",
+            "/api/account/profile", "/api/account/password", "/api/account/mfa/confirm", "/api/account/mfa/remove",
+            "/api/users/profile", "/api/users/active",
             "/api/users/admin", "/api/users/create", "/api/users/delete")
         try:
             payload = json.loads(self.rfile.read(int(length)))
@@ -760,6 +853,28 @@ class Handler(BaseHTTPRequestHandler):
                     except BaseException:
                         connection.rollback()
                         raise
+                elif self.path == "/api/account/mfa/remove":
+                    if set(payload) != {"password", "code"}:
+                        raise ValueError("Current password and authenticator code required")
+                    account = connection.execute(
+                        "SELECT username FROM accounts WHERE id=?", (actor,),
+                    ).fetchone()
+                    if account is None:
+                        raise PermissionError("Invalid credentials or MFA request")
+                    username = account[0]
+                    peer = self.client_address[0]
+                    if not THROTTLE.allowed(peer, username):
+                        raise PermissionError("Invalid credentials or MFA request")
+                    try:
+                        remove_own_mfa(
+                            connection, actor, payload["password"], payload["code"],
+                            session_token=read_session_cookie(self.headers.get("Cookie")),
+                        )
+                    except (PermissionError, ValueError):
+                        THROTTLE.failed(peer, username)
+                        raise PermissionError("Invalid credentials or MFA request") from None
+                    THROTTLE.succeeded(peer, username)
+                    result = {"status": "mfa removed"}
                 elif self.path == "/api/account/mfa/start":
                     if set(payload) != {"password"}:
                         raise ValueError("Password required")
@@ -881,11 +996,6 @@ class Handler(BaseHTTPRequestHandler):
                         raise PermissionError("Verified administrator required")
                     result = save_profile(connection, actor, payload["profile"],
                                           target_id=payload["userId"])
-                elif self.path == "/api/users/permission":
-                    if set(payload) != {"userId", "section", "level"} or type(payload["userId"]) is not int:
-                        raise ValueError("Invalid permission request")
-                    set_permission(connection, actor, payload["userId"], payload["section"], payload["level"])
-                    result = {"status": "updated"}
                 else:
                     if type(payload.get("userId")) is not int:
                         raise ValueError("Invalid user identifier")
@@ -921,7 +1031,8 @@ class Handler(BaseHTTPRequestHandler):
             with connect() as connection:
                 connection.execute("DELETE FROM account_email_proofs WHERE account_id=?", (payload.get("userId", actor),))
             notify_security_change(smtp_config_path(DB_PATH), notice_recipients)
-        self.respond(200, result)
+        self.respond(200, result, cookie=clear_session_cookie()
+                     if self.path == "/api/account/mfa/remove" else None)
 
     def handle_account_email(self):
         """Keep email proofs separate from sessions, with same-origin and abuse checks."""

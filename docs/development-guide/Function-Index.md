@@ -6,7 +6,7 @@ Scope: named JavaScript declarations/assignments in the three application script
 
 The account hydration/photo functions now have purpose-based callable bindings matching their function names: `hydrateAccount` and `removeAccountPhoto`. The immutable design manifest retains its historical integration-entry names; those metadata names are not the runtime's current function map. Pinned source paths, revisions and hashes are unchanged.
 
-**Recorded definitions: 693.** Regenerate after changing declarations or their lines. See [coding conventions](06-Coding-and-Naming-Conventions.md) and the [code reference](07-Function-and-Code-Reference.md).
+**Recorded definitions: 734.** Regenerate after changing declarations or their lines. See [coding conventions](06-Coding-and-Naming-Conventions.md) and the [code reference](07-Function-and-Code-Reference.md).
 
 ## interface/loader.js
 
@@ -446,75 +446,89 @@ The account hydration/photo functions now have purpose-based callable bindings m
 | [`clearVerticalRackAccessoryDragPreview`](../../interface/application.js#L8318) | 8318 |
 | [`getRackDropPosition`](../../interface/application.js#L8411) | 8411 |
 | [`window.onload`](../../interface/application.js#L8864) | 8864 |
-| [`refreshCentralInventory`](../../interface/application.js#L8879) | 8879 |
-| [`postInventory`](../../interface/application.js#L8900) | 8900 |
-| [`isBlockedAction`](../../interface/application.js#L8952) | 8952 |
-| [`applyAllowedControls`](../../interface/application.js#L8980) | 8980 |
-| [`enhanceLongSelects`](../../interface/application.js#L9006) | 9006 |
-| [`sync`](../../interface/application.js#L9057) | 9057 |
-| [`close`](../../interface/application.js#L9063) | 9063 |
-| [`choose`](../../interface/application.js#L9067) | 9067 |
-| [`draw`](../../interface/application.js#L9072) | 9072 |
-| [`open`](../../interface/application.js#L9090) | 9090 |
-| [`enhanceSelects`](../../interface/application.js#L9147) | 9147 |
-| [`switchTab`](../../interface/application.js#L9193) | 9193 |
-| [`updateDeviceEditorNotice`](../../interface/application.js#L9204) | 9204 |
-| [`openDeviceDetailView`](../../interface/application.js#L9230) | 9230 |
-| [`applyDeviceFormSectionPermissions`](../../interface/application.js#L9238) | 9238 |
-| [`forbidRackMount`](../../interface/application.js#L9266) | 9266 |
-| [`openDeviceModal`](../../interface/application.js#L9276) | 9276 |
-| [`nextDeviceModalClosed`](../../interface/application.js#L9318) | 9318 |
-| [`relatedChanges`](../../interface/application.js#L9324) | 9324 |
-| [`saveDevice`](../../interface/application.js#L9335) | 9335 |
-| [`nextIpamBridge.canEdit`](../../interface/application.js#L9362) | 9362 |
-| [`nextIpamBridge.saveBulk`](../../interface/application.js#L9363) | 9363 |
-| [`nextIpamBridge.save`](../../interface/application.js#L9385) | 9385 |
-| [`nextIpamBridge.deleteSubnet`](../../interface/application.js#L9407) | 9407 |
-| [`nextIpamBridge.saveSubnet`](../../interface/application.js#L9429) | 9429 |
-| [`nextSettingsBridge.save`](../../interface/application.js#L9464) | 9464 |
-| [`nextIntegrityRepairBridge.reload`](../../interface/application.js#L9481) | 9481 |
-| [`nextIntegrityRepairBridge.canViewSection`](../../interface/application.js#L9482) | 9482 |
-| [`nextIntegrityRepairBridge.preview`](../../interface/application.js#L9483) | 9483 |
-| [`nextIntegrityRepairBridge.apply`](../../interface/application.js#L9497) | 9497 |
-| [`nextResetBridge.reset`](../../interface/application.js#L9528) | 9528 |
-| [`nextDeviceCatalogueBridge.change`](../../interface/application.js#L9555) | 9555 |
-| [`nextRackBridge.reviewShelf`](../../interface/application.js#L9582) | 9582 |
-| [`nextRackBridge.removeShelf`](../../interface/application.js#L9590) | 9590 |
-| [`nextRackBridge.canEdit`](../../interface/application.js#L9599) | 9599 |
-| [`nextRackBridge.savePlacement`](../../interface/application.js#L9600) | 9600 |
-| [`nextRackBridge.save`](../../interface/application.js#L9635) | 9635 |
-| [`nextRackBridge.saveAccessory`](../../interface/application.js#L9638) | 9638 |
-| [`nextRackBridge.persist`](../../interface/application.js#L9641) | 9641 |
-| [`reserveForDelete`](../../interface/application.js#L9663) | 9663 |
-| [`removeDevice`](../../interface/application.js#L9671) | 9671 |
-| [`cancelDelete`](../../interface/application.js#L9697) | 9697 |
-| [`saveArchivedInstallation`](../../interface/application.js#L9703) | 9703 |
-| [`renderAccountSections`](../../interface/application.js#L9738) | 9738 |
-| [`renderAccountMfaPanel`](../../interface/application.js#L9766) | 9766 |
-| [`nextRenderAccount`](../../interface/application.js#L9776) | 9776 |
-| [`initialiseAccountEmailVerification`](../../interface/application.js#L9784) | 9784 |
-| [`closeEmailVerification`](../../interface/application.js#L9808) | 9808 |
-| [`updateEmailVerificationStatus`](../../interface/application.js#L9815) | 9815 |
-| [`showEmailVerificationFeedback`](../../interface/application.js#L9826) | 9826 |
-| [`hydrateAccount`](../../interface/application.js#L9880) | 9880 |
-| [`updateAccountHeaderPhoto`](../../interface/application.js#L9918) | 9918 |
-| [`loadAccountProfile`](../../interface/application.js#L9931) | 9931 |
-| [`removeAccountPhoto`](../../interface/application.js#L9947) | 9947 |
-| [`nextRenderUsers`](../../interface/application.js#L9956) | 9956 |
-| [`profileFields`](../../interface/application.js#L9958) | 9958 |
-| [`stat`](../../interface/application.js#L9979) | 9979 |
-| [`bars`](../../interface/application.js#L9982) | 9982 |
-| [`operation`](../../interface/application.js#L10034) | 10034 |
-| [`filterUserRows`](../../interface/application.js#L10054) | 10054 |
-| [`closeUserWorkspace`](../../interface/application.js#L10078) | 10078 |
-| [`loadCentralUsers`](../../interface/application.js#L10107) | 10107 |
-| [`changeCentralUser`](../../interface/application.js#L10113) | 10113 |
-| [`importPanel`](../../interface/application.js#L10124) | 10124 |
-| [`cancelImport`](../../interface/application.js#L10128) | 10128 |
-| [`nextImportModalClosed`](../../interface/application.js#L10134) | 10134 |
-| [`showImportReview`](../../interface/application.js#L10135) | 10135 |
-| [`chooseImportFile`](../../interface/application.js#L10175) | 10175 |
-| [`actOnImport`](../../interface/application.js#L10192) | 10192 |
+| [`refreshCentralInventory`](../../interface/application.js#L8880) | 8880 |
+| [`postInventory`](../../interface/application.js#L8901) | 8901 |
+| [`isBlockedAction`](../../interface/application.js#L8953) | 8953 |
+| [`applyAllowedControls`](../../interface/application.js#L8982) | 8982 |
+| [`enhanceLongSelects`](../../interface/application.js#L9029) | 9029 |
+| [`sync`](../../interface/application.js#L9080) | 9080 |
+| [`close`](../../interface/application.js#L9086) | 9086 |
+| [`choose`](../../interface/application.js#L9090) | 9090 |
+| [`draw`](../../interface/application.js#L9095) | 9095 |
+| [`open`](../../interface/application.js#L9113) | 9113 |
+| [`enhanceSelects`](../../interface/application.js#L9170) | 9170 |
+| [`switchTab`](../../interface/application.js#L9216) | 9216 |
+| [`updateDeviceEditorNotice`](../../interface/application.js#L9227) | 9227 |
+| [`openDeviceDetailView`](../../interface/application.js#L9253) | 9253 |
+| [`applyDeviceFormSectionPermissions`](../../interface/application.js#L9261) | 9261 |
+| [`forbidRackMount`](../../interface/application.js#L9289) | 9289 |
+| [`openDeviceModal`](../../interface/application.js#L9299) | 9299 |
+| [`nextDeviceModalClosed`](../../interface/application.js#L9341) | 9341 |
+| [`relatedChanges`](../../interface/application.js#L9347) | 9347 |
+| [`saveDevice`](../../interface/application.js#L9358) | 9358 |
+| [`nextIpamBridge.canEdit`](../../interface/application.js#L9385) | 9385 |
+| [`nextIpamBridge.saveBulk`](../../interface/application.js#L9386) | 9386 |
+| [`nextIpamBridge.save`](../../interface/application.js#L9408) | 9408 |
+| [`nextIpamBridge.deleteSubnet`](../../interface/application.js#L9430) | 9430 |
+| [`nextIpamBridge.saveSubnet`](../../interface/application.js#L9452) | 9452 |
+| [`nextSettingsBridge.save`](../../interface/application.js#L9487) | 9487 |
+| [`nextIntegrityRepairBridge.reload`](../../interface/application.js#L9504) | 9504 |
+| [`nextIntegrityRepairBridge.canViewSection`](../../interface/application.js#L9505) | 9505 |
+| [`nextIntegrityRepairBridge.preview`](../../interface/application.js#L9506) | 9506 |
+| [`nextIntegrityRepairBridge.apply`](../../interface/application.js#L9520) | 9520 |
+| [`nextResetBridge.reset`](../../interface/application.js#L9551) | 9551 |
+| [`nextDeviceCatalogueBridge.change`](../../interface/application.js#L9578) | 9578 |
+| [`nextRackBridge.reviewShelf`](../../interface/application.js#L9605) | 9605 |
+| [`nextRackBridge.removeShelf`](../../interface/application.js#L9613) | 9613 |
+| [`nextRackBridge.canEdit`](../../interface/application.js#L9622) | 9622 |
+| [`nextRackBridge.savePlacement`](../../interface/application.js#L9623) | 9623 |
+| [`nextRackBridge.save`](../../interface/application.js#L9658) | 9658 |
+| [`nextRackBridge.saveAccessory`](../../interface/application.js#L9661) | 9661 |
+| [`nextRackBridge.persist`](../../interface/application.js#L9664) | 9664 |
+| [`reserveForDelete`](../../interface/application.js#L9686) | 9686 |
+| [`removeDevice`](../../interface/application.js#L9694) | 9694 |
+| [`cancelDelete`](../../interface/application.js#L9720) | 9720 |
+| [`saveArchivedInstallation`](../../interface/application.js#L9726) | 9726 |
+| [`renderAccountSections`](../../interface/application.js#L9763) | 9763 |
+| [`renderAccountMfaPanel`](../../interface/application.js#L9791) | 9791 |
+| [`nextRenderAccount`](../../interface/application.js#L9802) | 9802 |
+| [`initialiseAccountEmailVerification`](../../interface/application.js#L9812) | 9812 |
+| [`closeEmailVerification`](../../interface/application.js#L9836) | 9836 |
+| [`updateEmailVerificationStatus`](../../interface/application.js#L9843) | 9843 |
+| [`showEmailVerificationFeedback`](../../interface/application.js#L9854) | 9854 |
+| [`hydrateAccount`](../../interface/application.js#L9908) | 9908 |
+| [`updateAccountHeaderPhoto`](../../interface/application.js#L9946) | 9946 |
+| [`loadAccountProfile`](../../interface/application.js#L9959) | 9959 |
+| [`removeAccountPhoto`](../../interface/application.js#L9975) | 9975 |
+| [`permissionLabel`](../../interface/application.js#L9987) | 9987 |
+| [`accountMfaLabel`](../../interface/application.js#L9990) | 9990 |
+| [`renderRoleMemberships`](../../interface/application.js#L9993) | 9993 |
+| [`renderRoleCatalogue`](../../interface/application.js#L9999) | 9999 |
+| [`openRoleLayer`](../../interface/application.js#L10004) | 10004 |
+| [`closeRoleLayer`](../../interface/application.js#L10015) | 10015 |
+| [`renderRoleDefinition`](../../interface/application.js#L10021) | 10021 |
+| [`renderRoleImpact`](../../interface/application.js#L10025) | 10025 |
+| [`access`](../../interface/application.js#L10030) | 10030 |
+| [`state`](../../interface/application.js#L10034) | 10034 |
+| [`requestRoleChange`](../../interface/application.js#L10039) | 10039 |
+| [`roleNotificationMessage`](../../interface/application.js#L10046) | 10046 |
+| [`previewRoleAction`](../../interface/application.js#L10050) | 10050 |
+| [`openRoleEditor`](../../interface/application.js#L10055) | 10055 |
+| [`nextRenderUsers`](../../interface/application.js#L10118) | 10118 |
+| [`profileFields`](../../interface/application.js#L10120) | 10120 |
+| [`stat`](../../interface/application.js#L10141) | 10141 |
+| [`bars`](../../interface/application.js#L10144) | 10144 |
+| [`operation`](../../interface/application.js#L10200) | 10200 |
+| [`filterUserRows`](../../interface/application.js#L10220) | 10220 |
+| [`closeUserWorkspace`](../../interface/application.js#L10244) | 10244 |
+| [`loadCentralUsers`](../../interface/application.js#L10273) | 10273 |
+| [`changeCentralUser`](../../interface/application.js#L10279) | 10279 |
+| [`importPanel`](../../interface/application.js#L10290) | 10290 |
+| [`cancelImport`](../../interface/application.js#L10294) | 10294 |
+| [`nextImportModalClosed`](../../interface/application.js#L10300) | 10300 |
+| [`showImportReview`](../../interface/application.js#L10301) | 10301 |
+| [`chooseImportFile`](../../interface/application.js#L10341) | 10341 |
+| [`actOnImport`](../../interface/application.js#L10358) | 10358 |
 
 ## interface/sign-in.js
 
@@ -522,14 +536,13 @@ The account hydration/photo functions now have purpose-based callable bindings m
 | --- | ---: |
 | [`$`](../../interface/sign-in.js#L2) | 2 |
 | [`applySignInTheme`](../../interface/sign-in.js#L5) | 5 |
-| [`showMfaQr`](../../interface/sign-in.js#L22) | 22 |
+| [`showMfaQr`](../../interface/sign-in.js#L21) | 21 |
 | [`showSession`](../../interface/sign-in.js#L30) | 30 |
-| [`request`](../../interface/sign-in.js#L47) | 47 |
-| [`display`](../../interface/sign-in.js#L51) | 51 |
-| [`loadUsers`](../../interface/sign-in.js#L150) | 150 |
-| [`adminAction`](../../interface/sign-in.js#L175) | 175 |
-| [`showRecoveryFeedback`](../../interface/sign-in.js#L206) | 206 |
-| [`resetRecoveryFlow`](../../interface/sign-in.js#L211) | 211 |
+| [`request`](../../interface/sign-in.js#L40) | 40 |
+| [`display`](../../interface/sign-in.js#L44) | 44 |
+| [`showRecoveryFeedback`](../../interface/sign-in.js#L156) | 156 |
+| [`resetRecoveryFlow`](../../interface/sign-in.js#L161) | 161 |
+| [`clearRequiredMfaDisplay`](../../interface/sign-in.js#L218) | 218 |
 
 ## backend/access_point_review.py
 
@@ -542,33 +555,39 @@ The account hydration/photo functions now have purpose-based callable bindings m
 
 | Function | Line |
 | --- | ---: |
-| [`queue_email`](../../backend/account_email.py#L32) | 32 |
-| [`queue_email.deliver`](../../backend/account_email.py#L37) | 37 |
-| [`email_proof_secret`](../../backend/account_email.py#L54) | 54 |
-| [`_digest`](../../backend/account_email.py#L91) | 91 |
-| [`email_attempts_remaining`](../../backend/account_email.py#L100) | 100 |
-| [`issue_email_proof`](../../backend/account_email.py#L109) | 109 |
-| [`confirm_email_proof`](../../backend/account_email.py#L140) | 140 |
-| [`security_recipients`](../../backend/account_email.py#L199) | 199 |
-| [`notify_security_change`](../../backend/account_email.py#L214) | 214 |
-| [`record_blocked_sign_in`](../../backend/account_email.py#L235) | 235 |
+| [`queue_email`](../../backend/account_email.py#L33) | 33 |
+| [`queue_email.deliver`](../../backend/account_email.py#L38) | 38 |
+| [`email_proof_secret`](../../backend/account_email.py#L55) | 55 |
+| [`_digest`](../../backend/account_email.py#L92) | 92 |
+| [`email_attempts_remaining`](../../backend/account_email.py#L101) | 101 |
+| [`issue_email_proof`](../../backend/account_email.py#L110) | 110 |
+| [`confirm_email_proof`](../../backend/account_email.py#L141) | 141 |
+| [`security_recipients`](../../backend/account_email.py#L200) | 200 |
+| [`notify_security_change`](../../backend/account_email.py#L215) | 215 |
+| [`role_change_notifications`](../../backend/account_email.py#L241) | 241 |
+| [`record_blocked_sign_in`](../../backend/account_email.py#L270) | 270 |
 
 ## backend/account_security.py
 
 | Function | Line |
 | --- | ---: |
-| [`change_own_password`](../../backend/account_security.py#L9) | 9 |
-| [`begin_mfa_enrolment`](../../backend/account_security.py#L31) | 31 |
-| [`complete_mfa_enrolment`](../../backend/account_security.py#L55) | 55 |
+| [`change_own_password`](../../backend/account_security.py#L13) | 13 |
+| [`begin_mfa_enrolment`](../../backend/account_security.py#L35) | 35 |
+| [`complete_mfa_enrolment`](../../backend/account_security.py#L59) | 59 |
+| [`_pending_mandatory_mfa_account`](../../backend/account_security.py#L80) | 80 |
+| [`start_required_mfa_enrolment`](../../backend/account_security.py#L93) | 93 |
+| [`_record_mfa_change`](../../backend/account_security.py#L112) | 112 |
+| [`confirm_required_mfa_enrolment`](../../backend/account_security.py#L128) | 128 |
+| [`remove_own_mfa`](../../backend/account_security.py#L144) | 144 |
 
 ## backend/accounts.py
 
 | Function | Line |
 | --- | ---: |
-| [`hash_password`](../../backend/accounts.py#L14) | 14 |
-| [`verify_password`](../../backend/accounts.py#L22) | 22 |
-| [`bootstrap_first_admin`](../../backend/accounts.py#L41) | 41 |
-| [`confirm_admin_mfa`](../../backend/accounts.py#L64) | 64 |
+| [`hash_password`](../../backend/accounts.py#L15) | 15 |
+| [`verify_password`](../../backend/accounts.py#L23) | 23 |
+| [`bootstrap_first_admin`](../../backend/accounts.py#L42) | 42 |
+| [`confirm_admin_mfa`](../../backend/accounts.py#L66) | 66 |
 
 ## backend/application_integrity.py
 
@@ -590,7 +609,8 @@ The account hydration/photo functions now have purpose-based callable bindings m
 
 | Function | Line |
 | --- | ---: |
-| [`authenticate`](../../backend/authentication.py#L14) | 14 |
+| [`verify_active_password`](../../backend/authentication.py#L18) | 18 |
+| [`authenticate`](../../backend/authentication.py#L32) | 32 |
 
 ## backend/collection_saves.py
 
@@ -793,15 +813,15 @@ The account hydration/photo functions now have purpose-based callable bindings m
 
 | Function | Line |
 | --- | ---: |
-| [`_admin`](../../backend/permissions.py#L13) | 13 |
-| [`_target`](../../backend/permissions.py#L22) | 22 |
-| [`create_user`](../../backend/permissions.py#L31) | 31 |
-| [`set_permission`](../../backend/permissions.py#L63) | 63 |
-| [`can_access`](../../backend/permissions.py#L113) | 113 |
-| [`set_account_active`](../../backend/permissions.py#L135) | 135 |
-| [`delete_user`](../../backend/permissions.py#L174) | 174 |
-| [`set_administrator`](../../backend/permissions.py#L201) | 201 |
-| [`can_replace_inventory`](../../backend/permissions.py#L242) | 242 |
+| [`_admin`](../../backend/permissions.py#L11) | 11 |
+| [`_target`](../../backend/permissions.py#L20) | 20 |
+| [`create_user`](../../backend/permissions.py#L29) | 29 |
+| [`set_permission`](../../backend/permissions.py#L62) | 62 |
+| [`can_access`](../../backend/permissions.py#L73) | 73 |
+| [`set_account_active`](../../backend/permissions.py#L77) | 77 |
+| [`delete_user`](../../backend/permissions.py#L116) | 116 |
+| [`set_administrator`](../../backend/permissions.py#L144) | 144 |
+| [`can_replace_inventory`](../../backend/permissions.py#L185) | 185 |
 
 ## backend/profiles.py
 
@@ -840,11 +860,11 @@ The account hydration/photo functions now have purpose-based callable bindings m
 | Function | Line |
 | --- | ---: |
 | [`login`](../../backend/request_auth.py#L19) | 19 |
-| [`csrf_for_session`](../../backend/request_auth.py#L35) | 35 |
-| [`authenticated_account`](../../backend/request_auth.py#L50) | 50 |
-| [`authorised_mutation`](../../backend/request_auth.py#L57) | 57 |
-| [`logout`](../../backend/request_auth.py#L68) | 68 |
-| [`authorised_inventory_import`](../../backend/request_auth.py#L80) | 80 |
+| [`csrf_for_session`](../../backend/request_auth.py#L36) | 36 |
+| [`authenticated_account`](../../backend/request_auth.py#L51) | 51 |
+| [`authorised_mutation`](../../backend/request_auth.py#L58) | 58 |
+| [`logout`](../../backend/request_auth.py#L69) | 69 |
+| [`authorised_inventory_import`](../../backend/request_auth.py#L81) | 81 |
 
 ## backend/reset_inventory.py
 
@@ -852,38 +872,70 @@ The account hydration/photo functions now have purpose-based callable bindings m
 | --- | ---: |
 | [`reset_inventory`](../../backend/reset_inventory.py#L13) | 13 |
 
+## backend/role_policy.py
+
+| Function | Line |
+| --- | ---: |
+| [`AccountRolePolicy.allows`](../../backend/role_policy.py#L20) | 20 |
+| [`evaluate_role_policy`](../../backend/role_policy.py#L32) | 32 |
+| [`assign_staff_member`](../../backend/role_policy.py#L74) | 74 |
+
+## backend/roles.py
+
+| Function | Line |
+| --- | ---: |
+| [`_json`](../../backend/roles.py#L23) | 23 |
+| [`_validate_action`](../../backend/roles.py#L27) | 27 |
+| [`_require_actor`](../../backend/roles.py#L67) | 67 |
+| [`role_catalogue`](../../backend/roles.py#L73) | 73 |
+| [`account_access_details`](../../backend/roles.py#L84) | 84 |
+| [`_action_targets`](../../backend/roles.py#L113) | 113 |
+| [`_apply_values`](../../backend/roles.py#L135) | 135 |
+| [`_security_snapshot`](../../backend/roles.py#L167) | 167 |
+| [`_preview_impact`](../../backend/roles.py#L198) | 198 |
+| [`_confirmation_signature`](../../backend/roles.py#L236) | 236 |
+| [`_issue_preview`](../../backend/roles.py#L243) | 243 |
+| [`preview_role_change`](../../backend/roles.py#L251) | 251 |
+| [`confirm_role_change`](../../backend/roles.py#L263) | 263 |
+| [`_audit_role_value`](../../backend/roles.py#L315) | 315 |
+
 ## backend/schema.py
 
 | Function | Line |
 | --- | ---: |
-| [`initialise_database`](../../backend/schema.py#L55) | 55 |
+| [`initialise_database`](../../backend/schema.py#L56) | 56 |
+| [`migrate_role_permissions`](../../backend/schema.py#L199) | 199 |
+| [`verify_role_migration`](../../backend/schema.py#L284) | 284 |
+| [`migrate_configurable_builtin_roles`](../../backend/schema.py#L310) | 310 |
+
 
 ## backend/server.py
 
 | Function | Line |
 | --- | ---: |
-| [`validate_public_origin`](../../backend/server.py#L73) | 73 |
-| [`connect`](../../backend/server.py#L91) | 91 |
-| [`initialise_database`](../../backend/server.py#L99) | 99 |
-| [`Handler.end_headers`](../../backend/server.py#L105) | 105 |
-| [`Handler.do_GET`](../../backend/server.py#L112) | 112 |
-| [`Handler.do_POST`](../../backend/server.py#L440) | 440 |
-| [`Handler.handle_user_mutation`](../../backend/server.py#L568) | 568 |
-| [`Handler.handle_account_email`](../../backend/server.py#L926) | 926 |
-| [`Handler.handle_profile_photo`](../../backend/server.py#L1006) | 1006 |
-| [`Handler.handle_import`](../../backend/server.py#L1037) | 1037 |
-| [`Handler.respond`](../../backend/server.py#L1113) | 1113 |
-| [`main`](../../backend/server.py#L1126) | 1126 |
+| [`validate_public_origin`](../../backend/server.py#L80) | 80 |
+| [`connect`](../../backend/server.py#L98) | 98 |
+| [`initialise_database`](../../backend/server.py#L106) | 106 |
+| [`Handler.end_headers`](../../backend/server.py#L112) | 112 |
+| [`Handler.do_GET`](../../backend/server.py#L119) | 119 |
+| [`Handler.do_POST`](../../backend/server.py#L448) | 448 |
+| [`Handler.handle_role_change`](../../backend/server.py#L619) | 619 |
+| [`Handler.handle_user_mutation`](../../backend/server.py#L661) | 661 |
+| [`Handler.handle_account_email`](../../backend/server.py#L1037) | 1037 |
+| [`Handler.handle_profile_photo`](../../backend/server.py#L1117) | 1117 |
+| [`Handler.handle_import`](../../backend/server.py#L1148) | 1148 |
+| [`Handler.respond`](../../backend/server.py#L1224) | 1224 |
+| [`main`](../../backend/server.py#L1237) | 1237 |
 
 ## backend/sessions.py
 
 | Function | Line |
 | --- | ---: |
-| [`_digest`](../../backend/sessions.py#L15) | 15 |
-| [`login_session`](../../backend/sessions.py#L25) | 25 |
-| [`session_account`](../../backend/sessions.py#L49) | 49 |
-| [`logout_session`](../../backend/sessions.py#L72) | 72 |
-| [`revoke_account_sessions`](../../backend/sessions.py#L81) | 81 |
+| [`_digest`](../../backend/sessions.py#L16) | 16 |
+| [`login_session`](../../backend/sessions.py#L26) | 26 |
+| [`session_account`](../../backend/sessions.py#L55) | 55 |
+| [`logout_session`](../../backend/sessions.py#L75) | 75 |
+| [`revoke_account_sessions`](../../backend/sessions.py#L84) | 84 |
 
 ## backend/settings_saves.py
 

@@ -17,13 +17,14 @@ THROTTLE = LoginThrottle()
 
 
 def login(connection, peer, username, password, *, mfa_code=None, now=None):
-    """Throttle invalid credentials; return a session token or None."""
+    """Throttle invalid proofs; report valid-password setup without a session."""
     if not isinstance(username, str) or not username.strip():
         return None
     if not THROTTLE.allowed(peer, username):
         return None
     token = login_session(
-        connection, username, password, mfa_code=mfa_code, now=now
+        connection, username, password, mfa_code=mfa_code, now=now,
+        report_enrolment=True,
     )
     if token is None:
         THROTTLE.failed(peer, username)

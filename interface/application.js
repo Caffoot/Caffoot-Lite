@@ -1217,7 +1217,7 @@ function hierarchyValidateTypes(subnets) {
                 return renderInterfaceTemplate("shared/render-section-header-3",[options.map(([key,label,icon])=>tab(key,label,icon,'select-rack-section',v13RackSection===key,'racks-tab','data-section-tab')).join('')]);
             }
             if (section === 'users') {
-                const options=[['overview','Overview','i-grid'],['list','User List','i-users'],['add','Add User','i-user']];
+                const options=[['overview','Overview','i-grid'],['list','User List','i-users'],['add','Add User','i-user'],['roles','Manage Roles','i-shield']];
                 return renderInterfaceTemplate("shared/render-section-header-4",[options.map(([key,label,icon])=>tab(key,label,icon,'select-users-section',activeUsersTab===key,'tab')).join('')]);
             }
             return '';
@@ -8818,7 +8818,7 @@ function openIpModal(ip) {
                     break;
                 }
                 case 'select-users-section': {
-                    if (['overview','list','add'].includes(target.dataset.tab)) {
+                    if (['overview','list','add','roles'].includes(target.dataset.tab)) {
                         activeUsersTab = target.dataset.tab;
                         switchTab('users');
                     }
@@ -8876,6 +8876,7 @@ void (async () => {
   let pendingSave = false;
   let activeDelete = null;
   let sessionIsAdmin = false;
+  let sessionCanEnterInventory = false;
   async function refreshCentralInventory(render = true) {
     const response = await fetch('/api/inventory/state', {cache:'no-store'});
     if (!response.ok) throw new Error(response.status === 401 ? 'Please sign in first.' : 'Unable to load central inventory.');
@@ -8958,6 +8959,7 @@ void (async () => {
     if (['open-device-modal','duplicate-device','duplicate-device-from-details'].includes(action))
       return !(editPermissions.Devices && editPermissions.IPAM);
     if (action === 'open-subnet-modal'||action==='open-multiple-subnets') return !editPermissions.IPAM;
+    if (actionCanEditRack.has(action)) return !editPermissions.Racks;
     if (action === 'check-inventory-safety')
       return !['Devices','IPAM','Racks'].every(section => permissions[section]);
     if (action === 'apply-inventory-integrity-repairs')
@@ -8980,11 +8982,32 @@ void (async () => {
   function applyAllowedControls() {
     for(const root of [document.getElementById('sidebar'), document.getElementById('main-content'), document.getElementById('modal-content')]){
       if(!root) continue;
+      if(!editPermissions.Racks){
+        // Keep equipment and empty U positions visible without editing affordances.
+        root.querySelectorAll('button[data-vertical-accessory],button[data-action="place-rack-item"]').forEach(button=>{
+          const display=document.createElement('span');
+          for(const attribute of button.attributes){
+            if(!['type','data-action','draggable','aria-label'].includes(attribute.name))
+              display.setAttribute(attribute.name,attribute.value);
+          }
+          display.innerHTML=button.innerHTML;
+          display.style.cursor='default';
+          if(button.dataset.action==='place-rack-item'){
+            display.setAttribute('aria-label','Empty U'+button.dataset.u);
+            display.lastElementChild.textContent='Empty';
+          }else display.setAttribute('aria-label',button.getAttribute('aria-label').replace(/^Edit /,''));
+          button.replaceWith(display);
+        });
+        root.querySelectorAll('[data-rack-device],[data-rack-accessory]').forEach(item=>{
+          item.draggable=false;
+          item.style.cursor='default';
+        });
+      }
       root.querySelectorAll('button').forEach(button=>{
         const blocked=isBlockedAction(button.dataset.action || '',button);
         const unsupportedSubmit=button.type==='submit' && button.form && !(
-          button.form?.matches('#next-account-password-form,#next-account-mfa-start,#next-account-mfa-confirm,#personal-details-form,#account-email-verification-form') ||
-          (sessionIsAdmin && button.closest('#next-user-create-form,#next-user-profile-form,#smtp-settings-form,#smtp-test-form')) ||
+          button.form?.matches('#next-account-password-form,#next-account-mfa-start,#next-account-mfa-confirm,#account-mfa-removal-form,#personal-details-form,#account-email-verification-form') ||
+          (sessionIsAdmin && (button.closest('#next-user-create-form,#next-user-profile-form,#smtp-settings-form,#smtp-test-form') || button.form?.matches('#role-definition-form'))) ||
           (editPermissions.Devices && button.form?.matches('form[data-device-form="true"]')) ||
           (editPermissions.IPAM && button.closest('form[data-form-action="ip"],form[data-form-action="bulk-ip"],form[data-form-action="subnet"],form[data-ipam-subnet-creation]')) ||
           (editPermissions.Devices && editPermissions.Racks && button.closest('#rack-shelf-removal-form')) ||
@@ -9191,7 +9214,7 @@ void (async () => {
   }, true);
   const originalSwitchTab = switchTab;
   switchTab = function(tab) {
-    if (((tab === 'users' || tab === 'settings') && !sessionIsAdmin) ||
+    if ((!sessionCanEnterInventory && tab!=='account') || ((tab === 'users' || tab === 'settings') && !sessionIsAdmin) ||
         (section[tab] && !permissions[section[tab]])) {
       showToast('You do not have access to this section.', 'error');
       return;
@@ -9735,6 +9758,8 @@ void (async () => {
 
   // Self-service account controls follow the established Users card styling.
   let sessionMfaEnrolled=false;
+  let sessionAssignedRoles=[];
+  let sessionMfaRemovalEligible=false;
   function renderAccountSections(){
     const card='rounded-2xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 p-5 space-y-3';
     const field='block w-full max-w-sm border rounded-lg p-2 mt-1 text-slate-900';
@@ -9765,7 +9790,8 @@ void (async () => {
   let accountPhotoUrl=null;
   function renderAccountMfaPanel(){
     if(sessionMfaEnrolled){
-      return renderInterfaceTemplate("my-account/render-account-mfa-panel-1",[]);
+      return renderInterfaceTemplate("my-account/render-account-mfa-panel-1",[])+
+        (sessionMfaRemovalEligible?renderInterfaceTemplate("my-account/optional-mfa-removal",[]):'');
     }
     return renderInterfaceTemplate("my-account/render-account-mfa-panel-2",[])+
       renderInterfaceTemplate("my-account/render-account-mfa-panel-3",[])+
@@ -9777,7 +9803,9 @@ void (async () => {
     const username=escapeHtml(signedInUsername||'');
     return accountMarkup
       .replaceAll('{{C_USERNAME}}',username)
-      .replaceAll('{{C_ROLE}}',sessionIsAdmin?'Administrator':'User')
+      .replaceAll('{{C_ROLE}}','<span aria-label="Assigned Roles">'+sessionAssignedRoles.map(role=>
+        escapeHtml(role.name)+(role.enabled?'':' (Disabled)')).join(', ')+'</span>'+
+        (sessionIsAdmin?'<br><span aria-label="Administrator Status">Administrator</span>':''))
       .replaceAll('{{C_MFA}}',sessionMfaEnrolled?'Enabled':'Not enrolled')
       .replace('<!--CAFFOOT_MFA_PANEL-->',renderAccountMfaPanel());
   };
@@ -9953,6 +9981,140 @@ void (async () => {
   // Users: administrator-only section, following the published sidebar and panel style.
   let users = null;
   let activeUserEditorId = null;
+  let roleCatalogue=[];
+  const roleSections=['Devices','IPAM','Racks'];
+  const roleLayers=[];
+  function permissionLabel(level){
+    return ({read:'Read',edit:'Edit',deny:'No Access'})[level]||'No Access';
+  }
+  function accountMfaLabel(user){
+    return user.mfaEnrolled?'MFA Enrolled':user.accessDetails?.mfaPending?'MFA Required · Setup Pending':'MFA Optional';
+  }
+  function renderRoleMemberships(user,own){
+    const assigned=new Set(user.accessDetails.roles.map(role=>role.id));
+    return '<div class="section-label" style="margin-top:24px">Assigned Roles</div><p class="formhint">Staff Member is automatic. Each additional enabled role requires MFA, even without section grants. Review and confirm each change.</p><div class="role-memberships">'+roleCatalogue.map(role=>
+      '<label class="role-membership"><input type="checkbox" data-role-membership="'+role.id+'" data-user-id="'+user.id+'" '+(assigned.has(role.id)?'checked ':'')+(role.roleKey==='staff_member'||own?'disabled ':'')+'><span>'+escapeHtml(role.name)+(role.isBuiltin?' · Protected':'')+(!role.enabled?' · Disabled':'')+'</span></label>'
+    ).join('')+'</div>';
+  }
+  function renderRoleCatalogue(){
+    return '<section class="section active" aria-label="Manage Roles"><div class="section-heading"><div><h2>Manage Roles</h2><p>Reusable section grants, separate from Administrator status.</p></div><button type="button" class="btn primary" data-role-command="create">+ Create Role</button></div><div class="card cardpad">'+roleCatalogue.map(role=>
+      '<div class="switch-row role-catalogue-row"><div><strong>'+escapeHtml(role.name)+'</strong><small>'+(role.roleKey==='staff_member'?'Protected Staff Member baseline':(role.isBuiltin?'Protected Identity · ':'')+(role.enabled?'Enabled · MFA Required':'Disabled · Assignments Retained'))+' · '+role.accountCount+' Assigned Accounts</small><small>'+roleSections.map(section=>section+': '+permissionLabel(role.grants[section])).join(' · ')+'</small></div><button type="button" class="btn" data-role-command="edit" data-role-id="'+role.id+'" '+(role.roleKey==='staff_member'?'disabled':'')+'>'+(role.roleKey==='staff_member'?'Protected':'Manage')+'</button></div>'
+    ).join('')+'</div><p class="formhint">Disabling a role retains assignments. Other roles and individual overrides may retain access. Every change needs a server preview and confirmation. Security notices depend on configured SMTP and verified email addresses.</p></section>';
+  }
+  function openRoleLayer(title,description,body,actions){
+    const host=document.getElementById('main-content');
+    const opener=document.activeElement;
+    const previous=[...host.children,document.getElementById('sidebar'),document.querySelector('.topbar')].filter(Boolean).map(element=>[element,element.inert]);
+    previous.forEach(([element])=>element.inert=true);
+    const layer=document.createElement('div');layer.className='users-live';layer.dataset.roleLayer='';
+    layer.innerHTML='<div class="modal-layer users-management-modal"><div class="modal" role="dialog" aria-modal="true" aria-labelledby="role-dialog-title-'+roleLayers.length+'"><div class="modal-head"><div><h2 id="role-dialog-title-'+roleLayers.length+'">'+escapeHtml(title)+'</h2><p>'+escapeHtml(description)+'</p></div><button type="button" class="close app-modal-close" data-role-command="close" aria-label="Close Dialog">Close ×</button></div><div class="modal-body">'+body+'<p class="formhint" role="status" data-role-feedback tabindex="-1"></p><div class="modal-actions">'+actions+'</div></div></div></div>';
+    const state={layer,previous,opener,overflow:document.body.style.overflow};
+    roleLayers.push(state);host.append(layer);document.body.style.overflow='hidden';
+    layer.querySelector('[data-role-command="close"]').focus();return layer;
+  }
+  function closeRoleLayer(){
+    const state=roleLayers.pop();if(!state)return;
+    state.layer.remove();state.previous.forEach(([element,inert])=>element.inert=inert);
+    document.body.style.overflow=state.overflow;
+    if(state.opener?.isConnected)state.opener.focus();
+  }
+  function renderRoleDefinition(role){
+    if(!role)return 'Deleted';
+    return escapeHtml(role.name)+' · '+(role.enabled?'Enabled':'Disabled')+' · '+roleSections.map(section=>section+': '+permissionLabel(role.grants[section])).join(' · ');
+  }
+  function renderRoleImpact(preview){
+    if(!preview.available)return '<p>The target or change is no longer available. Close this preview and refresh the list.</p>';
+    let html='<p>'+preview.accountCount+' Affected Accounts · '+preview.revokedSessionCount+' Sessions To End</p>';
+    if('roleBefore' in preview)html+='<div class="note-row"><div><strong>Role Definition</strong><p>Before: '+renderRoleDefinition(preview.roleBefore)+'</p><p>After: '+renderRoleDefinition(preview.roleAfter)+'</p></div></div>';
+    html+='<div class="role-impact-list">'+preview.users.map(user=>{
+      const access=state=>roleSections.map(section=>{
+        const rights=state.sections[section];
+        return '<li><strong>'+section+'</strong>: Inherited '+permissionLabel(rights.inherited)+'; Override '+(rights.override===null?'Inherit':permissionLabel(rights.override))+'; Effective '+permissionLabel(rights.effective)+'</li>';
+      }).join('');
+      const state=details=>'<p>Roles: '+escapeHtml(details.roles.map(role=>role.name+(role.enabled?'':' (Disabled)')).join(', '))+'</p><ul>'+access(details)+'</ul><p>MFA: '+(details.mfaEnrolled?'Enrolled':details.mfaPending?'Required · Setup Pending':'Optional')+'; Mandatory: '+(details.mfaMandatory?'Yes':'No')+'</p>';
+      return '<section class="role-impact-account"><h3>'+escapeHtml(user.username)+'</h3><strong>Before</strong>'+state(user.before)+'<strong>After</strong>'+state(user.after)+'<p>Retained Permissions: '+(Object.entries(user.retainedPermissions).map(([section,level])=>section+' '+permissionLabel(level)).join(', ')||'None')+'</p><p>'+user.sessionCount+' Stored Sessions; '+(user.revokeSessions?user.revokedSessionCount+' Will End':'Sessions Retained')+'. Configured rights remain subject to active-account and MFA checks.</p></section>';
+    }).join('')+'</div>';
+    return html;
+  }
+  async function requestRoleChange(path,payload){
+    const response=await fetch('/api/users/roles/'+path,{method:'POST',headers:{'Content-Type':'application/json','X-CSRF-Token':csrfToken},body:JSON.stringify(payload)});
+    const result=await response.json();
+    if(response.status===409&&result.preview)return result;
+    if(!response.ok)throw Error(result.error||'Unable to review role change.');
+    return result;
+  }
+  function roleNotificationMessage(notice){
+    if(!notice)return 'Change saved. Notification state is unavailable; email delivery is not confirmed.';
+    return 'Change saved. '+(!notice.smtpConfigured?'SMTP is not configured. ':notice.queued+' Notices Queued; '+notice.coalesced+' Coalesced; '+notice.notQueued+' Not Queued. ')+notice.eligibleAccountCount+' of '+notice.accountCount+' affected accounts have eligible verified email. Queue admission does not confirm delivery. '+notice.guidance;
+  }
+  async function previewRoleAction(action){
+    const preview=await requestRoleChange('preview',{action});
+    const layer=openRoleLayer('Review Access Change','Review the server-computed consequences before confirming.','<div data-role-impact>'+renderRoleImpact(preview)+'</div>','<button type="button" class="btn" data-role-command="close">Cancel</button><button type="button" class="btn primary" data-role-command="confirm">Confirm Change</button>');
+    layer.rolePreview=preview;
+  }
+  function openRoleEditor(roleId){
+    const role=roleCatalogue.find(entry=>entry.id===roleId);
+    if(role?.roleKey==='staff_member')return;
+    const grants=role?.grants||{};
+    const body='<form id="role-definition-form"><div class="field"><label for="role-name">Role Name</label><input class="input" id="role-name" name="name" required maxlength="80" '+(role?.isBuiltin?'readonly ':'')+'value="'+escapeHtml(role?.name||'')+'"></div><label class="role-membership"><input type="checkbox" name="enabled" '+(!role||role.enabled?'checked':'')+' '+(!role?'disabled':'')+'>Enabled</label><p class="formhint">Enabled additional roles require MFA. Built-in names are protected; custom role renaming retains assignments.</p><div class="access-grid">'+roleSections.map(section=>'<div class="access-option"><label for="role-grant-'+section+'">'+section+'</label><select class="input" id="role-grant-'+section+'" name="'+section+'">'+[['','No Access'],['read','Read'],['edit','Edit']].map(([value,label])=>'<option value="'+value+'" '+((grants[section]||'')===value?'selected':'')+'>'+label+'</option>').join('')+'</select></div>').join('')+'</div></form>';
+    const layer=openRoleLayer(role?'Manage '+role.name:'Create Role','New roles start unassigned. Administrator status is managed separately.',body,(role&&!role.isBuiltin?'<button class="btn danger" type="button" data-role-command="delete" data-role-id="'+role.id+'">Delete Role</button>':'')+'<button type="submit" form="role-definition-form" class="btn primary">Review Changes</button>');
+    layer.roleId=role?.id;layer.roleKey='custom_'+crypto.randomUUID().replaceAll('-','');
+    layer.querySelector('#role-name').focus();
+  }
+  document.addEventListener('submit',event=>{
+    if(event.target.id!=='role-definition-form'||!sessionIsAdmin)return;
+    event.preventDefault();event.stopImmediatePropagation();
+    const layer=roleLayers.at(-1).layer,form=event.target,data=new FormData(form),grants={};
+    roleSections.forEach(section=>{if(data.get(section))grants[section]=data.get(section);});
+    const action=layer.roleId?{type:'role.update',roleId:layer.roleId,name:String(data.get('name')).trim(),enabled:data.has('enabled'),grants}:{type:'role.create',roleKey:layer.roleKey,name:String(data.get('name')).trim(),grants};
+    // The create contract starts enabled; status can be changed after its first confirmation.
+    if(layer.roleId===undefined&&form.elements.enabled.checked===false){layer.querySelector('[data-role-feedback]').textContent='Create the role first, then disable it through a reviewed change.';return;}
+    void previewRoleAction(action).catch(error=>layer.querySelector('[data-role-feedback]').textContent=error.message);
+  },true);
+  document.addEventListener('click',event=>{
+    const button=event.target.closest('[data-role-command]');if(!button||!sessionIsAdmin)return;
+    event.preventDefault();event.stopImmediatePropagation();
+    const command=button.dataset.roleCommand;
+    if(command==='close'){closeRoleLayer();return;}
+    if(command==='create'||command==='edit'){openRoleEditor(Number(button.dataset.roleId));return;}
+    if(command==='delete'){
+      void previewRoleAction({type:'role.delete',roleId:Number(button.dataset.roleId)}).catch(error=>roleLayers.at(-1).layer.querySelector('[data-role-feedback]').textContent=error.message);return;
+    }
+    if(command==='confirm'){
+      const layer=roleLayers.at(-1).layer,preview=layer.rolePreview;
+      button.disabled=true;
+      void requestRoleChange('confirm',{action:preview.action,proof:preview.proof}).then(async result=>{
+        if(result.status==='confirmation required'){
+          layer.rolePreview=result.preview;
+          const body=layer.querySelector('.modal-body');
+          body.querySelector('[data-role-impact]').innerHTML=renderRoleImpact(result.preview);
+          const feedback=layer.querySelector('[data-role-feedback]');feedback.textContent='The preview changed or expired. Nothing was saved. Review the latest consequences and confirm again.';feedback.focus();
+          button.disabled=!result.preview.available;return;
+        }
+        while(roleLayers.length)closeRoleLayer();
+        await loadCentralUsers();
+        showToast(roleNotificationMessage(result.notifications));
+        document.querySelector(activeUsersTab==='roles'?'[data-role-command="create"]':'[data-action="users-close-editor"]')?.focus();
+      }).catch(error=>{layer.querySelector('[data-role-feedback]').textContent=error.message;button.disabled=false;});
+    }
+  },true);
+  document.addEventListener('change',event=>{
+    const input=event.target.closest('[data-role-membership]');if(!input||!sessionIsAdmin)return;
+    const action={type:input.checked?'membership.assign':'membership.remove',roleId:Number(input.dataset.roleMembership),userId:Number(input.dataset.userId)};
+    input.checked=!input.checked;
+    void previewRoleAction(action).catch(error=>showToast(error.message,'error'));
+  },true);
+  document.addEventListener('keydown',event=>{
+    const dialog=roleLayers.at(-1)?.layer.querySelector('[role="dialog"]')||document.querySelector('.users-management-modal [role="dialog"]');
+    if(!dialog)return;
+    if(event.key==='Escape'&&roleLayers.length){event.preventDefault();event.stopImmediatePropagation();closeRoleLayer();return;}
+    if(event.key!=='Tab')return;
+    const controls=[...dialog.querySelectorAll('button:not(:disabled),input:not(:disabled),select:not(:disabled),[tabindex="0"]')].filter(element=>element.getClientRects().length);
+    const first=controls[0],last=controls.at(-1);
+    if(event.shiftKey&&(document.activeElement===first||!dialog.contains(document.activeElement))){event.preventDefault();last?.focus();}
+    else if(!event.shiftKey&&(document.activeElement===last||!dialog.contains(document.activeElement))){event.preventDefault();first?.focus();}
+  },true);
+
   nextRenderUsers = function() {
     if (!sessionIsAdmin) return '';
     const profileFields=(profile={})=>[
@@ -9987,22 +10149,23 @@ void (async () => {
         '<button class="btn primary" type="button" data-action="users-add-nav">+ Add User</button></div>';
       html+='<div class="cards4">'+stats.map(stat).join('')+'</div>';
       html+='<div class="two-col"><div class="card cardpad"><h3 class="cardtitle">Accounts by role</h3>'+
-        '<p class="sub">Administrators and standard users across this installation.</p>'+
-        bars([['Administrators',admins,''],['Standard users',total-admins,'soft']])+
+        '<p class="sub">Staff Member is automatic; additional roles grant reusable section access.</p>'+
+        bars([['Administrators',admins,''],['Staff Members',total,'soft']])+
         '<div class="card-end"><span class="tiny">All figures come from the saved accounts.</span>'+
         '<button class="action-link" type="button" data-action="select-users-section" data-tab="list">View User List →</button></div></div>';
       html+='<div class="card cardpad"><h3 class="cardtitle">Authenticator enrolment</h3>'+
-        '<p class="sub">MFA is required before editing or administrator access is granted.</p>'+
+        '<p class="sub">Enabled additional roles and wider Read/Edit access require MFA.</p>'+
         bars([['Enrolled',enrolled,''],['Not enrolled',total-enrolled,'orange']])+
-        '<div class="card-end"><span class="tiny">Each user enrols MFA under My Account.</span>'+
+        '<div class="card-end"><span class="tiny">Required enrolment starts at sign-in.</span>'+
         '<button class="action-link" type="button" data-action="users-filter-pending">Review not enrolled →</button></div></div></div>';
       html+='<div class="card cardpad" style="margin-top:17px"><div class="section-heading"><div><h2>Access, made simple</h2>'+
-        '<p>Individual permissions keep responsibilities clearly separated.</p></div></div>'+
+        '<p>Enabled roles supply inherited access; individual overrides take precedence.</p></div></div>'+
         renderInterfaceTemplate("users/read-access-guide",[])+
         '<div class="guide-item"><strong>Read</strong><p>Users can view permitted records without changing information in that section.</p></div>'+
         renderInterfaceTemplate("users/edit-access-guide",[]);
       return html+'</div>';
     }
+    if (activeUsersTab==='roles') return html+renderRoleCatalogue()+'</div>';
     if (activeUsersTab==='add') {
       return html+'<section class="section active users-create-shell" aria-label="Add User">'+
         renderInterfaceTemplate("users/next-render-users-1",[])+
@@ -10019,27 +10182,30 @@ void (async () => {
     }
     const rows=users.map(user=>{
       const own=user.username.toLowerCase()===signedInUsername.toLowerCase();
-      const role=user.isAdmin?'Administrator':'Standard user';
+      const role=user.isAdmin?'Administrator':'Staff Member';
       const grantPills=user.isAdmin?'<span class="badge dark">All sections</span>':['Devices','IPAM','Racks'].map(section=>{
         const level=user.isAdmin?'edit':(user.permissions?.[section]||'');
         return `<span class="mini ${level==='edit'?'edit':level===''?'no':''}" title="${section}: ${level||'No access'}">${section}: ${level==='edit'?'Edit':level==='read'?'Read':'—'}</span>`;
       }).join('');
-      return renderInterfaceTemplate("users/rows-1",[user.id,escapeHtml([user.username,user.profile?.firstName,user.profile?.lastName,user.profile?.displayName,user.profile?.email].filter(Boolean).join(' ').toLowerCase()),user.active?'active':'disabled',user.mfaEnrolled?'enrolled':'pending',escapeHtml(user.username.slice(0,1).toUpperCase()),escapeHtml(user.username),own?'Your account · Protected':(user.profile?.displayName||[user.profile?.firstName,user.profile?.lastName].filter(Boolean).join(' ')||role),user.isAdmin?'blue':'dark',role,user.active?'green':'red',user.active?'Active':'Disabled',user.mfaEnrolled?'green':'amber',user.mfaEnrolled?'✓ MFA enrolled':'○ Not enrolled',grantPills,user.id,own?'View':'Manage']);
+      return renderInterfaceTemplate("users/rows-1",[user.id,escapeHtml([user.username,user.profile?.firstName,user.profile?.lastName,user.profile?.displayName,user.profile?.email].filter(Boolean).join(' ').toLowerCase()),user.active?'active':'disabled',user.mfaEnrolled?'enrolled':'pending',escapeHtml(user.username.slice(0,1).toUpperCase()),escapeHtml(user.username),own?'Your account · Protected':(user.profile?.displayName||[user.profile?.firstName,user.profile?.lastName].filter(Boolean).join(' ')||role),user.isAdmin?'blue':'dark',role,user.active?'green':'red',user.active?'Active':'Disabled',user.mfaEnrolled?'green':'amber',accountMfaLabel(user),grantPills,user.id,own?'View':'Manage',user.accessDetails.roles.filter(role=>role.roleKey!=='staff_member').map(role=>'<span class="badge role-membership-badge '+(role.enabled?'blue':'amber')+'">'+escapeHtml(role.name)+(role.enabled?'':' · Disabled')+'</span>').join('')]);
     }).join('');
     html+=renderInterfaceTemplate("users/account-list-panel",[rows,users.length,users.length]);
     const editingUser=users.find(u=>u.id===activeUserEditorId);
     if(editingUser){
       const own=editingUser.username.toLowerCase()===signedInUsername.toLowerCase();
-      const permissionControls=['Devices','IPAM','Racks'].map(section=>renderInterfaceTemplate("users/permission-controls-1",[section,section,section,editingUser.id,section,own||editingUser.isAdmin?'disabled':'',[['','No access'],['read','Read'],['edit','Edit']].map(([value,label])=>`<option value="${value}" ${(editingUser.isAdmin?'edit':editingUser.permissions?.[section]||'')===value?'selected':''}>${label}</option>`).join('')])).join('');
+      const permissionControls=roleSections.map(section=>{
+        const rights=editingUser.accessDetails.sections[section];
+        return renderInterfaceTemplate("users/permission-controls-1",[section,section,section,editingUser.id,section,own||editingUser.isAdmin?'disabled':'',[[null,'Inherit'],['deny','No Access'],['read','Read'],['edit','Edit']].map(([value,label])=>'<option value="'+(value===null?'':value)+'" '+(rights.override===value?'selected':'')+'>'+label+'</option>').join(''),permissionLabel(rights.inherited),permissionLabel(rights.effective)]);
+      }).join('');
       const operation=(kind,label)=>`<button type="button" class="btn ${kind==='delete'?'danger':''}" data-next-user-operation="${kind}" data-user-id="${editingUser.id}" ${own?'disabled':''}>${label}</button>`;
       const profile=editingUser.profile||{};
       const profileHTML=renderInterfaceTemplate("users/source-profile",[editingUser.id,...['firstName','lastName','displayName','email'].map(key=>escapeHtml(profile[key]||'')),own?'Edit your own personal details through My Account.':'Contact details do not change the sign-in username or account permissions. Saving an email address does not verify it.',own?'disabled':'']);
-      const meta=renderInterfaceTemplate("users/source-user-meta",[editingUser.active?'green':'red',editingUser.active?'Active':'Disabled',editingUser.isAdmin?'blue':'dark',editingUser.isAdmin?'Administrator · all sections':'Standard user',editingUser.mfaEnrolled?'green':'amber',editingUser.mfaEnrolled?'MFA enrolled':'MFA not enrolled']);
+      const meta=renderInterfaceTemplate("users/source-user-meta",[editingUser.active?'green':'red',editingUser.active?'Active':'Disabled',editingUser.isAdmin?'blue':'dark',editingUser.isAdmin?'Administrator · All Sections':'Staff Member',editingUser.mfaEnrolled?'green':'amber',accountMfaLabel(editingUser)]);
       const administratorNote=editingUser.isAdmin?'<div class="note-row" style="margin-bottom:13px">Administrators have access to all inventory sections. Their per-section permissions are not individually configured.</div>':'';
-      const warnings=own?'<div class="modal-warning">You cannot disable, demote or delete your own signed-in administrator account. These controls are intentionally unavailable.</div>':!editingUser.mfaEnrolled&&!editingUser.isAdmin?'<div class="modal-warning">Editing and administrator access require the user to enrol an authenticator in My Account first. Read access is allowed without enrolment.</div>':'';
+      const warnings=own?'<div class="modal-warning">You cannot disable, demote or delete your own signed-in administrator account. These controls are intentionally unavailable.</div>':editingUser.accessDetails.mfaPending?'<div class="modal-warning">MFA enrolment is required before wider Read/Edit access or enabled additional roles can be used. The user will be guided through enrolment before normal sign-in.</div>':'';
       const activeControl=renderInterfaceTemplate("users/source-account-control",[editingUser.active?'Disable account':'Enable account',editingUser.active?'Prevent this person signing in until the account is enabled again.':'Allow this person to sign in again.',operation('active',editingUser.active?'Disable':'Enable')]);
       const administratorControl=renderInterfaceTemplate("users/source-account-control",[editingUser.isAdmin?'Remove administrator':'Make administrator',editingUser.isAdmin?'Return this account to standard-user status.':'Grant existing administrator privileges to an MFA-enrolled account.',operation('admin',editingUser.isAdmin?'Remove admin':'Make admin')]);
-      html+=renderInterfaceTemplate("users/account-management-dialog",[own?'Your administrator account':'Manage '+escapeHtml(editingUser.username),own?'Self-protection prevents account changes here. Use My Account for your own security settings.':'Review access and account controls for this user.',meta,profileHTML,administratorNote,renderInterfaceTemplate("users/access-summary",[permissionControls]),warnings,activeControl,administratorControl,renderInterfaceTemplate("users/source-delete-control",[operation('delete','Delete User')])]);
+      html+=renderInterfaceTemplate("users/account-management-dialog",[own?'Your administrator account':'Manage '+escapeHtml(editingUser.username),own?'Self-protection prevents account changes here. Use My Account for your own security settings.':'Review access and account controls for this user.',meta,profileHTML+renderRoleMemberships(editingUser,own),administratorNote,'<p class="formhint">Permissions from assigned roles can be customised for each user. Select <strong>Inherit</strong> to use the permissions provided by their roles. Select <strong>No Access</strong>, <strong>Read</strong> or <strong>Edit</strong> to set an individual override. Individual overrides take precedence, including when a role’s permissions change.</p>'+renderInterfaceTemplate("users/access-summary",[permissionControls]),warnings,activeControl,administratorControl,renderInterfaceTemplate("users/source-delete-control",[operation('delete','Delete User')])]);
       document.body.style.overflow='hidden';
     }
     return html+'</div>';
@@ -10107,7 +10273,7 @@ void (async () => {
   async function loadCentralUsers() {
     const response=await fetch('/api/users',{cache:'no-store'});
     if (!response.ok) throw new Error('Unable to load users.');
-    users=(await response.json()).users;
+    const data=await response.json();users=data.users;roleCatalogue=data.roles;
     if (currentTab === 'users') renderContent();
   }
   async function changeCentralUser(path,payload) {
@@ -10239,7 +10405,7 @@ void (async () => {
   document.addEventListener('submit',event=>{
     const form=event.target;
     const id=form.id;
-    if(!['next-account-password-form','next-account-mfa-start','next-account-mfa-confirm','personal-details-form'].includes(id))return;
+    if(!['next-account-password-form','next-account-mfa-start','next-account-mfa-confirm','account-mfa-removal-form','personal-details-form'].includes(id))return;
     event.preventDefault();event.stopImmediatePropagation();
     const data=new FormData(form),submit=form.querySelector('button[type="submit"]');
     submit.disabled=true;
@@ -10261,6 +10427,10 @@ void (async () => {
           currentPassword:data.get('currentPassword'),newPassword:data.get('newPassword')
         });
         window.location.assign('/setup');
+      }else if(id==='account-mfa-removal-form'){
+        await postInventory('/api/account/mfa/remove',{password:data.get('password'),code:data.get('code')});
+        form.reset();
+        window.location.assign('/setup#mfa-removed');
       }else if(id==='next-account-mfa-start'){
         const result=await postInventory('/api/account/mfa/start',{password:data.get('password')});
         const panel=document.getElementById('next-account-mfa-details');
@@ -10274,7 +10444,11 @@ void (async () => {
         await postInventory('/api/account/mfa/confirm',{code:data.get('code')});
         window.location.assign('/setup');
       }
-    })().catch(error=>showToast(error.message,'error')).finally(()=>{submit.disabled=false;});
+    })().catch(error=>{
+      const feedback=form.querySelector('[data-mfa-removal-feedback]');
+      if(feedback){feedback.textContent=error.message;feedback.setAttribute('tabindex','-1');feedback.focus();}
+      else showToast(error.message,'error');
+    }).finally(()=>{submit.disabled=false;});
   },true);
   document.addEventListener('change',event=>{
     if(event.target.id!=='account-photo-input')return;
@@ -10308,6 +10482,8 @@ void (async () => {
     event.preventDefault();event.stopImmediatePropagation();
     const form=event.target;
     const fields=new FormData(form);
+    if(fields.get('password')!==fields.get('confirmPassword')){showToast('The initial passwords do not match.','error');form.elements.confirmPassword.focus();return;}
+    const submit=form.querySelector('[type="submit"]');submit.disabled=true;
     void changeCentralUser('/api/users/create',{
       username:fields.get('username'),password:fields.get('password'),
       profile:{
@@ -10319,7 +10495,7 @@ void (async () => {
     }).then(()=>{
       activeUsersTab='list';
       switchTab('users');
-    }).catch(error=>showToast(error.message,'error'));
+    }).catch(error=>{showToast(error.message,'error');submit.disabled=false;});
   },true);
   document.addEventListener('submit',event=>{
     if(event.target.id!=='next-user-profile-form'||!sessionIsAdmin)return;
@@ -10347,16 +10523,10 @@ void (async () => {
   document.addEventListener('change',event=>{
     const select=event.target.closest('[data-next-user-permission]');
     if (!select || !sessionIsAdmin) return;
-    void changeCentralUser('/api/users/permission',{
-      userId:Number(select.dataset.userId),section:select.dataset.section,
-      level:select.value||null
-    }).catch(async error=>{
-      const message = /^MFA enrolment required for (editing|administrators)$/.test(error.message)
-        ? 'This user must set up MFA in My account before editing or administrator access can be granted.'
-        : error.message;
-      showToast(message,'error');
-      await loadCentralUsers().catch(()=>{});
-    });
+    const user=users.find(entry=>entry.id===Number(select.dataset.userId));
+    const action={type:'override.set',userId:user.id,section:select.dataset.section,level:select.value||null};
+    select.value=user.accessDetails.sections[select.dataset.section].override||'';
+    void previewRoleAction(action).catch(error=>showToast(error.message,'error'));
   },true);
   document.addEventListener('click',event=>{
     const element=event.target.closest('[data-next-user-operation],[data-next-import-action],[data-action="next-import-pick"]');
@@ -10454,7 +10624,7 @@ void (async () => {
     if (!element) return;
     const action = element.dataset.action || '';
     if (isBlockedAction(action, element) || (element.matches('button') && element.type==='submit' && element.form &&
-        !element.form.matches('form[data-device-form="true"],#next-user-create-form,#next-user-profile-form,#next-account-password-form,#next-account-mfa-start,#next-account-mfa-confirm,#personal-details-form,#smtp-settings-form,#smtp-test-form,#account-email-verification-form') &&
+        !element.form.matches('form[data-device-form="true"],#role-definition-form,#next-user-create-form,#next-user-profile-form,#next-account-password-form,#next-account-mfa-start,#next-account-mfa-confirm,#account-mfa-removal-form,#personal-details-form,#smtp-settings-form,#smtp-test-form,#account-email-verification-form') &&
         !(editPermissions.IPAM && element.closest('form[data-form-action="ip"],form[data-form-action="bulk-ip"],form[data-form-action="subnet"],form[data-ipam-subnet-creation]')) &&
         !(editPermissions.Devices && editPermissions.Racks && element.closest('#rack-shelf-removal-form')) &&
         !(editPermissions.Racks && element.closest('form[data-form-action="rack"],form[data-form-action="assign"],#rack-accessory-form')))) {
@@ -10464,12 +10634,12 @@ void (async () => {
     }
   },true);
   document.addEventListener('submit',event => {
-    if (event.target.matches('#next-account-password-form,#next-account-mfa-start,#next-account-mfa-confirm,#personal-details-form,#next-user-profile-form,#smtp-settings-form,#smtp-test-form,#account-email-verification-form') ||
+    if (event.target.matches('#next-account-password-form,#next-account-mfa-start,#next-account-mfa-confirm,#account-mfa-removal-form,#personal-details-form,#next-user-profile-form,#smtp-settings-form,#smtp-test-form,#account-email-verification-form') ||
         (editPermissions.Devices && event.target.matches('form[data-device-form="true"]')) ||
         (editPermissions.IPAM && event.target.matches('form[data-form-action="ip"],form[data-form-action="bulk-ip"],form[data-form-action="subnet"],form[data-ipam-subnet-creation]')) ||
         (editPermissions.Racks && event.target.matches('form[data-form-action="rack"],form[data-form-action="assign"],#rack-accessory-form')) ||
         (editPermissions.Devices && editPermissions.Racks && event.target.matches('#rack-shelf-removal-form')) ||
-        (sessionIsAdmin && event.target.matches('#next-user-create-form'))) return;
+        (sessionIsAdmin && event.target.matches('#next-user-create-form,#role-definition-form'))) return;
     event.preventDefault();event.stopImmediatePropagation();
   },true);
   const root=document.getElementById('main-content');
@@ -10481,18 +10651,25 @@ void (async () => {
     const session=await sessionResponse.json();
     csrfToken=session.csrf_token;
     sessionIsAdmin=!!session.is_admin;
+    sessionAssignedRoles=session.assigned_roles||[];
     window.nextSessionIsAdmin=sessionIsAdmin;
     signedInUsername=session.username;
     sessionMfaEnrolled=!!session.mfa_enrolled;
+    sessionMfaRemovalEligible=session.mfa_removal_eligible===true;
+    sessionCanEnterInventory=session.can_enter_inventory===true;
     await loadAccountProfile();
     window.nextMfaEnrolled=sessionMfaEnrolled;
     document.getElementById('next-users-nav').classList.toggle('hidden', !sessionIsAdmin);
     document.getElementById('next-settings-nav').classList.toggle('hidden', !sessionIsAdmin);
     if (sessionIsAdmin) await loadCentralUsers();
-    await refreshCentralInventory(false);
+    if(sessionCanEnterInventory)await refreshCentralInventory(false);
+    else{
+      // The account shell loads only the signed-in user's profile, never inventory.
+      document.querySelectorAll('#sidebar [data-tab]').forEach(button=>{button.hidden=true;button.disabled=true;});
+    }
     // Hide only the browser-backup actions excluded from the server application by issue #215.
     document.querySelectorAll('[data-action="settings-backup"],[data-action="export-data"],[data-action="export-backup"]').forEach(el=>el.hidden=true);
-    switchTab('dashboard');
+    switchTab(sessionCanEnterInventory&&window.location.pathname!=='/account'?'dashboard':'account');
     // Preserve existing fragment entry points without changing server permissions.
     const destination = window.location.hash.slice(1);
     const legacyDestination = {

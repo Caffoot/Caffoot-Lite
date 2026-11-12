@@ -58,7 +58,7 @@ class SessionHttpTests(unittest.TestCase):
 
     def test_subnet_first_batch_permissions_atomicity_and_visible_count_http(self):
         from backend.inventory import stage_inventory
-        from backend.permissions import set_permission
+        from confirmed_permissions import set_permission
         with sqlite3.connect(self.path) as db:
             stage_inventory(db, {"devices":[],"subnets":[],"vlans":[],"racks":[],"rackAccessories":[],"ipAllocations":{}})
             admin = db.execute("SELECT id FROM accounts WHERE is_admin=1").fetchone()[0]
@@ -68,7 +68,10 @@ class SessionHttpTests(unittest.TestCase):
             set_permission(db,admin,editor,"IPAM","edit")
             editor_token=login_session(db,"subnet-editor","initial",mfa_code=code_at(secret,time.time()))
             reader=create_user(db,admin,"subnet-reader","initial");set_permission(db,admin,reader,"IPAM","read")
-            reader_token=login_session(db,"subnet-reader","initial")
+            reader_secret = new_secret()
+            db.execute("UPDATE accounts SET mfa_secret=?,mfa_confirmed=1 WHERE id=?", (reader_secret, reader))
+            db.commit()
+            reader_token=login_session(db,"subnet-reader","initial",mfa_code=code_at(reader_secret,time.time()))
             create_user(db,admin,"subnet-no-access","initial")
             none_token=login_session(db,"subnet-no-access","initial")
         parent={"id":"http-office","kind":"container","name":"Fictional office","cidr":"10.85.0.0/16"}
@@ -173,20 +176,54 @@ class SessionHttpTests(unittest.TestCase):
             self.assertEqual(self.request("/interface/screens/" + filename)[0], 401)
         self.assertNotIn(b"Your inventory is NOT saved in this browser", body)
 
-    def test_modular_files_preserve_inventory_access_boundary(self):
+    def test_packaged_account_resources_require_authentication_without_inventory_data(self):
         with sqlite3.connect(self.path) as db:
             user = create_user(db, 1, "no-inventory-access", "password")
             token = login_session(db, "no-inventory-access", "password")
         for path in ("/interface/application.js", "/interface/screens/dashboard.html",
                      "/interface/styles/device-details.css"):
             self.assertEqual(self.request(path)[0], 401)
-            self.assertEqual(self.request(path, COOKIE_NAME + "=" + token)[0], 403)
+            self.assertEqual(self.request(path, COOKIE_NAME + "=" + token)[0], 200)
             self.assertEqual(self.request(path, COOKIE_NAME + "=" + self.token)[0], 200)
         for path in ("/interface/../backend/server.py", "/interface/design-sources.json",
                      "/interface/screens/not-packaged.html"):
             self.assertEqual(self.request(path)[0], 404)
         for path in ("/interface/sign-in.js", "/interface/styles/sign-in.css"):
             self.assertEqual(self.request(path)[0], 200)
+
+    def test_staff_account_route_and_mfa_eligibility_preserve_data_boundaries(self):
+        from backend.roles import preview_role_change, confirm_role_change
+        with sqlite3.connect(self.path) as db:
+            user = create_user(db, 1, "staff-account", "password")
+            secret = new_secret()
+            db.execute("UPDATE accounts SET mfa_secret=?,mfa_confirmed=1 WHERE id=?", (secret, user))
+            db.commit()
+            token = login_session(db, "staff-account", "password", mfa_code=code_at(secret, time.time()))
+        cookie = COOKIE_NAME + "=" + token
+        self.assertEqual(self.request("/account")[0], 401)
+        self.assertEqual(self.request("/account", cookie)[0], 200)
+        self.assertTrue(json.loads(self.request("/api/session", cookie)[1])["mfa_removal_eligible"])
+        self.assertFalse(json.loads(self.request("/api/session", COOKIE_NAME + "=" + self.token)[1])["mfa_removal_eligible"])
+        for path in ("/inventory", "/inventory?rack-print=same-tab", "/api/inventory/state",
+                     "/api/users", "/api/settings/email", "/api/inventory/devices", "/api/inventory/ipam", "/api/inventory/racks"):
+            self.assertEqual(self.request(path, cookie)[0], 403, path)
+        sections = json.loads(self.request("/api/inventory/sections", cookie)[1])["sections"]
+        self.assertTrue(all(not rights["read"] and not rights["edit"] for rights in sections.values()))
+        profile = json.loads(self.request("/api/account/profile", cookie)[1])
+        self.assertNotIn("owner", json.dumps(profile))
+        with sqlite3.connect(self.path) as db:
+            action = {"type": "role.create", "roleKey": "zero_grant", "name": "Zero Grant", "grants": {}}
+            proof = preview_role_change(db, 1, self.token, action)["proof"]
+            confirm_role_change(db, 1, self.token, action, proof)
+            role = db.execute("SELECT id FROM roles WHERE role_key='zero_grant'").fetchone()[0]
+            action = {"type": "membership.assign", "roleId": role, "userId": user}
+            proof = preview_role_change(db, 1, self.token, action)["proof"]
+            confirm_role_change(db, 1, self.token, action, proof)
+            token = login_session(db, "staff-account", "password", mfa_code=code_at(secret, time.time()))
+        cookie = COOKIE_NAME + "=" + token
+        self.assertFalse(json.loads(self.request("/api/session", cookie)[1])["mfa_removal_eligible"])
+        self.assertEqual(self.request("/account", cookie)[0], 200)
+        self.assertEqual(self.request("/inventory", cookie)[0], 403)
 
     def test_inventory_requires_authenticated_inventory_access(self):
         status, body, cache = self.request("/inventory")
@@ -206,6 +243,13 @@ class SessionHttpTests(unittest.TestCase):
         status, body = response.status, json.loads(response.read())
         conn.close()
         return status, body
+
+    def change_permission(self, data, token=None, csrf=None):
+        action = {"type": "override.set", **data}
+        status, preview = self.post("/api/users/roles/preview", {"action": action}, token, csrf)
+        if status != 200:
+            return status, preview
+        return self.post("/api/users/roles/confirm", {"action": action, "proof": preview["proof"]}, token, csrf)
 
     def test_linked_shelf_removal_http_auth_permissions_and_atomic_result(self):
         from backend.inventory import stage_inventory, reconstruct_inventory
@@ -262,14 +306,14 @@ class SessionHttpTests(unittest.TestCase):
                                         self.token, csrf)
             self.assertEqual(status, 200)
             user_id = created["id"]
-            status, _ = self.post("/api/users/permission",
+            status, _ = self.change_permission(
                                   {"userId": user_id, "section": "Devices", "level": "read"},
                                   self.token, csrf)
             self.assertEqual(status, 200)
-            status, _ = self.post("/api/users/permission",
+            status, _ = self.change_permission(
                                   {"userId": user_id, "section": "Devices", "level": "edit"},
                                   self.token, csrf)
-            self.assertEqual(status, 400)  # Editing requires MFA enrolment.
+            self.assertEqual(status, 200)  # Configured Edit stays blocked until enrolment.
             status, _ = self.post("/api/users/delete", {"userId": user_id}, self.token)
             self.assertEqual(status, 403)  # CSRF required.
             status, _ = self.post("/api/users/delete", {"userId": user_id}, self.token, csrf)
@@ -328,12 +372,15 @@ class SessionHttpTests(unittest.TestCase):
                                        self.token, csrf)
             self.assertEqual(status, 200)
             user_id = result["id"]
-            status, _ = self.post("/api/users/permission",
+            status, _ = self.change_permission(
                                   {"userId": user_id, "section": "Devices", "level": "read"},
                                   self.token, csrf)
             self.assertEqual(status, 200)
         with sqlite3.connect(self.path) as db:
-            reader_token = login_session(db, "reader", "initial")
+            reader_secret = new_secret()
+            db.execute("UPDATE accounts SET mfa_secret=?,mfa_confirmed=1 WHERE id=?", (reader_secret, user_id))
+            db.commit()
+            reader_token = login_session(db, "reader", "initial", mfa_code=code_at(reader_secret, time.time()))
         status, raw, _ = self.request("/api/inventory/state", COOKIE_NAME + "=" + reader_token)
         self.assertEqual(status, 200)
         snapshot = json.loads(raw)
@@ -369,8 +416,7 @@ class SessionHttpTests(unittest.TestCase):
                     (secret, editor_id),
                 )
                 db.commit()
-            status, _ = self.post(
-                "/api/users/permission",
+            status, _ = self.change_permission(
                 {"userId": editor_id, "section": "IPAM", "level": "edit"},
                 self.token, csrf,
             )
@@ -458,7 +504,7 @@ class SessionHttpTests(unittest.TestCase):
                 db.execute("UPDATE accounts SET mfa_secret=?,mfa_confirmed=1 WHERE id=?",
                            (second_secret, second_id))
                 db.commit()
-            status, _ = self.post("/api/users/permission",
+            status, _ = self.change_permission(
                                   {"userId": second_id, "section": "IPAM", "level": "edit"},
                                   self.token, csrf)
             self.assertEqual(status, 200)
@@ -521,6 +567,31 @@ class SessionHttpTests(unittest.TestCase):
         self.assertEqual(len(payload["csrf_token"]), 64)
         self.assertEqual(self.request("/api/inventory")[0], 404)
         self.assertEqual(self.request("/health")[0], 200)
+
+    def test_session_describes_only_own_assigned_roles_separately_from_administrator(self):
+        with sqlite3.connect(self.path) as db:
+            staff = create_user(db, 1, "role-display-staff", "password")
+            for name, enabled in (("Support <Team>", 1), ("Retired Support", 0)):
+                role = db.execute("INSERT INTO roles(role_key,name,enabled) VALUES(?,?,?)",
+                                  ("display_" + str(enabled), name, enabled)).lastrowid
+                db.execute("INSERT INTO account_roles VALUES(1,?)", (role,))
+                if not enabled:
+                    db.execute("INSERT INTO account_roles VALUES(?,?)", (staff, role))
+            db.commit()
+            token = login_session(db, "role-display-staff", "password")
+        for bearer, administrator, expected in (
+            (self.token, True, [{"name": "Staff Member", "enabled": True},
+                                {"name": "Support <Team>", "enabled": True},
+                                {"name": "Retired Support", "enabled": False}]),
+            (token, False, [{"name": "Staff Member", "enabled": True},
+                            {"name": "Retired Support", "enabled": False}]),
+        ):
+            status, body, _ = self.request("/api/session", COOKIE_NAME + "=" + bearer)
+            self.assertEqual(status, 200)
+            session = json.loads(body)
+            self.assertEqual(session["assigned_roles"], expected)
+            self.assertEqual(session["is_admin"], administrator)
+        self.assertEqual(self.request("/api/session")[0], 401)
 
 
     def test_same_tab_print_direct_entry_and_reload_keep_inventory_security(self):

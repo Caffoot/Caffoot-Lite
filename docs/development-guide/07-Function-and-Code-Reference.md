@@ -38,15 +38,18 @@ The Issue #309 tab icons use `renderSectionTabIcon`. `revealSectionTab` scrolls 
 
 ## Accounts and editing
 
+On `milestone-1`, `schema.py:migrate_role_permissions` and `verify_role_migration` introduce and check schema 11 within the existing upgrade transaction. `role_policy.py:assign_staff_member` is shared by first-administrator setup and ordinary account creation. `evaluate_role_policy` combines enabled role grants and individual overrides, and `AccountRolePolicy.allows` applies account, section and MFA safeguards. Authentication, sessions, recovery and the Users response use the same evaluator. See [Shared Roles And Account Permissions](Role-Permissions.md) for development boundaries and rollback requirements.
+
 | File | Search terms |
 | --- | --- |
 | [`accounts.py`](../../backend/accounts.py) | `bootstrap_first_admin`, `confirm_admin_mfa` |
-| [`authentication.py`](../../backend/authentication.py) | `authenticate` |
+| [`authentication.py`](../../backend/authentication.py) | `verify_active_password`, `authenticate`, `MFAEnrolmentRequired` |
 | [`mfa.py`](../../backend/mfa.py) | `new_secret`, `provisioning_uri`, `verify_code` |
 | [`sessions.py`](../../backend/sessions.py) | `login_session`, `session_account`, `revoke_account_sessions` |
 | [`request_auth.py`](../../backend/request_auth.py) | `authorised_mutation`, `authorised_inventory_import` |
+| [`roles.py`](../../backend/roles.py) | `preview_role_change`, `confirm_role_change`, `account_access_details`, `role_catalogue` |
 | [`permissions.py`](../../backend/permissions.py) | `can_access`, `set_permission`, `can_replace_inventory` |
-| [`account_security.py`](../../backend/account_security.py) | `change_own_password`, `begin_mfa_enrolment` |
+| [`account_security.py`](../../backend/account_security.py) | `change_own_password`, `begin_mfa_enrolment`, `start_required_mfa_enrolment`, `confirm_required_mfa_enrolment`, `remove_own_mfa` |
 | [`account_email.py`](../../backend/account_email.py) | `issue_email_proof`, `confirm_email_proof`, `notify_security_change` |
 | [`recover_admin.py`](../../backend/recover_admin.py) | `recover_sole_administrator` (local host command only) |
 | [`http_security.py`](../../backend/http_security.py) | `session_cookie`, `require_same_origin` |
@@ -94,3 +97,33 @@ The [Issue #329 implementation](Issue-329-Subnet-First-IPAM.md) extends the exis
 The [private #329 corrections](Issue-329-Private-Corrections.md) add `subnetNameConflicts` for historical-safe browser checks, `formatSubnetValidationMessage` for user-readable hierarchy feedback and `showSubnetFormError` for visible field-linked messages. Generation supports subnet-sized strides and validated editable CIDRs; server mutation checks enforce new/renamed name uniqueness within the existing transaction. Approved optional planning and select presentation do not change stored relationships or native control semantics.
 
 The [planning/capacity follow-up](Issue-329-Planning-and-Capacity.md) adds `calculateSubnetCapacity` and `updateSubnetCapacityGuidance`, with no stored or automatic prefix change. Browser/server hierarchy helpers allow only strict containment of an independent network by a block. Parent filters still use explicit links. Reviewed block deletion skips independent device/allocation ownership, while all network deletion checks and explicit-child guards remain.
+
+
+## Role And MFA Interface Integration
+
+`schema.py:migrate_configurable_builtin_roles` applies schema 12 after the
+unchanged schema-11 migration, preserves existing role IDs and section levels,
+and invalidates sessions/proofs for active accounts newly assigned IT Staff.
+`roles.py:_action_targets` distinguishes the immutable Staff Member baseline
+from configurable built-ins with protected names/keys and allowed membership,
+grant and enabled-state changes. Existing preview/confirmation remains authoritative.
+The existing catalogue/editor/membership renderers expose those distinctions;
+Manage User explains overrides in a paragraph outside its three-card access grid.
+
+`nextRenderAccount` renders the session's own `assigned_roles` names/enabled
+flags, including disabled assignments, separately from `is_admin`.
+`isBlockedAction` checks rack actions directly against Racks Edit, including
+unassignment and suggested mounting. `applyAllowedControls` preserves vertical
+accessory and empty-U representations as non-interactive content for readers
+and removes drag affordances without changing stored records or data visibility.
+
+For independent schema-upgrade and complete-directory restoration checks, see
+[`test_upgrade_restore.py`](../../tests/test_upgrade_restore.py) and its
+[fictional fixture](../../tests/fixtures/upgrade_restore.py). These test helpers
+are outside the Function Index's documented runtime scope; no runtime function
+or declaration location changes in this verification batch. The
+[rehearsal guide](Upgrade-And-Restore-Rehearsal.md) explains the comparison method.
+
+`renderRoleCatalogue`, `renderRoleMemberships` and `accountMfaLabel` display the `/api/users` catalogue and account details without calculating authoritative grants. `previewRoleAction`, `requestRoleChange` and `renderRoleImpact` connect the server's preview/confirmation responses, including stale proofs. `openRoleEditor`, `openRoleLayer` and `closeRoleLayer` keep the new dialogs within existing Users conventions and contain keyboard focus. `roleNotificationMessage` describes queue state rather than delivery. Existing `nextRenderUsers`, `loadCentralUsers` and account-management handlers retain profile/lifecycle functionality.
+
+`renderAccountMfaPanel` adds the eligible removal form to the existing My Account Security tab. The startup path uses the session's `mfa_removal_eligible` and `can_enter_inventory` flags; Staff-only `/account` skips inventory-state loading. `interface/sign-in.js:clearRequiredMfaDisplay` clears displayed required-enrolment material on completion, cancellation and page exit. Ordinary pre-login enrolment uses `/api/login/mfa/*`, never first-admin setup routes. See the [role guide](Role-Permissions.md#users-and-my-account-interface) for the approved entry route and boundaries.
