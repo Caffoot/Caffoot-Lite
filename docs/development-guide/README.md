@@ -6,7 +6,7 @@ Welcome. This guide explains **how Caffoot Lite actually works**, from the every
 
 ## In simple terms
 
-Original Stage 1 was accepted at `53252613cf5302d8e526324c0982b8807472e251`. Current work adds [IT Staff and schema 12](Role-Permissions.md#configurable-built-in-roles--schema-12) under [issue #365](https://github.com/Caffoot/Caffoot-Lite/issues/365), preserving existing access and mandatory MFA. This additional feature requires private Raspberry Pi acceptance before any new merge decision; PR #358 remains draft. The published baseline remains v2.1. See the [active handover](../development-handovers/milestone-01.md).
+**Current development target: v2.2 (Milestone 01).** Stage 1 was accepted with [IT Staff and schema 12](Role-Permissions.md#configurable-built-in-roles--schema-12) ([issue #365](https://github.com/Caffoot/Caffoot-Lite/issues/365)) and merged into `main` in [PR #358](https://github.com/Caffoot/Caffoot-Lite/pull/358). Stages 2–6 remain outstanding and development uses `milestone-1`. **Published v2.1 remains the supported installation baseline.** See the [active handover](../development-handovers/milestone-01.md), [progress tracker](https://github.com/Caffoot/Caffoot-Lite/issues/351) and [version-aware documentation plan](https://github.com/Caffoot/Caffoot-Lite/issues/366).
 
 Caffoot Lite helps small IT teams document their devices, IP addresses, network racks and changes. The earlier HTML release saves its inventory in one browser. The Docker application keeps a **shared inventory** in a central SQLite database so authorised users see the same information.
 
