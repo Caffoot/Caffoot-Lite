@@ -18,7 +18,7 @@ def reconcile_published_ipam(candidate):
 
     for device in devices:
         ip = device.get("primaryIp")
-        if not ip:
+        if not ip or device.get("primaryIpMode") == "basic":
             continue
         existing = allocations.get(ip)
         if not isinstance(existing, dict):

@@ -4,7 +4,7 @@ from .audit_events import attribute_event
 import time
 from datetime import datetime, timezone
 
-from .application_integrity import validate_detached_application_state
+from .application_integrity import validate_live_application_state as validate_detached_application_state
 from .inventory import reconstruct_inventory
 from .ipam_validation import ip_belongs_to_subnet
 from .normalisation_validation import validate_normalisation_devices
@@ -16,7 +16,7 @@ def plan_ipam_repairs(state):
     """Derive only the safe device-owned IPAM synchronisations in v1.3.3."""
     owners = {}
     for device in state["devices"]:
-        if device.get("primaryIp"):
+        if device.get("primaryIp") and device.get("primaryIpMode") != "basic":
             owners.setdefault(device["primaryIp"], []).append(device)
     fixes = []
     for ip, devices in owners.items():

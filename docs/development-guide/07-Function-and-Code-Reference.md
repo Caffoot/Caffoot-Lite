@@ -40,6 +40,10 @@ The Issue #309 tab icons use `renderSectionTabIcon`. `revealSectionTab` scrolls 
 
 [`feature_settings.py`](../../backend/feature_settings.py) provides `read_feature_settings` and `save_feature_setting`; `Handler.handle_feature_settings` serves the administrator API. Schema 13 stores durable choices separately from inventory settings. See [Optional Features](Optional-Features.md) for defaults, validation, audit, effective access and the remaining UI boundary. `permissions.feature_enabled` composes with RBAC in `can_access`; `inventory_projection.project_inventory_response` filters response copies without changing saved records.
 
+## Optional Device Addresses
+
+`device_addresses.py` prepares and validates the explicit basic-address marker. `application_integrity.validate_live_application_state` permits only that bounded exemption; `validate_detached_application_state` retains strict legacy import validation by default. `ipam_linking.link_device_to_ipam` owns the explicit atomic Device/IPAM association. See [Optional Features](Optional-Features.md#optional-device-addresses-and-explicit-linking) for the data and API contract.
+
 ## Accounts and editing
 
 On `milestone-1`, `schema.py:migrate_role_permissions` and `verify_role_migration` introduce and check schema 11 within the existing upgrade transaction. `role_policy.py:assign_staff_member` is shared by first-administrator setup and ordinary account creation. `evaluate_role_policy` combines enabled role grants and individual overrides, and `AccountRolePolicy.allows` applies account, section and MFA safeguards. Authentication, sessions, recovery and the Users response use the same evaluator. See [Shared Roles And Account Permissions](Role-Permissions.md) for development boundaries and rollback requirements.

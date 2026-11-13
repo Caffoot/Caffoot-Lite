@@ -14,6 +14,8 @@ def validate_normalisation_addresses(candidate):
     primary_ips = set()
 
     for device in devices:
+        if 'primaryIpMode' in device:
+            raise ValueError('Basic IP mode is not supported in published v1.3.3 imports')
         ip = device.get("primaryIp")
         if not ip:
             continue

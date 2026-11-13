@@ -15,6 +15,16 @@
 - [ ] Obtain separate final milestone merge approval; verify the resulting `main` build
 - [ ] Obtain separate v2.2 publication approval and verify published image/platforms, release notes and installation links before changing current-release instructions
 
+## Stage 2 Batch 3 — Optional Addresses And Explicit IPAM Linking
+
+Verified baseline: `milestone-1` merge `339ed5f1d7f7415e126553ad06a89411d34cc0f9`, following the [approved contract](https://github.com/Caffoot/Caffoot-Lite/issues/238#issuecomment-6821230015) and [merge handover](https://github.com/Caffoot/Caffoot-Lite/issues/238#issuecomment-6862456347). Branch: `stage-2-batch-3-optional-ip-linking`.
+
+Initial backend checkpoint: no-IP Device creation requires Devices Edit only. Basic addresses use `primaryIpMode: "basic"` in the existing Device JSON; existing unmarked addresses retain their managed meaning. Basic values bypass only the subnet/allocation requirements of live validation. Published v1.3.3 import validation still rejects the marker and does not gain that exemption. Basic addresses are excluded from automatic allocation reconciliation and repair. Managed allocations remain unchanged while IPAM is disabled.
+
+The explicit session-bound `POST /api/devices/ipam/link` operation requires effective Devices Edit and IPAM Edit, an unchanged basic address/revision, no active Device edit, a suitable existing network subnet and conflict checks. Device, allocation, revision and audit commit together. Cancellation sends no request; there is no automatic linking or new subnet creation.
+
+At this intermediate checkpoint, 11 new backend tests and 74 existing Device/integrity/reconciliation tests passed. The first existing run found one mocked-permission boundary missing at the caller; it was restored and all 74 passed. Device form integration, HTTP and broader focused regressions remain pending. No visible Link control, IPAM card, Optional Features tab or Rack form changes are included. Stop after Batch 3 for review; no merge/release/deployment is authorised.
+
 ## Stage 2 Batch 2 — Feature Permissions And Security
 
 Starts from verified Batch 1 merge `1541916e1720da51a1757c6831daae37d775bd24` on branch `stage-2-batch-2-feature-permissions`, following the [corrected owner handover](https://github.com/Caffoot/Caffoot-Lite/issues/238#issuecomment-6861557679). No change to `main` or `milestone-1` is authorised.

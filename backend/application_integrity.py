@@ -3,6 +3,7 @@
 Returns diagnostics in the exact source stage order. This is not an import
 approval or persistence API.
 """
+from backend.device_addresses import is_basic_address, basic_address_errors
 from backend.inventory import RECOGNISED_MOUNTS
 from backend.shelf_associations import validate_device_shelf_association
 from backend.ipam_validation import ip_belongs_to_subnet
@@ -11,7 +12,7 @@ from backend.normalisation_validation import _number, _valid_ipv4
 from backend.subnet_validation import validate_subnet_hierarchy, validate_subnet_types
 
 
-def validate_detached_application_state(candidate):
+def validate_detached_application_state(candidate, *, allow_basic=False):
     """Mirror published validateApplicationState diagnostics and ordering."""
     errors = []
     subnets = candidate["subnets"]
@@ -64,15 +65,21 @@ def validate_detached_application_state(candidate):
         if device.get("location") == "Blank":
             errors.append(f"Device {name} still uses the retired Blank location.")
         ip = device.get("primaryIp")
+        basic = allow_basic and is_basic_address(device)
+        if 'primaryIpMode' in device:
+            if not basic or not ip:
+                errors.append('Invalid or unsupported primary IP mode')
+            elif basic:
+                errors.extend(basic_address_errors(device, candidate))
         if ip:
             if ip in primary_ips:
                 errors.append(f"Duplicate primary IP: {ip}.")
             primary_ips.add(ip)
-            if not any(ip_belongs_to_subnet(ip, s.get("cidr")) for s in subnets):
+            if not basic and not any(ip_belongs_to_subnet(ip, s.get("cidr")) for s in subnets):
                 errors.append(f"Primary IP {ip} on {name} has no subnet.")
             allocation = candidate["ipAllocations"].get(ip)
             expected = "Reserved" if device.get("ipReserved") else "Assigned"
-            if (not isinstance(allocation, dict) or
+            if not basic and (not isinstance(allocation, dict) or
                     allocation.get("deviceId") != identifier or
                     allocation.get("status") != expected):
                 errors.append(f"IPAM is out of sync for {name} ({ip}).")
@@ -101,8 +108,13 @@ def validate_detached_application_state(candidate):
             device = by_id.get(linked)
             if device is None:
                 errors.append(f"IPAM allocation {ip} references a missing device.")
-            elif (device.get("primaryIp") != ip or
+            elif (is_basic_address(device) or device.get("primaryIp") != ip or
                   allocation.get("status") !=
                   ("Reserved" if device.get("ipReserved") else "Assigned")):
                 errors.append(f"IPAM/device mismatch for {ip}.")
     return errors
+
+
+def validate_live_application_state(candidate):
+    """Validate saved application data while retaining strict legacy import rules."""
+    return validate_detached_application_state(candidate, allow_basic=True)

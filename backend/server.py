@@ -11,6 +11,7 @@ from pathlib import Path
 from urllib.parse import urlsplit
 
 from .device_saves import create_device, delete_reserved_device, save_reserved_device
+from .ipam_linking import link_device_to_ipam
 from .ipam_saves import change_independent_allocation, change_bulk_allocations
 from .collection_saves import (change_inventory_record, remove_linked_rack_shelf,
                                change_ipam_subnet_and_vlan_records,
@@ -477,7 +478,7 @@ class Handler(BaseHTTPRequestHandler):
                          "/api/account/mfa/start", "/api/account/mfa/confirm", "/api/account/mfa/remove",
                          "/api/devices/edit/start", "/api/devices/edit/cancel",
                          "/api/devices/edit/save", "/api/devices/create",
-                         "/api/devices/delete", "/api/ipam/allocation/save",
+                         "/api/devices/delete", "/api/devices/ipam/link", "/api/ipam/allocation/save",
                          "/api/ipam/allocation/delete", "/api/ipam/allocation/bulk",
                          "/api/ipam/subnets/save", "/api/ipam/subnets/delete",
                          "/api/inventory/rack-shelves/remove", "/api/inventory/record/save",
@@ -846,6 +847,9 @@ class Handler(BaseHTTPRequestHandler):
                     delete_reserved_device(connection, actor, payload["deviceId"],
                                            payload["revision"], payload.get("relatedDevices"))
                     result = {"status": "deleted"}
+                elif self.path == "/api/devices/ipam/link":
+                    result = link_device_to_ipam(connection, actor,
+                        read_session_cookie(self.headers.get("Cookie")), payload)
                 elif self.path == "/api/devices/create":
                     if set(payload) != {"record"}:
                         raise ValueError("Invalid device create request")

@@ -45,3 +45,17 @@ Read APIs use a single SQLite snapshot. Disabled collections, revision/editor me
 A device's existing primary address and placement references remain device-owned data; no hidden subnet, allocation collection or rack record is included in its response. Unrelated Device saves retain hidden relationships and leave disabled IPAM allocations untouched. Forged relationship changes and operations which would remove hidden relationships are refused. Omitted-field Rack form merging and optional/basic IP workflows remain later authorised batches.
 
 The existing shell, navigation guards and permission display use effective access. An all-off administrator enters the existing Settings screen; ordinary users retain My Account. No Optional Features tab, new card, Link to IPAM or Rack form change is added.
+
+## Optional Device Addresses And Explicit Linking
+
+Devices Edit can create a Device with an empty `primaryIp`, with IPAM on or off. New nonempty addresses while IPAM is off are saved as `primaryIpMode: "basic"`; no subnet or allocation is created. Basic addresses remain basic and editable with Devices Edit after IPAM is enabled, including when their subnet later exists. A normal Device save cannot remove their marker to link them. Clearing a basic address removes its marker. Existing nonempty unmarked records remain managed; they cannot be silently converted to basic. Managed changes still require effective IPAM Edit, and existing managed addresses are read-only while IPAM is off.
+
+The live validator permits basic addresses only with valid, unique IPv4 and no incompatible assignment/reservation or reservation flag. All other Device/inventory integrity checks remain. The published v1.3.3 normalisation/import validator remains separate and rejects this internal marker; this is not a new portable import format. Reconciliation and repair never create allocations for basic addresses.
+
+`POST /api/devices/ipam/link` uses the existing JSON/size, Origin, session and CSRF controls. Its exact payload is:
+
+```json
+{"deviceId":"device-id","revision":0,"subnetId":"existing-network-id","primaryIp":"192.0.2.10"}
+```
+
+The supplied subnet must already exist, be a managed network and contain the usable host address. Both effective Devices Edit and IPAM Edit and a live session are rechecked under the write lock. A changed revision/address, non-basic record, active Device edit, unavailable feature, conflict or incompatible reservation saves nothing. Existing allocation notes are retained when an available record is linked. The marker is removed, the existing allocation authority is updated and the Device revision advances atomically with attributable history. Success returns `{"revision":1}`. Cancel = no POST and no change. The visible control belongs to Batch 4 and is not implemented here.

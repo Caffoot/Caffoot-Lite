@@ -6,7 +6,7 @@ Scope: named JavaScript declarations/assignments in the three application script
 
 The account hydration/photo functions now have purpose-based callable bindings matching their function names: `hydrateAccount` and `removeAccountPhoto`. The immutable design manifest retains its historical integration-entry names; those metadata names are not the runtime's current function map. Pinned source paths, revisions and hashes are unchanged.
 
-**Recorded definitions: 740.** Regenerate after changing declarations or their lines. See [coding conventions](06-Coding-and-Naming-Conventions.md) and the [code reference](07-Function-and-Code-Reference.md).
+**Recorded definitions: 745.** Regenerate after changing declarations or their lines. See [coding conventions](06-Coding-and-Naming-Conventions.md) and the [code reference](07-Function-and-Code-Reference.md).
 
 ## interface/loader.js
 
@@ -593,7 +593,8 @@ The account hydration/photo functions now have purpose-based callable bindings m
 
 | Function | Line |
 | --- | ---: |
-| [`validate_detached_application_state`](../../backend/application_integrity.py#L14) | 14 |
+| [`validate_detached_application_state`](../../backend/application_integrity.py#L15) | 15 |
+| [`validate_live_application_state`](../../backend/application_integrity.py#L118) | 118 |
 
 ## backend/audit_events.py
 
@@ -637,12 +638,12 @@ The account hydration/photo functions now have purpose-based callable bindings m
 
 | Function | Line |
 | --- | ---: |
-| [`_check_primary_ip_claim`](../../backend/device_saves.py#L25) | 25 |
-| [`_prepare_related_guests`](../../backend/device_saves.py#L44) | 44 |
-| [`_persist_related_guests`](../../backend/device_saves.py#L88) | 88 |
-| [`save_reserved_device`](../../backend/device_saves.py#L101) | 101 |
-| [`create_device`](../../backend/device_saves.py#L237) | 237 |
-| [`delete_reserved_device`](../../backend/device_saves.py#L317) | 317 |
+| [`_check_primary_ip_claim`](../../backend/device_saves.py#L26) | 26 |
+| [`_prepare_related_guests`](../../backend/device_saves.py#L45) | 45 |
+| [`_persist_related_guests`](../../backend/device_saves.py#L89) | 89 |
+| [`save_reserved_device`](../../backend/device_saves.py#L102) | 102 |
+| [`create_device`](../../backend/device_saves.py#L239) | 239 |
+| [`delete_reserved_device`](../../backend/device_saves.py#L318) | 318 |
 
 ## backend/feature_settings.py
 
@@ -657,6 +658,20 @@ The account hydration/photo functions now have purpose-based callable bindings m
 | Function | Line |
 | --- | ---: |
 | [`project_inventory_response`](../../backend/inventory_projection.py#L6) | 6 |
+
+## backend/device_addresses.py
+
+| Function | Line |
+| --- | ---: |
+| [`is_basic_address`](../../backend/device_addresses.py#L6) | 6 |
+| [`prepare_device_address`](../../backend/device_addresses.py#L10) | 10 |
+| [`basic_address_errors`](../../backend/device_addresses.py#L35) | 35 |
+
+## backend/ipam_linking.py
+
+| Function | Line |
+| --- | ---: |
+| [`link_device_to_ipam`](../../backend/ipam_linking.py#L16) | 16 |
 
 ## backend/history_permissions.py
 
@@ -927,20 +942,20 @@ The account hydration/photo functions now have purpose-based callable bindings m
 
 | Function | Line |
 | --- | ---: |
-| [`validate_public_origin`](../../backend/server.py#L82) | 82 |
-| [`connect`](../../backend/server.py#L100) | 100 |
-| [`initialise_database`](../../backend/server.py#L108) | 108 |
-| [`Handler.end_headers`](../../backend/server.py#L114) | 114 |
-| [`Handler.do_GET`](../../backend/server.py#L121) | 121 |
-| [`Handler.do_POST`](../../backend/server.py#L458) | 458 |
-| [`Handler.handle_feature_settings`](../../backend/server.py#L632) | 632 |
-| [`Handler.handle_role_change`](../../backend/server.py#L675) | 675 |
-| [`Handler.handle_user_mutation`](../../backend/server.py#L717) | 717 |
-| [`Handler.handle_account_email`](../../backend/server.py#L1106) | 1106 |
-| [`Handler.handle_profile_photo`](../../backend/server.py#L1186) | 1186 |
-| [`Handler.handle_import`](../../backend/server.py#L1217) | 1217 |
-| [`Handler.respond`](../../backend/server.py#L1293) | 1293 |
-| [`main`](../../backend/server.py#L1306) | 1306 |
+| [`validate_public_origin`](../../backend/server.py#L83) | 83 |
+| [`connect`](../../backend/server.py#L101) | 101 |
+| [`initialise_database`](../../backend/server.py#L109) | 109 |
+| [`Handler.end_headers`](../../backend/server.py#L115) | 115 |
+| [`Handler.do_GET`](../../backend/server.py#L122) | 122 |
+| [`Handler.do_POST`](../../backend/server.py#L459) | 459 |
+| [`Handler.handle_feature_settings`](../../backend/server.py#L633) | 633 |
+| [`Handler.handle_role_change`](../../backend/server.py#L676) | 676 |
+| [`Handler.handle_user_mutation`](../../backend/server.py#L718) | 718 |
+| [`Handler.handle_account_email`](../../backend/server.py#L1110) | 1110 |
+| [`Handler.handle_profile_photo`](../../backend/server.py#L1190) | 1190 |
+| [`Handler.handle_import`](../../backend/server.py#L1221) | 1221 |
+| [`Handler.respond`](../../backend/server.py#L1297) | 1297 |
+| [`main`](../../backend/server.py#L1310) | 1310 |
 
 ## backend/sessions.py
 

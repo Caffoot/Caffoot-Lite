@@ -4,7 +4,7 @@ from .audit_events import attribute_event, safe_inventory_differences
 import time
 from datetime import datetime, timezone
 
-from .application_integrity import validate_detached_application_state
+from .application_integrity import validate_live_application_state as validate_detached_application_state
 from .inventory import COLLECTIONS, reconstruct_inventory
 from .ipam_validation import ip_belongs_to_subnet
 from .subnet_validation import validate_subnet_mutation
@@ -277,7 +277,7 @@ def delete_subnet_with_dependencies(connection, account_id, subnet_id,
         cidr = subnet.get("cidr")
         # Organisational blocks never own independent devices or allocations.
         network = subnet.get("kind", "network") == "network"
-        devices = [d for d in state["devices"] if network and d.get("primaryIp") and
+        devices = [d for d in state["devices"] if network and d.get("primaryIpMode") != "basic" and d.get("primaryIp") and
                    ip_belongs_to_subnet(d["primaryIp"], cidr)]
         if devices and not feature_enabled(connection, "Devices"):
             raise PermissionError("Cannot detach devices while Devices is disabled")
