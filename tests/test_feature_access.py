@@ -210,7 +210,7 @@ class FeatureAccessHttpTests(unittest.TestCase):
                ('ipam_saves',change_bulk_allocations,([dict(ip='10.0.0.12',record={})],),[True,False]),
                ('settings_saves',save_inventory_setting,('deviceTypes',[]),[True,False]),
                ('device_catalogue',change_device_catalogue,('type','add','','Desktop',[]),[True,False]),
-               ('device_saves',create_device,(dict(id='new',name='New'),),[True,True,False]),
+               ('device_saves',create_device,(dict(id='new',name='New'),),[True,False]),
                ('device_saves',save_reserved_device,('d1',0,dict(id='d1',name='New')),[True,False]),
                ('device_saves',delete_reserved_device,('d1',0),[True,False])]
         with sqlite3.connect(self.path) as db:

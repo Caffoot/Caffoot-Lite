@@ -3,7 +3,7 @@ import json
 from .audit_events import attribute_event, safe_inventory_differences
 from datetime import datetime, timezone
 
-from .application_integrity import validate_detached_application_state
+from .application_integrity import validate_live_application_state as validate_detached_application_state
 from .inventory import reconstruct_inventory
 from .permissions import can_access
 

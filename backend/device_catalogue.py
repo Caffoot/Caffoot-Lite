@@ -4,7 +4,7 @@ from .audit_events import attribute_event
 import time
 from datetime import datetime, timezone
 
-from .application_integrity import validate_detached_application_state
+from .application_integrity import validate_live_application_state as validate_detached_application_state
 from .inventory import reconstruct_inventory
 from .normalisation_pipeline import PUBLISHED_DEFAULTS
 from .normalisation_validation import validate_normalisation_devices

@@ -90,12 +90,13 @@ class RackShelfAssociationTests(unittest.TestCase):
         planned,changes=plan_legacy_computer_mounting_corrections(state)
         self.assertEqual(changes,[]);self.assertEqual(planned,state)
 
-    def test_new_shelf_device_uses_existing_devices_ipam_racks_permissions(self):
+    def test_no_ip_shelf_device_requires_devices_and_racks_edit(self):
         record=dict(self.device('new'),id='new')
-        for denied in ['Devices','IPAM','Racks']:
+        for denied in ['Devices','Racks']:
             with self.subTest(section=denied),patch('backend.device_saves.can_access',side_effect=lambda db,actor,section,edit=False:section!=denied):
                 with self.assertRaises(PermissionError):create_device(self.db,1,record)
-        self.assertEqual(create_device(self.db,1,record),0)
+        with patch('backend.device_saves.can_access',side_effect=lambda db,actor,section,edit=False:section!='IPAM'):
+            self.assertEqual(create_device(self.db,1,record),0)
 
     def test_reserved_device_shelf_change_checks_racks_permission(self):
         self.reserve();record=dict(self.state['devices'][0],rackId='rack-b',rackShelfAccessoryId='shelf-b')

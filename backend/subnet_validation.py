@@ -266,7 +266,7 @@ def validate_subnet_mutation(record, existing, state):
         raise ValueError("An assigned subnet purpose cannot be cleared.")
     if existing and record.get("cidr") != existing.get("cidr"):
         from .ipam_validation import ip_belongs_to_subnet
-        if (any(d.get("primaryIp") and ip_belongs_to_subnet(d["primaryIp"], existing.get("cidr"))
+        if (any(d.get("primaryIpMode") != "basic" and d.get("primaryIp") and ip_belongs_to_subnet(d["primaryIp"], existing.get("cidr"))
                 for d in state["devices"]) or
                 any(ip_belongs_to_subnet(ip, existing.get("cidr")) for ip in state["ipAllocations"])):
             raise ValueError("CIDR cannot be changed while devices or IPAM allocations depend on the subnet.")
