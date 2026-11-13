@@ -8,6 +8,7 @@ from backend.account_security import (
 )
 from backend.mfa import code_at, provisioning_uri
 from backend.permissions import create_user, can_access
+from enabled_inventory import enable_inventory_features
 from backend.schema import initialise_database
 
 
@@ -15,6 +16,7 @@ class AccountSecurityTests(unittest.TestCase):
     def setUp(self):
         self.db = sqlite3.connect(":memory:")
         initialise_database(self.db)
+        enable_inventory_features(self.db)
         self.admin, secret = bootstrap_first_admin(self.db, "admin", "original")
         confirm_admin_mfa(self.db, self.admin, code_at(secret, 59), timestamp=59)
         self.user = create_user(self.db, self.admin, "worker", "initial")

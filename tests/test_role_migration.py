@@ -9,7 +9,6 @@ from backend import schema
 from backend.accounts import bootstrap_first_admin, confirm_admin_mfa
 from backend.mfa import code_at
 from backend.permissions import create_user
-from backend.permissions import can_access
 from backend.role_policy import evaluate_role_policy
 
 
@@ -113,14 +112,14 @@ class RoleMigrationTests(unittest.TestCase):
         self.db.execute("INSERT INTO account_permissions VALUES(1,'Devices','read')")
         self.db.commit()
         schema.initialise_database(self.db)
-        self.assertFalse(can_access(self.db, 1, "IPAM"))
+        self.assertFalse(evaluate_role_policy(self.db, 1).allows("IPAM"))
         self.db.execute("INSERT INTO roles(role_key,name) VALUES('support','Support')")
         self.db.execute("INSERT INTO account_roles VALUES(1,2)")
         self.db.executemany("INSERT INTO role_grants VALUES(2,?, 'edit')", [("Devices",), ("IPAM",)])
         self.db.commit()
-        self.assertTrue(can_access(self.db, 1, "IPAM", edit=True))
-        self.assertTrue(can_access(self.db, 1, "Devices"))
-        self.assertFalse(can_access(self.db, 1, "Devices", edit=True))
+        self.assertTrue(evaluate_role_policy(self.db, 1).allows("IPAM", edit=True))
+        self.assertTrue(evaluate_role_policy(self.db, 1).allows("Devices"))
+        self.assertFalse(evaluate_role_policy(self.db, 1).allows("Devices", edit=True))
         self.assertEqual(evaluate_role_policy(self.db, 1).permissions, {"Devices": "read", "IPAM": "edit"})
 
     def test_sqlite_failure_rolls_back_created_tables_and_old_sessions(self):

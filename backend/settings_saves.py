@@ -17,6 +17,8 @@ def save_inventory_setting(connection, account_id, key, value):
     encoded = json.dumps(value, ensure_ascii=False, allow_nan=False)
     connection.execute("BEGIN IMMEDIATE")
     try:
+        if not can_access(connection, account_id, "Devices", edit=True):
+            raise PermissionError("Section edit permission was revoked")
         row = connection.execute(
             "SELECT value_json FROM inventory_settings WHERE key=?", (key,)
         ).fetchone()

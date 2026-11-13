@@ -1,5 +1,6 @@
 """HTTP regression for both inventory history response paths (isolated DB)."""
 from confirmed_permissions import set_permission
+from enabled_inventory import enable_inventory_features
 import http.client
 import json
 import sqlite3
@@ -27,6 +28,8 @@ class HistoryHttpPermissionTests(unittest.TestCase):
         with sqlite3.connect(self.path) as db:
             db.execute("PRAGMA foreign_keys=ON")
             initialise_database(db)
+            # This legacy history/RBAC fixture models all three inventory features enabled.
+            enable_inventory_features(db)
             admin, secret = bootstrap_first_admin(db, "owner", "password")
             now = time.time()
             confirm_admin_mfa(db, admin, code_at(secret, now), timestamp=now)

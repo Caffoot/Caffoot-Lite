@@ -10,7 +10,7 @@ from .ipam_validation import ip_belongs_to_subnet
 from .subnet_validation import validate_subnet_mutation
 from .normalisation_validation import (_number, validate_normalisation_devices,
                                         validate_normalisation_vlans)
-from .permissions import can_access
+from .permissions import can_access, feature_enabled
 from .rack_validation import find_rack_import_conflicts
 
 SECTIONS = {"subnets": "IPAM", "vlans": "IPAM",
@@ -28,6 +28,8 @@ def change_inventory_record(connection, account_id, collection, record_id, recor
         raise ValueError("Invalid inventory record")
     connection.execute("BEGIN IMMEDIATE")
     try:
+        if not can_access(connection, account_id, section, edit=True):
+            raise PermissionError("Section edit permission was revoked")
         state = reconstruct_inventory(connection)
         records = state[collection]
         existing = next((item for item in records if item["id"] == record_id), None)
@@ -117,6 +119,8 @@ def change_ipam_subnet_and_vlan_records(connection, account_id, changes):
         raise ValueError("Invalid subnet changes")
     connection.execute("BEGIN IMMEDIATE")
     try:
+        if not can_access(connection, account_id, "IPAM", edit=True):
+            raise PermissionError("Section edit permission was revoked")
         state = reconstruct_inventory(connection)
         before = {key: list(state[key]) for key in ("subnets", "vlans")}
         seen, operations = set(), []
@@ -262,6 +266,8 @@ def delete_subnet_with_dependencies(connection, account_id, subnet_id,
         raise ValueError("Invalid subnet deletion request")
     connection.execute("BEGIN IMMEDIATE")
     try:
+        if not can_access(connection, account_id, "IPAM", edit=True):
+            raise PermissionError("Section edit permission was revoked")
         state = reconstruct_inventory(connection)
         subnet = next((s for s in state["subnets"] if s["id"] == subnet_id), None)
         if subnet is None:
@@ -273,6 +279,8 @@ def delete_subnet_with_dependencies(connection, account_id, subnet_id,
         network = subnet.get("kind", "network") == "network"
         devices = [d for d in state["devices"] if network and d.get("primaryIp") and
                    ip_belongs_to_subnet(d["primaryIp"], cidr)]
+        if devices and not feature_enabled(connection, "Devices"):
+            raise PermissionError("Cannot detach devices while Devices is disabled")
         ips = [ip for ip in state["ipAllocations"] if network and ip_belongs_to_subnet(ip, cidr)]
         owners = {d["primaryIp"]: d for d in devices}
         for ip in ips:

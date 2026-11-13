@@ -71,7 +71,18 @@ def set_permission(connection, actor_id, target_id, section, level, *, session_t
 
 
 def can_access(connection, account_id, section, *, edit=False):
-    return evaluate_role_policy(connection, account_id).allows(section, edit=edit)
+    return feature_enabled(connection, section) and evaluate_role_policy(
+        connection, account_id).allows(section, edit=edit)
+
+
+def feature_enabled(connection, section):
+    """Unknown or missing organisation choices deny access, including for admins."""
+    feature = {"Devices": "devices", "IPAM": "ipam", "Racks": "racks"}.get(section)
+    if feature is None:
+        return False
+    return connection.execute(
+        "SELECT enabled FROM organisation_features WHERE feature=?", (feature,)
+    ).fetchone() == (1,)
 
 
 def set_account_active(connection, actor_id, target_id, active):

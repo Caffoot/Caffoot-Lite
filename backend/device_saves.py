@@ -7,7 +7,7 @@ from datetime import datetime, timezone
 from .application_integrity import validate_detached_application_state
 from .inventory import reconstruct_inventory
 from .normalisation_validation import validate_normalisation_devices
-from .permissions import can_access
+from .permissions import can_access, feature_enabled
 from .rack_validation import find_rack_import_conflicts
 
 
@@ -111,6 +111,10 @@ def save_reserved_device(connection, account_id, device_id, revision, record, se
         raise ValueError("Invalid device update")
     connection.execute("BEGIN IMMEDIATE")
     try:
+        if not can_access(connection, account_id, section, edit=True):
+            raise PermissionError("Section edit permission was revoked")
+        if not feature_enabled(connection, "Devices"):
+            raise PermissionError("Devices feature is disabled")
         row = connection.execute(
             "SELECT revision FROM inventory_devices WHERE id=?", (device_id,)
         ).fetchone()
@@ -166,7 +170,7 @@ def save_reserved_device(connection, account_id, device_id, revision, record, se
                 if old_allocation.get("status") in ("Assigned", "Reserved"):
                     old_allocation["status"] = "Available"
                 old_allocation["hostname"] = ""
-        if new_ip:
+        if new_ip and feature_enabled(connection, "IPAM"):
             allocation = allocations.setdefault(new_ip, {
                 "status": "Assigned", "deviceId": "", "hostname": "", "notes": ""
             })
@@ -185,7 +189,7 @@ def save_reserved_device(connection, account_id, device_id, revision, record, se
             (record["name"], json.dumps(record, ensure_ascii=False, allow_nan=False), device_id),
         )
         for ip in {old_ip, new_ip} - {None, ""}:
-            if ip in allocations:
+            if ip in allocations and before_allocations.get(ip) != allocations[ip]:
                 connection.execute(
                     "INSERT INTO inventory_ip_allocations(ip,record_json) VALUES(?,?) "
                     "ON CONFLICT(ip) DO UPDATE SET record_json=excluded.record_json",
@@ -246,6 +250,13 @@ def create_device(connection, account_id, record):
         raise PermissionError("Racks edit permission required to add a rack-mounted device")
     connection.execute("BEGIN IMMEDIATE")
     try:
+        if not can_access(connection, account_id, "Devices", edit=True):
+            raise PermissionError("Section edit permission was revoked")
+        if not can_access(connection, account_id, "IPAM", edit=True):
+            raise PermissionError("Section edit permission was revoked")
+        if (record.get("rackId") or record.get("mountType") == "Rack Mounted") and not can_access(
+                connection, account_id, "Racks", edit=True):
+            raise PermissionError("Racks edit permission required")
         candidate = reconstruct_inventory(connection)
         if any(device.get("id") == record["id"] for device in candidate["devices"]):
             raise ValueError("Device identifier already exists")
@@ -311,6 +322,8 @@ def delete_reserved_device(connection, account_id, device_id, revision, related_
         raise ValueError("Invalid device deletion")
     connection.execute("BEGIN IMMEDIATE")
     try:
+        if not can_access(connection, account_id, "Devices", edit=True):
+            raise PermissionError("Section edit permission was revoked")
         row = connection.execute(
             "SELECT record_json,revision FROM inventory_devices WHERE id=?", (device_id,)
         ).fetchone()
@@ -323,6 +336,8 @@ def delete_reserved_device(connection, account_id, device_id, revision, related_
         if row[1] != revision or reservation[2] != revision:
             raise ValueError("Device has changed since editing began")
         previous = json.loads(row[0])
+        if previous.get("rackId") and not feature_enabled(connection, "Racks"):
+            raise PermissionError("Cannot delete a device with a hidden rack relationship")
         candidate = reconstruct_inventory(connection)
         candidate["devices"] = [
             device for device in candidate["devices"] if device["id"] != device_id
@@ -337,6 +352,8 @@ def delete_reserved_device(connection, account_id, device_id, revision, related_
         for ip, allocation in candidate["ipAllocations"].items():
             if allocation.get("deviceId") != device_id and allocation.get("reservedForDeviceId") != device_id:
                 continue
+            if not feature_enabled(connection, "IPAM"):
+                raise PermissionError("Cannot remove a hidden IPAM relationship")
             before = dict(allocation)
             if allocation.get("deviceId") == device_id:
                 allocation["deviceId"] = ""

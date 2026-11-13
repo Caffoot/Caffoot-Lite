@@ -155,6 +155,15 @@ async function run(){
   await page.locator('#code-field:not([hidden])').waitFor();
   await page.locator('#code').fill(mfaCode(secret));
   await page.waitForURL('**/inventory');
+  // This regression checks existing enabled inventory; fresh installations start off.
+  await page.evaluate(async()=>{
+    const session=await(await fetch('/api/session')).json();
+    for(const feature of ['devices','ipam','racks']){
+      const response=await fetch('/api/settings/features',{method:'POST',headers:{'Content-Type':'application/json','X-CSRF-Token':session.csrf_token},body:JSON.stringify({feature,enabled:true})});
+      if(!response.ok)throw Error('Unable to enable regression inventory');
+    }
+  });
+  await page.reload();
   assert.equal(await page.locator('script[src*="cdn.tailwindcss.com"]').count(),0,
     'Inventory must not load remote Tailwind JavaScript');
   assert.equal(await page.locator('link[href="/interface/styles/utilities.css"]').count(),1,
@@ -444,8 +453,20 @@ async function run(){
   assert.equal(await draft02Activity.locator('#alert-filter').inputValue(),'critical',
     'Severity filter must retain its selected value after live redraw');
   await draft02Activity.locator('#alert-filter').selectOption('all');
-  assert.ok(await draft02Activity.locator('#activity-empty').isVisible(),
-    'Fresh inventory must show source empty-state copy without fabricated history');
+  // Enabling all three features for this legacy inventory test creates real audited
+  // settings changes. Keep those entries visible, rather than asserting an empty history.
+  const firstRunHistory=(await state(page)).changeHistory || [];
+  const enabledFeatureChanges=new Set(firstRunHistory
+    .filter(entry=>entry.reason==='Optional feature setting changed')
+    .flatMap(entry=>Array.isArray(entry.changes)?entry.changes:[])
+    .filter(change=>change.kind==='Settings'&&change.after?.enabled===true)
+    .map(change=>change.label));
+  assert.deepEqual([...enabledFeatureChanges].sort(),['devices','ipam','racks'],
+    'First-run feature enablement must have genuine saved audit events');
+  assert.equal(await draft02Activity.locator('#activity-empty').isVisible(),false,
+    'Dashboard must show genuine setup activity, not the empty-state copy');
+  assert.ok(await draft02Activity.getByText('Optional feature setting changed').first().isVisible(),
+    'Dashboard must display the saved feature-setting history');
   assert.ok(await draft02Activity.locator('#alert-empty').isVisible(),
     'Fresh inventory must show source empty state without fabricated warnings');
   assert.equal(await draft02Activity.locator('.db-section.card.db-card .db-report-buttons button[data-action="export-selected-inventory-csv"]').count(),3,
@@ -535,8 +556,13 @@ async function run(){
     'Settings help styling must not turn Audit Trail captions into warning panels');
   assert.equal(await page.locator('#main-content .audit-screen .audit-tab').count(),3,
     'Approved All Activity, Asset History and Recording Coverage must be available');
-  assert.equal(await page.locator('#main-content .audit-screen #stat-total').textContent(),'1',
-    'Saving the approved SMTP settings must create exactly one genuine, attributable audit event');
+  const recordedAudit=(await state(page)).changeHistory || [];
+  assert.equal(recordedAudit.length,firstRunHistory.length+1,
+    'Saving SMTP settings must add exactly one genuine event to the three setup feature changes');
+  assert.equal(recordedAudit.filter(entry=>entry.reason==='SMTP configuration updated').length,1,
+    'The saved SMTP configuration must have exactly one attributable audit event');
+  assert.equal(await page.locator('#main-content .audit-screen #stat-total').textContent(),String(recordedAudit.length),
+    'Audit Trail totals must reflect actual saved history, including feature-setting changes');
   assert.ok(await page.getByText('SMTP configuration updated',{exact:true}).first().isVisible(),
     'The real administrator SMTP change must be visible in the authorised Audit Trail');
   await page.locator('#sidebar [data-action="tab-users"]').click();

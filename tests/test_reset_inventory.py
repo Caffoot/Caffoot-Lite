@@ -7,6 +7,7 @@ from unittest.mock import patch
 from backend.inventory import reconstruct_inventory, stage_inventory
 from backend.normalisation_pipeline import PUBLISHED_DEFAULTS
 from backend.reset_inventory import reset_inventory
+from enabled_inventory import enable_inventory_features
 from backend.schema import initialise_database
 
 
@@ -15,6 +16,7 @@ class CleanInventoryResetTests(unittest.TestCase):
         self.db = sqlite3.connect(":memory:")
         self.db.execute("PRAGMA foreign_keys=ON")
         initialise_database(self.db)
+        enable_inventory_features(self.db)
         stage_inventory(self.db, {
             "devices": [{"id": "d1", "name": "Computer",
                          "type": "Desktop", "mountType": "Desktop",

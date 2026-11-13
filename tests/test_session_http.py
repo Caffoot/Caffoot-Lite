@@ -13,6 +13,7 @@ from backend.accounts import bootstrap_first_admin, confirm_admin_mfa
 from backend.http_security import COOKIE_NAME
 from backend.request_auth import csrf_for_session
 from backend.mfa import code_at, new_secret, provisioning_uri
+from enabled_inventory import enable_inventory_features
 from backend.schema import initialise_database
 from backend.permissions import create_user
 from backend.server import Handler
@@ -26,6 +27,7 @@ class SessionHttpTests(unittest.TestCase):
         with sqlite3.connect(self.path) as db:
             db.execute("PRAGMA foreign_keys=ON")
             initialise_database(db)
+            enable_inventory_features(db)
             admin, secret = bootstrap_first_admin(db, "owner", "password")
             timestamp = time.time()
             confirm_admin_mfa(db, admin, code_at(secret, timestamp), timestamp=timestamp)
