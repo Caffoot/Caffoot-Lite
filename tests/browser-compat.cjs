@@ -453,8 +453,20 @@ async function run(){
   assert.equal(await draft02Activity.locator('#alert-filter').inputValue(),'critical',
     'Severity filter must retain its selected value after live redraw');
   await draft02Activity.locator('#alert-filter').selectOption('all');
-  assert.ok(await draft02Activity.locator('#activity-empty').isVisible(),
-    'Fresh inventory must show source empty-state copy without fabricated history');
+  // Enabling all three features for this legacy inventory test creates real audited
+  // settings changes. Keep those entries visible, rather than asserting an empty history.
+  const firstRunHistory=(await state(page)).changeHistory || [];
+  const enabledFeatureChanges=new Set(firstRunHistory
+    .filter(entry=>entry.reason==='Optional feature setting changed')
+    .flatMap(entry=>Array.isArray(entry.changes)?entry.changes:[])
+    .filter(change=>change.kind==='Settings'&&change.after?.enabled===true)
+    .map(change=>change.label));
+  assert.deepEqual([...enabledFeatureChanges].sort(),['devices','ipam','racks'],
+    'First-run feature enablement must have genuine saved audit events');
+  assert.equal(await draft02Activity.locator('#activity-empty').isVisible(),false,
+    'Dashboard must show genuine setup activity, not the empty-state copy');
+  assert.ok(await draft02Activity.getByText('Optional feature setting changed').first().isVisible(),
+    'Dashboard must display the saved feature-setting history');
   assert.ok(await draft02Activity.locator('#alert-empty').isVisible(),
     'Fresh inventory must show source empty state without fabricated warnings');
   assert.equal(await draft02Activity.locator('.db-section.card.db-card .db-report-buttons button[data-action="export-selected-inventory-csv"]').count(),3,
