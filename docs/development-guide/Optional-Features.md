@@ -32,7 +32,7 @@ The service owns a write transaction, rechecks session validity and administrato
 
 ## Review Checks
 
-Focused tests are in `tests/test_feature_settings.py` and `tests/test_feature_settings_http.py`. They use temporary fictional data. The active [milestone handover](../development-handovers/milestone-01.md) records completed checks and the remaining batch boundary.
+Focused tests are in `tests/test_feature_settings.py`, `tests/test_feature_settings_http.py`, `tests/test_feature_access.py` and `tests/feature-access.cjs`. They use temporary fictional data. The active [milestone handover](../development-handovers/milestone-01.md) records completed checks and the remaining batch boundary.
 
 ## Effective Access And Response Filtering
 

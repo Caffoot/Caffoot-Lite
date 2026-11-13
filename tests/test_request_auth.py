@@ -6,6 +6,7 @@ from backend.mfa import code_at
 from backend.request_auth import (
     login, csrf_for_session, authenticated_account, authorised_mutation, authorised_inventory_import, logout,
 )
+from enabled_inventory import enable_inventory_features
 from backend.schema import initialise_database
 
 ORIGIN = "https://inventory.example"
@@ -14,6 +15,7 @@ class RequestAuthenticationTests(unittest.TestCase):
     def setUp(self):
         self.db = sqlite3.connect(":memory:")
         initialise_database(self.db)
+        enable_inventory_features(self.db)
         self.admin, secret = bootstrap_first_admin(self.db, "owner", "password")
         confirm_admin_mfa(self.db, self.admin, code_at(secret, 59), timestamp=59)
         self.token = login(

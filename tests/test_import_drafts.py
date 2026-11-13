@@ -9,6 +9,7 @@ from backend.import_drafts import ImportDrafts
 from backend.inventory import reconstruct_inventory, stage_inventory
 from backend.mfa import code_at
 from backend.request_auth import login, csrf_for_session
+from enabled_inventory import enable_inventory_features
 from backend.schema import initialise_database
 from test_import_review import fixture
 from test_published_access_point_handoff import published_backup
@@ -30,6 +31,7 @@ class ImportDraftTests(unittest.TestCase):
     def setUp(self):
         self.db = sqlite3.connect(":memory:")
         initialise_database(self.db)
+        enable_inventory_features(self.db)
         admin, secret = bootstrap_first_admin(self.db, "owner", "password")
         confirm_admin_mfa(self.db, admin, code_at(secret, 59), timestamp=59)
         token = login(self.db, "192.0.2.200", "owner", "password",

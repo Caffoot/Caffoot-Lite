@@ -8955,6 +8955,10 @@ void (async () => {
     // for an authorised one-way import; the backend rechecks full edit access.
     if (action === 'import-file' || action === 'next-import-pick')
       return !nextImportAllowed;
+    if(action==='export-selected-inventory-csv'){
+      const area={devices:'Devices',subnets:'IPAM',racks:'Racks'}[element?.dataset.report];
+      if(area&&!permissions[area])return true;
+    }
     if (readOnlyActions.has(action)) return false;
     if (['open-device-modal','duplicate-device','duplicate-device-from-details'].includes(action))
       return !(editPermissions.Devices && editPermissions.IPAM);

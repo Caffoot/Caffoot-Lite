@@ -3,6 +3,7 @@ from pathlib import Path
 import json,re,sqlite3,time,sys
 ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT))
+from enabled_inventory import enable_inventory_features
 from backend.schema import initialise_database
 from backend.accounts import bootstrap_first_admin,confirm_admin_mfa
 from backend.mfa import code_at
@@ -26,6 +27,7 @@ racks=[{'id':'rack-'+str(i),'name':'Rack '+chr(65+i),'heightU':42,'location':'Se
 state={'devices':devices,'subnets':subnets,'vlans':[],'racks':racks,'rackAccessories':[],'ipAllocations':{d['primaryIp']:{'status':'Assigned','deviceId':d['id'],'hostname':d['name']}for d in devices if d['primaryIp']},'deviceLocations':['Unknown','Server Room','Office'],'deviceTypes':['Server - Physical','Server - Virtual','Desktop','Switch','NAS','Router','Firewall','Unknown']}
 with sqlite3.connect(p) as db:
  initialise_database(db)
+ enable_inventory_features(db)
  user,secret=bootstrap_first_admin(db,'owner','Visual-Acceptance-Password-2026!')
  confirm_admin_mfa(db,user,code_at(secret,time.time()))
  stage_inventory(db,state)

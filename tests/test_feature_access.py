@@ -26,8 +26,8 @@ class FeatureAccessHttpTests(unittest.TestCase):
         state = dict(devices=[dict(id='d1',name='PRIVATE_DEVICE',mountType='Rack Mounted',rackId='r1',rackUStart=1,rackUEnd=1,rackUHeight=1,primaryIp='10.0.0.10',location='Office')],
                      subnets=[dict(id='s1',name='PRIVATE_SUBNET',cidr='10.0.0.0/24',gateway='10.0.0.1',vlan=20)],
                      vlans=[],racks=[dict(id='r1',name='PRIVATE_RACK',heightU=12)],rackAccessories=[],
-                     ipAllocations={'10.0.0.10':dict(deviceId='d1',hostname='PRIVATE_DEVICE',status='Assigned')},
-                     deviceTypes=['PRIVATE_CATALOGUE'])
+                     ipAllocations={'10.0.0.10':dict(deviceId='d1',hostname='PRIVATE_DEVICE',status='Assigned'),'10.0.0.11':dict(reservedForDeviceId='d1',hostname='PRIVATE_DEVICE',status='Reserved')},
+                     deviceTypes=['PRIVATE_CATALOGUE'],historicalRackConfiguration='PRIVATE_UNKNOWN_SETTING')
         with sqlite3.connect(self.path) as db:
             stage_inventory(db,state)
             db.execute('INSERT INTO inventory_change_history(record_json) VALUES(?)',(json.dumps(dict(reason='PRIVATE_LEGACY_REASON',changes=[dict(kind=kind,label=label,action='Created',fields=[]) for kind,label in [('Device','PRIVATE_DEVICE'),('IPAM','PRIVATE_SUBNET'),('Rack','PRIVATE_RACK')]])),))
@@ -58,9 +58,10 @@ class FeatureAccessHttpTests(unittest.TestCase):
                     if name not in enabled:
                         self.assertNotIn(marker,json.dumps(result))
                 self.assertEqual('PRIVATE_CATALOGUE' in json.dumps(result['settings']),'devices' in enabled)
+                if len(enabled)<3:self.assertNotIn('PRIVATE_UNKNOWN_SETTING',json.dumps(result))
                 if 'devices' not in enabled:
                     self.assertNotIn('deviceEditors',result)
-                    self.assertNotIn('deviceRevisions',result)
+                    self.assertEqual(result.get('deviceRevisions',{}),{})
                 status,settings=self.get('/api/inventory/settings')
                 self.assertEqual(status,200)
                 self.assertEqual('PRIVATE_CATALOGUE' in json.dumps(settings),'devices' in enabled)
@@ -178,3 +179,44 @@ class FeatureAccessHttpTests(unittest.TestCase):
         finally:writer.close()
         self.assertEqual(self.get('/api/inventory/racks')[0],403)
         with sqlite3.connect(self.path) as db:self.assertFalse(db.execute("SELECT 1 FROM inventory_racks WHERE id='new'").fetchone())
+
+    def test_partial_access_validation_errors_do_not_reveal_hidden_records(self):
+        self.seed();self.features(['racks'])
+        with patch('backend.server.PUBLIC_ORIGIN','https://caffoot.example'), patch('backend.collection_saves.validate_detached_application_state',return_value=['PRIVATE_DEVICE has a conflict']):
+            status,response=self.post('/api/inventory/record/save',dict(collection='racks',id='r1',record=dict(id='r1',name='Changed',heightU=12)),self.token,csrf_for_session(self.token))
+        self.assertEqual(status,400)
+        self.assertNotIn('PRIVATE_DEVICE',json.dumps(response))
+
+    def test_forged_hidden_relationship_mutations_save_nothing(self):
+        state=self.seed();self.features(['devices'])
+        with sqlite3.connect(self.path) as db:
+            db.execute('INSERT INTO device_edit_reservations VALUES(?,1,?,0)',('d1',int(time.time())+300));db.commit()
+            before=list(db.iterdump())
+            for record in (dict(state['devices'][0],primaryIp=''),dict(state['devices'][0],rackId=''),{k:v for k,v in state['devices'][0].items() if k!='rackId'}):
+                with self.assertRaises(PermissionError):save_reserved_device(db,1,'d1',0,record)
+                self.assertEqual(list(db.iterdump()),before)
+
+    def test_each_writer_rechecks_access_before_writing(self):
+        from backend.collection_saves import change_ipam_subnet_and_vlan_records, delete_subnet_with_dependencies
+        from backend.device_saves import create_device, delete_reserved_device
+        from backend.ipam_saves import change_bulk_allocations, change_independent_allocation
+        from backend.settings_saves import save_inventory_setting
+        from backend.device_catalogue import change_device_catalogue
+        self.seed();self.features(['devices','ipam','racks'])
+        cases=[('collection_saves',change_inventory_record,('racks','new',dict(id='new',heightU=12)),[True,False]),
+               ('collection_saves',change_ipam_subnet_and_vlan_records,([dict(collection='subnets',id='new',record={})],),[True,False]),
+               ('collection_saves',delete_subnet_with_dependencies,('s1',[],[]),[True,False]),
+               ('ipam_saves',change_independent_allocation,('10.0.0.12',{}),[True,False]),
+               ('ipam_saves',change_bulk_allocations,([dict(ip='10.0.0.12',record={})],),[True,False]),
+               ('settings_saves',save_inventory_setting,('deviceTypes',[]),[True,False]),
+               ('device_catalogue',change_device_catalogue,('type','add','','Desktop',[]),[True,False]),
+               ('device_saves',create_device,(dict(id='new',name='New'),),[True,True,False]),
+               ('device_saves',save_reserved_device,('d1',0,dict(id='d1',name='New')),[True,False]),
+               ('device_saves',delete_reserved_device,('d1',0),[True,False])]
+        with sqlite3.connect(self.path) as db:
+            before=list(db.iterdump())
+            for module,function,args,answers in cases:
+                with self.subTest(writer=function.__name__),patch('backend.'+module+'.can_access',side_effect=answers) as check:
+                    with self.assertRaises(PermissionError):function(db,1,*args)
+                    self.assertGreaterEqual(check.call_count,2)
+                    self.assertEqual(list(db.iterdump()),before)

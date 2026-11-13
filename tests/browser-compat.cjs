@@ -155,6 +155,15 @@ async function run(){
   await page.locator('#code-field:not([hidden])').waitFor();
   await page.locator('#code').fill(mfaCode(secret));
   await page.waitForURL('**/inventory');
+  // This regression checks existing enabled inventory; fresh installations start off.
+  await page.evaluate(async()=>{
+    const session=await(await fetch('/api/session')).json();
+    for(const feature of ['devices','ipam','racks']){
+      const response=await fetch('/api/settings/features',{method:'POST',headers:{'Content-Type':'application/json','X-CSRF-Token':session.csrf_token},body:JSON.stringify({feature,enabled:true})});
+      if(!response.ok)throw Error('Unable to enable regression inventory');
+    }
+  });
+  await page.reload();
   assert.equal(await page.locator('script[src*="cdn.tailwindcss.com"]').count(),0,
     'Inventory must not load remote Tailwind JavaScript');
   assert.equal(await page.locator('link[href="/interface/styles/utilities.css"]').count(),1,

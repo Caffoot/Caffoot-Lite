@@ -15,6 +15,7 @@ from backend.legacy_mounting import plan_legacy_computer_mounting_corrections
 from backend.normalisation_pipeline import normalise_detached_v133_state
 from backend.normalisation_validation import validate_normalisation_devices
 from backend.rack_validation import find_rack_import_conflicts
+from enabled_inventory import enable_inventory_features
 from backend.schema import initialise_database
 
 
@@ -22,6 +23,7 @@ class RackShelfAssociationTests(unittest.TestCase):
     def setUp(self):
         self.db = sqlite3.connect(":memory:")
         initialise_database(self.db)
+        enable_inventory_features(self.db)
         self.db.execute("INSERT INTO accounts(id,username,password_hash,is_admin,mfa_secret,mfa_confirmed) VALUES(1,'fictional-owner','test',1,'test',1)")
         self.db.execute("INSERT INTO accounts(id,username,password_hash,mfa_secret,mfa_confirmed) VALUES(2,'fictional-viewer','test','test',1)")
         self.db.commit()

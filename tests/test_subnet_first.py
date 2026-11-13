@@ -13,6 +13,7 @@ from backend.collection_saves import (change_inventory_record,
     change_ipam_subnet_and_vlan_records, delete_subnet_with_dependencies)
 from backend.inventory import stage_inventory, reconstruct_inventory
 from backend.normalisation_pipeline import normalise_detached_v133_state
+from enabled_inventory import enable_inventory_features
 from backend.schema import initialise_database
 
 
@@ -36,6 +37,7 @@ class SubnetFirstTests(unittest.TestCase):
     @staticmethod
     def prepare(db):
         initialise_database(db)
+        enable_inventory_features(db)
         db.execute("INSERT INTO accounts(id,username,password_hash,is_admin,mfa_secret,mfa_confirmed) VALUES(1,'fictional-ipam','test-hash',1,'secret',1)")
         db.commit()
         stage_inventory(db, dict(devices=[],subnets=[],vlans=[],racks=[],rackAccessories=[],ipAllocations={}))

@@ -12,6 +12,7 @@ from backend.authentication import authenticate
 from backend.mfa import code_at
 from backend.permissions import can_access, create_user
 from backend.role_policy import evaluate_role_policy
+from enabled_inventory import enable_inventory_features
 from backend.schema import initialise_database
 from backend.sessions import login_session, session_account
 
@@ -22,6 +23,7 @@ class RolePolicyTests(unittest.TestCase):
         self.db = sqlite3.connect(Path(self.temporary.name) / "fictional.sqlite3")
         self.db.execute("PRAGMA foreign_keys=ON")
         initialise_database(self.db)
+        enable_inventory_features(self.db)
         self.owner, secret = bootstrap_first_admin(self.db, "owner", "password")
         confirm_admin_mfa(self.db, self.owner, code_at(secret, 59), timestamp=59)
         self.user = create_user(self.db, self.owner, "staff", "password")
@@ -126,7 +128,8 @@ class RolePolicyTests(unittest.TestCase):
         with patch("backend.role_policy.SECTIONS", ("Devices", "IPAM", "Racks", "People")):
             self.assertFalse(can_access(self.db, self.user, "People"))
             self.db.execute("INSERT INTO role_grants VALUES(?,'People','read')", (role,))
-            self.assertTrue(can_access(self.db, self.user, "People"))
+            self.assertTrue(evaluate_role_policy(self.db, self.user).allows("People"))
+            self.assertFalse(can_access(self.db, self.user, "People"))
         self.db.execute("UPDATE accounts SET active=0 WHERE id=?", (self.user,))
         self.db.commit()
         self.assertFalse(can_access(self.db, self.user, "Devices", edit=True))

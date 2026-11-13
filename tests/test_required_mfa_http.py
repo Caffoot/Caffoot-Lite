@@ -16,6 +16,7 @@ from backend.login_throttle import LoginThrottle
 from backend.mfa import code_at, new_secret, provisioning_uri
 from backend.permissions import create_user, delete_user
 from backend.request_auth import csrf_for_session, authorised_mutation
+from enabled_inventory import enable_inventory_features
 from backend.schema import initialise_database
 from backend.server import Handler
 from backend.sessions import login_session
@@ -30,6 +31,7 @@ class RequiredMfaHttpTests(unittest.TestCase):
         with sqlite3.connect(self.path) as db:
             db.execute("PRAGMA foreign_keys=ON")
             initialise_database(db)
+            enable_inventory_features(db)
             self.admin, secret = bootstrap_first_admin(db, "owner", "password")
             confirm_admin_mfa(db, self.admin, code_at(secret, time.time()))
             self.user = create_user(db, self.admin, "worker", "password")
