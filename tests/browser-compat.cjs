@@ -556,8 +556,13 @@ async function run(){
     'Settings help styling must not turn Audit Trail captions into warning panels');
   assert.equal(await page.locator('#main-content .audit-screen .audit-tab').count(),3,
     'Approved All Activity, Asset History and Recording Coverage must be available');
-  assert.equal(await page.locator('#main-content .audit-screen #stat-total').textContent(),'1',
-    'Saving the approved SMTP settings must create exactly one genuine, attributable audit event');
+  const recordedAudit=(await state(page)).changeHistory || [];
+  assert.equal(recordedAudit.length,firstRunHistory.length+1,
+    'Saving SMTP settings must add exactly one genuine event to the three setup feature changes');
+  assert.equal(recordedAudit.filter(entry=>entry.reason==='SMTP configuration updated').length,1,
+    'The saved SMTP configuration must have exactly one attributable audit event');
+  assert.equal(await page.locator('#main-content .audit-screen #stat-total').textContent(),String(recordedAudit.length),
+    'Audit Trail totals must reflect actual saved history, including feature-setting changes');
   assert.ok(await page.getByText('SMTP configuration updated',{exact:true}).first().isVisible(),
     'The real administrator SMTP change must be visible in the authorised Audit Trail');
   await page.locator('#sidebar [data-action="tab-users"]').click();
