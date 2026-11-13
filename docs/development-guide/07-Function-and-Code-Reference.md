@@ -36,6 +36,10 @@ The Issue #309 tab icons use `renderSectionTabIcon`. `revealSectionTab` scrolls 
 | [`application_integrity.py`](../../backend/application_integrity.py) | `validate_detached_application_state` |
 | [`rack_validation.py`](../../backend/rack_validation.py) | `find_rack_import_conflicts` |
 
+## Organisation Feature Settings
+
+[`feature_settings.py`](../../backend/feature_settings.py) provides `read_feature_settings` and `save_feature_setting`; `Handler.handle_feature_settings` serves the administrator API. Schema 13 stores durable choices separately from inventory settings. See [Optional Features](Optional-Features.md) for defaults, validation, audit and the unfinished access-guard/UI boundary.
+
 ## Accounts and editing
 
 On `milestone-1`, `schema.py:migrate_role_permissions` and `verify_role_migration` introduce and check schema 11 within the existing upgrade transaction. `role_policy.py:assign_staff_member` is shared by first-administrator setup and ordinary account creation. `evaluate_role_policy` combines enabled role grants and individual overrides, and `AccountRolePolicy.allows` applies account, section and MFA safeguards. Authentication, sessions, recovery and the Users response use the same evaluator. See [Shared Roles And Account Permissions](Role-Permissions.md) for development boundaries and rollback requirements.

@@ -15,6 +15,20 @@
 - [ ] Obtain separate final milestone merge approval; verify the resulting `main` build
 - [ ] Obtain separate v2.2 publication approval and verify published image/platforms, release notes and installation links before changing current-release instructions
 
+## Stage 2 Batch 1 — Optional Features Foundation
+
+Authorised by the owner's 13 November 2026 instruction, following the [approved technical contract](https://github.com/Caffoot/Caffoot-Lite/issues/238#issuecomment-6821230015). Branch `stage-2-batch-1-optional-features` starts at `milestone-1` commit `d0e23deafc9267afaf1769d219b4eddce5c246bf`; verified `main` remains `6008fedfc2c25fc40b49c9e9e21f3a93d61a9f4a`, with documentation-only differences at the start.
+
+- Schema 13 stores organisation feature booleans separately from inventory settings. New databases start all off; existing installations, including empty inventories, retain Devices/IPAM/Racks on with future features off.
+- The administrator-only GET/POST API validates session, MFA, Origin, CSRF and inputs, requires disable acknowledgement, rechecks identity after the write lock, and audits real transitions atomically. Suppliers and Lifecycle cannot be activated.
+- Existing records, roles and grants are unchanged. Focused tests verify imports, Clean Start and SQLite backup/reinitialisation retain choices.
+- First committed/pushed checkpoint: `744324c` (abbreviated; final exact commit is reported at hand-off). Initial checks passed 10 new migration/service tests, five new HTTP tests and three existing schema tests.
+- Final focused evidence: `PYTHONPATH=tests:. python -m unittest test_feature_settings test_feature_settings_http test_schema test_role_migration test_builtin_roles test_inventory test_import_boundary test_reset_inventory test_request_auth test_sessions -v` ran 94 tests: 93 passed and one old schema-version assertion failed because it expected schema 12. Its expectation now follows the current schema version; its legacy grant checks remain intact. The affected files were rerun with `PYTHONPATH=tests:. python -m unittest test_builtin_roles test_feature_settings test_feature_settings_http -v`: all 26 passed, including all 16 new feature-settings checks. Across these focused runs, all 94 distinct tests have passed; no outstanding failures or skips.
+- Real SQLite lock-wait checks cover session deletion/expiry and administrator deactivation, demotion and MFA removal. Waiting changes fail without a setting or audit write. Duplicate JSON fields are rejected. Compilation of backend/new tests, changed documentation links, backend Function Index declaration locations and `git diff --check` passed.
+- Batch 1 is implemented for product-owner review with no known blocker. No owner acceptance or later-batch completion is claimed.
+
+See [Optional Features](../development-guide/Optional-Features.md) for the API and storage contract. **Saved choices do not yet enforce feature access:** effective permission guards/projections are Batch 2. Optional/basic IPs, linking, rack preservation and all UI additions remain later batches. No interface or pinned design source is changed. Whole-suite, browser, Docker, private-data and deployed restore checks have not been run for this backend-only batch. Stop after Batch 1 for owner review; no merge, release or deployment is authorised.
+
 ## Historical Stage 1 implementation record
 
 **The notes below were written during Stage 1 and may describe then-pending checks or a then-draft PR. They are historical checkpoints, superseded by the current status above.**
