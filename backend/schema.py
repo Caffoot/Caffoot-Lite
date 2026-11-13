@@ -6,7 +6,7 @@ the published inventory import format."""
 import sqlite3
 from backend.role_policy import evaluate_role_policy
 
-SCHEMA_VERSION = 12
+SCHEMA_VERSION = 13
 
 DDL = """
 CREATE TABLE IF NOT EXISTS inventory_devices (
@@ -57,6 +57,11 @@ def initialise_database(connection: sqlite3.Connection) -> None:
     """Apply schema changes in one transaction; fail closed on newer versions."""
     connection.execute("BEGIN IMMEDIATE")
     try:
+        # Read the database before creating any tables. An existing installation
+        # can have no inventory records and must still keep its upgrade defaults.
+        existing_database = connection.execute(
+            "SELECT 1 FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'"
+        ).fetchone() is not None
         connection.execute("""
             CREATE TABLE IF NOT EXISTS schema_migrations (
                 version INTEGER PRIMARY KEY,
@@ -190,6 +195,21 @@ def initialise_database(connection: sqlite3.Connection) -> None:
         if SCHEMA_VERSION >= 12 and 12 not in versions:
             migrate_configurable_builtin_roles(connection)
             connection.execute("INSERT INTO schema_migrations(version) VALUES(12)")
+        if SCHEMA_VERSION >= 13 and 13 not in versions:
+            connection.execute("""
+                CREATE TABLE organisation_features (
+                    feature TEXT PRIMARY KEY CHECK(feature IN
+                        ('devices','ipam','racks','suppliers','equipment_lifecycle')),
+                    enabled INTEGER NOT NULL CHECK(typeof(enabled)='integer' AND enabled IN (0,1)),
+                    CHECK(feature IN ('devices','ipam','racks') OR enabled=0)
+                )
+            """)
+            connection.executemany(
+                "INSERT INTO organisation_features(feature,enabled) VALUES(?,?)",
+                [(feature, int(existing_database and feature in ('devices','ipam','racks')))
+                 for feature in ('devices','ipam','racks','suppliers','equipment_lifecycle')],
+            )
+            connection.execute("INSERT INTO schema_migrations(version) VALUES(13)")
         connection.commit()
     except BaseException:
         connection.rollback()

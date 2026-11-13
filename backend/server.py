@@ -16,6 +16,7 @@ from .collection_saves import (change_inventory_record, remove_linked_rack_shelf
                                change_ipam_subnet_and_vlan_records,
                                delete_subnet_with_dependencies)
 from .settings_saves import save_inventory_setting
+from .feature_settings import read_feature_settings, save_feature_setting
 from .smtp_settings import (config_path as smtp_config_path, public_settings as smtp_public_settings,
                             save_settings as save_smtp_settings, send_test_email)
 from .device_catalogue import change_device_catalogue
@@ -117,6 +118,9 @@ class Handler(BaseHTTPRequestHandler):
         super().end_headers()
 
     def do_GET(self):
+        if self.path == "/api/settings/features":
+            self.handle_feature_settings()
+            return
         if self.path in ("/interface/sign-in.js", "/interface/styles/sign-in.css",
                          "/interface/styles/sign-in-controls.css"):
             path = INTERFACE_FILES[self.path]
@@ -446,6 +450,9 @@ class Handler(BaseHTTPRequestHandler):
             self.respond(404, {"error": "not found"})
 
     def do_POST(self):
+        if self.path == "/api/settings/features":
+            self.handle_feature_settings()
+            return
         if self.path in ("/api/users/roles/preview", "/api/users/roles/confirm",
                          "/api/users/permission"):
             self.handle_role_change()
@@ -615,6 +622,49 @@ class Handler(BaseHTTPRequestHandler):
             self.respond(401, {"error": "invalid credentials"})
             return
         self.respond(200, {"status": "signed in"}, cookie=session_cookie(token))
+
+    def handle_feature_settings(self):
+        """Use existing session and request proofs for organisation settings."""
+        origin = self.headers.get("Origin")
+        if (self.headers.get("Sec-Fetch-Site") == "cross-site"
+                or (origin is not None and (not PUBLIC_ORIGIN
+                    or not require_same_origin(origin, PUBLIC_ORIGIN)))
+                or (self.command == "POST" and (not PUBLIC_ORIGIN
+                    or not require_same_origin(origin, PUBLIC_ORIGIN)))):
+            self.respond(403, {"error": "forbidden"})
+            return
+        try:
+            with connect() as connection:
+                cookie = self.headers.get("Cookie")
+                if self.command == "GET":
+                    actor = authenticated_account(connection, cookie)
+                    if actor is None:
+                        self.respond(401, {"error": "unauthorised"})
+                        return
+                    self.respond(200, {"features": read_feature_settings(connection, actor)})
+                    return
+                actor = authorised_mutation(
+                    connection, cookie, origin, PUBLIC_ORIGIN,
+                    self.headers.get("X-CSRF-Token"),
+                )
+                if actor is None:
+                    raise PermissionError("Verified session required")
+                read_feature_settings(connection, actor)
+                length = self.headers.get("Content-Length", "")
+                if not length.isdecimal() or not 0 < int(length) <= MAX_LOGIN_BYTES:
+                    raise ValueError("Invalid request size")
+                if self.headers.get("Content-Type", "").split(";")[0].strip().lower() != "application/json":
+                    self.respond(415, {"error": "JSON required"})
+                    return
+                payload = json.loads(self.rfile.read(int(length)))
+                result = save_feature_setting(
+                    connection, actor, read_session_cookie(cookie), payload,
+                )
+            self.respond(200, {"features": result})
+        except PermissionError:
+            self.respond(403, {"error": "forbidden"})
+        except (ValueError, TypeError, sqlite3.IntegrityError) as exc:
+            self.respond(400, {"error": str(exc)})
 
     def handle_role_change(self):
         """Require the existing request safeguards before preview or confirmation."""
