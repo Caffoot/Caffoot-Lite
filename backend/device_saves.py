@@ -132,6 +132,8 @@ def save_reserved_device(connection, account_id, device_id, revision, record, se
         record = prepare_device_address(connection, account_id, record, previous)
         changed = {key for key in set(previous) | set(record)
                    if previous.get(key) != record.get(key)}
+        if changed.intersection({"primaryIp", "ipReserved"}) and (is_basic_address(previous) or is_basic_address(record)) and not can_access(connection, account_id, "Devices", edit=True):
+            raise PermissionError("Devices edit permission required for basic address changes")
         if section == "Racks":
             if not changed.issubset(_RACK_PLACEMENT_FIELDS):
                 raise PermissionError("Racks edit permission allows rack placement changes only")

@@ -349,6 +349,7 @@ function hierarchyValidateTypes(subnets) {
                 if (device.primaryIp) {
                     if (primaryIps.has(device.primaryIp)) throw new Error(`Duplicate primary IP: ${device.primaryIp}.`);
                     primaryIps.add(device.primaryIp);
+                    if(device.primaryIpMode==='basic')continue;
                     const owningSubnet = state.subnets.find(subnet => ipBelongsToSubnet(device.primaryIp, subnet.cidr));
                     if (!owningSubnet) throw new Error(`Primary IP ${device.primaryIp} on device ${device.name} does not belong to an existing subnet.`);
                 }
@@ -369,7 +370,7 @@ function hierarchyValidateTypes(subnets) {
             // Repair recoverable device/IPAM drift instead of rejecting an otherwise usable state.
             // The device record is the source of truth for its primary IP and hostname. IPAM notes belong to the address.
             for (const device of state.devices) {
-                if (!device.primaryIp) continue;
+                if (!device.primaryIp||device.primaryIpMode==='basic') continue;
 
                 const existing = state.ipAllocations[device.primaryIp];
                 if (!existing || !isPlainObject(existing)) {
@@ -444,9 +445,9 @@ function hierarchyValidateTypes(subnets) {
                     if (primaryIps.has(device.primaryIp)) errors.push(`Duplicate primary IP: ${device.primaryIp}.`);
                     primaryIps.set(device.primaryIp, device.id);
                     const subnet = appState.subnets.find(s => ipBelongsToSubnet(device.primaryIp, s.cidr));
-                    if (!subnet) errors.push(`Primary IP ${device.primaryIp} on ${device.name} has no subnet.`);
+                    if (device.primaryIpMode!=='basic'&&!subnet) errors.push(`Primary IP ${device.primaryIp} on ${device.name} has no subnet.`);
                     const allocation = appState.ipAllocations[device.primaryIp];
-                    if (!allocation || allocation.deviceId !== device.id || allocation.status !== (device.ipReserved ? 'Reserved' : 'Assigned')) errors.push(`IPAM is out of sync for ${device.name} (${device.primaryIp}).`);
+                    if (device.primaryIpMode!=='basic'&&(!allocation || allocation.deviceId !== device.id || allocation.status !== (device.ipReserved ? 'Reserved' : 'Assigned'))) errors.push(`IPAM is out of sync for ${device.name} (${device.primaryIp}).`);
                 }
                 const shelfError=getDeviceShelfAssociationError(device);
                 if(shelfError)errors.push(shelfError);
@@ -820,6 +821,12 @@ function hierarchyValidateTypes(subnets) {
         function setDevicePrimaryIp(device, newIp) {
             const oldIp = device.primaryIp || '';
             const trimmedIp = (newIp || '').trim();
+            if(device.primaryIpMode==='basic'){
+                if(trimmedIp&&(!isValidIpv4(trimmedIp)||findDeviceUsingIp(trimmedIp,device.id)))throw Error('Enter a valid, unique IPv4 address.');
+                device.primaryIp=trimmedIp;
+                return;
+            }
+            if(window.nextDeviceAddressPolicy?.canEditManaged===false&&trimmedIp===oldIp)return;
 
             if (trimmedIp && findDeviceUsingIp(trimmedIp, device.id)) {
                 throw new Error(`IP address ${trimmedIp} is already assigned to another device.`);
@@ -871,7 +878,7 @@ function hierarchyValidateTypes(subnets) {
         // Keep the IPAM record in sync when any device details change.
         // The device remains the source of truth for its primary IP allocation.
         function syncDeviceIpamRecord(device) {
-            if (!device?.primaryIp) return;
+            if (!device?.primaryIp||device.primaryIpMode==='basic'||window.nextDeviceAddressPolicy?.canEditManaged===false) return;
 
             const existing = appState.ipAllocations[device.primaryIp] || {};
             appState.ipAllocations[device.primaryIp] = {
@@ -1297,7 +1304,7 @@ function hierarchyValidateTypes(subnets) {
         function planDeviceIpAllocationIntegrityRepairs(state=appState) {
             const fixes=[], blocked=[];
             const owners=new Map();
-            for(const d of state.devices) if(d.primaryIp) {
+            for(const d of state.devices) if(d.primaryIp&&d.primaryIpMode!=='basic') {
                 if(!owners.has(d.primaryIp)) owners.set(d.primaryIp,[]);
                 owners.get(d.primaryIp).push(d);
             }
@@ -2707,8 +2714,9 @@ function hierarchyValidateTypes(subnets) {
             const range=parseSupportedIpv4Subnet(subnet?.cidr);
             if(!range) return {supported:false,cidr:subnet?.cidr||'',capacity:0,assigned:0,reserved:0,available:0,next:null,utilisation:0,duplicates:[]};
             const owners=new Map();
+            const basicIps=new Set(appState.devices.filter(d=>d.primaryIpMode==='basic').map(d=>d.primaryIp));
             for(const d of appState.devices) {
-                if(!isUsableHostAddressInSubnet(d.primaryIp,subnet.cidr)) continue;
+                if(d.primaryIpMode==='basic'||!isUsableHostAddressInSubnet(d.primaryIp,subnet.cidr)) continue;
                 const arr=owners.get(d.primaryIp)||[];arr.push(d.name||d.id);owners.set(d.primaryIp,arr);
             }
             const duplicates=[...owners].filter(([,a])=>a.length>1).map(([ip,owners])=>({ip,owners}));
@@ -2719,7 +2727,7 @@ function hierarchyValidateTypes(subnets) {
                 if(status==='Reserved') reserved++;
                 else if(status==='Assigned') assigned++;
                 else if(ip===subnet.gateway) reserved++; // Protected without writing an allocation record.
-                else if(next===null && status==='Available' && !owners.has(ip)) next=ip;
+                else if(next===null && status==='Available' && !owners.has(ip) && !basicIps.has(ip)) next=ip;
             }
             return {supported:true,cidr:subnet.cidr,capacity:range.capacity,assigned,reserved,
                 available:range.capacity-assigned-reserved,next,
@@ -2920,7 +2928,7 @@ function hierarchyValidateTypes(subnets) {
                     const ip = isIpAddressGridPaginated ? formatIpv4Address(i) : `${basePrefix}.${i}`;
                     const alloc = appState.ipAllocations[ip];
                     const gatewayProtected = ip === subnet.gateway;
-                    const status = gatewayProtected && (!alloc || alloc.status === 'Available') ? (appState.devices.some(d => d.primaryIp === ip) ? 'Assigned' : 'Reserved') : (alloc?.status || (appState.devices.some(d => d.primaryIp === ip) ? 'Assigned' : 'Available'));
+                    const status = gatewayProtected && (!alloc || alloc.status === 'Available') ? (appState.devices.some(d => d.primaryIpMode!=='basic'&&d.primaryIp === ip) ? 'Assigned' : 'Reserved') : (alloc?.status || (appState.devices.some(d => d.primaryIpMode!=='basic'&&d.primaryIp === ip) ? 'Assigned' : 'Available'));
                     const displayStatus = gatewayProtected ? `Gateway · ${status}` : status;
                     const reservedDevice = alloc?.reservedForDeviceId ? getDeviceById(alloc.reservedForDeviceId) : null;
                     const missingReservedDevice = Boolean(alloc?.reservedForDeviceId && !reservedDevice);
@@ -3624,7 +3632,7 @@ function openSubnetModal(subnetId = null) {
         // Users can deliberately detach/reassign dependencies first.
         function getDevicesAndIpAllocationsInSubnet(subnet, state=appState) {
             if(subnet.kind==='container')return {devices:[],allocations:[]};
-            const devices=state.devices.filter(d=>d.primaryIp && ipBelongsToSubnet(d.primaryIp,subnet.cidr));
+            const devices=state.devices.filter(d=>d.primaryIpMode!=='basic'&&d.primaryIp && ipBelongsToSubnet(d.primaryIp,subnet.cidr));
             const allocations=Object.keys(state.ipAllocations).filter(ip=>ipBelongsToSubnet(ip,subnet.cidr));
             return {devices,allocations};
         }
@@ -3637,7 +3645,7 @@ function openSubnetModal(subnetId = null) {
                     if(seen.has(d.primaryIp)) issues.push(`Duplicate primary IP ${d.primaryIp}: ${seen.get(d.primaryIp)} and ${d.name}`);
                     else seen.set(d.primaryIp,d.name);
                     const a=state.ipAllocations[d.primaryIp];
-                    if(!a || a.deviceId!==d.id || a.status!==(d.ipReserved?'Reserved':'Assigned'))
+                    if(d.primaryIpMode!=='basic'&&(!a || a.deviceId!==d.id || a.status!==(d.ipReserved?'Reserved':'Assigned')))
                         issues.push(`IPAM mismatch for ${d.name} (${d.primaryIp})`);
                 }
                 if(d.rackId && !rackIds.has(d.rackId)) issues.push(`Missing rack for ${d.name}`);
@@ -3846,7 +3854,7 @@ function openIpModal(ip) {
                 const existing = appState.ipAllocations[ip];
                 // A device-owned address may update its own IPAM notes, never its device notes or ownership.
                 if (!existing || status !== existing.status || hostname !== (existing.hostname || '') || releaseOrphan) {
-                    showToast(`IP address ${ip} is the primary IP of ${primaryDevice?.name || existing.deviceId}. Only IPAM notes can be edited here; edit the device to change its assignment.`, 'error');
+                    showToast(`IP address ${ip} is the primary IP of ${primaryDevice?.name || existing?.deviceId}. Only IPAM notes can be edited here; edit the device to change its assignment.`, 'error');
                     return;
                 }
                 appState.ipAllocations[ip] = { ...existing, notes };
@@ -4439,6 +4447,9 @@ function openIpModal(ip) {
             const select = document.getElementById('dev-ip-available');
             const hint = document.getElementById('dev-ip-hint');
             if (!subnetSelect || !ipInput || !select) return;
+            const addressMode=document.querySelector('[data-device-form="true"]')?.dataset;
+            if(addressMode?.basicIp==='true'){ipInput.disabled=false;select.disabled=true;return;}
+            if(addressMode?.ipamReadOnly==='true'){ipInput.disabled=true;select.disabled=true;return;}
             const subnet = appState.subnets.find(s => s.id === subnetSelect.value);
             select.innerHTML = '<option value="">Select next available IP...</option>';
             if (!subnet) {
@@ -7024,6 +7035,7 @@ function openIpModal(ip) {
             const originalDevice = deviceId ? getDeviceById(deviceId) : null;
             const formPermissions = document.querySelector('[data-device-form="true"]')?.dataset || {};
             const ipamReadOnly = !!originalDevice && formPermissions.ipamReadOnly === 'true';
+            const basicIp = formPermissions.basicIp === 'true';
             const racksReadOnly = !!originalDevice && formPermissions.racksReadOnly === 'true';
             if (deviceId && !originalDevice) return showToast('Device no longer exists.', 'error');
             if (originalDevice && (type !== originalDevice.type || isVirtualServer !== (originalDevice.isVirtual === true || originalDevice.type === 'Server - Virtual'))) return showToast('Device identity cannot be changed. Create a new device instead.', 'error');
@@ -7084,11 +7096,11 @@ function openIpModal(ip) {
             if (!type) return showToast('Please select a device type.', 'error');
             if (!mountType || (!isVirtualServer && !getRecognisedDeviceMountTypes(type).includes(mountType))) return showToast('Please select a valid mounting option for this device type.', 'error');
             if (!location) return showToast('Please select a location.', 'error');
-            if (!subnetId) return showToast('Please select an existing subnet.', 'error');
-            if (!primaryIp) return showToast('Please enter a primary IP address.', 'error');
+            if (primaryIp && !isValidIpv4(primaryIp)) return showToast('Please enter a valid IPv4 address.', 'error');
+            if (primaryIp && !basicIp && !ipamReadOnly && !subnetId) return showToast('Please select an existing subnet.', 'error');
             const subnet = appState.subnets.find(s => s.id === subnetId);
             const matchingSubnet = getSubnetForIp(primaryIp);
-            if (!subnet || !matchingSubnet || matchingSubnet.id !== subnet.id) return showToast('The primary IP must belong to the selected existing subnet.', 'error');
+            if (primaryIp && !basicIp && !ipamReadOnly && (!subnet || !matchingSubnet || matchingSubnet.id !== subnet.id)) return showToast('The primary IP must belong to the selected existing subnet.', 'error');
             if (findDeviceUsingIp(primaryIp, deviceId)) return showToast(`IP address ${primaryIp} is already assigned to another device.`, 'error');
             let rackShelfAccessoryId = '';
             let rackId = '', face = 'front', rackUStart = null, rackUEnd = null, rackUHeight = null;
@@ -7157,6 +7169,7 @@ function openIpModal(ip) {
             if (existingDevice) {
                 Object.assign(existingDevice, {status, manufacturer, model, serialNumber, typeDetails, virtualPlatform, virtualHostId, isVirtual:isVirtualServer});
                 preserveLegacyDeviceSoftwareFlags(existingDevice,typeDetails);
+                if(basicIp&&primaryIp)existingDevice.primaryIpMode='basic';
                 existingDevice.ipReserved = ipReserved;
                 existingDevice.name = name; existingDevice.type = type; existingDevice.mountType = mountType; existingDevice.location = location; existingDevice.notes = notes;
                 existingDevice.rackId = rackId; existingDevice.face = face; existingDevice.rackUStart = rackUStart; existingDevice.rackUEnd = rackUEnd; existingDevice.rackUHeight = rackUHeight;
@@ -7164,6 +7177,7 @@ function openIpModal(ip) {
                 try { setDevicePrimaryIp(existingDevice, primaryIp); syncDeviceIpamRecord(existingDevice); } catch (error) { appState = JSON.parse(beforeDeviceSave); return showToast('Device/IPAM update cancelled: ' + error.message, 'error'); }
             } else {
                 const newDevice = { id: 'dev_' + Date.now(), name, type, mountType, location, notes, status, manufacturer, model, serialNumber, typeDetails, virtualPlatform, virtualHostId, isVirtual:isVirtualServer, ipReserved, primaryIp: '', rackId, face, rackUStart, rackUEnd, rackUHeight };
+                if(basicIp&&primaryIp)newDevice.primaryIpMode='basic';
                 if(rackShelfAccessoryId)newDevice.rackShelfAccessoryId=rackShelfAccessoryId;
                 preserveLegacyDeviceSoftwareFlags(newDevice,typeDetails);
                 appState.devices.push(newDevice);
@@ -8883,6 +8897,7 @@ void (async () => {
     const state = await response.json();
     permissions = state.sections || {};
     editPermissions = state.editPermissions || {};
+    window.nextDeviceAddressPolicy={ipamEnabled:state.ipamEnabled===true,canEditManaged:!!editPermissions.IPAM};
     nextImportAllowed = ['Devices','IPAM','Racks'].every(key => editPermissions[key]);
     deviceRevisions = state.deviceRevisions || {};
     deviceEditors = state.deviceEditors || {};
@@ -8961,7 +8976,7 @@ void (async () => {
     }
     if (readOnlyActions.has(action)) return false;
     if (['open-device-modal','duplicate-device','duplicate-device-from-details'].includes(action))
-      return !(editPermissions.Devices && editPermissions.IPAM);
+      return !editPermissions.Devices;
     if (action === 'open-subnet-modal'||action==='open-multiple-subnets') return !editPermissions.IPAM;
     if (actionCanEditRack.has(action)) return !editPermissions.Racks;
     if (action === 'check-inventory-safety')
@@ -9277,17 +9292,38 @@ void (async () => {
   function applyDeviceFormSectionPermissions(deviceId) {
     const form = document.querySelector('#modal-content form[data-device-form="true"]');
     if (!form) return;
-    if (!editPermissions.IPAM) {
-      if (deviceId) {
-        form.dataset.ipamReadOnly = 'true';
-        for (const id of ['dev-block','dev-vlan','dev-subnet','dev-ip','dev-ip-available','dev-ip-reserved']) {
-          const field = document.getElementById(id);
-          if (field) field.disabled = true;
-        }
+    const existing=deviceId?getDeviceById(deviceId):null;
+    const ipamEnabled=window.nextDeviceAddressPolicy?.ipamEnabled===true;
+    const basic=existing?.primaryIpMode==='basic'||(!ipamEnabled&&!existing?.primaryIp);
+    const readOnly=!basic&&!!existing?.primaryIp&&(!ipamEnabled||!editPermissions.IPAM);
+    form.dataset.basicIp=String(basic);
+    form.dataset.ipamReadOnly=String(readOnly);
+    const address=document.getElementById('dev-ip');
+    const subnet=document.getElementById('dev-subnet');
+    address.required=false;
+    subnet.required=false;
+    form.querySelector('label[for="dev-ip"]').textContent='Primary IP Address (Optional)';
+    form.querySelector('label[for="dev-subnet"] .required-mark')?.setAttribute('hidden','');
+    address.disabled=readOnly||(!basic&&!editPermissions.IPAM);
+    address.placeholder=basic?'IPv4 Address (Optional)':'Optional; select a subnet when assigning an IP';
+    if(existing&&(basic||readOnly))address.value=existing.primaryIp||'';
+    const hideManaged=basic||!ipamEnabled||!editPermissions.IPAM;
+    if(hideManaged){
+      for(const id of ['dev-block','dev-subnet','dev-vlan']){
+        const field=document.getElementById(id);
+        field.disabled=true;
+        field.closest('.device-review-field').hidden=true;
       }
-      const button = form.querySelector('[data-action="create-subnet-from-device"]');
-      if (button) button.hidden = true;
+      form.querySelector('[data-action="create-subnet-from-device"]')?.setAttribute('hidden','');
+      for(const id of ['dev-ip-available','dev-ip-reserved']){
+        const field=document.getElementById(id);
+        field.disabled=true;
+        (id==='dev-ip-reserved'?field.closest('label'):field).hidden=true;
+        form.querySelector('label[for="'+id+'"]')?.setAttribute('hidden','');
+      }
+      if(!readOnly)document.getElementById('dev-ip-reserved').checked=false;
     }
+    document.getElementById('dev-ip-hint').textContent=readOnly?'Managed address is read-only. IPAM and its Edit permission are required to change it.':basic?'Optional basic IPv4. No subnet or allocation is created.':'';
     if (!editPermissions.Racks) {
       if (deviceId) form.dataset.racksReadOnly = 'true';
       for (const id of ['dev-rack-id','dev-rack-face','dev-rack-u','dev-rack-height','dev-shelf-rack','dev-rack-shelf']) {
@@ -9318,10 +9354,6 @@ void (async () => {
       return;
     }
     if (!deviceId) {
-      if (!editPermissions.IPAM) {
-        showToast('Devices and IPAM edit permission required to add a device.', 'error');
-        return;
-      }
       originalOpenDeviceModal(null);
       applyDeviceFormSectionPermissions(null);
       return;

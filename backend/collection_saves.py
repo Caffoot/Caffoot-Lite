@@ -179,7 +179,7 @@ def change_ipam_subnet_and_vlan_records(connection, account_id, changes):
                              if item["id"] == identifier), None)
             if original and original.get("cidr") != record.get("cidr"):
                 dependent_devices = [
-                    d for d in state["devices"] if d.get("primaryIp") and
+                    d for d in state["devices"] if d.get("primaryIpMode") != "basic" and d.get("primaryIp") and
                     ip_belongs_to_subnet(d["primaryIp"], original.get("cidr"))]
                 dependent_ips = [
                     ip for ip in state["ipAllocations"] if

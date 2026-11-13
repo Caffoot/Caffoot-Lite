@@ -11,7 +11,7 @@ from pathlib import Path
 from urllib.parse import urlsplit
 
 from .device_saves import create_device, delete_reserved_device, save_reserved_device
-from .ipam_linking import link_device_to_ipam
+from .ipam_linking import link_device_to_ipam, unique_link_fields
 from .ipam_saves import change_independent_allocation, change_bulk_allocations
 from .collection_saves import (change_inventory_record, remove_linked_rack_shelf,
                                change_ipam_subnet_and_vlan_records,
@@ -350,6 +350,8 @@ class Handler(BaseHTTPRequestHandler):
                     self.respond(403, {"error": "forbidden"})
                     return
                 result = {"sections": sections}
+                if sections["Devices"]:
+                    result["ipamEnabled"] = feature_enabled(connection, "IPAM")
                 # The published device records remain unchanged. Revisions and
                 # edit permissions are separate backend metadata for the shared
                 # edit-reservation workflow.
@@ -723,7 +725,7 @@ class Handler(BaseHTTPRequestHandler):
             return
         length = self.headers.get("Content-Length")
         inventory_path = self.path.startswith(("/api/devices/", "/api/ipam/", "/api/inventory/"))
-        request_limit = MAX_IMPORT_BYTES if inventory_path else MAX_LOGIN_BYTES
+        request_limit = MAX_IMPORT_BYTES if inventory_path and self.path != "/api/devices/ipam/link" else MAX_LOGIN_BYTES
         if length is None or not length.isdecimal() or not 0 < int(length) <= request_limit:
             self.respond(400, {"error": "invalid request size"})
             return
@@ -736,7 +738,7 @@ class Handler(BaseHTTPRequestHandler):
             "/api/users/profile", "/api/users/active",
             "/api/users/admin", "/api/users/create", "/api/users/delete")
         try:
-            payload = json.loads(self.rfile.read(int(length)))
+            payload = json.loads(self.rfile.read(int(length)), object_pairs_hook=unique_link_fields) if self.path == "/api/devices/ipam/link" else json.loads(self.rfile.read(int(length)))
             if not isinstance(payload, dict):
                 raise ValueError("Invalid user request")
             with connect() as connection:
@@ -1086,7 +1088,7 @@ class Handler(BaseHTTPRequestHandler):
             return
         except (ValueError, TypeError, sqlite3.IntegrityError) as exc:
             message = str(exc)
-            if self.path.startswith(("/api/devices/", "/api/ipam/", "/api/inventory/")):
+            if self.path != "/api/devices/ipam/link" and self.path.startswith(("/api/devices/", "/api/ipam/", "/api/inventory/")):
                 with connect() as connection:
                     actor = authenticated_account(connection, self.headers.get("Cookie"))
                     if not all(can_access(connection, actor, section)

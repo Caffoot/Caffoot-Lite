@@ -76,6 +76,16 @@ class OptionalDeviceAddressTests(unittest.TestCase):
             self.db.backup(copy);initialise_database(copy)
             self.assertEqual(reconstruct_inventory(copy),state)
         self.assertEqual(self.device()['primaryIpMode'],'basic')
+        omitted=dict(self.device());omitted.pop('primaryIpMode');self.save(omitted,actor=2)
+        self.assertEqual(self.device()['primaryIpMode'],'basic')
+        self.assertFalse(self.db.execute('SELECT 1 FROM inventory_ip_allocations').fetchone())
+
+    def test_basic_mode_survives_clearing_and_reentry_after_enabling_ipam(self):
+        self.ipam(False);record=self.create('10.0.0.10',actor=2);self.ipam(True)
+        self.save(dict(record,primaryIp=''),actor=2)
+        self.assertEqual(self.device()['primaryIpMode'],'basic')
+        self.save(dict(self.device(),primaryIp='10.0.0.11'),actor=2)
+        self.assertEqual(self.device()['primaryIp'],'10.0.0.11')
         self.assertFalse(self.db.execute('SELECT 1 FROM inventory_ip_allocations').fetchone())
 
     def test_managed_reference_is_readonly_and_allocation_unchanged_while_off(self):
@@ -95,11 +105,12 @@ class OptionalDeviceAddressTests(unittest.TestCase):
 
     def test_invalid_modes_ipv4_duplicates_and_hidden_reservations_rejected(self):
         self.ipam(False);record=self.create('10.0.0.10')
-        for ip in ('bad','256.1.1.1','10.0.0.10','010.0.0.010'):
+        for ip in ('bad','256.1.1.1','10.0.0.10','010.0.0.010',0,False,[]):
             with self.subTest(ip=ip),self.assertRaises(ValueError):self.create(ip,identifier='d2')
         for mode in (None,True,'managed','other'):
             with self.subTest(mode=mode),self.assertRaises(ValueError):self.save(dict(record,primaryIpMode=mode))
         self.subnet()
+        with self.assertRaises(ValueError):self.create('10.0.0.1',identifier='d2')
         self.db.execute('INSERT INTO inventory_ip_allocations VALUES(?,?)',('10.0.0.12',json.dumps(dict(status='Reserved',reservedForDeviceId='someone-else'))));self.db.commit()
         with self.assertRaises(ValueError):self.create('10.0.0.12',identifier='d2')
         with self.assertRaises(ValueError):self.save(dict(record,ipReserved=True))
@@ -152,3 +163,48 @@ class OptionalDeviceAddressTests(unittest.TestCase):
         with self.assertRaises(ValueError):validate_normalisation_addresses(state)
         self.assertTrue(validate_detached_application_state(state))
         self.assertEqual(validate_live_application_state(state),[])
+
+    def test_nonadministrator_link_requires_both_edit_grants(self):
+        self.ipam(False);self.create('10.0.0.10',actor=2);self.ipam(True);self.subnet()
+        token='b'*64
+        self.db.execute('INSERT INTO account_sessions VALUES(?,2,9999999999,1)',(_digest(token),));self.db.commit()
+        payload=dict(deviceId='d1',revision=0,subnetId='s1',primaryIp='10.0.0.10')
+        with self.assertRaises(PermissionError):link_device_to_ipam(self.db,2,token,payload)
+        self.db.execute("INSERT INTO account_permission_overrides VALUES(2,'IPAM','edit')");self.db.commit()
+        self.assertEqual(link_device_to_ipam(self.db,2,token,payload),{'revision':1})
+
+    def test_link_rechecks_feature_after_waiting_for_write_lock(self):
+        import concurrent.futures
+        import tempfile
+        import threading
+        from pathlib import Path
+        self.ipam(False);self.create('10.0.0.10');self.ipam(True);self.subnet()
+        with tempfile.TemporaryDirectory() as directory:
+            path=Path(directory)/'link.sqlite3'
+            with sqlite3.connect(path) as target:self.db.backup(target)
+            writer=sqlite3.connect(path);writer.execute('BEGIN IMMEDIATE')
+            writer.execute("UPDATE organisation_features SET enabled=0 WHERE feature='ipam'")
+            entered=threading.Event()
+            def link():
+                with sqlite3.connect(path,timeout=5) as waiting:
+                    waiting.set_trace_callback(lambda query:entered.set() if query=='BEGIN IMMEDIATE' else None)
+                    return link_device_to_ipam(waiting,1,self.token,dict(deviceId='d1',revision=0,subnetId='s1',primaryIp='10.0.0.10'))
+            try:
+                with concurrent.futures.ThreadPoolExecutor(max_workers=1) as pool:
+                    pending=pool.submit(link)
+                    try:self.assertTrue(entered.wait(3));self.assertFalse(pending.done())
+                    finally:writer.commit()
+                    with self.assertRaises(PermissionError):pending.result(timeout=5)
+            finally:writer.close()
+            with sqlite3.connect(path) as check:
+                self.assertFalse(check.execute('SELECT 1 FROM inventory_ip_allocations').fetchone())
+                self.assertIn('basic',check.execute('SELECT record_json FROM inventory_devices').fetchone()[0])
+
+    def test_ipam_only_editor_cannot_change_basic_address_through_ipam_section(self):
+        self.ipam(False);record=self.create('10.0.0.10');self.ipam(True)
+        self.db.execute("UPDATE account_permission_overrides SET level='deny' WHERE account_id=2 AND section='Devices'")
+        self.db.execute("INSERT INTO account_permission_overrides VALUES(2,'IPAM','edit')")
+        self.db.execute('INSERT INTO device_edit_reservations VALUES(?,2,?,0)',('d1',int(time.time())+300));self.db.commit()
+        before=list(self.db.iterdump())
+        with self.assertRaises(PermissionError):save_reserved_device(self.db,2,'d1',0,dict(record,primaryIp='10.0.0.11'),section='IPAM')
+        self.assertEqual(list(self.db.iterdump()),before)

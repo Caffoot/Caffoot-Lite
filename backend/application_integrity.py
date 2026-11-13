@@ -13,7 +13,7 @@ from backend.subnet_validation import validate_subnet_hierarchy, validate_subnet
 
 
 def validate_detached_application_state(candidate, *, allow_basic=False):
-    """Mirror published validateApplicationState diagnostics and ordering."""
+    """Keep legacy diagnostics strict; only explicit live callers allow basic IPs."""
     errors = []
     subnets = candidate["subnets"]
     devices = candidate["devices"]
@@ -67,9 +67,9 @@ def validate_detached_application_state(candidate, *, allow_basic=False):
         ip = device.get("primaryIp")
         basic = allow_basic and is_basic_address(device)
         if 'primaryIpMode' in device:
-            if not basic or not ip:
+            if not basic or device.get('ipReserved'):
                 errors.append('Invalid or unsupported primary IP mode')
-            elif basic:
+            elif ip:
                 errors.extend(basic_address_errors(device, candidate))
         if ip:
             if ip in primary_ips:

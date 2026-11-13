@@ -25,6 +25,23 @@ The explicit session-bound `POST /api/devices/ipam/link` operation requires effe
 
 At this intermediate checkpoint, 11 new backend tests and 74 existing Device/integrity/reconciliation tests passed. The first existing run found one mocked-permission boundary missing at the caller; it was restored and all 74 passed. Device form integration, HTTP and broader focused regressions remain pending. No visible Link control, IPAM card, Optional Features tab or Rack form changes are included. Stop after Batch 3 for review; no merge/release/deployment is authorised.
 
+### Batch 3 Final Review Checkpoint
+
+Backend checkpoint `c2d98d1` was committed and pushed after the first 85 passing tests. The completed batch also adapts the existing Device form: blank IP is allowed, the same IPv4 input serves basic addresses when appropriate, managed controls are hidden while unavailable, and existing managed references remain read-only. Layout, stylesheets and pinned HTML are unchanged. No Batch 4 control/card/tab or Rack form work is included.
+
+Saved basic mode survives clearing and re-entry after IPAM is enabled; ordinary edits cannot turn it into managed mode. Both backend and existing client repair/reconciliation paths exclude basic addresses. Subnet changes/deletion do not detach unlinked basic addresses. Existing managed interpretation and strict v1.3.3 import checks remain intact. The Link operation additionally handles numeric address aliases, protected gateways and Device edit reservations; safe missing-subnet guidance remains available when Racks is off.
+
+Focused evidence (fictional temporary data only):
+
+- The initial Device/integrity/reconciliation selection passed **74** tests after restoring the mocked managed-IP permission boundary at the writer.
+- The Device/IPAM/feature/subnet selection passed **84** tests. A further **157**-test legacy/import/data regression initially found the old no-IP shelf fixture still expected IPAM Edit, producing a failure and a subsequent duplicate-ID error in that same fixture. Its corrected contract retains Devices/Racks requirements while allowing a no-IP save without IPAM Edit. The affected security/Device/shelf/session selection then passed **68** tests.
+- Final new address/API selection: `PYTHONPATH=tests:. python -m unittest test_optional_device_addresses test_optional_ip_http -v` passed **20** tests, including no-IP Devices Edit only, basic creation/edit/toggle/restart, marker persistence, duplicate/alias/gateway/reservation checks, managed reference protection, strict import rejection, non-administrator linking, both feature/grant checks, session/MFA/Origin/CSRF, input shape/duplicate-field/size checks, stale revisions, replay, cancellation/no GET side effect, edit reservations, real SQLite lock-wait revocation and audit-failure rollback.
+- Across the recorded focused runs, **268 distinct Python tests passed**; **one test was skipped**: the opt-in isolated two-image restore rehearsal (`CAFFOOT_UPGRADE_RESTORE=1`). No whole-suite run was made and no outstanding failure remains in these selections.
+- `CAFFOOT_CHROMIUM_PATH=/usr/bin/chromium node tests/optional-ip.cjs` passed: a Devices-only editor creates no-IP Devices with IPAM on/off, enters basic IPv4 without a subnet, edits it after enablement, and retains no allocations. Adding a matching subnet does not infer an assigned count or repair; next-available avoids the basic address. The initial browser assertion expected the closed modal DOM to be removed; it now checks the existing hidden-modal lifecycle and passed. No browser infrastructure change was required.
+- Compilation, JavaScript syntax, changed guide links, regenerated backend/application Function Index locations and whitespace are checked before the final push. The source diff preserves schema 13, stored role policy, pinned HTML/CSS and all twelve design sources.
+
+Ready for Batch 3 product-owner review with no known implementation blocker. Final-head CI, whole-suite/wider browser and full visual acceptance, Docker/two-image/deployed/private-data restore checks were not run or claimed. The visible Link control, IPAM Overview count, Optional Features tab and Rack preservation/form work remain Batch 4. No Batch 4, merge, release or deployment is authorised.
+
 ## Stage 2 Batch 2 — Feature Permissions And Security
 
 Starts from verified Batch 1 merge `1541916e1720da51a1757c6831daae37d775bd24` on branch `stage-2-batch-2-feature-permissions`, following the [corrected owner handover](https://github.com/Caffoot/Caffoot-Lite/issues/238#issuecomment-6861557679). No change to `main` or `milestone-1` is authorised.

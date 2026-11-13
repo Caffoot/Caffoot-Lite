@@ -4,13 +4,23 @@ import time
 
 from .application_integrity import validate_live_application_state
 from .audit_events import record_actor_event
-from .device_addresses import is_basic_address
+from .device_addresses import is_basic_address, basic_address_errors
 from .device_saves import _check_primary_ip_claim
 from .inventory import reconstruct_inventory
-from .ipam_validation import ip_belongs_to_subnet
+from .ipam_validation import ip_belongs_to_subnet, _ip_number
 from .normalisation_validation import validate_normalisation_devices
 from .permissions import can_access
 from .sessions import session_account
+
+
+def unique_link_fields(pairs):
+    """Reject repeated JSON fields in an explicit linking request."""
+    result = {}
+    for key, value in pairs:
+        if key in result:
+            raise ValueError('Duplicate Link to IPAM field')
+        result[key] = value
+    return result
 
 
 def link_device_to_ipam(connection, account_id, session_token, payload):
@@ -43,15 +53,23 @@ def link_device_to_ipam(connection, account_id, session_token, payload):
         if any(s.get('gateway') == ip for s in state['subnets']) and device.get('type') not in ('Firewall','Router','Layer 3 Switch'):
             raise ValueError('This Device type cannot own a subnet gateway')
         _check_primary_ip_claim(state['ipAllocations'], ip, device['id'])
+        if any(key != ip and _ip_number(key) == _ip_number(ip) for key in state['ipAllocations']):
+            raise ValueError('An existing allocation uses another representation of this IPv4 address')
+        errors = basic_address_errors(device, {**state, 'ipAllocations':{key:value for key,value in state['ipAllocations'].items() if key != ip}})
+        if errors:
+            raise ValueError(errors[0])
         allocation = dict(state['ipAllocations'].get(ip) or {})
         allocation.update(status='Assigned', deviceId=device['id'], hostname=device['name'])
         allocation.setdefault('notes','')
         state['ipAllocations'][ip] = allocation
         device.pop('primaryIpMode')
-        validate_normalisation_devices(state)
-        errors = validate_live_application_state(state)
+        try:
+            validate_normalisation_devices(state)
+            errors = validate_live_application_state(state)
+        except ValueError:
+            raise ValueError('Saved inventory did not pass validation; no link was saved') from None
         if errors:
-            raise ValueError(errors[0])
+            raise ValueError('Saved inventory did not pass validation; no link was saved')
         connection.execute('UPDATE inventory_devices SET record_json=?,revision=revision+1 WHERE id=?',
                            (json.dumps(device,ensure_ascii=False,allow_nan=False),device['id']))
         connection.execute('INSERT INTO inventory_ip_allocations(ip,record_json) VALUES(?,?) ON CONFLICT(ip) DO UPDATE SET record_json=excluded.record_json',
