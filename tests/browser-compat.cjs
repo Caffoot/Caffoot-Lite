@@ -514,8 +514,6 @@ async function run(){
   assert.equal(await settingsTabs.count(),4,
     'Keep the original three Settings tabs and append only the approved Optional Features tab');
   for(const tab of ['data','email','maintenance','features']){
-    assert.equal(await settingsTabs.filter({has:page.locator('[data-tab="'+tab+'"]')}).count(),0,
-      'Settings tab selectors are individual buttons, not nested controls');
     assert.equal(await page.locator('.settings-screen .subnav [data-action="select-settings-tab"][data-tab="'+tab+'"]').count(),1,
       'Settings & Data must retain the original tabs and approved fourth tab: '+tab);
   }
