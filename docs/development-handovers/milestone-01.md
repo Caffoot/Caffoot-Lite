@@ -23,6 +23,17 @@ The first implementation adds locked omission-merging for hidden Rack placement,
 
 Initial focused selection passed 100 tests; the expanded omission/shelf/count/permission/modular selection passed 20 tests. One Batch 2 expectation that omission must be rejected was replaced by the newly approved merge behaviour, with explicit forgery checks retained. A new count test fixture required its setup transaction to commit before account creation; it was corrected before the 20 passing checks. Browser behaviour and source comparisons are pending at this intermediate checkpoint; no visual acceptance is claimed.
 
+### Batch 4 Final Review Checkpoint
+
+Intermediate checkpoint `32160a5` was committed and pushed before browser verification. The completed browser flow also exposed two integration issues: an unchanged blank-IP reservation flag could require IPAM Edit on a no-IP shelf Device, and the existing generic submit guard disabled the new Link form. The save now retains the saved flag when IPAM is read-only, blank-to-blank saves need only Devices Edit, and the Link form is allowed only with both effective Edit permissions. Focused backend tests and the real browser flow cover the corrections.
+
+- The final focused Python selection passed **145 tests**, with no failures or skips: `test_racks_off_preservation`, `test_feature_access`, `test_feature_settings_http`, `test_optional_ip_http`, `test_reserved_device_saves`, `test_rack_shelf_associations`, `test_modular_interface`, `test_optional_device_addresses`, `test_collection_saves`, `test_settings_saves` and `test_optional_features_visual_boundary`. This includes omitted-field merging, exact null/absent-field preservation, forged changes, all feature combinations, real API security, count disclosure, existing linking atomicity/conflicts and unchanged Settings/design boundaries.
+- `CAFFOOT_CHROMIUM_PATH=/usr/bin/chromium node tests/optional-features-interface.cjs` passed against local HTTPS and fictional SQLite data. It checks confirmation including empty inventories, cancellation, all-off administration, Device-only mounted/shelf saves, non-Rack choices, count permissions, no-subnet guidance, stale/cancel/success linking, modal keyboard focus and enabled-Rack/Rack-only boundaries. No browser page errors or checked document overflow were found.
+- [Visual evidence and comparison limits](evidence/stage-2-batch-4/Report.md) include 34 desktop/mobile captures: six relevant pinned-source views and 28 light/dark application views. The existing Settings panels/buttons, relevant CSS and all twelve design pins are unchanged. Source/application Settings geometry matches at 1440 and 390 pixels. This is a focused visual comparison, not owner acceptance or full milestone visual certification.
+- Python compilation, JavaScript syntax, Function Index declarations, changed Markdown links and whitespace were checked before the final push. No whole suite, wider existing browser suite, Firefox/WebKit, automated accessibility audit, Docker/Azure, private-data or deployed restore check was run. Final-head hosted CI remains outstanding; Batch 5 integrated acceptance is not claimed.
+
+Batch 4 is implemented for product-owner review with no known implementation blocker. Existing data, grants and Batch 3 backend linking authority are preserved. No schema, stylesheet or pinned design source changes are included.
+
 Stop after Batch 4 for owner review. No Batch 5, merge, release or deployment.
 
 ## Stage 2 Batch 3 — Optional Addresses And Explicit IPAM Linking

@@ -143,7 +143,7 @@ def save_reserved_device(connection, account_id, device_id, revision, record, se
             if not changed.issubset({"primaryIp", "ipReserved"}):
                 raise PermissionError("IPAM edit permission allows IP assignments only")
         else:
-            if (not (is_basic_address(previous) or is_basic_address(record)) and changed.intersection({"primaryIp", "ipReserved"}) and
+            if ((previous.get("primaryIp") or record.get("primaryIp")) and not (is_basic_address(previous) or is_basic_address(record)) and changed.intersection({"primaryIp", "ipReserved"}) and
                     not can_access(connection, account_id, "IPAM", edit=True)):
                 raise PermissionError("IPAM edit permission required for IP assignment changes")
             rack_placement_changed = bool(changed.intersection(

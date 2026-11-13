@@ -52,6 +52,13 @@ class RacksOffPreservationTests(unittest.TestCase):
         self.assertEqual(saved,{**original,'name':'Renamed'})
         self.assertEqual(self.db.execute('SELECT * FROM inventory_rack_accessories').fetchall(),before)
 
+    def test_no_ip_unrelated_save_does_not_require_ipam_edit(self):
+        self.db.execute("INSERT INTO accounts(id,username,password_hash,mfa_secret,mfa_confirmed) VALUES(2,'editor','hash','secret',1)")
+        self.db.execute("INSERT INTO account_permission_overrides VALUES(2,'Devices','edit')")
+        self.db.execute('UPDATE device_edit_reservations SET account_id=2');self.db.commit()
+        save_reserved_device(self.db,2,'mounted',0,dict(id='mounted',name='Renamed',type='Printer',primaryIp='',ipReserved=False))
+        self.assertFalse(self.db.execute('SELECT 1 FROM inventory_ip_allocations').fetchone())
+
     def test_absent_historical_fields_stay_absent(self):
         original={key:value for key,value in self.record.items() if key!='face'}
         self.db.execute('UPDATE inventory_devices SET record_json=?',(json.dumps(original),));self.db.commit()

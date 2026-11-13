@@ -1,6 +1,6 @@
 # Optional Features — Development Foundation
 
-This is unpublished v2.2 development under [issue #238](https://github.com/Caffoot/Caffoot-Lite/issues/238#issuecomment-6821230015). Schema/settings storage and API are implemented in Batch 1; Batch 2 adds effective feature guards and filtered responses. Batch 3 adds optional/basic Device addresses, the existing form behaviour and explicit backend linking. Rack form/preservation integration and the three approved interface additions remain Batch 4. This branch is for review, not deployment.
+This is unpublished v2.2 development under [issue #238](https://github.com/Caffoot/Caffoot-Lite/issues/238#issuecomment-6821230015). Schema/settings storage and API are implemented in Batch 1; Batch 2 adds effective feature guards and filtered responses. Batch 3 adds optional/basic Device addresses, the existing form behaviour and explicit backend linking. Batch 4 integrates Rack preservation and the three approved interface additions described below. This branch is for review, not deployment.
 
 ## Storage And Upgrade
 
@@ -26,7 +26,7 @@ Every disable request must explicitly confirm the action:
 {"feature":"devices","enabled":false,"confirmDisable":true}
 ```
 
-The later interface must ask for confirmation every time, including empty inventories; cancellation sends no request. `confirmDisable` is a boolean acknowledgement, not a new security proof. Unknown keys, duplicate JSON fields, non-boolean values, extra fields and any Suppliers/Lifecycle mutation are rejected. Only Devices, IPAM and Network Racks can change. Success returns the current `features` object. Missing/invalid GET authentication returns 401; insufficient rights or failed POST authentication/Origin/CSRF returns 403; invalid JSON/shape/size/choice returns 400; non-JSON POST returns 415.
+The interface asks for confirmation every time, including empty inventories; cancellation sends no request. `confirmDisable` is a boolean acknowledgement, not a new security proof. Unknown keys, duplicate JSON fields, non-boolean values, extra fields and any Suppliers/Lifecycle mutation are rejected. Only Devices, IPAM and Network Racks can change. Success returns the current `features` object. Missing/invalid GET authentication returns 401; insufficient rights or failed POST authentication/Origin/CSRF returns 403; invalid JSON/shape/size/choice returns 400; non-JSON POST returns 415.
 
 The service owns a write transaction, rechecks session validity and administrator/MFA status after obtaining the database lock, and commits the setting with its audit entry. A failure rolls both back. These endpoints do not depend on inventory section permissions.
 
@@ -42,9 +42,9 @@ Existing inventory writers recheck their section after obtaining a write lock. I
 
 Read APIs use a single SQLite snapshot. Disabled collections, revision/editor metadata and device catalogue settings are excluded from unauthorised projections. IPAM-only allocation responses retain references but omit Device-derived hostnames. History is filtered for administrators too when a feature is disabled; full administrator history remains unchanged when all features are available. Partial-access validation errors do not expose hidden inventory names or addresses. No stored records or history are redacted or rewritten.
 
-A device's existing primary address and placement references remain device-owned data; no hidden subnet, allocation collection or rack record is included in its response. Unrelated Device saves retain hidden relationships and leave disabled IPAM allocations untouched. Forged relationship changes and operations which would remove hidden relationships are refused. Omitted-field Rack form merging remains a later authorised batch. Optional/basic IP workflows are covered below.
+A device's existing primary address and placement references remain device-owned data; no hidden subnet, allocation collection or rack record is included in its response. Unrelated Device saves retain hidden relationships and leave disabled IPAM allocations untouched. Forged relationship changes and operations which would remove hidden relationships are refused. Omitted-field Rack form merging is described below. Optional/basic IP workflows are covered below.
 
-The existing shell, navigation guards and permission display use effective access. An all-off administrator enters the existing Settings screen; ordinary users retain My Account. No Optional Features tab, new card, Link to IPAM or Rack form change is added.
+The existing shell, navigation guards and permission display use effective access. An all-off administrator enters the existing Settings screen; ordinary users retain My Account. Batch 4 adds the approved tab, statistic, Link control and Rack form integration described below.
 
 ## Optional Device Addresses And Explicit Linking
 
@@ -58,9 +58,9 @@ The live validator permits basic addresses only with canonical, valid, unique IP
 {"deviceId":"device-id","revision":0,"subnetId":"existing-network-id","primaryIp":"192.0.2.10"}
 ```
 
-The supplied subnet must already exist, be a managed network and contain the usable host address. Both effective Devices Edit and IPAM Edit and a live session are rechecked under the write lock. A changed revision/address, non-basic record, active Device edit, unavailable feature, protected gateway, conflicting address representation or incompatible reservation saves nothing. Existing allocation notes are retained when an available record is linked. The marker is removed, the existing allocation authority is updated and the Device revision advances atomically with attributable history. Success returns `{"revision":1}`. Cancel = no POST and no change. The visible control belongs to Batch 4 and is not implemented here.
+The supplied subnet must already exist, be a managed network and contain the usable host address. Both effective Devices Edit and IPAM Edit and a live session are rechecked under the write lock. A changed revision/address, non-basic record, active Device edit, unavailable feature, protected gateway, conflicting address representation or incompatible reservation saves nothing. Existing allocation notes are retained when an available record is linked. The marker is removed, the existing allocation authority is updated and the Device revision advances atomically with attributable history. Success returns `{"revision":1}`. Cancel = no POST and no change. The Batch 4 visible control is described below.
 
-The existing Device form keeps its layout and styles. IP and subnet are no longer mandatory for a no-IP save. While IPAM is off, the same address field accepts optional basic IPv4 and managed subnet/allocation controls are hidden. Already-basic records keep that field after IPAM is enabled; unmarked managed references are read-only without effective IPAM Edit. The ordinary IPAM allocation display/repair logic does not infer an assignment from a basic address, and next-available suggestions avoid known basic addresses. No new Optional Features tab, IPAM statistic, Link control or Rack form is added.
+The existing Device form keeps its layout and styles. IP and subnet are no longer mandatory for a no-IP save. While IPAM is off, the same address field accepts optional basic IPv4 and managed subnet/allocation controls are hidden. Already-basic records keep that field after IPAM is enabled; unmarked managed references are read-only without effective IPAM Edit. The ordinary IPAM allocation display/repair logic does not infer an assignment from a basic address, and next-available suggestions avoid known basic addresses. The Batch 4 interface additions are described below.
 
 ## Optional Features Interface And Rack Preservation
 

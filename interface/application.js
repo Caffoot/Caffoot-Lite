@@ -9046,6 +9046,7 @@ void (async () => {
       root.querySelectorAll('button').forEach(button=>{
         const blocked=isBlockedAction(button.dataset.action || '',button);
         const unsupportedSubmit=button.type==='submit' && button.form && !(
+          (editPermissions.Devices&&editPermissions.IPAM&&button.form.id==='device-ipam-link-form') ||
           button.form?.matches('#next-account-password-form,#next-account-mfa-start,#next-account-mfa-confirm,#account-mfa-removal-form,#personal-details-form,#account-email-verification-form') ||
           (sessionIsAdmin && (button.closest('#next-user-create-form,#next-user-profile-form,#smtp-settings-form,#smtp-test-form') || button.form?.matches('#role-definition-form'))) ||
           (editPermissions.Devices && button.form?.matches('form[data-device-form="true"]')) ||
@@ -9436,6 +9437,10 @@ void (async () => {
         throw new Error('Device edit reservation is no longer active.');
       const outboundRecord={...record};
       const previous=before.devices.find(device=>device.id===deviceId);
+      if(previous&&!editPermissions.IPAM&&previous.primaryIp===record.primaryIp){
+        if(Object.hasOwn(previous,'ipReserved'))outboundRecord.ipReserved=previous.ipReserved;
+        else delete outboundRecord.ipReserved;
+      }
       if(window.nextDeviceAddressPolicy?.racksEnabled===false&&previous&&(previous.rackId||previous.rackShelfAccessoryId||previous.mountType==='Rack Mounted')){
         for(const key of ['mountType','rackId','rackUStart','rackUEnd','rackUHeight','face','rackFace','rackShelfAccessoryId','location'])delete outboundRecord[key];
       }
