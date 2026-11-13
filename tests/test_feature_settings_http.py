@@ -77,6 +77,7 @@ class FeatureSettingsHttpTests(unittest.TestCase):
                      ('POST', 'https://caffoot.example', 'text/plain', '{}', {}, 415),
                      ('POST', 'https://caffoot.example', 'application/json', ' ' * 4097, {}, 400),
                      ('POST', 'https://caffoot.example', 'application/json', '{', {}, 400),
+                     ('POST', 'https://caffoot.example', 'application/json', '{"feature":"devices","enabled":false,"enabled":true}', {}, 400),
                      ('GET', 'https://other.example', None, None, {}, 403),
                      ('GET', None, None, None, {'Sec-Fetch-Site': 'cross-site'}, 403)]
             for method, origin, content_type, body, extra, expected in cases:

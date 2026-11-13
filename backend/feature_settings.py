@@ -7,6 +7,16 @@ FEATURES = ('devices', 'ipam', 'racks', 'suppliers', 'equipment_lifecycle')
 AVAILABLE_FEATURES = frozenset(('devices', 'ipam', 'racks'))
 
 
+def unique_feature_fields(pairs):
+    """Reject repeated JSON fields instead of silently choosing one value."""
+    result = {}
+    for key, value in pairs:
+        if key in result:
+            raise ValueError("Duplicate feature setting field")
+        result[key] = value
+    return result
+
+
 def read_feature_settings(connection, account_id):
     """Return saved choices only to an active, MFA-enrolled administrator."""
     _admin(connection, account_id)

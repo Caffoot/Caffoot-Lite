@@ -16,7 +16,7 @@ from .collection_saves import (change_inventory_record, remove_linked_rack_shelf
                                change_ipam_subnet_and_vlan_records,
                                delete_subnet_with_dependencies)
 from .settings_saves import save_inventory_setting
-from .feature_settings import read_feature_settings, save_feature_setting
+from .feature_settings import read_feature_settings, save_feature_setting, unique_feature_fields
 from .smtp_settings import (config_path as smtp_config_path, public_settings as smtp_public_settings,
                             save_settings as save_smtp_settings, send_test_email)
 from .device_catalogue import change_device_catalogue
@@ -656,7 +656,7 @@ class Handler(BaseHTTPRequestHandler):
                 if self.headers.get("Content-Type", "").split(";")[0].strip().lower() != "application/json":
                     self.respond(415, {"error": "JSON required"})
                     return
-                payload = json.loads(self.rfile.read(int(length)))
+                payload = json.loads(self.rfile.read(int(length)), object_pairs_hook=unique_feature_fields)
                 result = save_feature_setting(
                     connection, actor, read_session_cookie(cookie), payload,
                 )

@@ -106,7 +106,7 @@ class BuiltinRoleMigrationTests(unittest.TestCase):
                 schema.initialise_database(self.db)
         self.assertEqual(list(self.db.iterdump()), before)
 
-    def test_schema_ten_reaches_twelve_sequentially_and_preserves_legacy_levels(self):
+    def test_schema_ten_reaches_current_version_sequentially_and_preserves_legacy_levels(self):
         self.db.close()
         self.db = sqlite3.connect(":memory:")
         self.db.execute("PRAGMA foreign_keys=ON")
@@ -118,7 +118,7 @@ class BuiltinRoleMigrationTests(unittest.TestCase):
         self.db.execute("INSERT INTO account_permissions VALUES(2,'Racks','edit')")
         self.db.commit()
         schema.initialise_database(self.db)
-        self.assertEqual(self.db.execute("SELECT version FROM schema_migrations ORDER BY version").fetchall(), [(n,) for n in range(1, 13)])
+        self.assertEqual(self.db.execute("SELECT version FROM schema_migrations ORDER BY version").fetchall(), [(n,) for n in range(1, schema.SCHEMA_VERSION + 1)])
         self.assertEqual(evaluate_role_policy(self.db, 1).permissions, {"Devices": "read"})
         self.assertEqual(evaluate_role_policy(self.db, 2).permissions, {"Racks": "edit"})
         self.assertEqual(evaluate_role_policy(self.db, 3).permissions, {})

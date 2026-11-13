@@ -165,3 +165,44 @@ class FeatureSettingsTests(unittest.TestCase):
             self.db.execute(f'UPDATE accounts SET {column}=1 WHERE id=1')
             self.db.commit()
         self.assertEqual(self.choices()['devices'], 0)
+
+    def test_waiting_writer_rechecks_revocation_and_administrator_state(self):
+        import concurrent.futures
+        import tempfile
+        import threading
+        from pathlib import Path
+
+        schema.initialise_database(self.db)
+        self.owner()
+        for statement in ('DELETE FROM account_sessions',
+                          'UPDATE account_sessions SET expires_at=1',
+                          'UPDATE accounts SET active=0 WHERE id=1',
+                          'UPDATE accounts SET is_admin=0 WHERE id=1',
+                          'UPDATE accounts SET mfa_confirmed=0 WHERE id=1'):
+            with self.subTest(statement=statement), tempfile.TemporaryDirectory() as directory:
+                path = Path(directory) / 'features.sqlite3'
+                with sqlite3.connect(path) as target:
+                    self.db.backup(target)
+                attempted = threading.Event()
+                writer = sqlite3.connect(path)
+                writer.execute('BEGIN IMMEDIATE')
+                writer.execute(statement)
+                def save_waiting():
+                    with sqlite3.connect(path, timeout=5) as waiting:
+                        waiting.set_trace_callback(lambda query: attempted.set() if query == 'BEGIN IMMEDIATE' else None)
+                        return save_feature_setting(waiting, 1, self.token, dict(feature='devices', enabled=True))
+                try:
+                    with concurrent.futures.ThreadPoolExecutor(max_workers=1) as pool:
+                        pending = pool.submit(save_waiting)
+                        try:
+                            self.assertTrue(attempted.wait(3))
+                            self.assertFalse(pending.done())
+                        finally:
+                            writer.commit()
+                        with self.assertRaises(PermissionError):
+                            pending.result(timeout=5)
+                finally:
+                    writer.close()
+                with sqlite3.connect(path) as check:
+                    self.assertEqual(check.execute("SELECT enabled FROM organisation_features WHERE feature='devices'").fetchone(), (0,))
+                    self.assertFalse(check.execute('SELECT 1 FROM inventory_change_history').fetchone())

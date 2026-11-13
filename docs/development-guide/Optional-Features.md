@@ -26,7 +26,7 @@ Every disable request must explicitly confirm the action:
 {"feature":"devices","enabled":false,"confirmDisable":true}
 ```
 
-The later interface must ask for confirmation every time, including empty inventories; cancellation sends no request. `confirmDisable` is a boolean acknowledgement, not a new security proof. Unknown keys, non-boolean values, extra fields and any Suppliers/Lifecycle mutation are rejected. Only Devices, IPAM and Network Racks can change. Success returns the current `features` object. Missing/invalid GET authentication returns 401; insufficient rights or failed POST authentication/Origin/CSRF returns 403; invalid JSON/shape/size/choice returns 400; non-JSON POST returns 415.
+The later interface must ask for confirmation every time, including empty inventories; cancellation sends no request. `confirmDisable` is a boolean acknowledgement, not a new security proof. Unknown keys, duplicate JSON fields, non-boolean values, extra fields and any Suppliers/Lifecycle mutation are rejected. Only Devices, IPAM and Network Racks can change. Success returns the current `features` object. Missing/invalid GET authentication returns 401; insufficient rights or failed POST authentication/Origin/CSRF returns 403; invalid JSON/shape/size/choice returns 400; non-JSON POST returns 415.
 
 The service owns a write transaction, rechecks session validity and administrator/MFA status after obtaining the database lock, and commits the setting with its audit entry. A failure rolls both back. These endpoints do not depend on inventory section permissions.
 

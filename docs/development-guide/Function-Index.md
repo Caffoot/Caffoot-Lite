@@ -6,7 +6,7 @@ Scope: named JavaScript declarations/assignments in the three application script
 
 The account hydration/photo functions now have purpose-based callable bindings matching their function names: `hydrateAccount` and `removeAccountPhoto`. The immutable design manifest retains its historical integration-entry names; those metadata names are not the runtime's current function map. Pinned source paths, revisions and hashes are unchanged.
 
-**Recorded definitions: 737.** Regenerate after changing declarations or their lines. See [coding conventions](06-Coding-and-Naming-Conventions.md) and the [code reference](07-Function-and-Code-Reference.md).
+**Recorded definitions: 738.** Regenerate after changing declarations or their lines. See [coding conventions](06-Coding-and-Naming-Conventions.md) and the [code reference](07-Function-and-Code-Reference.md).
 
 ## interface/loader.js
 
@@ -648,8 +648,9 @@ The account hydration/photo functions now have purpose-based callable bindings m
 
 | Function | Line |
 | --- | ---: |
-| [`read_feature_settings`](../../backend/feature_settings.py#L10) | 10 |
-| [`save_feature_setting`](../../backend/feature_settings.py#L18) | 18 |
+| [`unique_feature_fields`](../../backend/feature_settings.py#L10) | 10 |
+| [`read_feature_settings`](../../backend/feature_settings.py#L20) | 20 |
+| [`save_feature_setting`](../../backend/feature_settings.py#L28) | 28 |
 
 ## backend/history_permissions.py
 
