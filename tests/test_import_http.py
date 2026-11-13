@@ -11,6 +11,7 @@ from backend.accounts import bootstrap_first_admin, confirm_admin_mfa
 from backend.http_security import COOKIE_NAME
 from backend.mfa import code_at
 from backend.request_auth import login, csrf_for_session
+from enabled_inventory import enable_inventory_features
 from backend.schema import initialise_database
 from backend import server
 from test_import_review import fixture
@@ -24,6 +25,7 @@ class ImportHttpTests(unittest.TestCase):
         self.path = Path(self.tmp.name) / "inventory.sqlite"
         with sqlite3.connect(self.path) as db:
             initialise_database(db)
+            enable_inventory_features(db)
             admin, secret = bootstrap_first_admin(db, "owner", "password")
             confirm_admin_mfa(db, admin, code_at(secret, 59), timestamp=59)
             token = login(db, "192.0.2.200", "owner", "password",

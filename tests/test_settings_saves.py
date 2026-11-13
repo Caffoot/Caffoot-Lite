@@ -4,6 +4,7 @@ import sqlite3
 import unittest
 from unittest.mock import patch
 
+from enabled_inventory import enable_inventory_features
 from backend.schema import initialise_database
 from backend.settings_saves import save_inventory_setting
 
@@ -12,6 +13,7 @@ class InventorySettingsTests(unittest.TestCase):
     def setUp(self):
         self.db = sqlite3.connect(":memory:")
         initialise_database(self.db)
+        enable_inventory_features(self.db)
         self.db.execute(
             "INSERT INTO accounts(id,username,password_hash,is_admin,mfa_secret,mfa_confirmed) "
             "VALUES(1,'audit-tester','test-hash',1,'secret',1)"

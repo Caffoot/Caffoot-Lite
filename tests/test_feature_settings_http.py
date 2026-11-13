@@ -13,7 +13,10 @@ from backend.sessions import login_session
 
 
 class FeatureSettingsHttpTests(unittest.TestCase):
-    setUp = session_http.SessionHttpTests.setUp
+    def setUp(self):
+        session_http.SessionHttpTests.setUp(self)
+        with sqlite3.connect(self.path) as db:
+            db.execute('UPDATE organisation_features SET enabled=0')
     tearDown = session_http.SessionHttpTests.tearDown
     post = session_http.SessionHttpTests.post
     request = session_http.SessionHttpTests.request

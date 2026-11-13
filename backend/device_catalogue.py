@@ -30,6 +30,8 @@ def change_device_catalogue(connection, account_id, kind, operation, old_name,
     name = new_name.strip()
     connection.execute("BEGIN IMMEDIATE")
     try:
+        if not can_access(connection, account_id, "Devices", edit=True):
+            raise PermissionError("Section edit permission was revoked")
         state = reconstruct_inventory(connection)
         raw_list = state.get(key, PUBLISHED_DEFAULTS[key])
         if not isinstance(raw_list, list):

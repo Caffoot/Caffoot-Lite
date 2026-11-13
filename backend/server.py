@@ -16,6 +16,7 @@ from .collection_saves import (change_inventory_record, remove_linked_rack_shelf
                                change_ipam_subnet_and_vlan_records,
                                delete_subnet_with_dependencies)
 from .settings_saves import save_inventory_setting
+from .inventory_projection import project_inventory_response
 from .feature_settings import read_feature_settings, save_feature_setting, unique_feature_fields
 from .smtp_settings import (config_path as smtp_config_path, public_settings as smtp_public_settings,
                             save_settings as save_smtp_settings, send_test_email)
@@ -39,7 +40,7 @@ from .import_drafts import ImportDrafts
 from .request_auth import authenticated_account, csrf_for_session
 from .http_security import read_session_cookie, session_cookie, clear_session_cookie
 from .request_auth import login, logout, THROTTLE
-from .permissions import (can_access, create_user,
+from .permissions import (can_access, feature_enabled, create_user,
                           set_account_active, set_administrator, delete_user)
 from .role_policy import evaluate_role_policy
 from .roles import (preview_role_change, confirm_role_change, role_catalogue,
@@ -186,7 +187,7 @@ class Handler(BaseHTTPRequestHandler):
                 if account_id is None:
                     self.respond(401, {"error": "unauthorised"})
                     return
-                if self.path != "/account" and not any(can_access(connection, account_id, section)
+                if self.path != "/account" and not evaluate_role_policy(connection, account_id).is_admin and not any(can_access(connection, account_id, section)
                            for section in ("Devices", "IPAM", "Racks")):
                     self.respond(403, {"error": "forbidden"})
                     return
@@ -281,6 +282,7 @@ class Handler(BaseHTTPRequestHandler):
                 self.respond(200, {"users": users, "roles": role_catalogue(connection)})
         elif self.path == "/api/inventory/sections":
             with connect() as connection:
+                connection.execute("BEGIN")
                 account_id = authenticated_account(connection, self.headers.get("Cookie"))
                 if account_id is None:
                     self.respond(401, {"error": "unauthorised"})
@@ -299,6 +301,7 @@ class Handler(BaseHTTPRequestHandler):
                 "/api/inventory/racks": "Racks",
             }[self.path]
             with connect() as connection:
+                connection.execute("BEGIN")
                 account_id = authenticated_account(connection, self.headers.get("Cookie"))
                 if account_id is None:
                     self.respond(401, {"error": "unauthorised"})
@@ -331,17 +334,18 @@ class Handler(BaseHTTPRequestHandler):
                             "SELECT record_json FROM inventory_rack_accessories ORDER BY ordinal"
                         )],
                     }
-                self.respond(200, result)
+                self.respond(200, project_inventory_response(connection, account_id, result))
         elif self.path == "/api/inventory/state":
             """Return one permission-filtered SQLite snapshot for the inventory UI."""
             with connect() as connection:
+                connection.execute("BEGIN")
                 account_id = authenticated_account(connection, self.headers.get("Cookie"))
                 if account_id is None:
                     self.respond(401, {"error": "unauthorised"})
                     return
                 sections = {section: can_access(connection, account_id, section)
                             for section in ("Devices", "IPAM", "Racks")}
-                if not any(sections.values()):
+                if not any(sections.values()) and not evaluate_role_policy(connection, account_id).is_admin:
                     self.respond(403, {"error": "forbidden"})
                     return
                 result = {"sections": sections}
@@ -391,23 +395,25 @@ class Handler(BaseHTTPRequestHandler):
                     "SELECT key,value_json FROM inventory_settings"
                 )}
                 result["changeHistory"] = visible_change_history(connection, account_id)
-                self.respond(200, result)
+                self.respond(200, project_inventory_response(connection, account_id, result))
         elif self.path == "/api/inventory/settings":
             with connect() as connection:
+                connection.execute("BEGIN")
                 account_id = authenticated_account(connection, self.headers.get("Cookie"))
                 if account_id is None:
                     self.respond(401, {"error": "unauthorised"})
                     return
-                if not any(can_access(connection, account_id, section)
+                if not evaluate_role_policy(connection, account_id).is_admin and not any(can_access(connection, account_id, section)
                            for section in ("Devices", "IPAM", "Racks")):
                     self.respond(403, {"error": "forbidden"})
                     return
                 settings = {key: json.loads(raw) for key, raw in connection.execute(
                     "SELECT key,value_json FROM inventory_settings"
                 )}
-                self.respond(200, {"settings": settings})
+                self.respond(200, project_inventory_response(connection, account_id, {"settings": settings}))
         elif self.path == "/api/inventory/history":
             with connect() as connection:
+                connection.execute("BEGIN")
                 account_id = authenticated_account(connection, self.headers.get("Cookie"))
                 if account_id is None:
                     self.respond(401, {"error": "unauthorised"})
@@ -440,7 +446,7 @@ class Handler(BaseHTTPRequestHandler):
                     "mfa_enrolled": bool(account[2]),
                     "mfa_removal_eligible": bool(account[2]) and not evaluate_role_policy(
                         connection, account_id).mfa_mandatory,
-                    "can_enter_inventory": any(
+                    "can_enter_inventory": bool(account[1]) or any(
                         can_access(connection, account_id, section)
                         for section in ("Devices", "IPAM", "Racks")
                     ),
@@ -866,6 +872,10 @@ class Handler(BaseHTTPRequestHandler):
                     now = int(time.time())
                     connection.execute("BEGIN IMMEDIATE")
                     try:
+                        if not can_access(connection, actor, section, edit=True):
+                            raise PermissionError("Section edit permission was revoked")
+                        if not feature_enabled(connection, "Devices"):
+                            raise PermissionError("Devices feature is disabled")
                         connection.execute("DELETE FROM device_edit_reservations WHERE expires_at<=?", (now,))
                         if self.path.endswith("/start"):
                             device = connection.execute("SELECT revision FROM inventory_devices WHERE id=?", (device_id,)).fetchone()
@@ -1071,7 +1081,16 @@ class Handler(BaseHTTPRequestHandler):
             self.respond(403, {"error": "forbidden"})
             return
         except (ValueError, TypeError, sqlite3.IntegrityError) as exc:
-            self.respond(400, {"error": str(exc)})
+            message = str(exc)
+            if self.path.startswith(("/api/devices/", "/api/ipam/", "/api/inventory/")):
+                with connect() as connection:
+                    actor = authenticated_account(connection, self.headers.get("Cookie"))
+                    if not all(can_access(connection, actor, section)
+                               for section in ("Devices", "IPAM", "Racks")):
+                        # Validation checks the full saved inventory. Do not reveal
+                        # hidden record names or addresses in a conflict message.
+                        message = "Inventory operation could not be completed. Check your access and submitted values."
+            self.respond(400, {"error": message})
             return
         except (OSError, smtplib.SMTPException, ssl.SSLError):
             # Do not reflect mail-server diagnostics or credential details to clients.

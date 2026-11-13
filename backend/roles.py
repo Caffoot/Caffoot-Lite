@@ -12,7 +12,7 @@ import sqlite3
 import time
 
 from backend.audit_events import record_actor_event
-from backend.permissions import _admin, _target
+from backend.permissions import _admin, _target, feature_enabled
 from backend import role_policy
 from backend.sessions import session_account
 
@@ -100,10 +100,12 @@ def account_access_details(connection, account_id):
         inherited = max((source["level"] for source in sources),
                         key=lambda level: role_policy.LEVELS.index(level), default=None)
         effective = "edit" if policy.is_admin else policy.permissions.get(section)
+        enabled = feature_enabled(connection, section)
         sections[section] = {"sources": sources, "inherited": inherited,
                              "override": overrides.get(section), "effective": effective,
-                             "canRead": policy.allows(section),
-                             "canEdit": policy.allows(section, edit=True)}
+                             "featureEnabled": enabled,
+                             "canRead": enabled and policy.allows(section),
+                             "canEdit": enabled and policy.allows(section, edit=True)}
     return {"roles": roles, "sections": sections, "active": policy.active,
             "isAdmin": policy.is_admin, "mfaEnrolled": policy.mfa_enrolled,
             "mfaMandatory": policy.mfa_mandatory, "requiresMfa": policy.requires_mfa,

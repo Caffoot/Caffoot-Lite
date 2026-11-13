@@ -38,7 +38,7 @@ The Issue #309 tab icons use `renderSectionTabIcon`. `revealSectionTab` scrolls 
 
 ## Organisation Feature Settings
 
-[`feature_settings.py`](../../backend/feature_settings.py) provides `read_feature_settings` and `save_feature_setting`; `Handler.handle_feature_settings` serves the administrator API. Schema 13 stores durable choices separately from inventory settings. See [Optional Features](Optional-Features.md) for defaults, validation, audit and the unfinished access-guard/UI boundary.
+[`feature_settings.py`](../../backend/feature_settings.py) provides `read_feature_settings` and `save_feature_setting`; `Handler.handle_feature_settings` serves the administrator API. Schema 13 stores durable choices separately from inventory settings. See [Optional Features](Optional-Features.md) for defaults, validation, audit, effective access and the remaining UI boundary. `permissions.feature_enabled` composes with RBAC in `can_access`; `inventory_projection.project_inventory_response` filters response copies without changing saved records.
 
 ## Accounts and editing
 

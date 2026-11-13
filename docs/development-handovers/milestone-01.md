@@ -15,6 +15,16 @@
 - [ ] Obtain separate final milestone merge approval; verify the resulting `main` build
 - [ ] Obtain separate v2.2 publication approval and verify published image/platforms, release notes and installation links before changing current-release instructions
 
+## Stage 2 Batch 2 — Feature Permissions And Security
+
+Starts from verified Batch 1 merge `1541916e1720da51a1757c6831daae37d775bd24` on branch `stage-2-batch-2-feature-permissions`, following the [corrected owner handover](https://github.com/Caffoot/Caffoot-Lite/issues/238#issuecomment-6861557679). No change to `main` or `milestone-1` is authorised.
+
+The shared gate now combines enabled feature state with existing RBAC/account/MFA rules. Writers recheck after their lock; cross-feature operations cannot remove hidden relationships. Read snapshots, history (including administrator history), device-catalogue settings and IPAM Device-derived names are filtered. Existing administrator essentials and My Account remain available. Saved grants and authoritative inventory/history stay intact; no schema or feature-settings reseeding is added. Existing security/navigation logic changes only; pinned HTML/CSS, Optional Features UI, basic IPs, linking and Rack form integration remain untouched.
+
+Initial focused checks: 142 tests passed across feature combinations, HTTP denial, unchanged role rules, real SQLite feature-revocation contention, device/IPAM/Rack writes, import/reset, history and Batch 1 settings. The first eight-test run exposed an incorrect reset request fixture and an unchanged-allocation rewrite; both were corrected before the passing run. The latter now avoids any write to an unchanged hidden allocation. Existing inventory test fixtures explicitly enable the three implemented features; production fresh-install defaults stay all off. Further security regression and focused browser evidence remain pending at this checkpoint.
+
+See [Optional Features](../development-guide/Optional-Features.md) for storage/API/security behaviour and remaining integration limits. Stop after Batch 2 for owner review. No merge, release or deployment.
+
 ## Stage 2 Batch 1 — Optional Features Foundation
 
 Authorised by the owner's 13 November 2026 instruction, following the [approved technical contract](https://github.com/Caffoot/Caffoot-Lite/issues/238#issuecomment-6821230015). Branch `stage-2-batch-1-optional-features` starts at `milestone-1` commit `d0e23deafc9267afaf1769d219b4eddce5c246bf`; verified `main` remains `6008fedfc2c25fc40b49c9e9e21f3a93d61a9f4a`, with documentation-only differences at the start.

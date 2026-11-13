@@ -81,7 +81,8 @@ class FeatureSettingsTests(unittest.TestCase):
         before = self.choices()
         stage_inventory(self.db, inspect_export(json.dumps(fixture()).encode()))
         self.assertEqual(self.choices(), before)
-        reset_inventory(self.db, 1)
+        with patch("backend.reset_inventory.can_access", return_value=True):
+            reset_inventory(self.db, 1)
         self.assertEqual(self.choices(), before)
         with sqlite3.connect(':memory:') as restored:
             self.db.backup(restored)

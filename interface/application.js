@@ -8980,6 +8980,18 @@ void (async () => {
       !(editPermissions.Racks && actionCanEditRack.has(action));
   }
   function applyAllowedControls() {
+    document.querySelectorAll('#sidebar [data-tab]').forEach(button=>{
+      const area=section[button.dataset.tab];
+      if(area)button.hidden=!permissions[area];
+      if(['dashboard','audit'].includes(button.dataset.tab))button.hidden=!Object.values(permissions).some(Boolean);
+    });
+    const featureActions={Devices:['tab-devices','open-device-modal'],IPAM:['tab-ipam'],Racks:['tab-racks','dashboard-racks-overview','open-rack-modal']};
+    for(const [area,actions] of Object.entries(featureActions)){
+      if(permissions[area])continue;
+      for(const action of actions)document.querySelectorAll('#main-content [data-action="'+action+'"]').forEach(button=>{
+        (button.closest('.db-metric')||button).hidden=true;
+      });
+    }
     for(const root of [document.getElementById('sidebar'), document.getElementById('main-content'), document.getElementById('modal-content')]){
       if(!root) continue;
       if(!editPermissions.Racks){
@@ -9214,7 +9226,7 @@ void (async () => {
   }, true);
   const originalSwitchTab = switchTab;
   switchTab = function(tab) {
-    if ((!sessionCanEnterInventory && tab!=='account') || ((tab === 'users' || tab === 'settings') && !sessionIsAdmin) ||
+    if ((!sessionCanEnterInventory && tab!=='account') || (['dashboard','audit'].includes(tab) && !Object.values(permissions).some(Boolean)) || ((tab === 'users' || tab === 'settings') && !sessionIsAdmin) ||
         (section[tab] && !permissions[section[tab]])) {
       showToast('You do not have access to this section.', 'error');
       return;
@@ -10195,13 +10207,13 @@ void (async () => {
       const own=editingUser.username.toLowerCase()===signedInUsername.toLowerCase();
       const permissionControls=roleSections.map(section=>{
         const rights=editingUser.accessDetails.sections[section];
-        return renderInterfaceTemplate("users/permission-controls-1",[section,section,section,editingUser.id,section,own||editingUser.isAdmin?'disabled':'',[[null,'Inherit'],['deny','No Access'],['read','Read'],['edit','Edit']].map(([value,label])=>'<option value="'+(value===null?'':value)+'" '+(rights.override===value?'selected':'')+'>'+label+'</option>').join(''),permissionLabel(rights.inherited),permissionLabel(rights.effective)]);
+        return renderInterfaceTemplate("users/permission-controls-1",[section,section,section,editingUser.id,section,own||editingUser.isAdmin?'disabled':'',[[null,'Inherit'],['deny','No Access'],['read','Read'],['edit','Edit']].map(([value,label])=>'<option value="'+(value===null?'':value)+'" '+(rights.override===value?'selected':'')+'>'+label+'</option>').join(''),permissionLabel(rights.inherited),permissionLabel(rights.effective)+(rights.featureEnabled===false?' · Feature Disabled':'')]);
       }).join('');
       const operation=(kind,label)=>`<button type="button" class="btn ${kind==='delete'?'danger':''}" data-next-user-operation="${kind}" data-user-id="${editingUser.id}" ${own?'disabled':''}>${label}</button>`;
       const profile=editingUser.profile||{};
       const profileHTML=renderInterfaceTemplate("users/source-profile",[editingUser.id,...['firstName','lastName','displayName','email'].map(key=>escapeHtml(profile[key]||'')),own?'Edit your own personal details through My Account.':'Contact details do not change the sign-in username or account permissions. Saving an email address does not verify it.',own?'disabled':'']);
       const meta=renderInterfaceTemplate("users/source-user-meta",[editingUser.active?'green':'red',editingUser.active?'Active':'Disabled',editingUser.isAdmin?'blue':'dark',editingUser.isAdmin?'Administrator · All Sections':'Staff Member',editingUser.mfaEnrolled?'green':'amber',accountMfaLabel(editingUser)]);
-      const administratorNote=editingUser.isAdmin?'<div class="note-row" style="margin-bottom:13px">Administrators have access to all inventory sections. Their per-section permissions are not individually configured.</div>':'';
+      const administratorNote=editingUser.isAdmin?'<div class="note-row" style="margin-bottom:13px">Administrators retain configured access to all inventory sections. Disabled features remain unavailable. Their per-section permissions are not individually configured.</div>':'';
       const warnings=own?'<div class="modal-warning">You cannot disable, demote or delete your own signed-in administrator account. These controls are intentionally unavailable.</div>':editingUser.accessDetails.mfaPending?'<div class="modal-warning">MFA enrolment is required before wider Read/Edit access or enabled additional roles can be used. The user will be guided through enrolment before normal sign-in.</div>':'';
       const activeControl=renderInterfaceTemplate("users/source-account-control",[editingUser.active?'Disable account':'Enable account',editingUser.active?'Prevent this person signing in until the account is enabled again.':'Allow this person to sign in again.',operation('active',editingUser.active?'Disable':'Enable')]);
       const administratorControl=renderInterfaceTemplate("users/source-account-control",[editingUser.isAdmin?'Remove administrator':'Make administrator',editingUser.isAdmin?'Return this account to standard-user status.':'Grant existing administrator privileges to an MFA-enrolled account.',operation('admin',editingUser.isAdmin?'Remove admin':'Make admin')]);
@@ -10669,7 +10681,7 @@ void (async () => {
     }
     // Hide only the browser-backup actions excluded from the server application by issue #215.
     document.querySelectorAll('[data-action="settings-backup"],[data-action="export-data"],[data-action="export-backup"]').forEach(el=>el.hidden=true);
-    switchTab(sessionCanEnterInventory&&window.location.pathname!=='/account'?'dashboard':'account');
+    switchTab(window.location.pathname==='/account'?'account':Object.values(permissions).some(Boolean)?'dashboard':sessionIsAdmin?'settings':'account');
     // Preserve existing fragment entry points without changing server permissions.
     const destination = window.location.hash.slice(1);
     const legacyDestination = {
@@ -10678,10 +10690,10 @@ void (async () => {
       settings:'settings', account:'account'
     }[destination];
     const canOpen = legacyDestination === 'dashboard' || legacyDestination === 'account' ||
-      (legacyDestination === 'devices' && permissions.Devices?.read) ||
-      (legacyDestination === 'ipam' && permissions.IPAM?.read) ||
-      (legacyDestination === 'racks' && permissions.Racks?.read) ||
-      (legacyDestination === 'audit' && ['Devices','IPAM','Racks'].some(area => permissions[area]?.read)) ||
+      (legacyDestination === 'devices' && permissions.Devices) ||
+      (legacyDestination === 'ipam' && permissions.IPAM) ||
+      (legacyDestination === 'racks' && permissions.Racks) ||
+      (legacyDestination === 'audit' && ['Devices','IPAM','Racks'].some(area => permissions[area])) ||
       (sessionIsAdmin && ['users','settings'].includes(legacyDestination));
     if (legacyDestination && canOpen) switchTab(legacyDestination);
     document.getElementById('app').inert=false;

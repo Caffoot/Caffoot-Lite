@@ -7,6 +7,7 @@ from backend.mfa import code_at
 from backend.permissions import (
     create_user, can_access, can_replace_inventory, set_account_active, delete_user,
 )
+from enabled_inventory import enable_inventory_features
 from backend.schema import initialise_database
 
 
@@ -15,6 +16,7 @@ class PermissionsTests(unittest.TestCase):
         self.db = sqlite3.connect(":memory:")
         self.db.execute("PRAGMA foreign_keys=ON")
         initialise_database(self.db)
+        enable_inventory_features(self.db)
         self.admin, secret = bootstrap_first_admin(self.db, "Owner", "secret")
         confirm_admin_mfa(self.db, self.admin, code_at(secret, 59), timestamp=59)
 

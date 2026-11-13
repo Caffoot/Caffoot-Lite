@@ -73,7 +73,7 @@ def visible_change_history(connection, account_id):
         "SELECT active,is_admin,mfa_confirmed FROM accounts WHERE id=?",
         (account_id,),
     ).fetchone()
-    is_admin = row == (1, 1, 1)
+    is_admin = row == (1, 1, 1) and all(sections.values())
 
     history = []
     for (raw,) in connection.execute(

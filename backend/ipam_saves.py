@@ -16,6 +16,8 @@ def change_independent_allocation(connection, account_id, ip, record):
         raise ValueError("Invalid IPAM allocation")
     connection.execute("BEGIN IMMEDIATE")
     try:
+        if not can_access(connection, account_id, "IPAM", edit=True):
+            raise PermissionError("Section edit permission was revoked")
         state = reconstruct_inventory(connection)
         before = state["ipAllocations"].get(ip)
         if before and before.get("deviceId"):
@@ -71,6 +73,8 @@ def change_bulk_allocations(connection, account_id, changes):
         raise ValueError("Bulk IPAM operation must contain 1 to 512 addresses")
     connection.execute("BEGIN IMMEDIATE")
     try:
+        if not can_access(connection, account_id, "IPAM", edit=True):
+            raise PermissionError("Section edit permission was revoked")
         state = reconstruct_inventory(connection)
         gateways = {subnet.get("gateway") for subnet in state["subnets"]}
         primary_ips = {device.get("primaryIp") for device in state["devices"]}
