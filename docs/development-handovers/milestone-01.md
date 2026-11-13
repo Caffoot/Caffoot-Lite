@@ -15,6 +15,16 @@
 - [ ] Obtain separate final milestone merge approval; verify the resulting `main` build
 - [ ] Obtain separate v2.2 publication approval and verify published image/platforms, release notes and installation links before changing current-release instructions
 
+## Stage 2 Batch 4 — Interface And Rack Preservation
+
+Starts from verified merge `89ad05eab13f7a429dcbd5f4266a26e52f5de8d2` on `stage-2-batch-4-interface-rack-preservation`, following the [approved contract](https://github.com/Caffoot/Caffoot-Lite/issues/238#issuecomment-6821230015) and [Batch 4 handover](https://github.com/Caffoot/Caffoot-Lite/issues/238#issuecomment-6863207632). Published `main` remains unchanged.
+
+The first implementation adds locked omission-merging for hidden Rack placement, shelf and original Location fields; explicit changes are refused while Racks is off. New placements are blocked, while type-specific non-Rack choices remain. The existing Settings screen gains its fourth Optional Features tab using its own cards/toggles and secured API, with confirmation on disable and inactive future cards. The existing IPAM statistic component shows the authorised saved-data outside-subnet count. The Device Details Network context gains a Link action and chooser using existing Device dialog components and the Batch 3 backend.
+
+Initial focused selection passed 100 tests; the expanded omission/shelf/count/permission/modular selection passed 20 tests. One Batch 2 expectation that omission must be rejected was replaced by the newly approved merge behaviour, with explicit forgery checks retained. A new count test fixture required its setup transaction to commit before account creation; it was corrected before the 20 passing checks. Browser behaviour and source comparisons are pending at this intermediate checkpoint; no visual acceptance is claimed.
+
+Stop after Batch 4 for owner review. No Batch 5, merge, release or deployment.
+
 ## Stage 2 Batch 3 — Optional Addresses And Explicit IPAM Linking
 
 Verified baseline: `milestone-1` merge `339ed5f1d7f7415e126553ad06a89411d34cc0f9`, following the [approved contract](https://github.com/Caffoot/Caffoot-Lite/issues/238#issuecomment-6821230015) and [merge handover](https://github.com/Caffoot/Caffoot-Lite/issues/238#issuecomment-6862456347). Branch: `stage-2-batch-3-optional-ip-linking`.

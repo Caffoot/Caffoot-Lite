@@ -50,6 +50,7 @@ class FeatureAccessHttpTests(unittest.TestCase):
             with self.subTest(enabled=enabled):
                 status,result=self.get('/api/inventory/state')
                 self.assertEqual(status,200)
+                self.assertEqual('basicIpsOutsideSubnets' in result,'devices' in enabled and 'ipam' in enabled)
                 for name,section,collection,marker in zip(('devices','ipam','racks'),('Devices','IPAM','Racks'),('devices','subnets','racks'),('PRIVATE_DEVICE','PRIVATE_SUBNET','PRIVATE_RACK')):
                     self.assertEqual(result['sections'][section],name in enabled)
                     self.assertEqual(collection in result,name in enabled)
@@ -192,7 +193,7 @@ class FeatureAccessHttpTests(unittest.TestCase):
         with sqlite3.connect(self.path) as db:
             db.execute('INSERT INTO device_edit_reservations VALUES(?,1,?,0)',('d1',int(time.time())+300));db.commit()
             before=list(db.iterdump())
-            for record in (dict(state['devices'][0],primaryIp=''),dict(state['devices'][0],rackId=''),{k:v for k,v in state['devices'][0].items() if k!='rackId'}):
+            for record in (dict(state['devices'][0],primaryIp=''),dict(state['devices'][0],rackId='')):
                 with self.assertRaises(PermissionError):save_reserved_device(db,1,'d1',0,record)
                 self.assertEqual(list(db.iterdump()),before)
 
@@ -220,3 +221,25 @@ class FeatureAccessHttpTests(unittest.TestCase):
                     with self.assertRaises(PermissionError):function(db,1,*args)
                     self.assertGreaterEqual(check.call_count,2)
                     self.assertEqual(list(db.iterdump()),before)
+
+    def test_basic_outside_count_requires_both_read_permissions(self):
+        from backend.permissions import create_user
+        from backend.sessions import login_session
+        from backend.mfa import code_at, new_secret
+        self.seed()
+        with sqlite3.connect(self.path) as db:
+            db.execute('INSERT INTO inventory_devices(id,name,record_json,ordinal) VALUES(?,?,?,1)',('basic','Basic',json.dumps(dict(id='basic',name='Basic',mountType='Desktop',primaryIp='192.0.2.10',primaryIpMode='basic'))))
+            db.commit()
+            user=create_user(db,1,'ipam-viewer','password')
+            secret=new_secret()
+            db.execute('UPDATE accounts SET mfa_secret=?,mfa_confirmed=1 WHERE id=?',(secret,user))
+            db.execute("INSERT INTO account_permission_overrides VALUES(?,'IPAM','read')",(user,));db.commit()
+            token=login_session(db,'ipam-viewer','password',mfa_code=code_at(secret,time.time()))
+        status,body,_=self.request('/api/inventory/state',COOKIE_NAME+'='+token)
+        self.assertEqual(status,200);self.assertNotIn('basicIpsOutsideSubnets',json.loads(body))
+        with sqlite3.connect(self.path) as db:db.execute("INSERT INTO account_permission_overrides VALUES(?,'Devices','read')",(user,))
+        status,body,_=self.request('/api/inventory/state',COOKIE_NAME+'='+token)
+        self.assertEqual(status,200);self.assertEqual(json.loads(body)['basicIpsOutsideSubnets'],1)
+        self.features(['ipam','racks'])
+        status,body,_=self.request('/api/inventory/state',COOKIE_NAME+'='+token)
+        self.assertEqual(status,200);self.assertNotIn('basicIpsOutsideSubnets',json.loads(body))

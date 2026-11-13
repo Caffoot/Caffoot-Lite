@@ -25,6 +25,7 @@
 <button aria-selected="true" class="active" data-tab="data" data-action="select-settings-tab" role="tab" type="button"><svg fill="none" stroke="currentColor" viewbox="0 0 24 24"><use href="#i-database"></use></svg> Data &amp; Backups</button>
 <button aria-selected="false" data-tab="email" data-action="select-settings-tab" role="tab" type="button"><svg fill="none" stroke="currentColor" viewbox="0 0 24 24"><use href="#i-mail"></use></svg> Email Settings</button>
 <button aria-selected="false" data-tab="maintenance" data-action="select-settings-tab" role="tab" type="button"><svg fill="none" stroke="currentColor" viewbox="0 0 24 24"><use href="#i-tool"></use></svg> System Maintenance</button>
+<button aria-selected="false" data-tab="features" data-action="select-settings-tab" role="tab" type="button"><svg fill="none" stroke="currentColor" viewbox="0 0 24 24"><use href="#i-grid"></use></svg> Optional Features</button>
 </nav>
 <section class="account-panel active" data-section="data" role="tabpanel">
 <div class="settings-grid">
@@ -116,5 +117,8 @@
 <div class="card card-padded"><div class="card-head"><span class="iconwrap orange"><svg fill="none" stroke="currentColor" viewbox="0 0 24 24"><use href="#i-database"></use></svg></span><div><h3>Backups First</h3><p class="sub">Good backups make maintenance safer.</p></div></div><div class="divider"></div><button class="btn btn-outline full-button" data-action="select-settings-tab" data-tab="data" type="button">Review Backup Guidance</button></div>
 </div>
 </section>
+<section class="account-panel" data-section="features" role="tabpanel" hidden><div id="optional-feature-cards" class="settings-grid settings-maintenance-grid"></div><p id="optional-feature-feedback" class="muted-note" role="status">Loading feature settings…</p></section>
 <footer class="footer"><span>Caffoot Lite · Infrastructure, Simplified.</span><span>Settings &amp; Data · Caffoot Lite</span></footer>
 </main></div><!-- /interface-template -->
+
+<!-- interface-template:settings/optional-feature-card --><div class="card card-padded" data-feature-card="{{slot:0}}"><div class="card-head"><span class="iconwrap"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><use href="#{{slot:1}}"></use></svg></span><div class="heading-fill"><h3>{{slot:2}}</h3><p class="sub">{{slot:3}}</p></div><span class="mini-tag" data-feature-status>{{slot:4}}</span></div><div class="toggle-settings"><div><strong>{{slot:5}}</strong><span>{{slot:6}}</span></div><label class="toggle"><input type="checkbox" role="switch" aria-label="Enable {{slot:2}}" aria-checked="{{slot:7}}" data-optional-feature="{{slot:0}}" {{slot:8}} {{slot:9}}><span class="toggle-slider" aria-hidden="true"></span></label></div></div><!-- /interface-template -->
