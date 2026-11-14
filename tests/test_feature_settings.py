@@ -60,6 +60,7 @@ class FeatureSettingsTests(unittest.TestCase):
         before = self.snapshot()
         schema.initialise_database(self.db)
         after = self.snapshot()
+        self.assertEqual(after.pop('device_assignments'), [])
         self.assertEqual(after.pop('departments'), [])
         self.assertEqual(len(after.pop('staff_members')), 1)
         self.assertEqual(after, before)

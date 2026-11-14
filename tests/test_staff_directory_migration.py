@@ -61,6 +61,7 @@ class StaffDirectoryMigrationTests(unittest.TestCase):
         policies = {account: evaluate_role_policy(self.db, account) for account in range(1, 6)}
         schema.initialise_database(self.db)
         after = self.snapshot()
+        self.assertEqual(after.pop('device_assignments'), [])
         self.assertEqual(after.pop('departments'), [])
         staff = after.pop('staff_members')
         self.assertEqual(before, after)

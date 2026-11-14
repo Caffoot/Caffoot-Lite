@@ -94,6 +94,19 @@ jobs:
           NODE_PATH: ${{ runner.temp }}/caffoot-browser-tests/node_modules
           CAFFOOT_STAFF_OUTPUT: ${{ runner.temp }}/staff-directory-evidence
         run: node tests/staff-directory-interface.cjs
+      - name: Exercise canonical Device assignments and My Equipment
+        env:
+          NODE_PATH: ${{ runner.temp }}/caffoot-browser-tests/node_modules
+          CAFFOOT_EQUIPMENT_OUTPUT: ${{ runner.temp }}/device-assignment-evidence
+        run: node tests/device-assignments-interface.cjs
+      - name: Save Device assignment interface evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: device-assignment-interface-${{ github.sha }}
+          path: ${{ runner.temp }}/device-assignment-evidence
+          if-no-files-found: ignore
+          retention-days: 14
       - name: Save Staff and Department interface evidence
         if: always()
         uses: actions/upload-artifact@v4

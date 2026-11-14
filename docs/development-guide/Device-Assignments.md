@@ -13,6 +13,10 @@ Initial allocation records an eligible existing Device's holder. It does not
 assert physical possession by a storeroom or mark equipment Ready. Inactive
 Staff, archived Departments, inactive/retired Devices, virtual machines, stale
 revisions, edit reservations and Devices with assignment history are rejected.
+The reviewed Desktop, Laptop and Printer examples are enabled; other Device
+types fail closed while the owner clarifies the archived preview's explicit
+infrastructure-eligibility boundary. This restriction is awaiting a decision,
+not claimed as an approved new Device-type policy.
 The whole multi-Device request either commits with attributable audit events or
 rolls back. After waiting for the SQLite write lock, the operation rechecks its
 session, MFA-dependent effective rights, current recipients and Device state.

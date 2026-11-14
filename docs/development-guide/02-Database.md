@@ -23,6 +23,7 @@ The exact definitions are in [`backend/schema.py`](../../backend/schema.py). The
 | `schema_migrations` | `version`, `applied_at` | Applied schema versions |
 | `departments` | independent text `id`, unique `name`, `archived` | Flat Department records |
 | `staff_members` | independent text `id`, optional unique `account_id`, optional `department_id`, profile details, `active` | Directory records independent of logins |
+| `device_assignments` | numbered `id`, canonical `device_id`, exactly one `staff_id`/`department_id`, dated recipient/actor snapshots | Current allocations and retained history; schema 15, unique open allocation per Device |
 | `inventory_devices` | `id`, case-insensitive unique `name`, `record_json`, `revision`, `ordinal` | Device identity, variable device properties, optimistic revision and original list order |
 | `inventory_subnets` | `id`, `record_json`, `ordinal` | Subnet records |
 | `inventory_vlans` | `id`, `record_json`, `ordinal` | VLAN records |
@@ -66,3 +67,8 @@ The container mount is the persistence boundary. Back up and restore the deploye
 ### Related reading
 
 [Architecture](01-Architecture.md) · [Inventory and migration](05-Inventory-and-Migration.md) · [Code reference](07-Function-and-Code-Reference.md)
+
+Schema 15 adds [Device Assignments](Device-Assignments.md) without changing any
+existing records or inferring stock/readiness. Referenced Devices and recipients
+cannot be deleted. Whole-inventory replacement and Clean Start are also blocked
+where they would remove referenced Devices.

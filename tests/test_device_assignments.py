@@ -7,6 +7,7 @@ import unittest
 from unittest.mock import patch
 
 from backend import schema
+from backend.sessions import _digest
 from backend.device_assignments import (assign_devices, assignment_recipients,
     read_assignments, my_equipment, assignment_device_choices)
 from backend.staff_directory import save_staff_member, save_department, read_department
@@ -165,3 +166,58 @@ class DeviceAssignmentTests(unittest.TestCase):
         self.assertEqual(db.execute('SELECT * FROM inventory_devices').fetchall(), before)
         self.assertEqual(db.execute('SELECT * FROM device_assignments').fetchall(), [])
         self.assertEqual(db.execute('SELECT max(version) FROM schema_migrations').fetchone()[0], 15)
+
+    def test_audit_failure_rolls_back_every_device_and_general_history(self):
+        before = self.snapshot()
+        with patch('backend.device_assignments.record_actor_event', side_effect=RuntimeError('Audit unavailable')):
+            with self.assertRaises(RuntimeError):
+                self.allocate(('one', 'two'))
+        self.assertEqual(before, self.snapshot())
+
+    def test_delete_and_inventory_reset_retain_assignment_history(self):
+        from backend.device_saves import delete_reserved_device
+        from backend.reset_inventory import reset_inventory
+        self.allocate()
+        self.db.execute("INSERT INTO device_edit_reservations VALUES('one',1,9999999999,0)")
+        self.db.commit()
+        before = self.snapshot()
+        with self.assertRaisesRegex(ValueError, 'assignment history'):
+            delete_reserved_device(self.db, 1, 'one', 0)
+        self.assertEqual(before, self.snapshot())
+        with self.assertRaises(sqlite3.IntegrityError):
+            reset_inventory(self.db, 1)
+        self.assertEqual(before, self.snapshot())
+
+    def test_waiting_allocation_rechecks_session_and_permission(self):
+        for statement in ("DELETE FROM account_sessions WHERE account_id=2",
+                          "UPDATE accounts SET mfa_confirmed=0 WHERE id=2",
+                          "UPDATE account_permission_overrides SET level='deny' WHERE account_id=2 AND section='Devices'"):
+            self.db.execute("INSERT OR REPLACE INTO account_permission_overrides VALUES(2,'Devices','edit')")
+            self.db.execute("UPDATE accounts SET mfa_confirmed=1 WHERE id=2")
+            self.db.execute('INSERT OR REPLACE INTO account_sessions VALUES(?,?,9999999999,1)', (_digest(self.tokens[2]), 2))
+            self.db.commit()
+            ready = threading.Event()
+            def waiting():
+                with sqlite3.connect(self.path, timeout=10) as db:
+                    db.execute('PRAGMA foreign_keys=ON')
+                    ready.set()
+                    try:
+                        self.allocate(actor=2, connection=db)
+                        return 'assigned'
+                    except PermissionError:
+                        return 'denied'
+            self.db.execute('BEGIN IMMEDIATE')
+            with concurrent.futures.ThreadPoolExecutor(max_workers=1) as pool:
+                result = pool.submit(waiting)
+                self.assertTrue(ready.wait(5))
+                self.db.execute(statement)
+                self.db.commit()
+                self.assertEqual(result.result(timeout=10), 'denied')
+        self.assertEqual(self.db.execute('SELECT count(*) FROM device_assignments').fetchone()[0], 0)
+
+    def test_unreviewed_device_types_are_blocked_pending_eligibility_decision(self):
+        self.db.execute("UPDATE inventory_devices SET record_json=json_set(record_json,'$.type','Switch') WHERE id='one'")
+        self.db.commit()
+        with self.assertRaisesRegex(FileExistsError, 'product-owner approval'):
+            self.allocate()
+        self.assertNotIn('one', [d['id'] for d in assignment_device_choices(self.db, 1)])

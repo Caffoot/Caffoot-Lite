@@ -24,10 +24,13 @@ async function initialiseInterface() {
             interfaceTemplates.set(match[1], match[2]);
         }
     }
-    const designs = ['dashboard','my-account','settings','device-details','devices','device-inventory','device-management','ipam','racks','users','audit-trail','staff'];
+    const designs = ['dashboard','my-account','settings','device-details','devices','device-inventory','device-management','ipam','racks','users','audit-trail','staff','equipment'];
     await Promise.all(designs.map(async name => {
         interfaceStyles.set(name, await loadInterfaceText('styles/' + name + '.css'));
     }));
+    const equipmentStyle = document.createElement('style');
+    equipmentStyle.textContent = interfaceStyles.get('equipment');
+    document.head.append(equipmentStyle);
     const staffStyle = interfaceStyles.get('users') + '\n' + interfaceStyles.get('staff');
     interfaceStyles.set('staff', staffStyle);
     interfaceStyles.set('departments', staffStyle);
@@ -43,8 +46,14 @@ async function initialiseInterface() {
     staffScript.onerror = () => showInterfaceLoadError();
     staffScript.onload = () => {
         const script = document.createElement('script');
-        script.src = '/interface/application.js';
+        script.src = '/interface/equipment.js';
         script.onerror = () => showInterfaceLoadError();
+        script.onload = () => {
+            const applicationScript = document.createElement('script');
+            applicationScript.src = '/interface/application.js';
+            applicationScript.onerror = () => showInterfaceLoadError();
+            document.body.append(applicationScript);
+        };
         document.body.append(script);
     };
     document.body.append(staffScript);

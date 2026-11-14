@@ -35,6 +35,8 @@ def device_assignment_dependency(connection, device_id, record):
         return 'This Device is not active. Return, preparation and stock workflows are required before it can be issued.'
     if record.get('isVirtual') or record.get('virtualHostId') or record.get('type') in ('Virtual Machine', 'Server - Virtual'):
         return 'Virtual machines cannot be physically allocated as equipment.'
+    if record.get('type') not in ('Desktop', 'Laptop', 'Printer'):
+        return 'Initial allocation eligibility for this Device type needs product-owner approval.'
     return None
 
 
