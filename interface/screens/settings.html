@@ -117,8 +117,16 @@
 <div class="card card-padded"><div class="card-head"><span class="iconwrap orange"><svg fill="none" stroke="currentColor" viewbox="0 0 24 24"><use href="#i-database"></use></svg></span><div><h3>Backups First</h3><p class="sub">Good backups make maintenance safer.</p></div></div><div class="divider"></div><button class="btn btn-outline full-button" data-action="select-settings-tab" data-tab="data" type="button">Review Backup Guidance</button></div>
 </div>
 </section>
-<section class="account-panel" data-section="features" role="tabpanel" hidden><div id="optional-feature-cards" class="settings-grid settings-maintenance-grid"></div><p id="optional-feature-feedback" class="muted-note" role="status">Loading feature settings…</p></section>
+<section class="account-panel optional-features-panel" data-section="features" role="tabpanel" hidden>
+<div class="panel-heading"><div><h2>Optional Features</h2><p>Choose which sections your organisation uses. Features can be enabled independently, with permissions retained.</p></div></div>
+<div class="note"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 11v6m0-10v1"/></svg><span><strong>Your Information Stays Safe.</strong> Disabling a feature hides its functionality but retains existing records, relationships and permissions. Only administrators can change these settings. Turning a feature on does not grant users permission to access it.</span></div>
+<div id="optional-feature-cards">
+<h3 class="section-title">Infrastructure</h3><div id="optional-feature-infrastructure" class="feature-grid"></div>
+<h3 class="section-title">Additional Features</h3><div id="optional-feature-additional" class="feature-grid"></div>
+</div>
+<p id="optional-feature-feedback" class="muted-note" role="status">Loading feature settings…</p>
+</section>
 <footer class="footer"><span>Caffoot Lite · Infrastructure, Simplified.</span><span>Settings &amp; Data · Caffoot Lite</span></footer>
 </main></div><!-- /interface-template -->
 
-<!-- interface-template:settings/optional-feature-card --><div class="card card-padded" data-feature-card="{{slot:0}}"><div class="card-head"><span class="iconwrap"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><use href="#{{slot:1}}"></use></svg></span><div class="heading-fill"><h3>{{slot:2}}</h3><p class="sub">{{slot:3}}</p></div><span class="mini-tag" data-feature-status>{{slot:4}}</span></div><div class="toggle-settings"><div><strong>{{slot:5}}</strong><span>{{slot:6}}</span></div><label class="toggle"><input type="checkbox" role="switch" aria-label="Enable {{slot:2}}" aria-checked="{{slot:7}}" data-optional-feature="{{slot:0}}" {{slot:8}} {{slot:9}}><span class="toggle-slider" aria-hidden="true"></span></label></div></div><!-- /interface-template -->
+<!-- interface-template:settings/optional-feature-card --><article class="card card-padded" data-feature-card="{{slot:0}}"><div class="card-head"><span class="iconwrap {{slot:10}}"><svg viewBox="0 0 24 24" aria-hidden="true">{{slot:1}}</svg></span><div><h4 class="feature-title">{{slot:2}}</h4><p class="description">{{slot:3}}</p></div></div><div class="separator"></div><div class="feature-bottom"><span class="status {{slot:11}}" data-feature-status>{{slot:4}}</span><label class="toggle-label {{slot:12}}" for="optional-feature-{{slot:14}}"><span>{{slot:5}}</span><input id="optional-feature-{{slot:14}}" class="switch" type="checkbox" role="switch" aria-label="{{slot:6}}" aria-checked="{{slot:7}}" data-optional-feature="{{slot:0}}" {{slot:8}} {{slot:9}}></label></div>{{slot:13}}</article><!-- /interface-template -->

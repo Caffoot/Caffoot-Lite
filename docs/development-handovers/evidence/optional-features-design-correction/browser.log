@@ -1,0 +1,3 @@
+PASS: approved groups/copy/icons/card structure, real saved states, unavailable controls, load recovery, pending controls and failed-save rollback.
+PASS: switches/cancel/all-off essentials, Rack/shelf omission preservation, type choices, permission-safe count, no-subnet/cancel/stale/success linking.
+PASS: 42 desktop/mobile light/dark and pinned-source screenshots; no page errors or checked document overflow.

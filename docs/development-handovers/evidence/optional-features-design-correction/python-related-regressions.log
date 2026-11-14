@@ -1,0 +1,116 @@
+test_all_feature_combinations_filter_direct_combined_history_and_settings (test_feature_access.FeatureAccessHttpTests.test_all_feature_combinations_filter_direct_combined_history_and_settings) ... 127.0.0.1 - - [14/Nov/2026 16:22:00] "GET /api/inventory/state HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 16:22:00] "GET /api/inventory/devices HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 16:22:00] "GET /api/inventory/ipam HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 16:22:00] "GET /api/inventory/racks HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 16:22:00] "GET /api/inventory/settings HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 16:22:00] "GET /api/inventory/history HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 16:22:00] "GET /api/inventory/state HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 16:22:00] "GET /api/inventory/devices HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 16:22:00] "GET /api/inventory/ipam HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 16:22:00] "GET /api/inventory/racks HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 16:22:00] "GET /api/inventory/settings HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 16:22:00] "GET /api/inventory/history HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 16:22:00] "GET /api/inventory/state HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 16:22:00] "GET /api/inventory/devices HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 16:22:00] "GET /api/inventory/ipam HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 16:22:00] "GET /api/inventory/racks HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 16:22:00] "GET /api/inventory/settings HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 16:22:00] "GET /api/inventory/history HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 16:22:00] "GET /api/inventory/state HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 16:22:00] "GET /api/inventory/devices HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 16:22:00] "GET /api/inventory/ipam HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 16:22:00] "GET /api/inventory/racks HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 16:22:00] "GET /api/inventory/settings HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 16:22:00] "GET /api/inventory/history HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 16:22:00] "GET /api/inventory/state HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 16:22:00] "GET /api/inventory/devices HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 16:22:00] "GET /api/inventory/ipam HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 16:22:00] "GET /api/inventory/racks HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 16:22:00] "GET /api/inventory/settings HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 16:22:00] "GET /api/inventory/history HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 16:22:00] "GET /api/inventory/state HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 16:22:00] "GET /api/inventory/devices HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 16:22:00] "GET /api/inventory/ipam HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 16:22:00] "GET /api/inventory/racks HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 16:22:00] "GET /api/inventory/settings HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 16:22:00] "GET /api/inventory/history HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 16:22:00] "GET /api/inventory/state HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 16:22:00] "GET /api/inventory/devices HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 16:22:00] "GET /api/inventory/ipam HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 16:22:00] "GET /api/inventory/racks HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 16:22:00] "GET /api/inventory/settings HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 16:22:00] "GET /api/inventory/history HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 16:22:00] "GET /api/inventory/state HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 16:22:00] "GET /api/inventory/devices HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 16:22:00] "GET /api/inventory/ipam HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 16:22:00] "GET /api/inventory/racks HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 16:22:00] "GET /api/inventory/settings HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 16:22:00] "GET /api/inventory/history HTTP/1.1" 200 -
+ok
+test_all_off_admin_essentials_and_account_access (test_feature_access.FeatureAccessHttpTests.test_all_off_admin_essentials_and_account_access) ... 127.0.0.1 - - [14/Nov/2026 16:22:01] "GET /inventory HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 16:22:01] "GET /account HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 16:22:01] "GET /api/users HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 16:22:01] "GET /api/settings/features HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 16:22:01] "GET /api/account/profile HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 16:22:01] "GET /api/session HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 16:22:01] "GET /api/session HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 16:22:01] "GET /api/inventory/devices HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 16:22:01] "GET /api/inventory/ipam HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 16:22:01] "GET /api/inventory/racks HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 16:22:01] "POST /api/devices/create HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 16:22:01] "POST /api/devices/edit/start HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 16:22:01] "POST /api/devices/delete HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 16:22:01] "POST /api/ipam/allocation/save HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 16:22:01] "POST /api/inventory/record/save HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 16:22:01] "POST /api/inventory/reset HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 16:22:01] "POST /api/inventory/settings/save HTTP/1.1" 403 -
+ok
+test_basic_outside_count_requires_both_read_permissions (test_feature_access.FeatureAccessHttpTests.test_basic_outside_count_requires_both_read_permissions) ... 127.0.0.1 - - [14/Nov/2026 16:22:03] "GET /api/inventory/state HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 16:22:03] "GET /api/inventory/state HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 16:22:03] "GET /api/inventory/state HTTP/1.1" 200 -
+ok
+test_each_writer_rechecks_access_before_writing (test_feature_access.FeatureAccessHttpTests.test_each_writer_rechecks_access_before_writing) ... ok
+test_forged_hidden_relationship_mutations_save_nothing (test_feature_access.FeatureAccessHttpTests.test_forged_hidden_relationship_mutations_save_nothing) ... ok
+test_grants_overrides_mfa_status_and_future_features_fail_closed (test_feature_access.FeatureAccessHttpTests.test_grants_overrides_mfa_status_and_future_features_fail_closed) ... ok
+test_hidden_devices_cannot_be_modified_through_another_section (test_feature_access.FeatureAccessHttpTests.test_hidden_devices_cannot_be_modified_through_another_section) ... 127.0.0.1 - - [14/Nov/2026 16:22:07] "POST /api/devices/edit/start HTTP/1.1" 403 -
+ok
+test_hidden_ipam_and_rack_relationships_survive_unrelated_device_save (test_feature_access.FeatureAccessHttpTests.test_hidden_ipam_and_rack_relationships_survive_unrelated_device_save) ... 127.0.0.1 - - [14/Nov/2026 16:22:08] "GET /api/inventory/ipam HTTP/1.1" 200 -
+ok
+test_inventory_import_requires_all_enabled_features (test_feature_access.FeatureAccessHttpTests.test_inventory_import_requires_all_enabled_features) ... ok
+test_ordinary_users_keep_account_without_inventory_or_administrator_access (test_feature_access.FeatureAccessHttpTests.test_ordinary_users_keep_account_without_inventory_or_administrator_access) ... 127.0.0.1 - - [14/Nov/2026 16:22:10] "GET /account HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 16:22:10] "GET /inventory HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 16:22:10] "GET /api/users HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 16:22:10] "GET /api/settings/features HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 16:22:10] "GET /api/inventory/state HTTP/1.1" 403 -
+ok
+test_partial_access_validation_errors_do_not_reveal_hidden_records (test_feature_access.FeatureAccessHttpTests.test_partial_access_validation_errors_do_not_reveal_hidden_records) ... 127.0.0.1 - - [14/Nov/2026 16:22:11] "POST /api/inventory/record/save HTTP/1.1" 400 -
+ok
+test_waiting_writer_rechecks_feature_after_real_database_lock (test_feature_access.FeatureAccessHttpTests.test_waiting_writer_rechecks_feature_after_real_database_lock) ... 127.0.0.1 - - [14/Nov/2026 16:22:12] "GET /api/inventory/racks HTTP/1.1" 403 -
+ok
+test_ranges_include_network_and_broadcast_and_exclude_containers (test_racks_off_preservation.BasicIpCountTests.test_ranges_include_network_and_broadcast_and_exclude_containers) ... ok
+test_absent_historical_fields_stay_absent (test_racks_off_preservation.RacksOffPreservationTests.test_absent_historical_fields_stay_absent) ... ok
+test_all_explicit_hidden_placement_changes_are_rejected_atomically (test_racks_off_preservation.RacksOffPreservationTests.test_all_explicit_hidden_placement_changes_are_rejected_atomically) ... ok
+test_new_placements_are_refused_but_nonrack_types_are_unchanged (test_racks_off_preservation.RacksOffPreservationTests.test_new_placements_are_refused_but_nonrack_types_are_unchanged) ... ok
+test_no_ip_unrelated_save_does_not_require_ipam_edit (test_racks_off_preservation.RacksOffPreservationTests.test_no_ip_unrelated_save_does_not_require_ipam_edit) ... ok
+test_omitted_fields_are_merged_from_authoritative_record (test_racks_off_preservation.RacksOffPreservationTests.test_omitted_fields_are_merged_from_authoritative_record) ... ok
+test_omitted_shelf_association_and_original_location_are_retained (test_racks_off_preservation.RacksOffPreservationTests.test_omitted_shelf_association_and_original_location_are_retained) ... ok
+test_audit_failure_rolls_back_device_allocation_revision_and_history (test_optional_device_addresses.OptionalDeviceAddressTests.test_audit_failure_rolls_back_device_allocation_revision_and_history) ... ok
+test_basic_creation_and_edit_without_subnets_or_allocations (test_optional_device_addresses.OptionalDeviceAddressTests.test_basic_creation_and_edit_without_subnets_or_allocations) ... ok
+test_basic_mode_survives_clearing_and_reentry_after_enabling_ipam (test_optional_device_addresses.OptionalDeviceAddressTests.test_basic_mode_survives_clearing_and_reentry_after_enabling_ipam) ... ok
+test_enabling_restart_repair_and_unrelated_edits_do_not_link (test_optional_device_addresses.OptionalDeviceAddressTests.test_enabling_restart_repair_and_unrelated_edits_do_not_link) ... ok
+test_explicit_link_is_atomic_and_preserves_notes (test_optional_device_addresses.OptionalDeviceAddressTests.test_explicit_link_is_atomic_and_preserves_notes) ... ok
+test_invalid_modes_ipv4_duplicates_and_hidden_reservations_rejected (test_optional_device_addresses.OptionalDeviceAddressTests.test_invalid_modes_ipv4_duplicates_and_hidden_reservations_rejected) ... ok
+test_ipam_only_editor_cannot_change_basic_address_through_ipam_section (test_optional_device_addresses.OptionalDeviceAddressTests.test_ipam_only_editor_cannot_change_basic_address_through_ipam_section) ... ok
+test_legacy_import_validation_does_not_accept_basic_exemption (test_optional_device_addresses.OptionalDeviceAddressTests.test_legacy_import_validation_does_not_accept_basic_exemption) ... ok
+test_link_rechecks_both_features_grants_session_and_edit_reservation (test_optional_device_addresses.OptionalDeviceAddressTests.test_link_rechecks_both_features_grants_session_and_edit_reservation) ... ok
+test_link_rechecks_feature_after_waiting_for_write_lock (test_optional_device_addresses.OptionalDeviceAddressTests.test_link_rechecks_feature_after_waiting_for_write_lock) ... ok
+test_managed_assignment_requires_ipam_edit_and_remains_strict (test_optional_device_addresses.OptionalDeviceAddressTests.test_managed_assignment_requires_ipam_edit_and_remains_strict) ... ok
+test_managed_reference_is_readonly_and_allocation_unchanged_while_off (test_optional_device_addresses.OptionalDeviceAddressTests.test_managed_reference_is_readonly_and_allocation_unchanged_while_off) ... ok
+test_no_ip_creation_requires_devices_edit_only_in_both_modes (test_optional_device_addresses.OptionalDeviceAddressTests.test_no_ip_creation_requires_devices_edit_only_in_both_modes) ... ok
+test_no_subnet_wrong_subnet_conflict_and_stale_link_save_nothing (test_optional_device_addresses.OptionalDeviceAddressTests.test_no_subnet_wrong_subnet_conflict_and_stale_link_save_nothing) ... ok
+test_nonadministrator_link_requires_both_edit_grants (test_optional_device_addresses.OptionalDeviceAddressTests.test_nonadministrator_link_requires_both_edit_grants) ... ok
+
+----------------------------------------------------------------------
+Ran 34 tests in 13.258s
+
+OK

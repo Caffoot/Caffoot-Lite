@@ -9596,11 +9596,11 @@ void (async () => {
     }
   };
   const optionalFeatureDescriptions=[
-    ['devices','Devices','i-box','Track devices, their details and recorded addresses.'],
-    ['ipam','IPAM','i-network','Manage subnets, VLANs and managed IP address allocations.'],
-    ['racks','Network Racks','i-rack','Manage racks, shelves and equipment placement.'],
-    ['suppliers','Suppliers','i-users','Supplier records and contacts will be available in Stage 4.'],
-    ['equipment_lifecycle','Equipment Lifecycle','i-tool','Equipment lifecycle planning will be available in Stage 4.']
+    ['devices','Devices','<rect x="4" y="4" width="16" height="12" rx="2"/><path d="M9 20h6m-3-4v4"/>','Record and manage equipment, including its location and basic IP address details.','orange'],
+    ['ipam','IP Address Management','<rect x="9" y="3" width="6" height="6" rx="1"/><rect x="2" y="16" width="7" height="5" rx="1"/><rect x="15" y="16" width="7" height="5" rx="1"/><path d="M12 9v4M5.5 16v-3h13v3"/>','Manage subnets, IP address allocations and VLANs. Without IPAM, Devices still offers basic IP entry.',''],
+    ['racks','Network Racks','<rect x="6" y="2" width="12" height="20" rx="1"/><path d="M9 6h6M9 10h6M9 14h6M9 18h6"/>','Document racks, rack accessories and equipment placement within racks.','green'],
+    ['suppliers','Suppliers','<circle cx="9" cy="8" r="3"/><path d="M3 20v-2a6 6 0 0 1 12 0v2M17 6a3 3 0 0 1 0 6m1 4a5 5 0 0 1 3 4"/>','Manage supplier records, contacts and related notes and issues.','orange'],
+    ['equipment_lifecycle','Equipment Lifecycle','<circle cx="12" cy="12" r="9"/><path d="M12 7v5l4 2"/>','Track equipment lifecycle information, warranty dates and related warnings.','']
   ];
   let featureSettingsPending=false;
   async function hydrateOptionalFeatureSettings(root){
@@ -9612,10 +9612,12 @@ void (async () => {
       const result=await response.json();
       if(!response.ok)throw Error(result.error||'Unable to load feature settings.');
       if(!root.isConnected)return;
-      root.querySelector('#optional-feature-cards').innerHTML=optionalFeatureDescriptions.map(([key,label,icon,description],index)=>{
+      const cards=optionalFeatureDescriptions.map(([key,label,icon,description,colour],index)=>{
         const future=index>2,enabled=!future&&result.features[key]===true;
-        return renderInterfaceTemplate('settings/optional-feature-card',[key,icon,label,description,future?'Coming in Stage 4':enabled?'Enabled':'Disabled',future?'Unavailable':enabled?'Enabled':'Disabled','Saved data and permissions are retained.',String(enabled),enabled?'checked':'',future?'disabled':'']);
-      }).join('');
+        return renderInterfaceTemplate('settings/optional-feature-card',[key,icon,label,description,future?'Coming in Stage 4':enabled?'Enabled':'Disabled',future?'Not Available Yet':enabled?'Enabled':'Enable Feature',future?label+' — Coming in Stage 4':(enabled?'Disable ':'Enable ')+label,String(enabled),enabled?'checked':'',future?'disabled':'',colour,future?'planned':enabled?'enabled':'',future?'unavailable':'',future?'<div class="detail">This feature cannot be enabled until Stage 4 functionality is developed and approved.</div>':'',key.replaceAll('_','-')]);
+      });
+      root.querySelector('#optional-feature-infrastructure').innerHTML=cards.slice(0,3).join('');
+      root.querySelector('#optional-feature-additional').innerHTML=cards.slice(3).join('');
       feedback.textContent='Only administrators can change these organisation-wide settings.';
     }catch(error){if(root.isConnected){feedback.textContent=error.message;showNotification(error.message,'error');}}
     finally{delete root.dataset.featuresLoading;}
