@@ -1,5 +1,5 @@
-/* Only the proposed group structure and the isolated review harness need new rules.
-   All application colours, typography, cards, forms, rows and dialogs use source CSS. */
+/* Preview-only layout additions follow the approved Staff references.
+   Existing application colours, typography and components remain the authority. */
 [hidden]{display:none!important}
 #preview-navigation{display:grid;gap:4px}
 .preview-group-children{padding-left:12px}
@@ -11,6 +11,55 @@
 .preview-sample-note{font-size:10px;color:var(--muted);margin:0 0 15px;line-height:1.6}
 .preview-details-actions{display:flex;gap:9px;align-items:center;flex-wrap:wrap;margin-top:18px}
 .preview-record-name{overflow-wrap:anywhere}
+.preview-page-actions{display:flex;justify-content:flex-end;align-items:center;gap:9px;flex-wrap:wrap;margin-left:auto}
+.section-page-header>.header:has(>.preview-page-actions){flex-wrap:wrap}
+.section-page-header>.header:has(>.preview-page-actions)>:first-child{flex:1 1 220px;min-width:0}
+.preview-row-actions{display:flex;justify-content:flex-end;gap:7px;flex-wrap:wrap;max-width:172px}
+.preview-row-actions .btn{padding:8px 10px;min-height:36px}
+/* Preserve the archived form's column proportions and separate guidance stack. */
+.staff-main-grid{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(315px,.8fr);gap:17px;align-items:start}
+.staff-side-stack{display:grid;gap:17px}
+.staff-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:17px 16px}
+.staff-span-two{grid-column:1/-1}
+.staff-side-stack .card{padding:21px}
+.preview-aligned-form .preview-form-field{display:flex;flex-direction:column;gap:7px;min-width:0}
+.preview-aligned-form .preview-form-field>label{display:flex;align-items:baseline;gap:6px;min-height:16px;line-height:16px;font-size:11px;margin:0}
+.preview-aligned-form .preview-form-field>.input{box-sizing:border-box;height:42px;min-height:42px;padding:10px 11px;margin:0;font-size:12px;line-height:20px}
+.preview-aligned-form .field-help{display:block;color:var(--muted);font-size:10px;font-weight:450;line-height:1.6;margin:0}
+.preview-aligned-form .optional{font-size:10px;font-weight:500}
+.switch-row-staff{display:flex;align-items:center;gap:13px;justify-content:space-between;cursor:pointer}
+.switch-row-staff strong{font-size:12px;color:var(--ink)}
+.switch-row-staff small{display:block;margin-top:6px;font-size:10.5px;color:var(--muted);line-height:1.55;max-width:290px}
+.switch-control{width:40px;height:23px;flex:0 0 40px;position:relative;display:block}
+.switch-control input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;z-index:1;margin:0}
+.switch-slider{position:absolute;inset:0;border-radius:30px;background:var(--theme-disabled,#c8d4df);transition:background .15s}
+.switch-slider:before{content:'';position:absolute;left:3px;top:3px;width:17px;height:17px;border-radius:50%;background:white;transition:transform .15s;box-shadow:0 1px 3px #0002}
+.switch-control input:checked+.switch-slider{background:var(--orange)}
+.switch-control input:checked+.switch-slider:before{transform:translateX(17px)}
+.switch-control input:focus-visible+.switch-slider{outline:3px solid #ed853277;outline-offset:3px}
+.staff-account-fields{display:grid;gap:15px;padding-top:2px}
+.staff-account-fields .divider{margin:8px 0 0}
+.staff-role-note{border:1px solid var(--line);background:var(--theme-control,#f2f6fa);border-radius:10px;padding:13px 14px;line-height:1.6}
+.staff-role-note strong,.staff-mfa-hint strong{font-size:11px;color:var(--ink)}
+.staff-role-note p{font-size:10.5px;color:var(--muted);margin:7px 0 0}
+.role-name{display:inline-block;float:right;border-radius:7px;background:var(--theme-good-bg,#e8f6f0);color:var(--theme-good-text,#287860);padding:4px 8px;font-weight:750;font-size:10px}
+.staff-mfa-hint{background:var(--theme-control,#f1f5f9);border-radius:9px;padding:13px 14px;color:var(--muted)}
+.staff-mfa-hint p{font-size:10.5px;line-height:1.6;margin:6px 0 0}
+.linked-account{padding:3px 0 17px;display:grid;gap:9px}
+.linked-account strong{font-size:13px;color:var(--ink)}
+.linked-account p,.staff-restricted p{font-size:11px;line-height:1.65;color:var(--muted);margin:0}
+.staff-restricted{display:grid;gap:12px}
+.staff-quickpoints{display:grid;gap:11px;margin-top:1px}
+.staff-quickpoints>div{display:flex;gap:9px;color:var(--muted);font-size:10.5px;line-height:1.55}
+.point-dot{height:6px;width:6px;flex:none;border-radius:50%;background:var(--orange);margin-top:5px}
+.staff-actions{background:var(--white);border:1px solid var(--line);border-radius:var(--radius);margin-top:17px;padding:16px 21px;display:flex;align-items:center;justify-content:space-between;gap:17px;flex-wrap:wrap}
+.staff-actions p{font-size:10.5px;color:var(--muted);margin:0;line-height:1.6;max-width:440px}
+.staff-action-buttons{display:flex;gap:10px;flex-wrap:wrap;margin-left:auto}
+@media(min-width:1001px){.preview-staff-directory .list-header,.preview-staff-directory .userrow{grid-template-columns:minmax(180px,1.35fr) minmax(100px,.8fr) minmax(130px,.9fr) minmax(140px,1fr) 172px}}
+@media(max-width:1110px){.staff-main-grid{grid-template-columns:1fr}.staff-side-stack{grid-template-columns:1fr 1fr}}
+@media(max-width:1000px){.preview-row-actions{max-width:108px}}
+@media(max-width:850px){.staff-side-stack{grid-template-columns:1fr}}
+@media(max-width:590px){.staff-fields{grid-template-columns:1fr}.staff-span-two{grid-column:auto}.staff-actions{align-items:stretch}.staff-action-buttons{justify-content:flex-end}}
 #preview-review-controls{position:fixed;z-index:200;right:12px;bottom:12px;max-width:calc(100vw - 24px);font-size:11px;color:var(--ink)}
 #preview-review-controls>summary{cursor:pointer;list-style-position:inside;padding:10px 13px;background:var(--white);border:1px solid var(--line);border-radius:9px;box-shadow:var(--shadow);font-weight:700}
 .preview-review-panel{background:var(--white);color:var(--ink);border:1px solid var(--line);border-radius:12px;padding:18px;width:310px;max-width:calc(100vw - 24px);max-height:70vh;overflow:auto;box-shadow:var(--shadow)}
