@@ -50,6 +50,13 @@ The Issue #309 tab icons use `renderSectionTabIcon`. `revealSectionTab` scrolls 
 
 ## Accounts and editing
 
+`schema.py:migrate_staff_directory` adds schema 14 under the existing upgrade
+transaction. It copies compatible saved account details once without changing
+account security or existing records. `role_policy.SECTIONS` recognises Staff
+Members, Departments and IT Assets; `permissions.can_replace_inventory` explicitly
+retains Devices/IPAM/Racks Edit requirements. See
+[Staff Directory Foundation](Staff-Directory-Foundation.md) for link and feature rules.
+
 On `milestone-1`, `schema.py:migrate_role_permissions` and `verify_role_migration` introduce and check schema 11 within the existing upgrade transaction. `role_policy.py:assign_staff_member` is shared by first-administrator setup and ordinary account creation. `evaluate_role_policy` combines enabled role grants and individual overrides, and `AccountRolePolicy.allows` applies account, section and MFA safeguards. Authentication, sessions, recovery and the Users response use the same evaluator. See [Shared Roles And Account Permissions](Role-Permissions.md) for development boundaries and rollback requirements.
 
 | File | Search terms |

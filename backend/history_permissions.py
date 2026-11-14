@@ -5,7 +5,7 @@ changes apply immediately without a schema migration or history rewrite.
 """
 import json
 
-from .permissions import SECTIONS, can_access
+from .permissions import can_access
 from .subnet_validation import parse_hierarchy_cidr
 
 # Categories emitted by the established inventory writers, including the
@@ -65,7 +65,7 @@ def visible_change_history(connection, account_id):
     it is not disclosed to partially privileged users.
     """
     sections = {section: can_access(connection, account_id, section)
-                for section in SECTIONS}
+                for section in ("Devices", "IPAM", "Racks")}
     if not any(sections.values()):
         return []
 
