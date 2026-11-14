@@ -667,7 +667,7 @@ async function run(){
     'Removing a profile photo must restore the default avatar');
   await page.locator('[data-action="select-account-section"][data-section="security"]').first().click();
   await page.locator('#sidebar [data-action="tab-users"]').click();
-  assert.equal(await page.locator('#page-title').textContent(),'Users & Permissions');
+  assert.equal(await page.locator('#page-title').textContent(),'Permissions');
   await page.locator('.section-page-header [data-tab="list"]').click();
   await page.locator('[data-action="users-open-editor"]').first().click();
   const ownerWorkspace=page.locator('.users-management-modal .modal');
