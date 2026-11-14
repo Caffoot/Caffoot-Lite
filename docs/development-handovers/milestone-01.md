@@ -56,6 +56,19 @@ the interface and twelve pinned designs remain unchanged. Private legacy fixture
 and complete-volume restore remain outside this batch. No later batch, merge,
 publication or deployment is authorised.
 
+### Staff Search Correction — PR #378
+
+The owner requested the approved name-or-Department search behaviour on the same
+Batch 3.2 branch. Staff search now also matches the associated Department name,
+including archived Departments, under Staff Members Read. Department endpoints
+retain their independent permission checks, and response fields remain unchanged.
+Four new service/HTTP tests cover Department-only matches, Staff Read without
+Departments Read, archived Departments, literal wildcards, pagination and privacy.
+The relevant service, HTTP and section-permission selection passed **33 tests**,
+with no failures or skips. Python compilation, declaration links and whitespace
+were checked. No local full-suite or infrastructure rerun was needed for this
+search-only correction; current hosted outcomes are recorded in PR #378.
+
 ## Stage 3 Batch 3.1 — Staff Members And Departments Foundation
 
 Started from verified `milestone-1` at `519842b46861c85fde0eebf78298117c2346599d`,

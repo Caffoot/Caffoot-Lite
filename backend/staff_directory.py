@@ -72,7 +72,7 @@ def list_directory(connection, actor_id, section, *, query='', limit=100, offset
         raise ValueError('Invalid directory page')
     pattern = '%' + query.replace('!', '!!').replace('%', '!%').replace('_', '!_') + '%'
     if section == 'Staff Members':
-        ids = connection.execute("SELECT id FROM staff_members WHERE first_name||' '||last_name LIKE ? ESCAPE '!' ORDER BY last_name,first_name,id LIMIT ? OFFSET ?", (pattern, limit, offset)).fetchall()
+        ids = connection.execute("SELECT s.id FROM staff_members s LEFT JOIN departments d ON d.id=s.department_id WHERE s.first_name||' '||s.last_name LIKE ? ESCAPE '!' OR d.name LIKE ? ESCAPE '!' ORDER BY s.last_name,s.first_name,s.id LIMIT ? OFFSET ?", (pattern, pattern, limit, offset)).fetchall()
         return [read_staff_member(connection, actor_id, row[0]) for row in ids]
     ids = connection.execute("SELECT id FROM departments WHERE name LIKE ? ESCAPE '!' ORDER BY name,id LIMIT ? OFFSET ?", (pattern, limit, offset)).fetchall()
     return [read_department(connection, actor_id, row[0]) for row in ids]

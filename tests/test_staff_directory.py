@@ -61,6 +61,48 @@ class StaffDirectoryTests(unittest.TestCase):
         self.staff({'departmentId': None}, staff_id=staff['id'])
         self.assertIsNone(read_staff_member(self.db, 1, staff['id'])['departmentId'])
 
+    def test_staff_search_by_department_with_staff_read_only(self):
+        department = self.department()
+        first = self.staff(dict(firstName='Alex', lastName='Example', departmentId=department['id']))
+        second = self.staff(dict(firstName='Production', lastName='Person', departmentId=department['id']))
+        unassigned = self.staff(dict(firstName='Taylor', lastName='Unassigned'))
+        self.department({'name': 'Unstaffed Department'})
+        self.db.execute("UPDATE account_permission_overrides SET level='read' WHERE account_id=2 AND section='Staff Members'")
+        self.db.execute("DELETE FROM account_permission_overrides WHERE account_id=2 AND section='Departments'")
+        self.db.execute('UPDATE staff_members SET account_id=3 WHERE id=?', (first['id'],))
+        self.db.commit()
+        before = self.snapshot()
+        expected = [read_staff_member(self.db, 2, record['id']) for record in (first, second)]
+        self.assertEqual(list_directory(self.db, 2, 'Staff Members', query='pRoDuC'), expected)
+        self.assertEqual(list_directory(self.db, 2, 'Staff Members', query='Production', limit=1, offset=1), expected[1:])
+        self.assertEqual(list_directory(self.db, 2, 'Staff Members', query='Alex'), expected[:1])
+        self.assertEqual(list_directory(self.db, 2, 'Staff Members', query='Taylor'), [read_staff_member(self.db, 2, unassigned['id'])])
+        for query in ('Unstaffed', 'ordinary', "' OR 1=1 --"):
+            self.assertEqual(list_directory(self.db, 2, 'Staff Members', query=query), [])
+        for record in expected:
+            self.assertNotIn('accountId', record)
+            self.assertNotIn('departmentName', record)
+            self.assertNotIn('archived', record)
+        with self.assertRaises(PermissionError):
+            list_directory(self.db, 2, 'Departments', query='Production')
+        with self.assertRaises(PermissionError):
+            read_department(self.db, 2, department['id'])
+        with self.assertRaises(PermissionError):
+            list_directory(self.db, 3, 'Staff Members', query='Production')
+        self.assertEqual(self.snapshot(), before)
+
+    def test_staff_search_keeps_archived_departments_and_literal_wildcards(self):
+        department = self.department({'name': 'Archive %_! Team'})
+        staff = self.staff(dict(firstName='Alex', lastName='Example', departmentId=department['id']))
+        self.department({'archived': True}, department_id=department['id'])
+        self.db.execute("UPDATE account_permission_overrides SET level='read' WHERE account_id=2 AND section='Staff Members'")
+        self.db.execute("DELETE FROM account_permission_overrides WHERE account_id=2 AND section='Departments'")
+        self.db.commit()
+        expected = [read_staff_member(self.db, 2, staff['id'])]
+        for query in ('archive', '%', '_', '!', '%_!'):
+            self.assertEqual(list_directory(self.db, 2, 'Staff Members', query=query), expected)
+        self.assertEqual(list_directory(self.db, 2, 'Staff Members', query='missing%'), [])
+
     def test_manual_names_required_but_migrated_blanks_are_editable(self):
         for payload in ({'firstName': 'Alex'}, {'firstName': '', 'lastName': 'Example'},
                 {'firstName': 'Alex', 'lastName': '  '}):

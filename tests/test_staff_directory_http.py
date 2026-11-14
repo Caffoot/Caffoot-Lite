@@ -8,6 +8,7 @@ import tempfile
 import threading
 import unittest
 from unittest.mock import patch
+from urllib.parse import urlencode
 
 from backend.http_security import COOKIE_NAME
 from backend.request_auth import csrf_for_session
@@ -121,6 +122,41 @@ class StaffDirectoryHttpTests(unittest.TestCase):
         for query in ('limit=101', 'limit=bad', 'offset=-1', 'query=a&query=b', 'accountId=1'):
             self.assertEqual(self.request('/api/staff-members?' + query)[0], 400)
         self.assertEqual(self.request('/api/staff-members/person/delete', method='POST', payload={})[0], 404)
+
+    def test_staff_department_search_preserves_read_permissions_and_privacy(self):
+        with sqlite3.connect(self.path) as db:
+            db.execute("UPDATE staff_members SET department_id='dept' WHERE id='person'")
+            db.execute("INSERT INTO departments(id,name) VALUES('empty','Unstaffed Department')")
+        expected = self.request('/api/staff-members/person', actor=3)[1]['staffMember']
+        status, response, cache = self.request('/api/staff-members?query=pRoDuC', actor=3)
+        self.assertEqual(status, 200, response)
+        self.assertEqual(response, {'staffMembers': [expected]})
+        self.assertEqual(cache, 'no-store')
+        self.assertEqual(set(expected), {'id', 'firstName', 'lastName', 'email', 'jobTitle',
+            'telephone', 'location', 'departmentId', 'active'})
+        for query in ('Unstaffed', 'account-4', 'PRIVATE-MFA-SECRET', 'private-hash'):
+            self.assertEqual(self.request('/api/staff-members?' + urlencode({'query': query}), actor=3)[1], {'staffMembers': []})
+        for path in ('/api/departments', '/api/departments/dept', '/api/departments?query=Production'):
+            self.assertEqual(self.request(path, actor=3)[0], 403)
+        self.assertEqual(self.request('/api/staff-members?query=Production', actor=4)[0], 403)
+        self.assertEqual(self.request('/api/staff-members?query=Production', actor=5)[0], 403)
+        self.assertEqual(self.request('/api/staff-members?query=Production', actor=None)[0], 401)
+        self.assertEqual(self.request('/api/staff-members?query=Alex', actor=3)[1], {'staffMembers': [expected]})
+        with sqlite3.connect(self.path) as db:
+            self.assertIsNone(db.execute("SELECT 1 FROM account_permission_overrides WHERE account_id=3 AND section='Departments'").fetchone())
+
+    def test_staff_archived_department_search_escapes_wildcards(self):
+        with sqlite3.connect(self.path) as db:
+            db.execute("UPDATE departments SET name='Archive %_! Team',archived=1 WHERE id='dept'")
+            db.execute("UPDATE staff_members SET department_id='dept' WHERE id='person'")
+            db.execute("INSERT INTO staff_members(id,first_name,last_name) VALUES('unassigned','Taylor','Unassigned')")
+        expected = self.request('/api/staff-members/person', actor=3)[1]['staffMember']
+        for query in ('archive', '%', '_', '!', '%_!'):
+            status, response, _ = self.request('/api/staff-members?' + urlencode({'query': query}), actor=3)
+            self.assertEqual(status, 200)
+            self.assertEqual(response, {'staffMembers': [expected]})
+        self.assertEqual(self.request('/api/staff-members?query=missing%25', actor=3)[1], {'staffMembers': []})
+        self.assertEqual(self.request('/api/staff-members?query=Taylor', actor=3)[1]['staffMembers'][0]['id'], 'unassigned')
 
     def test_combined_login_admin_only_and_safe_conflict(self):
         payload = dict(firstName='Sam', lastName='Person', login=dict(username='new', password='test-password'))

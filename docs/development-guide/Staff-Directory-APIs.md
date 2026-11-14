@@ -23,8 +23,11 @@ the database write lock. Read responses use one database snapshot.
 | `/api/departments/{id}/delete` | Unavailable | Delete only if never associated; body `{}` |
 
 Lists accept `query` (up to 100 characters), `limit` (1–100, default 100) and
-`offset` (0–1000000, default 0). Search is a literal name substring, with SQL
-wildcards escaped. Lists return `staffMembers` or `departments`; record operations
+`offset` (0–1000000, default 0). Staff search matches a literal substring of the
+person's name or associated Department name, including archived Departments.
+It requires Staff Members Read only and returns the same Staff fields; it does
+not grant Departments directory access. Department search matches its name.
+SQL wildcards are escaped. Lists return `staffMembers` or `departments`; record operations
 return `staffMember` or `department`. No permanent Staff deletion exists.
 
 Staff fields are `firstName`, `lastName`, `email`, `departmentId`, `jobTitle`,
