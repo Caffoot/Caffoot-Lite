@@ -17,6 +17,21 @@ async function test(){
  const seed=spawnSync('python3',['tests/visual_fixtures.py',tmp],{cwd:root,encoding:'utf8'});
  assert.equal(seed.status,0,seed.stderr);
  const creds=JSON.parse(fs.readFileSync(path.join(tmp,'test-credentials.json')));
+ const readerInfo=JSON.parse(py([
+  'import json,sqlite3,sys,time',
+  'from backend.permissions import create_user',
+  'from backend.mfa import code_at',
+  'from backend.sessions import login_session',
+  'from backend.http_security import COOKIE_NAME',
+  'with sqlite3.connect(sys.argv[1]) as db:',
+  ' db.execute("PRAGMA foreign_keys=ON")',
+  ' user=create_user(db,1,"staff-reader","Reader-Only-Test-Password-2026!")',
+  ' db.execute("UPDATE accounts SET mfa_secret=?,mfa_confirmed=1 WHERE id=?",(sys.argv[2],user))',
+  ' db.execute("INSERT INTO account_permission_overrides(account_id,section,level) VALUES(?,"+"'Staff Members'"+","+"'read'"+")",(user,))',
+  ' db.commit()',
+  ' token=login_session(db,"staff-reader","Reader-Only-Test-Password-2026!",mfa_code=code_at(sys.argv[2],time.time()))',
+  ' print(json.dumps({"cookie":COOKIE_NAME,"token":token}))'
+ ].join('\n'),[path.join(tmp,'inventory.sqlite3'),creds.secret]));
  const log=fs.openSync(path.join(tmp,'server.log'),'w');
  server=spawn('python3',['-m','backend.server'],{cwd:root,stdio:['ignore',log,log],env:{
   ...process.env,CAFFOOT_DB_PATH:path.join(tmp,'inventory.sqlite3'),
@@ -99,8 +114,25 @@ async function test(){
  await page.locator('[data-action="users-open-editor"]').last().click();
  for(const section of ['Staff Members','Departments','IT Assets'])
   assert.equal(await page.locator('[data-next-user-permission][data-section="'+section+'"]').count(),1);
+ const readOnly=await browser.newContext({ignoreHTTPSErrors:true,viewport:{width:390,height:844}});
+ await readOnly.addCookies([{name:readerInfo.cookie,value:readerInfo.token,url:address,secure:true,httpOnly:true,sameSite:'Strict'}]);
+ const limitedPage=await readOnly.newPage();
+ limitedPage.on('pageerror',e=>errors.push(e.message));
+ const inventoryReads=[];
+ limitedPage.on('request',request=>{if(request.url().endsWith('/api/inventory/state'))inventoryReads.push(request.url());});
+ await limitedPage.goto(address+'/inventory#staff');
+ await limitedPage.locator('#app[aria-busy="false"]').waitFor();
+ await limitedPage.locator('.staff-live .preview-staff-directory').waitFor();
+ assert.equal(inventoryReads.length,0,'Staff-only accounts must never load inventory');
+ assert.ok(await limitedPage.locator('#sidebar [data-tab="devices"]').isHidden());
+ assert.ok(await limitedPage.locator('#sidebar [data-tab="departments"]').isHidden());
+ assert.equal(await limitedPage.locator('[data-staff-action="staff-add"]').count(),0);
+ assert.equal((await readOnly.request.get(address+'/api/inventory/state')).status(),403);
+ assert.equal((await readOnly.request.get(address+'/api/departments')).status(),403);
+ await limitedPage.screenshot({path:path.join(output,'staff-reader-mobile.png'),fullPage:true});
+ await readOnly.close();
  assert.deepEqual(errors,[]);
- fs.writeFileSync(path.join(output,'results.json'),JSON.stringify({passed:true,screenshots:5,errors},null,2));
+ fs.writeFileSync(path.join(output,'results.json'),JSON.stringify({passed:true,screenshots:6,errors},null,2));
  console.log('PASS: approved Staff screen layout, live CRUD, optional login, grouped navigation and six-section Permissions.');
 }
 (async()=>{
