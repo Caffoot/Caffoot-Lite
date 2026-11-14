@@ -1097,6 +1097,7 @@ function hierarchyValidateTypes(subnets) {
         document.addEventListener('invalid', function(event) {
             const field=event.target,form=field.closest?.('form');
             if(!form||form.id==='device-editor-form')return;
+            event.preventDefault();
             field.setAttribute('aria-invalid','true');
             if(form.dataset.notificationInvalid)return;
             form.dataset.notificationInvalid='true';
@@ -1109,7 +1110,8 @@ function hierarchyValidateTypes(subnets) {
                 delete form.dataset.nativeValidationMessage;
                 if(form.dataset.formAction==='subnet')showSubnetFormError(message,first.id);
                 else showToast(message,'error');
-                first.focus();
+                const target=first.classList.contains('caffoot-search-native')?first.nextElementSibling?.querySelector('.caffoot-search-trigger'):first;
+                target?.focus();
             });
         },true);
 

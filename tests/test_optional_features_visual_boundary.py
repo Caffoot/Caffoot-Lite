@@ -27,3 +27,11 @@ class OptionalFeaturesVisualBoundaryTests(unittest.TestCase):
         for path in ('interface/styles/settings.css','interface/styles/ipam.css','interface/styles/device-details.css','interface/design-sources.json'):
             self.assertEqual((ROOT/path).read_text(),baseline_text(path),path)
         self.assertEqual(len(json.loads((ROOT/'interface/design-sources.json').read_text())),12)
+
+    def test_pi_correction_templates_keep_existing_dashboard_and_report_layout(self):
+        for path in ('interface/screens/dashboard.html', 'interface/screens/shared.html'):
+            original = subprocess.check_output(
+                ['git', 'show', 'bda35d73398820f49c8c1cf0647aa1c8c92bbf2e:' + path],
+                cwd=ROOT, text=True)
+            current = (ROOT / path).read_text()
+            self.assertEqual(re.sub(r' data-dashboard-sections="[^"]*"', '', current), original)

@@ -1,6 +1,6 @@
-// Focused Stage 2 interface acceptance using fictional SQLite data and pinned designs.
+// Exercise the approved acceptance corrections against real HTTPS and fictional SQLite data.
 const assert=require('node:assert/strict');
-const fs=require('node:fs'),os=require('node:os'),path=require('node:path'),http=require('node:http');
+const fs=require('node:fs'),os=require('node:os'),path=require('node:path');
 const {spawn,spawnSync}=require('node:child_process');
 const {chromium}=require('playwright');
 const root=path.resolve(__dirname,'..'),temporary=fs.mkdtempSync(path.join(os.tmpdir(),'caffoot-pi-corrections-'));
@@ -46,16 +46,6 @@ with sqlite3.connect(sys.argv[1]) as db:
 const records=()=>Object.fromEntries(snapshot().inventory_devices.map(row=>[row[0],JSON.parse(row[2])]));
 const log=fs.openSync(path.join(temporary,'server.log'),'a');
 const server=spawn('python3',['-m','backend.server'],{cwd:root,stdio:['ignore',log,log],env:{...process.env,CAFFOOT_DB_PATH:database,CAFFOOT_TLS_DIR:path.join(temporary,'tls'),CAFFOOT_WEB_ADDRESS:address,CAFFOOT_SERVER_ADDRESS:'127.0.0.1',CAFFOOT_HOST:'127.0.0.1'}});
-const revision='c26db4a56bbc30f95b56201e81a7a76d13c6037b';
-const sources=['settings-data-draft-02','ipam-draft-01','devices-details-forms-batch-04'];
-const originals=Object.fromEntries(sources.map(name=>{
- const result=spawnSync('git',['show',revision+':future-design/approved/'+name+'.html'],{cwd:root,encoding:'utf8',maxBuffer:2*1024*1024});assert.equal(result.status,0,result.stderr);return[name,result.stdout];
-}));
-const reference=http.createServer((request,response)=>{
- const name=path.basename(request.url).replace(/\.html$/,'');
- if(!(name in originals)){response.writeHead(404);return response.end();}
- response.writeHead(200,{'Content-Type':'text/html'});response.end(originals[name]);
-});
 let browser;
 (async()=>{try{
  const engine=process.env.CAFFOOT_PI_ENGINE||'chromium';
@@ -63,6 +53,7 @@ let browser;
  browser=await launcher.launch({headless:true,...(engine==='chromium'&&(process.env.CAFFOOT_CHROMIUM_PATH||fs.existsSync('/usr/bin/chromium'))?{executablePath:process.env.CAFFOOT_CHROMIUM_PATH||'/usr/bin/chromium'}:{})});
  const context=await browser.newContext({ignoreHTTPSErrors:true,viewport:{width:1440,height:950}});
  await context.addCookies([{name:identity.cookie,value:identity.owner,url:address,secure:true,httpOnly:true,sameSite:'Strict'}]);
+ await context.route(/https:\/\/(fonts\.googleapis|fonts\.gstatic|cdnjs\.cloudflare)\.com\//,r=>r.abort());
  const page=await context.newPage();page.setDefaultTimeout(12000);const errors=[];page.on('pageerror',e=>errors.push(e.message));
  for(let i=0;i<40;i++){try{if((await context.request.get(address+'/health')).ok())break;}catch{}await new Promise(r=>setTimeout(r,100));}
  const load=async()=>{await page.goto(address+'/inventory');await page.locator('#app[aria-busy="false"]').waitFor();};
@@ -86,13 +77,22 @@ let browser;
  await load();await dashboard();
  const genuine=await page.evaluate(()=>{const a=appState.ipAllocations['10.0.0.10'];delete appState.ipAllocations['10.0.0.10'];const html=renderDashboardHTML();appState.ipAllocations['10.0.0.10']=a;return html;});
  assert.match(genuine,/IPAM is out of sync/);assert.match(genuine,/has no subnet|is not linked correctly/);
+ const missingRack=await page.evaluate(()=>{const saved=appState.racks;appState.racks=[];const html=renderDashboardHTML();appState.racks=saved;return html;});assert.match(missingRack,/references a missing rack/);
+ const missingDevice=await page.evaluate(()=>{const saved=appState.devices;appState.devices=[];const html=renderDashboardHTML();appState.devices=saved;return html;});assert.match(missingDevice,/references a missing device/);
+
  for(const name of ['editor','ipam','both','racks']){
   const c=await browser.newContext({ignoreHTTPSErrors:true});await c.addCookies([{name:identity.cookie,value:identity[name],url:address,secure:true,httpOnly:true,sameSite:'Strict'}]);
+  await c.route(/https:\/\/(fonts\.googleapis|fonts\.gstatic|cdnjs\.cloudflare)\.com\//,r=>r.abort());
   const p=await c.newPage();await p.goto(address+'/inventory');await p.locator('#app[aria-busy="false"]').waitFor();
   await p.evaluate(()=>switchTab('dashboard'));
   const text=await p.locator('#main-content').innerText();assert.doesNotMatch(text,/missing rack|missing device|missing.*shelf|out of sync|not linked correctly/i);
   if(['racks','ipam'].includes(name))assert.doesNotMatch(text,/Mounted Switch|Shelf Printer|mounted devices|Recent Devices|Device Status|Rack Capacity/);
   if(name==='editor')assert.doesNotMatch(text,/No subnets configured|No racks configured|Subnet Utilisation|Rack Capacity/);
+  const reports=await p.evaluate(()=>renderInventoryReportsHtml(false));
+  if(name==='editor')assert.doesNotMatch(reports,/Subnet Utilisation|Rack Occupancy|No subnets recorded|No racks recorded/);
+  if(name==='ipam')assert.doesNotMatch(reports,/Devices By Location|Rack Occupancy|No devices recorded|No racks recorded/);
+  if(name==='racks')assert.doesNotMatch(reports,/Devices By Location|Rack Occupancy|Subnet Utilisation|No devices recorded/);
+
   await c.close();
  }
  // Opening, tab changes and unrelated edits must not apply a new Location.
@@ -108,6 +108,12 @@ let browser;
  await page.locator('#dev-shelf-rack').selectOption('rack-b',{force:true});await page.locator('#dev-rack-shelf').selectOption('shelf-b',{force:true});
  assert.equal(await page.locator('#dev-location').inputValue(),'Second Rack Room');
  await page.evaluate(()=>closeModal(true));assert.deepEqual(snapshot(),initial,'Selection/Cancel mutated saved inventory or grants');
+ // Preserve the accepted Add Device default and manual override.
+ await page.evaluate(()=>openDeviceModal());await page.locator('#device-editor-form').waitFor();
+ await page.locator('#dev-type').selectOption('Switch',{force:true});await page.locator('#dev-mount-type').selectOption('Rack Mounted',{force:true});
+ await page.locator('#dev-rack-id').selectOption('rack',{force:true});assert.equal(await page.locator('#dev-location').inputValue(),'Rack Room');
+ await page.locator('#dev-location').selectOption('Office',{force:true});await page.locator('#dev-rack-id').selectOption('rack-b',{force:true});assert.equal(await page.locator('#dev-location').inputValue(),'Office');
+ await page.evaluate(()=>closeModal(true));assert.deepEqual(snapshot(),initial);
  // Real native-invalid submission: Start U, correct tab, inline feedback and visible toast.
  await page.evaluate(()=>openDeviceModal('mounted'));await page.locator('#device-editor-form').waitFor();
  await page.locator('#dev-rack-u').selectOption('',{force:true});
@@ -127,7 +133,7 @@ let browser;
  for(const width of [1440,390])for(const theme of ['light','dark']){
   await page.setViewportSize({width,height:width===390?844:950});
   await page.evaluate(theme=>document.documentElement.classList.toggle('dark',theme==='dark'),theme);
-  await page.evaluate(()=>showDeviceEditorFeedback('Rack start U must be a whole number.','dev-rack-u'));await page.waitForTimeout(350);
+  await page.evaluate(message=>showDeviceEditorFeedback(message,'dev-rack-u'),validationMessage);await page.waitForTimeout(350);
   const name='validation-'+theme+'-'+width+'.png';await page.screenshot({path:path.join(output,name)});pictures.push(name);
  }
  await page.evaluate(()=>closeModal(true));
@@ -135,7 +141,7 @@ let browser;
  await page.evaluate(()=>{switchTab('devices');openDeviceDetailView('shelf');});
  assert.match(await page.locator('#modal-content').innerText(),/Rack information is not available with your current access/);
  assert.doesNotMatch(await page.locator('#modal-content').innerText(),/Recorded shelf unavailable|Printer Shelf|Shelf U4|Network Rack/);
- await page.screenshot({path:path.join(output,'hidden-shelf.png')});pictures.push('hidden-shelf.png');
+ await page.getByText('Rack information is not available with your current access.',{exact:true}).first().scrollIntoViewIfNeeded();await page.screenshot({path:path.join(output,'hidden-shelf.png')});pictures.push('hidden-shelf.png');
  await page.evaluate(()=>{closeModal(true);openDeviceModal('shelf');});await page.locator('#device-editor-form').waitFor();
  assert.equal(await page.locator('#dev-location').inputValue(),'Original Shelf Location');assert.ok(await page.locator('#dev-location').isDisabled());
  await page.evaluate(()=>closeModal(true));
@@ -154,6 +160,9 @@ let browser;
   await page.waitForFunction(()=>!document.getElementById('toast').classList.contains('opacity-0')&&document.getElementById('toast').dataset.notificationType==='error');
   assert.ok((await page.locator('#toast-message').innerText()).length>0);
   assert.ok(await page.locator(selector+' [aria-invalid="true"]').count());
+  await page.waitForTimeout(350);
+  assert.ok(await page.evaluate(()=>{const t=document.getElementById('toast'),old=t.style.pointerEvents;t.style.pointerEvents='auto';const r=t.getBoundingClientRect(),top=document.elementFromPoint(r.right-8,r.bottom-8)?.closest('#toast')===t;t.style.pointerEvents=old;return top;}),'Notification must paint above '+selector);
+
   contextsChecked.push(selector);
  };
  await page.evaluate(()=>{switchTab('ipam');openSubnetModal();});await invalid('form[data-form-action="subnet"]');await page.evaluate(()=>closeModal(true));
@@ -164,13 +173,23 @@ let browser;
  await page.evaluate(()=>switchTab('users'));await page.locator('[data-action="select-users-section"][data-tab="add"]').click();await invalid('#next-user-create-form');
  await page.locator('[data-action="select-users-section"][data-tab="roles"]').click();await page.locator('[data-role-command="create"]').click();await invalid('#role-definition-form');
  await page.locator('[data-role-layer] [data-role-command="close"]').click();
- await page.evaluate(()=>switchTab('settings'));await page.locator('.settings-screen [data-tab="email"]').click();await invalid('#smtp-settings-form');
+ await page.evaluate(()=>switchTab('settings'));await page.locator('.settings-screen [data-tab="email"]').click();await page.waitForFunction(()=>document.querySelector('#smtp-settings-form button[type="submit"]')?.disabled===false);await invalid('#smtp-settings-form');
  // User password mismatch is an application-level validation error, not a native constraint.
  await page.evaluate(()=>switchTab('users'));await page.locator('[data-action="select-users-section"][data-tab="add"]').click();
  await page.locator('#new-user-username').fill('unsaved-colleague');await page.locator('#new-user-password').fill('Fictional-Password-2026!');await page.locator('#new-user-password-confirm').fill('Different-Password-2026!');
  await page.locator('#next-user-create-form [type="submit"]').click();await page.waitForFunction(()=>document.getElementById('toast-message').textContent==='The initial passwords do not match.');
  assert.deepEqual(snapshot(),initial);assert.deepEqual(errors,[]);
 
+ // A real unrelated Edit save keeps the recorded room and placement.
+ await page.evaluate(()=>{switchTab('devices');openDeviceModal('mounted');});await page.locator('#device-editor-form').waitFor();
+ await page.locator('#dev-notes').evaluate(field=>{field.value='Acceptance Notes';field.dispatchEvent(new Event('input',{bubbles:true}));});
+ const saved=page.waitForResponse(r=>r.url().endsWith('/api/devices/edit/save')&&r.request().method()==='POST');
+ await page.locator('button[form="device-editor-form"][type="submit"]').click();assert.equal((await saved).status(),200);
+ await page.waitForFunction(()=>document.getElementById('modal-container').classList.contains('hidden'));
+ const after=records().mounted,before=JSON.parse(initial.inventory_devices.find(row=>row[0]==='mounted')[2]);
+ for(const key of ['location','rackId','mountType','rackUStart','rackUEnd','rackUHeight','face'])assert.deepEqual(after[key],before[key],key);
+ assert.match(after.notes,/Acceptance Notes/);
+ assert.equal(await page.locator('#toast').getAttribute('data-notification-type'),'success');
  fs.writeFileSync(path.join(output,'results.json'),JSON.stringify({engine,pictures,validationMessage,contextsChecked,pageErrors:errors},null,2));
- console.log('PASS: feature/read matrix and genuine warnings; mounted/shelf/manual Location; hidden shelf; native validation/focus/paint; no saved-data changes.');
- }finally{if(browser)await browser.close();server.kill();reference.close();fs.closeSync(log);fs.rmSync(temporary,{recursive:true,force:true});}})().catch(e=>{console.error(e);process.exitCode=1});
+ console.log('PASS: feature/read matrix and genuine warnings; mounted/shelf/manual Location; hidden shelf; native validation/focus/paint; invalid/cancel data preserved; successful Notes-only save retains Location and placement.');
+ }finally{if(browser)await browser.close();server.kill();fs.closeSync(log);fs.rmSync(temporary,{recursive:true,force:true});}})().catch(e=>{console.error(e);process.exitCode=1});
