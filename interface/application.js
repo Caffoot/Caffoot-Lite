@@ -1262,7 +1262,11 @@ function hierarchyValidateTypes(subnets) {
                 revealSectionTab(strip,selected);
             });
         }
-        window.addEventListener('resize',()=>revealActiveSectionTabs());
+        window.addEventListener('resize',()=>{
+            revealActiveSectionTabs();
+            const selected=document.querySelector('.device-details-tab[aria-selected="true"]');
+            if(selected)revealSectionTab(selected.parentElement,selected);
+        });
         document.addEventListener('focusin',event=>{
             const button=event.target.closest('button');
             const strip=button?.parentElement;
@@ -4776,6 +4780,8 @@ function openIpModal(ip) {
                 tab.tabIndex=active?0:-1;
                 tab.classList.toggle('device-details-tab-active',active);
             });
+            const selected=root.querySelector('.device-details-tab[aria-selected="true"]');
+            if(selected)revealSectionTab(selected.parentElement,selected);
         }
         // Legacy device-type configurations remain visible as read-only history.
         // Do not restore them into active devices: identity and type are immutable.

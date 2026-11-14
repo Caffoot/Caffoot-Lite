@@ -221,3 +221,15 @@ class DeviceAssignmentTests(unittest.TestCase):
         with self.assertRaisesRegex(FileExistsError, 'product-owner approval'):
             self.allocate()
         self.assertNotIn('one', [d['id'] for d in assignment_device_choices(self.db, 1)])
+
+    def test_current_names_follow_recipient_rename_while_history_keeps_original(self):
+        self.allocate()
+        self.staff({'lastName': 'Renamed'}, staff_id=self.person)
+        result = read_assignments(self.db, 1, device_id='one')
+        self.assertEqual(result['current'][0]['recipientLabel'], 'Alex Renamed')
+        self.assertEqual(result['history'][0]['recipientLabel'], 'Alex Example')
+        self.allocate(('two',), kind='department')
+        self.department({'name': 'New Department Name'}, department_id=self.dept)
+        result = read_assignments(self.db, 1, device_id='two')
+        self.assertEqual(result['current'][0]['recipientLabel'], 'New Department Name')
+        self.assertEqual(result['history'][0]['recipientLabel'], 'Production')

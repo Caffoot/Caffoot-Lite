@@ -38,3 +38,12 @@
 
 .my-equipment .info-row{flex-wrap:wrap}
 .my-equipment .info-row>*{min-width:0;overflow-wrap:anywhere}
+
+.device-details-dialog .small-table{min-width:520px}
+
+.equipment-staff .staff-history-list{width:100%;border-collapse:collapse}
+.equipment-staff .staff-history-list td{padding:12px 0;border-bottom:1px solid var(--line);font-size:11px;vertical-align:top}
+.equipment-staff .staff-history-list td:first-child{width:95px;white-space:nowrap;color:var(--muted)}
+.equipment-staff .staff-history-list tr:last-child td{border:0}
+.equipment-staff .staff-history-list strong{font-size:11px;color:var(--heading)}
+.equipment-staff .staff-history-list small{display:block;color:var(--muted);margin-top:3px;font-size:10px;line-height:1.5}

@@ -65,11 +65,15 @@ def read_assignments(connection, actor_id, *, device_id=None, staff_id=None, dep
     if connection.execute(f'SELECT 1 FROM {table} WHERE id=?', (value,)).fetchone() is None:
         raise LookupError('Assignment subject not found')
     rows = connection.execute(f'''SELECT a.id,a.device_id,d.name,a.staff_id,a.department_id,
-        a.recipient_label,a.assigned_at,a.actor_id,a.actor_label,a.ended_at
+        a.recipient_label,a.assigned_at,a.actor_id,a.actor_label,a.ended_at,
+        COALESCE(NULLIF(trim(s.first_name||' '||s.last_name),''),p.name,a.recipient_label)
         FROM device_assignments a JOIN inventory_devices d ON d.id=a.device_id
+        LEFT JOIN staff_members s ON s.id=a.staff_id
+        LEFT JOIN departments p ON p.id=a.department_id
         WHERE a.{column}=? ORDER BY a.id DESC''', (value,))
-    history = [dict(zip(('id', 'deviceId', 'deviceName', 'staffId', 'departmentId', 'recipientLabel', 'assignedAt', 'actorId', 'actorLabel', 'endedAt'), row)) for row in rows]
-    result = {'current': [row for row in history if row['endedAt'] is None], 'history': history,
+    records = [(dict(zip(('id', 'deviceId', 'deviceName', 'staffId', 'departmentId', 'recipientLabel', 'assignedAt', 'actorId', 'actorLabel', 'endedAt'), row[:10])), row[10]) for row in rows]
+    history = [record for record, label in records]
+    result = {'current': [{**record, 'recipientLabel': label} for record, label in records if record['endedAt'] is None], 'history': history,
               'canAssign': can_access(connection, actor_id, 'Devices', edit=True)}
     if device_id is not None:
         raw, revision = connection.execute('SELECT record_json,revision FROM inventory_devices WHERE id=?', (device_id,)).fetchone()

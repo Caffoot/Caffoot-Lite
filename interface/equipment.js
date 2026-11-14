@@ -13,7 +13,8 @@
   }
   function assignmentHistory(history,deviceView=false){
     if(!history.length)return '<p class="sub">No equipment assignment history.</p>';
-    return `<div class="table-scroll"><table class="small-table"><thead><tr><th>${deviceView?'Staff Member / Department':'Equipment'}</th><th>Issue Date</th><th>Return / End Date</th><th>Recorded By</th></tr></thead><tbody>${history.map(item=>`<tr><td>${escapeHtml(deviceView?item.recipientLabel:item.deviceName)}</td><td>${escapeHtml(dateLabel(item.assignedAt))}</td><td>${escapeHtml(dateLabel(item.endedAt))}</td><td>${escapeHtml(item.actorLabel)}</td></tr>`).join('')}</tbody></table></div>`;
+    if(!deviceView)return `<table class="staff-history-list"><tbody>${history.map(item=>`<tr><td>${escapeHtml(dateLabel(item.assignedAt))}</td><td><strong>Assigned · ${escapeHtml(item.deviceName)}</strong><small>Assigned To ${escapeHtml(item.recipientLabel)} · Recorded By ${escapeHtml(item.actorLabel)}</small></td></tr>`).join('')}</tbody></table>`;
+    return `<div class="table-scroll"><table class="small-table"><thead><tr><th>Staff Member / Department</th><th>Issue Date</th><th>Return / End Date</th><th>Movement</th></tr></thead><tbody>${history.map(item=>`<tr><td>${escapeHtml(item.recipientLabel)}</td><td>${escapeHtml(dateLabel(item.assignedAt))}</td><td>${escapeHtml(dateLabel(item.endedAt))}</td><td>Assigned<br>Recorded By ${escapeHtml(item.actorLabel)}</td></tr>`).join('')}</tbody></table></div>`;
   }
   function staffPlaceholder(record){
     if(!config?.canRead())return '';

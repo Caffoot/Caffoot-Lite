@@ -78,8 +78,15 @@ async function test(){
  await page.locator('.equipment-staff [data-equipment-action="view-device"]').first().waitFor();
  assert.equal(await page.locator('.staff-live .two-col').innerHTML(),profileBefore);
  assert.equal(await page.locator('.equipment-staff [data-equipment-action="view-device"]').count(),2);
+ assert.equal(await page.locator('.staff-history-list tr').first().locator('td').count(),2);
  const report={};
  async function capture(name){
+  if(name.startsWith('device-')){
+   const visible=await page.locator('#device-details-tab-assigned').evaluate(e=>{
+    const tab=e.getBoundingClientRect(),strip=e.parentElement.getBoundingClientRect();
+    return tab.left>=strip.left-1&&tab.right<=strip.right+1;
+   });assert.ok(visible,'Selected Assigned To tab must remain visible after resizing');
+  }
   await page.screenshot({path:path.join(output,name+'.png'),fullPage:true});
   const metrics=await page.evaluate(()=>({width:innerWidth,documentWidth:document.documentElement.scrollWidth,
    theme:document.documentElement.className,focused:document.activeElement?.tagName}));
