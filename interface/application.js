@@ -9103,7 +9103,9 @@ void (async () => {
         const unsupportedSubmit=button.type==='submit' && button.form && !(
           (editPermissions.Devices&&editPermissions.IPAM&&button.form.id==='device-ipam-link-form') ||
           button.form?.matches('#next-account-password-form,#next-account-mfa-start,#next-account-mfa-confirm,#account-mfa-removal-form,#personal-details-form,#account-email-verification-form') ||
-          (sessionIsAdmin && (button.closest('#next-user-create-form,#next-user-profile-form,#smtp-settings-form,#smtp-test-form') || button.form?.matches('#role-definition-form,#staff-record-form,#staff-department-form'))) ||
+          (sessionIsAdmin && (button.closest('#next-user-create-form,#next-user-profile-form,#smtp-settings-form,#smtp-test-form') || button.form?.matches('#role-definition-form'))) ||
+          (editPermissions['Staff Members'] && button.form?.matches('#staff-record-form')) ||
+          (editPermissions.Departments && button.form?.matches('#staff-department-form')) ||
           (editPermissions.Devices && button.form?.matches('form[data-device-form="true"]')) ||
           (editPermissions.IPAM && button.closest('form[data-form-action="ip"],form[data-form-action="bulk-ip"],form[data-form-action="subnet"],form[data-ipam-subnet-creation]')) ||
           (editPermissions.Devices && editPermissions.Racks && button.closest('#rack-shelf-removal-form')) ||
@@ -9308,6 +9310,16 @@ void (async () => {
       finally { resumingFreshNavigation = false; }
     }).catch(error => showToast(error.message, 'error'));
   }, true);
+  document.addEventListener('click',event=>{
+    const button=event.target.closest('#sidebar [data-action="toggle-nav-group"]');
+    if(!button)return;
+    event.preventDefault();event.stopImmediatePropagation();
+    const body=document.getElementById('nav-group-'+button.dataset.group);
+    if(!body)return;
+    const next=button.getAttribute('aria-expanded')!=='true';
+    button.setAttribute('aria-expanded',String(next));
+    body.hidden=!next;
+  },true);
   const originalSwitchTab = switchTab;
   switchTab = function(tab) {
     if ((!sessionCanEnterInventory && !['account','staff','departments'].includes(tab) && !(sessionIsAdmin && ['users','settings'].includes(tab))) || (['dashboard','audit'].includes(tab) && !inventorySectionAccess()) || ((tab === 'users' || tab === 'settings') && !sessionIsAdmin) ||
@@ -10864,7 +10876,9 @@ void (async () => {
         !element.form.matches('form[data-device-form="true"],#role-definition-form,#next-user-create-form,#next-user-profile-form,#next-account-password-form,#next-account-mfa-start,#next-account-mfa-confirm,#account-mfa-removal-form,#personal-details-form,#smtp-settings-form,#smtp-test-form,#account-email-verification-form') &&
         !(editPermissions.IPAM && element.closest('form[data-form-action="ip"],form[data-form-action="bulk-ip"],form[data-form-action="subnet"],form[data-ipam-subnet-creation]')) &&
         !(editPermissions.Devices && editPermissions.Racks && element.closest('#rack-shelf-removal-form')) &&
-        !(editPermissions.Racks && element.closest('form[data-form-action="rack"],form[data-form-action="assign"],#rack-accessory-form')))) {
+        !(editPermissions.Racks && element.closest('form[data-form-action="rack"],form[data-form-action="assign"],#rack-accessory-form')) &&
+        !(editPermissions['Staff Members'] && element.form?.matches('#staff-record-form')) &&
+        !(editPermissions.Departments && element.form?.matches('#staff-department-form')))) {
       event.preventDefault();
       event.stopImmediatePropagation();
       showToast(!sessionIsAdmin ? 'Edit permission is required for this action.' : 'This inventory operation is not yet connected to SQLite.', 'error');
@@ -10873,6 +10887,8 @@ void (async () => {
   document.addEventListener('submit',event => {
     if(editPermissions.Devices&&editPermissions.IPAM&&event.target.matches('#device-ipam-link-form'))return;
     if (event.target.matches('#next-account-password-form,#next-account-mfa-start,#next-account-mfa-confirm,#account-mfa-removal-form,#personal-details-form,#next-user-profile-form,#smtp-settings-form,#smtp-test-form,#account-email-verification-form') ||
+        (editPermissions['Staff Members'] && event.target.matches('#staff-record-form')) ||
+        (editPermissions.Departments && event.target.matches('#staff-department-form')) ||
         (editPermissions.Devices && event.target.matches('form[data-device-form="true"]')) ||
         (editPermissions.IPAM && event.target.matches('form[data-form-action="ip"],form[data-form-action="bulk-ip"],form[data-form-action="subnet"],form[data-ipam-subnet-creation]')) ||
         (editPermissions.Racks && event.target.matches('form[data-form-action="rack"],form[data-form-action="assign"],#rack-accessory-form')) ||
