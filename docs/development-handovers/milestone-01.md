@@ -15,6 +15,28 @@
 - [ ] Obtain separate final milestone merge approval; verify the resulting `main` build
 - [ ] Obtain separate v2.2 publication approval and verify published image/platforms, release notes and installation links before changing current-release instructions
 
+## Optional Features — Approved Design Correction
+
+Separate branch `fix/optional-features-approved-design` starts from the verified
+`milestone-1` baseline `221739ae8c1331d396977adb6e79dc910f39380d`. This Stage 2 visual
+correction is separate from Staff preview PR #379. It follows the original integrated
+Optional Features HTML at `159424b56bb770ea6ab260764c4e9357d9c8667c` and
+[its recorded approval](https://github.com/Caffoot/Caffoot-Lite/issues/238#issuecomment-6820547757).
+
+The first correction checkpoint restores the heading, safety banner, Infrastructure
+and Additional Features groups, exact descriptions/icons and source card/switch
+composition. Saved API state and existing secured mutation behaviour remain.
+Twenty-three focused service/HTTP/persistence/source-boundary tests and the existing
+Optional Features Chromium runner pass. Before/after desktop/mobile light/dark
+captures were made; final source-to-application comparison and extra presentation
+regressions remain in progress. This checkpoint is not visual acceptance.
+
+Pinned styles and the three existing Settings panels are unchanged. New presentation
+rules are scoped in the existing integration stylesheet. The Function Index retains
+its definitions with updated declaration lines. No backend/schema, feature defaults,
+other Stage 3 work, merge, release or deployment is included. Stop for owner visual
+approval after the final evidence and draft PR are ready.
+
 ## Stage 3 Batch 3.2 — Staff Members And Departments Backend APIs
 
 Baseline: accepted PR #377, `milestone-1` at

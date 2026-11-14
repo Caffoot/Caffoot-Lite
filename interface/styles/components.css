@@ -402,3 +402,37 @@ html.dark #main-content .users-live button.btn.primary[data-role-command="create
 
 /* Error notifications remain above editor and nested dialog layers. */
 #toast[data-notification-type="error"]{z-index:10001;transition-property:transform,opacity}
+
+/* The approved Optional Features composition stays inside its own Settings tab.
+   Existing Settings panels and their pinned stylesheet remain unchanged. */
+.optional-features-panel .panel-heading{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;margin-bottom:18px}
+.optional-features-panel .panel-heading h2{font-size:17px;letter-spacing:-.4px;color:var(--theme-text,#273f59);margin:0 0 5px}
+.optional-features-panel .panel-heading p{font-size:12px;color:var(--theme-secondary,#788da1);margin:0;line-height:1.6;max-width:700px}
+.optional-features-panel .note{border:1px solid var(--theme-border,#dce6ee);background:var(--theme-control,#eef3f7);color:var(--theme-secondary,#4e6c83);border-radius:12px;padding:14px 16px;font-size:12px;line-height:1.7;margin-bottom:23px;display:flex;gap:12px;align-items:flex-start}
+.optional-features-panel .note svg{width:17px;flex:none;margin-top:2px}
+.optional-features-panel .section-title{margin:24px 0 12px;font-weight:800;font-size:13px;color:var(--theme-text,#344e66);letter-spacing:.01em}
+.optional-features-panel .feature-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:17px}
+.optional-features-panel .card-padded{padding:20px 21px}
+.optional-features-panel .card-head{display:flex;align-items:flex-start;gap:12px;flex-wrap:nowrap}
+.optional-features-panel .iconwrap{width:42px;height:42px;display:grid;place-items:center;flex:none;border-radius:11px;background:#eaf0f7;color:#6685a1}
+.optional-features-panel .iconwrap.orange{background:#fff2e5;color:#cc7d30}
+.optional-features-panel .iconwrap.green{background:#e8f6f0;color:#3c917b}
+.optional-features-panel .iconwrap svg{width:21px;height:21px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.optional-features-panel .feature-title{font-size:15px;font-weight:800;margin:0 0 6px;color:var(--theme-text,#28435b);letter-spacing:-.2px}
+.optional-features-panel .description{font-size:11.5px;color:var(--theme-secondary,#70859a);line-height:1.65;margin:0;min-height:57px}
+.optional-features-panel .separator{height:1px;background:var(--theme-border,#e9eef2);margin:18px 0 15px}
+.optional-features-panel .feature-bottom{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.optional-features-panel .status{font-size:10px;font-weight:800;padding:7px 10px;border-radius:99px;color:var(--theme-secondary,#788ca1);background:var(--theme-disabled,#f0f3f6)}
+.optional-features-panel .status.enabled{color:var(--theme-good-text,#27735f);background:var(--theme-good-bg,#e8f6f0)}
+.optional-features-panel .status.planned{color:var(--theme-warning-text,#8b6c38);background:var(--theme-warning-bg,#fff4dd);border:1px solid var(--theme-warning-border,#f5dfb5)}
+.optional-features-panel .toggle-label{display:inline-flex;align-items:center;gap:9px;font-weight:750;font-size:11px;color:var(--theme-secondary,#405b72);cursor:pointer}
+.optional-features-panel .switch{appearance:none;position:relative;width:40px;height:23px;background:var(--theme-disabled,#cbd6e0);border:0;border-radius:40px;transition:background .15s;margin:0;cursor:pointer;flex:none}
+.optional-features-panel .switch:after{content:"";position:absolute;width:17px;height:17px;background:#fff;left:3px;top:3px;border-radius:50%;box-shadow:0 1px 3px #0e274a29;transition:transform .15s}
+.optional-features-panel .switch:checked{background:var(--orange)}
+.optional-features-panel .switch:checked:after{transform:translateX(17px)}
+.optional-features-panel .switch:disabled{opacity:.45;cursor:not-allowed}
+.optional-features-panel .toggle-label.unavailable{color:var(--theme-secondary,#8b9bad);cursor:default}
+.optional-features-panel .detail{font-size:10.5px;color:var(--theme-secondary,#8a9aaa);line-height:1.6;margin-top:12px}
+@media(max-width:1050px){.optional-features-panel .feature-grid{grid-template-columns:1fr}.optional-features-panel .description{min-height:0}}
+@media(max-width:720px){.optional-features-panel .panel-heading{flex-direction:column}.optional-features-panel .card-padded{padding:17px}}
+@media(prefers-reduced-motion:reduce){.optional-features-panel .switch,.optional-features-panel .switch:after{transition:none}}

@@ -73,3 +73,25 @@ With Racks off, Device forms hide Rack-only selectors/actions and retain type-sp
 The saved combined snapshot includes `basicIpsOutsideSubnets` only with both effective Devices Read and IPAM Read. It counts nonblank basic addresses outside all configured managed network ranges, including network/broadcast boundaries as inside; containers do not substitute for managed network subnets. The existing IPAM Overview statistic reads this value, without a repair or write.
 
 Device Details → Network shows Link to IPAM only for a nonblank basic address with IPAM enabled and both effective Edit grants. Its chooser lists suitable existing subnets. No candidate gives clear existing-IPAM setup guidance and disables submission. Cancel saves nothing; submission uses the existing revision/address-bound operation. Stale/conflicting requests show validation without silently adopting a new address or revision. No new grants or alternate linking operation are introduced.
+
+## Approved Design Correction
+
+The Optional Features panel follows the actual
+[approved integrated design](https://github.com/Caffoot/Caffoot-Lite/blob/159424b56bb770ea6ab260764c4e9357d9c8667c/future-design/stage-2-previews/caffoot-optional-features-integrated-settings-review.html)
+and [owner approval in #238](https://github.com/Caffoot/Caffoot-Lite/issues/238#issuecomment-6820547757).
+It restores the Optional Features heading and explanation, the exact Your Information
+Stays Safe banner, Infrastructure and Additional Features groups, and the source
+card icons, descriptions, dividers, bottom status badges and contextual switch labels.
+Suppliers and Equipment Lifecycle retain their unavailable Stage 4 indications.
+No Staff, Department or IT Assets switches are added.
+
+`hydrateOptionalFeatureSettings` still reads the live feature API and displays its
+saved values. The existing disable confirmation, cancellation, pending controls,
+error handling and secured save path are retained. `settings/optional-feature-card`
+contains the approved article structure; integration rules in `components.css` are
+scoped to `.optional-features-panel`. The pinned `settings.css`, three existing tab
+panels, navigation, logo and header remain unchanged. The illustrative review badge,
+sidebar, default state and footer are not copied into the application.
+
+This correction is awaiting product-owner visual approval; it does not authorise
+release or deployment.
