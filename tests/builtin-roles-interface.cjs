@@ -40,7 +40,8 @@ module.exports=async({page,context,catalogue,confirmedAction,confirm,screenshot,
  await manageUser('dave');
  const modal=page.locator('.users-management-modal');
  assert.match(await modal.innerText(),/Individual overrides take precedence/);
- assert.equal(await modal.locator('.access-grid').evaluate(element=>element.children.length),3,'The three existing permission cards retain their layout');
+ assert.equal(await modal.locator('.access-grid').evaluate(element=>element.children.length),6,'Three original plus three approved Stage 3 permission cards');
+ assert.deepEqual(await modal.locator('.access-grid [data-next-user-permission]').evaluateAll(selects=>selects.map(item=>item.dataset.section)),['Devices','IPAM','Racks','Staff Members','Departments','IT Assets']);
  await screenshot(page,'it-staff-dave-1440');
  await page.setViewportSize({width:390,height:844});
  assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));await screenshot(page,'it-staff-dave-390');
