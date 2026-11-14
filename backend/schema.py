@@ -6,7 +6,7 @@ the published inventory import format."""
 import sqlite3
 from backend.role_policy import evaluate_role_policy
 
-SCHEMA_VERSION = 13
+SCHEMA_VERSION = 14
 
 DDL = """
 CREATE TABLE IF NOT EXISTS inventory_devices (
@@ -210,10 +210,78 @@ def initialise_database(connection: sqlite3.Connection) -> None:
                  for feature in ('devices','ipam','racks','suppliers','equipment_lifecycle')],
             )
             connection.execute("INSERT INTO schema_migrations(version) VALUES(13)")
+        if SCHEMA_VERSION >= 14 and 14 not in versions:
+            migrate_staff_directory(connection)
+            connection.execute("INSERT INTO schema_migrations(version) VALUES(14)")
         connection.commit()
     except BaseException:
         connection.rollback()
         raise
+
+
+def migrate_staff_directory(connection):
+    """Add independent Staff identities and copy available account details once.
+
+    The database upgrade owns the transaction, including every new table and
+    link. Unexpected tables or links stop the upgrade without merging people.
+    Removing a login clears only its link, retaining the Staff directory record.
+    """
+    # Previously unknown grants must not become active just because the
+    # application now recognises these section names.
+    for table in ("role_grants", "account_permission_overrides"):
+        if connection.execute(
+            f"SELECT 1 FROM {table} WHERE section IN (?,?,?) LIMIT 1",
+            ("Staff Members", "Departments", "IT Assets"),
+        ).fetchone():
+            raise RuntimeError("Staff upgrade found pre-existing new-section grants; review required")
+    statements = {
+        "departments": """
+            CREATE TABLE departments (
+                id TEXT NOT NULL PRIMARY KEY DEFAULT (lower(hex(randomblob(16))))
+                    CHECK(length(trim(id))>0),
+                name TEXT NOT NULL COLLATE NOCASE UNIQUE CHECK(length(trim(name))>0),
+                archived INTEGER NOT NULL DEFAULT 0
+                    CHECK(typeof(archived)='integer' AND archived IN (0,1))
+            )
+        """,
+        "staff_members": """
+            CREATE TABLE staff_members (
+                id TEXT NOT NULL PRIMARY KEY DEFAULT (lower(hex(randomblob(16))))
+                    CHECK(length(trim(id))>0),
+                first_name TEXT NOT NULL DEFAULT '',
+                last_name TEXT NOT NULL DEFAULT '',
+                email TEXT NOT NULL DEFAULT '',
+                department_id TEXT REFERENCES departments(id) ON DELETE RESTRICT,
+                job_title TEXT NOT NULL DEFAULT '',
+                telephone TEXT NOT NULL DEFAULT '',
+                location TEXT NOT NULL DEFAULT '',
+                active INTEGER NOT NULL DEFAULT 1
+                    CHECK(typeof(active)='integer' AND active IN (0,1)),
+                account_id INTEGER UNIQUE REFERENCES accounts(id) ON DELETE SET NULL
+            )
+        """,
+    }
+    for name, statement in statements.items():
+        existing = connection.execute(
+            "SELECT sql FROM sqlite_master WHERE name=?", (name,)
+        ).fetchone()
+        if existing is None:
+            connection.execute(statement)
+        elif " ".join(existing[0].split()) != " ".join(statement.split()):
+            raise RuntimeError("Staff upgrade found an incompatible table: " + name)
+    if connection.execute("PRAGMA foreign_key_check").fetchone():
+        raise RuntimeError("Staff upgrade found invalid relationships; review required")
+    connection.execute("""
+        INSERT INTO staff_members(account_id,first_name,last_name,email)
+        SELECT a.id,COALESCE(p.first_name,''),COALESCE(p.last_name,''),COALESCE(p.email,'')
+        FROM accounts a LEFT JOIN account_profiles p ON p.account_id=a.id
+        WHERE NOT EXISTS (SELECT 1 FROM staff_members s WHERE s.account_id=a.id)
+    """)
+    if connection.execute("""
+        SELECT a.id FROM accounts a LEFT JOIN staff_members s ON s.account_id=a.id
+        GROUP BY a.id HAVING count(s.id)!=1
+    """).fetchone() or connection.execute("PRAGMA foreign_key_check").fetchone():
+        raise RuntimeError("Staff upgrade did not preserve valid unique account links")
 
 
 def migrate_role_permissions(connection):

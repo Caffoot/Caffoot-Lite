@@ -8,18 +8,20 @@ The code keeps Devices, IPAM and Racks records in separate tables, along with ac
 
 ## Source and schema version
 
-The `milestone-1` branch uses schema 12. The accepted schema-11 four-table role
-migration is retained, followed by the configurable built-in-role constraint
-upgrade and access-preserving active-account IT Staff assignment described in
-[Shared Roles And Account Permissions](Role-Permissions.md). All steps run in
-one atomic transaction with foreign keys enabled. This is not a published release;
-the v2.1 schema/release remain unchanged. Schema 12 requires private owner acceptance.
+The Batch 3.1 candidate uses schema 14, adding independent Staff Members and flat
+Departments after Stage 2's schema-13 organisation features. Earlier role migrations
+remain unchanged. All steps run in one atomic transaction with foreign keys enabled.
+See [Staff Directory Foundation](Staff-Directory-Foundation.md) for exact fields,
+account mapping, link preservation and conflict handling. This is development for
+review; the published v2.1 schema and release remain unchanged.
 
 The exact definitions are in [`backend/schema.py`](../../backend/schema.py). The 30 October 2026 checkpoint had schema 7. The later modular v2.1 baseline used schema 9: migration 8 added profiles/photos and migration 9 added email proofs. The published v2.1 database uses schema 10, adding challenge identifiers, attempt counters and durable failed-attempt timestamps; it explicitly invalidates outstanding old-format email proofs at upgrade. The function `initialise_database(connection)` applies missing numbered migrations in a transaction and rejects databases marked newer than this application.
 
 | Table | Primary key and relevant columns | What it contains |
 | --- | --- | --- |
 | `schema_migrations` | `version`, `applied_at` | Applied schema versions |
+| `departments` | independent text `id`, unique `name`, `archived` | Flat Department records |
+| `staff_members` | independent text `id`, optional unique `account_id`, optional `department_id`, profile details, `active` | Directory records independent of logins |
 | `inventory_devices` | `id`, case-insensitive unique `name`, `record_json`, `revision`, `ordinal` | Device identity, variable device properties, optimistic revision and original list order |
 | `inventory_subnets` | `id`, `record_json`, `ordinal` | Subnet records |
 | `inventory_vlans` | `id`, `record_json`, `ordinal` | VLAN records |

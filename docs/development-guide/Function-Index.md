@@ -6,7 +6,7 @@ Scope: named JavaScript declarations/assignments in the three application script
 
 The account hydration/photo functions now have purpose-based callable bindings matching their function names: `hydrateAccount` and `removeAccountPhoto`. The immutable design manifest retains its historical integration-entry names; those metadata names are not the runtime's current function map. Pinned source paths, revisions and hashes are unchanged.
 
-**Recorded definitions: 754.** Regenerate after changing declarations or their lines. See [coding conventions](06-Coding-and-Naming-Conventions.md) and the [code reference](07-Function-and-Code-Reference.md).
+**Recorded definitions: 755.** Regenerate after changing declarations or their lines. See [coding conventions](06-Coding-and-Naming-Conventions.md) and the [code reference](07-Function-and-Code-Reference.md).
 
 ## interface/loader.js
 
@@ -862,10 +862,10 @@ The account hydration/photo functions now have purpose-based callable bindings m
 | [`set_permission`](../../backend/permissions.py#L62) | 62 |
 | [`can_access`](../../backend/permissions.py#L73) | 73 |
 | [`feature_enabled`](../../backend/permissions.py#L78) | 78 |
-| [`set_account_active`](../../backend/permissions.py#L88) | 88 |
-| [`delete_user`](../../backend/permissions.py#L127) | 127 |
-| [`set_administrator`](../../backend/permissions.py#L155) | 155 |
-| [`can_replace_inventory`](../../backend/permissions.py#L196) | 196 |
+| [`set_account_active`](../../backend/permissions.py#L91) | 91 |
+| [`delete_user`](../../backend/permissions.py#L130) | 130 |
+| [`set_administrator`](../../backend/permissions.py#L158) | 158 |
+| [`can_replace_inventory`](../../backend/permissions.py#L199) | 199 |
 
 ## backend/profiles.py
 
@@ -948,9 +948,10 @@ The account hydration/photo functions now have purpose-based callable bindings m
 | Function | Line |
 | --- | ---: |
 | [`initialise_database`](../../backend/schema.py#L56) | 56 |
-| [`migrate_role_permissions`](../../backend/schema.py#L219) | 219 |
-| [`verify_role_migration`](../../backend/schema.py#L304) | 304 |
-| [`migrate_configurable_builtin_roles`](../../backend/schema.py#L330) | 330 |
+| [`migrate_staff_directory`](../../backend/schema.py#L222) | 222 |
+| [`migrate_role_permissions`](../../backend/schema.py#L287) | 287 |
+| [`verify_role_migration`](../../backend/schema.py#L372) | 372 |
+| [`migrate_configurable_builtin_roles`](../../backend/schema.py#L398) | 398 |
 
 ## backend/server.py
 

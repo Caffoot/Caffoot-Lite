@@ -5,7 +5,7 @@ protection before passing the actor identity to administrative operations."""
 from backend.accounts import hash_password
 from backend.audit_events import record_actor_event
 from backend.profiles import validate_profile_details
-from backend.role_policy import assign_staff_member, evaluate_role_policy, SECTIONS, LEVELS
+from backend.role_policy import assign_staff_member, evaluate_role_policy, LEVELS
 
 
 def _admin(connection, actor_id):
@@ -77,6 +77,9 @@ def can_access(connection, account_id, section, *, edit=False):
 
 def feature_enabled(connection, section):
     """Unknown or missing organisation choices deny access, including for admins."""
+    if section in ("Staff Members", "Departments"):
+        return True
+    # IT Assets stays unavailable until its separately approved feature switch.
     feature = {"Devices": "devices", "IPAM": "ipam", "Racks": "racks"}.get(section)
     if feature is None:
         return False
@@ -202,4 +205,4 @@ def can_replace_inventory(connection, account_id):
     boundary. No import route or persistence is enabled by this predicate.
     """
     return all(can_access(connection, account_id, section, edit=True)
-               for section in SECTIONS)
+               for section in ("Devices", "IPAM", "Racks"))

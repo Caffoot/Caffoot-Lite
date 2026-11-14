@@ -42,7 +42,7 @@ class FeatureSettingsTests(unittest.TestCase):
         before = self.choices()
         schema.initialise_database(self.db)
         self.assertEqual(self.choices(), before)
-        self.assertEqual(self.db.execute('SELECT max(version) FROM schema_migrations').fetchone(), (13,))
+        self.assertEqual(self.db.execute('SELECT max(version) FROM schema_migrations').fetchone(), (schema.SCHEMA_VERSION,))
 
     def test_empty_existing_schema_12_uses_upgrade_defaults(self):
         with patch.object(schema, 'SCHEMA_VERSION', 12):
@@ -59,7 +59,10 @@ class FeatureSettingsTests(unittest.TestCase):
         self.db.commit()
         before = self.snapshot()
         schema.initialise_database(self.db)
-        self.assertEqual(self.snapshot(), before)
+        after = self.snapshot()
+        self.assertEqual(after.pop('departments'), [])
+        self.assertEqual(len(after.pop('staff_members')), 1)
+        self.assertEqual(after, before)
         self.assertEqual(self.choices()['devices'], 1)
 
     def test_failed_migration_rolls_back_table_and_version(self):

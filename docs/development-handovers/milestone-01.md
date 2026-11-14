@@ -15,6 +15,30 @@
 - [ ] Obtain separate final milestone merge approval; verify the resulting `main` build
 - [ ] Obtain separate v2.2 publication approval and verify published image/platforms, release notes and installation links before changing current-release instructions
 
+## Stage 3 Batch 3.1 — Staff Members And Departments Foundation
+
+Started from verified `milestone-1` at `519842b46861c85fde0eebf78298117c2346599d`,
+the accepted Stage 2 correction merge. Dedicated branch:
+`feat/staff-departments-foundation`. Scope follows the
+[Batch 3.1 authorisation](https://github.com/Caffoot/Caffoot-Lite/issues/368#issuecomment-6877271755).
+
+The first checkpoint adds schema 14, independent Staff/flat Department records,
+unique optional account links and atomic one-time backfill. It recognises the three
+new RBAC sections without granting them and explicitly retains the original three
+inventory-import requirements. The existing account-delete contract and approved
+Staff retention are combined through a nullable link; no profile synchronisation
+or account creation change is added. See
+[implementation contract](../development-guide/Staff-Directory-Foundation.md).
+
+Initial focused check: **24 tests passed**, no failures/skips, covering the new
+migration plus existing schema and feature-settings tests. This includes exact
+all-table/account-policy preservation, blanks, constraints, retry/reopen, concurrent
+upgrade, rollback and conflict handling. New-section security and wider regression
+checks are still pending at this checkpoint. No visual changes or design pins changed.
+
+Stop for product-owner review after the final PR. No later batch, merge, release,
+Docker publication or deployment is authorised.
+
 ## Stage 2 Raspberry Pi Acceptance Corrections
 
 Baseline `bda35d73398820f49c8c1cf0647aa1c8c92bbf2e`; branch `stage-2-pi-acceptance-corrections`. The [owner approved four corrections](https://github.com/Caffoot/Caffoot-Lite/issues/351#issuecomment-6874767163) after twelve native Pi/Safari tests. This is a new acceptance correction batch, not Stage 3 or repeated Stage 2 implementation.
