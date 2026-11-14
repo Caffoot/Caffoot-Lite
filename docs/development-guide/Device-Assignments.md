@@ -5,7 +5,9 @@ is unchanged. Scope: [Batch 3.4](https://github.com/Caffoot/Caffoot-Lite/issues/
 
 Schema 15 introduces `device_assignments`. Each dated record references the
 original Device and exactly one Staff Member or Department. It retains the
-recipient label, responsible account ID and username at allocation time. The
+recipient label, responsible account ID and username at allocation time.
+Current-holder labels follow later Staff/Department renames; the history keeps
+the original recorded labels. The
 partial unique index permits only one open allocation per Device. No inventory
 JSON assignment list, Device copy or separate handover system is created.
 

@@ -1,0 +1,66 @@
+{
+  "passed": true,
+  "errors": [],
+  "measurements": {
+    "staff-1440-light": {
+      "width": 1440,
+      "documentWidth": 1440,
+      "theme": "h-full",
+      "focused": "BODY"
+    },
+    "staff-1440-dark": {
+      "width": 1440,
+      "documentWidth": 1440,
+      "theme": "h-full dark",
+      "focused": "BODY"
+    },
+    "staff-390-light": {
+      "width": 390,
+      "documentWidth": 390,
+      "theme": "h-full",
+      "focused": "BODY"
+    },
+    "staff-390-dark": {
+      "width": 390,
+      "documentWidth": 390,
+      "theme": "h-full dark",
+      "focused": "BODY"
+    },
+    "device-1440-light": {
+      "width": 1440,
+      "documentWidth": 1440,
+      "theme": "h-full",
+      "focused": "BUTTON"
+    },
+    "device-1440-dark": {
+      "width": 1440,
+      "documentWidth": 1440,
+      "theme": "h-full dark",
+      "focused": "BUTTON"
+    },
+    "device-390-light": {
+      "width": 390,
+      "documentWidth": 390,
+      "theme": "h-full",
+      "focused": "BUTTON"
+    },
+    "device-390-dark": {
+      "width": 390,
+      "documentWidth": 390,
+      "theme": "h-full dark",
+      "focused": "BUTTON"
+    },
+    "assignment-390-light": {
+      "width": 390,
+      "documentWidth": 390,
+      "theme": "h-full",
+      "focused": "SELECT"
+    },
+    "assignment-390-dark": {
+      "width": 390,
+      "documentWidth": 390,
+      "theme": "h-full dark",
+      "focused": "SELECT"
+    }
+  }
+}

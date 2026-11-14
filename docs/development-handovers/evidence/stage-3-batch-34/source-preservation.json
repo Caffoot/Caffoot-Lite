@@ -1,0 +1,21 @@
+{
+  "baseline": "7ec4ac27eddb1f798fdfcf9fff09b761c7bebd86",
+  "checks": {
+    "staff_existing_source_preserved": true,
+    "device_modal_existing_markup_preserved": true,
+    "navigation_existing_markup_preserved": true,
+    "interface/styles/staff.css_unchanged": true,
+    "interface/screens/my-account.html_unchanged": true,
+    "interface/styles/my-account.css_unchanged": true,
+    "interface/screens/device-inventory.html_unchanged": true,
+    "interface/styles/device-details.css_unchanged": true,
+    "interface/styles/device-inventory.css_unchanged": true,
+    "device_details_existing_renderer_preserved": true
+  },
+  "allPreservationChecksPassed": true,
+  "functionalReferences": {
+    "device-reference.html": "be19e803de0a2afef5bf937b3de8d074647f34f7b97289904118b24a9f859c95",
+    "staff-reference.html": "1a49ca59fcc8f0f213c64e629d188c9faf996a913d3dd4b787ea2ed50ccdeb43",
+    "journey-reference.html": "31046eafb125d8d0c79201587aa88cbb53fdc6d7778958b03fddcac2018c3a08"
+  }
+}

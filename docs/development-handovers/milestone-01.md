@@ -1,6 +1,21 @@
 # Milestone 01 Development Handover — v2.2 Target
 
-> **Current status, 14 November 2026:** v2.2 remains the future Milestone 01 target; the published release is **v2.1**. Stage 1 was accepted and merged into `main` at `6008fedfc2c25fc40b49c9e9e21f3a93d61a9f4a`. Stage 2, including native Pi/Safari corrective retests, was accepted through PR #376 on `milestone-1` at `519842b46861c85fde0eebf78298117c2346599d`. Stage 3 Batch 3.1 was accepted in PR #377 at `97368e734f3e8008a9acc929b999a198eca1cf3f`; Batch 3.2 is an authorised review candidate; later batches and Stages 4–6 remain pending. No merge to `main`, publication or real deployment is authorised. Track remaining work in [#351](https://github.com/Caffoot/Caffoot-Lite/issues/351) and [#366](https://github.com/Caffoot/Caffoot-Lite/issues/366). Dated sections below preserve earlier checkpoints.
+> **Current status, 14 November 2026:** v2.2 remains the future Milestone 01 target; the published release is **v2.1**. Stage 1 was accepted and merged into `main` at `6008fedfc2c25fc40b49c9e9e21f3a93d61a9f4a`. Stage 2, including native Pi/Safari corrective retests, was accepted through PR #376 on `milestone-1` at `519842b46861c85fde0eebf78298117c2346599d`. Stage 3 Batch 3.1 was accepted in PR #377 at `97368e734f3e8008a9acc929b999a198eca1cf3f`; Batches 3.2 and 3.3 were accepted and merged through the verified `7ec4ac27eddb1f798fdfcf9fff09b761c7bebd86` baseline; Batch 3.4 is draft PR #382 with review evidence and one Device-type eligibility question pending. Later batches and Stages 4–6 remain pending. No merge to `main`, publication or real deployment is authorised. Track remaining work in [#351](https://github.com/Caffoot/Caffoot-Lite/issues/351) and [#366](https://github.com/Caffoot/Caffoot-Lite/issues/366). Dated sections below preserve earlier checkpoints.
+
+## Batch 3.4 Draft Review Checkpoint — 14 November 2026
+
+[Draft PR #382](https://github.com/Caffoot/Caffoot-Lite/pull/382) adds canonical
+Device allocation/history, additive Staff/Device panels and private two-section
+My Equipment. See the [test/design report](evidence/stage-3-batch-34/Report.md)
+and real application screenshots. Full backend: 698 tests, 694 passed and four
+existing skips; final assignment/HTTP: 17 passed; both relevant browser flows
+passed. Docker lifecycle and final runtime image provenance passed locally.
+The pinned HTML contract retains its pre-existing baseline IPAM CSS failure.
+
+Desktop, Laptop and Printer allocations work; other Device types remain blocked
+pending clarification of the original preview's infrastructure eligibility.
+Owner acceptance and hosted final-head checks remain unclaimed. No merge,
+deployment, publication, `main` or permanent-archive change.
 
 ## Current Stage 3 Integration Checkpoint — 14 November 2026
 
@@ -9,7 +24,7 @@
 - **PR #378 / Batch 3.2** merged at `221739ae8c1331d396977adb6e79dc910f39380d`.
 - **PR #380** restored the approved Optional Features layout; merged at `953956ef41d036ce3f94d8d8d29fcd10c1c2377e`.
 - **PR #379** retains the corrected, owner-reviewed Stage 3 Staff interface *visual reference* only; it is not an application integration branch and remains unmerged.
-- **Draft PR #381** is the approved Stage 3 **Batch 3.3 application integration**, branched from `953956ef41d036ce3f94d8d8d29fcd10c1c2377e`. It adds source-faithful Staff Directory/Details/Add/Edit, optional login, Departments management, grouped IT/Staff navigation and the existing Permissions management extended to six independently configurable sections. Access is server-verified and permits Staff-only/Department-only users to enter their permitted workspace without inventory access.
+- **PR #381** is the accepted and merged Stage 3 **Batch 3.3 application integration**, originally branched from `953956ef41d036ce3f94d8d8d29fcd10c1c2377e`. It adds source-faithful Staff Directory/Details/Add/Edit, optional login, Departments management, grouped IT/Staff navigation and the existing Permissions management extended to six independently configurable sections. Access is server-verified and permits Staff-only/Department-only users to enter their permitted workspace without inventory access.
 - **Pending for PR #381:** hosted CI review, real rendered app comparisons against the approved Staff and v2.1 references (desktop/mobile/light/dark), owner sign-off, and explicit separate merge approval. This draft is not accepted or safe to deploy merely because source files are committed.
 - Equipment assignment, associated equipment, My Equipment, optional IT Assets stock and the later stages remain excluded.
 

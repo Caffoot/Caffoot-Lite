@@ -57,3 +57,14 @@ Check changed Markdown links manually against the current repository tree. The h
 The original Raspberry Pi 5 acceptance and Docker/SQLite release stages, including manual same-device backup/restore testing, are recorded in [completed release tracker #218](https://github.com/Caffoot/Caffoot-Lite/issues/218). The manual restore did not prove off-host backup resilience. Subsequently, the v2.0.2 security correction and testing were tracked in [#255](https://github.com/Caffoot/Caffoot-Lite/issues/255) and its release preparation in [PR #256](https://github.com/Caffoot/Caffoot-Lite/pull/256). [Caffoot Lite v2.0.2](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v2.0.2) was published on 2 November 2026. These records are historical evidence, not instructions to repeat completed release work.
 
 [Start here](README.md) · [Inventory migration](05-Inventory-and-Migration.md)
+
+## Device Assignment Checks
+
+Run `PYTHONPATH=tests:. python -m unittest test_device_assignments test_device_assignments_http -v`
+for allocation atomicity, identity/history preservation, permissions and private
+employee views. `node tests/device-assignments-interface.cjs` exercises both
+entry points and the two My Equipment sections against real HTTPS/SQLite.
+Set `CAFFOOT_EQUIPMENT_OUTPUT` to retain screenshots and measurements; use
+`CAFFOOT_CHROMIUM_PATH` only when selecting an existing local Chromium binary.
+The [Batch 3.4 report](../development-handovers/evidence/stage-3-batch-34/Report.md)
+records actual results, source-preservation checks and remaining owner decisions.

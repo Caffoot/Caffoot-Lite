@@ -168,3 +168,11 @@ IT views. `assignment_recipients` offers only eligible names and identifiers;
 it does not grant directory access. `my_equipment` resolves the account's own
 Staff link and current Department on the server and returns employee-safe fields.
 See [Device Assignments](Device-Assignments.md) for API and workflow boundaries.
+
+`interface/equipment.js` supplies `staffPlaceholder`/`loadStaffEquipment`,
+`loadDeviceEquipment`, `renderMyEquipment`/`loadMyEquipment` and the shared
+`showAssignmentDialog`/`saveAssignment` operation. The existing application
+bridge supplies Devices rights and session CSRF proof; server checks remain
+authoritative. `selectDeviceDetailsTab` reuses `revealSectionTab` to keep its
+selected tab visible after narrow-screen changes. The existing Staff forms,
+Department renderer and My Account controls are preserved.
