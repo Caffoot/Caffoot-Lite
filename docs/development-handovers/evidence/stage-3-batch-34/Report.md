@@ -9,14 +9,23 @@ that checkpoint. Original screenshot revisions remain in Git history. Docker res
 hashes remain evidence for their original runtime; current captures are listed
 in the consolidated review below, without claiming a new image build.
 
-## Consolidated Visual Review And Status Placement
+## Final Visual Corrections And Consolidated Review
 
-[The consolidated review](Visual-Review.md) records the subsequent status-action
-placement correction, 46 passing focused tests, both passing affected browser
-flows, 40 updated captures and the remaining visual follow-ups. Current PNGs and
-`browser-results.json` correspond to runtime `163b4e0ff12ab5cddaa7f69a97f74b9f30522e88`.
-Original Docker/image provenance remains tied to the earlier recorded runtime;
-no Docker rerun or owner acceptance is claimed for the presentation correction.
+[The consolidated review](Visual-Review.md) records the two final authorised
+visual corrections following `49b9c8bef2a529d355d9b12f2114443fa683876a`:
+inactive-notice horizontal alignment and legible dark unselected Device labels.
+The current 40 PNGs and `browser-results.json` were regenerated together after
+both stylesheet changes. **18 assignment/API tests and the extended assignment
+browser flow passed**, with zero page errors or document overflow across
+1440px/390px light/dark. Device selection, hover, keyboard focus and native
+disabled state were checked explicitly. The existing status placement and all
+other runtime files are preserved; see `final-visual-preservation.json`.
+
+The earlier status-placement review passed 46 focused tests and both affected
+browser flows on its recorded runtime. Original Docker/image provenance remains
+tied to the earlier runtime; no new Docker build or owner acceptance is claimed.
+Inherited Device footer casing remains explicitly excluded and documented.
+The known baseline IPAM contract failure is unchanged and was not rerun.
 
 ## Final Corrections — 14 November 2026
 

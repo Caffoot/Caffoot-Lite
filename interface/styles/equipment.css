@@ -12,6 +12,7 @@
 .equipment-staff .staff-assign-table .small-table th{white-space:nowrap}
 .equipment-staff .staff-assign-foot{padding:13px 20px;border-top:1px solid var(--line);font-size:10.5px;line-height:1.6;color:var(--muted)}
 .equipment-staff .staff-assignment-tip{font-size:11px;color:var(--muted);line-height:1.7;margin:15px 0 0}
+.equipment-staff .staff-assignment-top + .staff-assignment-tip{margin-left:20px;margin-right:20px}
 .equipment-dialog .assignment-modal-head{padding:20px 22px;border-bottom:1px solid var(--line)}
 .equipment-dialog .assignment-modal-head h2{font-size:18px;margin:0 0 5px;color:var(--heading)}
 .equipment-dialog .assignment-modal-head p{margin:0;color:var(--muted);font-size:11px;line-height:1.6}
@@ -34,7 +35,7 @@
 @media(max-width:1000px){.equipment-staff.staff-profile-grid{grid-template-columns:1fr}}
 
 .equipment-dialog .assignment-modal-actions{display:flex;justify-content:flex-end;gap:9px;padding:16px 22px;border-top:1px solid var(--line)}
-@media(max-width:650px){.equipment-staff .staff-assign-table{overflow-x:auto}.equipment-staff .staff-assign-table table{min-width:610px}.equipment-staff .staff-assignment-top{padding:14px}.equipment-staff .staff-detail-card{padding:15px}}
+@media(max-width:650px){.equipment-staff .staff-assign-table{overflow-x:auto}.equipment-staff .staff-assign-table table{min-width:610px}.equipment-staff .staff-assignment-top{padding:14px}.equipment-staff .staff-assignment-top + .staff-assignment-tip{margin-left:14px;margin-right:14px}.equipment-staff .staff-detail-card{padding:15px}}
 
 .my-equipment .info-row{flex-wrap:wrap}
 .my-equipment .info-row>*{min-width:0;overflow-wrap:anywhere}
@@ -47,3 +48,6 @@
 .equipment-staff .staff-history-list tr:last-child td{border:0}
 .equipment-staff .staff-history-list strong{font-size:11px;color:var(--heading)}
 .equipment-staff .staff-history-list small{display:block;color:var(--muted);margin-top:3px;font-size:10px;line-height:1.5}
+
+/* Use the existing dark foreground only for enabled, idle Device choices. */
+html.dark #modal-container .equipment-dialog .device-review-check-item:not(:has(input:checked)):not(:has(input:disabled)):not(:hover){color:var(--theme-text)}

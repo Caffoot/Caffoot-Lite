@@ -76,7 +76,12 @@ async function test(){
  for(const device of available.slice(0,2))await page.locator(`[data-equipment-device="${device.id}"]`).check();
  for(const width of [1440,390]){
   await page.setViewportSize({width,height:width===390?844:950});
-  for(const theme of ['light','dark']){await page.evaluate(theme=>caffootSetTheme(theme),theme);await capture(`staff-assignment-${width}-${theme}`);}
+  for(const theme of ['light','dark']){
+   await page.evaluate(theme=>caffootSetTheme(theme),theme);
+   const choiceStyles=await verifyDeviceChoiceStyles(theme);
+   const name=`staff-assignment-${width}-${theme}`;
+   await capture(name);report[name].choiceStyles=choiceStyles;
+  }
  }
 
  await page.locator('#equipment-assignment-form [type="submit"]').click();
@@ -86,6 +91,67 @@ async function test(){
  assert.equal(await page.locator('.staff-live .two-col').innerHTML(),profileBefore);
  assert.equal(await page.locator('.equipment-staff [data-equipment-action="view-device"]').count(),2);
  assert.equal(await page.locator('.staff-history-list tr').first().locator('td').count(),2);
+ async function verifyDeviceChoiceStyles(theme){
+  const selected=page.locator('#equipment-device-choices label:has(input:checked)').first();
+  const idle=page.locator('#equipment-device-choices label').filter({hasText:'Reception-PC · Desktop'});
+  const checkbox=idle.locator('input');
+  const palette=await page.evaluate(()=>{
+   const style=getComputedStyle(document.documentElement),result={};
+   for(const key of ['theme-text','theme-hover','theme-warning-bg','theme-warning-text']){
+    const hex=style.getPropertyValue('--'+key).trim().replace('#','');
+    result[key]=hex?`rgb(${[0,2,4].map(start=>parseInt(hex.slice(start,start+2),16)).join(', ')})`:null;
+   }
+   return result;
+  });
+  const styleOf=element=>element.evaluate(label=>{
+   const input=label.querySelector('input'),style=getComputedStyle(label),focus=getComputedStyle(input);
+   return {color:style.color,background:style.backgroundColor,checked:input.checked,disabled:input.disabled,
+    outlineWidth:focus.outlineWidth,outlineStyle:focus.outlineStyle,outlineOffset:focus.outlineOffset};
+  });
+  await page.mouse.move(0,0);
+  const idleStyle=await styleOf(idle),selectedStyle=await styleOf(selected);
+  assert.equal(idleStyle.color,theme==='dark'?palette['theme-text']:'rgb(49, 81, 107)');
+  assert.equal(selectedStyle.color,theme==='dark'?palette['theme-warning-text']:'rgb(151, 82, 23)');
+  assert.equal(selectedStyle.background,theme==='dark'?palette['theme-warning-bg']:'rgb(255, 242, 232)');
+  await idle.hover();
+  const hovered=await styleOf(idle);
+  assert.equal(hovered.background,theme==='dark'?palette['theme-hover']:'rgb(238, 244, 250)');
+  assert.equal(hovered.color,theme==='dark'?palette['theme-text']:'rgb(49, 81, 107)');
+  await selected.hover();
+  const selectedHover=await styleOf(selected);
+  assert.equal(selectedHover.color,selectedStyle.color);
+  assert.equal(selectedHover.background,selectedStyle.background);
+  await page.mouse.move(0,0);
+  await checkbox.focus();
+  await page.keyboard.press('Space');
+  assert.equal(await checkbox.isChecked(),true,'Keyboard selection must remain functional');
+  const toggled=await styleOf(idle);
+  assert.equal(toggled.color,selectedStyle.color);
+  assert.equal(toggled.background,selectedStyle.background);
+  await page.keyboard.press('Space');
+  assert.equal(await checkbox.isChecked(),false);
+  const focused=await styleOf(idle);
+  assert.equal(focused.color,idleStyle.color);
+  assert.equal(focused.outlineWidth,toggled.outlineWidth);
+  assert.equal(focused.outlineStyle,toggled.outlineStyle);
+  assert.equal(focused.outlineOffset,toggled.outlineOffset);
+  assert.notEqual(focused.outlineStyle,'none');
+  assert.ok(parseFloat(focused.outlineWidth)>0,'Keyboard focus must remain visible');
+  try{
+   // Exercise the existing native disabled state without changing eligibility.
+   await checkbox.evaluate(input=>{input.disabled=true;});
+   await idle.click({force:true});
+   assert.equal(await checkbox.isDisabled(),true);
+   assert.equal(await checkbox.isChecked(),false,'Disabled input must not toggle');
+   await page.mouse.move(0,0);
+   const disabled=await styleOf(idle);
+   assert.equal(disabled.color,'rgb(49, 81, 107)','The dark contrast rule must not override disabled labels');
+   return {idle:idleStyle,selected:selectedStyle,hovered,selectedHover,toggled,focused,disabled};
+  }finally{
+   await checkbox.evaluate(input=>{input.disabled=false;input.blur();});
+   await page.mouse.move(0,0);
+  }
+ }
  async function capture(name,currentPage=page){
   await currentPage.waitForFunction(()=>{
    const equipment=document.querySelector('[data-equipment-staff]');
@@ -108,7 +174,19 @@ async function test(){
     assert.ok(positions.actionTop>=positions.profileBottom,'Status action must follow profile/login content');
     assert.ok(positions.actionBottom<=positions.equipmentTop,'Status action must sit above equipment');
    }
-   report[name]={positions};
+   const notice=await currentPage.locator('.staff-assignment-top + .staff-assignment-tip').evaluateAll(items=>items.map(item=>{
+    const heading=item.previousElementSibling,card=item.parentElement;
+    return {text:item.textContent,left:item.getBoundingClientRect().left,
+     headingLeft:heading.querySelector('h3').getBoundingClientRect().left,
+     rightInset:card.getBoundingClientRect().right-item.getBoundingClientRect().right,
+     headingRightInset:parseFloat(getComputedStyle(heading).paddingRight)+parseFloat(getComputedStyle(card).borderRightWidth)};
+   }));
+   for(const item of notice){
+    assert.equal(item.text,'Inactive Staff Member — outstanding assignments are retained. New assignments are unavailable.');
+    assert.ok(Math.abs(item.left-item.headingLeft)<1,'Inactive notice must align with its heading');
+    assert.ok(Math.abs(item.rightInset-item.headingRightInset)<1,'Inactive notice must retain the matching right inset');
+   }
+   report[name]={positions,notice};
   }
   if(name.startsWith('device-')){
    const visible=await currentPage.locator('#device-details-tab-assigned').evaluate(e=>{

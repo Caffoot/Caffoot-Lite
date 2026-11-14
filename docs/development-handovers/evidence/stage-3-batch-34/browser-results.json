@@ -6,29 +6,289 @@
       "width": 1440,
       "documentWidth": 1440,
       "theme": "h-full",
-      "focused": "INPUT",
-      "fullPage": false
+      "focused": "DIV",
+      "fullPage": false,
+      "choiceStyles": {
+        "idle": {
+          "color": "rgb(49, 81, 107)",
+          "background": "rgba(0, 0, 0, 0)",
+          "checked": false,
+          "disabled": false,
+          "outlineWidth": "3px",
+          "outlineStyle": "none",
+          "outlineOffset": "0px"
+        },
+        "selected": {
+          "color": "rgb(151, 82, 23)",
+          "background": "rgb(255, 242, 232)",
+          "checked": true,
+          "disabled": false,
+          "outlineWidth": "3px",
+          "outlineStyle": "none",
+          "outlineOffset": "0px"
+        },
+        "hovered": {
+          "color": "rgb(49, 81, 107)",
+          "background": "rgb(238, 244, 250)",
+          "checked": false,
+          "disabled": false,
+          "outlineWidth": "3px",
+          "outlineStyle": "none",
+          "outlineOffset": "0px"
+        },
+        "selectedHover": {
+          "color": "rgb(151, 82, 23)",
+          "background": "rgb(255, 242, 232)",
+          "checked": true,
+          "disabled": false,
+          "outlineWidth": "3px",
+          "outlineStyle": "none",
+          "outlineOffset": "0px"
+        },
+        "toggled": {
+          "color": "rgb(151, 82, 23)",
+          "background": "rgb(255, 242, 232)",
+          "checked": true,
+          "disabled": false,
+          "outlineWidth": "2px",
+          "outlineStyle": "solid",
+          "outlineOffset": "1px"
+        },
+        "focused": {
+          "color": "rgb(49, 81, 107)",
+          "background": "rgba(0, 0, 0, 0)",
+          "checked": false,
+          "disabled": false,
+          "outlineWidth": "2px",
+          "outlineStyle": "solid",
+          "outlineOffset": "1px"
+        },
+        "disabled": {
+          "color": "rgb(49, 81, 107)",
+          "background": "rgba(0, 0, 0, 0)",
+          "checked": false,
+          "disabled": true,
+          "outlineWidth": "3px",
+          "outlineStyle": "none",
+          "outlineOffset": "0px"
+        }
+      }
     },
     "staff-assignment-1440-dark": {
       "width": 1440,
       "documentWidth": 1440,
       "theme": "h-full dark",
-      "focused": "INPUT",
-      "fullPage": false
+      "focused": "DIV",
+      "fullPage": false,
+      "choiceStyles": {
+        "idle": {
+          "color": "rgb(241, 245, 249)",
+          "background": "rgba(0, 0, 0, 0)",
+          "checked": false,
+          "disabled": false,
+          "outlineWidth": "3px",
+          "outlineStyle": "none",
+          "outlineOffset": "0px"
+        },
+        "selected": {
+          "color": "rgb(253, 230, 138)",
+          "background": "rgb(69, 26, 3)",
+          "checked": true,
+          "disabled": false,
+          "outlineWidth": "3px",
+          "outlineStyle": "none",
+          "outlineOffset": "0px"
+        },
+        "hovered": {
+          "color": "rgb(241, 245, 249)",
+          "background": "rgb(51, 65, 85)",
+          "checked": false,
+          "disabled": false,
+          "outlineWidth": "3px",
+          "outlineStyle": "none",
+          "outlineOffset": "0px"
+        },
+        "selectedHover": {
+          "color": "rgb(253, 230, 138)",
+          "background": "rgb(69, 26, 3)",
+          "checked": true,
+          "disabled": false,
+          "outlineWidth": "3px",
+          "outlineStyle": "none",
+          "outlineOffset": "0px"
+        },
+        "toggled": {
+          "color": "rgb(253, 230, 138)",
+          "background": "rgb(69, 26, 3)",
+          "checked": true,
+          "disabled": false,
+          "outlineWidth": "2px",
+          "outlineStyle": "solid",
+          "outlineOffset": "1px"
+        },
+        "focused": {
+          "color": "rgb(241, 245, 249)",
+          "background": "rgba(0, 0, 0, 0)",
+          "checked": false,
+          "disabled": false,
+          "outlineWidth": "2px",
+          "outlineStyle": "solid",
+          "outlineOffset": "1px"
+        },
+        "disabled": {
+          "color": "rgb(49, 81, 107)",
+          "background": "rgba(0, 0, 0, 0)",
+          "checked": false,
+          "disabled": true,
+          "outlineWidth": "3px",
+          "outlineStyle": "none",
+          "outlineOffset": "0px"
+        }
+      }
     },
     "staff-assignment-390-light": {
       "width": 390,
       "documentWidth": 390,
       "theme": "h-full",
-      "focused": "INPUT",
-      "fullPage": false
+      "focused": "DIV",
+      "fullPage": false,
+      "choiceStyles": {
+        "idle": {
+          "color": "rgb(49, 81, 107)",
+          "background": "rgba(0, 0, 0, 0)",
+          "checked": false,
+          "disabled": false,
+          "outlineWidth": "3px",
+          "outlineStyle": "none",
+          "outlineOffset": "0px"
+        },
+        "selected": {
+          "color": "rgb(151, 82, 23)",
+          "background": "rgb(255, 242, 232)",
+          "checked": true,
+          "disabled": false,
+          "outlineWidth": "3px",
+          "outlineStyle": "none",
+          "outlineOffset": "0px"
+        },
+        "hovered": {
+          "color": "rgb(49, 81, 107)",
+          "background": "rgb(238, 244, 250)",
+          "checked": false,
+          "disabled": false,
+          "outlineWidth": "3px",
+          "outlineStyle": "none",
+          "outlineOffset": "0px"
+        },
+        "selectedHover": {
+          "color": "rgb(151, 82, 23)",
+          "background": "rgb(255, 242, 232)",
+          "checked": true,
+          "disabled": false,
+          "outlineWidth": "3px",
+          "outlineStyle": "none",
+          "outlineOffset": "0px"
+        },
+        "toggled": {
+          "color": "rgb(151, 82, 23)",
+          "background": "rgb(255, 242, 232)",
+          "checked": true,
+          "disabled": false,
+          "outlineWidth": "2px",
+          "outlineStyle": "solid",
+          "outlineOffset": "1px"
+        },
+        "focused": {
+          "color": "rgb(49, 81, 107)",
+          "background": "rgba(0, 0, 0, 0)",
+          "checked": false,
+          "disabled": false,
+          "outlineWidth": "2px",
+          "outlineStyle": "solid",
+          "outlineOffset": "1px"
+        },
+        "disabled": {
+          "color": "rgb(49, 81, 107)",
+          "background": "rgba(0, 0, 0, 0)",
+          "checked": false,
+          "disabled": true,
+          "outlineWidth": "3px",
+          "outlineStyle": "none",
+          "outlineOffset": "0px"
+        }
+      }
     },
     "staff-assignment-390-dark": {
       "width": 390,
       "documentWidth": 390,
       "theme": "h-full dark",
-      "focused": "INPUT",
-      "fullPage": false
+      "focused": "DIV",
+      "fullPage": false,
+      "choiceStyles": {
+        "idle": {
+          "color": "rgb(241, 245, 249)",
+          "background": "rgba(0, 0, 0, 0)",
+          "checked": false,
+          "disabled": false,
+          "outlineWidth": "3px",
+          "outlineStyle": "none",
+          "outlineOffset": "0px"
+        },
+        "selected": {
+          "color": "rgb(253, 230, 138)",
+          "background": "rgb(69, 26, 3)",
+          "checked": true,
+          "disabled": false,
+          "outlineWidth": "3px",
+          "outlineStyle": "none",
+          "outlineOffset": "0px"
+        },
+        "hovered": {
+          "color": "rgb(241, 245, 249)",
+          "background": "rgb(51, 65, 85)",
+          "checked": false,
+          "disabled": false,
+          "outlineWidth": "3px",
+          "outlineStyle": "none",
+          "outlineOffset": "0px"
+        },
+        "selectedHover": {
+          "color": "rgb(253, 230, 138)",
+          "background": "rgb(69, 26, 3)",
+          "checked": true,
+          "disabled": false,
+          "outlineWidth": "3px",
+          "outlineStyle": "none",
+          "outlineOffset": "0px"
+        },
+        "toggled": {
+          "color": "rgb(253, 230, 138)",
+          "background": "rgb(69, 26, 3)",
+          "checked": true,
+          "disabled": false,
+          "outlineWidth": "2px",
+          "outlineStyle": "solid",
+          "outlineOffset": "1px"
+        },
+        "focused": {
+          "color": "rgb(241, 245, 249)",
+          "background": "rgba(0, 0, 0, 0)",
+          "checked": false,
+          "disabled": false,
+          "outlineWidth": "2px",
+          "outlineStyle": "solid",
+          "outlineOffset": "1px"
+        },
+        "disabled": {
+          "color": "rgb(49, 81, 107)",
+          "background": "rgba(0, 0, 0, 0)",
+          "checked": false,
+          "disabled": true,
+          "outlineWidth": "3px",
+          "outlineStyle": "none",
+          "outlineOffset": "0px"
+        }
+      }
     },
     "staff-1440-light": {
       "positions": {
@@ -39,6 +299,7 @@
         "profileBottom": 671.96875,
         "actionBeforeEquipment": true
       },
+      "notice": [],
       "width": 1440,
       "documentWidth": 1440,
       "theme": "h-full",
@@ -54,6 +315,7 @@
         "profileBottom": 671.96875,
         "actionBeforeEquipment": true
       },
+      "notice": [],
       "width": 1440,
       "documentWidth": 1440,
       "theme": "h-full dark",
@@ -69,6 +331,7 @@
         "profileBottom": 981.171875,
         "actionBeforeEquipment": true
       },
+      "notice": [],
       "width": 390,
       "documentWidth": 390,
       "theme": "h-full",
@@ -84,6 +347,7 @@
         "profileBottom": 981.171875,
         "actionBeforeEquipment": true
       },
+      "notice": [],
       "width": 390,
       "documentWidth": 390,
       "theme": "h-full dark",
@@ -97,6 +361,7 @@
         "profileBottom": 510.578125,
         "actionBeforeEquipment": null
       },
+      "notice": [],
       "width": 1440,
       "documentWidth": 1440,
       "theme": "h-full",
@@ -110,6 +375,7 @@
         "profileBottom": 510.578125,
         "actionBeforeEquipment": null
       },
+      "notice": [],
       "width": 1440,
       "documentWidth": 1440,
       "theme": "h-full dark",
@@ -123,6 +389,7 @@
         "profileBottom": 809.390625,
         "actionBeforeEquipment": null
       },
+      "notice": [],
       "width": 390,
       "documentWidth": 390,
       "theme": "h-full",
@@ -136,6 +403,7 @@
         "profileBottom": 809.390625,
         "actionBeforeEquipment": null
       },
+      "notice": [],
       "width": 390,
       "documentWidth": 390,
       "theme": "h-full dark",
@@ -145,12 +413,21 @@
     "staff-inactive-1440-light": {
       "positions": {
         "hasAction": true,
-        "actionBottom": 456.96875,
-        "actionTop": 416.96875,
-        "equipmentTop": 474.96875,
-        "profileBottom": 398.96875,
+        "actionBottom": 729.96875,
+        "actionTop": 689.96875,
+        "equipmentTop": 747.96875,
+        "profileBottom": 671.96875,
         "actionBeforeEquipment": true
       },
+      "notice": [
+        {
+          "text": "Inactive Staff Member — outstanding assignments are retained. New assignments are unavailable.",
+          "left": 279.1875,
+          "headingLeft": 279.1875,
+          "rightInset": 21,
+          "headingRightInset": 21
+        }
+      ],
       "width": 1440,
       "documentWidth": 1440,
       "theme": "h-full",
@@ -166,6 +443,15 @@
         "profileBottom": 671.96875,
         "actionBeforeEquipment": true
       },
+      "notice": [
+        {
+          "text": "Inactive Staff Member — outstanding assignments are retained. New assignments are unavailable.",
+          "left": 279.1875,
+          "headingLeft": 279.1875,
+          "rightInset": 21,
+          "headingRightInset": 21
+        }
+      ],
       "width": 1440,
       "documentWidth": 1440,
       "theme": "h-full dark",
@@ -181,6 +467,15 @@
         "profileBottom": 981.171875,
         "actionBeforeEquipment": true
       },
+      "notice": [
+        {
+          "text": "Inactive Staff Member — outstanding assignments are retained. New assignments are unavailable.",
+          "left": 96,
+          "headingLeft": 96,
+          "rightInset": 15,
+          "headingRightInset": 15
+        }
+      ],
       "width": 390,
       "documentWidth": 390,
       "theme": "h-full",
@@ -196,6 +491,15 @@
         "profileBottom": 981.171875,
         "actionBeforeEquipment": true
       },
+      "notice": [
+        {
+          "text": "Inactive Staff Member — outstanding assignments are retained. New assignments are unavailable.",
+          "left": 96,
+          "headingLeft": 96,
+          "rightInset": 15,
+          "headingRightInset": 15
+        }
+      ],
       "width": 390,
       "documentWidth": 390,
       "theme": "h-full dark",
@@ -209,6 +513,15 @@
         "profileBottom": 510.578125,
         "actionBeforeEquipment": null
       },
+      "notice": [
+        {
+          "text": "Inactive Staff Member — outstanding assignments are retained. New assignments are unavailable.",
+          "left": 279.1875,
+          "headingLeft": 279.1875,
+          "rightInset": 21,
+          "headingRightInset": 21
+        }
+      ],
       "width": 1440,
       "documentWidth": 1440,
       "theme": "h-full",
@@ -222,6 +535,15 @@
         "profileBottom": 510.578125,
         "actionBeforeEquipment": null
       },
+      "notice": [
+        {
+          "text": "Inactive Staff Member — outstanding assignments are retained. New assignments are unavailable.",
+          "left": 279.1875,
+          "headingLeft": 279.1875,
+          "rightInset": 21,
+          "headingRightInset": 21
+        }
+      ],
       "width": 1440,
       "documentWidth": 1440,
       "theme": "h-full dark",
@@ -235,6 +557,15 @@
         "profileBottom": 809.390625,
         "actionBeforeEquipment": null
       },
+      "notice": [
+        {
+          "text": "Inactive Staff Member — outstanding assignments are retained. New assignments are unavailable.",
+          "left": 96,
+          "headingLeft": 96,
+          "rightInset": 15,
+          "headingRightInset": 15
+        }
+      ],
       "width": 390,
       "documentWidth": 390,
       "theme": "h-full",
@@ -248,6 +579,15 @@
         "profileBottom": 809.390625,
         "actionBeforeEquipment": null
       },
+      "notice": [
+        {
+          "text": "Inactive Staff Member — outstanding assignments are retained. New assignments are unavailable.",
+          "left": 96,
+          "headingLeft": 96,
+          "rightInset": 15,
+          "headingRightInset": 15
+        }
+      ],
       "width": 390,
       "documentWidth": 390,
       "theme": "h-full dark",

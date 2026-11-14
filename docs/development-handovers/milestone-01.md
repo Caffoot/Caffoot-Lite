@@ -2,6 +2,29 @@
 
 > **Current status, 14 November 2026:** v2.2 remains the future Milestone 01 target; the published release is **v2.1**. Stage 1 was accepted and merged into `main` at `6008fedfc2c25fc40b49c9e9e21f3a93d61a9f4a`. Stage 2, including native Pi/Safari corrective retests, was accepted through PR #376 on `milestone-1` at `519842b46861c85fde0eebf78298117c2346599d`. Stage 3 Batch 3.1 was accepted in PR #377 at `97368e734f3e8008a9acc929b999a198eca1cf3f`; Batches 3.2 and 3.3 were accepted and merged through the verified `7ec4ac27eddb1f798fdfcf9fff09b761c7bebd86` baseline; Batch 3.4 is draft PR #382 with review evidence; initial eligibility is confirmed as Desktop, Laptop and Printer only. Later batches and Stages 4–6 remain pending. No merge to `main`, publication or real deployment is authorised. Track remaining work in [#351](https://github.com/Caffoot/Caffoot-Lite/issues/351) and [#366](https://github.com/Caffoot/Caffoot-Lite/issues/366). Dated sections below preserve earlier checkpoints.
 
+## Batch 3.4 Final Visual Corrections — 14 November 2026
+
+The inactive Staff equipment notice now aligns with its card heading, and enabled
+unselected Device labels in the dark Assign Equipment dialog use the established
+theme text colour. These are exactly the two corrections authorised in
+[issue #368 comment #6884722532](https://github.com/Caffoot/Caffoot-Lite/issues/368#issuecomment-6884722532),
+following verified HEAD `49b9c8bef2a529d355d9b12f2114443fa683876a`.
+
+**18 focused assignment/API tests passed**. The extended application browser flow
+passed with **40 refreshed screenshots** at 1440px/390px, light/dark, zero page
+errors and no document overflow. It verifies active/inactive Staff, administrator
+and restricted views, selection/hover/keyboard focus/disabled states and retained
+assignment, login, Department, personal-equipment, privacy and MFA behaviour.
+See the [updated review and evidence](evidence/stage-3-batch-34/Visual-Review.md).
+
+Only equipment CSS changes runtime source. The accepted status control placement,
+Desktop/Laptop/Printer eligibility, backend/schema, navigation and approved
+layouts remain intact. Device footer labels remain explicitly excluded; their
+inherited casing is the remaining documented visual discrepancy. The known
+baseline IPAM contract failure was not changed or rerun. No repeated full suite,
+Docker run, archive change, merge, deployment or publication. PR #382 stays draft;
+product-owner final visual and functional acceptance remains outstanding.
+
 ## Batch 3.4 Status Action And Consolidated Review — 14 November 2026
 
 The existing Mark Inactive / Reactivate action is restored immediately after
@@ -14,8 +37,9 @@ Department sharing, My Equipment and My Account across 1440px/390px light/dark.
 The consolidated flow and existing Staff interface browser test both passed;
 40 captures, geometry/source checks and visual follow-ups are in the
 [consolidated review](evidence/stage-3-batch-34/Visual-Review.md).
-Outstanding visual notes concern inactive-notice inset, a dark unselected-device
-label and inherited Device footer casing. No unapproved styling change was made.
+That review recorded inactive-notice inset, a dark unselected-device label and
+inherited Device footer casing. The first two are resolved in the final visual
+correction above; the excluded footer casing remains for separate review.
 Owner acceptance remains outstanding; no merge, deployment or publication.
 
 ## Batch 3.4 Final Corrections — 14 November 2026

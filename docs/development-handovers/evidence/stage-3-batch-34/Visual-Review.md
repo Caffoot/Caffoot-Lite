@@ -1,8 +1,53 @@
 # Consolidated Batch 3.4 Visual Review
 
-Runtime reviewed: `163b4e0ff12ab5cddaa7f69a97f74b9f30522e88`, following
-`db25bea339e8db3b04a1c9bf7175ce28fdf7f005`. This remains draft PR #382 against
-`milestone-1`. **Product-owner visual and functional acceptance is outstanding.**
+Final visual corrections follow verified starting HEAD
+`49b9c8bef2a529d355d9b12f2114443fa683876a`, as authorised in
+[issue #368 comment #6884722532](https://github.com/Caffoot/Caffoot-Lite/issues/368#issuecomment-6884722532).
+The current screenshot matrix and `browser-results.json` include both corrections.
+Earlier status-action review runtime: `163b4e0ff12ab5cddaa7f69a97f74b9f30522e88`.
+This remains draft PR #382 against `milestone-1`.
+**Product-owner visual and functional acceptance is outstanding.**
+
+## Final Visual Corrections — 14 November 2026
+
+Only `interface/styles/equipment.css` changes application behaviour:
+
+- The inactive notice has the heading's existing horizontal inset: 20px on
+  desktop and 14px at the existing mobile breakpoint. The direct-sibling
+  selector affects only this notice, preserving its wording and other tips.
+- Enabled, unselected Device labels at rest use `--theme-text` in dark Assign
+  Equipment dialogs, following the existing Device software-choice convention.
+  The selector excludes selected, hovered and disabled rows. Light mode is
+  unchanged; the established selected/hover/focus styles remain in effect.
+
+`final-visual-preservation.json` confirms that every other tracked backend and
+interface file matches the starting HEAD byte-for-byte. The accepted status
+control position, Device footer, eligibility, permissions, schema and navigation
+are unchanged. No runtime function or Function Index location changes.
+
+**Actual checks on both corrections together:**
+
+- `PYTHONPATH=tests:. python3 -m unittest test_device_assignments test_device_assignments_http -v`:
+  **18 passed**, no failures or skips, 2.079 seconds.
+- `CAFFOOT_CHROMIUM_PATH=/usr/bin/chromium CAFFOOT_EQUIPMENT_OUTPUT=/workspace/work/batch34-final-visual/screenshots node tests/device-assignments-interface.cjs`:
+  **passed**, 40 real-application captures at 1440px/390px in light/dark,
+  zero page errors and no document overflow. The flow retains the functional,
+  permission, privacy and MFA checks described below.
+- New assertions measure notice alignment against the heading on active/inactive
+  administrator and restricted-reader views. They exercise checked/unchecked,
+  hover, keyboard selection/focus and native disabled Device choices in all four
+  size/theme combinations. The disabled fixture is restored before capture;
+  no Device eligibility is changed. Dark idle foreground is `rgb(241, 245, 249)`;
+  light idle remains `rgb(49, 81, 107)`. Selected dark colours remain the existing
+  warning palette. Computed measurements are in `browser-results.json`.
+- JavaScript syntax, source-preservation and whitespace checks passed. Visual
+  inspection confirms the corrected notice inset and legible unselected labels.
+
+The complete 40-image matrix was refreshed from this run. The original archived
+references and `reference-hashes.json` remain unchanged. No full-suite, Docker,
+whole browser-compatibility or IPAM-contract rerun was needed for these two
+scoped stylesheet corrections. No comprehensive accessibility certification or
+native Pi/Safari result is claimed.
 
 ## Correction And Preservation
 
@@ -12,10 +57,10 @@ Assignment History. Only the equipment insertion's position changes. The
 existing button markup, styling, Staff Edit condition, confirmation and handler
 are byte-for-byte unchanged. Restricted Staff readers do not receive the action.
 
-`visual-review-preservation.json` verifies the change against the reviewed base.
+`visual-review-preservation.json` verifies that earlier placement change against its reviewed base.
 The other Staff renderers and all handlers match after removing the equipment
 insertion from both versions. Device Details, assignment presentation/CSS,
-Departments, navigation, My Account and backend source were not modified.
+Departments, navigation, My Account and backend source were not modified by that placement correction.
 No function was added, renamed or moved to a different line, so Function Index
 locations remain unchanged and were checked.
 
@@ -65,7 +110,7 @@ section names are retained. Existing footer casing is recorded below rather
 than changed without authorisation. This is source/visual verification evidence,
 not a claim of pixel identity with a functional preview or owner acceptance.
 
-## Functional And Security Checks Actually Run
+## Earlier Status-Placement Checks
 
 - **46 focused Python tests passed**, no failures or skips, 10.064 seconds:
   `test_device_assignments`, `test_device_assignments_http`,
@@ -96,22 +141,15 @@ numeric colour-contrast audit is claimed.
 
 ## Remaining Visual Discrepancies — Documented, Not Changed
 
-1. **Inactive-equipment notice inset:** the explanatory inactive Staff paragraph
-   starts flush against the equipment card's left edge while its heading/table
-   use an inset. See `staff-inactive-1440-light.png` and
-   `staff-inactive-390-dark.png`. This existing Batch 3.4 presentation was not
-   restyled as part of the authorised status-action correction.
-2. **Dark Staff allocation label contrast:** the unselected `Reception-PC · Desktop`
-   label appears markedly darker than the other labels in
-   `staff-assignment-390-dark.png` (also visible at 1440px). This needs visual/
-   contrast review; no numeric contrast ratio or accessibility pass/fail is
-   asserted. The assignment CSS and palette are unchanged.
-3. **Inherited Device footer casing:** `Edit device` and `Delete device` remain
-   sentence case in the accepted existing modal, rather than Title Case. See
-   `device-1440-dark.png`. The footer was deliberately preserved; no unrelated
-   label change was made.
+The inactive-notice inset and dark unselected-label findings from the previous
+review are corrected above under the explicit two-item approval.
+
+**Inherited Device footer casing:** `Edit device` and `Delete device` remain
+sentence case in the accepted existing modal. See `device-1440-dark.png`.
+The owner expressly excluded these labels from this correction; they remain for
+separate review.
 
 There are **no remaining failures in the focused or affected local browser
-checks**. These visual follow-ups and the known pre-existing IPAM CSS contract
-limitation remain for owner review. They do not authorise extra design changes.
-Native Pi/Safari and product-owner acceptance have not been performed here.
+checks for these two corrections**. The known pre-existing IPAM CSS contract
+failure was not changed or rerun. Product-owner visual and functional acceptance
+remains outstanding; native Pi/Safari acceptance has not been performed here.
