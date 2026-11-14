@@ -1,0 +1,22 @@
+/* Only the proposed group structure and the isolated review harness need new rules.
+   All application colours, typography, cards, forms, rows and dialogs use source CSS. */
+[hidden]{display:none!important}
+#preview-navigation{display:grid;gap:4px}
+.preview-group-children{padding-left:12px}
+.preview-group-toggle .preview-group-chevron{margin-left:auto;width:13px;height:13px;transition:transform .15s}
+.preview-group-toggle[aria-expanded=true] .preview-group-chevron{transform:rotate(90deg)}
+.shell.collapsed .preview-group-children{padding-left:0}
+.shell.collapsed .preview-group-chevron{display:none}
+#preview-settings{gap:12px}
+.preview-sample-note{font-size:10px;color:var(--muted);margin:0 0 15px;line-height:1.6}
+.preview-details-actions{display:flex;gap:9px;align-items:center;flex-wrap:wrap;margin-top:18px}
+.preview-record-name{overflow-wrap:anywhere}
+#preview-review-controls{position:fixed;z-index:200;right:12px;bottom:12px;max-width:calc(100vw - 24px);font-size:11px;color:var(--ink)}
+#preview-review-controls>summary{cursor:pointer;list-style-position:inside;padding:10px 13px;background:var(--white);border:1px solid var(--line);border-radius:9px;box-shadow:var(--shadow);font-weight:700}
+.preview-review-panel{background:var(--white);color:var(--ink);border:1px solid var(--line);border-radius:12px;padding:18px;width:310px;max-width:calc(100vw - 24px);max-height:70vh;overflow:auto;box-shadow:var(--shadow)}
+.preview-review-panel h2{font-size:15px;margin:0 0 8px}
+.preview-review-panel p{color:var(--muted);font-size:11px;line-height:1.6}
+.preview-review-panel .field{margin:14px 0}
+.preview-review-panel .role-membership{display:flex;gap:8px;align-items:center}
+@media(max-width:730px){.preview-group-children{padding-left:0}.preview-group-chevron{display:none}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
