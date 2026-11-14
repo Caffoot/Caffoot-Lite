@@ -51,6 +51,8 @@ from .request_auth import authorised_mutation
 from .http_security import require_same_origin
 from .tls import ensure_certificate
 from .deployment_settings import validate_published_port
+from .device_assignments import (assignment_recipients, assignment_device_choices,
+    read_assignments, assign_devices, my_equipment)
 from .staff_directory import (require_directory_access, list_directory,
                                read_staff_member, read_department,
                                save_staff_member, save_department, unique_directory_fields,
@@ -124,6 +126,9 @@ class Handler(BaseHTTPRequestHandler):
         super().end_headers()
 
     def do_GET(self):
+        if self.path.startswith(("/api/equipment/", "/api/my-equipment")):
+            self.handle_equipment_request()
+            return
         if self.path.startswith(("/api/staff-members", "/api/departments")):
             self.handle_directory_request()
             return
@@ -477,6 +482,9 @@ class Handler(BaseHTTPRequestHandler):
             self.respond(404, {"error": "not found"})
 
     def do_POST(self):
+        if self.path.startswith(("/api/equipment/", "/api/my-equipment")):
+            self.handle_equipment_request()
+            return
         if self.path.startswith(("/api/staff-members", "/api/departments")):
             self.handle_directory_request()
             return
@@ -652,6 +660,73 @@ class Handler(BaseHTTPRequestHandler):
             self.respond(401, {"error": "invalid credentials"})
             return
         self.respond(200, {"status": "signed in"}, cookie=session_cookie(token))
+
+    def handle_equipment_request(self):
+        """Keep self-service private and all allocation writes session/CSRF protected."""
+        parsed = urlsplit(self.path)
+        origin = self.headers.get('Origin')
+        if (self.headers.get('Sec-Fetch-Site') == 'cross-site'
+                or (origin is not None and (not PUBLIC_ORIGIN or not require_same_origin(origin, PUBLIC_ORIGIN)))
+                or (self.command == 'POST' and (not PUBLIC_ORIGIN or not require_same_origin(origin, PUBLIC_ORIGIN)))):
+            self.respond(403, {'error': 'forbidden'})
+            return
+        try:
+            with connect() as connection:
+                cookie = self.headers.get('Cookie')
+                if self.command == 'GET':
+                    connection.execute('BEGIN')
+                actor = (authenticated_account(connection, cookie) if self.command == 'GET' else
+                         authorised_mutation(connection, cookie, origin, PUBLIC_ORIGIN, self.headers.get('X-CSRF-Token')))
+                if actor is None:
+                    self.respond(401 if self.command == 'GET' else 403, {'error': 'unauthorised'})
+                    return
+                parameters = parse_qs(parsed.query, keep_blank_values=True)
+                if any(len(values) != 1 for values in parameters.values()):
+                    raise ValueError('Duplicate equipment parameter')
+                parameters = {key: values[0] for key, values in parameters.items()}
+                if self.command == 'GET' and parsed.path == '/api/my-equipment':
+                    if parameters:
+                        raise ValueError('My Equipment does not accept identity parameters')
+                    result = my_equipment(connection, actor)
+                elif self.command == 'GET' and parsed.path == '/api/equipment/recipients':
+                    if set(parameters) - {'query', 'kind'}:
+                        raise ValueError('Invalid recipient parameters')
+                    result = {'recipients': assignment_recipients(connection, actor, **parameters)}
+                elif self.command == 'GET' and parsed.path == '/api/equipment/available-devices':
+                    if set(parameters) - {'query', 'limit', 'offset'}:
+                        raise ValueError('Invalid Device parameters')
+                    for key in ('limit', 'offset'):
+                        if key in parameters:
+                            parameters[key] = int(parameters[key])
+                    result = {'devices': assignment_device_choices(connection, actor, **parameters)}
+                elif self.command == 'GET' and parsed.path == '/api/equipment/assignments':
+                    names = {'deviceId': 'device_id', 'staffId': 'staff_id', 'departmentId': 'department_id'}
+                    if len(parameters) != 1 or set(parameters) - names.keys():
+                        raise ValueError('One assignment subject is required')
+                    result = read_assignments(connection, actor, **{names[key]: value for key, value in parameters.items()})
+                elif self.command == 'POST' and parsed.path == '/api/equipment/assignments' and not parameters:
+                    length = self.headers.get('Content-Length', '')
+                    if not length.isdecimal() or not 0 < int(length) <= MAX_LOGIN_BYTES:
+                        raise ValueError('Invalid request size')
+                    if self.headers.get('Content-Type', '').split(';')[0].strip().lower() != 'application/json':
+                        self.respond(415, {'error': 'JSON required'})
+                        return
+                    payload = json.loads(self.rfile.read(int(length)), object_pairs_hook=unique_directory_fields)
+                    result = assign_devices(connection, actor, read_session_cookie(cookie), payload)
+                else:
+                    self.respond(404, {'error': 'not found'})
+                    return
+            self.respond(200, result)
+        except PermissionError:
+            self.respond(403, {'error': 'forbidden'})
+        except LookupError as exc:
+            self.respond(404, {'error': str(exc)})
+        except FileExistsError as exc:
+            self.respond(409, {'error': str(exc)})
+        except sqlite3.IntegrityError:
+            self.respond(409, {'error': 'Equipment relationship conflict'})
+        except (ValueError, TypeError) as exc:
+            self.respond(400, {'error': str(exc)})
 
     def handle_directory_request(self):
         """Protect directory reads and saves with the established request checks."""

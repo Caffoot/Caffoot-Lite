@@ -6,7 +6,7 @@ the published inventory import format."""
 import sqlite3
 from backend.role_policy import evaluate_role_policy
 
-SCHEMA_VERSION = 14
+SCHEMA_VERSION = 15
 
 DDL = """
 CREATE TABLE IF NOT EXISTS inventory_devices (
@@ -213,6 +213,9 @@ def initialise_database(connection: sqlite3.Connection) -> None:
         if SCHEMA_VERSION >= 14 and 14 not in versions:
             migrate_staff_directory(connection)
             connection.execute("INSERT INTO schema_migrations(version) VALUES(14)")
+        if SCHEMA_VERSION >= 15 and 15 not in versions:
+            migrate_device_assignments(connection)
+            connection.execute("INSERT INTO schema_migrations(version) VALUES(15)")
         connection.commit()
     except BaseException:
         connection.rollback()
@@ -487,3 +490,35 @@ def migrate_configurable_builtin_roles(connection):
             after_level = "edit" if after.is_admin else after.permissions.get(section)
             if before_level != after_level:
                 raise RuntimeError("Built-in role upgrade changed section access")
+
+
+def migrate_device_assignments(connection):
+    """Retain each allocation against its original Device and recipient identity.
+
+    Nothing is inferred from existing inventory. In particular, an unassigned
+    Device is not evidence that it has been received or prepared as stock.
+    """
+    connection.execute("""
+        CREATE TABLE device_assignments (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            device_id TEXT NOT NULL REFERENCES inventory_devices(id) ON DELETE RESTRICT,
+            staff_id TEXT REFERENCES staff_members(id) ON DELETE RESTRICT,
+            department_id TEXT REFERENCES departments(id) ON DELETE RESTRICT,
+            recipient_label TEXT NOT NULL,
+            assigned_at TEXT NOT NULL,
+            actor_id INTEGER NOT NULL,
+            actor_label TEXT NOT NULL,
+            ended_at TEXT,
+            CHECK((staff_id IS NOT NULL) != (department_id IS NOT NULL)),
+            CHECK(ended_at IS NULL OR ended_at >= assigned_at)
+        )
+    """)
+    connection.execute("CREATE UNIQUE INDEX device_assignment_current ON device_assignments(device_id) WHERE ended_at IS NULL")
+    connection.execute("CREATE INDEX device_assignment_staff ON device_assignments(staff_id,id)")
+    connection.execute("CREATE INDEX device_assignment_department ON device_assignments(department_id,id)")
+    # Initial allocations cannot be rewritten or removed. Later return workflows
+    # must explicitly migrate these guards alongside their audited operation.
+    for operation in ('UPDATE', 'DELETE'):
+        connection.execute(f"""CREATE TRIGGER retain_device_assignment_{operation.lower()}
+            BEFORE {operation} ON device_assignments BEGIN
+            SELECT RAISE(ABORT,'Assignment history must be retained'); END""")

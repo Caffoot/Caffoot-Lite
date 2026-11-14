@@ -341,6 +341,8 @@ def delete_reserved_device(connection, account_id, device_id, revision, related_
             raise ValueError("Device edit reservation is no longer valid")
         if row[1] != revision or reservation[2] != revision:
             raise ValueError("Device has changed since editing began")
+        if connection.execute('SELECT 1 FROM device_assignments WHERE device_id=? LIMIT 1', (device_id,)).fetchone():
+            raise ValueError('Device has assignment history and cannot be deleted')
         previous = json.loads(row[0])
         if previous.get("rackId") and not feature_enabled(connection, "Racks"):
             raise PermissionError("Cannot delete a device with a hidden rack relationship")

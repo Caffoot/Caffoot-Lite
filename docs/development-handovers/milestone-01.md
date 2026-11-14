@@ -442,3 +442,15 @@ The measured existing Users sidebar/header/main/KPI/profile-grid widths, columns
 Local backend: 562 tests passed with three documented skips; local existing Chromium and expanded Users/MFA checks passed. Source/template provenance, 733 Function Index locations, compatibility copies, links, syntax, release consistency and whitespace checks passed. No production data, real SMTP delivery or complete private restore rehearsal was used. The existing TOTP verifier is unchanged.
 
 **Batch 04 implementation is complete for review. Stop here; do not treat automated checks as owner acceptance. No Batch 05, PR #358/#359 merge, protected `main` change, deployment or publication.**
+
+### Batch 3.4 Initial Development Checkpoint — 14 November 2026
+
+Canonical Device allocation storage and protected APIs are implemented from
+`7ec4ac27eddb1f798fdfcf9fff09b761c7bebd86` on the existing authorised feature
+branch. Schema 15 creates no inferred assignments or stock states. See
+[Device Assignments](../development-guide/Device-Assignments.md).
+
+Focused model/directory/HTTP/section regression: 45 tests passed. Additional
+allocation HTTP security tests and the additive approved interface integration
+are in progress. This is a partially tested development checkpoint, not ready
+for owner acceptance. No merge, release or deployment is authorised.
