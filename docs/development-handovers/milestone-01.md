@@ -1,6 +1,6 @@
 # Milestone 01 Development Handover — v2.2 Target
 
-> **Current status, 14 November 2026:** v2.2 remains the future Milestone 01 target; the published release is **v2.1**. Stage 1 was accepted and merged into `main` at `6008fedfc2c25fc40b49c9e9e21f3a93d61a9f4a`. Stage 2, including native Pi/Safari corrective retests, was accepted through PR #376 on `milestone-1` at `519842b46861c85fde0eebf78298117c2346599d`. Stage 3 Batch 3.1 is an authorised review candidate; later batches and Stages 4–6 remain pending. No merge to `main`, publication or real deployment is authorised. Track remaining work in [#351](https://github.com/Caffoot/Caffoot-Lite/issues/351) and [#366](https://github.com/Caffoot/Caffoot-Lite/issues/366). Dated sections below preserve earlier checkpoints.
+> **Current status, 14 November 2026:** v2.2 remains the future Milestone 01 target; the published release is **v2.1**. Stage 1 was accepted and merged into `main` at `6008fedfc2c25fc40b49c9e9e21f3a93d61a9f4a`. Stage 2, including native Pi/Safari corrective retests, was accepted through PR #376 on `milestone-1` at `519842b46861c85fde0eebf78298117c2346599d`. Stage 3 Batch 3.1 was accepted in PR #377 at `97368e734f3e8008a9acc929b999a198eca1cf3f`; Batch 3.2 is an authorised review candidate; later batches and Stages 4–6 remain pending. No merge to `main`, publication or real deployment is authorised. Track remaining work in [#351](https://github.com/Caffoot/Caffoot-Lite/issues/351) and [#366](https://github.com/Caffoot/Caffoot-Lite/issues/366). Dated sections below preserve earlier checkpoints.
 
 ## Ongoing v2.2 checklist
 
@@ -14,6 +14,60 @@
 - [ ] Draft and verify v2.2 release notes, installation/upgrade/rollback guidance, source-compatible examples and screenshots based on delivered work
 - [ ] Obtain separate final milestone merge approval; verify the resulting `main` build
 - [ ] Obtain separate v2.2 publication approval and verify published image/platforms, release notes and installation links before changing current-release instructions
+
+## Stage 3 Batch 3.2 — Staff Members And Departments Backend APIs
+
+Baseline: accepted PR #377, `milestone-1` at
+`97368e734f3e8008a9acc929b999a198eca1cf3f`. Dedicated branch:
+`feat/staff-departments-apis`. Scope follows the
+[Batch 3.2 authorisation](https://github.com/Caffoot/Caffoot-Lite/issues/368#issuecomment-6877568738).
+
+The first checkpoint adds Staff/Department backend operations and a shared account
+writer, reusing schema 14. Optional login creation and Staff linking are atomic;
+Users and initial setup create exactly one linked Staff identity. Profiles and
+statuses remain independent. Directory responses hide login identity from ordinary
+readers, and historical Department membership prevents unsafe deletion. No screens,
+navigation or assignment/stock APIs are added. See the
+[API contract](../development-guide/Staff-Directory-APIs.md).
+
+Initial focused service/migration/account checks: **36 passed**, no failures/skips.
+The first development run caught an SQL search-escape error; literal wildcard
+handling was corrected before the passing run. The earlier foundation assertion
+that future Users accounts had no Staff link now tests the newly authorised unique
+link. HTTP security, wider regressions and final CI remain pending at this checkpoint.
+Stop at a reviewable PR for product-owner acceptance; do not merge or deploy.
+
+The first checkpoint was committed and pushed as
+`72c9f0c0e58ca6d9e6147f966477a5ec3b0e7d28` before wider HTTP/regression work.
+The completed focused selection passed **89 tests**, no failures/skips:
+`test_staff_directory`, `test_staff_directory_http`, `test_builtin_roles`,
+`test_role_migration`, `test_user_profile_administration`,
+`test_staff_section_permissions`, `test_staff_directory_migration`, `test_accounts`,
+`test_permissions`, `test_schema`, `test_account_security` and `test_profiles`.
+This includes real HTTP session/origin/CSRF/MFA guards, read/edit/admin boundaries,
+link privacy, audit privacy, transaction rollback, concurrent optional login creation
+and waiting-writer revocation/archive checks. Legacy migration fixtures explicitly
+prepare old-schema accounts without future Staff links; current writer tests use
+schema 14. No production fallback skips the new link requirement.
+
+Final-head local/backend, hosted Compose, documentation and secret-scan outcomes
+are recorded in the Batch 3.2 PR. No local browser, Docker or Azure setup was added;
+the interface and twelve pinned designs remain unchanged. Private legacy fixtures
+and complete-volume restore remain outside this batch. No later batch, merge,
+publication or deployment is authorised.
+
+### Staff Search Correction — PR #378
+
+The owner requested the approved name-or-Department search behaviour on the same
+Batch 3.2 branch. Staff search now also matches the associated Department name,
+including archived Departments, under Staff Members Read. Department endpoints
+retain their independent permission checks, and response fields remain unchanged.
+Four new service/HTTP tests cover Department-only matches, Staff Read without
+Departments Read, archived Departments, literal wildcards, pagination and privacy.
+The relevant service, HTTP and section-permission selection passed **33 tests**,
+with no failures or skips. Python compilation, declaration links and whitespace
+were checked. No local full-suite or infrastructure rerun was needed for this
+search-only correction; current hosted outcomes are recorded in PR #378.
 
 ## Stage 3 Batch 3.1 — Staff Members And Departments Foundation
 

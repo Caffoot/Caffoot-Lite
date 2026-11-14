@@ -204,9 +204,9 @@ class StaffDirectoryMigrationTests(unittest.TestCase):
             delete_user(self.db, 1, 1)
         count = len(self.rows('staff_members'))
         user = create_user(self.db, 1, 'later-account', 'test-password')
-        self.assertEqual(len(self.rows('staff_members')), count)
+        self.assertEqual(len(self.rows('staff_members')), count + 1)
         schema.initialise_database(self.db)
-        self.assertIsNone(self.db.execute('SELECT 1 FROM staff_members WHERE account_id=?', (user,)).fetchone())
+        self.assertEqual(self.db.execute('SELECT count(*) FROM staff_members WHERE account_id=?', (user,)).fetchone(), (1,))
 
     def test_concurrent_upgrade_creates_one_directory_record_per_account(self):
         barrier = threading.Barrier(2)

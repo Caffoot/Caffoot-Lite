@@ -6,6 +6,7 @@ from backend.accounts import hash_password
 from backend.audit_events import record_actor_event
 from backend.profiles import validate_profile_details
 from backend.role_policy import assign_staff_member, evaluate_role_policy, LEVELS
+from backend.staff_identity import link_account_staff
 
 
 def _admin(connection, actor_id):
@@ -34,29 +35,43 @@ def create_user(connection, actor_id, username, password, profile=None):
     details = validate_profile_details(profile) if profile is not None else None
     connection.execute("BEGIN IMMEDIATE")
     try:
-        _admin(connection, actor_id)
-        cursor = connection.execute(
-            "INSERT INTO accounts(username,password_hash) VALUES(?,?)",
-            (username.strip(), hash_password(password)),
-        )
-        assign_staff_member(connection, cursor.lastrowid)
-        if details is not None:
-            connection.execute(
-                "INSERT INTO account_profiles(account_id,first_name,last_name,"
-                "display_name,email,email_verified) VALUES(?,?,?,?,?,0)",
-                (cursor.lastrowid, details["firstName"], details["lastName"],
-                 details["displayName"], details["email"]),
-            )
-        record_actor_event(
-            connection, actor_id, kind="Account", action="Created",
-            label=username.strip(), reason="Account created",
-            fields=["Account"] + (["Personal details"] if details is not None else []),
-        )
+        account_id = create_user_in_transaction(connection, actor_id, username, password, details)
         connection.commit()
-        return cursor.lastrowid
+        return account_id
     except BaseException:
         connection.rollback()
         raise
+
+
+def create_user_in_transaction(connection, actor_id, username, password, profile=None, *, staff_id=None):
+    """Reuse the account writer within a combined Staff and login save.
+
+    Only a verified administrator may create a login. The caller owns the
+    transaction, so this writer never commits part of a combined operation.
+    """
+    if not connection.in_transaction:
+        raise RuntimeError("Account creation requires an active transaction")
+    _admin(connection, actor_id)
+    if not isinstance(username, str) or not username.strip():
+        raise ValueError("Username is required")
+    details = validate_profile_details(profile) if profile is not None else None
+    cursor = connection.execute(
+        "INSERT INTO accounts(username,password_hash) VALUES(?,?)",
+        (username.strip(), hash_password(password)))
+    account_id = cursor.lastrowid
+    assign_staff_member(connection, account_id)
+    if details is not None:
+        connection.execute(
+            "INSERT INTO account_profiles(account_id,first_name,last_name,"
+            "display_name,email,email_verified) VALUES(?,?,?,?,?,0)",
+            (account_id, details["firstName"], details["lastName"],
+             details["displayName"], details["email"]))
+    link_account_staff(connection, account_id, details, staff_id=staff_id)
+    record_actor_event(
+        connection, actor_id, kind="Account", action="Created",
+        label=username.strip(), reason="Account created",
+        fields=["Account"] + (["Personal details"] if details is not None else []))
+    return account_id
 
 
 def set_permission(connection, actor_id, target_id, section, level, *, session_token=None, proof=None):

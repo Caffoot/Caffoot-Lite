@@ -241,9 +241,11 @@ class BuiltinRoleAdministrationTests(unittest.TestCase):
         self.db.execute("PRAGMA foreign_keys=ON")
         with patch.object(schema, "SCHEMA_VERSION", 11):
             schema.initialise_database(self.db)
-        owner, secret = bootstrap_first_admin(self.db, "old-owner", "password")
-        confirm_admin_mfa(self.db, owner, code_at(secret, 59), timestamp=59)
-        staff = create_user(self.db, owner, "old-staff", "password")
+        # Prepare historical accounts before the Staff directory existed.
+        with patch('backend.accounts.link_account_staff'), patch('backend.permissions.link_account_staff'):
+            owner, secret = bootstrap_first_admin(self.db, "old-owner", "password")
+            confirm_admin_mfa(self.db, owner, code_at(secret, 59), timestamp=59)
+            staff = create_user(self.db, owner, "old-staff", "password")
         token = login_session(self.db, "old-staff", "password", now=59)
         schema.initialise_database(self.db)
         policy = evaluate_role_policy(self.db, staff)

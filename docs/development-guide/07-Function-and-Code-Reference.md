@@ -50,6 +50,12 @@ The Issue #309 tab icons use `renderSectionTabIcon`. `revealSectionTab` scrolls 
 
 ## Accounts and editing
 
+`staff_directory.py` provides protected Staff/Department reads and saves.
+`permissions.create_user_in_transaction` shares the existing account writer with
+combined Staff/login creation. `staff_identity.link_account_staff` runs within
+Users, setup and combined transactions without committing. See
+[Staff Directory APIs](Staff-Directory-APIs.md) for privacy, lifecycle and HTTP contracts.
+
 `schema.py:migrate_staff_directory` adds schema 14 under the existing upgrade
 transaction. It copies compatible saved account details once without changing
 account security or existing records. `role_policy.SECTIONS` recognises Staff

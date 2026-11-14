@@ -6,7 +6,7 @@ Scope: named JavaScript declarations/assignments in the three application script
 
 The account hydration/photo functions now have purpose-based callable bindings matching their function names: `hydrateAccount` and `removeAccountPhoto`. The immutable design manifest retains its historical integration-entry names; those metadata names are not the runtime's current function map. Pinned source paths, revisions and hashes are unchanged.
 
-**Recorded definitions: 755.** Regenerate after changing declarations or their lines. See [coding conventions](06-Coding-and-Naming-Conventions.md) and the [code reference](07-Function-and-Code-Reference.md).
+**Recorded definitions: 770.** Regenerate after changing declarations or their lines. See [coding conventions](06-Coding-and-Naming-Conventions.md) and the [code reference](07-Function-and-Code-Reference.md).
 
 ## interface/loader.js
 
@@ -590,10 +590,10 @@ The account hydration/photo functions now have purpose-based callable bindings m
 
 | Function | Line |
 | --- | ---: |
-| [`hash_password`](../../backend/accounts.py#L15) | 15 |
-| [`verify_password`](../../backend/accounts.py#L23) | 23 |
-| [`bootstrap_first_admin`](../../backend/accounts.py#L42) | 42 |
-| [`confirm_admin_mfa`](../../backend/accounts.py#L66) | 66 |
+| [`hash_password`](../../backend/accounts.py#L16) | 16 |
+| [`verify_password`](../../backend/accounts.py#L24) | 24 |
+| [`bootstrap_first_admin`](../../backend/accounts.py#L43) | 43 |
+| [`confirm_admin_mfa`](../../backend/accounts.py#L68) | 68 |
 
 ## backend/application_integrity.py
 
@@ -856,16 +856,17 @@ The account hydration/photo functions now have purpose-based callable bindings m
 
 | Function | Line |
 | --- | ---: |
-| [`_admin`](../../backend/permissions.py#L11) | 11 |
-| [`_target`](../../backend/permissions.py#L20) | 20 |
-| [`create_user`](../../backend/permissions.py#L29) | 29 |
-| [`set_permission`](../../backend/permissions.py#L62) | 62 |
-| [`can_access`](../../backend/permissions.py#L73) | 73 |
-| [`feature_enabled`](../../backend/permissions.py#L78) | 78 |
-| [`set_account_active`](../../backend/permissions.py#L91) | 91 |
-| [`delete_user`](../../backend/permissions.py#L130) | 130 |
-| [`set_administrator`](../../backend/permissions.py#L158) | 158 |
-| [`can_replace_inventory`](../../backend/permissions.py#L199) | 199 |
+| [`_admin`](../../backend/permissions.py#L12) | 12 |
+| [`_target`](../../backend/permissions.py#L21) | 21 |
+| [`create_user`](../../backend/permissions.py#L30) | 30 |
+| [`create_user_in_transaction`](../../backend/permissions.py#L46) | 46 |
+| [`set_permission`](../../backend/permissions.py#L77) | 77 |
+| [`can_access`](../../backend/permissions.py#L88) | 88 |
+| [`feature_enabled`](../../backend/permissions.py#L93) | 93 |
+| [`set_account_active`](../../backend/permissions.py#L106) | 106 |
+| [`delete_user`](../../backend/permissions.py#L145) | 145 |
+| [`set_administrator`](../../backend/permissions.py#L173) | 173 |
+| [`can_replace_inventory`](../../backend/permissions.py#L214) | 214 |
 
 ## backend/profiles.py
 
@@ -957,20 +958,21 @@ The account hydration/photo functions now have purpose-based callable bindings m
 
 | Function | Line |
 | --- | ---: |
-| [`validate_public_origin`](../../backend/server.py#L83) | 83 |
-| [`connect`](../../backend/server.py#L101) | 101 |
-| [`initialise_database`](../../backend/server.py#L109) | 109 |
-| [`Handler.end_headers`](../../backend/server.py#L115) | 115 |
-| [`Handler.do_GET`](../../backend/server.py#L122) | 122 |
-| [`Handler.do_POST`](../../backend/server.py#L462) | 462 |
-| [`Handler.handle_feature_settings`](../../backend/server.py#L636) | 636 |
-| [`Handler.handle_role_change`](../../backend/server.py#L679) | 679 |
-| [`Handler.handle_user_mutation`](../../backend/server.py#L721) | 721 |
-| [`Handler.handle_account_email`](../../backend/server.py#L1113) | 1113 |
-| [`Handler.handle_profile_photo`](../../backend/server.py#L1193) | 1193 |
-| [`Handler.handle_import`](../../backend/server.py#L1224) | 1224 |
-| [`Handler.respond`](../../backend/server.py#L1300) | 1300 |
-| [`main`](../../backend/server.py#L1313) | 1313 |
+| [`validate_public_origin`](../../backend/server.py#L86) | 86 |
+| [`connect`](../../backend/server.py#L104) | 104 |
+| [`initialise_database`](../../backend/server.py#L112) | 112 |
+| [`Handler.end_headers`](../../backend/server.py#L118) | 118 |
+| [`Handler.do_GET`](../../backend/server.py#L125) | 125 |
+| [`Handler.do_POST`](../../backend/server.py#L468) | 468 |
+| [`Handler.handle_directory_request`](../../backend/server.py#L645) | 645 |
+| [`Handler.handle_feature_settings`](../../backend/server.py#L712) | 712 |
+| [`Handler.handle_role_change`](../../backend/server.py#L755) | 755 |
+| [`Handler.handle_user_mutation`](../../backend/server.py#L797) | 797 |
+| [`Handler.handle_account_email`](../../backend/server.py#L1189) | 1189 |
+| [`Handler.handle_profile_photo`](../../backend/server.py#L1269) | 1269 |
+| [`Handler.handle_import`](../../backend/server.py#L1300) | 1300 |
+| [`Handler.respond`](../../backend/server.py#L1376) | 1376 |
+| [`main`](../../backend/server.py#L1389) | 1389 |
 
 ## backend/sessions.py
 
@@ -1037,3 +1039,25 @@ The account hydration/photo functions now have purpose-based callable bindings m
 | --- | ---: |
 | [`build_private_acceptance`](../../scripts/build_private_acceptance.py#L12) | 12 |
 | [`build_private_acceptance.git`](../../scripts/build_private_acceptance.py#L13) | 13 |
+## backend/staff_directory.py
+
+| Function | Line |
+| --- | ---: |
+| [`unique_directory_fields`](../../backend/staff_directory.py#L14) | 14 |
+| [`require_directory_access`](../../backend/staff_directory.py#L24) | 24 |
+| [`_text`](../../backend/staff_directory.py#L30) | 30 |
+| [`_staff_record`](../../backend/staff_directory.py#L37) | 37 |
+| [`_department_record`](../../backend/staff_directory.py#L44) | 44 |
+| [`read_staff_member`](../../backend/staff_directory.py#L51) | 51 |
+| [`read_department`](../../backend/staff_directory.py#L62) | 62 |
+| [`list_directory`](../../backend/staff_directory.py#L67) | 67 |
+| [`_validate_staff`](../../backend/staff_directory.py#L81) | 81 |
+| [`_create_login`](../../backend/staff_directory.py#L98) | 98 |
+| [`save_staff_member`](../../backend/staff_directory.py#L113) | 113 |
+| [`save_department`](../../backend/staff_directory.py#L157) | 157 |
+
+## backend/staff_identity.py
+
+| Function | Line |
+| --- | ---: |
+| [`link_account_staff`](../../backend/staff_identity.py#L4) | 4 |
