@@ -1,77 +1,107 @@
 # Visual Review — Preview Only, Do Not Merge
 
-Open [preview.html](preview.html) for the interactive review or browse the
-[52 screenshots](gallery.html). All records, usernames and counts are fictional.
-The preview is self-contained and makes no API requests. Theme and persona controls
-are in the clearly labelled review panel at the lower right.
+The corrected [interactive preview](preview.html) restores the approved Staff
+form and directory actions. Browse the [52 refreshed views](gallery.html) and the
+[side-by-side source comparison](comparisons.html), with 22 additional captures.
+All records are fictional. This remains an isolated visual preview; application
+integration is paused pending product-owner review.
 
-## What To Inspect
+## Corrections To Inspect
 
-- Staff Directory, Department-name search, Details and Add/Edit forms in both themes.
-  Create Login starts off; an administrator may reveal Username, Password and
-  Confirm Password. The migrated blank-name record remains blank.
-- Department archive/reactivation and retained membership. Archived Departments
-  cannot be selected for new Staff membership. Only the never-associated Design Lab
-  offers Delete Permanently, with confirmation.
-- Permissions Overview, User List, Add User, Manage Roles and the original account
-  management dialog. Devices, IPAM, Network Racks, Staff Members, Departments and
-  IT Assets are separate controls. Inherit and explicit overrides remain distinct;
-  protected roles/admins, MFA warnings and review-before-confirmation are retained.
-- Expanded IT/Staff groups, collapsed groups and the existing narrow/collapsed icon
-  rail. IT Assets starts hidden. The separate review feature switch does not grant
-  rights and is not an application setting.
-- Staff-only and Department-only sample views. They show only their permitted
-  destinations. Non-administrator Staff views contain no linked-login details.
+- Personal Details occupies the left column. The separate Caffoot Login card is
+  on the right, with account fields, Default Role and MFA guidance inside it.
+  Equipment And Ticket Access is a separate guidance card beneath it, with no
+  operational equipment or ticket controls. Create Caffoot Login starts off.
+- The approved field order is restored: names, full-width Email, Department/Job
+  Title, Telephone/Location and full-width Staff Status. Staff Add/Edit and
+  Department forms use consistent labels and 42 px inputs/selects. Required login
+  indicators and the username/password hints stay with their fields.
+- Add Staff Member and Add Department remain orange header actions. Staff Details
+  now has its primary Edit Staff Member action at the top right. Headers wrap
+  below the title on narrow screens. Form actions retain Cancel then orange Save
+  at the bottom right.
+- Directory rows have separate orange View Details and authorised neutral Edit.
+  Read-only users get View Details alone. There is no directory-row Create Login.
+  Staff records and combined forms retain Create Login/Manage Login in Permissions;
+  ordinary Staff editors see no linked-account controls or details.
 
-## Source Fidelity Comparison
+## Actual Visual Comparison
 
-The existing v2.1 shell and components remain the design authority. The preview
-embeds the actual source CSS unchanged, uses the exact navigation brand/top bar and
-Users list/dialog/profile/permission templates, and follows `application.js`'s
-existing Users and role composition. Measured sidebar widths are 215 px on desktop
-and 65 px on narrow screens; no alternate sidebar, typography, palette or card style
-is proposed. Offline system font fallbacks match those available to the application.
-The twelve original design hashes were checked during packaging.
+Both original files were rendered unmodified from
+`docs/milestone-01-stage-2-3-previews` at
+`159424b56bb770ea6ab260764c4e9357d9c8667c`:
+`caffoot-staff-member-login-preview.html` and
+`caffoot-staff-directory-assignments-preview.html`. The pinned
+`users-permissions-draft-02.html` was rendered from
+`c26db4a56bbc30f95b56201e81a7a76d13c6037b`. They used the same existing Chromium,
+font availability and viewport sizes as the corrected preview. Staff comparison
+captures isolate the actual rendered form grid/directory; pinned Users captures
+show the whole page. None reconstructs the approved HTML.
 
-Proposed visual additions are limited to grouped navigation and the new Staff and
-Department content composed from those existing rows, forms and cards. Permissions
-adds three section choices in the same controls. Six grant summaries wrap in mobile
-rows; no source stylesheet is changed. The extra sample notice and floating controls
-belong only to this review harness. Existing destinations shown as context are not
-replacement screen designs. The archived Stage 3 HTML supplied functional direction,
-not styles or assignment/stock content. See the exact
-[source map and hashes](source-manifest.json) and [fidelity table](README.md#authority-and-source-fidelity).
+The [comparison page](comparisons.html) places the actual approved sources on the
+left and the correction on the right. Visual inspection covered login off/on
+against **both** Staff references, dark styling, mobile card order, separate row
+actions and the pinned Users header/form conventions. The left/right card widths,
+aligned tops, separate guidance stack, field sequence, default-role/MFA placement
+and distinct View Details/Edit actions now follow the approved composition. The
+mobile form reads Personal Details, Login, guidance, then Save/Cancel, without
+heading/action overlap. Department Add/Edit screenshots show aligned input/select
+controls in both themes and viewport sizes.
 
-## Verification And Limits
+The comparison also makes these retained differences visible:
 
-Chromium inspection passed 48 assertions and captured 52 views across desktop/mobile,
-light/dark, collapsed navigation, restricted personas, forms and Permissions dialogs.
-Checked views have no document overflow; six-section mobile grant summaries remain
-readable. Keyboard checks cover modal focus containment, Escape and restored focus.
-The sample password confirmation, no-storage behaviour, independent profile edits,
-name/Department search and combined account filters were exercised. No page errors,
-external requests or application/API calls were observed.
+- Current v2.1 colours, typography, logo, controls and the accepted grouped navigation
+  remain, including the 65 px mobile rail. The captured form width is 293 px
+  versus 299 px in the archive at the same phone viewport. The twelve pinned
+  files and current runtime sources are unchanged.
+- Inputs/selects are consistently 42 px; the archived Staff controls have a 39 px
+  minimum. The pinned Users form uses its existing natural control sizing. The
+  shared palette, border treatment and orange action convention remain; pixel-for-
+  pixel identity across these different forms is not claimed.
+- The Add/Edit title is in the current page header, with the sample notice above
+  it, rather than repeating the archive's Staff Members heading above an editor
+  heading. The source form's Clear Form is replaced by the retained Save/Cancel
+  convention explicitly required in this correction.
+- Optional-field/archive guidance, blank migrated details and the explicit
+  non-operational equipment note add some height. Fictional directory columns and
+  statuses remain as previously previewed; archived equipment columns/actions are
+  excluded. The floating review controls belong only to the harness.
 
-Two inspection selectors initially matched several elements and were made precise.
-Inspection also corrected preview-only multi-word search, restored combined Users
-filters and ensured extra grant summaries wrap. These corrections do not touch
-runtime files. Managed Chromium blocks file URLs, so browser inspection used the
-same HTML through local static HTTP; no browser policy was changed. This is neither
-a deployed-application security test nor product-owner visual acceptance.
+These are observations from rendered views, not a declaration of visual acceptance.
+Matching source hashes, CSS and automated checks do not prove visual fidelity.
+The product owner must review the corrected preview before any integration.
 
-## Integration Concerns Requiring Review
+## Focused Verification And Limits
 
-The [integration notes](README.md#integration-gates--documentation-only) identify:
+**179 preview assertions passed**: the existing 48 interaction checks and 131
+correction checks. The correction check is reproducible with
+[check-visual-corrections.cjs](check-visual-corrections.cjs); see the
+[run instructions](README.md#focused-visual-correction-check). It checks 1440,
+1024, 768 and 390 px in both themes, card order, consistent control heights/labels,
+header fit, form footer placement, separate permitted row actions, login actions
+and restricted Staff access. The original interaction checks also cover archived
+membership/deletion, name/Department search, migrated blanks, profile independence,
+role inheritance/overrides, protected roles/admins, MFA presentation, keyboard
+focus, Escape, password confirmation and account filters.
 
-1. Section-appropriate entry/navigation for Staff-only and Department-only accounts,
-   preserving existing inventory route guards and grants.
-2. Minimal Department labels/eligible choices for Staff users without general
-   Departments Read, with server validation and archived-membership rules.
-3. A reviewed server-owned way to expose Department deletion eligibility; current
-   read responses do not contain historical-association capability information.
-4. Wiring the original Permissions UI to existing six-section server confirmation,
-   session/MFA rules and independent future IT Assets feature state.
+No page errors, API calls, external resource requests or checked document overflow
+were observed. The 52-view gallery was refreshed at 1440×1000 and 390×844 in both
+themes. Additional comparison captures use the same viewports. Exact dimensions,
+checks and hashes are in [inspection-results.json](inspection-results.json).
 
-None of these technical proposals is implemented here. All production backend,
-schema, API, styles, templates, JavaScript and tests are unchanged from the approved
-baseline. Stop for product-owner visual review and explicit integration approval.
+A geometry check initially compared viewport coordinates while focus was scrolling;
+it now compares document coordinates. The original login preview opens its editor
+directly, so reference capture respects that state instead of trying its hidden Add
+button. These were inspection-script failures, corrected before the reported pass.
+Managed Chromium blocks file URLs; inspection used the same standalone HTML over
+local static HTTP without changing browser policy. No new browser, Azure or Docker
+setup was used. Application suites were not rerun for these preview-only changes.
+This is neither deployed-application security testing nor owner visual acceptance.
+
+## Integration Remains Unauthorised
+
+The existing [integration gates](README.md#integration-gates--documentation-only)
+remain: section-appropriate entry, minimal Department-label/eligible-choice access,
+server-owned deletion eligibility and real Permissions/session/MFA wiring. No
+production backend, schema, API, styles, templates, JavaScript or tests changed.
+Stop for product-owner visual review. Do not merge, integrate or deploy.

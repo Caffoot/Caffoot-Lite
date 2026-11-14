@@ -33,16 +33,16 @@ def build_preview():
     sidebar_brand = sidebar_brand.replace('/assets/caffoot-logo-256.png', logo)
     topbar = re.search(r'<header class="topbar">[\s\S]*?</header>', navigation)[0]
     manifest = {'baseline': BASELINE, 'pinnedDesignRevision': PINNED,
-                'functionalArchiveRevision': ARCHIVE, 'runtimeChanged': False,
+                'staffPreviewReferenceRevision': ARCHIVE, 'runtimeChanged': False,
                 'embeddedOrFollowedSources': {path: hashlib.sha256((ROOT / path).read_bytes()).hexdigest() for path in paths}}
     manifest['pinnedDesigns'] = json.loads((ROOT / 'interface/design-sources.json').read_text())
     for source in manifest['pinnedDesigns']:
         original = subprocess.check_output(['git', 'show', PINNED + ':' + source['source']], cwd=ROOT)
         assert hashlib.sha256(original).hexdigest() == source['htmlSha256']
-    manifest['functionalReferences'] = {}
+    manifest['staffPreviewReferences'] = {}
     for name in ('caffoot-staff-member-login-preview.html', 'caffoot-staff-directory-assignments-preview.html'):
         original = subprocess.check_output(['git', 'show', ARCHIVE + ':future-design/stage-3-previews/' + name], cwd=ROOT)
-        manifest['functionalReferences'][name] = hashlib.sha256(original).hexdigest()
+        manifest['staffPreviewReferences'][name] = hashlib.sha256(original).hexdigest()
     styles = '\n'.join(f'<style data-source="{path}">\n{(ROOT / path).read_text()}\n</style>' for path in paths if path.endswith('.css'))
     embedded = json.dumps(templates).replace('</', '<\\/')
     preview = f'''<!doctype html>

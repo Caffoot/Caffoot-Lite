@@ -38,12 +38,12 @@ Scope: [Batch 3.3 preview authorisation](https://github.com/Caffoot/Caffoot-Lite
 | Existing v2.1 source | Reuse in this preview | Proposed difference |
 | --- | --- | --- |
 | `interface/screens/navigation.html` | Exact brand, icon symbols and top bar; existing sidebar/item/collapse classes | Add expandable IT and Staff groups, move the existing destinations inside them, relabel Users as Permissions |
-| `interface/styles/shared.css`, `components.css`, `dialogs.css`, `users.css`, `themes.css`, `utilities.css` | Embedded byte-for-byte in runtime stylesheet order | No changes to these source styles; a small separate preview stylesheet handles only group nesting and the external review harness |
+| `interface/styles/shared.css`, `components.css`, `dialogs.css`, `users.css`, `themes.css`, `utilities.css` | Embedded byte-for-byte in runtime stylesheet order | No changes to these source styles; a separate preview stylesheet handles grouped navigation, the approved Staff composition, aligned Staff/Department controls and the review harness |
 | `interface/screens/users.html` | Exact list, row, management dialog, profile, grant and account-control templates | Reuse row/form components for Staff/Departments; extend the same Permissions grant controls to six independent sections |
 | `interface/screens/shared.html` | Existing Users section header and tab conventions | Permissions label and truthful sample-only explanatory text |
 | `interface/application.js` | Existing Users/role rendering structure, highest-role/override presentation, protected role identities, MFA and confirmation flow conventions | Local fictional-data callbacks replace every API operation; no runtime code is loaded or modified |
 | Twelve approved HTML sources at `c26db4a56bbc30f95b56201e81a7a76d13c6037b` | Original hashes checked during packaging; My Account/shared navigation and Users & Permissions are the main design references | No replacement design or framework |
-| Archived Staff login/directory HTML at `159424b56bb770ea6ab260764c4e9357d9c8667c` | Approved fields, optional login, name-or-Department search and directory/detail workflow | Behaviour reference only; no archived visual styles, assignment or stock interfaces copied |
+| Archived Staff login/directory HTML at `159424b56bb770ea6ab260764c4e9357d9c8667c` | Approved left Personal Details/right Caffoot Login composition, separate security guidance, optional login, fields, name-or-Department search and separate View Details/Edit actions | Structural layout restored using current v2.1 colours and components; Save/Cancel retained; no assignment or stock interfaces |
 
 The preview uses the same offline system font fallbacks as the application; it
 does not download Inter or Font Awesome. Icons use the existing embedded SVGs.
@@ -96,12 +96,15 @@ The generator reads accepted source files without writing them. The preview-only
 JavaScript is not part of the runtime Function Index; no runtime declarations move.
 
 The initial checkpoint was committed and pushed as
-`616b836` before wider inspection. Final local inspection passed **48 preview checks**
-and produced **52 screenshots** at 1440×1000 and 390×844 in light and dark themes.
+`616b836` before wider inspection. The corrected preview passed **179 preview checks**
+and refreshed **52 screenshots**, with **22 additional reference/comparison captures** at 1440×1000 and 390×844 in light and dark themes.
 See the [screenshot gallery](gallery.html), [inspection record](inspection-results.json)
-and [concise review report](Review.md). The checks include optional login validation,
+and [concise review report](Review.md). The [side-by-side comparison](comparisons.html)
+uses browser captures of both actual approved Staff files and the pinned Users design. The checks include optional login validation,
 migrated blanks, restricted personas, archive/deletion, profile independence,
 six-section role/override presentation, protected administrator/role controls,
+form composition, uniform control heights, responsive ordering, header actions and
+separate authorised View Details/Edit actions,
 keyboard focus and account filters. No page errors, API calls, external resource
 requests or checked document overflow were found. Mobile six-section grant summaries
 wrap using word separators while retaining the existing source styles.
@@ -111,3 +114,13 @@ No working-application backend, browser suite, Docker or Raspberry Pi verificati
 is claimed or needed for this isolated preview. The managed file-URL limitation
 above remains. Product-owner visual acceptance and separate integration authorisation
 are required before any application work.
+
+### Focused Visual Correction Check
+
+With an existing Playwright/Chromium installation and the static server above, run
+`node docs/previews/staff-departments-navigation/check-visual-corrections.cjs`.
+`PREVIEW_URL` and `CHROMIUM_PATH` can override the local URL/browser. An optional
+first argument writes the JSON result. No dependency installation or application
+server is required. This checks 131 assertions at 1440, 1024, 768 and 390 px in both
+themes. The existing 48 interaction checks were also rerun. Geometry checks support
+the actual [visual comparison](comparisons.html); they do not establish owner acceptance.

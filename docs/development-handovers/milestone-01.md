@@ -27,12 +27,20 @@ Permissions controls extended to six sections, with clearly fictional sample dat
 
 The initial checkpoint was committed and pushed as
 `616b836b68721dc7e3bb17c35c830d40114aff67` before wider inspection.
-Final local preview inspection passed **48 checks** and captured **52 screenshots**
+After the PR #379 visual correction, local preview inspection passed **179 checks**
+and refreshed **52 screenshots**, plus **22 reference/comparison captures**
 at desktop/mobile sizes in light/dark themes. No checked document overflow, page
 errors, API calls or external resource requests were found. The
 [review report](../previews/staff-departments-navigation/Review.md),
 [gallery](../previews/staff-departments-navigation/gallery.html) and source manifest
-record fidelity, evidence and limitations. Managed Chromium blocks file URLs;
+record fidelity, evidence and limitations. The
+[side-by-side comparison](../previews/staff-departments-navigation/comparisons.html)
+uses both original approved Staff HTML files and the pinned Users design. Personal
+Details is left of the separate Caffoot Login/security stack, login starts off,
+controls align, and directory rows offer separate View Details/authorised Edit.
+Create Login remains on records/the combined form; no row action was added.
+Page actions sit in the header and forms retain Save/Cancel. The current 65 px
+mobile rail and other accepted navigation remain. Managed Chromium blocks file URLs;
 inspection used the same standalone file through local static HTTP without changing
 browser policy. This is not deployed-application or owner acceptance evidence.
 

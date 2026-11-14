@@ -1,7 +1,7 @@
 {
   "baseline": "221739ae8c1331d396977adb6e79dc910f39380d",
   "pinnedDesignRevision": "c26db4a56bbc30f95b56201e81a7a76d13c6037b",
-  "functionalArchiveRevision": "159424b56bb770ea6ab260764c4e9357d9c8667c",
+  "staffPreviewReferenceRevision": "159424b56bb770ea6ab260764c4e9357d9c8667c",
   "runtimeChanged": false,
   "embeddedOrFollowedSources": {
     "interface/styles/utilities.css": "0d64b175b22813315e118f392a411552a8058e3f8a66d55aa925688e327e2467",
@@ -205,7 +205,7 @@
       "entryUrl": "/setup"
     }
   ],
-  "functionalReferences": {
+  "staffPreviewReferences": {
     "caffoot-staff-member-login-preview.html": "1bcfb6e59311ebe2d8534eecf38847daac07d7a92b3076fb9eeb89b5ccb79a9e",
     "caffoot-staff-directory-assignments-preview.html": "1a49ca59fcc8f0f213c64e629d188c9faf996a913d3dd4b787ea2ed50ccdeb43"
   }
