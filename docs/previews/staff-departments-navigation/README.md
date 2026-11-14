@@ -6,6 +6,11 @@ sample data and interactions are embedded. No application server, account,
 network request or installation is required. All names and records are fictional.
 Sample changes reset on reload; no passwords or records are stored in browser storage.
 
+Managed Chromium here blocks `file://` navigation. The same self-contained file
+was inspected over local static HTTP. If your browser also blocks file URLs, run
+`python -m http.server 8767 --bind 127.0.0.1` in this directory and open
+`http://127.0.0.1:8767/preview.html`. This starts no Caffoot application or API.
+
 Use **Preview Only · Sample Data · Controls** at the lower right to switch light/dark
 theme and Administrator, Staff Editor/Reader or Department Editor/Reader views.
 The separate IT Assets review checkbox starts off and only simulates navigation
@@ -90,7 +95,19 @@ repository to reproduce the standalone HTML and [source manifest](source-manifes
 The generator reads accepted source files without writing them. The preview-only
 JavaScript is not part of the runtime Function Index; no runtime declarations move.
 
-Initial checkpoint: HTML/JavaScript packaging and syntax pass; Chromium opens the
-standalone preview at 1440×1000 and 390×844 with no page errors or document overflow.
-Broader interaction, theme, keyboard and screenshot checks are pending at this
-checkpoint. No application, backend, browser suite or Docker test pass is claimed.
+The initial checkpoint was committed and pushed as
+`616b836` before wider inspection. Final local inspection passed **48 preview checks**
+and produced **52 screenshots** at 1440×1000 and 390×844 in light and dark themes.
+See the [screenshot gallery](gallery.html), [inspection record](inspection-results.json)
+and [concise review report](Review.md). The checks include optional login validation,
+migrated blanks, restricted personas, archive/deletion, profile independence,
+six-section role/override presentation, protected administrator/role controls,
+keyboard focus and account filters. No page errors, API calls, external resource
+requests or checked document overflow were found. Mobile six-section grant summaries
+wrap using word separators while retaining the existing source styles.
+
+Source styles and runtime files remain unchanged; all twelve pinned hashes match.
+No working-application backend, browser suite, Docker or Raspberry Pi verification
+is claimed or needed for this isolated preview. The managed file-URL limitation
+above remains. Product-owner visual acceptance and separate integration authorisation
+are required before any application work.

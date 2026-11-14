@@ -1,6 +1,7 @@
 """Package an isolated, offline visual preview from the accepted interface sources."""
 import base64
 import hashlib
+import html
 import json
 from pathlib import Path
 import re
@@ -59,6 +60,7 @@ def build_preview():
 <div class="field"><label for="preview-persona">View As</label><select class="input" id="preview-persona"><option value="admin">Administrator</option><option value="staff-editor">Staff Editor · No Departments Read</option><option value="staff-reader">Staff Reader · No Departments Read</option><option value="department-editor">Department Editor Only</option><option value="department-reader">Department Reader Only</option></select></div>
 <div class="field"><label for="preview-theme">Theme</label><select class="input" id="preview-theme"><option value="light">Light</option><option value="dark">Dark</option></select></div>
 <label class="role-membership"><input type="checkbox" id="preview-assets"> Simulate IT Assets Enabled</label><p>Off by default. This review control changes sample visibility only; it is not a proposed feature control.</p><button class="btn" id="preview-reset">Reset Sample Data</button></div></details>
+<template id="preview-license">{html.escape((ROOT / 'LICENSE').read_text())}</template>
 <script type="application/json" id="preview-source-templates">{embedded}</script>
 <script>{(HERE / 'preview-interactions.js').read_text()}</script></body></html>'''
     (HERE / 'preview.html').write_text(preview)

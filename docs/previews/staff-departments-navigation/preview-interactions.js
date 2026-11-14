@@ -28,7 +28,7 @@ const initialUsers = [
 ];
 let staff = structuredClone(initialStaff), departments = structuredClone(initialDepartments);
 let users = structuredClone(initialUsers), roles = structuredClone(initialRoles);
-let destination = 'staff', permissionTab = 'list', persona = 'admin', assetsEnabled = false;
+let destination = 'staff', permissionTab = 'overview', persona = 'admin', assetsEnabled = false;
 let currentStaffId = null, searchText = '', statusFilter = 'all';
 let dialogState = null, pendingSampleChange = null, toastTimer, createLoginIntent = false;
 const groupsOpen = {it:true,staff:true};
@@ -62,7 +62,8 @@ function renderNavigation() {
   $('page-title').textContent=({staff:'Staff Members',departments:'Departments',permissions:'Permissions',account:'My Account',dashboard:'Dashboard',devices:'Devices',assets:'IT Assets',ipam:'IPAM',racks:'Network Racks',audit:'Audit Trail',settings:'Settings & Data'})[destination];
 }
 function renderStaffDirectory() {
-  const visible=staff.filter(record=>(!searchText||`${record.firstName} ${record.lastName} ${departmentName(record.departmentId)}`.toLowerCase().includes(searchText))&&(statusFilter==='all'||String(record.active)===statusFilter));
+  const query=searchText.trim().toLowerCase();
+  const visible=staff.filter(record=>(!query||`${record.firstName} ${record.lastName} ${departments.find(item=>item.id===record.departmentId)?.name||''}`.toLowerCase().includes(query))&&(statusFilter==='all'||String(record.active)===statusFilter));
   const rows=visible.map(record=>`<div class="userrow" data-preview-staff-id="${record.id}"><div class="who"><span class="initial" aria-hidden="true">${escapeHtml(record.firstName?.slice(0,1)||'?')}</span><div style="min-width:0"><h3 class="username preview-record-name">${escapeHtml(displayName(record))}</h3><div class="userdesc">${record.firstName?'Staff Member':'Migrated Record · Details Blank'}</div></div></div><div class="role-cell">${escapeHtml(departmentName(record.departmentId))}${departments.find(item=>item.id===record.departmentId)?.archived?'<div class="userdesc">Archived · Membership Retained</div>':''}</div><div class="mfa-cell">${isAdministrator()?badge(record.accountId?'Linked Login':'No Login',record.accountId?'blue':'dark'):escapeHtml(record.jobTitle||'—')}<div style="margin-top:5px">${badge(record.active?'Active':'Inactive',record.active?'green':'red')}</div></div><div class="permissions-cell"><div class="userdesc">${escapeHtml(record.email||'No Email Recorded')}</div><div class="userdesc">${escapeHtml(record.location||'')}</div></div><div class="actions">${button('View Details','staff-details',record.id)}</div></div>`).join('');
   return header('Staff Members','Maintain Staff profiles independently of Caffoot logins.',canEditStaff()?button('+ Add Staff Member','staff-add','',true):'')+`<div class="users-list-shell section active"><div class="toolbar"><div class="filters"><div class="field search"><label for="preview-staff-search">Find A Staff Member</label><input class="input" id="preview-staff-search" type="search" placeholder="Search by name or department…" value="${escapeHtml(searchText)}"></div><div class="field filter"><label for="preview-staff-status">Staff Status</label><select class="input" id="preview-staff-status"><option value="all">All Statuses</option><option value="true" ${statusFilter==='true'?'selected':''}>Active</option><option value="false" ${statusFilter==='false'?'selected':''}>Inactive</option></select></div></div></div><div class="card users-list-card"><div class="users-list-table-scroll"><div class="list-header"><span>Staff Member</span><span>Department</span><span>${isAdministrator()?'Login &amp; Status':'Job Title &amp; Status'}</span><span>Contact &amp; Location</span><span>Details</span></div><div id="preview-staff-rows">${rows||'<p class="cardpad">No matching Staff Members.</p>'}</div></div><div class="list-footer" role="status">Showing ${visible.length} of ${staff.length} Staff Members · Sample Data</div></div></div>`;
 }
@@ -94,12 +95,14 @@ function renderPermissions() {
   if(permissionTab==='add')return top+renderAddUser();
   if(permissionTab==='overview')return top+renderPermissionsOverview();
   const rows=users.map(user=>template('users/rows-1',[
-    user.id,escapeHtml(user.username),user.active?'active':'disabled',user.mfaEnrolled?'enrolled':'pending',escapeHtml(user.username[0].toUpperCase()),escapeHtml(user.username),user.id===1?'Your Account · Protected':escapeHtml(user.profile.displayName||[user.profile.firstName,user.profile.lastName].filter(Boolean).join(' ')||'Staff Member'),user.isAdmin?'blue':'dark',user.isAdmin?'Administrator':'Staff Member',user.active?'green':'red',user.active?'Active':'Disabled',user.mfaEnrolled?'green':'amber',userAccessDescription(user),user.isAdmin?'<span class="badge dark">All Sections</span>':sectionNames.map(section=>`<span class="mini ${effectiveGrant(user,section)==='edit'?'edit':effectiveGrant(user,section)?'':'no'}">${sectionLabel(section)}: ${permissionLabel(effectiveGrant(user,section))}</span>`).join(''),user.id,user.id===1?'View':'Manage',roles.filter(role=>user.roles.includes(role.id)&&role.roleKey!=='staff_member').map(role=>badge(escapeHtml(role.name),role.enabled?'blue':'amber')).join('')])).join('');
+    user.id,escapeHtml([user.username,...Object.values(user.profile)].filter(Boolean).join(' ').toLowerCase()),user.active?'active':'disabled',user.mfaEnrolled?'enrolled':'pending',escapeHtml(user.username[0].toUpperCase()),escapeHtml(user.username),user.id===1?'Your Account · Protected':escapeHtml(user.profile.displayName||[user.profile.firstName,user.profile.lastName].filter(Boolean).join(' ')||'Staff Member'),user.isAdmin?'blue':'dark',user.isAdmin?'Administrator':'Staff Member',user.active?'green':'red',user.active?'Active':'Disabled',user.mfaEnrolled?'green':'amber',userAccessDescription(user),user.isAdmin?'<span class="badge dark">All Sections</span>':sectionNames.map(section=>`<span class="mini ${effectiveGrant(user,section)==='edit'?'edit':effectiveGrant(user,section)?'':'no'}">${sectionLabel(section)}: ${permissionLabel(effectiveGrant(user,section))}</span>`).join(' '),user.id,user.id===1?'View':'Manage',roles.filter(role=>user.roles.includes(role.id)&&role.roleKey!=='staff_member').map(role=>badge(escapeHtml(role.name),role.enabled?'blue':'amber')).join('')])).join('');
   return top+'<div class="users-live">'+template('users/account-list-panel',[rows,users.length,users.length])+'</div>';
 }
 function renderPermissionsOverview() {
   const stats=[['Total Users',users.length,'users','Recorded Sample Accounts'],['Administrators',users.filter(user=>user.isAdmin).length,'shield','Independent Account Flag'],['Active Users',users.filter(user=>user.active).length,'check','Accounts Currently Enabled'],['MFA Enrolled',users.filter(user=>user.mfaEnrolled).length,'key','Authenticator Enrolment']];
-  return '<div class="users-live"><section class="section active">'+template('users/overview-summary')+button('+ Add User','user-add','',true)+'</div><div class="cards4">'+stats.map(([label,count,symbol,foot])=>`<section class="card cardpad stat"><div class="stathead"><span>${label}</span><span class="stat-icon">${template('users/icon-'+symbol)}</span></div><div class="statnum">${count}</div><div class="statfoot">${foot}</div></section>`).join('')+'</div><div class="card cardpad" style="margin-top:17px"><div class="section-heading"><div><h2>Access, Made Simple</h2><p>Enabled roles supply inherited access; individual overrides take precedence.</p></div></div>'+template('users/read-access-guide')+'<div class="guide-item"><strong>Read</strong><p>Users can view permitted records without changing information in that section.</p></div>'+template('users/edit-access-guide')+'</div>';
+  const bars=items=>items.map(([label,count,colour])=>`<div class="barrow"><div class="barline"><span>${label}</span><b>${count}</b></div><div class="track"><div class="fill ${colour}" style="width:${users.length?Math.round(count/users.length*100):0}%"></div></div></div>`).join('');
+  const inheritedPanels='<div class="two-col"><div class="card cardpad"><h3 class="cardtitle">Accounts By Role</h3><p class="sub">Staff Member is automatic; additional roles grant reusable section access.</p>'+bars([['Administrators',users.filter(user=>user.isAdmin).length,''],['Staff Members',users.length,'soft']])+'<div class="card-end"><span class="tiny">All figures come from fictional sample accounts.</span><button class="action-link" type="button" data-permission-tab="list">View User List →</button></div></div><div class="card cardpad"><h3 class="cardtitle">Authenticator Enrolment</h3><p class="sub">Enabled additional roles and wider Read/Edit access require MFA.</p>'+bars([['Enrolled',users.filter(user=>user.mfaEnrolled).length,''],['Not Enrolled',users.filter(user=>!user.mfaEnrolled).length,'orange']])+'<div class="card-end"><span class="tiny">Required enrolment starts at sign-in.</span><button class="action-link" type="button" data-action="users-filter-pending">Review Not Enrolled →</button></div></div></div>';
+  return '<div class="users-live"><section class="section active">'+template('users/overview-summary')+button('+ Add User','user-add','',true)+'</div><div class="cards4">'+stats.map(([label,count,symbol,foot])=>`<section class="card cardpad stat"><div class="stathead"><span>${label}</span><span class="stat-icon">${template('users/icon-'+symbol)}</span></div><div class="statnum">${count}</div><div class="statfoot">${foot}</div></section>`).join('')+'</div>'+inheritedPanels+'<div class="card cardpad" style="margin-top:17px"><div class="section-heading"><div><h2>Access, Made Simple</h2><p>Enabled roles supply inherited access; individual overrides take precedence.</p></div></div>'+template('users/read-access-guide')+'<div class="guide-item"><strong>Read</strong><p>Users can view permitted records without changing information in that section.</p></div>'+template('users/edit-access-guide')+'</div>';
 }
 function renderRoleCatalogue() {
   return '<div class="users-live"><section class="section active" aria-label="Manage Roles"><div class="section-heading"><div><h2>Manage Roles</h2><p>Reusable section grants, separate from Administrator status.</p></div>'+button('+ Create Role','role-add','',true)+'</div><div class="card cardpad">'+roles.map(role=>`<div class="switch-row role-catalogue-row"><div><strong>${escapeHtml(role.name)}</strong><small>${role.roleKey==='staff_member'?'Protected Staff Member Baseline':(role.isBuiltin?'Protected Identity · ':'')+(role.enabled?'Enabled · MFA Required':'Disabled · Assignments Retained')} · ${users.filter(user=>user.roles.includes(role.id)).length} Assigned Accounts</small><small>${sectionNames.map(section=>sectionLabel(section)+': '+permissionLabel(role.grants[section])).join(' · ')}</small></div><button class="btn" type="button" data-preview-action="role-edit" data-id="${role.id}" ${role.roleKey==='staff_member'?'disabled':''}>${role.roleKey==='staff_member'?'Protected':'Manage'}</button></div>`).join('')+'</div><p class="formhint">Disabling a role retains assignments. Other roles and individual overrides may retain access. Every change needs review and confirmation. IT Assets grants do not enable its feature.</p></section></div>';
@@ -187,6 +190,13 @@ function goTo(next) {
 function confirmDirectoryChange(title, description, apply) {
   openDialog(title,'Fictional sample data only.',`<div class="modal-warning">${description}</div>`,button('Cancel','close-dialog')+button('Confirm','confirm-sample-change','',true));pendingSampleChange=apply;
 }
+function filterPreviewUsers() {
+  const list=$('users-live-list');if(!list)return;
+  const search=$('live-users-search').value.trim().toLowerCase(),status=$('live-users-status').value,mfa=$('live-users-mfa').value;
+  const rows=[...list.querySelectorAll('[data-users-row]')];let count=0;
+  rows.forEach(row=>{const visible=(!search||row.dataset.search.toLowerCase().includes(search))&&(status==='all'||row.dataset.active===status)&&(mfa==='all'||row.dataset.mfa===mfa);row.hidden=!visible;if(visible)count++;});
+  $('live-users-count').textContent=`Showing ${count} of ${rows.length} accounts`;
+}
 document.addEventListener('click', event=>{
   const group=event.target.closest('[data-preview-group]');
   if(group){groupsOpen[group.dataset.previewGroup]=!groupsOpen[group.dataset.previewGroup];renderNavigation();return;}
@@ -202,6 +212,7 @@ document.addEventListener('click', event=>{
     if(sourceAction.dataset.action==='users-open-editor'){openAccountDialog(sourceAction.dataset.userId);return;}
     if(sourceAction.dataset.action==='users-close-editor'){closeDialog();return;}
     if(sourceAction.dataset.action==='users-add-nav'){permissionTab='add';closeDialog();renderMain();return;}
+    if(sourceAction.dataset.action==='users-filter-pending'){permissionTab='list';closeDialog();renderMain();$('live-users-mfa').value='pending';filterPreviewUsers();return;}
   }
   const control=event.target.closest('[data-preview-action]');if(!control)return;
   const action=control.dataset.previewAction,id=control.dataset.id;
@@ -254,10 +265,10 @@ document.addEventListener('click', event=>{
 });
 document.addEventListener('input',event=>{
   if(event.target.id==='preview-staff-search'){
-    const position=event.target.selectionStart;searchText=event.target.value.trim().toLowerCase();renderMain();$('preview-staff-search').focus();$('preview-staff-search').setSelectionRange(position,position);
+    const position=event.target.selectionStart;searchText=event.target.value;renderMain();$('preview-staff-search').focus();$('preview-staff-search').setSelectionRange(position,position);
   }
   if(event.target.id==='live-users-search'){
-    const value=event.target.value.toLowerCase();document.querySelectorAll('[data-users-row]').forEach(row=>row.hidden=!row.dataset.search.toLowerCase().includes(value));
+    filterPreviewUsers();
   }
 });
 document.addEventListener('change',event=>{
@@ -282,8 +293,7 @@ document.addEventListener('change',event=>{
     reviewSampleAccessChange((assigned?'Assign':'Remove')+' Role',()=>{const user=users.find(item=>item.id===id);user.roles=assigned?[...user.roles,roleId]:user.roles.filter(value=>value!==roleId);},'Changing role membership requires rechecking MFA and revoking affected sessions.');return;
   }
   if(['live-users-status','live-users-mfa'].includes(target.id)){
-    const search=$('live-users-search').value.toLowerCase(),status=$('live-users-status').value,mfa=$('live-users-mfa').value;
-    document.querySelectorAll('[data-users-row]').forEach(row=>row.hidden=(!row.dataset.search.toLowerCase().includes(search)||(status!=='all'&&row.dataset.active!==status)||(mfa!=='all'&&row.dataset.mfa!==mfa)));
+    filterPreviewUsers();
   }
 });
 document.addEventListener('submit',event=>{
@@ -295,7 +305,7 @@ document.addEventListener('submit',event=>{
     if(login&&data.get('password')!==data.get('confirmPassword')){$('preview-form-feedback').textContent='Passwords must match.';$('preview-confirmPassword').focus();return;}
     const id=form.dataset.id||crypto.randomUUID(),existing=staff.find(item=>item.id===id);
     const values=Object.fromEntries(['firstName','lastName','email','jobTitle','telephone','location'].map(key=>[key,String(data.get(key)||'').trim()]));
-    if(!existing&&(!values.firstName||!values.lastName))return;
+    if(!existing&&(!values.firstName||!values.lastName)){$('preview-form-feedback').textContent='Enter First Name and Surname.';return;}
     const departmentId=String(data.get('departmentId')||'')||null;
     if(departments.find(item=>item.id===departmentId)?.archived&&existing?.departmentId!==departmentId){$('preview-form-feedback').textContent='Choose an active Department.';return;}
     if(login&&users.some(user=>user.username.toLowerCase()===String(data.get('username')).toLowerCase())){$('preview-form-feedback').textContent='Choose a unique sample username.';return;}

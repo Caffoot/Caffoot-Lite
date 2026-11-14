@@ -1,0 +1,386 @@
+{
+  "baseline": "221739ae8c1331d396977adb6e79dc910f39380d",
+  "browser": "Existing system Chromium with Playwright; no installation",
+  "viewports": [
+    {
+      "width": 1440,
+      "height": 1000
+    },
+    {
+      "width": 390,
+      "height": 844
+    }
+  ],
+  "checks": [
+    "Four clearly fictional Staff records, including blank migrated details",
+    "IT Assets hidden by default",
+    "Department-name search finds associated Staff",
+    "Archived Department remains searchable",
+    "Create Login defaults off",
+    "Manual First Name is required",
+    "Email remains optional",
+    "Archived Departments unavailable for new membership",
+    "Password confirmation prevents a mismatched sample save",
+    "Optional login save opens the existing Staff identity",
+    "Manage Login opens the existing Users account management interface",
+    "Six independent section override controls",
+    "Migrated missing names stay blank",
+    "Editing migrated blanks does not invent required information",
+    "Staff-only reader has no Departments navigation",
+    "Permissions is administrator-only",
+    "Staff-only workspace does not grant inventory",
+    "Staff Read has no Add action",
+    "Staff-only list hides linked-login information",
+    "Staff Read without Departments Read can search associated Department labels",
+    "Non-admin Staff editor has no login controls",
+    "Department Read has no mutation controls",
+    "Department-only workspace does not grant Staff directory access",
+    "Department Edit can manage its permitted records",
+    "Never-associated Department offers permanent deletion",
+    "Historical associations prevent permanent deletion",
+    "Archived Department offers reactivation",
+    "Archiving retains existing Staff membership",
+    "New membership excludes the newly archived Department",
+    "Protected Staff Member baseline cannot be edited",
+    "Built-in role name is protected",
+    "Access review retains before/after, MFA and feature-disabled presentation",
+    "IT Assets Edit does not enable the feature",
+    "Separate review feature switch controls eligible navigation",
+    "Individual override supersedes inherited Edit",
+    "Inherit restores role-derived Edit",
+    "Signed-in administrator section controls remain protected",
+    "Dialog keyboard focus stays inside the source modal",
+    "Escape restores focus to the opener",
+    "No page errors, API calls or external resource requests",
+    "Typing a multi-word Staff name preserves spaces and case",
+    "Typing a multi-word archived Department name works",
+    "Existing account search and MFA filters combine and update the visible count",
+    "Existing account profile search is retained",
+    "Account profile edits do not synchronise Staff profiles",
+    "Never-associated Department deletion has an explicit confirmation",
+    "Sample passwords and records are never written to model or browser storage",
+    "All six individual override controls retain matching, valid labels in both themes and viewport sizes"
+  ],
+  "checkCount": 48,
+  "pageErrors": [],
+  "unexpectedRequests": [],
+  "limitations": [
+    "Managed Chromium blocks file URLs. The same self-contained HTML was inspected through local static HTTP."
+  ],
+  "runtimeChanged": false,
+  "previewHtmlSha256": "ef2066d45cf468c7f7a3885ca8642764758ac15d1fbb4adf9e55616df36a46b1",
+  "screenshots": [
+    {
+      "file": "screenshots/desktop-light-staff-directory.png",
+      "width": 1440,
+      "height": 1000,
+      "sha256": "9daf7539be1591216b52f15b25a11f936c31fb648292a3b0fe3953283d524a55"
+    },
+    {
+      "file": "screenshots/desktop-light-staff-details.png",
+      "width": 1440,
+      "height": 1000,
+      "sha256": "9c92f7bbd6d99561a5b70234265e9a7a15cc8645c6b67b3f526ee8f2f5097fa0"
+    },
+    {
+      "file": "screenshots/desktop-light-staff-edit.png",
+      "width": 1440,
+      "height": 1000,
+      "sha256": "e799791ff12c3a0d79a30d6e70cb7d202f66b9c375da0da2d10045018be7cb3c"
+    },
+    {
+      "file": "screenshots/desktop-light-staff-add-login.png",
+      "width": 1440,
+      "height": 1148,
+      "sha256": "0915c3e262dd37b465117082b9e2d632c28e8dd5c4512d71ed6e0ea47a347626"
+    },
+    {
+      "file": "screenshots/desktop-light-departments.png",
+      "width": 1440,
+      "height": 1000,
+      "sha256": "81530ff22b8488661d2e9c8191ba1afb1b0621f50128be5ee16e1eae19df8ba1"
+    },
+    {
+      "file": "screenshots/desktop-light-department-dialog.png",
+      "width": 1440,
+      "height": 1000,
+      "sha256": "3f32d7d1ceaaf8e621dad70be41498bff7e5ee9b18a67c2b76318106c415751a"
+    },
+    {
+      "file": "screenshots/desktop-light-permissions-overview.png",
+      "width": 1440,
+      "height": 1109,
+      "sha256": "bb9040ab9ca36bd8d24382b58a3c122ff7ef329fa76819531daa0d68cdccaaba"
+    },
+    {
+      "file": "screenshots/desktop-light-permissions-list.png",
+      "width": 1440,
+      "height": 1000,
+      "sha256": "6226ca6edee2d8bbb64c50d0591e7e2ea83e99239f23a4c4d423e79295e4b4e2"
+    },
+    {
+      "file": "screenshots/desktop-light-permissions-roles.png",
+      "width": 1440,
+      "height": 1000,
+      "sha256": "a3a3d995b7a5e6d2504d7cd37f6af9b5105ef25506a5d47bcb6601e48c23e7fb"
+    },
+    {
+      "file": "screenshots/desktop-light-permissions-role-dialog.png",
+      "width": 1440,
+      "height": 1000,
+      "sha256": "b8607aa5a9e39961e6635c680b8b71ff173c65438238a81a5906447e26452292"
+    },
+    {
+      "file": "screenshots/desktop-dark-staff-directory.png",
+      "width": 1440,
+      "height": 1000,
+      "sha256": "41363faeca4282e3448aea302ca6b66d6659fabd837f89ba5bc9ca71abfdf257"
+    },
+    {
+      "file": "screenshots/desktop-dark-staff-details.png",
+      "width": 1440,
+      "height": 1000,
+      "sha256": "a77216890169323b7d913ad6926e5851cfe31e67a4267a47288658564d89ea8e"
+    },
+    {
+      "file": "screenshots/desktop-dark-staff-edit.png",
+      "width": 1440,
+      "height": 1000,
+      "sha256": "2cb7a26669282eac2478845d60e07dabc915c7eebc7f8b1693c1851008565973"
+    },
+    {
+      "file": "screenshots/desktop-dark-staff-add-login.png",
+      "width": 1440,
+      "height": 1148,
+      "sha256": "b537f785ad100df1ee52f022d881a476f59de040357238fc7629c683374ed695"
+    },
+    {
+      "file": "screenshots/desktop-dark-departments.png",
+      "width": 1440,
+      "height": 1000,
+      "sha256": "b18a6db16428cdeea17cf5fe070c9ad8367bfeaade30dea4f01026877d85f2e9"
+    },
+    {
+      "file": "screenshots/desktop-dark-department-dialog.png",
+      "width": 1440,
+      "height": 1000,
+      "sha256": "51b6d6c634d4a1e35f8ad5fbb7fbfba0ab5da6161de82e91af89b8dfd3976232"
+    },
+    {
+      "file": "screenshots/desktop-dark-permissions-overview.png",
+      "width": 1440,
+      "height": 1109,
+      "sha256": "8090f65bd096014f0a04ddfe9f4d0eb49f7eb919cf1ece19b1c53a955f06afe4"
+    },
+    {
+      "file": "screenshots/desktop-dark-permissions-list.png",
+      "width": 1440,
+      "height": 1000,
+      "sha256": "150c1c97ec75b2e96292e5525ac1e0380d48904bfc576aca841f8171a98a1300"
+    },
+    {
+      "file": "screenshots/desktop-dark-permissions-roles.png",
+      "width": 1440,
+      "height": 1000,
+      "sha256": "ba4c8f6d6bdc25bda323c84d0f9655694bcd039926647d488c181a1774c1e241"
+    },
+    {
+      "file": "screenshots/desktop-dark-permissions-role-dialog.png",
+      "width": 1440,
+      "height": 1000,
+      "sha256": "4bc8338d4e620771854069d9c811ee071c3d7912750233a75e7ce4d04036a508"
+    },
+    {
+      "file": "screenshots/mobile-light-staff-directory.png",
+      "width": 390,
+      "height": 1411,
+      "sha256": "77b0005f2d6c8068a2484516b2285a45491aed2013ad23e874ab28fef4fdd864"
+    },
+    {
+      "file": "screenshots/mobile-light-staff-details.png",
+      "width": 390,
+      "height": 1123,
+      "sha256": "036784cec530f31a748d343be4fe843bc269db6c1356bbdf132e223fc95872b1"
+    },
+    {
+      "file": "screenshots/mobile-light-staff-edit.png",
+      "width": 390,
+      "height": 1438,
+      "sha256": "335d5338bc5a94f325f1b79d13e19c4a009708d61d272db7e05c837df5f8c208"
+    },
+    {
+      "file": "screenshots/mobile-light-staff-add-login.png",
+      "width": 390,
+      "height": 1705,
+      "sha256": "fc88b0c396b80d921a10b2385f08c184dae77ba882df58e3f6a7736d5194339d"
+    },
+    {
+      "file": "screenshots/mobile-light-departments.png",
+      "width": 390,
+      "height": 1242,
+      "sha256": "ae77357043c9a20a4f7838fa6c975e9ecd8a67973fe3b01251e4afd565abd5b2"
+    },
+    {
+      "file": "screenshots/mobile-light-department-dialog.png",
+      "width": 390,
+      "height": 844,
+      "sha256": "6900c9fab9c8bfa1b0f0540da847edcf7239f5005b6335d45da4447b022d6dc2"
+    },
+    {
+      "file": "screenshots/mobile-light-permissions-overview.png",
+      "width": 390,
+      "height": 2019,
+      "sha256": "55aba587539791bc53c9219116eb56b659d439161016cec8161fe087d5c5bf58"
+    },
+    {
+      "file": "screenshots/mobile-light-permissions-list.png",
+      "width": 390,
+      "height": 1573,
+      "sha256": "53d321ae2c02895310f16ca0d87551be4738a612e6baed5377bcf45923f57559"
+    },
+    {
+      "file": "screenshots/mobile-light-permissions-roles.png",
+      "width": 390,
+      "height": 1416,
+      "sha256": "f8c4edd9f299e0cc23a058727f36e83481cb3993d9180f56100cc0b01f04a96a"
+    },
+    {
+      "file": "screenshots/mobile-light-permissions-role-dialog.png",
+      "width": 390,
+      "height": 844,
+      "sha256": "dcb54e3afd96c77895a79f570e3619f5afbb5696262c98258f357270f7b9b02c"
+    },
+    {
+      "file": "screenshots/mobile-dark-staff-directory.png",
+      "width": 390,
+      "height": 1411,
+      "sha256": "b1966b68f3059c0c233cee72509ae94a0d61708b890aad3f54494dc0a8a33125"
+    },
+    {
+      "file": "screenshots/mobile-dark-staff-details.png",
+      "width": 390,
+      "height": 1123,
+      "sha256": "31f3206cfde04603a84d4d1d2d5e4bf28960cab48f77b0862b47bc7d2c236bfa"
+    },
+    {
+      "file": "screenshots/mobile-dark-staff-edit.png",
+      "width": 390,
+      "height": 1438,
+      "sha256": "22e880b3f01e113873ad1a8bc9364c0d75511f1eae60ef301fff5dca40822ed5"
+    },
+    {
+      "file": "screenshots/mobile-dark-staff-add-login.png",
+      "width": 390,
+      "height": 1705,
+      "sha256": "c59019c2ecf7212541f6efcd0adc1262bee1c59f93cde9cf3788f8b394863629"
+    },
+    {
+      "file": "screenshots/mobile-dark-departments.png",
+      "width": 390,
+      "height": 1242,
+      "sha256": "fdb6feba1d67aa1eb99edb0d8638281bc3bd288e4529d9ccddb3607c2eef0a84"
+    },
+    {
+      "file": "screenshots/mobile-dark-department-dialog.png",
+      "width": 390,
+      "height": 844,
+      "sha256": "d1968df02b044efbf5a73f613db594828ca3de719da462d7ac88b6f64213abae"
+    },
+    {
+      "file": "screenshots/mobile-dark-permissions-overview.png",
+      "width": 390,
+      "height": 2019,
+      "sha256": "210ac71648f6b292e89721a2b1605b56bec121a53d0b8a6c5b52ee07ac954cdf"
+    },
+    {
+      "file": "screenshots/mobile-dark-permissions-list.png",
+      "width": 390,
+      "height": 1573,
+      "sha256": "fed23240dadebf6b4d3980e4b573eabdea4d6ee26295287a812ebe56d02bd994"
+    },
+    {
+      "file": "screenshots/mobile-dark-permissions-roles.png",
+      "width": 390,
+      "height": 1416,
+      "sha256": "c2f05ebf995e4abfb002e60fd84543e2223826cd87b7907622111ff05d8cb64d"
+    },
+    {
+      "file": "screenshots/mobile-dark-permissions-role-dialog.png",
+      "width": 390,
+      "height": 844,
+      "sha256": "8cd9ebae8192827ab2a3e558db6c5782b4f0fce816077544c27a20c0f658ada0"
+    },
+    {
+      "file": "screenshots/desktop-light-sidebar-collapsed.png",
+      "width": 1440,
+      "height": 1000,
+      "sha256": "2ce3d36b83dbffa8e4c955fdcb55fd4f361ae2d3aca59dcabe12661f5d29df6f"
+    },
+    {
+      "file": "screenshots/desktop-light-groups-collapsed.png",
+      "width": 1440,
+      "height": 1000,
+      "sha256": "39548fb701053ee9c0c72998ef52fc6ba95f13113b4f1202f34314a31de393d1"
+    },
+    {
+      "file": "screenshots/desktop-light-staff-editor-only.png",
+      "width": 1440,
+      "height": 1000,
+      "sha256": "fbcb14ea95835419c0e496422fe1d21d358be68033f21f1146e8db589ba88c8f"
+    },
+    {
+      "file": "screenshots/mobile-dark-staff-editor-only.png",
+      "width": 390,
+      "height": 1379,
+      "sha256": "a5a4a8b79ad5ddb1edce20ce8b93be3798bf1717c1e8721ba338d990d3e0c3ec"
+    },
+    {
+      "file": "screenshots/desktop-light-staff-add-login-off.png",
+      "width": 1440,
+      "height": 1000,
+      "sha256": "7d0c56de3565c4c29f9845ba78eed6d06bdf7754e09562851e295b17f36db45d"
+    },
+    {
+      "file": "screenshots/desktop-light-migrated-staff-details.png",
+      "width": 1440,
+      "height": 1000,
+      "sha256": "d3a928df7642c67bc3549bc2dcf94ca2d1b5ac5334375895fb0c6cd9d0fc3080"
+    },
+    {
+      "file": "screenshots/desktop-light-department-editor-only.png",
+      "width": 1440,
+      "height": 1000,
+      "sha256": "61ab17167ccddd172c3ff0aacc2dff722cb12cb0e1dac5f2b4998357176d769b"
+    },
+    {
+      "file": "screenshots/desktop-light-it-assets-navigation-enabled.png",
+      "width": 1440,
+      "height": 1000,
+      "sha256": "e486973c94df5157da40099f7f7c0125c144a6bdea2a130acf5b4524d31f8187"
+    },
+    {
+      "file": "screenshots/desktop-light-permissions-individual-overrides.png",
+      "width": 1440,
+      "height": 1000,
+      "sha256": "d896382b93720de5a0f2460fbb1bf58ce0af9d0e52b46643b7ebe4eadd98ebb7"
+    },
+    {
+      "file": "screenshots/desktop-dark-permissions-individual-overrides.png",
+      "width": 1440,
+      "height": 1000,
+      "sha256": "e9fcdae116d707ddf9cec5d3509824201ac2e9a6eba09242a8f858c0470e6bc2"
+    },
+    {
+      "file": "screenshots/mobile-light-permissions-individual-overrides.png",
+      "width": 390,
+      "height": 844,
+      "sha256": "0578c9c45e4dd9a5ee2c3a021adc1d6f81949f9ed17111450862e3df262015eb"
+    },
+    {
+      "file": "screenshots/mobile-dark-permissions-individual-overrides.png",
+      "width": 390,
+      "height": 844,
+      "sha256": "a338c3245237acb96ca02fe79a7364b09b03984da23533accb7dc309613b6b15"
+    }
+  ]
+}

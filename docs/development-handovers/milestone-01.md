@@ -15,6 +15,35 @@
 - [ ] Obtain separate final milestone merge approval; verify the resulting `main` build
 - [ ] Obtain separate v2.2 publication approval and verify published image/platforms, release notes and installation links before changing current-release instructions
 
+## Stage 3 Batch 3.3 — Visual Preview Only
+
+Baseline `221739ae8c1331d396977adb6e79dc910f39380d`, accepted PR #378;
+branch `preview/staff-departments-navigation`, following the
+[preview-only authorisation](https://github.com/Caffoot/Caffoot-Lite/issues/368#issuecomment-6878028705).
+The isolated [interactive preview](../previews/staff-departments-navigation/preview.html)
+embeds actual v2.1 styles, navigation brand/top bar and Users templates. It shows
+Staff lists/details/forms, Department lifecycle, grouped navigation and the original
+Permissions controls extended to six sections, with clearly fictional sample data.
+
+The initial checkpoint was committed and pushed as
+`616b836b68721dc7e3bb17c35c830d40114aff67` before wider inspection.
+Final local preview inspection passed **48 checks** and captured **52 screenshots**
+at desktop/mobile sizes in light/dark themes. No checked document overflow, page
+errors, API calls or external resource requests were found. The
+[review report](../previews/staff-departments-navigation/Review.md),
+[gallery](../previews/staff-departments-navigation/gallery.html) and source manifest
+record fidelity, evidence and limitations. Managed Chromium blocks file URLs;
+inspection used the same standalone file through local static HTTP without changing
+browser policy. This is not deployed-application or owner acceptance evidence.
+
+Runtime source, APIs, schema and application tests are unchanged; all twelve pinned
+design hashes match. No backend, browser suite or Docker infrastructure rerun was
+needed. Staff-only/Department-only entry, minimal Department labels/selection,
+deletion eligibility and final server-owned Permissions wiring are documented
+integration gates, not implemented changes. Stop for product-owner visual review
+and explicit authorisation before any application integration. Preview Only — Do
+Not Merge; no deployment, publication, release or following batch.
+
 ## Stage 3 Batch 3.2 — Staff Members And Departments Backend APIs
 
 Baseline: accepted PR #377, `milestone-1` at
