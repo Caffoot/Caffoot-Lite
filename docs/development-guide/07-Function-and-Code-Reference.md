@@ -178,3 +178,9 @@ bridge supplies Devices rights and session CSRF proof; server checks remain
 authoritative. `selectDeviceDetailsTab` reuses `revealSectionTab` to keep its
 selected tab visible after narrow-screen changes. The existing Staff forms,
 Department renderer and My Account controls are preserved.
+
+`interface/staff-directory.js:renderStaffDetails` retains the existing Staff
+status action immediately after profile/login content and before the equipment
+placeholder. The action's permission, confirmation and handler are unchanged.
+See the [consolidated Batch 3.4 review](../development-handovers/evidence/stage-3-batch-34/Visual-Review.md)
+for active/inactive administrator/restricted views and current visual follow-ups.

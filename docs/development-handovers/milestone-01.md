@@ -11,8 +11,12 @@ Focused Staff/assignment/API checks: **46 passed**. The extended browser flow
 checks active/inactive administrator and restricted views, actual status
 operations, retained allocations/history/login, both allocation entry points,
 Department sharing, My Equipment and My Account across 1440px/390px light/dark.
-Visual comparison and the updated evidence report are being completed; no owner
-acceptance, merge, deployment or publication is implied by this checkpoint.
+The consolidated flow and existing Staff interface browser test both passed;
+40 captures, geometry/source checks and visual follow-ups are in the
+[consolidated review](evidence/stage-3-batch-34/Visual-Review.md).
+Outstanding visual notes concern inactive-notice inset, a dark unselected-device
+label and inherited Device footer casing. No unapproved styling change was made.
+Owner acceptance remains outstanding; no merge, deployment or publication.
 
 ## Batch 3.4 Final Corrections — 14 November 2026
 

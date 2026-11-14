@@ -2,65 +2,397 @@
   "passed": true,
   "errors": [],
   "measurements": {
-    "staff-1440-light": {
+    "staff-assignment-1440-light": {
       "width": 1440,
       "documentWidth": 1440,
       "theme": "h-full",
-      "focused": "BODY"
+      "focused": "INPUT",
+      "fullPage": false
+    },
+    "staff-assignment-1440-dark": {
+      "width": 1440,
+      "documentWidth": 1440,
+      "theme": "h-full dark",
+      "focused": "INPUT",
+      "fullPage": false
+    },
+    "staff-assignment-390-light": {
+      "width": 390,
+      "documentWidth": 390,
+      "theme": "h-full",
+      "focused": "INPUT",
+      "fullPage": false
+    },
+    "staff-assignment-390-dark": {
+      "width": 390,
+      "documentWidth": 390,
+      "theme": "h-full dark",
+      "focused": "INPUT",
+      "fullPage": false
+    },
+    "staff-1440-light": {
+      "positions": {
+        "hasAction": true,
+        "actionBottom": 729.96875,
+        "actionTop": 689.96875,
+        "equipmentTop": 747.96875,
+        "profileBottom": 671.96875,
+        "actionBeforeEquipment": true
+      },
+      "width": 1440,
+      "documentWidth": 1440,
+      "theme": "h-full",
+      "focused": "BODY",
+      "fullPage": true
     },
     "staff-1440-dark": {
+      "positions": {
+        "hasAction": true,
+        "actionBottom": 729.96875,
+        "actionTop": 689.96875,
+        "equipmentTop": 747.96875,
+        "profileBottom": 671.96875,
+        "actionBeforeEquipment": true
+      },
       "width": 1440,
       "documentWidth": 1440,
       "theme": "h-full dark",
-      "focused": "BODY"
+      "focused": "BODY",
+      "fullPage": true
     },
     "staff-390-light": {
+      "positions": {
+        "hasAction": true,
+        "actionBottom": 1039.171875,
+        "actionTop": 999.171875,
+        "equipmentTop": 1057.171875,
+        "profileBottom": 981.171875,
+        "actionBeforeEquipment": true
+      },
       "width": 390,
       "documentWidth": 390,
       "theme": "h-full",
-      "focused": "BODY"
+      "focused": "BODY",
+      "fullPage": true
     },
     "staff-390-dark": {
+      "positions": {
+        "hasAction": true,
+        "actionBottom": 1039.171875,
+        "actionTop": 999.171875,
+        "equipmentTop": 1057.171875,
+        "profileBottom": 981.171875,
+        "actionBeforeEquipment": true
+      },
       "width": 390,
       "documentWidth": 390,
       "theme": "h-full dark",
-      "focused": "BODY"
+      "focused": "BODY",
+      "fullPage": true
+    },
+    "staff-restricted-active-1440-light": {
+      "positions": {
+        "hasAction": false,
+        "equipmentTop": 546.578125,
+        "profileBottom": 510.578125,
+        "actionBeforeEquipment": null
+      },
+      "width": 1440,
+      "documentWidth": 1440,
+      "theme": "h-full",
+      "focused": "BODY",
+      "fullPage": true
+    },
+    "staff-restricted-active-1440-dark": {
+      "positions": {
+        "hasAction": false,
+        "equipmentTop": 546.578125,
+        "profileBottom": 510.578125,
+        "actionBeforeEquipment": null
+      },
+      "width": 1440,
+      "documentWidth": 1440,
+      "theme": "h-full dark",
+      "focused": "BODY",
+      "fullPage": true
+    },
+    "staff-restricted-active-390-light": {
+      "positions": {
+        "hasAction": false,
+        "equipmentTop": 845.390625,
+        "profileBottom": 809.390625,
+        "actionBeforeEquipment": null
+      },
+      "width": 390,
+      "documentWidth": 390,
+      "theme": "h-full",
+      "focused": "BODY",
+      "fullPage": true
+    },
+    "staff-restricted-active-390-dark": {
+      "positions": {
+        "hasAction": false,
+        "equipmentTop": 845.390625,
+        "profileBottom": 809.390625,
+        "actionBeforeEquipment": null
+      },
+      "width": 390,
+      "documentWidth": 390,
+      "theme": "h-full dark",
+      "focused": "BODY",
+      "fullPage": true
+    },
+    "staff-inactive-1440-light": {
+      "positions": {
+        "hasAction": true,
+        "actionBottom": 456.96875,
+        "actionTop": 416.96875,
+        "equipmentTop": 474.96875,
+        "profileBottom": 398.96875,
+        "actionBeforeEquipment": true
+      },
+      "width": 1440,
+      "documentWidth": 1440,
+      "theme": "h-full",
+      "focused": "BODY",
+      "fullPage": true
+    },
+    "staff-inactive-1440-dark": {
+      "positions": {
+        "hasAction": true,
+        "actionBottom": 729.96875,
+        "actionTop": 689.96875,
+        "equipmentTop": 747.96875,
+        "profileBottom": 671.96875,
+        "actionBeforeEquipment": true
+      },
+      "width": 1440,
+      "documentWidth": 1440,
+      "theme": "h-full dark",
+      "focused": "BODY",
+      "fullPage": true
+    },
+    "staff-inactive-390-light": {
+      "positions": {
+        "hasAction": true,
+        "actionBottom": 1039.171875,
+        "actionTop": 999.171875,
+        "equipmentTop": 1057.171875,
+        "profileBottom": 981.171875,
+        "actionBeforeEquipment": true
+      },
+      "width": 390,
+      "documentWidth": 390,
+      "theme": "h-full",
+      "focused": "BODY",
+      "fullPage": true
+    },
+    "staff-inactive-390-dark": {
+      "positions": {
+        "hasAction": true,
+        "actionBottom": 1039.171875,
+        "actionTop": 999.171875,
+        "equipmentTop": 1057.171875,
+        "profileBottom": 981.171875,
+        "actionBeforeEquipment": true
+      },
+      "width": 390,
+      "documentWidth": 390,
+      "theme": "h-full dark",
+      "focused": "BODY",
+      "fullPage": true
+    },
+    "staff-restricted-inactive-1440-light": {
+      "positions": {
+        "hasAction": false,
+        "equipmentTop": 546.578125,
+        "profileBottom": 510.578125,
+        "actionBeforeEquipment": null
+      },
+      "width": 1440,
+      "documentWidth": 1440,
+      "theme": "h-full",
+      "focused": "BODY",
+      "fullPage": true
+    },
+    "staff-restricted-inactive-1440-dark": {
+      "positions": {
+        "hasAction": false,
+        "equipmentTop": 546.578125,
+        "profileBottom": 510.578125,
+        "actionBeforeEquipment": null
+      },
+      "width": 1440,
+      "documentWidth": 1440,
+      "theme": "h-full dark",
+      "focused": "BODY",
+      "fullPage": true
+    },
+    "staff-restricted-inactive-390-light": {
+      "positions": {
+        "hasAction": false,
+        "equipmentTop": 845.390625,
+        "profileBottom": 809.390625,
+        "actionBeforeEquipment": null
+      },
+      "width": 390,
+      "documentWidth": 390,
+      "theme": "h-full",
+      "focused": "BODY",
+      "fullPage": true
+    },
+    "staff-restricted-inactive-390-dark": {
+      "positions": {
+        "hasAction": false,
+        "equipmentTop": 845.390625,
+        "profileBottom": 809.390625,
+        "actionBeforeEquipment": null
+      },
+      "width": 390,
+      "documentWidth": 390,
+      "theme": "h-full dark",
+      "focused": "BODY",
+      "fullPage": true
     },
     "device-1440-light": {
       "width": 1440,
       "documentWidth": 1440,
       "theme": "h-full",
-      "focused": "BUTTON"
+      "focused": "BUTTON",
+      "fullPage": false
     },
     "device-1440-dark": {
       "width": 1440,
       "documentWidth": 1440,
       "theme": "h-full dark",
-      "focused": "BUTTON"
+      "focused": "BUTTON",
+      "fullPage": false
     },
     "device-390-light": {
       "width": 390,
       "documentWidth": 390,
       "theme": "h-full",
-      "focused": "BUTTON"
+      "focused": "BUTTON",
+      "fullPage": false
     },
     "device-390-dark": {
       "width": 390,
       "documentWidth": 390,
       "theme": "h-full dark",
-      "focused": "BUTTON"
+      "focused": "BUTTON",
+      "fullPage": false
+    },
+    "assignment-1440-light": {
+      "width": 1440,
+      "documentWidth": 1440,
+      "theme": "h-full",
+      "focused": "SELECT",
+      "fullPage": false
+    },
+    "assignment-1440-dark": {
+      "width": 1440,
+      "documentWidth": 1440,
+      "theme": "h-full dark",
+      "focused": "SELECT",
+      "fullPage": false
     },
     "assignment-390-light": {
       "width": 390,
       "documentWidth": 390,
       "theme": "h-full",
-      "focused": "SELECT"
+      "focused": "SELECT",
+      "fullPage": false
     },
     "assignment-390-dark": {
       "width": 390,
       "documentWidth": 390,
       "theme": "h-full dark",
-      "focused": "SELECT"
+      "focused": "SELECT",
+      "fullPage": false
+    },
+    "device-shared-1440-light": {
+      "width": 1440,
+      "documentWidth": 1440,
+      "theme": "h-full",
+      "focused": "BUTTON",
+      "fullPage": false
+    },
+    "device-shared-1440-dark": {
+      "width": 1440,
+      "documentWidth": 1440,
+      "theme": "h-full dark",
+      "focused": "BUTTON",
+      "fullPage": false
+    },
+    "device-shared-390-light": {
+      "width": 390,
+      "documentWidth": 390,
+      "theme": "h-full",
+      "focused": "BUTTON",
+      "fullPage": false
+    },
+    "device-shared-390-dark": {
+      "width": 390,
+      "documentWidth": 390,
+      "theme": "h-full dark",
+      "focused": "BUTTON",
+      "fullPage": false
+    },
+    "my-account-1440-light": {
+      "width": 1440,
+      "documentWidth": 1440,
+      "theme": "h-full",
+      "focused": "BODY",
+      "fullPage": true
+    },
+    "my-account-1440-dark": {
+      "width": 1440,
+      "documentWidth": 1440,
+      "theme": "h-full dark",
+      "focused": "BODY",
+      "fullPage": true
+    },
+    "my-account-390-light": {
+      "width": 390,
+      "documentWidth": 390,
+      "theme": "h-full",
+      "focused": "BODY",
+      "fullPage": true
+    },
+    "my-account-390-dark": {
+      "width": 390,
+      "documentWidth": 390,
+      "theme": "h-full dark",
+      "focused": "BODY",
+      "fullPage": true
+    },
+    "personal-1440-light": {
+      "width": 1440,
+      "documentWidth": 1440,
+      "theme": "h-full",
+      "focused": "BUTTON",
+      "fullPage": true
+    },
+    "personal-1440-dark": {
+      "width": 1440,
+      "documentWidth": 1440,
+      "theme": "h-full dark",
+      "focused": "BUTTON",
+      "fullPage": true
+    },
+    "personal-390-light": {
+      "width": 390,
+      "documentWidth": 390,
+      "theme": "h-full",
+      "focused": "BUTTON",
+      "fullPage": true
+    },
+    "personal-390-dark": {
+      "width": 390,
+      "documentWidth": 390,
+      "theme": "h-full dark",
+      "focused": "BUTTON",
+      "fullPage": true
     }
   }
 }

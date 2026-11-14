@@ -2,11 +2,21 @@
 
 Draft [PR #382](https://github.com/Caffoot/Caffoot-Lite/pull/382) targets
 `milestone-1` from the verified `7ec4ac27eddb1f798fdfcf9fff09b761c7bebd86`
-baseline. Runtime checkpoint: `d91629bdb308c3012b08e2b3ed724a85d0cfa774`.
+baseline. Original delivery runtime checkpoint: `d91629bdb308c3012b08e2b3ed724a85d0cfa774`.
 The original documentation/evidence checkpoint is
 `ad184c83c5eb18945d21b0ccb7432ac8a551a8e8`. The corrections below supersede
-that checkpoint. Original screenshots, Docker results and image hashes remain
-evidence for the original runtime; they are not a new correction-image build.
+that checkpoint. Original screenshot revisions remain in Git history. Docker results and image
+hashes remain evidence for their original runtime; current captures are listed
+in the consolidated review below, without claiming a new image build.
+
+## Consolidated Visual Review And Status Placement
+
+[The consolidated review](Visual-Review.md) records the subsequent status-action
+placement correction, 46 passing focused tests, both passing affected browser
+flows, 40 updated captures and the remaining visual follow-ups. Current PNGs and
+`browser-results.json` correspond to runtime `163b4e0ff12ab5cddaa7f69a97f74b9f30522e88`.
+Original Docker/image provenance remains tied to the earlier recorded runtime;
+no Docker rerun or owner acceptance is claimed for the presentation correction.
 
 ## Final Corrections — 14 November 2026
 
