@@ -1,0 +1,587 @@
+{
+  "baseline": "221739ae8c1331d396977adb6e79dc910f39380d",
+  "browser": "Existing system Chromium with Playwright; no installation",
+  "viewports": [
+    {
+      "width": 1440,
+      "height": 1000
+    },
+    {
+      "width": 1024,
+      "height": 1000
+    },
+    {
+      "width": 768,
+      "height": 1000
+    },
+    {
+      "width": 390,
+      "height": 844
+    }
+  ],
+  "checks": [
+    "Four clearly fictional Staff records, including blank migrated details",
+    "IT Assets hidden by default",
+    "Department-name search finds associated Staff",
+    "Archived Department remains searchable",
+    "Create Login defaults off",
+    "Manual First Name is required",
+    "Email remains optional",
+    "Archived Departments unavailable for new membership",
+    "Password confirmation prevents a mismatched sample save",
+    "Optional login save opens the existing Staff identity",
+    "Manage Login opens the existing Users account management interface",
+    "Six independent section override controls",
+    "Migrated missing names stay blank",
+    "Editing migrated blanks does not invent required information",
+    "Staff-only reader has no Departments navigation",
+    "Permissions is administrator-only",
+    "Staff-only workspace does not grant inventory",
+    "Staff Read has no Add action",
+    "Staff-only list hides linked-login information",
+    "Staff Read without Departments Read can search associated Department labels",
+    "Non-admin Staff editor has no login controls",
+    "Department Read has no mutation controls",
+    "Department-only workspace does not grant Staff directory access",
+    "Department Edit can manage its permitted records",
+    "Never-associated Department offers permanent deletion",
+    "Historical associations prevent permanent deletion",
+    "Archived Department offers reactivation",
+    "Archiving retains existing Staff membership",
+    "New membership excludes the newly archived Department",
+    "Protected Staff Member baseline cannot be edited",
+    "Built-in role name is protected",
+    "Access review retains before/after, MFA and feature-disabled presentation",
+    "IT Assets Edit does not enable the feature",
+    "Separate review feature switch controls eligible navigation",
+    "Individual override supersedes inherited Edit",
+    "Inherit restores role-derived Edit",
+    "Signed-in administrator section controls remain protected",
+    "Dialog keyboard focus stays inside the source modal",
+    "Escape restores focus to the opener",
+    "No page errors, API calls or external resource requests",
+    "Typing a multi-word Staff name preserves spaces and case",
+    "Typing a multi-word archived Department name works",
+    "Existing account search and MFA filters combine and update the visible count",
+    "Existing account profile search is retained",
+    "Account profile edits do not synchronise Staff profiles",
+    "Never-associated Department deletion has an explicit confirmation",
+    "Sample passwords and records are never written to model or browser storage",
+    "All six individual override controls retain matching, valid labels in both themes and viewport sizes",
+    "1440px light: separate View Details and Edit",
+    "1440px light: no directory-row Create Login",
+    "1440px light: optional login starts off",
+    "1440px light: approved personal/login column order",
+    "1440px light: separate guidance card",
+    "1440px light: role and MFA guidance inside login card",
+    "1440px light: labelled 42px Staff controls",
+    "1440px light: Department and Job Title controls aligned",
+    "1440px light: separate Save/Cancel footer",
+    "1440px light: header actions do not squeeze or overlap heading",
+    "1440px light: no Staff form overflow",
+    "1440px light: Edit retains linked login and aligned controls",
+    "1440px light: primary Department action in page header",
+    "1440px light: labelled 42px Department Add controls",
+    "1440px light: labelled 42px Department Edit controls",
+    "1440px light: no Department form overflow",
+    "1440px dark: separate View Details and Edit",
+    "1440px dark: no directory-row Create Login",
+    "1440px dark: optional login starts off",
+    "1440px dark: approved personal/login column order",
+    "1440px dark: separate guidance card",
+    "1440px dark: role and MFA guidance inside login card",
+    "1440px dark: labelled 42px Staff controls",
+    "1440px dark: Department and Job Title controls aligned",
+    "1440px dark: separate Save/Cancel footer",
+    "1440px dark: header actions do not squeeze or overlap heading",
+    "1440px dark: no Staff form overflow",
+    "1440px dark: Edit retains linked login and aligned controls",
+    "1440px dark: primary Department action in page header",
+    "1440px dark: labelled 42px Department Add controls",
+    "1440px dark: labelled 42px Department Edit controls",
+    "1440px dark: no Department form overflow",
+    "1024px light: separate View Details and Edit",
+    "1024px light: no directory-row Create Login",
+    "1024px light: optional login starts off",
+    "1024px light: approved personal/login column order",
+    "1024px light: separate guidance card",
+    "1024px light: role and MFA guidance inside login card",
+    "1024px light: labelled 42px Staff controls",
+    "1024px light: Department and Job Title controls aligned",
+    "1024px light: separate Save/Cancel footer",
+    "1024px light: header actions do not squeeze or overlap heading",
+    "1024px light: no Staff form overflow",
+    "1024px light: Edit retains linked login and aligned controls",
+    "1024px light: primary Department action in page header",
+    "1024px light: labelled 42px Department Add controls",
+    "1024px light: labelled 42px Department Edit controls",
+    "1024px light: no Department form overflow",
+    "1024px dark: separate View Details and Edit",
+    "1024px dark: no directory-row Create Login",
+    "1024px dark: optional login starts off",
+    "1024px dark: approved personal/login column order",
+    "1024px dark: separate guidance card",
+    "1024px dark: role and MFA guidance inside login card",
+    "1024px dark: labelled 42px Staff controls",
+    "1024px dark: Department and Job Title controls aligned",
+    "1024px dark: separate Save/Cancel footer",
+    "1024px dark: header actions do not squeeze or overlap heading",
+    "1024px dark: no Staff form overflow",
+    "1024px dark: Edit retains linked login and aligned controls",
+    "1024px dark: primary Department action in page header",
+    "1024px dark: labelled 42px Department Add controls",
+    "1024px dark: labelled 42px Department Edit controls",
+    "1024px dark: no Department form overflow",
+    "768px light: separate View Details and Edit",
+    "768px light: no directory-row Create Login",
+    "768px light: optional login starts off",
+    "768px light: approved personal/login column order",
+    "768px light: separate guidance card",
+    "768px light: role and MFA guidance inside login card",
+    "768px light: labelled 42px Staff controls",
+    "768px light: Department and Job Title controls aligned",
+    "768px light: separate Save/Cancel footer",
+    "768px light: header actions do not squeeze or overlap heading",
+    "768px light: no Staff form overflow",
+    "768px light: Edit retains linked login and aligned controls",
+    "768px light: primary Department action in page header",
+    "768px light: labelled 42px Department Add controls",
+    "768px light: labelled 42px Department Edit controls",
+    "768px light: no Department form overflow",
+    "768px dark: separate View Details and Edit",
+    "768px dark: no directory-row Create Login",
+    "768px dark: optional login starts off",
+    "768px dark: approved personal/login column order",
+    "768px dark: separate guidance card",
+    "768px dark: role and MFA guidance inside login card",
+    "768px dark: labelled 42px Staff controls",
+    "768px dark: Department and Job Title controls aligned",
+    "768px dark: separate Save/Cancel footer",
+    "768px dark: header actions do not squeeze or overlap heading",
+    "768px dark: no Staff form overflow",
+    "768px dark: Edit retains linked login and aligned controls",
+    "768px dark: primary Department action in page header",
+    "768px dark: labelled 42px Department Add controls",
+    "768px dark: labelled 42px Department Edit controls",
+    "768px dark: no Department form overflow",
+    "390px light: separate View Details and Edit",
+    "390px light: no directory-row Create Login",
+    "390px light: optional login starts off",
+    "390px light: approved personal/login column order",
+    "390px light: separate guidance card",
+    "390px light: role and MFA guidance inside login card",
+    "390px light: labelled 42px Staff controls",
+    "390px light: separate Save/Cancel footer",
+    "390px light: header actions do not squeeze or overlap heading",
+    "390px light: no Staff form overflow",
+    "390px light: Edit retains linked login and aligned controls",
+    "390px light: primary Department action in page header",
+    "390px light: labelled 42px Department Add controls",
+    "390px light: labelled 42px Department Edit controls",
+    "390px light: no Department form overflow",
+    "390px dark: separate View Details and Edit",
+    "390px dark: no directory-row Create Login",
+    "390px dark: optional login starts off",
+    "390px dark: approved personal/login column order",
+    "390px dark: separate guidance card",
+    "390px dark: role and MFA guidance inside login card",
+    "390px dark: labelled 42px Staff controls",
+    "390px dark: separate Save/Cancel footer",
+    "390px dark: header actions do not squeeze or overlap heading",
+    "390px dark: no Staff form overflow",
+    "390px dark: Edit retains linked login and aligned controls",
+    "390px dark: primary Department action in page header",
+    "390px dark: labelled 42px Department Add controls",
+    "390px dark: labelled 42px Department Edit controls",
+    "390px dark: no Department form overflow",
+    "Record Create Login opens combined form with explicit login intent",
+    "Staff Read shows View Details without Edit",
+    "Staff Edit keeps row Edit without Departments access",
+    "Restricted combined form exposes no account controls",
+    "No preview page errors"
+  ],
+  "checkGroups": {
+    "existingInteractions": 48,
+    "visualCorrections": 131
+  },
+  "pageErrors": [],
+  "unexpectedRequests": [],
+  "limitations": [
+    "Managed Chromium blocks file URLs. The same self-contained HTML was inspected through local static HTTP."
+  ],
+  "previewSha256": "d2bb6981520e16a59f33b90bad0916e77c48fa9358eb64ff99aedf5ced3f32cd",
+  "screenshots": {
+    "desktop-dark-department-dialog.png": {
+      "width": 1440,
+      "height": 1000,
+      "sha256": "23d02c56ae49fe6f05558f8390e7b732ad873f76944d61d20cc2eff98b4cd749"
+    },
+    "desktop-dark-departments.png": {
+      "width": 1440,
+      "height": 1000,
+      "sha256": "d5c7728e72cffe489936918eb0dca3e86c55b56f0742550caee4560fd36f7898"
+    },
+    "desktop-dark-permissions-individual-overrides.png": {
+      "width": 1440,
+      "height": 1000,
+      "sha256": "c17206b345b0a7470757293335cca327f7f09670c614729a2734224066c01a42"
+    },
+    "desktop-dark-permissions-list.png": {
+      "width": 1440,
+      "height": 1000,
+      "sha256": "bd346b9fc5b87660ba5937b71d1ed80af01e7fec7fc64285341b8492a310417a"
+    },
+    "desktop-dark-permissions-overview.png": {
+      "width": 1440,
+      "height": 1109,
+      "sha256": "f25e9def99360ef3adc827941cf0e91d6a37df8018d1a75962452057cd568acd"
+    },
+    "desktop-dark-permissions-role-dialog.png": {
+      "width": 1440,
+      "height": 1000,
+      "sha256": "0facad5879ec2767a5a47700b45a25f835956898036d229218971043079bc091"
+    },
+    "desktop-dark-permissions-roles.png": {
+      "width": 1440,
+      "height": 1000,
+      "sha256": "ba4c8f6d6bdc25bda323c84d0f9655694bcd039926647d488c181a1774c1e241"
+    },
+    "desktop-dark-staff-add-login.png": {
+      "width": 1440,
+      "height": 1398,
+      "sha256": "8304e4b53e4a18f7e72fc7f644d3afaa687e4468c8720d3d0af41c12ba898a8e"
+    },
+    "desktop-dark-staff-details.png": {
+      "width": 1440,
+      "height": 1000,
+      "sha256": "8f459789afbfb804b2b5ddda618a73fe21cd8b768d2a4c9b315b78197ea9ef33"
+    },
+    "desktop-dark-staff-directory.png": {
+      "width": 1440,
+      "height": 1000,
+      "sha256": "55b0c6260671351ce2783479cdcb6665d0532ebaef108781eed1deb6d6f88d44"
+    },
+    "desktop-dark-staff-edit.png": {
+      "width": 1440,
+      "height": 1000,
+      "sha256": "2fa33c6ca969a7668cb78ffc0da7dc0a436735dab7ebb8de2a783c85ef40869b"
+    },
+    "desktop-light-department-dialog.png": {
+      "width": 1440,
+      "height": 1000,
+      "sha256": "87fabec484d402d915bf60aa0765efe1ad2f6dadc218168ddefb55e1763baf36"
+    },
+    "desktop-light-department-editor-only.png": {
+      "width": 1440,
+      "height": 1000,
+      "sha256": "61ab17167ccddd172c3ff0aacc2dff722cb12cb0e1dac5f2b4998357176d769b"
+    },
+    "desktop-light-departments.png": {
+      "width": 1440,
+      "height": 1000,
+      "sha256": "81530ff22b8488661d2e9c8191ba1afb1b0621f50128be5ee16e1eae19df8ba1"
+    },
+    "desktop-light-groups-collapsed.png": {
+      "width": 1440,
+      "height": 1000,
+      "sha256": "39bcf03d6a7bec596148db1ba9dbf655bdac2439fdaf2607c5cfe4875a4c7d65"
+    },
+    "desktop-light-it-assets-navigation-enabled.png": {
+      "width": 1440,
+      "height": 1000,
+      "sha256": "3398b8fe69302ba949fdbee7a267e7bf99c8f394524974ec462a473ba340ab03"
+    },
+    "desktop-light-migrated-staff-details.png": {
+      "width": 1440,
+      "height": 1000,
+      "sha256": "0463c7e74d3ae0848102e3e55ba2f8b834795719d1b20582d3bc7c730fd00474"
+    },
+    "desktop-light-permissions-individual-overrides.png": {
+      "width": 1440,
+      "height": 1000,
+      "sha256": "38db32ede3b19c211724d90dd91299c99580918d41c33c0811c2c1b0ebf485c3"
+    },
+    "desktop-light-permissions-list.png": {
+      "width": 1440,
+      "height": 1000,
+      "sha256": "6226ca6edee2d8bbb64c50d0591e7e2ea83e99239f23a4c4d423e79295e4b4e2"
+    },
+    "desktop-light-permissions-overview.png": {
+      "width": 1440,
+      "height": 1109,
+      "sha256": "1d589a650ad60ba31f21ad67248d306b0c2497b55ba0f347967d8c1318d1eb36"
+    },
+    "desktop-light-permissions-role-dialog.png": {
+      "width": 1440,
+      "height": 1000,
+      "sha256": "70656ec80d222593b34fedd0a969f8c3e1a19a0e54875e6c5144dc76d1762654"
+    },
+    "desktop-light-permissions-roles.png": {
+      "width": 1440,
+      "height": 1000,
+      "sha256": "a3a3d995b7a5e6d2504d7cd37f6af9b5105ef25506a5d47bcb6601e48c23e7fb"
+    },
+    "desktop-light-sidebar-collapsed.png": {
+      "width": 1440,
+      "height": 1000,
+      "sha256": "9cb6a74a47caae72b325c3b282065997ccf25b735c480d37ee50783896ecf1ee"
+    },
+    "desktop-light-staff-add-login-off.png": {
+      "width": 1440,
+      "height": 1000,
+      "sha256": "39a96edccec47e45915a87d836320c7e375a384b8360d1a71eb417f8c2bdfb6d"
+    },
+    "desktop-light-staff-add-login.png": {
+      "width": 1440,
+      "height": 1398,
+      "sha256": "1f47bc128f114f41d6eac1952febc985c16961c13d8654b838eaf32c131b21bb"
+    },
+    "desktop-light-staff-details.png": {
+      "width": 1440,
+      "height": 1000,
+      "sha256": "278d12e4d713d7c069f0e71afe5facf8c7992e22ab59177a2d37361e4790e430"
+    },
+    "desktop-light-staff-directory.png": {
+      "width": 1440,
+      "height": 1000,
+      "sha256": "3992ccd09774481103ec3967645443339e7295c2c832b11e42eb628f3a0f5aa4"
+    },
+    "desktop-light-staff-edit.png": {
+      "width": 1440,
+      "height": 1000,
+      "sha256": "95be335a1ad3b2192c27f0a96205291e19810f1a6b3d78f5ab5ae5ddbbd3be07"
+    },
+    "desktop-light-staff-editor-only.png": {
+      "width": 1440,
+      "height": 1000,
+      "sha256": "0d406b88e4479841f826ed3af9eba63a4ef4651ae4c392b0e451dbb4b96a74e1"
+    },
+    "mobile-dark-department-dialog.png": {
+      "width": 390,
+      "height": 844,
+      "sha256": "e8177071649eb402d8236e33102bbffbc725a57a93d9fd43bf1912314768f5b0"
+    },
+    "mobile-dark-departments.png": {
+      "width": 390,
+      "height": 1275,
+      "sha256": "9cff110204b0832631dfcf22a805f9bca221ee49e9fad3e0f6217abbcfacd18b"
+    },
+    "mobile-dark-permissions-individual-overrides.png": {
+      "width": 390,
+      "height": 844,
+      "sha256": "ccdee1c46f4aa479c6aeb69e343365a1fa78236f1a7a71c23f436b7a4a9de8c9"
+    },
+    "mobile-dark-permissions-list.png": {
+      "width": 390,
+      "height": 1573,
+      "sha256": "51f11a64fac56bdc2ab55e2cb67a00d76e806868d44852c4232143392faa01b5"
+    },
+    "mobile-dark-permissions-overview.png": {
+      "width": 390,
+      "height": 2019,
+      "sha256": "e479e9820906fec71c3f1a2c6c76f5d2f3c3d0f1fdc00ea6a9faeaa2a2652705"
+    },
+    "mobile-dark-permissions-role-dialog.png": {
+      "width": 390,
+      "height": 844,
+      "sha256": "8cd9ebae8192827ab2a3e558db6c5782b4f0fce816077544c27a20c0f658ada0"
+    },
+    "mobile-dark-permissions-roles.png": {
+      "width": 390,
+      "height": 1416,
+      "sha256": "4f395de110003bcd4b8f8a412cd91164fba80e5075eb7a3bb6d7346d3e79a202"
+    },
+    "mobile-dark-staff-add-login.png": {
+      "width": 390,
+      "height": 2621,
+      "sha256": "c913e6dd88cd19f8b0e7a502937e725b18db478d9598ebb429f63467e606d007"
+    },
+    "mobile-dark-staff-details.png": {
+      "width": 390,
+      "height": 1146,
+      "sha256": "e0f46f5e3b0421f71dc80bf68a80eaecfb8377bbfcdf56e0cc54daf7fa229a4b"
+    },
+    "mobile-dark-staff-directory.png": {
+      "width": 390,
+      "height": 1556,
+      "sha256": "14e4d2fddc13bad8f20d0e69577df9f311be52142d2be28dbc865aaaeac255f2"
+    },
+    "mobile-dark-staff-edit.png": {
+      "width": 390,
+      "height": 2115,
+      "sha256": "7402b5f5633963243b55dcb8a35b368f7f32e5b1e397e137093fafeb983cf9fb"
+    },
+    "mobile-dark-staff-editor-only.png": {
+      "width": 390,
+      "height": 1524,
+      "sha256": "8db7594588a452abf778798e2da1872a1b7d01dd9022847a95c25c2af8cf3705"
+    },
+    "mobile-light-department-dialog.png": {
+      "width": 390,
+      "height": 844,
+      "sha256": "b2939ac08070f96cd488c418847e1e1b1d2587363f88dcee71a1548020edad83"
+    },
+    "mobile-light-departments.png": {
+      "width": 390,
+      "height": 1275,
+      "sha256": "2af57bea85f951baab513354d26c881755ab63dda99052c13711389cf78f4a6b"
+    },
+    "mobile-light-permissions-individual-overrides.png": {
+      "width": 390,
+      "height": 844,
+      "sha256": "8ac14acee6ec5a69fb374bc57f301d64d202aa1c02e0c95a266986810c0c3ccf"
+    },
+    "mobile-light-permissions-list.png": {
+      "width": 390,
+      "height": 1573,
+      "sha256": "a1e3450c3f7782911d542d2ae2319ac3a86b6f73ac54ea9d1c192c5d34cd8fd3"
+    },
+    "mobile-light-permissions-overview.png": {
+      "width": 390,
+      "height": 2019,
+      "sha256": "a3f9cfb39114d429b7366b0b3c2689479a2508495c5e95c7a341c122ec1232d5"
+    },
+    "mobile-light-permissions-role-dialog.png": {
+      "width": 390,
+      "height": 844,
+      "sha256": "675de6aa6220ad84e0f6fff96de74c58a68fdbf153b3d5ff983dc49ffaa26874"
+    },
+    "mobile-light-permissions-roles.png": {
+      "width": 390,
+      "height": 1416,
+      "sha256": "c448621b62f150d149c1ce028496babdc2cdbf322561981447157fec3b013f08"
+    },
+    "mobile-light-staff-add-login.png": {
+      "width": 390,
+      "height": 2621,
+      "sha256": "f35064e9a9ea54606a840593757fc288464a946a411c1a04e82d506d8341a585"
+    },
+    "mobile-light-staff-details.png": {
+      "width": 390,
+      "height": 1146,
+      "sha256": "a2e79c80be727a956b24d99b5b539da3a0edccb9f1f7664c2913c645e5f7dd0a"
+    },
+    "mobile-light-staff-directory.png": {
+      "width": 390,
+      "height": 1556,
+      "sha256": "91e56f31c8c07186c2748acbbc4fc8806600f511f2320c1907fabea7beb93322"
+    },
+    "mobile-light-staff-edit.png": {
+      "width": 390,
+      "height": 2115,
+      "sha256": "9d629e6af11dcf6dc22561e5b013b19757f6c150e2f3321c51d57909bc0facb4"
+    }
+  },
+  "comparisonCaptures": {
+    "approved-dark-form.png": {
+      "width": 1139,
+      "height": 959,
+      "sha256": "304eb14b835d54870fc77edc9d2f756beeec789d730f4659ac9409a2fad97fba"
+    },
+    "approved-directory-assignments-off.png": {
+      "width": 1139,
+      "height": 522,
+      "sha256": "d3966c07dea469c80bbfab01ee4b8753c9fff73e142b7e7891975a37671be67b"
+    },
+    "approved-directory-assignments-on.png": {
+      "width": 1139,
+      "height": 959,
+      "sha256": "7bc9af9cb13a6613ba7521ddbd7af64f877bd6e40387dba76f0f47d1e4c512e9"
+    },
+    "approved-directory.png": {
+      "width": 1139,
+      "height": 422,
+      "sha256": "90de80d8317cc1ecb1c90b2a1907242fcfa2d184eed234852c0bb3e8bd27ac43"
+    },
+    "approved-member-login-off.png": {
+      "width": 1139,
+      "height": 522,
+      "sha256": "207a899530f874375bd881afd53b6f4090d279963a984c912127bf2520416b7f"
+    },
+    "approved-member-login-on.png": {
+      "width": 1139,
+      "height": 959,
+      "sha256": "6d905d9b6e4974262c4df41b0531ca46d3c6de16aef64b41f1da076bdb1f2e55"
+    },
+    "approved-mobile-form.png": {
+      "width": 299,
+      "height": 1917,
+      "sha256": "98f95ee5855c5f3d1720197840ce02e782513364c96fc426de9f1427eda235ca"
+    },
+    "corrected-desktop-dark-department-add.png": {
+      "width": 1440,
+      "height": 1000,
+      "sha256": "fbf2c48a0c36ff8bb8a2cb336801a1e8ea0ec9afbc2d5f0957bd9423851bd76c"
+    },
+    "corrected-desktop-dark-off.png": {
+      "width": 1139,
+      "height": 610,
+      "sha256": "6d8b9689622bf3c026aac55e77afa959b159054a97fe49fa86ae892c6552938a"
+    },
+    "corrected-desktop-dark-on.png": {
+      "width": 1139,
+      "height": 1016,
+      "sha256": "1f963badbfdc9a3adc10fe017390f581c9c326252e36337e716756cea7b654f9"
+    },
+    "corrected-desktop-light-department-add.png": {
+      "width": 1440,
+      "height": 1000,
+      "sha256": "b3fe5e112b92760b7bbe24907f48f82d8ffffbef4cd678297e35e1d6a037222b"
+    },
+    "corrected-desktop-light-off.png": {
+      "width": 1139,
+      "height": 610,
+      "sha256": "d5725906dd241a422e9c5c179b4800acf84325c7e380bc47e58c41240571f6e2"
+    },
+    "corrected-desktop-light-on.png": {
+      "width": 1139,
+      "height": 1016,
+      "sha256": "87dcfefe9ae88ca5ca5011b6e099e76b03e8dc5ebb9965df46aea4345f416682"
+    },
+    "corrected-directory.png": {
+      "width": 1225,
+      "height": 765,
+      "sha256": "a0ee3e5b6d163142aa5a49a5f45184c4c5297099f7110a93bbdf8c37cc0e5d67"
+    },
+    "corrected-mobile-dark-department-add.png": {
+      "width": 390,
+      "height": 1275,
+      "sha256": "b564ca6fa61d9132a1b1e6791fdda5cab2e6c5e049cf266fb3bc61d96adbce04"
+    },
+    "corrected-mobile-dark-off.png": {
+      "width": 293,
+      "height": 1522,
+      "sha256": "1afdcecbb667490d70a134c6f91347612f1bc9adeabb2de9c0d2995b3fde9c94"
+    },
+    "corrected-mobile-dark-on.png": {
+      "width": 293,
+      "height": 2129,
+      "sha256": "ddbc351afa87203bd8c996fc71007cd1f304b649759ee0f124b19c10c695c848"
+    },
+    "corrected-mobile-light-department-add.png": {
+      "width": 390,
+      "height": 1275,
+      "sha256": "1608dd9ead2f411a552e257c37ef7bfb0fa4bcbd77cdb69ca0b7cd68da2d10ee"
+    },
+    "corrected-mobile-light-off.png": {
+      "width": 293,
+      "height": 1522,
+      "sha256": "3d47122d7d5c4c94960dce5f5cdd5d1fe260118557f83841b7b864e7791dfcb1"
+    },
+    "corrected-mobile-light-on.png": {
+      "width": 293,
+      "height": 2129,
+      "sha256": "0b7c6fdcdd6449a57968703f04eedce2fe3faa8df91dc395bfb0761115837e3e"
+    },
+    "pinned-users-add.png": {
+      "width": 1440,
+      "height": 1293,
+      "sha256": "7cfa357b8a2b799f61a62896a6c71b87166afc69f6ac2269700b6169fc79d698"
+    },
+    "pinned-users-overview.png": {
+      "width": 1440,
+      "height": 1149,
+      "sha256": "657ec4d9761b6f66587183b6e9319f5b4d2160c6b1f538c97277a6bab014c262"
+    }
+  }
+}
