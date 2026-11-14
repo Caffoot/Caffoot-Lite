@@ -161,7 +161,9 @@ let browser;
   assert.ok((await page.locator('#toast-message').innerText()).length>0);
   assert.ok(await page.locator(selector+' [aria-invalid="true"]').count());
   await page.waitForTimeout(350);
-  assert.ok(await page.evaluate(()=>{const t=document.getElementById('toast'),old=t.style.pointerEvents;t.style.pointerEvents='auto';const r=t.getBoundingClientRect(),top=document.elementFromPoint(r.right-8,r.bottom-8)?.closest('#toast')===t;t.style.pointerEvents=old;return top;}),'Notification must paint above '+selector);
+  const paintResult=await page.evaluate(async()=>{const t=document.getElementById('toast'),old=t.style.pointerEvents;t.style.pointerEvents='auto';await new Promise(requestAnimationFrame);const r=t.getBoundingClientRect(),point=document.elementFromPoint(r.right-8,r.bottom-8),style=getComputedStyle(t),result={above:point?.closest('#toast')===t,rect:{x:r.x,y:r.y,width:r.width,height:r.height,right:r.right,bottom:r.bottom},viewport:[innerWidth,innerHeight],hit:point?.outerHTML?.slice(0,350),z:style.zIndex,opacity:style.opacity,transform:style.transform,message:t.textContent};t.style.pointerEvents=old;return result;});
+  if(!paintResult.above){await page.screenshot({path:path.join(output,'paint-failure.png')});console.error('Paint diagnostics: '+JSON.stringify(paintResult));}
+  assert.ok(paintResult.above,'Notification must paint above '+selector+' '+JSON.stringify(paintResult));
 
   contextsChecked.push(selector);
  };
