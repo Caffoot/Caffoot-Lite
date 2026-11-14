@@ -65,6 +65,9 @@ class ImportHttpTests(unittest.TestCase):
         return result[0]
 
     def test_full_http_preview_confirm_and_no_replay(self):
+        with sqlite3.connect(self.path) as db:
+            feature_choices = db.execute('SELECT * FROM organisation_features ORDER BY feature').fetchall()
+            grants = db.execute('SELECT * FROM role_grants ORDER BY role_id,section').fetchall()
         source = fixture()
         source["caffootBackup"] = {
             "format": "caffoot-inventory", "schemaVersion": 1,
@@ -93,6 +96,8 @@ class ImportHttpTests(unittest.TestCase):
             self.assertEqual(db.execute(
                 "SELECT count(*) FROM inventory_devices"
             ).fetchone()[0], 1)
+            self.assertEqual(db.execute('SELECT * FROM organisation_features ORDER BY feature').fetchall(), feature_choices)
+            self.assertEqual(db.execute('SELECT * FROM role_grants ORDER BY role_id,section').fetchall(), grants)
 
     def test_cross_origin_and_untrusted_client_candidate_rejected(self):
         status, _ = self.request("/api/import/preview", b"{}", origin="https://attacker.example")

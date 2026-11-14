@@ -1,0 +1,606 @@
+test_close_reopen_and_database_restoration_preserve_unlinked_data_and_grants (test_optional_features_persistence.OptionalFeaturesPersistenceTests.test_close_reopen_and_database_restoration_preserve_unlinked_data_and_grants) ... ok
+test_real_import_reset_permissions_and_persistence_without_permission_mocks (test_optional_features_persistence.OptionalFeaturesPersistenceTests.test_real_import_reset_permissions_and_persistence_without_permission_mocks) ... ok
+test_audit_failure_rolls_back_setting (test_feature_settings.FeatureSettingsTests.test_audit_failure_rolls_back_setting) ... ok
+test_authorisation_rechecked_inside_write_transaction (test_feature_settings.FeatureSettingsTests.test_authorisation_rechecked_inside_write_transaction) ... ok
+test_choices_survive_import_clean_start_database_copy_and_restart (test_feature_settings.FeatureSettingsTests.test_choices_survive_import_clean_start_database_copy_and_restart) ... ok
+test_empty_existing_schema_12_uses_upgrade_defaults (test_feature_settings.FeatureSettingsTests.test_empty_existing_schema_12_uses_upgrade_defaults) ... ok
+test_failed_migration_rolls_back_table_and_version (test_feature_settings.FeatureSettingsTests.test_failed_migration_rolls_back_table_and_version) ... ok
+test_fresh_defaults_and_repeated_initialisation (test_feature_settings.FeatureSettingsTests.test_fresh_defaults_and_repeated_initialisation) ... ok
+test_populated_upgrade_preserves_every_existing_table_and_session (test_feature_settings.FeatureSettingsTests.test_populated_upgrade_preserves_every_existing_table_and_session) ... ok
+test_storage_rejects_unknown_nonboolean_and_future_activation (test_feature_settings.FeatureSettingsTests.test_storage_rejects_unknown_nonboolean_and_future_activation) ... ok
+test_transitions_audit_actor_values_noop_and_preserve_data (test_feature_settings.FeatureSettingsTests.test_transitions_audit_actor_values_noop_and_preserve_data) ... ok
+test_validation_confirmation_and_future_features_save_nothing (test_feature_settings.FeatureSettingsTests.test_validation_confirmation_and_future_features_save_nothing) ... ok
+test_waiting_writer_rechecks_revocation_and_administrator_state (test_feature_settings.FeatureSettingsTests.test_waiting_writer_rechecks_revocation_and_administrator_state) ... ok
+test_administrator_get_post_and_confirmation (test_feature_settings_http.FeatureSettingsHttpTests.test_administrator_get_post_and_confirmation) ... 127.0.0.1 - - [14/Nov/2026 07:02:51] "GET /api/settings/features HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:02:51] "POST /api/settings/features HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:02:51] "POST /api/settings/features HTTP/1.1" 400 -
+127.0.0.1 - - [14/Nov/2026 07:02:51] "POST /api/settings/features HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:02:51] "POST /api/settings/features HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:02:51] "POST /api/settings/features HTTP/1.1" 400 -
+127.0.0.1 - - [14/Nov/2026 07:02:51] "POST /api/settings/features HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:02:51] "POST /api/settings/features HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:02:51] "POST /api/settings/features HTTP/1.1" 400 -
+127.0.0.1 - - [14/Nov/2026 07:02:51] "POST /api/settings/features HTTP/1.1" 200 -
+ok
+test_origin_json_and_size_guards (test_feature_settings_http.FeatureSettingsHttpTests.test_origin_json_and_size_guards) ... 127.0.0.1 - - [14/Nov/2026 07:02:52] "POST /api/settings/features HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 07:02:52] "POST /api/settings/features HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 07:02:52] "POST /api/settings/features HTTP/1.1" 415 -
+127.0.0.1 - - [14/Nov/2026 07:02:52] "POST /api/settings/features HTTP/1.1" 400 -
+127.0.0.1 - - [14/Nov/2026 07:02:52] "POST /api/settings/features HTTP/1.1" 400 -
+127.0.0.1 - - [14/Nov/2026 07:02:52] "POST /api/settings/features HTTP/1.1" 400 -
+127.0.0.1 - - [14/Nov/2026 07:02:52] "GET /api/settings/features HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 07:02:52] "GET /api/settings/features HTTP/1.1" 403 -
+ok
+test_session_revocation_between_request_check_and_write_is_denied (test_feature_settings_http.FeatureSettingsHttpTests.test_session_revocation_between_request_check_and_write_is_denied) ... 127.0.0.1 - - [14/Nov/2026 07:02:53] "POST /api/settings/features HTTP/1.1" 403 -
+ok
+test_strict_payload_validation_and_unavailable_features (test_feature_settings_http.FeatureSettingsHttpTests.test_strict_payload_validation_and_unavailable_features) ... 127.0.0.1 - - [14/Nov/2026 07:02:53] "POST /api/settings/features HTTP/1.1" 400 -
+127.0.0.1 - - [14/Nov/2026 07:02:53] "POST /api/settings/features HTTP/1.1" 400 -
+127.0.0.1 - - [14/Nov/2026 07:02:53] "POST /api/settings/features HTTP/1.1" 400 -
+127.0.0.1 - - [14/Nov/2026 07:02:53] "POST /api/settings/features HTTP/1.1" 400 -
+127.0.0.1 - - [14/Nov/2026 07:02:53] "POST /api/settings/features HTTP/1.1" 400 -
+127.0.0.1 - - [14/Nov/2026 07:02:53] "POST /api/settings/features HTTP/1.1" 400 -
+127.0.0.1 - - [14/Nov/2026 07:02:53] "POST /api/settings/features HTTP/1.1" 400 -
+127.0.0.1 - - [14/Nov/2026 07:02:53] "POST /api/settings/features HTTP/1.1" 400 -
+127.0.0.1 - - [14/Nov/2026 07:02:53] "POST /api/settings/features HTTP/1.1" 400 -
+ok
+test_unauthenticated_ordinary_and_revoked_sessions_denied (test_feature_settings_http.FeatureSettingsHttpTests.test_unauthenticated_ordinary_and_revoked_sessions_denied) ... 127.0.0.1 - - [14/Nov/2026 07:02:54] "GET /api/settings/features HTTP/1.1" 401 -
+127.0.0.1 - - [14/Nov/2026 07:02:54] "GET /api/settings/features HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 07:02:54] "POST /api/settings/features HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 07:02:54] "POST /api/settings/features HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 07:02:54] "POST /api/settings/features HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 07:02:54] "POST /api/settings/features HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 07:02:54] "GET /api/settings/features HTTP/1.1" 401 -
+127.0.0.1 - - [14/Nov/2026 07:02:54] "POST /api/settings/features HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 07:02:54] "GET /api/settings/features HTTP/1.1" 401 -
+127.0.0.1 - - [14/Nov/2026 07:02:54] "POST /api/settings/features HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 07:02:54] "GET /api/settings/features HTTP/1.1" 401 -
+127.0.0.1 - - [14/Nov/2026 07:02:54] "POST /api/settings/features HTTP/1.1" 403 -
+ok
+test_all_feature_combinations_filter_direct_combined_history_and_settings (test_feature_access.FeatureAccessHttpTests.test_all_feature_combinations_filter_direct_combined_history_and_settings) ... 127.0.0.1 - - [14/Nov/2026 07:02:55] "GET /api/inventory/state HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:02:55] "GET /api/inventory/devices HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 07:02:55] "GET /api/inventory/ipam HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 07:02:55] "GET /api/inventory/racks HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 07:02:55] "GET /api/inventory/settings HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:02:55] "GET /api/inventory/history HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 07:02:55] "GET /api/inventory/state HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:02:55] "GET /api/inventory/devices HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 07:02:55] "GET /api/inventory/ipam HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 07:02:55] "GET /api/inventory/racks HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:02:55] "GET /api/inventory/settings HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:02:55] "GET /api/inventory/history HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:02:55] "GET /api/inventory/state HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:02:55] "GET /api/inventory/devices HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 07:02:55] "GET /api/inventory/ipam HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:02:55] "GET /api/inventory/racks HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 07:02:55] "GET /api/inventory/settings HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:02:55] "GET /api/inventory/history HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:02:55] "GET /api/inventory/state HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:02:55] "GET /api/inventory/devices HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 07:02:55] "GET /api/inventory/ipam HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:02:55] "GET /api/inventory/racks HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:02:55] "GET /api/inventory/settings HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:02:55] "GET /api/inventory/history HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:02:55] "GET /api/inventory/state HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:02:55] "GET /api/inventory/devices HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:02:55] "GET /api/inventory/ipam HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 07:02:55] "GET /api/inventory/racks HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 07:02:55] "GET /api/inventory/settings HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:02:55] "GET /api/inventory/history HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:02:55] "GET /api/inventory/state HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:02:55] "GET /api/inventory/devices HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:02:55] "GET /api/inventory/ipam HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 07:02:55] "GET /api/inventory/racks HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:02:55] "GET /api/inventory/settings HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:02:55] "GET /api/inventory/history HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:02:55] "GET /api/inventory/state HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:02:55] "GET /api/inventory/devices HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:02:55] "GET /api/inventory/ipam HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:02:55] "GET /api/inventory/racks HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 07:02:55] "GET /api/inventory/settings HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:02:55] "GET /api/inventory/history HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:02:55] "GET /api/inventory/state HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:02:55] "GET /api/inventory/devices HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:02:55] "GET /api/inventory/ipam HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:02:55] "GET /api/inventory/racks HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:02:55] "GET /api/inventory/settings HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:02:55] "GET /api/inventory/history HTTP/1.1" 200 -
+ok
+test_all_off_admin_essentials_and_account_access (test_feature_access.FeatureAccessHttpTests.test_all_off_admin_essentials_and_account_access) ... 127.0.0.1 - - [14/Nov/2026 07:02:56] "GET /inventory HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:02:56] "GET /account HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:02:56] "GET /api/users HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:02:56] "GET /api/settings/features HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:02:56] "GET /api/account/profile HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:02:56] "GET /api/session HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:02:56] "GET /api/session HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:02:56] "GET /api/inventory/devices HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 07:02:56] "GET /api/inventory/ipam HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 07:02:56] "GET /api/inventory/racks HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 07:02:56] "POST /api/devices/create HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 07:02:56] "POST /api/devices/edit/start HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 07:02:56] "POST /api/devices/delete HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 07:02:56] "POST /api/ipam/allocation/save HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 07:02:56] "POST /api/inventory/record/save HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 07:02:56] "POST /api/inventory/reset HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 07:02:56] "POST /api/inventory/settings/save HTTP/1.1" 403 -
+ok
+test_basic_outside_count_requires_both_read_permissions (test_feature_access.FeatureAccessHttpTests.test_basic_outside_count_requires_both_read_permissions) ... 127.0.0.1 - - [14/Nov/2026 07:02:57] "GET /api/inventory/state HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:02:57] "GET /api/inventory/state HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:02:57] "GET /api/inventory/state HTTP/1.1" 200 -
+ok
+test_each_writer_rechecks_access_before_writing (test_feature_access.FeatureAccessHttpTests.test_each_writer_rechecks_access_before_writing) ... ok
+test_forged_hidden_relationship_mutations_save_nothing (test_feature_access.FeatureAccessHttpTests.test_forged_hidden_relationship_mutations_save_nothing) ... ok
+test_grants_overrides_mfa_status_and_future_features_fail_closed (test_feature_access.FeatureAccessHttpTests.test_grants_overrides_mfa_status_and_future_features_fail_closed) ... ok
+test_hidden_devices_cannot_be_modified_through_another_section (test_feature_access.FeatureAccessHttpTests.test_hidden_devices_cannot_be_modified_through_another_section) ... 127.0.0.1 - - [14/Nov/2026 07:03:00] "POST /api/devices/edit/start HTTP/1.1" 403 -
+ok
+test_hidden_ipam_and_rack_relationships_survive_unrelated_device_save (test_feature_access.FeatureAccessHttpTests.test_hidden_ipam_and_rack_relationships_survive_unrelated_device_save) ... 127.0.0.1 - - [14/Nov/2026 07:03:01] "GET /api/inventory/ipam HTTP/1.1" 200 -
+ok
+test_inventory_import_requires_all_enabled_features (test_feature_access.FeatureAccessHttpTests.test_inventory_import_requires_all_enabled_features) ... ok
+test_ordinary_users_keep_account_without_inventory_or_administrator_access (test_feature_access.FeatureAccessHttpTests.test_ordinary_users_keep_account_without_inventory_or_administrator_access) ... 127.0.0.1 - - [14/Nov/2026 07:03:02] "GET /account HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:03:02] "GET /inventory HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 07:03:03] "GET /api/users HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 07:03:03] "GET /api/settings/features HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 07:03:03] "GET /api/inventory/state HTTP/1.1" 403 -
+ok
+test_partial_access_validation_errors_do_not_reveal_hidden_records (test_feature_access.FeatureAccessHttpTests.test_partial_access_validation_errors_do_not_reveal_hidden_records) ... 127.0.0.1 - - [14/Nov/2026 07:03:03] "POST /api/inventory/record/save HTTP/1.1" 400 -
+ok
+test_waiting_writer_rechecks_feature_after_real_database_lock (test_feature_access.FeatureAccessHttpTests.test_waiting_writer_rechecks_feature_after_real_database_lock) ... 127.0.0.1 - - [14/Nov/2026 07:03:04] "GET /api/inventory/racks HTTP/1.1" 403 -
+ok
+test_audit_failure_rolls_back_device_allocation_revision_and_history (test_optional_device_addresses.OptionalDeviceAddressTests.test_audit_failure_rolls_back_device_allocation_revision_and_history) ... ok
+test_basic_creation_and_edit_without_subnets_or_allocations (test_optional_device_addresses.OptionalDeviceAddressTests.test_basic_creation_and_edit_without_subnets_or_allocations) ... ok
+test_basic_mode_survives_clearing_and_reentry_after_enabling_ipam (test_optional_device_addresses.OptionalDeviceAddressTests.test_basic_mode_survives_clearing_and_reentry_after_enabling_ipam) ... ok
+test_enabling_restart_repair_and_unrelated_edits_do_not_link (test_optional_device_addresses.OptionalDeviceAddressTests.test_enabling_restart_repair_and_unrelated_edits_do_not_link) ... ok
+test_explicit_link_is_atomic_and_preserves_notes (test_optional_device_addresses.OptionalDeviceAddressTests.test_explicit_link_is_atomic_and_preserves_notes) ... ok
+test_invalid_modes_ipv4_duplicates_and_hidden_reservations_rejected (test_optional_device_addresses.OptionalDeviceAddressTests.test_invalid_modes_ipv4_duplicates_and_hidden_reservations_rejected) ... ok
+test_ipam_only_editor_cannot_change_basic_address_through_ipam_section (test_optional_device_addresses.OptionalDeviceAddressTests.test_ipam_only_editor_cannot_change_basic_address_through_ipam_section) ... ok
+test_legacy_import_validation_does_not_accept_basic_exemption (test_optional_device_addresses.OptionalDeviceAddressTests.test_legacy_import_validation_does_not_accept_basic_exemption) ... ok
+test_link_rechecks_both_features_grants_session_and_edit_reservation (test_optional_device_addresses.OptionalDeviceAddressTests.test_link_rechecks_both_features_grants_session_and_edit_reservation) ... ok
+test_link_rechecks_feature_after_waiting_for_write_lock (test_optional_device_addresses.OptionalDeviceAddressTests.test_link_rechecks_feature_after_waiting_for_write_lock) ... ok
+test_managed_assignment_requires_ipam_edit_and_remains_strict (test_optional_device_addresses.OptionalDeviceAddressTests.test_managed_assignment_requires_ipam_edit_and_remains_strict) ... ok
+test_managed_reference_is_readonly_and_allocation_unchanged_while_off (test_optional_device_addresses.OptionalDeviceAddressTests.test_managed_reference_is_readonly_and_allocation_unchanged_while_off) ... ok
+test_no_ip_creation_requires_devices_edit_only_in_both_modes (test_optional_device_addresses.OptionalDeviceAddressTests.test_no_ip_creation_requires_devices_edit_only_in_both_modes) ... ok
+test_no_subnet_wrong_subnet_conflict_and_stale_link_save_nothing (test_optional_device_addresses.OptionalDeviceAddressTests.test_no_subnet_wrong_subnet_conflict_and_stale_link_save_nothing) ... ok
+test_nonadministrator_link_requires_both_edit_grants (test_optional_device_addresses.OptionalDeviceAddressTests.test_nonadministrator_link_requires_both_edit_grants) ... ok
+test_cancel_has_no_request_and_get_cannot_link (test_optional_ip_http.OptionalIpHttpTests.test_cancel_has_no_request_and_get_cannot_link) ... 127.0.0.1 - - [14/Nov/2026 07:03:05] "POST /api/devices/create HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:03:05] "GET /api/devices/ipam/link HTTP/1.1" 404 -
+ok
+test_explicit_link_http_and_replay_rejection (test_optional_ip_http.OptionalIpHttpTests.test_explicit_link_http_and_replay_rejection) ... 127.0.0.1 - - [14/Nov/2026 07:03:06] "POST /api/devices/create HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:03:06] "POST /api/devices/ipam/link HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:03:06] "POST /api/devices/ipam/link HTTP/1.1" 400 -
+ok
+test_missing_proofs_disabled_features_and_mfa_save_nothing (test_optional_ip_http.OptionalIpHttpTests.test_missing_proofs_disabled_features_and_mfa_save_nothing) ... 127.0.0.1 - - [14/Nov/2026 07:03:06] "POST /api/devices/create HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:03:06] "POST /api/devices/ipam/link HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 07:03:06] "POST /api/devices/ipam/link HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 07:03:06] "POST /api/devices/ipam/link HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 07:03:06] "POST /api/devices/ipam/link HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 07:03:06] "POST /api/devices/ipam/link HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 07:03:06] "POST /api/devices/ipam/link HTTP/1.1" 403 -
+ok
+test_missing_subnet_explanation_remains_available_with_racks_off (test_optional_ip_http.OptionalIpHttpTests.test_missing_subnet_explanation_remains_available_with_racks_off) ... 127.0.0.1 - - [14/Nov/2026 07:03:07] "POST /api/devices/create HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:03:07] "POST /api/devices/ipam/link HTTP/1.1" 400 -
+ok
+test_shape_origin_json_size_and_duplicate_keys_rejected (test_optional_ip_http.OptionalIpHttpTests.test_shape_origin_json_size_and_duplicate_keys_rejected) ... 127.0.0.1 - - [14/Nov/2026 07:03:08] "POST /api/devices/create HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:03:08] "POST /api/devices/ipam/link HTTP/1.1" 400 -
+127.0.0.1 - - [14/Nov/2026 07:03:08] "POST /api/devices/ipam/link HTTP/1.1" 400 -
+127.0.0.1 - - [14/Nov/2026 07:03:08] "POST /api/devices/ipam/link HTTP/1.1" 400 -
+127.0.0.1 - - [14/Nov/2026 07:03:08] "POST /api/devices/ipam/link HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 07:03:08] "POST /api/devices/ipam/link HTTP/1.1" 415 -
+127.0.0.1 - - [14/Nov/2026 07:03:08] "POST /api/devices/ipam/link HTTP/1.1" 400 -
+127.0.0.1 - - [14/Nov/2026 07:03:08] "POST /api/devices/ipam/link HTTP/1.1" 400 -
+ok
+test_ranges_include_network_and_broadcast_and_exclude_containers (test_racks_off_preservation.BasicIpCountTests.test_ranges_include_network_and_broadcast_and_exclude_containers) ... ok
+test_absent_historical_fields_stay_absent (test_racks_off_preservation.RacksOffPreservationTests.test_absent_historical_fields_stay_absent) ... ok
+test_all_explicit_hidden_placement_changes_are_rejected_atomically (test_racks_off_preservation.RacksOffPreservationTests.test_all_explicit_hidden_placement_changes_are_rejected_atomically) ... ok
+test_new_placements_are_refused_but_nonrack_types_are_unchanged (test_racks_off_preservation.RacksOffPreservationTests.test_new_placements_are_refused_but_nonrack_types_are_unchanged) ... ok
+test_no_ip_unrelated_save_does_not_require_ipam_edit (test_racks_off_preservation.RacksOffPreservationTests.test_no_ip_unrelated_save_does_not_require_ipam_edit) ... ok
+test_omitted_fields_are_merged_from_authoritative_record (test_racks_off_preservation.RacksOffPreservationTests.test_omitted_fields_are_merged_from_authoritative_record) ... ok
+test_omitted_shelf_association_and_original_location_are_retained (test_racks_off_preservation.RacksOffPreservationTests.test_omitted_shelf_association_and_original_location_are_retained) ... ok
+test_existing_settings_panels_and_tab_buttons_are_byte_preserved (test_optional_features_visual_boundary.OptionalFeaturesVisualBoundaryTests.test_existing_settings_panels_and_tab_buttons_are_byte_preserved) ... ok
+test_existing_style_sources_and_twelve_design_pins_are_unchanged (test_optional_features_visual_boundary.OptionalFeaturesVisualBoundaryTests.test_existing_style_sources_and_twelve_design_pins_are_unchanged) ... ok
+test_administrator_is_independent_and_requires_mfa (test_role_policy.RolePolicyTests.test_administrator_is_independent_and_requires_mfa) ... ok
+test_empty_additional_role_requires_mfa_and_disabled_role_does_not (test_role_policy.RolePolicyTests.test_empty_additional_role_requires_mfa_and_disabled_role_does_not) ... ok
+test_existing_session_rechecks_additional_role_and_read_policy (test_role_policy.RolePolicyTests.test_existing_session_rechecks_additional_role_and_read_policy) ... ok
+test_inactive_unknown_and_new_sections_fail_closed (test_role_policy.RolePolicyTests.test_inactive_unknown_and_new_sections_fail_closed) ... ok
+test_individual_deny_read_edit_and_inherit_supersede_roles (test_role_policy.RolePolicyTests.test_individual_deny_read_edit_and_inherit_supersede_roles) ... ok
+test_legacy_table_cannot_supply_access_or_receive_permission_writes (test_role_policy.RolePolicyTests.test_legacy_table_cannot_supply_access_or_receive_permission_writes) ... ok
+test_multiple_enabled_roles_take_maximum_grant (test_role_policy.RolePolicyTests.test_multiple_enabled_roles_take_maximum_grant) ... ok
+test_read_requires_mfa_from_override_or_inherited_grant (test_role_policy.RolePolicyTests.test_read_requires_mfa_from_override_or_inherited_grant) ... ok
+test_recovery_uses_the_same_role_and_mfa_policy (test_role_policy.RolePolicyTests.test_recovery_uses_the_same_role_and_mfa_policy) ... ok
+test_staff_baseline_and_voluntary_mfa (test_role_policy.RolePolicyTests.test_staff_baseline_and_voluntary_mfa) ... ok
+test_account_management_and_password_change_http (test_session_http.SessionHttpTests.test_account_management_and_password_change_http) ... 127.0.0.1 - - [14/Nov/2026 07:03:13] "POST /api/users/create HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:03:13] "POST /api/users/roles/preview HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:03:13] "POST /api/users/roles/confirm HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:03:13] "POST /api/users/roles/preview HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:03:13] "POST /api/users/roles/confirm HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:03:13] "POST /api/users/delete HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 07:03:13] "POST /api/users/delete HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:03:14] "POST /api/account/password HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:03:14] "GET /api/session HTTP/1.1" 401 -
+ok
+test_admin_inventory_page_contains_users_and_migration_navigation (test_session_http.SessionHttpTests.test_admin_inventory_page_contains_users_and_migration_navigation) ... 127.0.0.1 - - [14/Nov/2026 07:03:14] "GET /inventory HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:03:14] "GET /interface/screens/navigation.html HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:03:14] "GET /interface/screens/navigation.html HTTP/1.1" 401 -
+127.0.0.1 - - [14/Nov/2026 07:03:14] "GET /interface/screens/settings.html HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:03:14] "GET /interface/screens/settings.html HTTP/1.1" 401 -
+127.0.0.1 - - [14/Nov/2026 07:03:15] "GET /interface/screens/migration.html HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:03:15] "GET /interface/screens/migration.html HTTP/1.1" 401 -
+ok
+test_anonymous_request_is_rejected (test_session_http.SessionHttpTests.test_anonymous_request_is_rejected) ... 127.0.0.1 - - [14/Nov/2026 07:03:15] "GET /api/session HTTP/1.1" 401 -
+ok
+test_device_create_edit_delete_through_authenticated_http (test_session_http.SessionHttpTests.test_device_create_edit_delete_through_authenticated_http) ... 127.0.0.1 - - [14/Nov/2026 07:03:16] "POST /api/devices/create HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:03:16] "POST /api/devices/edit/start HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:03:16] "POST /api/devices/edit/save HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:03:16] "POST /api/devices/edit/start HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:03:16] "POST /api/devices/delete HTTP/1.1" 200 -
+ok
+test_device_edit_reservation_conflict_cancel_and_expiry (test_session_http.SessionHttpTests.test_device_edit_reservation_conflict_cancel_and_expiry) ... 127.0.0.1 - - [14/Nov/2026 07:03:17] "POST /api/users/create HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:03:17] "POST /api/users/roles/preview HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:03:17] "POST /api/users/roles/confirm HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:03:17] "POST /api/devices/edit/start HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:03:17] "POST /api/devices/edit/start HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:03:17] "POST /api/devices/edit/start HTTP/1.1" 400 -
+127.0.0.1 - - [14/Nov/2026 07:03:17] "POST /api/devices/edit/start HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:03:17] "POST /api/devices/edit/cancel HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:03:17] "POST /api/devices/edit/start HTTP/1.1" 400 -
+127.0.0.1 - - [14/Nov/2026 07:03:17] "POST /api/devices/edit/cancel HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:03:17] "POST /api/devices/edit/start HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:03:17] "POST /api/devices/edit/start HTTP/1.1" 200 -
+ok
+test_device_editor_name_visible_and_competing_edit_still_refused (test_session_http.SessionHttpTests.test_device_editor_name_visible_and_competing_edit_still_refused) ... 127.0.0.1 - - [14/Nov/2026 07:03:18] "GET /api/inventory/state HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:03:18] "POST /api/devices/edit/start HTTP/1.1" 400 -
+127.0.0.1 - - [14/Nov/2026 07:03:18] "GET /api/inventory/state HTTP/1.1" 200 -
+ok
+test_inventory_assets_are_served_from_existing_published_files (test_session_http.SessionHttpTests.test_inventory_assets_are_served_from_existing_published_files) ... 127.0.0.1 - - [14/Nov/2026 07:03:19] "GET /assets/favicon.ico HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:03:19] "GET /assets/apple-touch-icon.png HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:03:19] "GET /assets/caffoot-icon-1024.png HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:03:19] "GET /assets/caffoot-logo-256.png HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:03:19] "GET /assets/qrcode.min.js HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:03:19] "GET /assets/tailwind.css HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:03:19] "GET /assets/not-in-application.png HTTP/1.1" 404 -
+ok
+test_inventory_requires_authenticated_inventory_access (test_session_http.SessionHttpTests.test_inventory_requires_authenticated_inventory_access) ... 127.0.0.1 - - [14/Nov/2026 07:03:19] "GET /inventory HTTP/1.1" 401 -
+ok
+test_inventory_snapshot_is_sqlite_owned_and_permission_filtered (test_session_http.SessionHttpTests.test_inventory_snapshot_is_sqlite_owned_and_permission_filtered) ... 127.0.0.1 - - [14/Nov/2026 07:03:20] "GET /api/inventory/state HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:03:20] "POST /api/users/create HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:03:20] "POST /api/users/roles/preview HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:03:20] "POST /api/users/roles/confirm HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:03:20] "GET /api/inventory/state HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:03:20] "GET /api/inventory/state HTTP/1.1" 401 -
+ok
+test_ipam_editor_does_not_receive_hidden_device_revisions (test_session_http.SessionHttpTests.test_ipam_editor_does_not_receive_hidden_device_revisions) ... 127.0.0.1 - - [14/Nov/2026 07:03:21] "POST /api/users/create HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:03:21] "POST /api/users/roles/preview HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:03:21] "POST /api/users/roles/confirm HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:03:21] "GET /api/inventory/state HTTP/1.1" 200 -
+ok
+test_ipam_notes_on_device_primary_ip_http (test_session_http.SessionHttpTests.test_ipam_notes_on_device_primary_ip_http) ... 127.0.0.1 - - [14/Nov/2026 07:03:22] "POST /api/ipam/allocation/save HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:03:22] "POST /api/ipam/allocation/save HTTP/1.1" 400 -
+ok
+test_legacy_device_vlan_metadata_survives_reserved_save_http (test_session_http.SessionHttpTests.test_legacy_device_vlan_metadata_survives_reserved_save_http) ... 127.0.0.1 - - [14/Nov/2026 07:03:23] "POST /api/devices/create HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:03:23] "POST /api/devices/edit/start HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:03:23] "POST /api/devices/edit/save HTTP/1.1" 200 -
+ok
+test_linked_shelf_removal_http_auth_permissions_and_atomic_result (test_session_http.SessionHttpTests.test_linked_shelf_removal_http_auth_permissions_and_atomic_result) ... 127.0.0.1 - - [14/Nov/2026 07:03:24] "POST /api/inventory/rack-shelves/remove HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 07:03:24] "POST /api/inventory/rack-shelves/remove HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 07:03:24] "POST /api/inventory/rack-shelves/remove HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 07:03:24] "POST /api/inventory/rack-shelves/remove HTTP/1.1" 400 -
+127.0.0.1 - - [14/Nov/2026 07:03:24] "POST /api/inventory/rack-shelves/remove HTTP/1.1" 400 -
+127.0.0.1 - - [14/Nov/2026 07:03:24] "POST /api/inventory/rack-shelves/remove HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:03:24] "POST /api/inventory/rack-shelves/remove HTTP/1.1" 403 -
+ok
+test_packaged_account_resources_require_authentication_without_inventory_data (test_session_http.SessionHttpTests.test_packaged_account_resources_require_authentication_without_inventory_data) ... 127.0.0.1 - - [14/Nov/2026 07:03:25] "GET /interface/application.js HTTP/1.1" 401 -
+127.0.0.1 - - [14/Nov/2026 07:03:25] "GET /interface/application.js HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:03:25] "GET /interface/application.js HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:03:25] "GET /interface/screens/dashboard.html HTTP/1.1" 401 -
+127.0.0.1 - - [14/Nov/2026 07:03:25] "GET /interface/screens/dashboard.html HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:03:25] "GET /interface/screens/dashboard.html HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:03:25] "GET /interface/styles/device-details.css HTTP/1.1" 401 -
+127.0.0.1 - - [14/Nov/2026 07:03:25] "GET /interface/styles/device-details.css HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:03:25] "GET /interface/styles/device-details.css HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:03:25] "GET /interface/../backend/server.py HTTP/1.1" 404 -
+127.0.0.1 - - [14/Nov/2026 07:03:25] "GET /interface/design-sources.json HTTP/1.1" 404 -
+127.0.0.1 - - [14/Nov/2026 07:03:25] "GET /interface/screens/not-packaged.html HTTP/1.1" 404 -
+127.0.0.1 - - [14/Nov/2026 07:03:25] "GET /interface/sign-in.js HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:03:25] "GET /interface/styles/sign-in.css HTTP/1.1" 200 -
+ok
+test_published_device_notes_exceed_login_request_limit (test_session_http.SessionHttpTests.test_published_device_notes_exceed_login_request_limit) ... 127.0.0.1 - - [14/Nov/2026 07:03:26] "POST /api/devices/create HTTP/1.1" 200 -
+ok
+test_same_tab_print_direct_entry_and_reload_keep_inventory_security (test_session_http.SessionHttpTests.test_same_tab_print_direct_entry_and_reload_keep_inventory_security) ... 127.0.0.1 - - [14/Nov/2026 07:03:26] "GET /inventory HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:03:26] "GET /inventory?rack-print=same-tab HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:03:26] "GET /inventory?rack-print=same-tab HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:03:26] "GET /inventory?rack-print=same-tab HTTP/1.1" 401 -
+127.0.0.1 - - [14/Nov/2026 07:03:27] "GET /inventory?rack-print=same-tab HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 07:03:27] "GET /inventory/ HTTP/1.1" 404 -
+127.0.0.1 - - [14/Nov/2026 07:03:27] "GET /inventory?rack-print=other HTTP/1.1" 404 -
+127.0.0.1 - - [14/Nov/2026 07:03:27] "GET /inventory?other=same-tab HTTP/1.1" 404 -
+127.0.0.1 - - [14/Nov/2026 07:03:27] "GET /inventory?rack-print=same-tab&extra=1 HTTP/1.1" 404 -
+127.0.0.1 - - [14/Nov/2026 07:03:27] "GET /interface/application.js?rack-print=same-tab HTTP/1.1" 404 -
+127.0.0.1 - - [14/Nov/2026 07:03:27] "GET /inventory HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:03:27] "GET /inventory?rack-print=same-tab HTTP/1.1" 200 -
+ok
+test_session_describes_only_own_assigned_roles_separately_from_administrator (test_session_http.SessionHttpTests.test_session_describes_only_own_assigned_roles_separately_from_administrator) ... 127.0.0.1 - - [14/Nov/2026 07:03:28] "GET /api/session HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:03:28] "GET /api/session HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:03:28] "GET /api/session HTTP/1.1" 401 -
+ok
+test_software_service_name_boundary_through_settings_api (test_session_http.SessionHttpTests.test_software_service_name_boundary_through_settings_api) ... 127.0.0.1 - - [14/Nov/2026 07:03:28] "POST /api/inventory/settings/save HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:03:28] "POST /api/inventory/settings/save HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:03:28] "POST /api/inventory/settings/save HTTP/1.1" 400 -
+127.0.0.1 - - [14/Nov/2026 07:03:28] "POST /api/inventory/settings/save HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:03:28] "POST /api/inventory/settings/save HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:03:28] "POST /api/inventory/settings/save HTTP/1.1" 400 -
+ok
+test_staff_account_route_and_mfa_eligibility_preserve_data_boundaries (test_session_http.SessionHttpTests.test_staff_account_route_and_mfa_eligibility_preserve_data_boundaries) ... 127.0.0.1 - - [14/Nov/2026 07:03:29] "GET /account HTTP/1.1" 401 -
+127.0.0.1 - - [14/Nov/2026 07:03:29] "GET /account HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:03:29] "GET /api/session HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:03:29] "GET /api/session HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:03:29] "GET /inventory HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 07:03:29] "GET /inventory?rack-print=same-tab HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 07:03:29] "GET /api/inventory/state HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 07:03:29] "GET /api/users HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 07:03:29] "GET /api/settings/email HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 07:03:29] "GET /api/inventory/devices HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 07:03:29] "GET /api/inventory/ipam HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 07:03:29] "GET /api/inventory/racks HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 07:03:29] "GET /api/inventory/sections HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:03:29] "GET /api/account/profile HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:03:30] "GET /api/session HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:03:30] "GET /account HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:03:30] "GET /inventory HTTP/1.1" 403 -
+ok
+test_subnet_first_batch_permissions_atomicity_and_visible_count_http (test_session_http.SessionHttpTests.test_subnet_first_batch_permissions_atomicity_and_visible_count_http) ... 127.0.0.1 - - [14/Nov/2026 07:03:31] "POST /api/ipam/subnets/save HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 07:03:31] "POST /api/ipam/subnets/save HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 07:03:31] "POST /api/ipam/subnets/save HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 07:03:31] "POST /api/ipam/subnets/save HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 07:03:31] "POST /api/ipam/subnets/save HTTP/1.1" 400 -
+127.0.0.1 - - [14/Nov/2026 07:03:31] "POST /api/ipam/subnets/save HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:03:31] "GET /api/inventory/state HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:03:31] "GET /api/inventory/state HTTP/1.1" 200 -
+ok
+test_user_mfa_start_supplies_authenticator_qr_uri (test_session_http.SessionHttpTests.test_user_mfa_start_supplies_authenticator_qr_uri) ... 127.0.0.1 - - [14/Nov/2026 07:03:32] "POST /api/users/create HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:03:32] "POST /api/account/mfa/start HTTP/1.1" 200 -
+ok
+test_valid_session_and_no_inventory_exposure (test_session_http.SessionHttpTests.test_valid_session_and_no_inventory_exposure) ... 127.0.0.1 - - [14/Nov/2026 07:03:33] "GET /api/session HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:03:33] "GET /api/inventory HTTP/1.1" 404 -
+127.0.0.1 - - [14/Nov/2026 07:03:33] "GET /health HTTP/1.1" 200 -
+ok
+test_import_denied_after_account_deactivation (test_request_auth.RequestAuthenticationTests.test_import_denied_after_account_deactivation) ... ok
+test_import_requires_authenticated_session_origin_and_csrf (test_request_auth.RequestAuthenticationTests.test_import_requires_authenticated_session_origin_and_csrf) ... ok
+test_invalid_login_and_expired_session (test_request_auth.RequestAuthenticationTests.test_invalid_login_and_expired_session) ... ok
+test_logout_requires_csrf_and_revokes (test_request_auth.RequestAuthenticationTests.test_logout_requires_csrf_and_revokes) ... ok
+test_offline_import_preview_is_read_only_and_requires_authentication (test_request_auth.RequestAuthenticationTests.test_offline_import_preview_is_read_only_and_requires_authentication) ... ok
+test_offline_import_rejects_untrusted_export_before_writing (test_request_auth.RequestAuthenticationTests.test_offline_import_rejects_untrusted_export_before_writing) ... ok
+test_offline_import_requires_final_confirmation_and_preserves_accounts (test_request_auth.RequestAuthenticationTests.test_offline_import_requires_final_confirmation_and_preserves_accounts) ... ok
+test_session_bound_identity_and_mutation (test_request_auth.RequestAuthenticationTests.test_session_bound_identity_and_mutation) ... ok
+test_account_deleted_after_request_authentication_has_generic_removal_error (test_required_mfa_http.RequiredMfaHttpTests.test_account_deleted_after_request_authentication_has_generic_removal_error) ... 127.0.0.1 - - [14/Nov/2026 07:03:36] "POST /api/account/mfa/remove HTTP/1.1" 403 -
+ok
+test_bad_password_budget_is_shared_between_all_prelogin_routes (test_required_mfa_http.RequiredMfaHttpTests.test_bad_password_budget_is_shared_between_all_prelogin_routes) ... 127.0.0.1 - - [14/Nov/2026 07:03:37] "POST /api/login HTTP/1.1" 401 -
+127.0.0.1 - - [14/Nov/2026 07:03:37] "POST /api/login/mfa/start HTTP/1.1" 401 -
+127.0.0.1 - - [14/Nov/2026 07:03:37] "POST /api/login/mfa/confirm HTTP/1.1" 401 -
+127.0.0.1 - - [14/Nov/2026 07:03:37] "POST /api/login HTTP/1.1" 401 -
+127.0.0.1 - - [14/Nov/2026 07:03:37] "POST /api/login/mfa/start HTTP/1.1" 401 -
+127.0.0.1 - - [14/Nov/2026 07:03:37] "POST /api/login/mfa/start HTTP/1.1" 401 -
+ok
+test_bad_password_unknown_and_inactive_are_generic_and_do_not_leak_secret (test_required_mfa_http.RequiredMfaHttpTests.test_bad_password_unknown_and_inactive_are_generic_and_do_not_leak_secret) ... 127.0.0.1 - - [14/Nov/2026 07:03:38] "POST /api/login HTTP/1.1" 401 -
+127.0.0.1 - - [14/Nov/2026 07:03:38] "POST /api/login HTTP/1.1" 401 -
+127.0.0.1 - - [14/Nov/2026 07:03:38] "POST /api/login/mfa/start HTTP/1.1" 401 -
+127.0.0.1 - - [14/Nov/2026 07:03:38] "POST /api/login/mfa/start HTTP/1.1" 401 -
+127.0.0.1 - - [14/Nov/2026 07:03:39] "POST /api/login/mfa/confirm HTTP/1.1" 401 -
+127.0.0.1 - - [14/Nov/2026 07:03:39] "POST /api/login/mfa/confirm HTTP/1.1" 401 -
+127.0.0.1 - - [14/Nov/2026 07:03:39] "POST /api/login HTTP/1.1" 401 -
+127.0.0.1 - - [14/Nov/2026 07:03:39] "POST /api/login/mfa/start HTTP/1.1" 401 -
+ok
+test_prelogin_origin_content_size_and_field_guards (test_required_mfa_http.RequiredMfaHttpTests.test_prelogin_origin_content_size_and_field_guards) ... 127.0.0.1 - - [14/Nov/2026 07:03:40] "POST /api/login/mfa/start HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 07:03:40] "POST /api/login/mfa/start HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 07:03:40] "POST /api/login/mfa/start HTTP/1.1" 415 -
+127.0.0.1 - - [14/Nov/2026 07:03:40] "POST /api/login/mfa/start HTTP/1.1" 400 -
+127.0.0.1 - - [14/Nov/2026 07:03:40] "POST /api/login/mfa/start HTTP/1.1" 400 -
+127.0.0.1 - - [14/Nov/2026 07:03:40] "POST /api/login/mfa/confirm HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 07:03:40] "POST /api/login/mfa/confirm HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 07:03:40] "POST /api/login/mfa/confirm HTTP/1.1" 415 -
+127.0.0.1 - - [14/Nov/2026 07:03:40] "POST /api/login/mfa/confirm HTTP/1.1" 400 -
+127.0.0.1 - - [14/Nov/2026 07:03:40] "POST /api/login/mfa/confirm HTTP/1.1" 400 -
+ok
+test_removal_failures_are_throttled_and_permission_assignment_blocks_removal (test_required_mfa_http.RequiredMfaHttpTests.test_removal_failures_are_throttled_and_permission_assignment_blocks_removal) ... 127.0.0.1 - - [14/Nov/2026 07:03:41] "POST /api/account/mfa/remove HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 07:03:41] "POST /api/account/mfa/remove HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 07:03:41] "POST /api/account/mfa/remove HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 07:03:41] "POST /api/account/mfa/remove HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 07:03:41] "POST /api/account/mfa/remove HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 07:03:41] "POST /api/account/mfa/remove HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 07:03:41] "GET /api/session HTTP/1.1" 200 -
+ok
+test_removal_protects_origin_csrf_and_proofs_then_revokes_session (test_required_mfa_http.RequiredMfaHttpTests.test_removal_protects_origin_csrf_and_proofs_then_revokes_session) ... 127.0.0.1 - - [14/Nov/2026 07:03:42] "POST /api/account/mfa/remove HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 07:03:42] "POST /api/account/mfa/remove HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 07:03:42] "POST /api/account/mfa/remove HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 07:03:42] "POST /api/account/mfa/remove HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 07:03:42] "POST /api/account/mfa/remove HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 07:03:43] "POST /api/account/mfa/remove HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:03:43] "GET /api/session HTTP/1.1" 401 -
+127.0.0.1 - - [14/Nov/2026 07:03:43] "POST /api/login HTTP/1.1" 200 -
+ok
+test_required_response_no_cookie_no_session_and_no_normal_api_access (test_required_mfa_http.RequiredMfaHttpTests.test_required_response_no_cookie_no_session_and_no_normal_api_access) ... 127.0.0.1 - - [14/Nov/2026 07:03:44] "POST /api/login HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:03:44] "POST /api/login HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:03:44] "POST /api/login HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:03:44] "POST /api/login HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:03:44] "POST /api/login HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:03:44] "POST /api/login HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:03:44] "POST /api/login HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:03:44] "GET /api/session HTTP/1.1" 401 -
+127.0.0.1 - - [14/Nov/2026 07:03:44] "GET /api/session HTTP/1.1" 401 -
+127.0.0.1 - - [14/Nov/2026 07:03:44] "GET /api/inventory/state HTTP/1.1" 401 -
+127.0.0.1 - - [14/Nov/2026 07:03:44] "GET /api/inventory/state HTTP/1.1" 401 -
+127.0.0.1 - - [14/Nov/2026 07:03:44] "GET /api/users HTTP/1.1" 401 -
+127.0.0.1 - - [14/Nov/2026 07:03:44] "GET /api/users HTTP/1.1" 401 -
+127.0.0.1 - - [14/Nov/2026 07:03:44] "POST /api/account/mfa/start HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 07:03:44] "POST /api/setup/mfa-secret HTTP/1.1" 400 -
+ok
+test_role_assignment_after_login_refuses_removal_without_altering_grants (test_required_mfa_http.RequiredMfaHttpTests.test_role_assignment_after_login_refuses_removal_without_altering_grants) ... 127.0.0.1 - - [14/Nov/2026 07:03:45] "POST /api/account/mfa/remove HTTP/1.1" 403 -
+ok
+test_start_and_valid_password_login_do_not_reset_failed_code_budget (test_required_mfa_http.RequiredMfaHttpTests.test_start_and_valid_password_login_do_not_reset_failed_code_budget) ... 127.0.0.1 - - [14/Nov/2026 07:03:46] "POST /api/login/mfa/start HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:03:46] "POST /api/login/mfa/start HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:03:47] "POST /api/login HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:03:47] "POST /api/login/mfa/confirm HTTP/1.1" 401 -
+127.0.0.1 - - [14/Nov/2026 07:03:47] "POST /api/login/mfa/start HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:03:47] "POST /api/login HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:03:48] "POST /api/login/mfa/confirm HTTP/1.1" 401 -
+127.0.0.1 - - [14/Nov/2026 07:03:48] "POST /api/login/mfa/start HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:03:48] "POST /api/login HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:03:48] "POST /api/login/mfa/confirm HTTP/1.1" 401 -
+127.0.0.1 - - [14/Nov/2026 07:03:49] "POST /api/login/mfa/start HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:03:49] "POST /api/login HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:03:49] "POST /api/login/mfa/confirm HTTP/1.1" 401 -
+127.0.0.1 - - [14/Nov/2026 07:03:49] "POST /api/login/mfa/start HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:03:49] "POST /api/login HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:03:50] "POST /api/login/mfa/confirm HTTP/1.1" 401 -
+127.0.0.1 - - [14/Nov/2026 07:03:50] "POST /api/login/mfa/confirm HTTP/1.1" 401 -
+127.0.0.1 - - [14/Nov/2026 07:03:50] "POST /api/login/mfa/start HTTP/1.1" 401 -
+127.0.0.1 - - [14/Nov/2026 07:03:50] "POST /api/login HTTP/1.1" 401 -
+ok
+test_start_reuses_secret_and_confirm_requires_fresh_normal_login (test_required_mfa_http.RequiredMfaHttpTests.test_start_reuses_secret_and_confirm_requires_fresh_normal_login) ... 127.0.0.1 - - [14/Nov/2026 07:03:51] "POST /api/login/mfa/start HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:03:52] "POST /api/login/mfa/start HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:03:52] "POST /api/login/mfa/start HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:03:52] "POST /api/login/mfa/confirm HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:03:52] "GET /api/session HTTP/1.1" 401 -
+127.0.0.1 - - [14/Nov/2026 07:03:52] "POST /api/login HTTP/1.1" 401 -
+127.0.0.1 - - [14/Nov/2026 07:03:53] "POST /api/login HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:03:53] "POST /api/login/mfa/start HTTP/1.1" 401 -
+127.0.0.1 - - [14/Nov/2026 07:03:53] "POST /api/login/mfa/confirm HTTP/1.1" 401 -
+ok
+test_upgraded_legacy_reader_enrols_without_losing_existing_access (test_required_mfa_http.RequiredMfaHttpTests.test_upgraded_legacy_reader_enrols_without_losing_existing_access) ... 127.0.0.1 - - [14/Nov/2026 07:03:54] "POST /api/login HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:03:54] "POST /api/login/mfa/start HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:03:55] "POST /api/login/mfa/confirm HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:03:55] "POST /api/login HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 07:03:55] "GET /api/inventory/sections HTTP/1.1" 200 -
+ok
+test_disable_revokes_sessions (test_session_invalidation.SessionInvalidationTests.test_disable_revokes_sessions) ... ok
+test_password_change_revokes_sessions (test_session_invalidation.SessionInvalidationTests.test_password_change_revokes_sessions) ... ok
+test_permission_change_revokes_sessions (test_session_invalidation.SessionInvalidationTests.test_permission_change_revokes_sessions) ... ok
+test_role_change_revokes_sessions (test_session_invalidation.SessionInvalidationTests.test_role_change_revokes_sessions) ... ok
+test_add_rack_mounted_requires_racks_edit_too (test_reserved_device_saves.CreateDeviceTests.test_add_rack_mounted_requires_racks_edit_too) ... ok
+test_add_requires_devices_and_ipam_edit (test_reserved_device_saves.CreateDeviceTests.test_add_requires_devices_and_ipam_edit) ... ok
+test_competing_ip_and_bad_rack_roll_back (test_reserved_device_saves.CreateDeviceTests.test_competing_ip_and_bad_rack_roll_back) ... ok
+test_create_commits_device_ipam_and_history (test_reserved_device_saves.CreateDeviceTests.test_create_commits_device_ipam_and_history) ... ok
+test_create_refuses_reserved_ipam_address (test_reserved_device_saves.CreateDeviceTests.test_create_refuses_reserved_ipam_address) ... ok
+test_duplicate_identifier_and_name_do_not_mutate_inventory (test_reserved_device_saves.CreateDeviceTests.test_duplicate_identifier_and_name_do_not_mutate_inventory) ... ok
+test_requires_devices_edit_permission (test_reserved_device_saves.CreateDeviceTests.test_requires_devices_edit_permission) ... ok
+test_archived_software_installation_change_preserves_other_device_data (test_reserved_device_saves.DeleteReservedDeviceTests.test_archived_software_installation_change_preserves_other_device_data) ... ok
+test_audit_details_keep_safe_changes_but_never_notes_or_credentials (test_reserved_device_saves.DeleteReservedDeviceTests.test_audit_details_keep_safe_changes_but_never_notes_or_credentials) ... ok
+test_competing_ip_rolls_back (test_reserved_device_saves.DeleteReservedDeviceTests.test_competing_ip_rolls_back) ... ok
+test_delete_clears_independent_device_reservations (test_reserved_device_saves.DeleteReservedDeviceTests.test_delete_clears_independent_device_reservations) ... ok
+test_delete_host_and_guest_choice_commit_together (test_reserved_device_saves.DeleteReservedDeviceTests.test_delete_host_and_guest_choice_commit_together) ... ok
+test_delete_releases_ip_and_records_history (test_reserved_device_saves.DeleteReservedDeviceTests.test_delete_releases_ip_and_records_history) ... ok
+test_devices_only_editor_can_rename_without_ipam_or_racks_edit (test_reserved_device_saves.DeleteReservedDeviceTests.test_devices_only_editor_can_rename_without_ipam_or_racks_edit) ... ok
+test_devices_only_editor_cannot_change_primary_ip_or_reservation (test_reserved_device_saves.DeleteReservedDeviceTests.test_devices_only_editor_cannot_change_primary_ip_or_reservation) ... ok
+test_devices_only_editor_cannot_move_or_unmount_a_racked_device (test_reserved_device_saves.DeleteReservedDeviceTests.test_devices_only_editor_cannot_move_or_unmount_a_racked_device) ... ok
+test_edit_primary_ip_respects_independent_reservations (test_reserved_device_saves.DeleteReservedDeviceTests.test_edit_primary_ip_respects_independent_reservations) ... ok
+test_expired_reservation_preserves_device (test_reserved_device_saves.DeleteReservedDeviceTests.test_expired_reservation_preserves_device) ... ok
+test_expired_reservation_rejects_save_without_history (test_reserved_device_saves.DeleteReservedDeviceTests.test_expired_reservation_rejects_save_without_history) ... ok
+test_history_preserves_all_events_after_two_hundred (test_reserved_device_saves.DeleteReservedDeviceTests.test_history_preserves_all_events_after_two_hundred) ... ok
+test_host_guest_choice_saves_with_host_and_revisions (test_reserved_device_saves.DeleteReservedDeviceTests.test_host_guest_choice_saves_with_host_and_revisions) ... ok
+test_ipam_only_save_cannot_modify_unrelated_device_details (test_reserved_device_saves.DeleteReservedDeviceTests.test_ipam_only_save_cannot_modify_unrelated_device_details) ... ok
+test_move_primary_ip_and_rename_commits_together (test_reserved_device_saves.DeleteReservedDeviceTests.test_move_primary_ip_and_rename_commits_together) ... ok
+test_overlapping_rack_position_rolls_back (test_reserved_device_saves.DeleteReservedDeviceTests.test_overlapping_rack_position_rolls_back) ... ok
+test_rack_move_is_recorded_with_device_change (test_reserved_device_saves.DeleteReservedDeviceTests.test_rack_move_is_recorded_with_device_change) ... ok
+test_racks_edit_permission_does_not_allow_unrelated_device_changes (test_reserved_device_saves.DeleteReservedDeviceTests.test_racks_edit_permission_does_not_allow_unrelated_device_changes) ... ok
+test_racks_section_can_move_device_with_reservation (test_reserved_device_saves.DeleteReservedDeviceTests.test_racks_section_can_move_device_with_reservation) ... ok
+test_racks_section_collision_keeps_device_and_reservation (test_reserved_device_saves.DeleteReservedDeviceTests.test_racks_section_collision_keeps_device_and_reservation) ... ok
+test_rejected_save_has_no_history (test_reserved_device_saves.DeleteReservedDeviceTests.test_rejected_save_has_no_history) ... ok
+test_related_changes_reject_non_guest_and_leave_database_unchanged (test_reserved_device_saves.DeleteReservedDeviceTests.test_related_changes_reject_non_guest_and_leave_database_unchanged) ... ok
+test_related_changes_reject_unapproved_device_properties (test_reserved_device_saves.DeleteReservedDeviceTests.test_related_changes_reject_unapproved_device_properties) ... ok
+test_rename_refreshes_ipam_hostname_and_history (test_reserved_device_saves.DeleteReservedDeviceTests.test_rename_refreshes_ipam_hostname_and_history) ... ok
+test_requires_edit_permission (test_reserved_device_saves.DeleteReservedDeviceTests.test_requires_edit_permission) ... ok
+test_stale_revision_preserves_device (test_reserved_device_saves.DeleteReservedDeviceTests.test_stale_revision_preserves_device) ... ok
+test_stale_revision_rejects_save_without_history (test_reserved_device_saves.DeleteReservedDeviceTests.test_stale_revision_rejects_save_without_history) ... ok
+test_unmodified_device_save (test_reserved_device_saves.DeleteReservedDeviceTests.test_unmodified_device_save) ... ok
+test_archived_software_installation_change_preserves_other_device_data (test_reserved_device_saves.ReservedDeviceSaveTests.test_archived_software_installation_change_preserves_other_device_data) ... ok
+test_audit_details_keep_safe_changes_but_never_notes_or_credentials (test_reserved_device_saves.ReservedDeviceSaveTests.test_audit_details_keep_safe_changes_but_never_notes_or_credentials) ... ok
+test_competing_ip_rolls_back (test_reserved_device_saves.ReservedDeviceSaveTests.test_competing_ip_rolls_back) ... ok
+test_devices_only_editor_can_rename_without_ipam_or_racks_edit (test_reserved_device_saves.ReservedDeviceSaveTests.test_devices_only_editor_can_rename_without_ipam_or_racks_edit) ... ok
+test_devices_only_editor_cannot_change_primary_ip_or_reservation (test_reserved_device_saves.ReservedDeviceSaveTests.test_devices_only_editor_cannot_change_primary_ip_or_reservation) ... ok
+test_devices_only_editor_cannot_move_or_unmount_a_racked_device (test_reserved_device_saves.ReservedDeviceSaveTests.test_devices_only_editor_cannot_move_or_unmount_a_racked_device) ... ok
+test_edit_primary_ip_respects_independent_reservations (test_reserved_device_saves.ReservedDeviceSaveTests.test_edit_primary_ip_respects_independent_reservations) ... ok
+test_expired_reservation_rejects_save_without_history (test_reserved_device_saves.ReservedDeviceSaveTests.test_expired_reservation_rejects_save_without_history) ... ok
+test_history_preserves_all_events_after_two_hundred (test_reserved_device_saves.ReservedDeviceSaveTests.test_history_preserves_all_events_after_two_hundred) ... ok
+test_host_guest_choice_saves_with_host_and_revisions (test_reserved_device_saves.ReservedDeviceSaveTests.test_host_guest_choice_saves_with_host_and_revisions) ... ok
+test_ipam_only_save_cannot_modify_unrelated_device_details (test_reserved_device_saves.ReservedDeviceSaveTests.test_ipam_only_save_cannot_modify_unrelated_device_details) ... ok
+test_move_primary_ip_and_rename_commits_together (test_reserved_device_saves.ReservedDeviceSaveTests.test_move_primary_ip_and_rename_commits_together) ... ok
+test_overlapping_rack_position_rolls_back (test_reserved_device_saves.ReservedDeviceSaveTests.test_overlapping_rack_position_rolls_back) ... ok
+test_rack_move_is_recorded_with_device_change (test_reserved_device_saves.ReservedDeviceSaveTests.test_rack_move_is_recorded_with_device_change) ... ok
+test_rejected_save_has_no_history (test_reserved_device_saves.ReservedDeviceSaveTests.test_rejected_save_has_no_history) ... ok
+test_related_changes_reject_non_guest_and_leave_database_unchanged (test_reserved_device_saves.ReservedDeviceSaveTests.test_related_changes_reject_non_guest_and_leave_database_unchanged) ... ok
+test_related_changes_reject_unapproved_device_properties (test_reserved_device_saves.ReservedDeviceSaveTests.test_related_changes_reject_unapproved_device_properties) ... ok
+test_rename_refreshes_ipam_hostname_and_history (test_reserved_device_saves.ReservedDeviceSaveTests.test_rename_refreshes_ipam_hostname_and_history) ... ok
+test_stale_revision_rejects_save_without_history (test_reserved_device_saves.ReservedDeviceSaveTests.test_stale_revision_rejects_save_without_history) ... ok
+test_unmodified_device_save (test_reserved_device_saves.ReservedDeviceSaveTests.test_unmodified_device_save) ... ok
+test_atomic_reassign_and_retire_keep_records_ip_notes_and_audit (test_rack_shelf_associations.RackShelfAssociationTests.test_atomic_reassign_and_retire_keep_records_ip_notes_and_audit) ... ok
+test_current_access_point_shelf_is_not_a_legacy_mount_correction (test_rack_shelf_associations.RackShelfAssociationTests.test_current_access_point_shelf_is_not_a_legacy_mount_correction) ... ok
+test_expired_other_reservation_does_not_become_a_new_lock (test_rack_shelf_associations.RackShelfAssociationTests.test_expired_other_reservation_does_not_become_a_new_lock) ... ok
+test_failure_after_sql_updates_rolls_back_devices_shelf_audit_and_reservation (test_rack_shelf_associations.RackShelfAssociationTests.test_failure_after_sql_updates_rolls_back_devices_shelf_audit_and_reservation) ... ok
+test_missing_duplicate_or_changed_linked_devices_roll_back (test_rack_shelf_associations.RackShelfAssociationTests.test_missing_duplicate_or_changed_linked_devices_roll_back) ... ok
+test_no_ip_shelf_device_requires_devices_and_racks_edit (test_rack_shelf_associations.RackShelfAssociationTests.test_no_ip_shelf_device_requires_devices_and_racks_edit) ... ok
+test_normalisation_and_storage_roundtrip_preserve_reference_and_unknowns (test_rack_shelf_associations.RackShelfAssociationTests.test_normalisation_and_storage_roundtrip_preserve_reference_and_unknowns) ... ok
+test_ordinary_accessory_delete_type_change_cross_rack_are_blocked (test_rack_shelf_associations.RackShelfAssociationTests.test_ordinary_accessory_delete_type_change_cross_rack_are_blocked) ... ok
+test_other_active_reservation_blocks_all_changes (test_rack_shelf_associations.RackShelfAssociationTests.test_other_active_reservation_blocks_all_changes) ... ok
+test_own_expired_or_stale_reservation_is_not_overridden (test_rack_shelf_associations.RackShelfAssociationTests.test_own_expired_or_stale_reservation_is_not_overridden) ... ok
+test_parent_rack_delete_and_rack_mounted_collision_stay_protected (test_rack_shelf_associations.RackShelfAssociationTests.test_parent_rack_delete_and_rack_mounted_collision_stay_protected) ... ok
+test_permission_denial_rolls_back (test_rack_shelf_associations.RackShelfAssociationTests.test_permission_denial_rolls_back) ... ok
+test_reserved_device_shelf_change_checks_racks_permission (test_rack_shelf_associations.RackShelfAssociationTests.test_reserved_device_shelf_change_checks_racks_permission) ... ok
+test_shelf_movement_keeps_identity_links_and_device_revisions (test_rack_shelf_associations.RackShelfAssociationTests.test_shelf_movement_keeps_identity_links_and_device_revisions) ... ok
+test_stale_revision_shelf_or_target_rolls_back (test_rack_shelf_associations.RackShelfAssociationTests.test_stale_revision_shelf_or_target_rolls_back) ... ok
+test_tabletop_without_rack_and_legacy_without_field_remain_valid (test_rack_shelf_associations.RackShelfAssociationTests.test_tabletop_without_rack_and_legacy_without_field_remain_valid) ... ok
+test_valid_shelves_do_not_occupy_device_u (test_rack_shelf_associations.RackShelfAssociationTests.test_valid_shelves_do_not_occupy_device_u) ... ok
+test_validation_rejects_wrong_missing_virtual_and_independent_u (test_rack_shelf_associations.RackShelfAssociationTests.test_validation_rejects_wrong_missing_virtual_and_independent_u) ... ok
+test_active_device_edit_and_edit_permissions_reject_without_writes (test_ipam_repair.IpamIntegrityRepairTests.test_active_device_edit_and_edit_permissions_reject_without_writes) ... ok
+test_safe_device_allocations_repaired_without_other_mutations (test_ipam_repair.IpamIntegrityRepairTests.test_safe_device_allocations_repaired_without_other_mutations) ... ok
+test_stale_repair_preview_cannot_overwrite_current_allocations (test_ipam_repair.IpamIntegrityRepairTests.test_stale_repair_preview_cannot_overwrite_current_allocations) ... ok
+test_transaction_rolls_back_if_history_write_fails (test_ipam_repair.IpamIntegrityRepairTests.test_transaction_rolls_back_if_history_write_fails) ... ok
+test_missing_allocation_created_as_assigned (test_ipam_reconciliation.IpamReconciliationTests.test_missing_allocation_created_as_assigned) ... ok
+test_no_primary_ip_does_not_create_allocation (test_ipam_reconciliation.IpamReconciliationTests.test_no_primary_ip_does_not_create_allocation) ... ok
+test_repairs_stale_owner_and_status (test_ipam_reconciliation.IpamReconciliationTests.test_repairs_stale_owner_and_status) ... ok
+test_reserved_device_repairs_status (test_ipam_reconciliation.IpamReconciliationTests.test_reserved_device_repairs_status) ... ok
+test_reserved_stale_allocation_keeps_reserved_status (test_ipam_reconciliation.IpamReconciliationTests.test_reserved_stale_allocation_keeps_reserved_status) ... ok
+test_stale_allocation_owner_released (test_ipam_reconciliation.IpamReconciliationTests.test_stale_allocation_owner_released) ... ok
+test_unlinked_allocation_untouched (test_ipam_reconciliation.IpamReconciliationTests.test_unlinked_allocation_untouched) ... ok
+test_updates_hostname_and_preserves_notes (test_ipam_reconciliation.IpamReconciliationTests.test_updates_hostname_and_preserves_notes) ... ok
+test_cancelled_review_never_reaches_database_staging (test_import_boundary.ImportBoundaryTests.test_cancelled_review_never_reaches_database_staging)
+Cancellation at confirmation leaves existing inventory untouched. ... ok
+test_case_insensitive_name_collision_rolls_back (test_import_boundary.ImportBoundaryTests.test_case_insensitive_name_collision_rolls_back) ... ok
+test_detached_relationship_diagnostics_allow_unlinked_available_ip (test_import_boundary.ImportBoundaryTests.test_detached_relationship_diagnostics_allow_unlinked_available_ip) ... ok
+test_detached_relationship_diagnostics_find_source_defined_conflicts (test_import_boundary.ImportBoundaryTests.test_detached_relationship_diagnostics_find_source_defined_conflicts) ... ok
+test_failed_import_does_not_erase_change_history (test_import_boundary.ImportBoundaryTests.test_failed_import_does_not_erase_change_history) ... ok
+test_failed_reviewed_replacement_preserves_security_and_inventory (test_import_boundary.ImportBoundaryTests.test_failed_reviewed_replacement_preserves_security_and_inventory)
+Late failure during reviewed staging leaves all existing data intact. ... ok
+test_failed_second_import_preserves_all_collections_and_settings (test_import_boundary.ImportBoundaryTests.test_failed_second_import_preserves_all_collections_and_settings) ... ok
+test_inspection_and_staging_do_not_mutate_source (test_import_boundary.ImportBoundaryTests.test_inspection_and_staging_do_not_mutate_source) ... ok
+test_inventory_replacement_does_not_clear_change_history (test_import_boundary.ImportBoundaryTests.test_inventory_replacement_does_not_clear_change_history) ... ok
+test_late_sqlite_failure_rolls_back_all_inventory_sections (test_import_boundary.ImportBoundaryTests.test_late_sqlite_failure_rolls_back_all_inventory_sections)
+An error after replacement starts cannot partially restore inventory. ... ok
+test_missing_device_id_rolls_back_everything (test_import_boundary.ImportBoundaryTests.test_missing_device_id_rolls_back_everything) ... ok
+test_missing_mount_uses_published_rack_or_desktop_fallback (test_import_boundary.ImportBoundaryTests.test_missing_mount_uses_published_rack_or_desktop_fallback) ... ok
+test_mount_diagnostics_preserve_source_and_reject_unknown_mount (test_import_boundary.ImportBoundaryTests.test_mount_diagnostics_preserve_source_and_reject_unknown_mount) ... ok
+test_optional_unknown_top_level_fields_survive (test_import_boundary.ImportBoundaryTests.test_optional_unknown_top_level_fields_survive) ... ok
+test_permission_recheck_runs_under_write_lock_before_any_deletion (test_import_boundary.ImportBoundaryTests.test_permission_recheck_runs_under_write_lock_before_any_deletion) ... ok
+test_preview_does_not_imply_import_approval (test_import_boundary.ImportBoundaryTests.test_preview_does_not_imply_import_approval) ... ok
+test_published_mount_types_are_all_accepted_without_type_restrictions (test_import_boundary.ImportBoundaryTests.test_published_mount_types_are_all_accepted_without_type_restrictions) ... ok
+test_replacement_preview_counts_without_writing_inventory (test_import_boundary.ImportBoundaryTests.test_replacement_preview_counts_without_writing_inventory) ... ok
+test_reviewed_candidate_replaces_inventory_but_not_security (test_import_boundary.ImportBoundaryTests.test_reviewed_candidate_replaces_inventory_but_not_security)
+Detached v1.3.3 candidate can replace data without changing users. ... ok
+test_staging_does_not_commit_a_rejected_replacement (test_import_boundary.ImportBoundaryTests.test_staging_does_not_commit_a_rejected_replacement) ... ok
+test_cross_origin_and_untrusted_client_candidate_rejected (test_import_http.ImportHttpTests.test_cross_origin_and_untrusted_client_candidate_rejected) ... ok
+test_full_http_preview_confirm_and_no_replay (test_import_http.ImportHttpTests.test_full_http_preview_confirm_and_no_replay) ... ok
+test_access_point_choices_are_required_and_server_rebuilt (test_import_drafts.ImportDraftTests.test_access_point_choices_are_required_and_server_rebuilt) ... ok
+test_authenticated_cancel_rejects_bad_csrf_without_losing_draft (test_import_drafts.ImportDraftTests.test_authenticated_cancel_rejects_bad_csrf_without_losing_draft) ... ok
+test_authenticated_cancel_revokes_draft (test_import_drafts.ImportDraftTests.test_authenticated_cancel_revokes_draft) ... ok
+test_cancel_does_not_replace_inventory (test_import_drafts.ImportDraftTests.test_cancel_does_not_replace_inventory) ... ok
+test_preview_confirmation_one_use_and_no_candidate_exposure (test_import_drafts.ImportDraftTests.test_preview_confirmation_one_use_and_no_candidate_exposure) ... ok
+test_session_and_csrf_binding (test_import_drafts.ImportDraftTests.test_session_and_csrf_binding) ... ok
+test_clean_start_retains_users_and_history_and_resets_all_inventory (test_reset_inventory.CleanInventoryResetTests.test_clean_start_retains_users_and_history_and_resets_all_inventory) ... ok
+test_failed_database_write_rolls_back_every_collection_and_history (test_reset_inventory.CleanInventoryResetTests.test_failed_database_write_rolls_back_every_collection_and_history) ... ok
+test_requires_edit_permission_for_every_inventory_section (test_reset_inventory.CleanInventoryResetTests.test_requires_edit_permission_for_every_inventory_section) ... ok
+test_device_identity_and_json_constraints (test_schema.SchemaTests.test_device_identity_and_json_constraints) ... ok
+test_initialisation_is_repeatable (test_schema.SchemaTests.test_initialisation_is_repeatable) ... ok
+test_reject_newer_database_without_downgrade (test_schema.SchemaTests.test_reject_newer_database_without_downgrade) ... ok
+test_every_design_stylesheet_is_the_exact_pinned_source (test_modular_interface.ModularInterfaceTests.test_every_design_stylesheet_is_the_exact_pinned_source) ... ok
+test_templates_and_includes_are_unique_and_resolvable (test_modular_interface.ModularInterfaceTests.test_templates_and_includes_are_unique_and_resolvable) ... ok
+
+----------------------------------------------------------------------
+Ran 236 tests in 72.331s
+
+OK

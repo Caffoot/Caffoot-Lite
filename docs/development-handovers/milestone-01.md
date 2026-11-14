@@ -15,6 +15,26 @@
 - [ ] Obtain separate final milestone merge approval; verify the resulting `main` build
 - [ ] Obtain separate v2.2 publication approval and verify published image/platforms, release notes and installation links before changing current-release instructions
 
+## Stage 2 Batch 5 — Final Integration Verification
+
+Verified `milestone-1` baseline `8192bb4438a1615f3b3c640d59deff2dfdde07be`; published `main` remains `6008fedfc2c25fc40b49c9e9e21f3a93d61a9f4a`. Branch: `stage-2-batch-5-final-verification`. Scope follows the [approved contract](https://github.com/Caffoot/Caffoot-Lite/issues/238#issuecomment-6821230015), [verified Batch 4 merge](https://github.com/Caffoot/Caffoot-Lite/issues/238#issuecomment-6873486389) and the owner's explicit verification-only instruction. No application implementation changes are authorised in this batch.
+
+Initial verification checkpoint: **236 focused Python tests passed**, with no failures or skips. The four affected persistence/import checks also passed after adding HTTP import assertions for feature/grant retention and renaming one test for clarity. New file-backed tests cover close/reopen and SQLite database-copy restoration, basic addresses without automatic linking, grants retained across feature toggles, inventory replacement and Clean Start without mocked permission decisions. One initial test callback omitted its connection argument; the test setup was corrected before the passing runs. This was not an application defect.
+
+The existing feature-combination Chromium test passed all eight combinations, essential all-off administration/My Account and deep-link denial without page errors. The Batch 4 final-feature CI jobs were independently checked as successful: backend, Chromium, Firefox, WebKit, Compose lifecycle, release documentation and Git history scan. Those results apply to `ab51bb194adccbc69f134f4412073008528595f7`; the merged baseline differs from the earlier reviewed Batch 4 checkpoint only in its first-run browser test.
+
+The first checkpoint was committed and pushed as `46cf108169c78f7bd8cc01f11d541d282b3d5e85` before final visual review.
+
+### Batch 5 Final Local Verification
+
+All three existing focused Chromium flows passed: `feature-access.cjs`, `optional-ip.cjs` and `optional-features-interface.cjs`. They cover feature combinations and essential paths, no-IP/basic addresses, Rack-off mounted/shelf saves, type-specific choices, confirmation/cancellation, count permissions and no-subnet/cancel/stale/successful linking. No page errors were reported. The interface flow generated 34 new desktop/mobile source/light/dark captures, checked modal focus and found no checked horizontal document overflow.
+
+The [final verification report](evidence/stage-2-batch-5/Report.md) includes the exact commands, Python/browser logs, coverage matrix, screenshots, source comparisons, measurements and CI references. All twelve pinned HTML hashes were verified; the three existing Settings panels and relevant CSS remain unchanged. Settings geometry matches the pinned source in both themes at 1440 and 390 pixels. Narrow mobile feature descriptions wrap within the existing card layout; the captures preserve this for owner appearance review. Python compilation, JavaScript syntax, links, whitespace and unchanged runtime/design boundaries passed.
+
+[Draft PR #375](https://github.com/Caffoot/Caffoot-Lite/pull/375) targets `milestone-1`. The existing path-selected CI runs automatically; results for the final evidence commit are recorded in that PR. Broader browser/Firefox/WebKit/Compose evidence is the independently verified Batch 4 CI, not new local runs. No whole-suite local run, automated accessibility audit, local Docker/Azure, private-data or deployed-volume restoration was attempted. Full backup/restore and wider legacy compatibility remain Stage 6; the new database-copy test does not certify deployed-volume restoration.
+
+No material application defect or contract conflict was found, and no implementation change was made. Stage 2 is ready to present for final product-owner acceptance once applicable PR checks pass. Owner visual approval and final acceptance remain outstanding. Stop after Batch 5; no Stage 3, merge, tag, release or deployment.
+
 ## Stage 2 Batch 4 — Interface And Rack Preservation
 
 Starts from verified merge `89ad05eab13f7a429dcbd5f4266a26e52f5de8d2` on `stage-2-batch-4-interface-rack-preservation`, following the [approved contract](https://github.com/Caffoot/Caffoot-Lite/issues/238#issuecomment-6821230015) and [Batch 4 handover](https://github.com/Caffoot/Caffoot-Lite/issues/238#issuecomment-6863207632). Published `main` remains unchanged.

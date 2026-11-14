@@ -1,0 +1,1 @@
+PASS: Devices-only editor created no-IP Devices with IPAM on/off, created basic IPv4 without subnet, edited it after enabling IPAM, and created no allocation.
