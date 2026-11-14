@@ -95,7 +95,7 @@ async function test(){
  await page.evaluate(()=>caffootSetTheme('dark'));
  await page.screenshot({path:path.join(output,'staff-edit-dark-mobile.png'),fullPage:true});
  await page.locator('#sidebar [data-tab="users"]').click();
- await page.locator('[data-action="select-users-section"][data-tab="list"]').click();
+ await page.locator('.section-page-header [data-action="select-users-section"][data-tab="list"]').click();
  await page.locator('[data-action="users-open-editor"]').last().click();
  for(const section of ['Staff Members','Departments','IT Assets'])
   assert.equal(await page.locator('[data-next-user-permission][data-section="'+section+'"]').count(),1);
