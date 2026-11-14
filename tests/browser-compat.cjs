@@ -182,9 +182,13 @@ async function run(){
   await page.locator('[data-action="toggle-sidebar"]').click();
   assert.equal(await page.locator('#app').evaluate(el=>el.classList.contains('collapsed')),false,
     'The approved menu must expand again');
-  // The shared navigation must come from the approved seven-item HTML menu.
-  assert.equal(await page.locator('#sidebar .nav-item[data-tab]').count(),7,
-    'Approved sidebar must have exactly seven primary sections, not nested actions');
+  // Stage 3 groups retain the original destinations and add core Staff navigation.
+  assert.equal(await page.locator('#sidebar .nav-item[data-tab]').count(),9,
+    'Existing seven destinations plus approved Staff Members and Departments');
+  assert.deepEqual(await page.locator('#sidebar [data-nav-group="it"] .nav-item[data-tab] .nav-text').allTextContents(),
+    ['Devices','IPAM','Network Racks']);
+  assert.deepEqual(await page.locator('#sidebar [data-nav-group="staff"] .nav-item[data-tab] .nav-text').allTextContents(),
+    ['Staff Members','Departments','Permissions']);
   assert.equal(await page.locator('#sidebar [id$="-sidebar-actions"]').count(),0,
     'The old nested section menus must not be shipped');
   assert.ok(await page.locator('#app .header-account').isVisible(),
@@ -663,7 +667,7 @@ async function run(){
     'Removing a profile photo must restore the default avatar');
   await page.locator('[data-action="select-account-section"][data-section="security"]').first().click();
   await page.locator('#sidebar [data-action="tab-users"]').click();
-  assert.equal(await page.locator('#page-title').textContent(),'Users & Permissions');
+  assert.equal(await page.locator('#page-title').textContent(),'Permissions');
   await page.locator('.section-page-header [data-tab="list"]').click();
   await page.locator('[data-action="users-open-editor"]').first().click();
   const ownerWorkspace=page.locator('.users-management-modal .modal');

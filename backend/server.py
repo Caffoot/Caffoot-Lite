@@ -53,7 +53,8 @@ from .tls import ensure_certificate
 from .deployment_settings import validate_published_port
 from .staff_directory import (require_directory_access, list_directory,
                                read_staff_member, read_department,
-                               save_staff_member, save_department, unique_directory_fields)
+                               save_staff_member, save_department, unique_directory_fields,
+                               list_staff_department_choices)
 
 DB_PATH = Path(os.environ.get("CAFFOOT_DB_PATH", "/data/caffoot.sqlite3"))
 HOST = os.environ.get("CAFFOOT_HOST", "0.0.0.0")
@@ -195,7 +196,7 @@ class Handler(BaseHTTPRequestHandler):
                     self.respond(401, {"error": "unauthorised"})
                     return
                 if self.path != "/account" and not evaluate_role_policy(connection, account_id).is_admin and not any(can_access(connection, account_id, section)
-                           for section in ("Devices", "IPAM", "Racks")):
+                           for section in ("Devices", "IPAM", "Racks", "Staff Members", "Departments")):
                     self.respond(403, {"error": "forbidden"})
                     return
             body = (Path(__file__).resolve().parent.parent / "inventory.html").read_bytes()
@@ -460,6 +461,16 @@ class Handler(BaseHTTPRequestHandler):
                         can_access(connection, account_id, section)
                         for section in ("Devices", "IPAM", "Racks")
                     ),
+                    "can_enter_workspace": bool(account[1]) or any(
+                        can_access(connection, account_id, section)
+                        for section in ("Devices", "IPAM", "Racks", "Staff Members", "Departments")
+                    ),
+                    "directory_permissions": {
+                        "staffMembers": {"read": can_access(connection, account_id, "Staff Members"),
+                                         "edit": can_access(connection, account_id, "Staff Members", edit=True)},
+                        "departments": {"read": can_access(connection, account_id, "Departments"),
+                                        "edit": can_access(connection, account_id, "Departments", edit=True)}
+                    },
                     "csrf_token": csrf_for_session(read_session_cookie(cookie)),
                 })
         else:
@@ -655,6 +666,10 @@ class Handler(BaseHTTPRequestHandler):
             self.respond(404, {'error': 'not found'})
             return
         record_id = parts[2] if len(parts) >= 3 else None
+        choices = section == 'Staff Members' and record_id == 'department-choices'
+        if choices and self.command != 'GET':
+            self.respond(404, {'error': 'not found'})
+            return
         origin = self.headers.get('Origin')
         if (self.headers.get('Sec-Fetch-Site') == 'cross-site'
                 or (origin is not None and (not PUBLIC_ORIGIN or not require_same_origin(origin, PUBLIC_ORIGIN)))
@@ -676,7 +691,11 @@ class Handler(BaseHTTPRequestHandler):
                     parameters = parse_qs(parsed.query, keep_blank_values=True)
                     if set(parameters) - {'query', 'limit', 'offset'} or any(len(value) != 1 for value in parameters.values()):
                         raise ValueError('Invalid search parameters')
-                    if record_id:
+                    if choices:
+                        if parameters:
+                            raise ValueError('No search parameters for Department choices')
+                        result = list_staff_department_choices(connection, actor)
+                    elif record_id:
                         result = (read_staff_member(connection, actor, record_id) if section == 'Staff Members'
                                   else read_department(connection, actor, record_id))
                     else:
@@ -698,7 +717,7 @@ class Handler(BaseHTTPRequestHandler):
                     else:
                         result = save_department(connection, actor, read_session_cookie(cookie), payload,
                             department_id=record_id, delete=action == 'delete')
-            key = ('staffMembers' if section == 'Staff Members' else 'departments') if isinstance(result, list) else ('staffMember' if section == 'Staff Members' else 'department')
+            key = ('departments' if choices else ('staffMembers' if section == 'Staff Members' else 'departments')) if isinstance(result, list) else ('staffMember' if section == 'Staff Members' else 'department')
             self.respond(200, {key: result})
         except PermissionError:
             self.respond(403, {'error': 'forbidden'})

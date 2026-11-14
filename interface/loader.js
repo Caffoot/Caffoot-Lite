@@ -24,10 +24,13 @@ async function initialiseInterface() {
             interfaceTemplates.set(match[1], match[2]);
         }
     }
-    const designs = ['dashboard','my-account','settings','device-details','devices','device-inventory','device-management','ipam','racks','users','audit-trail'];
+    const designs = ['dashboard','my-account','settings','device-details','devices','device-inventory','device-management','ipam','racks','users','audit-trail','staff'];
     await Promise.all(designs.map(async name => {
         interfaceStyles.set(name, await loadInterfaceText('styles/' + name + '.css'));
     }));
+    const staffStyle = interfaceStyles.get('users') + '\n' + interfaceStyles.get('staff');
+    interfaceStyles.set('staff', staffStyle);
+    interfaceStyles.set('departments', staffStyle);
     const currentStyle = document.getElementById('interface-page-style');
     const pageStyle = document.createElement('style');
     pageStyle.id = currentStyle.id;
@@ -35,10 +38,16 @@ async function initialiseInterface() {
     const root = document.getElementById('interface-root');
     root.innerHTML = await loadInterfaceText('screens/navigation.html');
     root.replaceWith(...root.childNodes);
-    const script = document.createElement('script');
-    script.src = '/interface/application.js';
-    script.onerror = () => showInterfaceLoadError();
-    document.body.append(script);
+    const staffScript = document.createElement('script');
+    staffScript.src = '/interface/staff-directory.js';
+    staffScript.onerror = () => showInterfaceLoadError();
+    staffScript.onload = () => {
+        const script = document.createElement('script');
+        script.src = '/interface/application.js';
+        script.onerror = () => showInterfaceLoadError();
+        document.body.append(script);
+    };
+    document.body.append(staffScript);
 }
 function showInterfaceLoadError() {
     const root = document.getElementById('interface-root') || document.getElementById('main-content');

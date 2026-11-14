@@ -1177,7 +1177,9 @@ function hierarchyValidateTypes(subnets) {
 
                 audit: 'Audit Trail',
                 settings: 'Settings & Data',
-                users: 'Users & Permissions',
+                users: 'Permissions',
+                staff: 'Staff Members',
+                departments: 'Departments',
                 account: 'My Account'
             };
             document.getElementById('page-title').textContent = titles[tabId];
@@ -1239,7 +1241,7 @@ function hierarchyValidateTypes(subnets) {
             }
             if (section === 'users') {
                 const options=[['overview','Overview','i-grid'],['list','User List','i-users'],['add','Add User','i-user'],['roles','Manage Roles','i-shield']];
-                return renderInterfaceTemplate("shared/render-section-header-4",[options.map(([key,label,icon])=>tab(key,label,icon,'select-users-section',activeUsersTab===key,'tab')).join('')]);
+                return renderInterfaceTemplate("shared/render-section-header-4",[options.map(([key,label,icon])=>tab(key,label,icon,'select-users-section',activeUsersTab===key,'tab')).join('')]).replace('Users &amp; Permissions','Permissions');
             }
             return '';
         }
@@ -1287,6 +1289,10 @@ function hierarchyValidateTypes(subnets) {
             else if (currentTab === 'racks') html = renderRackHubV13();
             else if (currentTab === 'audit') html = renderAuditHTML();
             else if (currentTab === 'users') html = nextRenderUsers();
+            else if (currentTab === 'staff' || currentTab === 'departments') {
+                window.caffootStaffDirectory.enter(currentTab);
+                html = '<div class="users-live staff-live">'+window.caffootStaffDirectory.render(currentTab)+'</div>';
+            }
             else if (currentTab === 'account') html = nextRenderAccount();
             else if (currentTab === 'settings') html = renderApplicationSettings();
             if (['devices','ipam','racks','users'].includes(currentTab)) {
@@ -8812,6 +8818,8 @@ function openIpModal(ip) {
                 
                 case 'tab-settings': switchTab('settings'); break;
                 case 'tab-users': switchTab('users'); break;
+                case 'tab-staff': switchTab('staff'); break;
+                case 'tab-departments': switchTab('departments'); break;
                 case 'sidebar-users-overview': activeUsersTab='overview'; switchTab('users'); break;
                 case 'sidebar-users-list': activeUsersTab='list'; switchTab('users'); break;
                 case 'sidebar-users-add': activeUsersTab='add'; switchTab('users'); break;
@@ -8923,7 +8931,7 @@ function openIpModal(ip) {
 // Caffoot Lite: published inventory UI, authoritative SQLite persistence.
 void (async () => {
   const collections = ['devices','subnets','vlans','racks','rackAccessories','ipAllocations'];
-  const section = {devices:'Devices',ipam:'IPAM',racks:'Racks'};
+  const section = {devices:'Devices',ipam:'IPAM',racks:'Racks',staff:'Staff Members',departments:'Departments'};
   let permissions = {};
   let editPermissions = {};
   let deviceRevisions = {};
@@ -8934,12 +8942,21 @@ void (async () => {
   let activeDelete = null;
   let sessionIsAdmin = false;
   let sessionCanEnterInventory = false;
+  let sessionDirectoryPermissions = {staffMembers:{read:false,edit:false},departments:{read:false,edit:false}};
+  const inventorySectionAccess = () => ['Devices','IPAM','Racks'].some(key=>permissions[key]);
+  function addDirectoryAccess(){
+    permissions['Staff Members']=!!sessionDirectoryPermissions.staffMembers?.read;
+    permissions.Departments=!!sessionDirectoryPermissions.departments?.read;
+    editPermissions['Staff Members']=!!sessionDirectoryPermissions.staffMembers?.edit;
+    editPermissions.Departments=!!sessionDirectoryPermissions.departments?.edit;
+  }
   async function refreshCentralInventory(render = true) {
     const response = await fetch('/api/inventory/state', {cache:'no-store'});
     if (!response.ok) throw new Error(response.status === 401 ? 'Please sign in first.' : 'Unable to load central inventory.');
     const state = await response.json();
     permissions = state.sections || {};
     editPermissions = state.editPermissions || {};
+    addDirectoryAccess();
     window.nextDeviceAddressPolicy={ipamEnabled:state.ipamEnabled===true,canEditManaged:!!editPermissions.IPAM,racksEnabled:state.racksEnabled===true};
     window.nextBasicIpsOutsideSubnets=typeof state.basicIpsOutsideSubnets==='number'?state.basicIpsOutsideSubnets:null;
     nextImportAllowed = ['Devices','IPAM','Racks'].every(key => editPermissions[key]);
@@ -9046,7 +9063,12 @@ void (async () => {
     document.querySelectorAll('#sidebar [data-tab]').forEach(button=>{
       const area=section[button.dataset.tab];
       if(area)button.hidden=!permissions[area];
-      if(['dashboard','audit'].includes(button.dataset.tab))button.hidden=!Object.values(permissions).some(Boolean);
+      if(['dashboard','audit'].includes(button.dataset.tab))button.hidden=!inventorySectionAccess();
+    });
+    document.querySelectorAll('#sidebar [data-nav-group]').forEach(group=>{
+      const anyVisible=[...group.querySelectorAll('.preview-group-children [data-tab]')]
+        .some(button=>!button.hidden&&!button.classList.contains('hidden'));
+      group.hidden=!anyVisible;
     });
     const featureActions={Devices:['tab-devices','open-device-modal'],IPAM:['tab-ipam'],Racks:['tab-racks','dashboard-racks-overview','open-rack-modal']};
     for(const [area,actions] of Object.entries(featureActions)){
@@ -9084,6 +9106,8 @@ void (async () => {
           (editPermissions.Devices&&editPermissions.IPAM&&button.form.id==='device-ipam-link-form') ||
           button.form?.matches('#next-account-password-form,#next-account-mfa-start,#next-account-mfa-confirm,#account-mfa-removal-form,#personal-details-form,#account-email-verification-form') ||
           (sessionIsAdmin && (button.closest('#next-user-create-form,#next-user-profile-form,#smtp-settings-form,#smtp-test-form') || button.form?.matches('#role-definition-form'))) ||
+          (editPermissions['Staff Members'] && button.form?.matches('#staff-record-form')) ||
+          (editPermissions.Departments && button.form?.matches('#staff-department-form')) ||
           (editPermissions.Devices && button.form?.matches('form[data-device-form="true"]')) ||
           (editPermissions.IPAM && button.closest('form[data-form-action="ip"],form[data-form-action="bulk-ip"],form[data-form-action="subnet"],form[data-ipam-subnet-creation]')) ||
           (editPermissions.Devices && editPermissions.Racks && button.closest('#rack-shelf-removal-form')) ||
@@ -9288,9 +9312,19 @@ void (async () => {
       finally { resumingFreshNavigation = false; }
     }).catch(error => showToast(error.message, 'error'));
   }, true);
+  document.addEventListener('click',event=>{
+    const button=event.target.closest('#sidebar [data-action="toggle-nav-group"]');
+    if(!button)return;
+    event.preventDefault();event.stopImmediatePropagation();
+    const body=document.getElementById('nav-group-'+button.dataset.group);
+    if(!body)return;
+    const next=button.getAttribute('aria-expanded')!=='true';
+    button.setAttribute('aria-expanded',String(next));
+    body.hidden=!next;
+  },true);
   const originalSwitchTab = switchTab;
   switchTab = function(tab) {
-    if ((!sessionCanEnterInventory && tab!=='account') || (['dashboard','audit'].includes(tab) && !Object.values(permissions).some(Boolean)) || ((tab === 'users' || tab === 'settings') && !sessionIsAdmin) ||
+    if ((!sessionCanEnterInventory && !['account','staff','departments'].includes(tab) && !(sessionIsAdmin && ['users','settings'].includes(tab))) || (['dashboard','audit'].includes(tab) && !inventorySectionAccess()) || ((tab === 'users' || tab === 'settings') && !sessionIsAdmin) ||
         (section[tab] && !permissions[section[tab]])) {
       showToast('You do not have access to this section.', 'error');
       return;
@@ -10198,7 +10232,7 @@ void (async () => {
   let users = null;
   let activeUserEditorId = null;
   let roleCatalogue=[];
-  const roleSections=['Devices','IPAM','Racks'];
+  const roleSections=['Devices','IPAM','Racks','Staff Members','Departments','IT Assets'];
   const roleLayers=[];
   function permissionLabel(level){
     return ({read:'Read',edit:'Edit',deny:'No Access'})[level]||'No Access';
@@ -10399,7 +10433,7 @@ void (async () => {
     const rows=users.map(user=>{
       const own=user.username.toLowerCase()===signedInUsername.toLowerCase();
       const role=user.isAdmin?'Administrator':'Staff Member';
-      const grantPills=user.isAdmin?'<span class="badge dark">All sections</span>':['Devices','IPAM','Racks'].map(section=>{
+      const grantPills=user.isAdmin?'<span class="badge dark">All sections</span>':roleSections.map(section=>{
         const level=user.isAdmin?'edit':(user.permissions?.[section]||'');
         return `<span class="mini ${level==='edit'?'edit':level===''?'no':''}" title="${section}: ${level||'No access'}">${section}: ${level==='edit'?'Edit':level==='read'?'Read':'—'}</span>`;
       }).join('');
@@ -10844,7 +10878,9 @@ void (async () => {
         !element.form.matches('form[data-device-form="true"],#role-definition-form,#next-user-create-form,#next-user-profile-form,#next-account-password-form,#next-account-mfa-start,#next-account-mfa-confirm,#account-mfa-removal-form,#personal-details-form,#smtp-settings-form,#smtp-test-form,#account-email-verification-form') &&
         !(editPermissions.IPAM && element.closest('form[data-form-action="ip"],form[data-form-action="bulk-ip"],form[data-form-action="subnet"],form[data-ipam-subnet-creation]')) &&
         !(editPermissions.Devices && editPermissions.Racks && element.closest('#rack-shelf-removal-form')) &&
-        !(editPermissions.Racks && element.closest('form[data-form-action="rack"],form[data-form-action="assign"],#rack-accessory-form')))) {
+        !(editPermissions.Racks && element.closest('form[data-form-action="rack"],form[data-form-action="assign"],#rack-accessory-form')) &&
+        !(editPermissions['Staff Members'] && element.form?.matches('#staff-record-form')) &&
+        !(editPermissions.Departments && element.form?.matches('#staff-department-form')))) {
       event.preventDefault();
       event.stopImmediatePropagation();
       showToast(!sessionIsAdmin ? 'Edit permission is required for this action.' : 'This inventory operation is not yet connected to SQLite.', 'error');
@@ -10853,6 +10889,8 @@ void (async () => {
   document.addEventListener('submit',event => {
     if(editPermissions.Devices&&editPermissions.IPAM&&event.target.matches('#device-ipam-link-form'))return;
     if (event.target.matches('#next-account-password-form,#next-account-mfa-start,#next-account-mfa-confirm,#account-mfa-removal-form,#personal-details-form,#next-user-profile-form,#smtp-settings-form,#smtp-test-form,#account-email-verification-form') ||
+        (editPermissions['Staff Members'] && event.target.matches('#staff-record-form')) ||
+        (editPermissions.Departments && event.target.matches('#staff-department-form')) ||
         (editPermissions.Devices && event.target.matches('form[data-device-form="true"]')) ||
         (editPermissions.IPAM && event.target.matches('form[data-form-action="ip"],form[data-form-action="bulk-ip"],form[data-form-action="subnet"],form[data-ipam-subnet-creation]')) ||
         (editPermissions.Racks && event.target.matches('form[data-form-action="rack"],form[data-form-action="assign"],#rack-accessory-form')) ||
@@ -10868,6 +10906,8 @@ void (async () => {
     if(!sessionResponse.ok) throw new Error('Please sign in first.');
     const session=await sessionResponse.json();
     csrfToken=session.csrf_token;
+    sessionDirectoryPermissions=session.directory_permissions||sessionDirectoryPermissions;
+    addDirectoryAccess();
     sessionIsAdmin=!!session.is_admin;
     sessionAssignedRoles=session.assigned_roles||[];
     window.nextSessionIsAdmin=sessionIsAdmin;
@@ -10875,27 +10915,36 @@ void (async () => {
     sessionMfaEnrolled=!!session.mfa_enrolled;
     sessionMfaRemovalEligible=session.mfa_removal_eligible===true;
     sessionCanEnterInventory=session.can_enter_inventory===true;
+    window.caffootStaffDirectory.configure({
+      rights:sessionDirectoryPermissions,admin:sessionIsAdmin,csrf:csrfToken,
+      accountList:()=>users||[],reloadAccounts:async()=>{if(sessionIsAdmin)await loadCentralUsers();},
+      redraw:()=>renderContent(),notify:(message,type)=>showToast(message,type),
+      manageLogin:accountId=>{
+        if(!sessionIsAdmin)return;
+        activeUsersTab='list';activeUserEditorId=Number(accountId);switchTab('users');
+      }
+    });
     await loadAccountProfile();
     window.nextMfaEnrolled=sessionMfaEnrolled;
     document.getElementById('next-users-nav').classList.toggle('hidden', !sessionIsAdmin);
     document.getElementById('next-settings-nav').classList.toggle('hidden', !sessionIsAdmin);
     if (sessionIsAdmin) await loadCentralUsers();
     if(sessionCanEnterInventory)await refreshCentralInventory(false);
-    else{
-      // The account shell loads only the signed-in user's profile, never inventory.
-      document.querySelectorAll('#sidebar [data-tab]').forEach(button=>{button.hidden=true;button.disabled=true;});
-    }
+    if(sessionDirectoryPermissions.staffMembers?.read||sessionDirectoryPermissions.departments?.read)
+      await window.caffootStaffDirectory.refresh();
     // Hide only the browser-backup actions excluded from the server application by issue #215.
     document.querySelectorAll('[data-action="settings-backup"],[data-action="export-data"],[data-action="export-backup"]').forEach(el=>el.hidden=true);
-    switchTab(window.location.pathname==='/account'?'account':Object.values(permissions).some(Boolean)?'dashboard':sessionIsAdmin?'settings':'account');
+    switchTab(window.location.pathname==='/account'?'account':inventorySectionAccess()?'dashboard':sessionDirectoryPermissions.staffMembers?.read?'staff':sessionDirectoryPermissions.departments?.read?'departments':sessionIsAdmin?'settings':'account');
     // Preserve existing fragment entry points without changing server permissions.
     const destination = window.location.hash.slice(1);
     const legacyDestination = {
       dashboard:'dashboard', devices:'devices', ipam:'ipam',
       racks:'racks', audit:'audit', users:'users',
-      settings:'settings', account:'account'
+      settings:'settings', account:'account',staff:'staff',departments:'departments'
     }[destination];
-    const canOpen = legacyDestination === 'dashboard' || legacyDestination === 'account' ||
+    const canOpen = (legacyDestination === 'dashboard' && inventorySectionAccess()) || legacyDestination === 'account' ||
+      (legacyDestination === 'staff' && permissions['Staff Members']) ||
+      (legacyDestination === 'departments' && permissions.Departments) ||
       (legacyDestination === 'devices' && permissions.Devices) ||
       (legacyDestination === 'ipam' && permissions.IPAM) ||
       (legacyDestination === 'racks' && permissions.Racks) ||

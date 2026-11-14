@@ -436,3 +436,14 @@ html.dark #main-content .users-live button.btn.primary[data-role-command="create
 @media(max-width:1050px){.optional-features-panel .feature-grid{grid-template-columns:1fr}.optional-features-panel .description{min-height:0}}
 @media(max-width:720px){.optional-features-panel .panel-heading{flex-direction:column}.optional-features-panel .card-padded{padding:17px}}
 @media(prefers-reduced-motion:reduce){.optional-features-panel .switch,.optional-features-panel .switch:after{transition:none}}
+
+/* Stage 3 grouped sidebar: the existing v2.1 links remain authoritative. */
+#sidebar .preview-nav-group{display:grid;gap:3px}
+#sidebar .preview-group-toggle{width:100%}
+#sidebar .preview-group-children{display:grid;gap:3px;padding-left:11px}
+#sidebar .preview-group-chevron{margin-left:auto;font-size:19px;line-height:1}
+#sidebar .preview-group-toggle[aria-expanded="true"] .preview-group-chevron{transform:rotate(90deg)}
+#sidebar .preview-group-children .nav-item{width:100%}
+#sidebar.collapsed .preview-group-children,#app.collapsed #sidebar .preview-group-children{padding-left:0}
+#sidebar.collapsed .preview-group-chevron,#app.collapsed #sidebar .preview-group-chevron{display:none}
+@media(max-width:720px){#sidebar .preview-group-children{padding-left:0}#sidebar .preview-group-chevron{display:none}}
