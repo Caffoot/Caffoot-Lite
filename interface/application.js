@@ -1289,7 +1289,10 @@ function hierarchyValidateTypes(subnets) {
             else if (currentTab === 'racks') html = renderRackHubV13();
             else if (currentTab === 'audit') html = renderAuditHTML();
             else if (currentTab === 'users') html = nextRenderUsers();
-            else if (currentTab === 'staff' || currentTab === 'departments') html = '<div class="users-live staff-live">'+window.caffootStaffDirectory.render(currentTab)+'</div>';
+            else if (currentTab === 'staff' || currentTab === 'departments') {
+                window.caffootStaffDirectory.enter(currentTab);
+                html = '<div class="users-live staff-live">'+window.caffootStaffDirectory.render(currentTab)+'</div>';
+            }
             else if (currentTab === 'account') html = nextRenderAccount();
             else if (currentTab === 'settings') html = renderApplicationSettings();
             if (['devices','ipam','racks','users'].includes(currentTab)) {
@@ -1297,7 +1300,6 @@ function hierarchyValidateTypes(subnets) {
                 html = renderSectionHeader(currentTab) + '<section class="' + panelClass + ' active section-page-body"' + (currentTab==='devices'?' data-section="'+activeDeviceDetailsTab+'"':'') + '>' + html + '</section>';
             }
             container.innerHTML = html;
-            if (currentTab === 'staff' || currentTab === 'departments') window.caffootStaffDirectory.enter(currentTab);
             if (currentTab === 'account') hydrateAccount(container);
             if (currentTab === 'audit') hydrateAudit(container);
             if (currentTab === 'settings') hydrateSettings(container);
@@ -10915,6 +10917,7 @@ void (async () => {
     sessionCanEnterInventory=session.can_enter_inventory===true;
     window.caffootStaffDirectory.configure({
       rights:sessionDirectoryPermissions,admin:sessionIsAdmin,csrf:csrfToken,
+      accountList:()=>users||[],reloadAccounts:async()=>{if(sessionIsAdmin)await loadCentralUsers();},
       redraw:()=>renderContent(),notify:(message,type)=>showToast(message,type),
       manageLogin:accountId=>{
         if(!sessionIsAdmin)return;
