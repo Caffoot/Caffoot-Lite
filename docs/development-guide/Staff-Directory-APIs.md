@@ -56,6 +56,34 @@ roles, MFA and account-profile details are never joined into Staff responses.
 Staff membership contains the Department ID, without exposing another section's
 list or account administration. Contact details are excluded from new audit events.
 
+## Batch 3.3 Directory Presentation Extensions (Draft)
+
+The Stage 3.3 integration retains the Stage 3.2 API contracts and adds the following
+small, permission-scoped outputs to support the approved forms:
+
+- `GET /api/staff-members/department-choices`: requires **Staff Members Read**.
+  Returns `{ "departments": [{ "id", "name", "archived" }] }` for linked
+  Departments (including archived current memberships). Users with **Staff Members
+  Edit** additionally see active Departments eligible for new membership. It
+  never returns general unlinked archived Departments, Staff records or other
+  Departments management information, and cannot be used for mutation.
+- `GET /api/departments` and `GET /api/departments/{id}` additionally include
+  `canDelete`, computed by the server against Staff current and historic
+  Department associations. This is a display hint, **not** authorisation:
+  deletion still performs the original transactional association check.
+- `GET /api/session` retains `can_enter_inventory` with its original meaning,
+  and adds `can_enter_workspace` plus the current user's effective
+  `directory_permissions` for Staff Members and Departments. The signed-in
+  Staff-only user can enter the normal shell but **cannot** fetch inventory
+  state or any Devices/IPAM/Racks data without their independent rights.
+- The signed-in Staff Member form uses the existing POST directory endpoints.
+  Optional account creation still requires a verified administrator; Staff
+  edit status and account status remain independent. The approved two-column
+  layout uses the owner's accepted Cancel / Save Staff Member controls.
+
+This is part of **draft PR #381**, not yet final product acceptance. The
+original Stage 3.2 contract and all original access restrictions remain.
+
 ## Transaction And Lifecycle Rules
 
 `permissions.create_user_in_transaction` is the shared account writer. Existing
