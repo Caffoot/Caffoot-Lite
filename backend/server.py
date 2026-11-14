@@ -352,6 +352,7 @@ class Handler(BaseHTTPRequestHandler):
                 result = {"sections": sections}
                 if sections["Devices"]:
                     result["ipamEnabled"] = feature_enabled(connection, "IPAM")
+                    result["racksEnabled"] = feature_enabled(connection, "Racks")
                 # The published device records remain unchanged. Revisions and
                 # edit permissions are separate backend metadata for the shared
                 # edit-reservation workflow.

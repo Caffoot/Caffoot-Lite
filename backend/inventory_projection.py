@@ -1,4 +1,6 @@
 """Keep feature-only collections out of other sections' API responses."""
+import ipaddress
+
 from .permissions import can_access
 from .inventory import SETTINGS
 
@@ -29,4 +31,29 @@ def project_inventory_response(connection, account_id, result):
                      if key != "hostname" or not (allocation.get("deviceId") or allocation.get("reservedForDeviceId"))}
                 for ip, allocation in result["ipAllocations"].items()
             }
+    if sections['Devices'] and sections['IPAM'] and 'devices' in result and 'subnets' in result:
+        result['basicIpsOutsideSubnets'] = count_basic_ips_outside_subnets(result['devices'], result['subnets'])
     return result
+
+
+def count_basic_ips_outside_subnets(devices, subnets):
+    """Count only unlinked addresses outside complete managed network ranges."""
+    networks = []
+    for subnet in subnets:
+        if subnet.get('kind','network') != 'network':
+            continue
+        try:
+            networks.append(ipaddress.IPv4Network(subnet['cidr'], strict=True))
+        except (ValueError, KeyError):
+            continue
+    count = 0
+    for device in devices:
+        if device.get('primaryIpMode') != 'basic' or not device.get('primaryIp'):
+            continue
+        try:
+            address = ipaddress.IPv4Address(device['primaryIp'])
+        except ValueError:
+            continue
+        if not any(address in network for network in networks):
+            count += 1
+    return count

@@ -1,0 +1,108 @@
+{
+  "revision": "c26db4a56bbc30f95b56201e81a7a76d13c6037b",
+  "screens": [
+    "approved-settings-1440.png",
+    "approved-ipam-1440.png",
+    "approved-network-1440.png",
+    "optional-features-light-1440.png",
+    "ipam-overview-light-1440.png",
+    "device-network-light-1440.png",
+    "link-no-subnet-light-1440.png",
+    "link-existing-subnet-light-1440.png",
+    "racks-off-device-light-1440.png",
+    "racks-off-new-device-light-1440.png",
+    "optional-features-dark-1440.png",
+    "ipam-overview-dark-1440.png",
+    "device-network-dark-1440.png",
+    "link-no-subnet-dark-1440.png",
+    "link-existing-subnet-dark-1440.png",
+    "racks-off-device-dark-1440.png",
+    "racks-off-new-device-dark-1440.png",
+    "approved-settings-390.png",
+    "approved-ipam-390.png",
+    "approved-network-390.png",
+    "optional-features-light-390.png",
+    "ipam-overview-light-390.png",
+    "device-network-light-390.png",
+    "link-no-subnet-light-390.png",
+    "link-existing-subnet-light-390.png",
+    "racks-off-device-light-390.png",
+    "racks-off-new-device-light-390.png",
+    "optional-features-dark-390.png",
+    "ipam-overview-dark-390.png",
+    "device-network-dark-390.png",
+    "link-no-subnet-dark-390.png",
+    "link-existing-subnet-dark-390.png",
+    "racks-off-device-dark-390.png",
+    "racks-off-new-device-dark-390.png"
+  ],
+  "metrics": [
+    {
+      "width": 1440,
+      "theme": "light",
+      "area": "approved-settings",
+      "geometry": {
+        "mainWidth": 1225,
+        "navGap": "22px",
+        "cardRadius": "15px",
+        "cardPadding": "22px"
+      }
+    },
+    {
+      "width": 1440,
+      "theme": "light",
+      "area": "settings",
+      "geometry": {
+        "mainWidth": 1225,
+        "navGap": "22px",
+        "cardRadius": "15px",
+        "cardPadding": "22px"
+      }
+    },
+    {
+      "width": 1440,
+      "theme": "dark",
+      "area": "settings",
+      "geometry": {
+        "mainWidth": 1225,
+        "navGap": "22px",
+        "cardRadius": "15px",
+        "cardPadding": "22px"
+      }
+    },
+    {
+      "width": 390,
+      "theme": "light",
+      "area": "approved-settings",
+      "geometry": {
+        "mainWidth": 325,
+        "navGap": "13px",
+        "cardRadius": "15px",
+        "cardPadding": "17px"
+      }
+    },
+    {
+      "width": 390,
+      "theme": "light",
+      "area": "settings",
+      "geometry": {
+        "mainWidth": 325,
+        "navGap": "13px",
+        "cardRadius": "15px",
+        "cardPadding": "17px"
+      }
+    },
+    {
+      "width": 390,
+      "theme": "dark",
+      "area": "settings",
+      "geometry": {
+        "mainWidth": 325,
+        "navGap": "13px",
+        "cardRadius": "15px",
+        "cardPadding": "17px"
+      }
+    }
+  ],
+  "pageErrors": []
+}

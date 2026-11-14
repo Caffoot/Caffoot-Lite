@@ -371,8 +371,14 @@ async function run(){
   console.log('Approved catalogue modal structure and mobile multi-type field coverage passed');
   await page.locator('#sidebar [data-action="tab-ipam"]').click();
   await page.locator('#main-content .ipam-stats').waitFor();
-  assert.equal(await page.locator('#main-content .ipam-stat').count(),4,
-    'Approved IPAM Overview must show the four live saved-inventory totals');
+  const overviewStats=page.locator('#main-content .ipam-stats .ipam-stat');
+  assert.equal(await overviewStats.count(),5,
+    'Keep the original four IPAM totals and append only the approved basic-IP statistic');
+  for(const label of ['IP Address Blocks','Networks','Usable Addresses',
+                      'Available Addresses','Basic IPs Outside Subnets']){
+    assert.equal(await overviewStats.filter({hasText:label}).count(),1,
+      'IPAM Overview must retain each original total and the approved fifth: '+label);
+  }
   assert.ok(await page.locator('#main-content .ipam-card #ipam-overview-search').isVisible(),
     'Approved IPAM Overview must keep working subnet search');
   await page.locator('#sidebar [data-action="tab-racks"]').click();
@@ -504,8 +510,13 @@ async function run(){
   await page.locator('#sidebar [data-action="tab-settings"]').click();
   assert.ok(await page.getByRole('heading',{name:'Settings & Data',exact:true}).isVisible(),
     'Settings & Data must use the owner-approved Draft 02 page');
-  assert.equal(await page.locator('.settings-screen .subnav [data-action="select-settings-tab"]').count(),3,
-    'Approved Data & Backups, Email Settings and System Maintenance tabs must render');
+  const settingsTabs=page.locator('.settings-screen .subnav [data-action="select-settings-tab"]');
+  assert.equal(await settingsTabs.count(),4,
+    'Keep the original three Settings tabs and append only the approved Optional Features tab');
+  for(const tab of ['data','email','maintenance','features']){
+    assert.equal(await page.locator('.settings-screen .subnav [data-action="select-settings-tab"][data-tab="'+tab+'"]').count(),1,
+      'Settings & Data must retain the original tabs and approved fourth tab: '+tab);
+  }
   assert.ok(await page.getByRole('heading',{name:'Import Existing Inventory',exact:true}).isVisible(),
     'The approved Import Existing Inventory panel must remain');
   assert.ok(await page.locator('[data-action="next-import-pick"]').isEnabled(),

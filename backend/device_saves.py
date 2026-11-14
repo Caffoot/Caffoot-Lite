@@ -6,6 +6,7 @@ from datetime import datetime, timezone
 
 from .application_integrity import validate_live_application_state as validate_detached_application_state
 from .device_addresses import prepare_device_address, is_basic_address
+from .device_rack_fields import prepare_device_rack_fields
 from .inventory import reconstruct_inventory
 from .normalisation_validation import validate_normalisation_devices
 from .permissions import can_access, feature_enabled
@@ -129,6 +130,7 @@ def save_reserved_device(connection, account_id, device_id, revision, record, se
             raise ValueError("Device has changed since editing began")
         candidate = reconstruct_inventory(connection)
         previous = next(device for device in candidate["devices"] if device["id"] == device_id)
+        record = prepare_device_rack_fields(connection, record, previous)
         record = prepare_device_address(connection, account_id, record, previous)
         changed = {key for key in set(previous) | set(record)
                    if previous.get(key) != record.get(key)}
@@ -141,7 +143,7 @@ def save_reserved_device(connection, account_id, device_id, revision, record, se
             if not changed.issubset({"primaryIp", "ipReserved"}):
                 raise PermissionError("IPAM edit permission allows IP assignments only")
         else:
-            if (not (is_basic_address(previous) or is_basic_address(record)) and changed.intersection({"primaryIp", "ipReserved"}) and
+            if ((previous.get("primaryIp") or record.get("primaryIp")) and not (is_basic_address(previous) or is_basic_address(record)) and changed.intersection({"primaryIp", "ipReserved"}) and
                     not can_access(connection, account_id, "IPAM", edit=True)):
                 raise PermissionError("IPAM edit permission required for IP assignment changes")
             rack_placement_changed = bool(changed.intersection(
@@ -254,6 +256,7 @@ def create_device(connection, account_id, record):
     try:
         if not can_access(connection, account_id, "Devices", edit=True):
             raise PermissionError("Section edit permission was revoked")
+        record = prepare_device_rack_fields(connection, record)
         record = prepare_device_address(connection, account_id, record)
         if record.get("primaryIp") and not is_basic_address(record) and not can_access(connection, account_id, "IPAM", edit=True):
             raise PermissionError("IPAM edit permission required for managed address changes")

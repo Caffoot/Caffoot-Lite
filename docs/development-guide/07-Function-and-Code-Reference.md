@@ -44,6 +44,10 @@ The Issue #309 tab icons use `renderSectionTabIcon`. `revealSectionTab` scrolls 
 
 `device_addresses.py` prepares and validates the explicit basic-address marker. `application_integrity.validate_live_application_state` permits only that bounded exemption; `validate_detached_application_state` retains strict legacy import validation by default. `ipam_linking.link_device_to_ipam` owns the explicit atomic Device/IPAM association. See [Optional Features](Optional-Features.md#optional-device-addresses-and-explicit-linking) for the data and API contract.
 
+## Optional Feature Interface And Rack Preservation
+
+`device_rack_fields.prepare_device_rack_fields` merges omitted protected placement/Location values while Racks is off and rejects explicit changes. `inventory_projection.count_basic_ips_outside_subnets` feeds the doubly authorised snapshot statistic. `hydrateOptionalFeatureSettings`, `openDeviceIpamLink` and `cancelDeviceIpamLink` connect the approved additions to the existing secured operations and component styles.
+
 ## Accounts and editing
 
 On `milestone-1`, `schema.py:migrate_role_permissions` and `verify_role_migration` introduce and check schema 11 within the existing upgrade transaction. `role_policy.py:assign_staff_member` is shared by first-administrator setup and ordinary account creation. `evaluate_role_policy` combines enabled role grants and individual overrides, and `AccountRolePolicy.allows` applies account, section and MFA safeguards. Authentication, sessions, recovery and the Users response use the same evaluator. See [Shared Roles And Account Permissions](Role-Permissions.md) for development boundaries and rollback requirements.
