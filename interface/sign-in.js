@@ -31,7 +31,7 @@ async function showSession(){
  const r=await fetch('/api/session',{cache:'no-store'});
  if(!r.ok)return false;
  const session=await r.json();csrfToken=session.csrf_token;
- if(session.can_enter_inventory){
+ if(session.can_enter_workspace || session.can_enter_inventory){
   window.location.replace('/inventory');
   return true;
  }
