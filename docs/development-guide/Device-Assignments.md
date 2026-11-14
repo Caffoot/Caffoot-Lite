@@ -15,10 +15,9 @@ Initial allocation records an eligible existing Device's holder. It does not
 assert physical possession by a storeroom or mark equipment Ready. Inactive
 Staff, archived Departments, inactive/retired Devices, virtual machines, stale
 revisions, edit reservations and Devices with assignment history are rejected.
-The reviewed Desktop, Laptop and Printer examples are enabled; other Device
-types fail closed while the owner clarifies the archived preview's explicit
-infrastructure-eligibility boundary. This restriction is awaiting a decision,
-not claimed as an approved new Device-type policy.
+Only Desktop, Laptop and Printer are eligible for initial allocation, as
+[confirmed by the product owner](https://github.com/Caffoot/Caffoot-Lite/issues/368#issuecomment-6883527160).
+Other Device types remain blocked unless separately approved.
 The whole multi-Device request either commits with attributable audit events or
 rolls back. After waiting for the SQLite write lock, the operation rechecks its
 session, MFA-dependent effective rights, current recipients and Device state.
@@ -38,7 +37,7 @@ existing same-origin, session-bound CSRF proof and an active verified session.
 | Endpoint | Access And Response |
 | --- | --- |
 | `GET /api/equipment/recipients?kind=staff&query=…` | Devices Edit; active Staff names/IDs only. `kind=department` offers non-archived Departments. No contact, account or security fields. |
-| `GET /api/equipment/available-devices?query=…&limit=100&offset=0` | Devices Edit; eligible canonical Device IDs, names, types and revisions. |
+| `GET /api/equipment/available-devices?query=…&limit=100&offset=0` | Devices Edit; eligible canonical Device IDs, names, types and revisions. LIMIT/OFFSET count eligible matching Devices in name/ID order, after the existing eligibility checks. |
 | `GET /api/equipment/assignments?deviceId=…` | Devices Read; current holder and dated history. Exactly one of `deviceId`, `staffId`, `departmentId` is required. |
 | `POST /api/equipment/assignments` | Devices Edit; `{recipientKind: "staff" or "department", recipientId, devices: [{id, revision}]}`; 1–100 distinct Devices. |
 | `GET /api/my-equipment` | Own authenticated account; no inventory grant required. Accepts no identity parameters. Returns `assignedToMe` and `sharedWithMyDepartment`. |

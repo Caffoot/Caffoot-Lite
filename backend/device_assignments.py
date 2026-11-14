@@ -45,12 +45,21 @@ def assignment_device_choices(connection, actor_id, *, query='', limit=100, offs
     if not isinstance(query, str) or len(query) > 100 or type(limit) is not int or not 1 <= limit <= 100 or type(offset) is not int or not 0 <= offset <= 1000000:
         raise ValueError('Invalid Device search')
     pattern = '%' + query.replace('!', '!!').replace('%', '!%').replace('_', '!_') + '%'
-    rows = connection.execute("SELECT id,record_json,revision FROM inventory_devices WHERE name LIKE ? ESCAPE '!' AND NOT EXISTS (SELECT 1 FROM device_assignments a WHERE a.device_id=inventory_devices.id) ORDER BY name,id LIMIT ? OFFSET ?", (pattern, limit, offset))
+    rows = connection.execute("SELECT id,record_json,revision FROM inventory_devices WHERE name LIKE ? ESCAPE '!' AND NOT EXISTS (SELECT 1 FROM device_assignments a WHERE a.device_id=inventory_devices.id) ORDER BY name,id", (pattern,))
     result = []
+    remaining_offset = offset
     for device_id, raw, revision in rows:
         record = json.loads(raw)
-        if device_assignment_dependency(connection, device_id, record) is None:
-            result.append({'id': device_id, 'name': record['name'], 'type': record.get('type', ''), 'revision': revision})
+        if device_assignment_dependency(connection, device_id, record) is not None:
+            continue
+        # Page through eligible equipment, so infrastructure and inactive records
+        # cannot fill a search page and hide the Devices that can be allocated.
+        if remaining_offset:
+            remaining_offset -= 1
+            continue
+        result.append({'id': device_id, 'name': record['name'], 'type': record.get('type', ''), 'revision': revision})
+        if len(result) == limit:
+            break
     return result
 
 

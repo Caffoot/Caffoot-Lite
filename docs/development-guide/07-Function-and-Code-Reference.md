@@ -167,6 +167,8 @@ edit reservations. `read_assignments` supplies one shared history for authorised
 IT views. `assignment_recipients` offers only eligible names and identifiers;
 it does not grant directory access. `my_equipment` resolves the account's own
 Staff link and current Department on the server and returns employee-safe fields.
+`assignment_device_choices` applies its offset and limit after the shared
+eligibility check, so other Device types cannot hide eligible search results.
 See [Device Assignments](Device-Assignments.md) for API and workflow boundaries.
 
 `interface/equipment.js` supplies `staffPlaceholder`/`loadStaffEquipment`,

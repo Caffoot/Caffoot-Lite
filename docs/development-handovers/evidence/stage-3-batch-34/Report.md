@@ -3,7 +3,42 @@
 Draft [PR #382](https://github.com/Caffoot/Caffoot-Lite/pull/382) targets
 `milestone-1` from the verified `7ec4ac27eddb1f798fdfcf9fff09b761c7bebd86`
 baseline. Runtime checkpoint: `d91629bdb308c3012b08e2b3ed724a85d0cfa774`.
-The later report commit changes documentation/evidence only.
+The original documentation/evidence checkpoint is
+`ad184c83c5eb18945d21b0ccb7432ac8a551a8e8`. The corrections below supersede
+that checkpoint. Original screenshots, Docker results and image hashes remain
+evidence for the original runtime; they are not a new correction-image build.
+
+## Final Corrections — 14 November 2026
+
+The owner confirmed **Desktop, Laptop and Printer only** in
+[issue #368 comment #6883527160](https://github.com/Caffoot/Caffoot-Lite/issues/368#issuecomment-6883527160).
+The existing eligibility predicate is unchanged. The accepted Departments screen
+and every application interface file are unchanged by these corrections.
+
+- `tests/browser-compat.cjs` now checks the exact ten approved sidebar IDs and
+  labels, including My Equipment, rather than the obsolete count of nine.
+- `assignment_device_choices` now applies OFFSET/LIMIT to eligible matching
+  records after the existing shared eligibility check. Name/ID order, Devices
+  Edit access, canonical identities and the four response fields are preserved.
+  The cursor stops when the requested eligible page is full.
+- The regression fixture starts with 125 ineligible Switches, followed by mixed
+  eligible types, Retired Laptops and virtual records. It checks three complete
+  pages, an empty final page, default search, unchanged storage and denied access.
+  It reproduced empty pages before the fix and passes after it.
+
+**Actual correction checks:**
+
+| Command / Check | Result |
+| --- | --- |
+| `PYTHONPATH=tests:. python3 -m unittest test_device_assignments test_device_assignments_http -v` | **18 passed**, no failures/skips, 1.981 seconds. |
+| `CAFFOOT_CHROMIUM_PATH=/usr/bin/chromium node tests/browser-compat.cjs` | **Passed**, full affected browser compatibility script; final output `PASS: Caffoot Lite focused Chromium compatibility`. The focus environment variable was not set, so the full script ran. |
+| Affected Python compilation, browser-test syntax, Function Index locations and whitespace | **Passed**. |
+
+No additional full backend suite, Docker/image build or visual acceptance was
+performed for this focused correction. The known baseline IPAM contract failure
+was not changed or rerun. No remaining failure occurred in the correction checks.
+Product-owner visual and functional acceptance is still required; PR #382 stays
+draft. No merge, deployment or `main` change.
 
 ## Delivered Behaviour
 
@@ -87,13 +122,11 @@ pending. Automated tests and this comparison do not constitute owner acceptance.
 
 ## Blocked And Deferred
 
-The archived Assigned To preview excludes its Switch example and explicitly
-leaves other Device-type eligibility for separate approval. The current code
-therefore enables only its reviewed **Desktop, Laptop and Printer** examples.
-Other types are blocked, and the owner has been asked whether all active
-physical Device types should be eligible. This is an unresolved scope question,
-not a claimed new approved type policy. No broader allocation will be enabled
-without the answer.
+The product owner has [confirmed Desktop, Laptop and Printer as the only
+eligible initial-assignment types](https://github.com/Caffoot/Caffoot-Lite/issues/368#issuecomment-6883527160).
+This resolves the earlier eligibility question without changing the implemented
+restriction. Other Device types, including infrastructure equipment, remain
+blocked unless separately approved.
 
 Return Equipment, reassignment, stock receipts/balances, preparation/Ready,
 write-off/correction, Get From Stock, accessories and Service Desk remain

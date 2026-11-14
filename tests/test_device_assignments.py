@@ -233,3 +233,28 @@ class DeviceAssignmentTests(unittest.TestCase):
         result = read_assignments(self.db, 1, device_id='two')
         self.assertEqual(result['current'][0]['recipientLabel'], 'New Department Name')
         self.assertEqual(result['history'][0]['recipientLabel'], 'Production')
+
+    def test_device_search_pages_count_only_eligible_matching_records(self):
+        # A long run of infrastructure records must not hide later equipment.
+        expected = []
+        records = [('Switch', 'Active', False)] * 125
+        for device_type in ('Desktop', 'Laptop', 'Printer') * 3:
+            records.extend([(device_type, 'Active', False), ('Switch', 'Active', False),
+                            ('Laptop', 'Retired', False), ('Laptop', 'Active', True)])
+        for index, (device_type, status, virtual) in enumerate(records):
+            device_id = f'page-device-{index:03d}'
+            record = {'id': device_id, 'name': f'Page Device {index:03d}',
+                      'type': device_type, 'status': status, 'isVirtual': virtual}
+            self.db.execute('INSERT INTO inventory_devices(id,name,record_json,ordinal,revision) VALUES(?,?,?,?,?)',
+                            (device_id, record['name'], json.dumps(record), index + 3, index))
+            if device_type in ('Desktop', 'Laptop', 'Printer') and status == 'Active' and not virtual:
+                expected.append({'id': device_id, 'name': record['name'], 'type': device_type, 'revision': index})
+        self.db.commit()
+        before = self.snapshot()
+        pages = [assignment_device_choices(self.db, 1, query='Page Device', limit=3, offset=offset)
+                 for offset in (0, 3, 6, 9)]
+        self.assertEqual(pages, [expected[:3], expected[3:6], expected[6:9], []])
+        self.assertEqual(assignment_device_choices(self.db, 1, query='Page Device'), expected)
+        self.assertEqual(before, self.snapshot())
+        with self.assertRaises(PermissionError):
+            assignment_device_choices(self.db, 3, query='Page Device', limit=3)
