@@ -13,6 +13,8 @@ from backend.inventory import inspect_export, stage_inventory
 from backend.permissions import create_user, delete_user, set_account_active
 from backend.profiles import save_profile
 from backend.role_policy import evaluate_role_policy
+from backend.reset_inventory import reset_inventory
+from enabled_inventory import enable_inventory_features
 from test_inventory import fixture
 
 
@@ -118,6 +120,20 @@ class StaffDirectoryMigrationTests(unittest.TestCase):
         self.db.commit()
         self.assertEqual(self.db.execute("SELECT department_id FROM staff_members WHERE id='no-login'").fetchone(), ('dept',))
 
+    def test_partial_backfill_keeps_valid_link_and_does_not_match_people_by_name(self):
+        schema.initialise_database(self.db)
+        self.db.execute('DELETE FROM schema_migrations WHERE version=14')
+        self.db.execute('DELETE FROM staff_members WHERE account_id!=3')
+        self.db.execute("UPDATE staff_members SET email='' WHERE account_id=3")
+        self.db.execute("INSERT INTO staff_members(id,first_name,last_name) VALUES('unlinked','Alex','Example')")
+        self.db.commit()
+        retained = self.db.execute('SELECT * FROM staff_members WHERE account_id=3').fetchone()
+        schema.initialise_database(self.db)
+        self.assertEqual(self.db.execute('SELECT * FROM staff_members WHERE account_id=3').fetchone(), retained)
+        self.assertEqual(self.db.execute('SELECT account_id FROM staff_members WHERE account_id IS NOT NULL ORDER BY account_id').fetchall(), [(n,) for n in range(1, 6)])
+        self.assertEqual(self.db.execute("SELECT account_id FROM staff_members WHERE id='unlinked'").fetchone(), (None,))
+        self.assertEqual(len(self.rows('staff_members')), 6)
+
     def test_failure_after_schema_or_backfill_rolls_back_entire_upgrade(self):
         before = list(self.db.iterdump())
         for blocked_table in ('staff_members', 'schema_migrations'):
@@ -175,6 +191,11 @@ class StaffDirectoryMigrationTests(unittest.TestCase):
         self.assertEqual(self.db.execute('SELECT * FROM staff_members WHERE account_id=3').fetchone(), staff)
         set_account_active(self.db, 1, 3, False)
         self.assertEqual(self.db.execute('SELECT * FROM staff_members WHERE account_id=3').fetchone(), staff)
+        before = list(self.db.iterdump())
+        with patch('backend.permissions.record_actor_event', side_effect=RuntimeError('Audit failed')):
+            with self.assertRaisesRegex(RuntimeError, 'Audit failed'):
+                delete_user(self.db, 1, 3)
+        self.assertEqual(list(self.db.iterdump()), before)
         delete_user(self.db, 1, 3)
         self.assertEqual(self.db.execute('SELECT * FROM staff_members WHERE id=?', (staff[0],)).fetchone(), (*staff[:-1], None))
         self.assertIsNone(self.db.execute('SELECT 1 FROM accounts WHERE id=3').fetchone())
@@ -207,3 +228,15 @@ class StaffDirectoryMigrationTests(unittest.TestCase):
         self.assertTrue(self.db.in_transaction)
         self.db.rollback()
         self.assertEqual(self.db.execute('SELECT username FROM accounts WHERE id=5').fetchone(), ('profile-missing',))
+
+    def test_existing_inventory_import_and_clean_start_retain_directory(self):
+        schema.initialise_database(self.db)
+        enable_inventory_features(self.db)
+        self.db.execute("INSERT INTO departments(id,name) VALUES('dept','Production')")
+        self.db.execute("UPDATE staff_members SET department_id='dept' WHERE account_id=3")
+        self.db.commit()
+        directory = {table: self.rows(table) for table in ('staff_members', 'departments')}
+        stage_inventory(self.db, inspect_export(json.dumps(fixture()).encode()))
+        self.assertEqual({table: self.rows(table) for table in directory}, directory)
+        reset_inventory(self.db, 1)
+        self.assertEqual({table: self.rows(table) for table in directory}, directory)

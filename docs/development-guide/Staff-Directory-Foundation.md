@@ -67,6 +67,9 @@ UI is added here.
 Full legacy inventory import still requires effective Edit on **Devices, IPAM and
 Racks**, including all three feature gates. It does not require Staff Members,
 Departments or IT Assets, and those grants cannot substitute for inventory rights.
+The inventory history filter also retains its original three-section boundary,
+so default-off IT Assets cannot hide existing administrator audit details. Directory
+permissions alone do not expose inventory or account-security history.
 
 ## Verification
 
@@ -75,3 +78,6 @@ all-table and security preservation, constraints, existing links, retries/reopen
 rollback after table creation and backfill, conflicts, concurrent upgrades and
 existing profile/status/deletion behaviour. Final evidence belongs in the active
 [handover](../development-handovers/milestone-01.md) and Batch 3.1 PR.
+`test_staff_section_permissions.py` exercises the existing role preview/confirmation
+service, inheritance and overrides, MFA, session/proof revocation, administrator
+protection, directory privacy and preservation of import/history access.

@@ -1,12 +1,12 @@
 # Milestone 01 Development Handover — v2.2 Target
 
-> **Current status, 12 November 2026:** v2.2 is the agreed **future** release designation for Milestone 01, not a public release or Docker image. The latest published version remains **v2.1**. Stage 1 RBAC, individual overrides, IT Staff and schema 12 were formally accepted, with the isolated fictional-data full-volume restore rehearsal reported passed, and [PR #358](https://github.com/Caffoot/Caffoot-Lite/pull/358) merged into `main` at `6008fedfc2c25fc40b49c9e9e21f3a93d61a9f4a`. **Stages 2–6 are still open.** Development and private acceptance continue on `milestone-1`; do not merge to `main`, publish v2.2 or deploy to a real installation without separate owner approval. Track remaining stages in [#351](https://github.com/Caffoot/Caffoot-Lite/issues/351) and release-preparation documentation in [#366](https://github.com/Caffoot/Caffoot-Lite/issues/366).
+> **Current status, 14 November 2026:** v2.2 remains the future Milestone 01 target; the published release is **v2.1**. Stage 1 was accepted and merged into `main` at `6008fedfc2c25fc40b49c9e9e21f3a93d61a9f4a`. Stage 2, including native Pi/Safari corrective retests, was accepted through PR #376 on `milestone-1` at `519842b46861c85fde0eebf78298117c2346599d`. Stage 3 Batch 3.1 is an authorised review candidate; later batches and Stages 4–6 remain pending. No merge to `main`, publication or real deployment is authorised. Track remaining work in [#351](https://github.com/Caffoot/Caffoot-Lite/issues/351) and [#366](https://github.com/Caffoot/Caffoot-Lite/issues/366). Dated sections below preserve earlier checkpoints.
 
 ## Ongoing v2.2 checklist
 
 - [x] Agree target version v2.2; distinguish from published v2.1
 - [x] Stage 1 — accepted and merged (PR #358); documented real Pi and isolated restore evidence
-- [ ] Stage 2 — optional-feature foundation (issue #238)
+- [x] Stage 2 — optional-feature foundation (issue #238), accepted through PR #376
 - [ ] Stage 3 — People, Assets and equipment handovers (#232, #352, #292)
 - [ ] Stage 4 — Suppliers and lifecycle (#349, #286)
 - [ ] Stage 5 — Service Desk and notifications (#233, #355)
@@ -35,6 +35,22 @@ migration plus existing schema and feature-settings tests. This includes exact
 all-table/account-policy preservation, blanks, constraints, retry/reopen, concurrent
 upgrade, rollback and conflict handling. New-section security and wider regression
 checks are still pending at this checkpoint. No visual changes or design pins changed.
+
+The first migration checkpoint was committed and pushed as
+`42397f54e8518a04997fbd25ecdbf4c584b2f058`.
+The completed focused selection passed **95 tests**, no failures/skips:
+`test_staff_directory_migration`, `test_staff_section_permissions`, `test_schema`,
+`test_feature_settings`, `test_permissions`, `test_role_policy`, `test_role_migration`,
+`test_builtin_roles`, `test_roles`, `test_import_http`,
+`test_optional_features_persistence` and `test_history_permissions`.
+It exercises partial backfill, login-deletion rollback, the real role-confirmation
+service, MFA/session/proof revocation, inheritance/overrides and directory privacy.
+Import and inventory history now explicitly keep their original three-section
+requirements. A development run caught a removed history import; its correction
+and the complete-admin-history regression are included in the passing selection.
+Final candidate backend CI, documentation, source-pin and hosted-check outcomes
+are recorded in the Batch 3.1 PR. No browser/Docker/Azure setup or deployment was
+performed locally; the unchanged interface does not require a new visual approval.
 
 Stop for product-owner review after the final PR. No later batch, merge, release,
 Docker publication or deployment is authorised.
