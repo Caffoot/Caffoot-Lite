@@ -59,6 +59,10 @@ let browser;
  const load=async()=>{await page.goto(address+'/inventory');await page.locator('#app[aria-busy="false"]').waitFor();};
  const toggle=async(feature,enabled)=>{const r=await context.request.post(address+'/api/settings/features',{headers:{Origin:address,'X-CSRF-Token':identity.csrf},data:{feature,enabled,confirmDisable:true}});assert.equal(r.status(),200,await r.text());};
  const dashboard=async(tab='overview')=>{await page.evaluate(tab=>{closeModal(true);switchTab('dashboard');activeDashboardTab=tab;renderContent();},tab);};
+ const waitForErrorNotification=()=>page.waitForFunction(()=>{
+  const toast=document.getElementById('toast'),style=getComputedStyle(toast),rect=toast.getBoundingClientRect();
+  return toast.dataset.notificationType==='error'&&style.opacity==='1'&&Number(style.zIndex)>=10000&&rect.y>=0&&rect.bottom<=innerHeight;
+ });
  const initial=snapshot();
  for(let bits=1;bits<8;bits++){
   for(const [index,key] of ['devices','ipam','racks'].entries())await toggle(key,!!(bits&(1<<index)));
@@ -123,7 +127,7 @@ let browser;
  assert.ok(await page.locator('[data-device-editor-feedback]').isVisible());
  assert.equal(await page.locator('#device-editor-form').evaluate(form=>form.contains(document.activeElement)),true);
  const validationMessage=await page.locator('[data-device-editor-feedback]').innerText();assert.match(validationMessage,/Start U/i);
- await page.waitForTimeout(350);
+ await waitForErrorNotification();
  const paint=await page.evaluate(()=>{const toast=document.getElementById('toast'),r=toast.getBoundingClientRect();const x=Math.min(innerWidth-1,r.right-8),y=Math.min(innerHeight-1,r.bottom-8);return {visible:r.top>=0&&r.bottom<=innerHeight,above:document.elementFromPoint(x,y)?.closest('#toast')===toast};});
  // The toast is intentionally pointer-transparent; use paint order with pointer events temporarily enabled.
  const above=await page.evaluate(()=>{const t=document.getElementById('toast');const old=t.style.pointerEvents;t.style.pointerEvents='auto';const r=t.getBoundingClientRect(),top=document.elementFromPoint(r.right-8,r.bottom-8)?.closest('#toast')===t;t.style.pointerEvents=old;return top;});
@@ -133,7 +137,7 @@ let browser;
  for(const width of [1440,390])for(const theme of ['light','dark']){
   await page.setViewportSize({width,height:width===390?844:950});
   await page.evaluate(theme=>document.documentElement.classList.toggle('dark',theme==='dark'),theme);
-  await page.evaluate(message=>showDeviceEditorFeedback(message,'dev-rack-u'),validationMessage);await page.waitForTimeout(350);
+  await page.evaluate(message=>showDeviceEditorFeedback(message,'dev-rack-u'),validationMessage);await waitForErrorNotification();
   const name='validation-'+theme+'-'+width+'.png';await page.screenshot({path:path.join(output,name)});pictures.push(name);
  }
  await page.evaluate(()=>closeModal(true));
@@ -160,7 +164,7 @@ let browser;
   await page.waitForFunction(()=>!document.getElementById('toast').classList.contains('opacity-0')&&document.getElementById('toast').dataset.notificationType==='error');
   assert.ok((await page.locator('#toast-message').innerText()).length>0);
   assert.ok(await page.locator(selector+' [aria-invalid="true"]').count());
-  await page.waitForTimeout(350);
+  await waitForErrorNotification();
   const paintResult=await page.evaluate(async()=>{const t=document.getElementById('toast'),old=t.style.pointerEvents;t.style.pointerEvents='auto';await new Promise(requestAnimationFrame);const r=t.getBoundingClientRect(),point=document.elementFromPoint(r.right-8,r.bottom-8),style=getComputedStyle(t),result={above:point?.closest('#toast')===t,rect:{x:r.x,y:r.y,width:r.width,height:r.height,right:r.right,bottom:r.bottom},viewport:[innerWidth,innerHeight],hit:point?.outerHTML?.slice(0,350),z:style.zIndex,opacity:style.opacity,transform:style.transform,message:t.textContent};t.style.pointerEvents=old;return result;});
   if(!paintResult.above){await page.screenshot({path:path.join(output,'paint-failure.png')});console.error('Paint diagnostics: '+JSON.stringify(paintResult));}
   assert.ok(paintResult.above,'Notification must paint above '+selector+' '+JSON.stringify(paintResult));
