@@ -59,9 +59,24 @@ def read_staff_member(connection, actor_id, staff_id):
     return record
 
 
+def department_has_associations(connection, department_id):
+    """Retain Departments referenced currently or in append-only Staff history."""
+    if connection.execute('SELECT 1 FROM staff_members WHERE department_id=? LIMIT 1',
+                          (department_id,)).fetchone():
+        return True
+    return connection.execute("""
+        SELECT 1 FROM inventory_change_history h, json_each(h.record_json,'$.changes') c
+        WHERE json_extract(c.value,'$.kind')='Staff Member' AND
+        (json_extract(c.value,'$.before.Department')=? OR json_extract(c.value,'$.after.Department')=?)
+        LIMIT 1
+    """, (department_id, department_id)).fetchone() is not None
+
+
 def read_department(connection, actor_id, department_id):
     require_directory_access(connection, actor_id, 'Departments')
-    return _department_record(connection, department_id)
+    record = _department_record(connection, department_id)
+    record['canDelete'] = not department_has_associations(connection, department_id)
+    return record
 
 
 def list_directory(connection, actor_id, section, *, query='', limit=100, offset=0):
@@ -181,13 +196,7 @@ def save_department(connection, actor_id, session_token, payload, *, department_
         if delete:
             if creating:
                 raise ValueError('Department is required')
-            associated = connection.execute('SELECT 1 FROM staff_members WHERE department_id=? LIMIT 1', (department_id,)).fetchone()
-            historic = connection.execute("""
-                SELECT 1 FROM inventory_change_history h, json_each(h.record_json,'$.changes') c
-                WHERE json_extract(c.value,'$.kind')='Staff Member' AND
-                (json_extract(c.value,'$.before.Department')=? OR json_extract(c.value,'$.after.Department')=?) LIMIT 1
-            """, (department_id, department_id)).fetchone()
-            if associated or historic:
+            if department_has_associations(connection, department_id):
                 raise FileExistsError('Department has current or historical associations; archive it instead')
             connection.execute('DELETE FROM departments WHERE id=?', (department_id,))
             result = {'id': department_id, 'deleted': True}
