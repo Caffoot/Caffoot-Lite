@@ -68,6 +68,76 @@ class StaffDirectoryHttpTests(unittest.TestCase):
         client.close()
         return result
 
+
+    def test_staff_only_workspace_entry_never_grants_inventory_access(self):
+        status, session, _ = self.request('/api/session', actor=3)
+        self.assertEqual(status, 200)
+        self.assertFalse(session['can_enter_inventory'])
+        self.assertTrue(session['can_enter_workspace'])
+        self.assertEqual(session['directory_permissions']['staffMembers'], {'read': True, 'edit': False})
+        self.assertEqual(session['directory_permissions']['departments'], {'read': False, 'edit': False})
+        self.assertEqual(self.request('/api/inventory/state', actor=3)[0], 403)
+        self.assertEqual(self.request('/api/inventory/devices', actor=3)[0], 403)
+        self.assertEqual(self.request('/api/departments', actor=3)[0], 403)
+
+        status, department_session, _ = self.request('/api/session', actor=5)
+        self.assertEqual(status, 200)
+        self.assertTrue(department_session['can_enter_workspace'])
+        self.assertFalse(department_session['can_enter_inventory'])
+        self.assertFalse(department_session['directory_permissions']['staffMembers']['read'])
+        self.assertTrue(department_session['directory_permissions']['departments']['edit'])
+
+        self.assertFalse(self.request('/api/session', actor=4)[1]['can_enter_workspace'])
+        self.assertEqual(self.request('/inventory', actor=4)[0], 403)
+
+        client = http.client.HTTPConnection('127.0.0.1', self.server.server_port)
+        client.request('GET', '/inventory', headers={'Origin': ORIGIN,
+            'Cookie': COOKIE_NAME + '=' + self.tokens[3]})
+        response = client.getresponse()
+        self.assertEqual(response.status, 200)
+        self.assertIn(b'interface/loader.js', response.read())
+        client.close()
+
+    def test_staff_department_labels_reveal_only_attached_names_and_active_choices(self):
+        with sqlite3.connect(self.path) as db:
+            db.execute("UPDATE staff_members SET department_id='dept' WHERE id='person'")
+            db.execute("INSERT INTO departments(id,name) VALUES('empty','Unstaffed Team')")
+            db.execute("INSERT INTO departments(id,name,archived) VALUES('former','Old Team',1)")
+            db.execute("INSERT INTO departments(id,name,archived) VALUES('linked','Linked Archive',1)")
+            db.execute("INSERT INTO staff_members(id,first_name,last_name,department_id) VALUES('retired','Person','Example','linked')")
+
+        url = '/api/staff-members/department-choices'
+        self.assertEqual(self.request(url, actor=4)[0], 403)
+        self.assertEqual(self.request(url, actor=5)[0], 403)
+        self.assertEqual(self.request(url, actor=None)[0], 401)
+        self.assertEqual(self.request(url, method='POST', actor=1, payload={})[0], 404)
+        self.assertEqual(self.request(url + '?query=dept', actor=3)[0], 400)
+        status, result, cache = self.request(url, actor=3)
+        self.assertEqual(status, 200)
+        self.assertEqual(cache, 'no-store')
+        self.assertEqual({d['name'] for d in result['departments']}, {'Production', 'Linked Archive'})
+        self.assertEqual(set(result['departments'][0]), {'id', 'name', 'archived'})
+        self.assertEqual(self.request(url, actor=2)[0], 200)
+        editor_options = self.request(url, actor=2)[1]['departments']
+        self.assertEqual({d['name'] for d in editor_options},
+            {'Production', 'Unstaffed Team', 'Linked Archive'})
+        self.assertNotIn('Old Team', [d['name'] for d in editor_options])
+
+    def test_department_delete_eligibility_is_read_only_and_history_aware(self):
+        with sqlite3.connect(self.path) as db:
+            db.execute("INSERT INTO departments(id,name) VALUES('unused','Never Used')")
+            db.execute("UPDATE staff_members SET department_id='dept' WHERE id='person'")
+        listed = {d['id']: d for d in self.request('/api/departments', actor=5)[1]['departments']}
+        self.assertTrue(listed['unused']['canDelete'])
+        self.assertFalse(listed['dept']['canDelete'])
+        self.assertEqual(self.request('/api/departments/dept', actor=5)[1]['department']['canDelete'], False)
+        self.assertEqual(self.request('/api/departments/unused', actor=5)[1]['department']['canDelete'], True)
+        self.assertEqual(self.request('/api/staff-members/person', method='POST', actor=2,
+            payload={'departmentId': None})[0], 200)
+        self.assertFalse(self.request('/api/departments/dept', actor=5)[1]['department']['canDelete'])
+        self.assertEqual(self.request('/api/departments/dept/delete', method='POST', actor=5,
+            payload={})[0], 409)
+
     def test_sessions_section_rights_mfa_and_non_enumerating_denial(self):
         for actor, expected in ((None, 401), (4, 403), (5, 403), (6, 401), (3, 200)):
             self.assertEqual(self.request(actor=actor)[0], expected)
