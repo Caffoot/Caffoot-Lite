@@ -2,6 +2,17 @@
 
 > **Current status, 14 November 2026:** v2.2 remains the future Milestone 01 target; the published release is **v2.1**. Stage 1 was accepted and merged into `main` at `6008fedfc2c25fc40b49c9e9e21f3a93d61a9f4a`. Stage 2, including native Pi/Safari corrective retests, was accepted through PR #376 on `milestone-1` at `519842b46861c85fde0eebf78298117c2346599d`. Stage 3 Batch 3.1 was accepted in PR #377 at `97368e734f3e8008a9acc929b999a198eca1cf3f`; Batch 3.2 is an authorised review candidate; later batches and Stages 4–6 remain pending. No merge to `main`, publication or real deployment is authorised. Track remaining work in [#351](https://github.com/Caffoot/Caffoot-Lite/issues/351) and [#366](https://github.com/Caffoot/Caffoot-Lite/issues/366). Dated sections below preserve earlier checkpoints.
 
+## Current Stage 3 Integration Checkpoint — 14 November 2026
+
+- **Published v2.1 remains unchanged** at `main`; there has been no v2.2 release or Raspberry Pi deployment.
+- **PR #377 / Batch 3.1** merged into `milestone-1` at `97368e734f3e8008a9acc929b999a198eca1cf3f`.
+- **PR #378 / Batch 3.2** merged at `221739ae8c1331d396977adb6e79dc910f39380d`.
+- **PR #380** restored the approved Optional Features layout; merged at `953956ef41d036ce3f94d8d8d29fcd10c1c2377e`.
+- **PR #379** retains the corrected, owner-reviewed Stage 3 Staff interface *visual reference* only; it is not an application integration branch and remains unmerged.
+- **Draft PR #381** is the approved Stage 3 **Batch 3.3 application integration**, branched from `953956ef41d036ce3f94d8d8d29fcd10c1c2377e`. It adds source-faithful Staff Directory/Details/Add/Edit, optional login, Departments management, grouped IT/Staff navigation and the existing Permissions management extended to six independently configurable sections. Access is server-verified and permits Staff-only/Department-only users to enter their permitted workspace without inventory access.
+- **Pending for PR #381:** hosted CI review, real rendered app comparisons against the approved Staff and v2.1 references (desktop/mobile/light/dark), owner sign-off, and explicit separate merge approval. This draft is not accepted or safe to deploy merely because source files are committed.
+- Equipment assignment, associated equipment, My Equipment, optional IT Assets stock and the later stages remain excluded.
+
 ## Ongoing v2.2 checklist
 
 - [x] Agree target version v2.2; distinguish from published v2.1
