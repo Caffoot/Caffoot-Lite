@@ -1,0 +1,32 @@
+{
+  "engine": "chromium",
+  "pictures": [
+    "validation-light-1440.png",
+    "validation-dark-1440.png",
+    "validation-light-390.png",
+    "validation-dark-390.png",
+    "hidden-shelf.png",
+    "dashboard-overview-light-1440.png",
+    "dashboard-insights-light-1440.png",
+    "dashboard-activity-light-1440.png",
+    "dashboard-overview-dark-1440.png",
+    "dashboard-insights-dark-1440.png",
+    "dashboard-activity-dark-1440.png",
+    "dashboard-overview-light-390.png",
+    "dashboard-insights-light-390.png",
+    "dashboard-activity-light-390.png",
+    "dashboard-overview-dark-390.png",
+    "dashboard-insights-dark-390.png",
+    "dashboard-activity-dark-390.png"
+  ],
+  "validationMessage": "Start U: Please select an item in the list.",
+  "contextsChecked": [
+    "form[data-form-action=\"subnet\"]",
+    "form[data-form-action=\"rack\"]",
+    "form[data-form-action=\"rack\"]",
+    "#next-user-create-form",
+    "#role-definition-form",
+    "#smtp-settings-form"
+  ],
+  "pageErrors": []
+}

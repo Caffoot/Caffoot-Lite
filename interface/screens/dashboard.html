@@ -34,7 +34,7 @@
               </select>
             </div><!-- /interface-template -->
 
-<!-- interface-template:dashboard/network-snapshot-1 --><div class="card db-card">
+<!-- interface-template:dashboard/network-snapshot-1 --><div class="card db-card" data-dashboard-sections="IPAM">
               <div class="card-head"><span class="iconwrap"><svg aria-hidden="true" fill="none" height="18" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" width="18"><use href="#i-network"></use></svg></span><div><h3>Network Allocation Overview</h3><p class="sub">A summary of your stored addressing data.</p></div></div>
               <div class="divider"></div>
               <div class="db-legend">
@@ -74,25 +74,25 @@
 <!-- interface-template:dashboard/network-insights-3 --><div class="db-progress-title"><span>{{slot:0}} — {{slot:1}}</span><strong>{{slot:2}} / {{slot:3}}U</strong></div><div class="db-bar"><span style="width:{{slot:4}}%;background:{{slot:5}}"></span></div><!-- /interface-template -->
 
 <!-- interface-template:dashboard/network-insights-4 --><div class="db-insights-4">
-              <div class="card db-card">
+              <div class="card db-card" data-dashboard-sections="IPAM">
                 <div class="card-head"><span class="iconwrap orange"><svg aria-hidden="true" fill="none" height="18" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" width="18"><use href="#i-network"></use></svg></span><div><h3>IP Address Utilisation</h3><p class="sub">Allocated or reserved addresses across managed subnets.</p></div></div>
                 <div class="divider"></div>
                 <div class="db-stat-number">{{slot:0}}%</div>
                 <div class="db-bar" role="progressbar" aria-label="IP address utilisation" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{slot:1}}"><span style="width:{{slot:2}}%;background:#7197b9"></span></div>
                 <div class="db-legend"><div><span class="db-dot blue"></span><span>Assigned</span><strong>{{slot:3}}</strong></div><div><span class="db-dot"></span><span>Reserved</span><strong>{{slot:4}}</strong></div><div><span class="db-dot green"></span><span>Available</span><strong>{{slot:5}}</strong></div></div>
               </div>
-              <div class="card db-card">
+              <div class="card db-card" data-dashboard-sections="Devices">
                 <div class="card-head"><span class="iconwrap"><svg aria-hidden="true" fill="none" height="18" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" width="18"><use href="#i-box"></use></svg></span><div><h3>Device Status</h3><p class="sub">Status distribution in the saved inventory.</p></div></div>
                 <div class="divider"></div>
                 <div class="db-stat-number">{{slot:6}} <span class="db-muted">devices</span></div>
                 <div class="db-legend">{{slot:7}}</div>
               </div>
-              <div class="card db-card">
+              <div class="card db-card" data-dashboard-sections="Devices">
                 <div class="card-head"><span class="iconwrap"><svg aria-hidden="true" fill="none" height="18" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" width="18"><use href="#i-box"></use></svg></span><div><h3>Hardware Distribution</h3><p class="sub">Device categories by inventory count.</p></div></div>
                 <div class="divider"></div>
                 {{slot:8}}
               </div>
-              <div class="card db-card">
+              <div class="card db-card" data-dashboard-sections="Devices Racks">
                 <div class="card-head"><span class="iconwrap orange"><svg aria-hidden="true" fill="none" height="18" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" width="18"><use href="#i-rack"></use></svg></span><div><h3>Rack Capacity by Face</h3><p class="sub">Front and rear U occupancy, including accessories.</p></div></div>
                 <div class="divider"></div>
                 {{slot:9}}
@@ -161,13 +161,13 @@
                                     <div class="card-head"><span class="iconwrap orange"><svg aria-hidden="true" fill="none" height="18" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" width="18"><use href="#i-grid"></use></svg></span><div><h3>Quick Access</h3><p class="sub">Existing actions, available according to the signed-in user’s permissions.</p></div></div>
                                     <div class="db-actionrow">{{slot:5}}</div>
                                 </div>
-                                <div class="card db-card">
+                                <div class="card db-card" data-dashboard-sections="Devices">
                                     <div class="card-head"><span class="iconwrap"><svg aria-hidden="true" fill="none" height="18" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" width="18"><use href="#i-box"></use></svg></span><div><h3>Recent Devices</h3><p class="sub">The latest records in your saved inventory.</p></div></div>
                                     <div class="divider"></div>
                                     {{slot:6}}
                                     <button type="button" data-action="tab-devices" class="btn btn-outline">View All Devices</button>
                                 </div>
-                                <div class="card db-card">
+                                <div class="card db-card" data-dashboard-sections="IPAM">
                                     <div class="card-head"><span class="iconwrap green"><svg aria-hidden="true" fill="none" height="18" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" width="18"><use href="#i-network"></use></svg></span><div><h3>Subnet Utilisation</h3><p class="sub">Usable addresses across existing CIDR networks.</p></div></div>
                                     <div class="divider"></div>
                                     {{slot:7}}
@@ -175,7 +175,7 @@
                                 </div>
                             </div>
                             <div class="db-stack">
-                                <div class="card db-card">
+                                <div class="card db-card" data-dashboard-sections="Devices Racks">
                                     <div class="card-head"><span class="iconwrap orange"><svg aria-hidden="true" fill="none" height="18" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" width="18"><use href="#i-rack"></use></svg></span><div><h3>Rack Capacity</h3><p class="sub">Used U-space across your cabinets.</p></div></div>
                                     <div class="divider"></div>
                                     {{slot:8}}
@@ -185,9 +185,9 @@
                                 <div class="card db-card">
                                     <div class="card-head"><span class="iconwrap"><svg aria-hidden="true" fill="none" height="18" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" width="18"><use href="#i-info"></use></svg></span><div><h3>Inventory Status</h3><p class="sub">A concise snapshot of your saved inventory.</p></div></div>
                                     <div class="divider"></div>
-                                    <div class="db-slimrow"><strong>Devices</strong><span class="db-badge">{{slot:10}} tracked</span></div>
-                                    <div class="db-slimrow"><strong>Subnets</strong><span class="db-badge">{{slot:11}} configured</span></div>
-                                    <div class="db-slimrow"><strong>Racks</strong><span class="db-badge">{{slot:12}} configured</span></div>
+                                    <div class="db-slimrow" data-dashboard-sections="Devices"><strong>Devices</strong><span class="db-badge">{{slot:10}} tracked</span></div>
+                                    <div class="db-slimrow" data-dashboard-sections="IPAM"><strong>Subnets</strong><span class="db-badge">{{slot:11}} configured</span></div>
+                                    <div class="db-slimrow" data-dashboard-sections="Racks"><strong>Racks</strong><span class="db-badge">{{slot:12}} configured</span></div>
                                     <p class="db-muted">Administrator-only Inventory Health warnings appear only when the real checks detect an issue.</p>
                                 </div>
                             </div>
@@ -195,7 +195,7 @@
                     </div>
                     <div data-section="insights" id="dashboard-panel-insights" role="tabpanel" aria-labelledby="dashboard-tab-insights" class="account-panel active dashboard-tab-panel space-y-5" {{slot:13}}>
                     {{slot:14}}
-                    <section class="db-section card db-card db-rack-details">
+                    <section class="db-section card db-card db-rack-details" data-dashboard-sections="Racks">
                         <div class="card-head"><span class="iconwrap"><svg aria-hidden="true" fill="none" height="18" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" width="18"><use href="#i-rack"></use></svg></span><div><h3>Rack Details</h3><p class="sub">Open a rack to inspect its equipment and available space.</p></div></div>
                         <div class="divider"></div>
                         <div class="db-grid">{{slot:15}}</div>

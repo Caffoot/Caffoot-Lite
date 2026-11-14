@@ -1,0 +1,179 @@
+test_all_feature_combinations_filter_direct_combined_history_and_settings (test_feature_access.FeatureAccessHttpTests.test_all_feature_combinations_filter_direct_combined_history_and_settings) ... 127.0.0.1 - - [14/Nov/2026 08:56:00] "GET /api/inventory/state HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 08:56:00] "GET /api/inventory/devices HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 08:56:00] "GET /api/inventory/ipam HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 08:56:00] "GET /api/inventory/racks HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 08:56:00] "GET /api/inventory/settings HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 08:56:00] "GET /api/inventory/history HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 08:56:00] "GET /api/inventory/state HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 08:56:00] "GET /api/inventory/devices HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 08:56:00] "GET /api/inventory/ipam HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 08:56:00] "GET /api/inventory/racks HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 08:56:00] "GET /api/inventory/settings HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 08:56:00] "GET /api/inventory/history HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 08:56:00] "GET /api/inventory/state HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 08:56:00] "GET /api/inventory/devices HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 08:56:00] "GET /api/inventory/ipam HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 08:56:00] "GET /api/inventory/racks HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 08:56:00] "GET /api/inventory/settings HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 08:56:00] "GET /api/inventory/history HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 08:56:00] "GET /api/inventory/state HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 08:56:00] "GET /api/inventory/devices HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 08:56:00] "GET /api/inventory/ipam HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 08:56:00] "GET /api/inventory/racks HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 08:56:00] "GET /api/inventory/settings HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 08:56:00] "GET /api/inventory/history HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 08:56:00] "GET /api/inventory/state HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 08:56:00] "GET /api/inventory/devices HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 08:56:00] "GET /api/inventory/ipam HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 08:56:00] "GET /api/inventory/racks HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 08:56:00] "GET /api/inventory/settings HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 08:56:00] "GET /api/inventory/history HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 08:56:00] "GET /api/inventory/state HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 08:56:00] "GET /api/inventory/devices HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 08:56:00] "GET /api/inventory/ipam HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 08:56:00] "GET /api/inventory/racks HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 08:56:00] "GET /api/inventory/settings HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 08:56:00] "GET /api/inventory/history HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 08:56:00] "GET /api/inventory/state HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 08:56:00] "GET /api/inventory/devices HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 08:56:00] "GET /api/inventory/ipam HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 08:56:00] "GET /api/inventory/racks HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 08:56:00] "GET /api/inventory/settings HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 08:56:00] "GET /api/inventory/history HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 08:56:00] "GET /api/inventory/state HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 08:56:00] "GET /api/inventory/devices HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 08:56:00] "GET /api/inventory/ipam HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 08:56:00] "GET /api/inventory/racks HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 08:56:00] "GET /api/inventory/settings HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 08:56:00] "GET /api/inventory/history HTTP/1.1" 200 -
+ok
+test_all_off_admin_essentials_and_account_access (test_feature_access.FeatureAccessHttpTests.test_all_off_admin_essentials_and_account_access) ... 127.0.0.1 - - [14/Nov/2026 08:56:01] "GET /inventory HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 08:56:01] "GET /account HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 08:56:01] "GET /api/users HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 08:56:01] "GET /api/settings/features HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 08:56:01] "GET /api/account/profile HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 08:56:01] "GET /api/session HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 08:56:01] "GET /api/session HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 08:56:01] "GET /api/inventory/devices HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 08:56:01] "GET /api/inventory/ipam HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 08:56:01] "GET /api/inventory/racks HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 08:56:01] "POST /api/devices/create HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 08:56:01] "POST /api/devices/edit/start HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 08:56:01] "POST /api/devices/delete HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 08:56:01] "POST /api/ipam/allocation/save HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 08:56:01] "POST /api/inventory/record/save HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 08:56:01] "POST /api/inventory/reset HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 08:56:01] "POST /api/inventory/settings/save HTTP/1.1" 403 -
+ok
+test_basic_outside_count_requires_both_read_permissions (test_feature_access.FeatureAccessHttpTests.test_basic_outside_count_requires_both_read_permissions) ... 127.0.0.1 - - [14/Nov/2026 08:56:03] "GET /api/inventory/state HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 08:56:03] "GET /api/inventory/state HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 08:56:03] "GET /api/inventory/state HTTP/1.1" 200 -
+ok
+test_each_writer_rechecks_access_before_writing (test_feature_access.FeatureAccessHttpTests.test_each_writer_rechecks_access_before_writing) ... ok
+test_forged_hidden_relationship_mutations_save_nothing (test_feature_access.FeatureAccessHttpTests.test_forged_hidden_relationship_mutations_save_nothing) ... ok
+test_grants_overrides_mfa_status_and_future_features_fail_closed (test_feature_access.FeatureAccessHttpTests.test_grants_overrides_mfa_status_and_future_features_fail_closed) ... ok
+test_hidden_devices_cannot_be_modified_through_another_section (test_feature_access.FeatureAccessHttpTests.test_hidden_devices_cannot_be_modified_through_another_section) ... 127.0.0.1 - - [14/Nov/2026 08:56:06] "POST /api/devices/edit/start HTTP/1.1" 403 -
+ok
+test_hidden_ipam_and_rack_relationships_survive_unrelated_device_save (test_feature_access.FeatureAccessHttpTests.test_hidden_ipam_and_rack_relationships_survive_unrelated_device_save) ... 127.0.0.1 - - [14/Nov/2026 08:56:07] "GET /api/inventory/ipam HTTP/1.1" 200 -
+ok
+test_inventory_import_requires_all_enabled_features (test_feature_access.FeatureAccessHttpTests.test_inventory_import_requires_all_enabled_features) ... ok
+test_ordinary_users_keep_account_without_inventory_or_administrator_access (test_feature_access.FeatureAccessHttpTests.test_ordinary_users_keep_account_without_inventory_or_administrator_access) ... 127.0.0.1 - - [14/Nov/2026 08:56:09] "GET /account HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 08:56:09] "GET /inventory HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 08:56:09] "GET /api/users HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 08:56:09] "GET /api/settings/features HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 08:56:09] "GET /api/inventory/state HTTP/1.1" 403 -
+ok
+test_partial_access_validation_errors_do_not_reveal_hidden_records (test_feature_access.FeatureAccessHttpTests.test_partial_access_validation_errors_do_not_reveal_hidden_records) ... 127.0.0.1 - - [14/Nov/2026 08:56:10] "POST /api/inventory/record/save HTTP/1.1" 400 -
+ok
+test_waiting_writer_rechecks_feature_after_real_database_lock (test_feature_access.FeatureAccessHttpTests.test_waiting_writer_rechecks_feature_after_real_database_lock) ... 127.0.0.1 - - [14/Nov/2026 08:56:11] "GET /api/inventory/racks HTTP/1.1" 403 -
+ok
+test_ranges_include_network_and_broadcast_and_exclude_containers (test_racks_off_preservation.BasicIpCountTests.test_ranges_include_network_and_broadcast_and_exclude_containers) ... ok
+test_absent_historical_fields_stay_absent (test_racks_off_preservation.RacksOffPreservationTests.test_absent_historical_fields_stay_absent) ... ok
+test_all_explicit_hidden_placement_changes_are_rejected_atomically (test_racks_off_preservation.RacksOffPreservationTests.test_all_explicit_hidden_placement_changes_are_rejected_atomically) ... ok
+test_new_placements_are_refused_but_nonrack_types_are_unchanged (test_racks_off_preservation.RacksOffPreservationTests.test_new_placements_are_refused_but_nonrack_types_are_unchanged) ... ok
+test_no_ip_unrelated_save_does_not_require_ipam_edit (test_racks_off_preservation.RacksOffPreservationTests.test_no_ip_unrelated_save_does_not_require_ipam_edit) ... ok
+test_omitted_fields_are_merged_from_authoritative_record (test_racks_off_preservation.RacksOffPreservationTests.test_omitted_fields_are_merged_from_authoritative_record) ... ok
+test_omitted_shelf_association_and_original_location_are_retained (test_racks_off_preservation.RacksOffPreservationTests.test_omitted_shelf_association_and_original_location_are_retained) ... ok
+test_add_rack_mounted_requires_racks_edit_too (test_reserved_device_saves.CreateDeviceTests.test_add_rack_mounted_requires_racks_edit_too) ... ok
+test_add_requires_devices_and_ipam_edit (test_reserved_device_saves.CreateDeviceTests.test_add_requires_devices_and_ipam_edit) ... ok
+test_competing_ip_and_bad_rack_roll_back (test_reserved_device_saves.CreateDeviceTests.test_competing_ip_and_bad_rack_roll_back) ... ok
+test_create_commits_device_ipam_and_history (test_reserved_device_saves.CreateDeviceTests.test_create_commits_device_ipam_and_history) ... ok
+test_create_refuses_reserved_ipam_address (test_reserved_device_saves.CreateDeviceTests.test_create_refuses_reserved_ipam_address) ... ok
+test_duplicate_identifier_and_name_do_not_mutate_inventory (test_reserved_device_saves.CreateDeviceTests.test_duplicate_identifier_and_name_do_not_mutate_inventory) ... ok
+test_requires_devices_edit_permission (test_reserved_device_saves.CreateDeviceTests.test_requires_devices_edit_permission) ... ok
+test_archived_software_installation_change_preserves_other_device_data (test_reserved_device_saves.DeleteReservedDeviceTests.test_archived_software_installation_change_preserves_other_device_data) ... ok
+test_audit_details_keep_safe_changes_but_never_notes_or_credentials (test_reserved_device_saves.DeleteReservedDeviceTests.test_audit_details_keep_safe_changes_but_never_notes_or_credentials) ... ok
+test_competing_ip_rolls_back (test_reserved_device_saves.DeleteReservedDeviceTests.test_competing_ip_rolls_back) ... ok
+test_delete_clears_independent_device_reservations (test_reserved_device_saves.DeleteReservedDeviceTests.test_delete_clears_independent_device_reservations) ... ok
+test_delete_host_and_guest_choice_commit_together (test_reserved_device_saves.DeleteReservedDeviceTests.test_delete_host_and_guest_choice_commit_together) ... ok
+test_delete_releases_ip_and_records_history (test_reserved_device_saves.DeleteReservedDeviceTests.test_delete_releases_ip_and_records_history) ... ok
+test_devices_only_editor_can_rename_without_ipam_or_racks_edit (test_reserved_device_saves.DeleteReservedDeviceTests.test_devices_only_editor_can_rename_without_ipam_or_racks_edit) ... ok
+test_devices_only_editor_cannot_change_primary_ip_or_reservation (test_reserved_device_saves.DeleteReservedDeviceTests.test_devices_only_editor_cannot_change_primary_ip_or_reservation) ... ok
+test_devices_only_editor_cannot_move_or_unmount_a_racked_device (test_reserved_device_saves.DeleteReservedDeviceTests.test_devices_only_editor_cannot_move_or_unmount_a_racked_device) ... ok
+test_edit_primary_ip_respects_independent_reservations (test_reserved_device_saves.DeleteReservedDeviceTests.test_edit_primary_ip_respects_independent_reservations) ... ok
+test_expired_reservation_preserves_device (test_reserved_device_saves.DeleteReservedDeviceTests.test_expired_reservation_preserves_device) ... ok
+test_expired_reservation_rejects_save_without_history (test_reserved_device_saves.DeleteReservedDeviceTests.test_expired_reservation_rejects_save_without_history) ... ok
+test_history_preserves_all_events_after_two_hundred (test_reserved_device_saves.DeleteReservedDeviceTests.test_history_preserves_all_events_after_two_hundred) ... ok
+test_host_guest_choice_saves_with_host_and_revisions (test_reserved_device_saves.DeleteReservedDeviceTests.test_host_guest_choice_saves_with_host_and_revisions) ... ok
+test_ipam_only_save_cannot_modify_unrelated_device_details (test_reserved_device_saves.DeleteReservedDeviceTests.test_ipam_only_save_cannot_modify_unrelated_device_details) ... ok
+test_move_primary_ip_and_rename_commits_together (test_reserved_device_saves.DeleteReservedDeviceTests.test_move_primary_ip_and_rename_commits_together) ... ok
+test_overlapping_rack_position_rolls_back (test_reserved_device_saves.DeleteReservedDeviceTests.test_overlapping_rack_position_rolls_back) ... ok
+test_rack_move_is_recorded_with_device_change (test_reserved_device_saves.DeleteReservedDeviceTests.test_rack_move_is_recorded_with_device_change) ... ok
+test_racks_edit_permission_does_not_allow_unrelated_device_changes (test_reserved_device_saves.DeleteReservedDeviceTests.test_racks_edit_permission_does_not_allow_unrelated_device_changes) ... ok
+test_racks_section_can_move_device_with_reservation (test_reserved_device_saves.DeleteReservedDeviceTests.test_racks_section_can_move_device_with_reservation) ... ok
+test_racks_section_collision_keeps_device_and_reservation (test_reserved_device_saves.DeleteReservedDeviceTests.test_racks_section_collision_keeps_device_and_reservation) ... ok
+test_rejected_save_has_no_history (test_reserved_device_saves.DeleteReservedDeviceTests.test_rejected_save_has_no_history) ... ok
+test_related_changes_reject_non_guest_and_leave_database_unchanged (test_reserved_device_saves.DeleteReservedDeviceTests.test_related_changes_reject_non_guest_and_leave_database_unchanged) ... ok
+test_related_changes_reject_unapproved_device_properties (test_reserved_device_saves.DeleteReservedDeviceTests.test_related_changes_reject_unapproved_device_properties) ... ok
+test_rename_refreshes_ipam_hostname_and_history (test_reserved_device_saves.DeleteReservedDeviceTests.test_rename_refreshes_ipam_hostname_and_history) ... ok
+test_requires_edit_permission (test_reserved_device_saves.DeleteReservedDeviceTests.test_requires_edit_permission) ... ok
+test_stale_revision_preserves_device (test_reserved_device_saves.DeleteReservedDeviceTests.test_stale_revision_preserves_device) ... ok
+test_stale_revision_rejects_save_without_history (test_reserved_device_saves.DeleteReservedDeviceTests.test_stale_revision_rejects_save_without_history) ... ok
+test_unmodified_device_save (test_reserved_device_saves.DeleteReservedDeviceTests.test_unmodified_device_save) ... ok
+test_archived_software_installation_change_preserves_other_device_data (test_reserved_device_saves.ReservedDeviceSaveTests.test_archived_software_installation_change_preserves_other_device_data) ... ok
+test_audit_details_keep_safe_changes_but_never_notes_or_credentials (test_reserved_device_saves.ReservedDeviceSaveTests.test_audit_details_keep_safe_changes_but_never_notes_or_credentials) ... ok
+test_competing_ip_rolls_back (test_reserved_device_saves.ReservedDeviceSaveTests.test_competing_ip_rolls_back) ... ok
+test_devices_only_editor_can_rename_without_ipam_or_racks_edit (test_reserved_device_saves.ReservedDeviceSaveTests.test_devices_only_editor_can_rename_without_ipam_or_racks_edit) ... ok
+test_devices_only_editor_cannot_change_primary_ip_or_reservation (test_reserved_device_saves.ReservedDeviceSaveTests.test_devices_only_editor_cannot_change_primary_ip_or_reservation) ... ok
+test_devices_only_editor_cannot_move_or_unmount_a_racked_device (test_reserved_device_saves.ReservedDeviceSaveTests.test_devices_only_editor_cannot_move_or_unmount_a_racked_device) ... ok
+test_edit_primary_ip_respects_independent_reservations (test_reserved_device_saves.ReservedDeviceSaveTests.test_edit_primary_ip_respects_independent_reservations) ... ok
+test_expired_reservation_rejects_save_without_history (test_reserved_device_saves.ReservedDeviceSaveTests.test_expired_reservation_rejects_save_without_history) ... ok
+test_history_preserves_all_events_after_two_hundred (test_reserved_device_saves.ReservedDeviceSaveTests.test_history_preserves_all_events_after_two_hundred) ... ok
+test_host_guest_choice_saves_with_host_and_revisions (test_reserved_device_saves.ReservedDeviceSaveTests.test_host_guest_choice_saves_with_host_and_revisions) ... ok
+test_ipam_only_save_cannot_modify_unrelated_device_details (test_reserved_device_saves.ReservedDeviceSaveTests.test_ipam_only_save_cannot_modify_unrelated_device_details) ... ok
+test_move_primary_ip_and_rename_commits_together (test_reserved_device_saves.ReservedDeviceSaveTests.test_move_primary_ip_and_rename_commits_together) ... ok
+test_overlapping_rack_position_rolls_back (test_reserved_device_saves.ReservedDeviceSaveTests.test_overlapping_rack_position_rolls_back) ... ok
+test_rack_move_is_recorded_with_device_change (test_reserved_device_saves.ReservedDeviceSaveTests.test_rack_move_is_recorded_with_device_change) ... ok
+test_rejected_save_has_no_history (test_reserved_device_saves.ReservedDeviceSaveTests.test_rejected_save_has_no_history) ... ok
+test_related_changes_reject_non_guest_and_leave_database_unchanged (test_reserved_device_saves.ReservedDeviceSaveTests.test_related_changes_reject_non_guest_and_leave_database_unchanged) ... ok
+test_related_changes_reject_unapproved_device_properties (test_reserved_device_saves.ReservedDeviceSaveTests.test_related_changes_reject_unapproved_device_properties) ... ok
+test_rename_refreshes_ipam_hostname_and_history (test_reserved_device_saves.ReservedDeviceSaveTests.test_rename_refreshes_ipam_hostname_and_history) ... ok
+test_stale_revision_rejects_save_without_history (test_reserved_device_saves.ReservedDeviceSaveTests.test_stale_revision_rejects_save_without_history) ... ok
+test_unmodified_device_save (test_reserved_device_saves.ReservedDeviceSaveTests.test_unmodified_device_save) ... ok
+test_atomic_reassign_and_retire_keep_records_ip_notes_and_audit (test_rack_shelf_associations.RackShelfAssociationTests.test_atomic_reassign_and_retire_keep_records_ip_notes_and_audit) ... ok
+test_current_access_point_shelf_is_not_a_legacy_mount_correction (test_rack_shelf_associations.RackShelfAssociationTests.test_current_access_point_shelf_is_not_a_legacy_mount_correction) ... ok
+test_expired_other_reservation_does_not_become_a_new_lock (test_rack_shelf_associations.RackShelfAssociationTests.test_expired_other_reservation_does_not_become_a_new_lock) ... ok
+test_failure_after_sql_updates_rolls_back_devices_shelf_audit_and_reservation (test_rack_shelf_associations.RackShelfAssociationTests.test_failure_after_sql_updates_rolls_back_devices_shelf_audit_and_reservation) ... ok
+test_missing_duplicate_or_changed_linked_devices_roll_back (test_rack_shelf_associations.RackShelfAssociationTests.test_missing_duplicate_or_changed_linked_devices_roll_back) ... ok
+test_no_ip_shelf_device_requires_devices_and_racks_edit (test_rack_shelf_associations.RackShelfAssociationTests.test_no_ip_shelf_device_requires_devices_and_racks_edit) ... ok
+test_normalisation_and_storage_roundtrip_preserve_reference_and_unknowns (test_rack_shelf_associations.RackShelfAssociationTests.test_normalisation_and_storage_roundtrip_preserve_reference_and_unknowns) ... ok
+test_ordinary_accessory_delete_type_change_cross_rack_are_blocked (test_rack_shelf_associations.RackShelfAssociationTests.test_ordinary_accessory_delete_type_change_cross_rack_are_blocked) ... ok
+test_other_active_reservation_blocks_all_changes (test_rack_shelf_associations.RackShelfAssociationTests.test_other_active_reservation_blocks_all_changes) ... ok
+test_own_expired_or_stale_reservation_is_not_overridden (test_rack_shelf_associations.RackShelfAssociationTests.test_own_expired_or_stale_reservation_is_not_overridden) ... ok
+test_parent_rack_delete_and_rack_mounted_collision_stay_protected (test_rack_shelf_associations.RackShelfAssociationTests.test_parent_rack_delete_and_rack_mounted_collision_stay_protected) ... ok
+test_permission_denial_rolls_back (test_rack_shelf_associations.RackShelfAssociationTests.test_permission_denial_rolls_back) ... ok
+test_reserved_device_shelf_change_checks_racks_permission (test_rack_shelf_associations.RackShelfAssociationTests.test_reserved_device_shelf_change_checks_racks_permission) ... ok
+test_shelf_movement_keeps_identity_links_and_device_revisions (test_rack_shelf_associations.RackShelfAssociationTests.test_shelf_movement_keeps_identity_links_and_device_revisions) ... ok
+test_stale_revision_shelf_or_target_rolls_back (test_rack_shelf_associations.RackShelfAssociationTests.test_stale_revision_shelf_or_target_rolls_back) ... ok
+test_tabletop_without_rack_and_legacy_without_field_remain_valid (test_rack_shelf_associations.RackShelfAssociationTests.test_tabletop_without_rack_and_legacy_without_field_remain_valid) ... ok
+test_valid_shelves_do_not_occupy_device_u (test_rack_shelf_associations.RackShelfAssociationTests.test_valid_shelves_do_not_occupy_device_u) ... ok
+test_validation_rejects_wrong_missing_virtual_and_independent_u (test_rack_shelf_associations.RackShelfAssociationTests.test_validation_rejects_wrong_missing_virtual_and_independent_u) ... ok
+test_every_design_stylesheet_is_the_exact_pinned_source (test_modular_interface.ModularInterfaceTests.test_every_design_stylesheet_is_the_exact_pinned_source) ... ok
+test_templates_and_includes_are_unique_and_resolvable (test_modular_interface.ModularInterfaceTests.test_templates_and_includes_are_unique_and_resolvable) ... ok
+test_existing_settings_panels_and_tab_buttons_are_byte_preserved (test_optional_features_visual_boundary.OptionalFeaturesVisualBoundaryTests.test_existing_settings_panels_and_tab_buttons_are_byte_preserved) ... ok
+test_existing_style_sources_and_twelve_design_pins_are_unchanged (test_optional_features_visual_boundary.OptionalFeaturesVisualBoundaryTests.test_existing_style_sources_and_twelve_design_pins_are_unchanged) ... ok
+
+----------------------------------------------------------------------
+Ran 97 tests in 12.565s
+
+OK

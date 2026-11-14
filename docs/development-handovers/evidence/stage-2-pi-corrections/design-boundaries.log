@@ -1,0 +1,8 @@
+test_existing_settings_panels_and_tab_buttons_are_byte_preserved (test_optional_features_visual_boundary.OptionalFeaturesVisualBoundaryTests.test_existing_settings_panels_and_tab_buttons_are_byte_preserved) ... ok
+test_existing_style_sources_and_twelve_design_pins_are_unchanged (test_optional_features_visual_boundary.OptionalFeaturesVisualBoundaryTests.test_existing_style_sources_and_twelve_design_pins_are_unchanged) ... ok
+test_pi_correction_templates_keep_existing_dashboard_and_report_layout (test_optional_features_visual_boundary.OptionalFeaturesVisualBoundaryTests.test_pi_correction_templates_keep_existing_dashboard_and_report_layout) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.033s
+
+OK

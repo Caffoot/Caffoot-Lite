@@ -6,6 +6,7 @@ on:
     paths:
       - "interface/**"
       - "tests/browser-compat.cjs"
+      - "tests/pi-acceptance-corrections.cjs"
       - "tests/users-roles-interface.cjs"
       - "tests/device-editor-approved.cjs"
       - "tests/rack-shelf-associations.cjs"
@@ -27,6 +28,7 @@ on:
     paths:
       - "interface/**"
       - "tests/browser-compat.cjs"
+      - "tests/pi-acceptance-corrections.cjs"
       - "tests/users-roles-interface.cjs"
       - "tests/device-editor-approved.cjs"
       - "tests/rack-shelf-associations.cjs"
@@ -68,6 +70,19 @@ jobs:
         run: |
           npm install --prefix "$RUNNER_TEMP/caffoot-browser-tests" --no-save --no-package-lock --no-audit --no-fund playwright@1.56.1 axe-core@4.14.0
           "$RUNNER_TEMP/caffoot-browser-tests/node_modules/.bin/playwright" install --with-deps chromium
+      - name: Check Raspberry Pi acceptance corrections in Chromium
+        env:
+          NODE_PATH: ${{ runner.temp }}/caffoot-browser-tests/node_modules
+          CAFFOOT_VISUAL_OUTPUT: ${{ runner.temp }}/pi-acceptance-corrections
+        run: node tests/pi-acceptance-corrections.cjs
+      - name: Save Raspberry Pi correction evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pi-corrections-chromium-${{ github.sha }}
+          path: ${{ runner.temp }}/pi-acceptance-corrections
+          if-no-files-found: ignore
+          retention-days: 14
       - name: Check Users roles, MFA and Staff My Account
         env:
           NODE_PATH: ${{ runner.temp }}/caffoot-browser-tests/node_modules
@@ -186,6 +201,20 @@ jobs:
         run: |
           npm install --prefix "$RUNNER_TEMP/caffoot-browser-tests" --no-save --no-package-lock --no-audit --no-fund playwright@1.62.1 axe-core@4.14.0
           "$RUNNER_TEMP/caffoot-browser-tests/node_modules/.bin/playwright" install --with-deps "${{ matrix.engine }}"
+      - name: Check Raspberry Pi acceptance corrections in each engine
+        env:
+          NODE_PATH: ${{ runner.temp }}/caffoot-browser-tests/node_modules
+          CAFFOOT_PI_ENGINE: ${{ matrix.engine }}
+          CAFFOOT_VISUAL_OUTPUT: ${{ runner.temp }}/pi-acceptance-corrections
+        run: node tests/pi-acceptance-corrections.cjs
+      - name: Save Raspberry Pi correction engine evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pi-corrections-${{ matrix.engine }}-${{ github.sha }}
+          path: ${{ runner.temp }}/pi-acceptance-corrections
+          if-no-files-found: ignore
+          retention-days: 14
       - name: Check Users roles, MFA and Staff My Account in each engine
         env:
           NODE_PATH: ${{ runner.temp }}/caffoot-browser-tests/node_modules
