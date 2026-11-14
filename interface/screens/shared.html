@@ -106,16 +106,16 @@
                     {{slot:0}}
                 </div>
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
-                    <div class="rounded-xl border border-slate-200 dark:border-slate-600 p-4 space-y-3">
+                    <div data-dashboard-sections="Devices" class="rounded-xl border border-slate-200 dark:border-slate-600 p-4 space-y-3">
                         <h4 class="font-semibold text-slate-900 dark:text-white">Devices By Location</h4>
                         {{slot:1}}
                     </div>
-                    <div class="rounded-xl border border-slate-200 dark:border-slate-600 p-4 space-y-3">
+                    <div data-dashboard-sections="IPAM" class="rounded-xl border border-slate-200 dark:border-slate-600 p-4 space-y-3">
                         <h4 class="font-semibold text-slate-900 dark:text-white">Subnet Utilisation</h4>
                         {{slot:2}}
                     </div>
                 </div>
-                <div class="rounded-xl border border-slate-200 dark:border-slate-600 p-4 space-y-3">
+                <div data-dashboard-sections="Devices Racks" class="rounded-xl border border-slate-200 dark:border-slate-600 p-4 space-y-3">
                     <h4 class="font-semibold text-slate-900 dark:text-white">Rack Occupancy By Face</h4>
                     {{slot:3}}
                 </div>

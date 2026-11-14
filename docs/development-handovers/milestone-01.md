@@ -15,6 +15,16 @@
 - [ ] Obtain separate final milestone merge approval; verify the resulting `main` build
 - [ ] Obtain separate v2.2 publication approval and verify published image/platforms, release notes and installation links before changing current-release instructions
 
+## Stage 2 Raspberry Pi Acceptance Corrections
+
+Baseline `bda35d73398820f49c8c1cf0647aa1c8c92bbf2e`; branch `stage-2-pi-acceptance-corrections`. The [owner approved four corrections](https://github.com/Caffoot/Caffoot-Lite/issues/351#issuecomment-6874767163) after twelve native Pi/Safari tests. This is a new acceptance correction batch, not Stage 3 or repeated Stage 2 implementation.
+
+The real browser reproduced all four findings before the patch: false missing Rack/Shelf/IPAM Dashboard warnings, an inline-only Device error with no visible toast, Edit Rack selection retaining the old Location and misleading inaccessible-shelf wording. The initial patch corrects those paths, keeps existing form components and changes no backend/schema/permission or pinned design source.
+
+Intermediate local checks: 97 focused Python tests passed without failures/skips. The focused Chromium matrix passed feature/read combinations and genuine warnings, Rack/Shelf/manual Location changes, Cancel/data preservation, inaccessible versus missing shelf wording and native Start U error focus/paint order. The expanded run also passed native Subnet/Rack/nested Rack/Users/Role/Settings forms and application password-mismatch feedback. A first test incorrectly tried to fill a select; it was corrected to select its blank option. Broader regression and final visual/CI evidence remain pending. WebKit was downloaded once but cannot start without missing host libraries; no system dependency retry was made. Native Safari is not certified by these checks.
+
+See [implementation notes](../development-guide/Pi-Acceptance-Corrections.md). Stop for product-owner review; no merge, tag, release, website change or deployment.
+
 ## Stage 2 Batch 5 — Final Integration Verification
 
 Verified `milestone-1` baseline `8192bb4438a1615f3b3c640d59deff2dfdde07be`; published `main` remains `6008fedfc2c25fc40b49c9e9e21f3a93d61a9f4a`. Branch: `stage-2-batch-5-final-verification`. Scope follows the [approved contract](https://github.com/Caffoot/Caffoot-Lite/issues/238#issuecomment-6821230015), [verified Batch 4 merge](https://github.com/Caffoot/Caffoot-Lite/issues/238#issuecomment-6873486389) and the owner's explicit verification-only instruction. No application implementation changes are authorised in this batch.

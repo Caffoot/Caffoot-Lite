@@ -399,3 +399,6 @@ html.dark #modal-container .device-editor-dialog #device-form-installed-software
 html.dark #account-mfa-removal-form .btn-primary,
 html.dark #main-content [data-role-layer] button.btn.primary,
 html.dark #main-content .users-live button.btn.primary[data-role-command="create"]{background:var(--orange,#ed8532);border-color:var(--orange,#ed8532)}
+
+/* Error notifications remain above editor and nested dialog layers. */
+#toast[data-notification-type="error"]{z-index:10001}
