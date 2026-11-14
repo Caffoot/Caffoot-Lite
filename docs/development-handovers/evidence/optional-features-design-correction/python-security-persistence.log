@@ -1,0 +1,68 @@
+test_audit_failure_rolls_back_setting (test_feature_settings.FeatureSettingsTests.test_audit_failure_rolls_back_setting) ... ok
+test_authorisation_rechecked_inside_write_transaction (test_feature_settings.FeatureSettingsTests.test_authorisation_rechecked_inside_write_transaction) ... ok
+test_choices_survive_import_clean_start_database_copy_and_restart (test_feature_settings.FeatureSettingsTests.test_choices_survive_import_clean_start_database_copy_and_restart) ... ok
+test_empty_existing_schema_12_uses_upgrade_defaults (test_feature_settings.FeatureSettingsTests.test_empty_existing_schema_12_uses_upgrade_defaults) ... ok
+test_failed_migration_rolls_back_table_and_version (test_feature_settings.FeatureSettingsTests.test_failed_migration_rolls_back_table_and_version) ... ok
+test_fresh_defaults_and_repeated_initialisation (test_feature_settings.FeatureSettingsTests.test_fresh_defaults_and_repeated_initialisation) ... ok
+test_populated_upgrade_preserves_every_existing_table_and_session (test_feature_settings.FeatureSettingsTests.test_populated_upgrade_preserves_every_existing_table_and_session) ... ok
+test_storage_rejects_unknown_nonboolean_and_future_activation (test_feature_settings.FeatureSettingsTests.test_storage_rejects_unknown_nonboolean_and_future_activation) ... ok
+test_transitions_audit_actor_values_noop_and_preserve_data (test_feature_settings.FeatureSettingsTests.test_transitions_audit_actor_values_noop_and_preserve_data) ... ok
+test_validation_confirmation_and_future_features_save_nothing (test_feature_settings.FeatureSettingsTests.test_validation_confirmation_and_future_features_save_nothing) ... ok
+test_waiting_writer_rechecks_revocation_and_administrator_state (test_feature_settings.FeatureSettingsTests.test_waiting_writer_rechecks_revocation_and_administrator_state) ... ok
+test_administrator_get_post_and_confirmation (test_feature_settings_http.FeatureSettingsHttpTests.test_administrator_get_post_and_confirmation) ... 127.0.0.1 - - [14/Nov/2026 16:18:07] "GET /api/settings/features HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 16:18:07] "POST /api/settings/features HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 16:18:07] "POST /api/settings/features HTTP/1.1" 400 -
+127.0.0.1 - - [14/Nov/2026 16:18:07] "POST /api/settings/features HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 16:18:07] "POST /api/settings/features HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 16:18:07] "POST /api/settings/features HTTP/1.1" 400 -
+127.0.0.1 - - [14/Nov/2026 16:18:07] "POST /api/settings/features HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 16:18:07] "POST /api/settings/features HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 16:18:07] "POST /api/settings/features HTTP/1.1" 400 -
+127.0.0.1 - - [14/Nov/2026 16:18:07] "POST /api/settings/features HTTP/1.1" 200 -
+ok
+test_origin_json_and_size_guards (test_feature_settings_http.FeatureSettingsHttpTests.test_origin_json_and_size_guards) ... 127.0.0.1 - - [14/Nov/2026 16:18:08] "POST /api/settings/features HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 16:18:08] "POST /api/settings/features HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 16:18:08] "POST /api/settings/features HTTP/1.1" 415 -
+127.0.0.1 - - [14/Nov/2026 16:18:08] "POST /api/settings/features HTTP/1.1" 400 -
+127.0.0.1 - - [14/Nov/2026 16:18:08] "POST /api/settings/features HTTP/1.1" 400 -
+127.0.0.1 - - [14/Nov/2026 16:18:08] "POST /api/settings/features HTTP/1.1" 400 -
+127.0.0.1 - - [14/Nov/2026 16:18:08] "GET /api/settings/features HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 16:18:08] "GET /api/settings/features HTTP/1.1" 403 -
+ok
+test_session_revocation_between_request_check_and_write_is_denied (test_feature_settings_http.FeatureSettingsHttpTests.test_session_revocation_between_request_check_and_write_is_denied) ... 127.0.0.1 - - [14/Nov/2026 16:18:09] "POST /api/settings/features HTTP/1.1" 403 -
+ok
+test_strict_payload_validation_and_unavailable_features (test_feature_settings_http.FeatureSettingsHttpTests.test_strict_payload_validation_and_unavailable_features) ... 127.0.0.1 - - [14/Nov/2026 16:18:10] "POST /api/settings/features HTTP/1.1" 400 -
+127.0.0.1 - - [14/Nov/2026 16:18:10] "POST /api/settings/features HTTP/1.1" 400 -
+127.0.0.1 - - [14/Nov/2026 16:18:10] "POST /api/settings/features HTTP/1.1" 400 -
+127.0.0.1 - - [14/Nov/2026 16:18:10] "POST /api/settings/features HTTP/1.1" 400 -
+127.0.0.1 - - [14/Nov/2026 16:18:10] "POST /api/settings/features HTTP/1.1" 400 -
+127.0.0.1 - - [14/Nov/2026 16:18:10] "POST /api/settings/features HTTP/1.1" 400 -
+127.0.0.1 - - [14/Nov/2026 16:18:10] "POST /api/settings/features HTTP/1.1" 400 -
+127.0.0.1 - - [14/Nov/2026 16:18:10] "POST /api/settings/features HTTP/1.1" 400 -
+127.0.0.1 - - [14/Nov/2026 16:18:10] "POST /api/settings/features HTTP/1.1" 400 -
+ok
+test_unauthenticated_ordinary_and_revoked_sessions_denied (test_feature_settings_http.FeatureSettingsHttpTests.test_unauthenticated_ordinary_and_revoked_sessions_denied) ... 127.0.0.1 - - [14/Nov/2026 16:18:11] "GET /api/settings/features HTTP/1.1" 401 -
+127.0.0.1 - - [14/Nov/2026 16:18:11] "GET /api/settings/features HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 16:18:11] "POST /api/settings/features HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 16:18:11] "POST /api/settings/features HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 16:18:11] "POST /api/settings/features HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 16:18:11] "POST /api/settings/features HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 16:18:11] "GET /api/settings/features HTTP/1.1" 401 -
+127.0.0.1 - - [14/Nov/2026 16:18:11] "POST /api/settings/features HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 16:18:11] "GET /api/settings/features HTTP/1.1" 401 -
+127.0.0.1 - - [14/Nov/2026 16:18:11] "POST /api/settings/features HTTP/1.1" 403 -
+127.0.0.1 - - [14/Nov/2026 16:18:11] "GET /api/settings/features HTTP/1.1" 401 -
+127.0.0.1 - - [14/Nov/2026 16:18:11] "POST /api/settings/features HTTP/1.1" 403 -
+ok
+test_close_reopen_and_database_restoration_preserve_unlinked_data_and_grants (test_optional_features_persistence.OptionalFeaturesPersistenceTests.test_close_reopen_and_database_restoration_preserve_unlinked_data_and_grants) ... ok
+test_inventory_replacement_reset_and_persistence_without_permission_mocks (test_optional_features_persistence.OptionalFeaturesPersistenceTests.test_inventory_replacement_reset_and_persistence_without_permission_mocks) ... ok
+test_existing_settings_panels_and_tab_buttons_are_byte_preserved (test_optional_features_visual_boundary.OptionalFeaturesVisualBoundaryTests.test_existing_settings_panels_and_tab_buttons_are_byte_preserved) ... ok
+test_existing_style_sources_and_twelve_design_pins_are_unchanged (test_optional_features_visual_boundary.OptionalFeaturesVisualBoundaryTests.test_existing_style_sources_and_twelve_design_pins_are_unchanged) ... ok
+test_pi_correction_templates_keep_existing_dashboard_and_report_layout (test_optional_features_visual_boundary.OptionalFeaturesVisualBoundaryTests.test_pi_correction_templates_keep_existing_dashboard_and_report_layout) ... ok
+test_every_design_stylesheet_is_the_exact_pinned_source (test_modular_interface.ModularInterfaceTests.test_every_design_stylesheet_is_the_exact_pinned_source) ... ok
+test_templates_and_includes_are_unique_and_resolvable (test_modular_interface.ModularInterfaceTests.test_templates_and_includes_are_unique_and_resolvable) ... ok
+
+----------------------------------------------------------------------
+Ran 23 tests in 4.889s
+
+OK

@@ -51,6 +51,10 @@ const sources=['settings-data-draft-02','ipam-draft-01','devices-details-forms-b
 const originals=Object.fromEntries(sources.map(name=>{
  const result=spawnSync('git',['show',revision+':future-design/approved/'+name+'.html'],{cwd:root,encoding:'utf8',maxBuffer:2*1024*1024});assert.equal(result.status,0,result.stderr);return[name,result.stdout];
 }));
+const optionalFeaturesRevision='159424b56bb770ea6ab260764c4e9357d9c8667c';
+const optionalFeaturesSource=spawnSync('git',['show',optionalFeaturesRevision+':future-design/stage-2-previews/caffoot-optional-features-integrated-settings-review.html'],{cwd:root,encoding:'utf8'});
+assert.equal(optionalFeaturesSource.status,0,optionalFeaturesSource.stderr);
+originals['optional-features-integrated']=optionalFeaturesSource.stdout;
 const reference=http.createServer((request,response)=>{
  const name=path.basename(request.url).replace(/\.html$/,'');
  if(!(name in originals)){response.writeHead(404);return response.end();}
@@ -104,10 +108,80 @@ const errors=[],metrics=[],screens=[];
   };
   await featurePanel();
   assert.deepEqual(await owner.locator('.settings-screen .subnav [role="tab"]').allTextContents(),[' Data & Backups',' Email Settings',' System Maintenance',' Optional Features']);
+  const approvedFeatures=await contexts.owner.newPage();
+  await approvedFeatures.goto('http://127.0.0.1:'+reference.address().port+'/optional-features-integrated.html');
+  assert.equal(await owner.locator('.optional-features-panel .panel-heading>div').textContent(),await approvedFeatures.locator('.panel-heading>div').textContent());
+  assert.equal(await owner.locator('.optional-features-panel .note').textContent(),await approvedFeatures.locator('.note').textContent());
+  assert.deepEqual(await owner.locator('.optional-features-panel .section-title').allTextContents(),await approvedFeatures.locator('.section-title').allTextContents());
+  assert.equal(await owner.locator('#optional-feature-infrastructure article').count(),3);
+  assert.equal(await owner.locator('#optional-feature-additional article').count(),2);
+  assert.equal(await owner.getByText('Design Review · No Settings Saved',{exact:true}).count(),0);
+  assert.deepEqual(await owner.locator('[data-optional-feature]').evaluateAll(inputs=>inputs.map(input=>input.dataset.optionalFeature)),['devices','ipam','racks','suppliers','equipment_lifecycle']);
+  const savedFeatures=(await (await contexts.owner.request.get(address+'/api/settings/features')).json()).features;
+  for(const [index,feature] of ['devices','ipam','racks','suppliers','equipment_lifecycle'].entries()){
+   const card=owner.locator('[data-feature-card="'+feature+'"]'),approvedCard=approvedFeatures.locator('article').nth(index);
+   assert.equal(await card.locator('.feature-title').textContent(),await approvedCard.locator('.feature-title').textContent());
+   assert.equal(await card.locator('.description').textContent(),await approvedCard.locator('.description').textContent());
+   assert.equal(await card.locator('.iconwrap svg').innerHTML(),await approvedCard.locator('.iconwrap svg').innerHTML());
+   assert.equal(await card.locator('input').isChecked(),savedFeatures[feature]);
+   assert.equal(await card.locator('.feature-bottom>[data-feature-status]').count(),1);
+   assert.equal(await card.locator('label').getAttribute('for'),await card.locator('input').getAttribute('id'));
+  }
+  await approvedFeatures.close();
   for(const feature of ['suppliers','equipment_lifecycle']){
    assert.ok(await owner.locator('[data-optional-feature="'+feature+'"]').isDisabled());
    assert.match(await owner.locator('[data-feature-card="'+feature+'"] [data-feature-status]').textContent(),/Coming in Stage 4/);
+   assert.equal(await owner.locator('[data-feature-card="'+feature+'"] .toggle-label>span').textContent(),'Not Available Yet');
   }
+  // Failed requests must leave saved feature choices and inventory intact.
+  const loadErrorPage=await open('owner','#settings');
+  await loadErrorPage.route('**/api/settings/features',route=>route.fulfill({status:503,json:{error:'Feature settings temporarily unavailable.'}}));
+  await loadErrorPage.locator('.settings-screen [data-tab="features"]').click();
+  await loadErrorPage.locator('#optional-feature-feedback').filter({hasText:'Feature settings temporarily unavailable.'}).waitFor();
+  assert.equal(await loadErrorPage.locator('[data-optional-feature]').count(),0);
+  await loadErrorPage.unroute('**/api/settings/features');
+  await loadErrorPage.reload();await loadErrorPage.locator('#app[aria-busy="false"]').waitFor();
+  await loadErrorPage.locator('.settings-screen [data-tab="features"]').click();
+  await loadErrorPage.locator('[data-optional-feature="devices"]').waitFor();
+  assert.equal(await loadErrorPage.locator('[data-optional-feature="devices"]').isChecked(),savedFeatures.devices);
+  await loadErrorPage.close();
+  const beforeFailedSave=snapshot();let pendingControlsDisabled=false;
+  await owner.route('**/api/settings/features',async route=>{
+   if(route.request().method()!=='POST')return route.continue();
+   pendingControlsDisabled=await owner.locator('[data-optional-feature]').evaluateAll(inputs=>inputs.every(input=>input.disabled));
+   await route.fulfill({status:409,json:{error:'Feature setting changed. Reload and try again.'}});
+  });
+  owner.once('dialog',dialog=>dialog.accept());
+  const failedResponse=owner.waitForResponse(response=>response.url().endsWith('/api/settings/features')&&response.status()===409);
+  await owner.locator('[data-optional-feature="racks"]').click();await failedResponse;
+  await owner.waitForFunction(()=>{const input=document.querySelector('[data-optional-feature="racks"]');return input&&!input.disabled&&input.checked;});
+  assert.ok(pendingControlsDisabled);assert.deepEqual(snapshot(),beforeFailedSave);
+  assert.deepEqual((await (await contexts.owner.request.get(address+'/api/settings/features')).json()).features,savedFeatures);
+  assert.equal(await owner.locator('[data-feature-card="racks"] [data-feature-status]').textContent(),'Enabled');
+  await owner.unroute('**/api/settings/features');
+  console.log('PASS: approved groups/copy/icons/card structure, real saved states, unavailable controls, load recovery, pending controls and failed-save rollback.');
+  // Capture real saved enabled/disabled states using the existing secured controls.
+  for(const enabled of [false,true]){
+   for(const feature of ['devices','ipam','racks'])await toggle(feature,enabled);
+   await owner.reload();await owner.locator('#app[aria-busy="false"]').waitFor();await featurePanel();
+   for(const [width,height] of [[1440,950],[390,844]]){
+    await owner.setViewportSize({width,height});
+    for(const theme of ['light','dark']){
+     await owner.evaluate(theme=>{caffootSetTheme(theme);scrollTo({top:0,behavior:'instant'});},theme);
+     for(const feature of ['devices','ipam','racks']){
+      const card=owner.locator('[data-feature-card="'+feature+'"]');
+      assert.equal(await card.locator('input').isChecked(),enabled);
+      assert.equal(await card.locator('input').getAttribute('aria-label'),(enabled?'Disable ':'Enable ')+await card.locator('.feature-title').textContent());
+      assert.equal(await card.locator('.toggle-label>span').textContent(),enabled?'Enabled':'Enable Feature');
+     }
+     assert.ok(await owner.locator('.feature-bottom').evaluateAll(rows=>rows.every(row=>row.scrollWidth<=row.clientWidth)),'Status and switches must fit inside cards');
+     const name='optional-features-'+(enabled?'enabled':'disabled')+'-'+theme+'-'+width+'.png';
+     await owner.screenshot({path:path.join(output,name),fullPage:true});screens.push(name);
+     assert.ok(await owner.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),'Feature state document overflow');
+    }
+   }
+  }
+  await owner.setViewportSize({width:1440,height:950});await owner.evaluate(()=>caffootSetTheme('light'));
   const beforeCancel=snapshot(),postCount=featurePosts;
   await toggle('racks',false,false);assert.equal(featurePosts,postCount);assert.deepEqual(snapshot(),beforeCancel);
   await toggle('racks',false);
@@ -222,7 +296,7 @@ const errors=[],metrics=[],screens=[];
   python("import sqlite3,sys\nwith sqlite3.connect(sys.argv[1]) as db:\n db.execute('DELETE FROM device_edit_reservations')\n db.execute('DELETE FROM inventory_devices')",[database]);
   await toggle('devices',false);await toggle('devices',true);
   assert.deepEqual(errors,[]);
-  fs.writeFileSync(path.join(output,'measurements.json'),JSON.stringify({revision,screens,metrics,pageErrors:errors},null,2));
+  fs.writeFileSync(path.join(output,'measurements.json'),JSON.stringify({revision,optionalFeaturesRevision,screens,metrics,pageErrors:errors},null,2));
   console.log('PASS: '+screens.length+' desktop/mobile light/dark and pinned-source screenshots; no page errors or checked document overflow.');
  }catch(error){
   fs.writeFileSync(path.join(output,'failure.txt'),String(error)+'\n'+fs.readFileSync(path.join(temporary,'server.log'),'utf8'));

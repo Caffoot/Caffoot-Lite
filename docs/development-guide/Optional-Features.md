@@ -93,5 +93,8 @@ scoped to `.optional-features-panel`. The pinned `settings.css`, three existing 
 panels, navigation, logo and header remain unchanged. The illustrative review badge,
 sidebar, default state and footer are not copied into the application.
 
+The [visual mapping, before/after/source captures and focused results](../development-handovers/evidence/optional-features-design-correction/Report.md)
+record the correction and retained differences.
+
 This correction is awaiting product-owner visual approval; it does not authorise
 release or deployment.
