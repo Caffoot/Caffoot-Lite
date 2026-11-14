@@ -78,6 +78,19 @@ def list_directory(connection, actor_id, section, *, query='', limit=100, offset
     return [read_department(connection, actor_id, row[0]) for row in ids]
 
 
+def list_staff_department_choices(connection, actor_id):
+    """Expose only linked labels, plus active Department choices for Staff editors."""
+    require_directory_access(connection, actor_id, 'Staff Members')
+    can_edit = can_access(connection, actor_id, 'Staff Members', edit=True)
+    rows = connection.execute("""
+        SELECT d.id,d.name,d.archived FROM departments d
+        WHERE d.id IN (SELECT department_id FROM staff_members WHERE department_id IS NOT NULL)
+           OR (?=1 AND d.archived=0)
+        ORDER BY d.name,d.id
+    """, (int(can_edit),))
+    return [{'id': row[0], 'name': row[1], 'archived': bool(row[2])} for row in rows]
+
+
 def _validate_staff(payload, *, creating):
     if not isinstance(payload, dict) or not payload or set(payload) - {*STAFF_FIELDS, 'departmentId', 'active', 'login'}:
         raise ValueError('Invalid Staff fields')
