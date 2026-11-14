@@ -2,6 +2,18 @@
 
 > **Current status, 14 November 2026:** v2.2 remains the future Milestone 01 target; the published release is **v2.1**. Stage 1 was accepted and merged into `main` at `6008fedfc2c25fc40b49c9e9e21f3a93d61a9f4a`. Stage 2, including native Pi/Safari corrective retests, was accepted through PR #376 on `milestone-1` at `519842b46861c85fde0eebf78298117c2346599d`. Stage 3 Batch 3.1 was accepted in PR #377 at `97368e734f3e8008a9acc929b999a198eca1cf3f`; Batches 3.2 and 3.3 were accepted and merged through the verified `7ec4ac27eddb1f798fdfcf9fff09b761c7bebd86` baseline; Batch 3.4 is draft PR #382 with review evidence; initial eligibility is confirmed as Desktop, Laptop and Printer only. Later batches and Stages 4–6 remain pending. No merge to `main`, publication or real deployment is authorised. Track remaining work in [#351](https://github.com/Caffoot/Caffoot-Lite/issues/351) and [#366](https://github.com/Caffoot/Caffoot-Lite/issues/366). Dated sections below preserve earlier checkpoints.
 
+## Batch 3.4 Status Action And Consolidated Review — 14 November 2026
+
+The existing Mark Inactive / Reactivate action is restored immediately after
+Staff profile/login content and before the additive equipment panels. Its
+markup, styling, access checks, confirmation and handler are unchanged.
+Focused Staff/assignment/API checks: **46 passed**. The extended browser flow
+checks active/inactive administrator and restricted views, actual status
+operations, retained allocations/history/login, both allocation entry points,
+Department sharing, My Equipment and My Account across 1440px/390px light/dark.
+Visual comparison and the updated evidence report are being completed; no owner
+acceptance, merge, deployment or publication is implied by this checkpoint.
+
 ## Batch 3.4 Final Corrections — 14 November 2026
 
 The owner confirmed Desktop, Laptop and Printer as the only eligible types in

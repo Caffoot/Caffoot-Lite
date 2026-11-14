@@ -28,6 +28,7 @@ async function test(){
   ' user=create_user(db,1,"staff-reader","Reader-Only-Test-Password-2026!")',
   ' db.execute("UPDATE accounts SET mfa_secret=?,mfa_confirmed=1 WHERE id=?",(sys.argv[2],user))',
   " db.execute('INSERT INTO account_permission_overrides(account_id,section,level) VALUES(?,?,?)',(user,'Staff Members','read'))",
+  " db.execute('INSERT INTO account_permission_overrides(account_id,section,level) VALUES(?,?,?)',(user,'Devices','read'))",
   ' db.commit()',
   ' token=login_session(db,"staff-reader","Reader-Only-Test-Password-2026!",mfa_code=code_at(sys.argv[2],time.time()))',
   ' print(json.dumps({"cookie":COOKIE_NAME,"token":token}))'
@@ -51,6 +52,7 @@ async function test(){
  assert.equal(login.status(),200,await login.text());
  const page=await context.newPage(),errors=[];
  page.on('pageerror',e=>errors.push(e.message));
+ const report={};
 
  const session=await (await context.request.get(address+'/api/session')).json();
  const headers={Origin:address,'X-CSRF-Token':session.csrf_token};
@@ -72,6 +74,11 @@ async function test(){
  const profileBefore=await page.locator('.staff-live .two-col').innerHTML();
  await page.locator('[data-equipment-action="assign-staff"]').click();
  for(const device of available.slice(0,2))await page.locator(`[data-equipment-device="${device.id}"]`).check();
+ for(const width of [1440,390]){
+  await page.setViewportSize({width,height:width===390?844:950});
+  for(const theme of ['light','dark']){await page.evaluate(theme=>caffootSetTheme(theme),theme);await capture(`staff-assignment-${width}-${theme}`);}
+ }
+
  await page.locator('#equipment-assignment-form [type="submit"]').click();
  await page.locator('#equipment-assignment-form').waitFor({state:'hidden'});
  await page.getByRole('heading',{name:'Assigned Equipment',exact:true}).waitFor();
@@ -79,25 +86,110 @@ async function test(){
  assert.equal(await page.locator('.staff-live .two-col').innerHTML(),profileBefore);
  assert.equal(await page.locator('.equipment-staff [data-equipment-action="view-device"]').count(),2);
  assert.equal(await page.locator('.staff-history-list tr').first().locator('td').count(),2);
- const report={};
- async function capture(name){
+ async function capture(name,currentPage=page){
+  await currentPage.waitForFunction(()=>{
+   const equipment=document.querySelector('[data-equipment-staff]');
+   return !equipment||!equipment.textContent.includes('Loading assigned equipment');
+  });
+  if(name.startsWith('staff-')&&!name.startsWith('staff-assignment-')){
+   const positions=await currentPage.locator('.staff-live').evaluate(root=>{
+    const action=root.querySelector('[data-staff-action="staff-status"]');
+    const equipment=root.querySelector('[data-equipment-staff]');
+    const profile=root.querySelector('.two-col');
+    const login=[...root.querySelectorAll('.card')].find(card=>card.querySelector('h3')?.textContent==='Caffoot Login');
+    return {hasAction:!!action,actionBottom:action?.getBoundingClientRect().bottom,
+     actionTop:action?.getBoundingClientRect().top,equipmentTop:equipment.getBoundingClientRect().top,
+     profileBottom:(login||profile).getBoundingClientRect().bottom,
+     actionBeforeEquipment:action?!!(action.compareDocumentPosition(equipment)&Node.DOCUMENT_POSITION_FOLLOWING):null};
+   });
+   if(name.includes('restricted'))assert.equal(positions.hasAction,false);
+   else{
+    assert.equal(positions.actionBeforeEquipment,true,'Staff status action must precede equipment');
+    assert.ok(positions.actionTop>=positions.profileBottom,'Status action must follow profile/login content');
+    assert.ok(positions.actionBottom<=positions.equipmentTop,'Status action must sit above equipment');
+   }
+   report[name]={positions};
+  }
   if(name.startsWith('device-')){
-   const visible=await page.locator('#device-details-tab-assigned').evaluate(e=>{
+   const visible=await currentPage.locator('#device-details-tab-assigned').evaluate(e=>{
     const tab=e.getBoundingClientRect(),strip=e.parentElement.getBoundingClientRect();
     return tab.left>=strip.left-1&&tab.right<=strip.right+1;
    });assert.ok(visible,'Selected Assigned To tab must remain visible after resizing');
   }
-  await page.screenshot({path:path.join(output,name+'.png'),fullPage:true});
-  const metrics=await page.evaluate(()=>({width:innerWidth,documentWidth:document.documentElement.scrollWidth,
+  const fullPage=!(await currentPage.locator('#modal-container').isVisible());
+  await currentPage.screenshot({path:path.join(output,name+'.png'),fullPage});
+  const metrics=await currentPage.evaluate(()=>({width:innerWidth,documentWidth:document.documentElement.scrollWidth,
    theme:document.documentElement.className,focused:document.activeElement?.tagName}));
-  assert.ok(metrics.documentWidth<=metrics.width+1,JSON.stringify(metrics));report[name]=metrics;
+  assert.ok(metrics.documentWidth<=metrics.width+1,JSON.stringify(metrics));report[name]={...report[name],...metrics,fullPage};
  }
  for(const width of [1440,390]){
   await page.setViewportSize({width,height:width===390?844:950});
   for(const theme of ['light','dark']){await page.evaluate(theme=>caffootSetTheme(theme),theme);await capture(`staff-${width}-${theme}`);}
  }
+ // Confirm actual status operations retain equipment, history and the linked login.
+ const assignmentsBefore=await (await context.request.get(address+'/api/equipment/assignments?staffId='+person.id)).json();
+ const accountBefore=(await (await context.request.get(address+'/api/users')).json()).users.find(user=>user.id===person.accountId);
+ const restricted=await browser.newContext({ignoreHTTPSErrors:true,viewport:{width:1440,height:950}});
+ await restricted.addCookies([{name:readerInfo.cookie,value:readerInfo.token,url:address,secure:true,httpOnly:true,sameSite:'Strict'}]);
+ const restrictedPage=await restricted.newPage();restrictedPage.on('pageerror',e=>errors.push(e.message));
+ async function restrictedStaff(active){
+  if(restrictedPage.url()===address+'/inventory#staff')await restrictedPage.reload();
+  else await restrictedPage.goto(address+'/inventory#staff');
+  await restrictedPage.locator('#app[aria-busy="false"]').waitFor();
+  await restrictedPage.locator(`[data-staff-action="staff-details"][data-id="${person.id}"]`).click();
+  await restrictedPage.locator('.equipment-staff [data-equipment-action="view-device"]').first().waitFor();
+  assert.equal(await restrictedPage.locator('[data-staff-action="staff-status"],[data-staff-action="staff-edit"],[data-staff-action="manage-login"],[data-equipment-action="assign-staff"]').count(),0);
+  assert.equal(await restrictedPage.locator('.staff-live').getByRole('heading',{name:'Caffoot Login',exact:true}).count(),0);
+  assert.equal(await restrictedPage.locator('.staff-live .section-heading .badge').textContent(),active?'Active':'Inactive');
+  for(const width of [1440,390]){
+   await restrictedPage.setViewportSize({width,height:width===390?844:950});
+   for(const theme of ['light','dark']){
+    await restrictedPage.evaluate(theme=>caffootSetTheme(theme),theme);
+    await capture(`staff-restricted-${active?'active':'inactive'}-${width}-${theme}`,restrictedPage);
+   }
+  }
+ }
+ await restrictedStaff(true);
+ // Cancel preserves the Staff status and the existing confirmation wording.
+ page.once('dialog',dialog=>{assert.match(dialog.message(),/^Mark Inactive Alex Morgan\?/);void dialog.dismiss();});
+ await page.locator('[data-staff-action="staff-status"]').click();
+ assert.equal((await (await context.request.get(address+'/api/staff-members/'+person.id)).json()).staffMember.active,true);
+ page.once('dialog',dialog=>{assert.match(dialog.message(),/^Mark Inactive Alex Morgan\?/);void dialog.accept();});
+ await page.locator('[data-staff-action="staff-status"]').click();
+ await page.locator('[data-staff-action="staff-status"]').filter({hasText:'Reactivate'}).waitFor();
+ for(const width of [1440,390]){
+  await page.setViewportSize({width,height:width===390?844:950});
+  for(const theme of ['light','dark']){await page.evaluate(theme=>caffootSetTheme(theme),theme);await capture(`staff-inactive-${width}-${theme}`);}
+ }
+ assert.equal(await page.locator('[data-equipment-action="assign-staff"]').count(),0);
+ assert.deepEqual(await (await context.request.get(address+'/api/equipment/assignments?staffId='+person.id)).json(),assignmentsBefore);
+ await restrictedStaff(false);
+ page.once('dialog',dialog=>{assert.match(dialog.message(),/^Reactivate Alex Morgan\?/);void dialog.accept();});
+ await page.locator('[data-staff-action="staff-status"]').click();
+ await page.locator('[data-staff-action="staff-status"]').filter({hasText:'Mark Inactive'}).waitFor();
+ await page.locator('[data-equipment-action="assign-staff"]').waitFor();
+ assert.deepEqual(await (await context.request.get(address+'/api/equipment/assignments?staffId='+person.id)).json(),assignmentsBefore);
+ assert.deepEqual((await (await context.request.get(address+'/api/users')).json()).users.find(user=>user.id===person.accountId),accountBefore);
+ const readerSession=await (await restricted.request.get(address+'/api/session')).json();
+ assert.equal(readerSession.mfa_enrolled,true);
+ assert.equal((await restricted.request.post(address+'/api/staff-members/'+person.id,{headers:{Origin:address,'X-CSRF-Token':readerSession.csrf_token},data:{active:false}})).status(),403);
+ await restricted.close();
+ // Existing Edit and Manage Login controls still open their original views.
  await page.setViewportSize({width:1440,height:950});
  await page.evaluate(()=>caffootSetTheme('light'));
+ await page.locator('[data-staff-action="staff-edit"]').click();
+ await page.locator('#staff-record-form').waitFor();
+ assert.equal(await page.locator('#preview-firstName').inputValue(),'Alex');
+ await page.locator('#staff-record-form [data-staff-action="staff-back"]').click();
+ await page.locator(`[data-staff-action="staff-details"][data-id="${person.id}"]`).click();
+ await page.locator('[data-staff-action="manage-login"]').click();
+ await page.locator('[data-next-user-permission][data-section="Devices"]').waitFor();
+ await page.locator('[data-action="users-close-editor"]').first().click();
+ console.log('Staff status, restricted views, editing and Manage Login preservation passed');
+ await page.locator('#sidebar [data-tab="staff"]').click();
+ const detailsLink=page.locator(`[data-staff-action="staff-details"][data-id="${person.id}"]`);
+ if(await detailsLink.count())await detailsLink.click();
+ await page.getByRole('heading',{name:'Staff Details',exact:true}).waitFor();
  await page.locator('.equipment-staff [data-equipment-action="view-device"]').first().click();
  await page.locator('#device-details-tab-assigned').click();
  await page.locator('#device-details-panel-assigned').getByText('Alex Morgan',{exact:true}).first().waitFor();
@@ -119,15 +211,19 @@ async function test(){
  await page.locator('#equipment-recipient-kind').selectOption('department');
  await page.locator('#equipment-recipient option[value="'+dept.id+'"]').waitFor({state:'attached'});
  await page.locator('#equipment-recipient').selectOption(dept.id);
- await page.setViewportSize({width:390,height:844});
- await capture('assignment-390-light');
- await page.evaluate(()=>caffootSetTheme('dark'));
- await capture('assignment-390-dark');
- await page.evaluate(()=>caffootSetTheme('light'));
+ for(const width of [1440,390]){
+  await page.setViewportSize({width,height:width===390?844:950});
+  for(const theme of ['light','dark']){await page.evaluate(theme=>caffootSetTheme(theme),theme);await capture(`assignment-${width}-${theme}`);}
+ }
  await page.keyboard.press('Tab');
  assert.ok(await page.locator('#modal-content').evaluate(e=>e.contains(document.activeElement)));
  await page.locator('#equipment-assignment-form [type="submit"]').click();
  await page.locator('#device-details-panel-assigned').getByText('Production',{exact:true}).first().waitFor();
+ for(const width of [1440,390]){
+  await page.setViewportSize({width,height:width===390?844:950});
+  for(const theme of ['light','dark']){await page.evaluate(theme=>caffootSetTheme(theme),theme);await capture(`device-shared-${width}-${theme}`);}
+ }
+
  await page.locator('.device-review-footer [data-action="close-modal"]').click();
  // The employee gets both safe sections while inventory remains inaccessible.
  const employee=await browser.newContext({ignoreHTTPSErrors:true,viewport:{width:390,height:844}});
@@ -137,6 +233,16 @@ async function test(){
  const inventoryRequests=[];employeePage.on('request',r=>{if(r.url().endsWith('/api/inventory/state'))inventoryRequests.push(r.url());});
  await employeePage.goto(address+'/account');
  await employeePage.locator('#app[aria-busy="false"]').waitFor();
+ await employeePage.locator('.account-screen').waitFor();
+ for(const width of [1440,390]){
+  await employeePage.setViewportSize({width,height:width===390?844:950});
+  for(const theme of ['light','dark']){
+   await employeePage.evaluate(theme=>caffootSetTheme(theme),theme);
+   await capture(`my-account-${width}-${theme}`,employeePage);
+  }
+ }
+ await employeePage.locator('.account-screen .subnav [data-section="security"]').click();
+ await employeePage.locator('#next-account-mfa-start').waitFor();
  await employeePage.locator('#sidebar [data-tab="equipment"]').click();
  await employeePage.locator('[data-personal-equipment] .info-row').first().waitFor();
  assert.equal(await employeePage.locator('[data-personal-equipment] .info-row').count(),2);
@@ -147,7 +253,7 @@ async function test(){
   await employeePage.setViewportSize({width,height:width===390?844:950});
   for(const theme of ['light','dark']){
    await employeePage.evaluate(theme=>caffootSetTheme(theme),theme);
-   await employeePage.screenshot({path:path.join(output,`personal-${width}-${theme}.png`),fullPage:true});
+   await capture(`personal-${width}-${theme}`,employeePage);
    assert.ok(await employeePage.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1));
   }
  }
@@ -159,6 +265,6 @@ async function test(){
  await employee.close();
  assert.deepEqual(errors,[]);
  fs.writeFileSync(path.join(output,'results.json'),JSON.stringify({passed:true,errors,measurements:report},null,2));
- console.log('PASS: canonical Staff multi-allocation, Device Department allocation, shared history, private employee sections, membership refresh, light/dark desktop/mobile, modal keyboard containment.');
+ console.log('PASS: Staff status placement/confirmation/reactivation, administrator and restricted views, unchanged assignments/login, canonical allocation/history, private personal/shared sections, My Account, 1440/390px light/dark and modal keyboard containment.');
 }
 (async()=>{try{await test();}finally{if(browser)await browser.close();if(server){server.kill('SIGTERM');if(server.exitCode===null)await new Promise(r=>server.once('exit',r));}}})().catch(e=>{console.error(e);process.exitCode=1});
