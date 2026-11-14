@@ -15,6 +15,16 @@
 - [ ] Obtain separate final milestone merge approval; verify the resulting `main` build
 - [ ] Obtain separate v2.2 publication approval and verify published image/platforms, release notes and installation links before changing current-release instructions
 
+## Stage 2 Batch 5 — Final Integration Verification
+
+Verified `milestone-1` baseline `8192bb4438a1615f3b3c640d59deff2dfdde07be`; published `main` remains `6008fedfc2c25fc40b49c9e9e21f3a93d61a9f4a`. Branch: `stage-2-batch-5-final-verification`. Scope follows the [approved contract](https://github.com/Caffoot/Caffoot-Lite/issues/238#issuecomment-6821230015), [verified Batch 4 merge](https://github.com/Caffoot/Caffoot-Lite/issues/238#issuecomment-6873486389) and the owner's explicit verification-only instruction. No application implementation changes are authorised in this batch.
+
+Initial verification checkpoint: **236 focused Python tests passed**, with no failures or skips. The four affected persistence/import checks also passed after adding HTTP import assertions for feature/grant retention and renaming one test for clarity. New file-backed tests cover close/reopen and SQLite database-copy restoration, basic addresses without automatic linking, grants retained across feature toggles, inventory replacement and Clean Start without mocked permission decisions. One initial test callback omitted its connection argument; the test setup was corrected before the passing runs. This was not an application defect.
+
+The existing feature-combination Chromium test passed all eight combinations, essential all-off administration/My Account and deep-link denial without page errors. The Batch 4 final-feature CI jobs were independently checked as successful: backend, Chromium, Firefox, WebKit, Compose lifecycle, release documentation and Git history scan. Those results apply to `ab51bb194adccbc69f134f4412073008528595f7`; the merged baseline differs from the earlier reviewed Batch 4 checkpoint only in its first-run browser test.
+
+Optional-IP browser, final three-delta visual comparisons and Batch 5 hosted CI are pending at this intermediate checkpoint. Stage 2 final acceptance is not yet claimed. Stop after Batch 5; no Stage 3, merge, tag, release or deployment.
+
 ## Stage 2 Batch 4 — Interface And Rack Preservation
 
 Starts from verified merge `89ad05eab13f7a429dcbd5f4266a26e52f5de8d2` on `stage-2-batch-4-interface-rack-preservation`, following the [approved contract](https://github.com/Caffoot/Caffoot-Lite/issues/238#issuecomment-6821230015) and [Batch 4 handover](https://github.com/Caffoot/Caffoot-Lite/issues/238#issuecomment-6863207632). Published `main` remains unchanged.
