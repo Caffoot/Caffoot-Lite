@@ -1,0 +1,9 @@
+test_cross_origin_and_untrusted_client_candidate_rejected (test_import_http.ImportHttpTests.test_cross_origin_and_untrusted_client_candidate_rejected) ... ok
+test_full_http_preview_confirm_and_no_replay (test_import_http.ImportHttpTests.test_full_http_preview_confirm_and_no_replay) ... ok
+test_close_reopen_and_database_restoration_preserve_unlinked_data_and_grants (test_optional_features_persistence.OptionalFeaturesPersistenceTests.test_close_reopen_and_database_restoration_preserve_unlinked_data_and_grants) ... ok
+test_inventory_replacement_reset_and_persistence_without_permission_mocks (test_optional_features_persistence.OptionalFeaturesPersistenceTests.test_inventory_replacement_reset_and_persistence_without_permission_mocks) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.615s
+
+OK

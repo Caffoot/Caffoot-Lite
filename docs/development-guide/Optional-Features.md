@@ -32,6 +32,8 @@ The service owns a write transaction, rechecks session validity and administrato
 
 ## Review Checks
 
+The [Stage 2 final verification report](../development-handovers/evidence/stage-2-batch-5/Report.md) records the Batch 5 focused migration, persistence, security, Device/IPAM/Rack and browser evidence. It distinguishes completed checks from the remaining owner acceptance and Stage 6 integration limits.
+
 Focused tests are in `tests/test_feature_settings.py`, `tests/test_feature_settings_http.py`, `tests/test_feature_access.py` and `tests/feature-access.cjs`. They use temporary fictional data. The active [milestone handover](../development-handovers/milestone-01.md) records completed checks and the remaining batch boundary.
 
 ## Effective Access And Response Filtering
