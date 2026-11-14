@@ -102,6 +102,9 @@ class StaffDirectoryTests(unittest.TestCase):
             save_department(self.db, 1, self.tokens[1], {}, department_id=department['id'], delete=True)
         self.department({'archived': False}, department_id=department['id'])
         self.assertFalse(read_department(self.db, 1, department['id'])['archived'])
+        event = json.loads(self.db.execute('SELECT record_json FROM inventory_change_history ORDER BY id DESC LIMIT 1').fetchone()[0])
+        self.assertTrue(event['changes'][0]['before']['archived'])
+        self.assertFalse(event['changes'][0]['after']['archived'])
         empty = self.department({'name': 'Empty'})
         self.assertTrue(save_department(self.db, 1, self.tokens[1], {}, department_id=empty['id'], delete=True)['deleted'])
 
@@ -210,3 +213,63 @@ class StaffDirectoryTests(unittest.TestCase):
         history = json.dumps(self.db.execute('SELECT record_json FROM inventory_change_history').fetchall())
         for secret in ('Private First', 'Private Last', 'private@example.test', 'private telephone', 'private-password', self.tokens[1]):
             self.assertNotIn(secret, history)
+
+    def test_waiting_write_rechecks_session_mfa_status_and_permission(self):
+        for statement in (
+                'DELETE FROM account_sessions WHERE account_id=2',
+                'UPDATE accounts SET active=0 WHERE id=2',
+                'UPDATE accounts SET mfa_confirmed=0 WHERE id=2',
+                "UPDATE account_permission_overrides SET level='deny' WHERE account_id=2 AND section='Staff Members'"):
+            with self.subTest(statement=statement):
+                attempted = threading.Event()
+                writer = sqlite3.connect(self.path)
+                try:
+                    writer.execute('BEGIN IMMEDIATE')
+                    writer.execute(statement)
+                    def waiting_save():
+                        with sqlite3.connect(self.path, timeout=10) as db:
+                            db.set_trace_callback(lambda sql: attempted.set() if sql == 'BEGIN IMMEDIATE' else None)
+                            with self.assertRaises(PermissionError):
+                                save_staff_member(db, 2, self.tokens[2], dict(firstName='Blocked', lastName='Save'))
+                    with concurrent.futures.ThreadPoolExecutor(max_workers=1) as pool:
+                        future = pool.submit(waiting_save)
+                        self.assertTrue(attempted.wait(5))
+                        writer.commit()
+                        future.result(timeout=10)
+                    self.assertEqual(self.db.execute('SELECT count(*) FROM staff_members').fetchone(), (0,))
+                finally:
+                    writer.close()
+                self.db.execute('UPDATE accounts SET active=1,mfa_confirmed=1 WHERE id=2')
+                self.db.execute("UPDATE account_permission_overrides SET level='edit' WHERE account_id=2")
+                self.db.execute('INSERT OR REPLACE INTO account_sessions VALUES(?,2,9999999999,1)', (_digest(self.tokens[2]),))
+                self.db.commit()
+
+    def test_queued_association_rechecks_department_archive(self):
+        department = self.department()
+        attempted = threading.Event()
+        writer = sqlite3.connect(self.path)
+        try:
+            writer.execute('BEGIN IMMEDIATE')
+            writer.execute('UPDATE departments SET archived=1 WHERE id=?', (department['id'],))
+            def waiting_save():
+                with sqlite3.connect(self.path, timeout=10) as db:
+                    db.execute('PRAGMA foreign_keys=ON')
+                    db.set_trace_callback(lambda sql: attempted.set() if sql == 'BEGIN IMMEDIATE' else None)
+                    with self.assertRaises(FileExistsError):
+                        save_staff_member(db, 1, self.tokens[1], dict(firstName='Blocked', lastName='Save', departmentId=department['id']))
+            with concurrent.futures.ThreadPoolExecutor(max_workers=1) as pool:
+                future = pool.submit(waiting_save)
+                self.assertTrue(attempted.wait(5))
+                writer.commit()
+                future.result(timeout=10)
+        finally:
+            writer.close()
+        self.assertEqual(self.db.execute('SELECT count(*) FROM staff_members').fetchone(), (0,))
+
+    def test_department_audit_failure_rolls_back_rename_and_archive(self):
+        department = self.department()
+        before = self.snapshot()
+        with patch('backend.staff_directory.record_actor_event', side_effect=RuntimeError('Audit failed')):
+            with self.assertRaises(RuntimeError):
+                self.department(dict(name='Changed', archived=True), department_id=department['id'])
+        self.assertEqual(before, self.snapshot())

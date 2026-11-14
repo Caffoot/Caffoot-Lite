@@ -23,7 +23,7 @@ def unique_directory_fields(pairs):
 
 def require_directory_access(connection, actor_id, section, *, edit=False):
     """Check section rights before revealing whether a record exists."""
-    if not can_access(connection, actor_id, section, edit=edit):
+    if section not in ('Staff Members', 'Departments') or not can_access(connection, actor_id, section, edit=edit):
         raise PermissionError("Directory access required")
 
 
@@ -142,8 +142,8 @@ def save_staff_member(connection, actor_id, session_token, payload, *, staff_id=
             record_actor_event(connection, actor_id, kind='Staff Member',
                 action='Created' if creating else 'Updated', label=staff_id,
                 reason='Staff directory updated', fields=list(columns),
-                before={'Department': before.get('departmentId')},
-                after={'Department': after['departmentId']})
+                before={'Department': before.get('departmentId'), 'Active': before.get('active')},
+                after={'Department': after['departmentId'], 'Active': bool(after['active'])})
             if 'login' in payload:
                 _create_login(connection, actor_id, staff_id, payload['login'])
         result = read_staff_member(connection, actor_id, staff_id)
@@ -192,7 +192,9 @@ def save_department(connection, actor_id, session_token, payload, *, department_
             result = _department_record(connection, department_id)
         record_actor_event(connection, actor_id, kind='Department',
             action='Deleted' if delete else ('Created' if creating else 'Updated'),
-            label=department_id, reason='Department directory updated', fields=['Department'])
+            label=department_id, reason='Department directory updated', fields=['Department'],
+            before={key: before.get(key) for key in ('name', 'archived')},
+            after={key: result.get(key) for key in ('name', 'archived')})
         connection.commit()
         return result
     except BaseException:

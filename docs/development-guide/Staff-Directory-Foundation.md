@@ -1,5 +1,9 @@
 # Staff Members And Departments Foundation
 
+The foundation was accepted in PR #377. The following describes its migration;
+[Batch 3.2 APIs](Staff-Directory-APIs.md) extend future account creation and Staff
+operations without changing schema 14 or rerunning its upgrade.
+
 Batch 3.1 adds schema 14 on a dedicated branch from `milestone-1` at
 `519842b46861c85fde0eebf78298117c2346599d`. Its scope is authorised by
 [#368](https://github.com/Caffoot/Caffoot-Lite/issues/368#issuecomment-6877271755).
@@ -36,8 +40,8 @@ After version 14 is recorded, startup does not repeat the backfill.
 
 The upgrade writes no original account, profile, security, session, role, grant,
 override, inventory or history rows. It creates no logins or equipment assignments.
-Existing account creation continues unchanged; later combined Staff/login creation
-is outside this batch. `assign_staff_member` still assigns the protected security
+The foundation left account creation unchanged; combined Staff/login creation and
+future-account links are added in Batch 3.2. `assign_staff_member` assigns the protected security
 role, not a Staff directory record.
 
 ## Login Separation

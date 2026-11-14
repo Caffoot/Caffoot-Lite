@@ -86,5 +86,8 @@ deletion check for their own current/historical relationships before adding them
 
 `test_staff_directory.py` covers service validation, lifecycle, privacy, independent
 profiles/status, shared account creation, atomic failure and concurrent login creation.
-HTTP and wider regression evidence is recorded in the active
+`test_staff_directory_http.py` exercises the real HTTP handler, session/CSRF/origin
+guards, duplicate fields, statuses, search, record privacy and administrator-only
+login creation. Queued writes test session/MFA/permission revocation and archived
+Departments after waiting for the database lock. HTTP and wider regression evidence is recorded in the active
 [Milestone 01 handover](../development-handovers/milestone-01.md) and Batch 3.2 PR.

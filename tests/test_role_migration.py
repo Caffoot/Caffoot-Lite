@@ -156,7 +156,9 @@ class RoleMigrationTests(unittest.TestCase):
             self.db.execute("UPDATE roles SET role_key='renamed' WHERE role_key='support'")
 
     def test_bootstrap_and_ordinary_creation_assign_only_staff(self):
-        schema.initialise_database(self.db)
+        # Current account writers require the current Staff-link schema.
+        with patch.object(schema, 'SCHEMA_VERSION', 14):
+            schema.initialise_database(self.db)
         owner, secret = bootstrap_first_admin(self.db, "owner", "password")
         confirm_admin_mfa(self.db, owner, code_at(secret, 59), timestamp=59)
         user = create_user(self.db, owner, "staff", "password")
@@ -164,7 +166,8 @@ class RoleMigrationTests(unittest.TestCase):
         self.assertEqual(self.db.execute("SELECT * FROM account_permission_overrides").fetchall(), [])
 
     def test_creation_failure_does_not_leave_partial_accounts(self):
-        schema.initialise_database(self.db)
+        with patch.object(schema, 'SCHEMA_VERSION', 14):
+            schema.initialise_database(self.db)
         with patch("backend.accounts.assign_staff_member", side_effect=RuntimeError("Unavailable")):
             with self.assertRaises(RuntimeError):
                 bootstrap_first_admin(self.db, "owner", "password")
