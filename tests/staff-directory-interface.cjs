@@ -27,7 +27,7 @@ async function test(){
   ' db.execute("PRAGMA foreign_keys=ON")',
   ' user=create_user(db,1,"staff-reader","Reader-Only-Test-Password-2026!")',
   ' db.execute("UPDATE accounts SET mfa_secret=?,mfa_confirmed=1 WHERE id=?",(sys.argv[2],user))',
-  ' db.execute("INSERT INTO account_permission_overrides(account_id,section,level) VALUES(?,"+"'Staff Members'"+","+"'read'"+")",(user,))',
+  " db.execute('INSERT INTO account_permission_overrides(account_id,section,level) VALUES(?,?,?)',(user,'Staff Members','read'))",
   ' db.commit()',
   ' token=login_session(db,"staff-reader","Reader-Only-Test-Password-2026!",mfa_code=code_at(sys.argv[2],time.time()))',
   ' print(json.dumps({"cookie":COOKIE_NAME,"token":token}))'
