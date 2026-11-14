@@ -8,7 +8,7 @@ import smtplib
 import ssl
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
-from urllib.parse import urlsplit
+from urllib.parse import urlsplit, parse_qs
 
 from .device_saves import create_device, delete_reserved_device, save_reserved_device
 from .ipam_linking import link_device_to_ipam, unique_link_fields
@@ -51,6 +51,9 @@ from .request_auth import authorised_mutation
 from .http_security import require_same_origin
 from .tls import ensure_certificate
 from .deployment_settings import validate_published_port
+from .staff_directory import (require_directory_access, list_directory,
+                               read_staff_member, read_department,
+                               save_staff_member, save_department, unique_directory_fields)
 
 DB_PATH = Path(os.environ.get("CAFFOOT_DB_PATH", "/data/caffoot.sqlite3"))
 HOST = os.environ.get("CAFFOOT_HOST", "0.0.0.0")
@@ -120,6 +123,9 @@ class Handler(BaseHTTPRequestHandler):
         super().end_headers()
 
     def do_GET(self):
+        if self.path.startswith(("/api/staff-members", "/api/departments")):
+            self.handle_directory_request()
+            return
         if self.path == "/api/settings/features":
             self.handle_feature_settings()
             return
@@ -460,6 +466,9 @@ class Handler(BaseHTTPRequestHandler):
             self.respond(404, {"error": "not found"})
 
     def do_POST(self):
+        if self.path.startswith(("/api/staff-members", "/api/departments")):
+            self.handle_directory_request()
+            return
         if self.path == "/api/settings/features":
             self.handle_feature_settings()
             return
@@ -632,6 +641,73 @@ class Handler(BaseHTTPRequestHandler):
             self.respond(401, {"error": "invalid credentials"})
             return
         self.respond(200, {"status": "signed in"}, cookie=session_cookie(token))
+
+    def handle_directory_request(self):
+        """Protect directory reads and saves with the established request checks."""
+        parsed = urlsplit(self.path)
+        parts = parsed.path.strip('/').split('/')
+        section = {'staff-members': 'Staff Members', 'departments': 'Departments'}.get(parts[1] if len(parts) > 1 else '')
+        action = parts[3] if len(parts) == 4 else None
+        if (section is None or len(parts) not in (2, 3, 4)
+                or (len(parts) == 4 and (self.command != 'POST' or action !=
+                    ('login' if section == 'Staff Members' else 'delete')))
+                or parsed.path.endswith('/') or (self.command == 'POST' and parsed.query)):
+            self.respond(404, {'error': 'not found'})
+            return
+        record_id = parts[2] if len(parts) >= 3 else None
+        origin = self.headers.get('Origin')
+        if (self.headers.get('Sec-Fetch-Site') == 'cross-site'
+                or (origin is not None and (not PUBLIC_ORIGIN or not require_same_origin(origin, PUBLIC_ORIGIN)))
+                or (self.command == 'POST' and (not PUBLIC_ORIGIN or not require_same_origin(origin, PUBLIC_ORIGIN)))):
+            self.respond(403, {'error': 'forbidden'})
+            return
+        try:
+            with connect() as connection:
+                cookie = self.headers.get('Cookie')
+                if self.command == 'GET':
+                    connection.execute('BEGIN')
+                actor = (authenticated_account(connection, cookie) if self.command == 'GET' else
+                         authorised_mutation(connection, cookie, origin, PUBLIC_ORIGIN, self.headers.get('X-CSRF-Token')))
+                if actor is None:
+                    self.respond(401 if self.command == 'GET' else 403, {'error': 'unauthorised'})
+                    return
+                require_directory_access(connection, actor, section, edit=self.command == 'POST')
+                if self.command == 'GET':
+                    parameters = parse_qs(parsed.query, keep_blank_values=True)
+                    if set(parameters) - {'query', 'limit', 'offset'} or any(len(value) != 1 for value in parameters.values()):
+                        raise ValueError('Invalid search parameters')
+                    if record_id:
+                        result = (read_staff_member(connection, actor, record_id) if section == 'Staff Members'
+                                  else read_department(connection, actor, record_id))
+                    else:
+                        result = list_directory(connection, actor, section,
+                            query=parameters.get('query', [''])[0],
+                            limit=int(parameters.get('limit', ['100'])[0]),
+                            offset=int(parameters.get('offset', ['0'])[0]))
+                else:
+                    length = self.headers.get('Content-Length', '')
+                    if not length.isdecimal() or not 0 < int(length) <= MAX_LOGIN_BYTES:
+                        raise ValueError('Invalid request size')
+                    if self.headers.get('Content-Type', '').split(';')[0].strip().lower() != 'application/json':
+                        self.respond(415, {'error': 'JSON required'})
+                        return
+                    payload = json.loads(self.rfile.read(int(length)), object_pairs_hook=unique_directory_fields)
+                    if section == 'Staff Members':
+                        result = save_staff_member(connection, actor, read_session_cookie(cookie), payload,
+                            staff_id=record_id, login_only=action == 'login')
+                    else:
+                        result = save_department(connection, actor, read_session_cookie(cookie), payload,
+                            department_id=record_id, delete=action == 'delete')
+            key = ('staffMembers' if section == 'Staff Members' else 'departments') if isinstance(result, list) else ('staffMember' if section == 'Staff Members' else 'department')
+            self.respond(200, {key: result})
+        except PermissionError:
+            self.respond(403, {'error': 'forbidden'})
+        except LookupError as exc:
+            self.respond(404, {'error': str(exc)})
+        except (FileExistsError, sqlite3.IntegrityError):
+            self.respond(409, {'error': 'Directory record conflict'})
+        except (ValueError, TypeError) as exc:
+            self.respond(400, {'error': str(exc)})
 
     def handle_feature_settings(self):
         """Use existing session and request proofs for organisation settings."""

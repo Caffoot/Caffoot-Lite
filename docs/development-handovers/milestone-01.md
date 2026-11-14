@@ -15,6 +15,28 @@
 - [ ] Obtain separate final milestone merge approval; verify the resulting `main` build
 - [ ] Obtain separate v2.2 publication approval and verify published image/platforms, release notes and installation links before changing current-release instructions
 
+## Stage 3 Batch 3.2 — Staff Members And Departments Backend APIs
+
+Baseline: accepted PR #377, `milestone-1` at
+`97368e734f3e8008a9acc929b999a198eca1cf3f`. Dedicated branch:
+`feat/staff-departments-apis`. Scope follows the
+[Batch 3.2 authorisation](https://github.com/Caffoot/Caffoot-Lite/issues/368#issuecomment-6877568738).
+
+The first checkpoint adds Staff/Department backend operations and a shared account
+writer, reusing schema 14. Optional login creation and Staff linking are atomic;
+Users and initial setup create exactly one linked Staff identity. Profiles and
+statuses remain independent. Directory responses hide login identity from ordinary
+readers, and historical Department membership prevents unsafe deletion. No screens,
+navigation or assignment/stock APIs are added. See the
+[API contract](../development-guide/Staff-Directory-APIs.md).
+
+Initial focused service/migration/account checks: **36 passed**, no failures/skips.
+The first development run caught an SQL search-escape error; literal wildcard
+handling was corrected before the passing run. The earlier foundation assertion
+that future Users accounts had no Staff link now tests the newly authorised unique
+link. HTTP security, wider regressions and final CI remain pending at this checkpoint.
+Stop at a reviewable PR for product-owner acceptance; do not merge or deploy.
+
 ## Stage 3 Batch 3.1 — Staff Members And Departments Foundation
 
 Started from verified `milestone-1` at `519842b46861c85fde0eebf78298117c2346599d`,
