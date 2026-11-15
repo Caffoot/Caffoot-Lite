@@ -505,6 +505,9 @@ class StockCirculationTests(unittest.TestCase):
         payload['deviceAssignmentId']=payload.pop('issueEntryId')
         self.return_equipment(payload)
         self.assertTrue(stock_movement_history(self.db,1,device_id='canonical'))
+        from backend.device_assignments import read_assignments
+        closure=read_assignments(self.db,1,device_id='canonical')['history'][0]['closure']
+        self.assertEqual(closure,dict(kind='returned',date=payload['returnedOn'],actor='Fictional Owner'))
         self.assertEqual(stock_movement_history(self.db,2),[])
         self.unchanged(PermissionError,lambda:stock_movement_history(self.db,2,device_id='canonical'))
         self.db.execute("UPDATE organisation_features SET enabled=0 WHERE feature='devices'")
@@ -513,6 +516,9 @@ class StockCirculationTests(unittest.TestCase):
         self.db.execute("UPDATE organisation_features SET enabled=0 WHERE feature='it_assets'")
         self.db.commit()
         self.unchanged(PermissionError,lambda:stock_movement_history(self.db,1))
+        self.db.execute("UPDATE organisation_features SET enabled=1 WHERE feature='devices'")
+        self.db.commit()
+        self.assertNotIn('closure',read_assignments(self.db,1,device_id='canonical')['history'][0])
 
     def test_department_stock_history_blocks_unsafe_deletion_after_full_return(self):
         from backend.staff_directory import read_department,save_department
