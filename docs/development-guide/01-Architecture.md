@@ -2,11 +2,9 @@
 
 ## In simple terms
 
-The current `milestone-1` addition is schema 12 and IT Staff. It reuses the same
-role tables, permission policy, MFA flow and administrator preview/confirmation
-service. Only built-in identity constraints and the approved access-preserving
-upgrade change; no parallel permissions system, new framework or future
-departmental roles are introduced. See [IT Staff](Role-Permissions.md#configurable-built-in-roles--schema-12).
+**Version boundary:** Published v2.1 is the tagged schema-10 release. `main` includes accepted but unreleased Stage 1/schema 12; this `milestone-1` development branch is schema 15 through merged Stage 3 Batch 3.4. Batch 3.4 manual/native acceptance remains deferred, not passed. See [Development Status](Development-Status.md) for source checkpoints; documentation synchronisation does not release v2.2.
+
+Stage 1's role tables, permission policy, MFA flow and reviewed administrator role changes remain in use. Stage 2 adds independent optional-feature rules; the subsequent Staff Members, Departments and Device assignment work is on this branch. Refer to [Role Permissions](Role-Permissions.md), [Optional Features](Optional-Features.md) and [Staff Directory Foundation](Staff-Directory-Foundation.md) for their established contracts.
 
 The Docker version of Caffoot Lite is a small web application, not a collection of separate services. A browser opens the application's HTTPS page; the Python server serves that page and processes its requests; SQLite stores the shared inventory and account details. A Portainer stack or Docker Compose configuration starts the same application.
 

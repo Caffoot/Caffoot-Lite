@@ -20,14 +20,14 @@ These initial categories use GitHub's standard label names, where available. Rep
 | Label | Meaning | Who Applies It |
 | --- | --- | --- |
 | `bug` | Something does not work as expected | Automatically from Report A Bug |
-| `enhancement` | A feature request or improvement idea | Automatically from Suggest A Feature |
+| `future request` | A feature request or improvement idea | Automatically from Suggest A Feature |
 | `documentation` | Clearer guides, screenshots, examples or code explanations | Automatically from Improve Documentation |
 | `question` | A request for help or clarification | Automatically from Ask A Question |
 | `good first issue` | A clearly scoped, approachable task for first-time contributors | Maintainers after review |
 | `help wanted` | A task with agreed scope where community contributions are welcomed | Maintainers after review |
 | `duplicate` | A request already being tracked elsewhere | Maintainers after review |
 
-**Optional later label:** `UI / UX` could highlight interface and accessibility suggestions if that additional label is created and maintained. It is not required for the initial issue forms; interface suggestions can start as an `enhancement`.
+**Optional later label:** `UI / UX` could highlight interface and accessibility suggestions if that additional label is created and maintained. It is not required for the initial issue forms; interface suggestions can use the existing feature-request form and its `future request` label.
 
 ## Simple Review Process
 

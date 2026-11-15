@@ -8,7 +8,7 @@ This page helps visitors see what is available, what is being developed and whic
 
 Caffoot Lite v2.1 was published on **8 November 2026**. The current release includes:
 
-- Device and IT asset inventory with improved physical-server and virtual-machine forms.
+- Device inventory with improved physical-server and virtual-machine forms.
 - Subnet-first IP address management (IPAM), optional VLANs and guided bulk subnet planning.
 - Network rack documentation, front/rear views and equipment placement.
 - Multi-user access, administrator-managed permissions, MFA, account/email workflows and Audit Trail.
@@ -16,27 +16,29 @@ Caffoot Lite v2.1 was published on **8 November 2026**. The current release incl
 
 **[Install Caffoot Lite](INSTALLATION.md)** · **[See the latest release](https://github.com/Caffoot/Caffoot-Lite/releases/latest)** · **[Explore the features](docs/how-tos/features-and-instructions/README.md)**
 
-## In development — v2.2 (Milestone 01)
+## In development — v2.2, not published
 
-**v2.2 is the agreed target version, not a published release and not a release-date commitment.** Stage 1 is accepted and merged via PR #358. Stage 2 is accepted through PR #376 at `519842b46861c85fde0eebf78298117c2346599d`, with the later Optional Features design correction merged via PR #380. Stage 3 Batches 3.1–3.4 are merged via PRs #377, #378, #381 and #382; the current integration checkpoint is `05b162aa10a74994c970d0b6dbf111dc59b47513` (schema 15). Batch 3.4 manual acceptance is deferred, not passed. Later Stage 3 batches and Stages 4–6 remain pending. Development continues on `milestone-1`, with scope, reviews and acceptance recorded in the [Milestone 01 tracker #351](https://github.com/Caffoot/Caffoot-Lite/issues/351). Only v2.1 installation instructions and published images are presently available. Documentation preparation is tracked in [#366](https://github.com/Caffoot/Caffoot-Lite/issues/366); see the [draft v2.2 user guides](docs/how-tos/features-and-instructions/v2.2-draft/README.md).
+**Milestone 01 — Everyday IT Management** targets v2.2. Stage 1 roles/IT Staff is accepted via PR #358. Stage 2 optional Devices/IPAM/Racks is accepted; Stage 3 Batches 3.1–3.4 add core Staff Members and Departments, initial Device assignments and My Equipment on the separate `milestone-1` branch. **Batch 3.4 manual acceptance is deferred, not passed.** See [exact checkpoints](docs/development-guide/Development-Status.md) and [tracker #351](https://github.com/Caffoot/Caffoot-Lite/issues/351).
 
-The [six long-term planning milestones](docs/product-direction/PROPOSED-MILESTONES.md) organise future proposals. **Milestone 01 — Everyday IT Management** includes core Staff Members and Departments, initial Device assignments and My Equipment already merged for development, independently optional IT Assets with stock and returns still pending in Stage 3, upcoming Suppliers, optional modules and the full Service Desk. **Milestone 02 — Connected Infrastructure** remains focused on network relationships. **Milestone 03 — Inventory Tools, Reporting & Verification** groups later inventory improvements such as CSV/JSON, saved views, QR labels, stocktakes, reporting and IT documentation. See the [live GitHub milestones](https://github.com/Caffoot/Caffoot-Lite/milestones). These are planning groupings: detailed feature scope and implementation still require separate approval; no release date is set. The completed v2.1 integration and its historical decisions are recorded in [issue #282](https://github.com/Caffoot/Caffoot-Lite/issues/282).
+Approved milestone direction still awaiting dependent implementation includes:
+
+- Independently optional IT Assets, quantity stock and later assignment/return workflows ([#352](https://github.com/Caffoot/Caffoot-Lite/issues/352), [#292](https://github.com/Caffoot/Caffoot-Lite/issues/292)).
+- Suppliers in Stage 4 and linked Service Desk work in Stage 5 ([#349](https://github.com/Caffoot/Caffoot-Lite/issues/349), [#233](https://github.com/Caffoot/Caffoot-Lite/issues/233)).
+- Stage 6 integrated compatibility, complete-volume upgrade/restore and final acceptance.
+
+**v2.2 is not publicly installable.** No release date is promised. The [six planning milestones](docs/product-direction/PROPOSED-MILESTONES.md) organise later work without approving every proposal. Their dated original structure remains historical context, not an alternative to later issue decisions.
+
+The separate [draft v2.2 user guides](docs/how-tos/features-and-instructions/v2.2-draft/README.md) describe implemented milestone features through Batch 3.4. They are not published instructions, an approved upgrade procedure or evidence of completed manual acceptance.
 
 ## Ideas under consideration — not yet scheduled
 
 The community is welcome to suggest and discuss improvements. Current individual proposals include:
 
 - [Multiple network interfaces, addresses per device and IPv6 (#231)](https://github.com/Caffoot/Caffoot-Lite/issues/231)
-- [Independently Optional IT Assets and stock movements (#352)](https://github.com/Caffoot/Caffoot-Lite/issues/352)
-- [Suppliers, locations and contacts (#349)](https://github.com/Caffoot/Caffoot-Lite/issues/349)
-- [People, departments and asset assignment (#232)](https://github.com/Caffoot/Caffoot-Lite/issues/232)
-- [Equipment handovers and reassignment history (#292)](https://github.com/Caffoot/Caffoot-Lite/issues/292)
-- [Support tickets linked to devices and people (#233)](https://github.com/Caffoot/Caffoot-Lite/issues/233)
 - [MSP customers and overlapping private IP ranges (#234)](https://github.com/Caffoot/Caffoot-Lite/issues/234)
 - [Switch ports, connections and topology (#235)](https://github.com/Caffoot/Caffoot-Lite/issues/235)
 - [Monitoring, alerts and live status (#236)](https://github.com/Caffoot/Caffoot-Lite/issues/236)
 - [In-app documentation and revision history (#237)](https://github.com/Caffoot/Caffoot-Lite/issues/237)
-- [Optional sections or modules (#238)](https://github.com/Caffoot/Caffoot-Lite/issues/238)
 - [LDAP/LLDAP/Active Directory sign-in (#240)](https://github.com/Caffoot/Caffoot-Lite/issues/240)
 - [Saved filters and inventory views (#241)](https://github.com/Caffoot/Caffoot-Lite/issues/241)
 - [Long-term departmental asset management (#353)](https://github.com/Caffoot/Caffoot-Lite/issues/353) — future direction only, outside the immediate IT scope.
@@ -55,4 +57,4 @@ Please [report security vulnerabilities privately](SECURITY.md), not in public i
 
 ---
 
-*Updated: 15 November 2026. This page distinguishes the published v2.1 release from the agreed v2.2 development target; no release date is promised.*
+*Updated: 15 November 2026. Published v2.1, unreleased implementation, approved pending work and unscheduled proposals are distinguished above.*

@@ -8,13 +8,9 @@ The code keeps Devices, IPAM and Racks records in separate tables, along with ac
 
 ## Source and schema version
 
-The accepted Batch 3.1 foundation uses schema 14, adding independent Staff Members and flat
-Departments after Stage 2's schema-13 organisation features. Earlier role migrations
-remain unchanged. All steps run in one atomic transaction with foreign keys enabled.
-See [Staff Directory Foundation](Staff-Directory-Foundation.md) for exact fields,
-account mapping, link preservation and conflict handling. Batch 3.2 adds
-[directory APIs](Staff-Directory-APIs.md) and future-account links using the same
-schema. The published v2.1 schema and release remain unchanged.
+**Version boundary:** Published v2.1 is the tagged schema-10 release. `main` includes accepted but unreleased Stage 1/schema 12; this `milestone-1` development branch is schema 15 through merged Stage 3 Batch 3.4. Batch 3.4 manual/native acceptance remains deferred, not passed. See [Development Status](Development-Status.md) for source checkpoints; documentation synchronisation does not release v2.2.
+
+Stage 2 adds schema 13; Stage 3 Batch 3.1 adds independent Staff Members and flat Departments at schema 14, while Batch 3.4 adds current and historical Device assignments at schema 15. The earlier role migrations are retained. [Staff Directory Foundation](Staff-Directory-Foundation.md), [Staff Directory APIs](Staff-Directory-APIs.md) and [Device Assignments](Device-Assignments.md) document the approved boundaries. The published v2.1 schema remains 10; these are not production upgrade instructions.
 
 The exact definitions are in [`backend/schema.py`](../../backend/schema.py). The 30 October 2026 checkpoint had schema 7. The later modular v2.1 baseline used schema 9: migration 8 added profiles/photos and migration 9 added email proofs. The published v2.1 database uses schema 10, adding challenge identifiers, attempt counters and durable failed-attempt timestamps; it explicitly invalidates outstanding old-format email proofs at upgrade. The function `initialise_database(connection)` applies missing numbered migrations in a transaction and rejects databases marked newer than this application.
 

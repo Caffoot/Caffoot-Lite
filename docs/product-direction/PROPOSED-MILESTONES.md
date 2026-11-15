@@ -1,6 +1,8 @@
 # Caffoot Lite — Long-Term Planning Milestones
 
-> **Original planning structure agreed 5 November 2026; Milestones 01–03 regrouped 10 November 2026.** Six GitHub Milestones #20–#25 group future requests under the agreed [product vision](VISION.md); they do not constitute an approved development schedule. No future version number, date, feature scope or technical architecture is agreed by this document.
+> **Current decision update — 15 November 2026:** Milestone 01 targets **unreleased v2.2**. Stage 1 and Stage 2 are accepted; Stage 3 Batches 3.1–3.4 are merged on `milestone-1`, with Batch 3.4 manual acceptance deferred, not passed. **IT Assets is independently optional; Staff Members and Departments are core.** Stock/returns, Suppliers and Service Desk remain pending. Follow [Development Status](../development-guide/Development-Status.md), [#368](https://github.com/Caffoot/Caffoot-Lite/issues/368) and the [12 November optionality amendment](https://github.com/Caffoot/Caffoot-Lite/issues/352#issuecomment-6821569639). The dated planning register below is retained for context; it does not reopen settled decisions or authorise new work.
+
+> **Original planning structure agreed 5 November 2026; Milestones 01–03 regrouped 10 November 2026.** Six GitHub Milestones #20–#25 group future requests under the agreed [product vision](VISION.md); they do not constitute an approved development schedule. That original grouping alone does not approve a version, release date, feature scope or technical architecture. Later approvals, including the v2.2 target, are distinguished above.
 
 ## Where we are today
 
@@ -16,11 +18,11 @@ GitHub Milestones #20–#25 group future requests by the **benefit to users**, n
 
 **Outcome:** An IT team can record equipment and stock, manage suppliers and staff, assign equipment, handle returns and support users through a connected, straightforward experience.
 
-Current planning issues:
+Milestone allocation (original grouping; current delivery status is above):
 - [Role-based permissions and per-user overrides — #350](https://github.com/Caffoot/Caffoot-Lite/issues/350).
-- [Optional sections for agreed non-core capabilities — #238](https://github.com/Caffoot/Caffoot-Lite/issues/238). **Core Assets is not optional.**
+- [Optional sections for agreed non-core capabilities — #238](https://github.com/Caffoot/Caffoot-Lite/issues/238). **IT Assets is independently optional**, under the later amendment linked above.
 - [Suppliers, branches, contacts and supplier notes/issues — #349](https://github.com/Caffoot/Caffoot-Lite/issues/349).
-- [Core Assets: individually tracked equipment, quantity stock and stock movement history — #352](https://github.com/Caffoot/Caffoot-Lite/issues/352).
+- [Optional IT Assets: individually tracked equipment, quantity stock and stock movement history — #352](https://github.com/Caffoot/Caffoot-Lite/issues/352).
 - [People, departments and device/asset assignments — #232](https://github.com/Caffoot/Caffoot-Lite/issues/232).
 - [Equipment handovers and reassignment history — #292](https://github.com/Caffoot/Caffoot-Lite/issues/292).
 - [Full device/asset-linked Service Desk and support tickets — #233](https://github.com/Caffoot/Caffoot-Lite/issues/233).
@@ -30,7 +32,7 @@ Current planning issues:
 - [Milestone planning checkpoint — #351](https://github.com/Caffoot/Caffoot-Lite/issues/351).
 - [#323 — organisation-specific asset information](https://github.com/Caffoot/Caffoot-Lite/issues/323) is **closed, Not Planned**, and must not be treated as delivery scope.
 
-**To decide:** Exact record relationships, permissions and privacy, asset quantity versus individual tracking, staff assignment and return workflows, support ticket behaviour, safe migration and the approved HTML interfaces. Plan these connected capabilities together to avoid later retrofits; that does **not** authorise one monolithic implementation or prescribe an unapproved technical architecture. The [latest #351 checkpoint](https://github.com/Caffoot/Caffoot-Lite/issues/351#issuecomment-6764257679) supersedes the earlier milestone-wide development sequence. Feature-level decisions in their issues remain in force.
+**Original planning questions, partly superseded:** Later #232/#352/#368 decisions settle the Staff/Department identity, independent permissions/privacy, individual/quantity stock direction, assignment/return workflows and retained UI authority. Remaining technical details and later stages still need their own approval; do not ask the owner to repeat settled product choices. Plan these connected capabilities together to avoid later retrofits; that does **not** authorise one monolithic implementation or prescribe an unapproved technical architecture. The [10 November #351 checkpoint](https://github.com/Caffoot/Caffoot-Lite/issues/351#issuecomment-6764257679) supersedes the earlier milestone-wide development sequence. Feature-level decisions in their issues remain in force.
 
 ### Milestone 02 (#21) — Connected Infrastructure
 
@@ -51,7 +53,7 @@ Existing proposals (unchanged):
 
 **Outcome:** Build on the connected everyday IT management foundations with faster inventory operations, clear documentation, accurate verification and practical reporting.
 
-Current planning issues:
+Milestone allocation (original grouping; current delivery status is above):
 - [Saved views and remembered inventory filters — #241](https://github.com/Caffoot/Caffoot-Lite/issues/241).
 - [QR labels linking to authorised asset records — #287](https://github.com/Caffoot/Caffoot-Lite/issues/287).
 - [CSV import/export and safe bulk updates — #288](https://github.com/Caffoot/Caffoot-Lite/issues/288).
@@ -106,7 +108,7 @@ Potential directions:
 
 ## Future departmental asset direction — not scheduled
 
-[Issue #353](https://github.com/Caffoot/Caffoot-Lite/issues/353) records possible future Maintenance, Facilities and Production asset management, such as manufacturing machinery and service schedules. It has **no assigned milestone or implementation approval**. The current core Assets proposal [#352](https://github.com/Caffoot/Caffoot-Lite/issues/352) remains **IT-focused**, without unnecessary assumptions that would prevent later, separately approved departmental uses. Department membership does not replace [#350](https://github.com/Caffoot/Caffoot-Lite/issues/350) permissions.
+[Issue #353](https://github.com/Caffoot/Caffoot-Lite/issues/353) records possible future Maintenance, Facilities and Production asset management, such as manufacturing machinery and service schedules. It has **no assigned milestone or implementation approval**. The current independently optional IT Assets direction [#352](https://github.com/Caffoot/Caffoot-Lite/issues/352) remains **IT-focused**, without unnecessary assumptions that would prevent later, separately approved departmental uses. Department membership does not replace [#350](https://github.com/Caffoot/Caffoot-Lite/issues/350) permissions.
 
 ## What must remain true at every stage
 
@@ -129,7 +131,7 @@ The [public roadmap](../../ROADMAP.md) should list only released work, genuinely
 
 ## Deliberately left for later
 
-- Concrete release numbers after v2.1.
+- Release numbers beyond the agreed, unreleased Milestone 01 v2.2 target.
 - Delivery dates or estimates.
 - A decision to implement all of these possibilities.
 - Authentication, device-agent or modular-architecture choices.
