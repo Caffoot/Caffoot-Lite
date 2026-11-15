@@ -285,3 +285,15 @@ schema or movement rule. All **62 affected tests passed**, including feature-dis
 privacy. The complete 52-image flow was refreshed against this final runtime.
 The full backend run above is pinned to `c205cfa`; final GitHub CI covers the additional
 read-only projection and the final documentation commit separately.
+
+## Final CI False Positive
+
+The first final-evidence commit (`80011c8`) failed the full-history secret scan.
+The redacted local report identified only `Source-Checks.json:27`: the SHA-256 of
+`backend/request_auth.py`. Recomputing the hash from the committed file bytes
+confirmed it is a source checksum, not a credential. The existing `.gitleaksignore`
+now names only that exact commit/file/rule/line fingerprint. No detector or path
+was broadly excluded, and no checkpoint history was rewritten. See the
+[repeat scan result](secret-scan-check.log). Final PR Actions are reported in the
+PR description so their actual status remains visible without changing evidence
+source revisions.
