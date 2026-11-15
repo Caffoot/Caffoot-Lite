@@ -7,8 +7,12 @@ operations without changing schema 14 or rerunning its upgrade.
 Batch 3.1 adds schema 14 on a dedicated branch from `milestone-1` at
 `519842b46861c85fde0eebf78298117c2346599d`. Its scope is authorised by
 [#368](https://github.com/Caffoot/Caffoot-Lite/issues/368#issuecomment-6877271755).
-The published release remains v2.1. Staff screens, operational APIs, navigation,
-assignments and the IT Assets feature switch need separate batches.
+The published release remains v2.1. Operational APIs, Staff screens/navigation
+and initial Device assignments are now merged in Batches 3.2–3.4 through PR #382
+at `05b162aa10a74994c970d0b6dbf111dc59b47513` (schema 15). Batch 3.4 manual
+acceptance is deferred, not passed. The IT Assets feature switch and stock
+workflows remain pending. See the [draft Staff guide](../how-tos/features-and-instructions/v2.2-draft/Staff-Members.md).
+The sections below describe this foundation batch, not the complete current system.
 
 ## Records And Upgrade
 

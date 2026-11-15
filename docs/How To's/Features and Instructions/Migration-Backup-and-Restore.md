@@ -1,6 +1,6 @@
 # Migration, Backup and Restore
 
-**Development branch notice:** Schema 11 on `milestone-1` preserves existing accounts and configured grants, assigns Staff Member without inventory rights and revokes all old sessions. This intermediate batch is not ready to deploy. Before a future authorised upgrade, back up the complete private `/data` directory and retain the matching v2.1 image. Rollback requires restoring both together; never run v2.1 against a schema-11 database. See [Shared Roles And Account Permissions](../../development-guide/Role-Permissions.md).
+**Development branch notice — unreleased v2.2:** `milestone-1` is merged through Stage 3 Batch 3.4 at `05b162aa10a74994c970d0b6dbf111dc59b47513` (schema 15). Batch 3.4 manual acceptance is deferred, not passed. Full legacy-import compatibility and complete-volume backup/restore verification belong to Stage 6 and remain pending. This is not a production upgrade procedure. Published v2.1 instructions below remain unchanged; see the [draft v2.2 guides](../../how-tos/features-and-instructions/v2.2-draft/README.md).
 
 [← All feature guides](README.md)
 

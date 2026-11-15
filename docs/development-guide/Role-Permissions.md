@@ -1,14 +1,20 @@
 # Shared Roles And Account Permissions
 
-## Staff And Department Foundation — Schema 14 Candidate
+## Current Development — Staff And Department Permissions
 
 Batch 3.1 extends the existing section list with Staff Members, Departments and
 IT Assets. It creates no grants or roles, retains default-deny and MFA, and keeps
 the inventory importer explicitly dependent on Devices/IPAM/Racks Edit only.
 Staff/Departments are core; effective IT Assets access remains off pending its
 separate feature batch. See [Staff Directory Foundation](Staff-Directory-Foundation.md).
-The Stage 1 checkpoint below is historical; PR #358 was subsequently accepted and
-merged, and Stage 2 is included in the approved Batch 3.1 baseline.
+Stage 1 was accepted and merged via PR #358; Stage 2 is accepted and Batches
+3.1–3.4 are merged through PR #382 at `05b162aa10a74994c970d0b6dbf111dc59b47513`
+(schema 15). Batch 3.4 manual acceptance is deferred, not passed. See the
+[draft v2.2 permissions guide](../how-tos/features-and-instructions/v2.2-draft/Roles-Section-Permissions-and-MFA.md).
+
+### Historical Stage 1 Checkpoint
+
+The following paragraph records the earlier pre-merge position, not current status.
 
 This is development on `milestone-1`; the published release remains v2.1.
 Original Stage 1 was [accepted](https://github.com/Caffoot/Caffoot-Lite/issues/351#issuecomment-6816955325)

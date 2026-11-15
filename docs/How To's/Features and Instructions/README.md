@@ -40,3 +40,7 @@ The detailed [Docker/Portainer installation instructions](../../../INSTALLATION.
 All signed-in users can open **My account → Help & Guides** for short built-in help without a public Internet connection. Each topic can also open its longer **Read full guide** in a separate browser tab. The documentation link requires access to GitHub; normal local inventory work does not.
 
 **Release history:** v2.0 introduced the Docker/SQLite edition; v2.0.1 moved its source to the repository root; v2.0.2 delivered a security correction. The standalone [v1.3.3](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v1.3.3) release remains available for one-way JSON migration.
+
+## Draft v2.2 — Not Published / Not Production Guidance
+
+The published v2.1 guides above remain current. The separate [draft v2.2 guides](../../how-tos/features-and-instructions/v2.2-draft/README.md) describe implemented development features through Batch 3.4. Manual Batch 3.4 acceptance is deferred, not passed. These drafts are not installation, upgrade or restore instructions.

@@ -1,7 +1,10 @@
 # Device Assignments
 
 This is unreleased Milestone 01 development. The published v2.1 installation
-is unchanged. Scope: [Batch 3.4](https://github.com/Caffoot/Caffoot-Lite/issues/368#issuecomment-6881744109).
+is unchanged. Batch 3.4 merged via PR #382 at
+`05b162aa10a74994c970d0b6dbf111dc59b47513`; manual acceptance is deferred,
+not passed. See the [draft user guide](../how-tos/features-and-instructions/v2.2-draft/Device-Assignments-and-My-Equipment.md).
+Scope: [Batch 3.4](https://github.com/Caffoot/Caffoot-Lite/issues/368#issuecomment-6881744109).
 
 Schema 15 introduces `device_assignments`. Each dated record references the
 original Device and exactly one Staff Member or Department. It retains the

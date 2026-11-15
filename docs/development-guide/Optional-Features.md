@@ -1,6 +1,6 @@
 # Optional Features — Development Foundation
 
-This is unpublished v2.2 development under [issue #238](https://github.com/Caffoot/Caffoot-Lite/issues/238#issuecomment-6821230015). Schema/settings storage and API are implemented in Batch 1; Batch 2 adds effective feature guards and filtered responses. Batch 3 adds optional/basic Device addresses, the existing form behaviour and explicit backend linking. Batch 4 integrates Rack preservation and the three approved interface additions described below. This branch is for review, not deployment.
+This is unpublished v2.2 development under [issue #238](https://github.com/Caffoot/Caffoot-Lite/issues/238#issuecomment-6821230015). Stage 2 was accepted through PR #376 at `519842b46861c85fde0eebf78298117c2346599d`; the later approved Optional Features design correction merged via PR #380. Stage 3 Batches 3.1–3.4 are merged through PR #382 at `05b162aa10a74994c970d0b6dbf111dc59b47513` (schema 15); Batch 3.4 manual acceptance is deferred, not passed. The technical sections below describe the Stage 2 implementation. See the [draft v2.2 Optional Features guide](../how-tos/features-and-instructions/v2.2-draft/Optional-Features-and-Link-To-IPAM.md). No public v2.2 installation or deployment is authorised.
 
 ## Storage And Upgrade
 
@@ -32,7 +32,7 @@ The service owns a write transaction, rechecks session validity and administrato
 
 ## Review Checks
 
-The [Stage 2 final verification report](../development-handovers/evidence/stage-2-batch-5/Report.md) records the Batch 5 focused migration, persistence, security, Device/IPAM/Rack and browser evidence. It distinguishes completed checks from the remaining owner acceptance and Stage 6 integration limits.
+The [Stage 2 final verification report](../development-handovers/evidence/stage-2-batch-5/Report.md) records the Batch 5 focused migration, persistence, security, Device/IPAM/Rack and browser evidence. It preserves the then-current checks and acceptance limits. Stage 2 acceptance is now recorded in the current summary above; Stage 6 integration and complete-volume restore verification remain pending.
 
 Focused tests are in `tests/test_feature_settings.py`, `tests/test_feature_settings_http.py`, `tests/test_feature_access.py` and `tests/feature-access.cjs`. They use temporary fictional data. The active [milestone handover](../development-handovers/milestone-01.md) records completed checks and the remaining batch boundary.
 
