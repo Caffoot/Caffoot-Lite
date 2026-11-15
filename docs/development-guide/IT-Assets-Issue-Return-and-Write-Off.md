@@ -90,3 +90,43 @@ still requires Devices Edit. No new permission or role is introduced.
 **Actual focused result:** 51 tests passed across stock circulation, stock intake,
 closure and existing Device allocations. Return, preparation, write-off and UI
 remain pending at this checkpoint.
+
+## Checkpoint 3: Return And Preparation Backend
+
+`POST /api/it-assets/return` selects an original issue entry or current legacy
+Device assignment, its version, Date Returned, Returned/Ready/Written Off quantities,
+checks, damaged reason and optional note. It rejects over-returns, closed/stale
+issues and contradictory quantities. Inactive/archived original holders can return
+outstanding equipment; their unreturned quantities remain linked to them.
+
+All returned units first enter the existing `awaiting_preparation` state. Explicit
+Ready and damaged dispositions append separate readiness/write-off movements in
+the same transaction. Final Awaiting quantity is Returned minus Ready minus Written
+Off; damaged units do not remain held. The original issue is reduced only once.
+There is no new receipt, inferred stock or arbitrary balance editor.
+
+A real assigned Device return requires both effective Devices Edit and IT Assets
+Edit. It creates at most one permanent stock link to the same Device, closes the
+original assignment through Schema 17 and leaves Device JSON, IP, Rack, Location
+and operational status unchanged. Registered Device projections require Devices
+Read as well as stock access. Cross-feature audit projections omit Device stock
+facts when Devices access is unavailable.
+
+`POST /api/it-assets/preparation` confirms selected returned units or quantities
+ready with Date Checked and appropriate checks. It creates no second physical
+receipt. Existing receipt-readiness cannot bypass returned-equipment preparation;
+a reasoned readiness reversal for returned equipment re-enters preparation.
+The original three balance keys remain compatible; additive `stateBalances`
+distinguishes checks, preparation, issued and written-off quantities.
+
+**Open type-mapping clarification:** Desktop, Laptop and physical Server require
+wipe/reset plus cleaned/working confirmation. Monitor, Keyboard, Mouse and Docking
+Station require cleaned/working confirmation without compulsory wipe. Mandatory
+checks for other canonical Device types (including Printer) need owner clarification;
+the current WIP blocks their preparation/Ready transition rather than assuming a
+rule. Physical return into preparation and write-off remain independently possible.
+No new data-bearing field or screen is introduced by this checkpoint.
+
+**Actual focused result:** 56 tests passed across circulation, intake, closure and
+history privacy. Standalone Write Off, equipment projections, UI and final complete
+verification remain pending. The open clarification is not final acceptance.

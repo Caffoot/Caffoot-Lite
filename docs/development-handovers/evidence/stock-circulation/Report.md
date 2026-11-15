@@ -45,3 +45,25 @@ limits, concurrency, retry/stale protection, audit rollback, MFA/Read/feature-of
 controls, narrow recipient privacy and protected HTTP routes. Initial fixture
 mistakes (grant column name and duplicate catalogue data) were corrected without
 changing application safeguards. Full final suites and screenshots remain pending.
+
+## Checkpoint 3
+
+Partial/mixed returns, canonical assigned-Device return/closure and later
+preparation are implemented. Separate return, readiness and damaged write-off
+facts commit together. Original receipts, issue references and Device records
+remain unchanged. Readiness cannot bypass returned-equipment checks.
+
+```sh
+PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=tests:. python3 -m unittest test_stock_circulation test_stock_intake test_assignment_closure test_history_permissions -v
+```
+
+**56 tests passed:** [log](checkpoint-03.log). Coverage includes the five-unit
+mixed example, partial/complete returns, invalid dispositions, duplicate/concurrent
+returns, later wipe/cleaning checks, readiness bypass rejection, final-disposition
+rollback, protected HTTP return/preparation and secondary Device privacy.
+
+**Clarification pending:** mandatory preparation-check classification for canonical
+Device types beyond the explicitly covered computers and non-data examples.
+Other Device types are blocked from Ready pending that answer; no assumed wipe
+rule is advertised as approved. Standalone Write Off, Staff/Department/My Equipment
+integration, browser/UI, full suites and final evidence remain work in progress.

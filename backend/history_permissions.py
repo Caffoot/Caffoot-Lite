@@ -95,6 +95,13 @@ def visible_change_history(connection, account_id):
             kind = change.get("kind")
             section = _KIND_SECTIONS.get(kind) if isinstance(kind, str) else None
             if section is not None and sections[section]:
+                if kind=='IT Assets' and not sections['Devices']:
+                    after=change.get('after') if isinstance(change.get('after'),dict) else {}
+                    movement=after.get('movementId',after.get('closureMovementId'))
+                    if after.get('deviceId') is not None or (type(movement) is int and connection.execute(
+                            'SELECT 1 FROM it_asset_stock_entries e JOIN it_asset_stock_units u ON u.id=e.stock_unit_id '
+                            'WHERE e.movement_id=? AND u.device_id IS NOT NULL LIMIT 1',(movement,)).fetchone()):
+                        continue
                 # Never forward unrecognised historical payload properties.
                 fields = change.get("fields")
                 changes.append({

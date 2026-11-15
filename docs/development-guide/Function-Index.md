@@ -6,7 +6,7 @@ Scope: named JavaScript declarations/assignments in the six application scripts,
 
 The account hydration/photo functions now have purpose-based callable bindings matching their function names: `hydrateAccount` and `removeAccountPhoto`. The immutable design manifest retains its historical integration-entry names; those metadata names are not the runtime's current function map. Pinned source paths, revisions and hashes are unchanged.
 
-**Recorded definitions: 913.** Checked against the source in this commit. This remains a definition map, not a call graph. See [coding conventions](06-Coding-and-Naming-Conventions.md) and the [code reference](07-Function-and-Code-Reference.md).
+**Recorded definitions: 922.** Checked against the source in this commit. This remains a definition map, not a call graph. See [coding conventions](06-Coding-and-Naming-Conventions.md) and the [code reference](07-Function-and-Code-Reference.md).
 
 ## interface/loader.js
 
@@ -1092,23 +1092,23 @@ The account hydration/photo functions now have purpose-based callable bindings m
 
 | Function | Line |
 | --- | ---: |
-| [`validate_public_origin`](../../backend/server.py#L91) | 91 |
-| [`connect`](../../backend/server.py#L109) | 109 |
-| [`initialise_database`](../../backend/server.py#L117) | 117 |
-| [`Handler.end_headers`](../../backend/server.py#L123) | 123 |
-| [`Handler.do_GET`](../../backend/server.py#L130) | 130 |
-| [`Handler.do_POST`](../../backend/server.py#L491) | 491 |
-| [`Handler.handle_stock_request`](../../backend/server.py#L674) | 674 |
-| [`Handler.handle_equipment_request`](../../backend/server.py#L739) | 739 |
-| [`Handler.handle_directory_request`](../../backend/server.py#L806) | 806 |
-| [`Handler.handle_feature_settings`](../../backend/server.py#L881) | 881 |
-| [`Handler.handle_role_change`](../../backend/server.py#L924) | 924 |
-| [`Handler.handle_user_mutation`](../../backend/server.py#L966) | 966 |
-| [`Handler.handle_account_email`](../../backend/server.py#L1358) | 1358 |
-| [`Handler.handle_profile_photo`](../../backend/server.py#L1438) | 1438 |
-| [`Handler.handle_import`](../../backend/server.py#L1469) | 1469 |
-| [`Handler.respond`](../../backend/server.py#L1545) | 1545 |
-| [`main`](../../backend/server.py#L1558) | 1558 |
+| [`validate_public_origin`](../../backend/server.py#L92) | 92 |
+| [`connect`](../../backend/server.py#L110) | 110 |
+| [`initialise_database`](../../backend/server.py#L118) | 118 |
+| [`Handler.end_headers`](../../backend/server.py#L124) | 124 |
+| [`Handler.do_GET`](../../backend/server.py#L131) | 131 |
+| [`Handler.do_POST`](../../backend/server.py#L492) | 492 |
+| [`Handler.handle_stock_request`](../../backend/server.py#L675) | 675 |
+| [`Handler.handle_equipment_request`](../../backend/server.py#L742) | 742 |
+| [`Handler.handle_directory_request`](../../backend/server.py#L809) | 809 |
+| [`Handler.handle_feature_settings`](../../backend/server.py#L884) | 884 |
+| [`Handler.handle_role_change`](../../backend/server.py#L927) | 927 |
+| [`Handler.handle_user_mutation`](../../backend/server.py#L969) | 969 |
+| [`Handler.handle_account_email`](../../backend/server.py#L1361) | 1361 |
+| [`Handler.handle_profile_photo`](../../backend/server.py#L1441) | 1441 |
+| [`Handler.handle_import`](../../backend/server.py#L1472) | 1472 |
+| [`Handler.respond`](../../backend/server.py#L1548) | 1548 |
+| [`main`](../../backend/server.py#L1561) | 1561 |
 
 ## backend/sessions.py
 
@@ -1177,14 +1177,23 @@ The account hydration/photo functions now have purpose-based callable bindings m
 
 | Function | Line |
 | --- | ---: |
-| [`stock_event_date`](../../backend/stock_circulation.py#L11) | 11 |
-| [`stock_recipients`](../../backend/stock_circulation.py#L23) | 23 |
-| [`stock_recipient`](../../backend/stock_circulation.py#L29) | 29 |
-| [`stock_movement_snapshot`](../../backend/stock_circulation.py#L43) | 43 |
-| [`publish_stock_movement`](../../backend/stock_circulation.py#L50) | 50 |
-| [`stock_issue_records`](../../backend/stock_circulation.py#L76) | 76 |
-| [`read_stock_issues`](../../backend/stock_circulation.py#L98) | 98 |
-| [`issue_stock`](../../backend/stock_circulation.py#L103) | 103 |
+| [`stock_event_date`](../../backend/stock_circulation.py#L13) | 13 |
+| [`stock_recipients`](../../backend/stock_circulation.py#L25) | 25 |
+| [`stock_recipient`](../../backend/stock_circulation.py#L31) | 31 |
+| [`stock_movement_snapshot`](../../backend/stock_circulation.py#L45) | 45 |
+| [`publish_stock_movement`](../../backend/stock_circulation.py#L52) | 52 |
+| [`stock_issue_records`](../../backend/stock_circulation.py#L78) | 78 |
+| [`read_stock_issues`](../../backend/stock_circulation.py#L102) | 102 |
+| [`issue_stock`](../../backend/stock_circulation.py#L118) | 118 |
+| [`stock_unit_states`](../../backend/stock_circulation.py#L167) | 167 |
+| [`registered_stock_devices`](../../backend/stock_circulation.py#L178) | 178 |
+| [`legacy_device_issue`](../../backend/stock_circulation.py#L195) | 195 |
+| [`preparation_requires_wipe`](../../backend/stock_circulation.py#L213) | 213 |
+| [`preparation_checks`](../../backend/stock_circulation.py#L221) | 221 |
+| [`require_stock_device_edit`](../../backend/stock_circulation.py#L231) | 231 |
+| [`return_stock`](../../backend/stock_circulation.py#L238) | 238 |
+| [`prepare_stock`](../../backend/stock_circulation.py#L335) | 335 |
+| [`stock_state_balance`](../../backend/stock_circulation.py#L397) | 397 |
 
 ## backend/stock_intake.py
 
@@ -1199,14 +1208,14 @@ The account hydration/photo functions now have purpose-based callable bindings m
 | [`stock_configuration`](../../backend/stock_intake.py#L80) | 80 |
 | [`stock_digest`](../../backend/stock_intake.py#L85) | 85 |
 | [`stock_item`](../../backend/stock_intake.py#L89) | 89 |
-| [`stock_history`](../../backend/stock_intake.py#L142) | 142 |
-| [`read_stock`](../../backend/stock_intake.py#L176) | 176 |
-| [`stock_operation`](../../backend/stock_intake.py#L185) | 185 |
-| [`stock_replay`](../../backend/stock_intake.py#L194) | 194 |
-| [`append_stock_fact`](../../backend/stock_intake.py#L212) | 212 |
-| [`stock_write_access`](../../backend/stock_intake.py#L238) | 238 |
-| [`receive_stock`](../../backend/stock_intake.py#L244) | 244 |
-| [`update_stock_readiness`](../../backend/stock_intake.py#L336) | 336 |
+| [`stock_history`](../../backend/stock_intake.py#L145) | 145 |
+| [`read_stock`](../../backend/stock_intake.py#L180) | 180 |
+| [`stock_operation`](../../backend/stock_intake.py#L189) | 189 |
+| [`stock_replay`](../../backend/stock_intake.py#L198) | 198 |
+| [`append_stock_fact`](../../backend/stock_intake.py#L216) | 216 |
+| [`stock_write_access`](../../backend/stock_intake.py#L242) | 242 |
+| [`receive_stock`](../../backend/stock_intake.py#L248) | 248 |
+| [`update_stock_readiness`](../../backend/stock_intake.py#L340) | 340 |
 
 ## backend/stock_schema.py
 

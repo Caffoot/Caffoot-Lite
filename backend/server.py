@@ -20,7 +20,8 @@ from .settings_saves import save_inventory_setting
 from .inventory_projection import project_inventory_response
 from .feature_settings import read_feature_settings, save_feature_setting, unique_feature_fields
 from .stock_intake import stock_access, read_stock, receive_stock, update_stock_readiness
-from .stock_circulation import issue_stock, read_stock_issues, stock_recipients
+from .stock_circulation import (issue_stock, read_stock_issues, stock_recipients,
+                              return_stock, prepare_stock)
 from .smtp_settings import (config_path as smtp_config_path, public_settings as smtp_public_settings,
                             save_settings as save_smtp_settings, send_test_email)
 from .device_catalogue import change_device_catalogue
@@ -679,7 +680,8 @@ class Handler(BaseHTTPRequestHandler):
         reading = self.command == 'GET'
         valid = (route in ('/api/it-assets/stock','/api/it-assets/issues','/api/it-assets/recipients') and reading or
                  len(parts) == 4 and parts[:3] == ['api', 'it-assets', 'stock'] and reading or
-                 route in ('/api/it-assets/receive', '/api/it-assets/readiness','/api/it-assets/issue') and not reading)
+                 route in ('/api/it-assets/receive', '/api/it-assets/readiness','/api/it-assets/issue',
+                           '/api/it-assets/return','/api/it-assets/preparation') and not reading)
         if not valid or (parsed.query and route!='/api/it-assets/recipients') or route.endswith('/'):
             self.respond(404, {'error': 'not found'})
             return
@@ -722,7 +724,8 @@ class Handler(BaseHTTPRequestHandler):
                         return
                     payload = json.loads(self.rfile.read(int(length)), object_pairs_hook=unique_directory_fields)
                     writer = {'/api/it-assets/receive':receive_stock,'/api/it-assets/readiness':update_stock_readiness,
-                              '/api/it-assets/issue':issue_stock}[route]
+                              '/api/it-assets/issue':issue_stock,'/api/it-assets/return':return_stock,
+                              '/api/it-assets/preparation':prepare_stock}[route]
                     result = writer(connection, actor, read_session_cookie(cookie), payload)
             self.respond(200, result)
         except PermissionError:
