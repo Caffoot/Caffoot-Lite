@@ -6,6 +6,7 @@
 .stock-live .small-table{width:100%;border-collapse:collapse;font-size:11px}
 .stock-live .small-table th,.stock-live .small-table td{padding:16px 18px;text-align:left;border-bottom:1px solid var(--line);vertical-align:middle;overflow-wrap:anywhere}
 .stock-live .small-table th{color:var(--muted);font-size:10px;font-weight:750}
+.stock-live .small-table time{white-space:nowrap}
 .stock-live .small-table td .sub{margin-top:5px}
 .stock-live .small-table .btn{margin-top:7px}
 .stock-live fieldset{border:0;padding:0;margin:0;min-width:0}
