@@ -8,6 +8,7 @@ on:
       - "tests/browser-compat.cjs"
       - "tests/department-details-interface.cjs"
       - "tests/stock-intake-interface.cjs"
+      - "tests/stock-circulation-interface.cjs"
       - "tests/pi-acceptance-corrections.cjs"
       - "tests/users-roles-interface.cjs"
       - "tests/device-editor-approved.cjs"
@@ -32,6 +33,7 @@ on:
       - "tests/browser-compat.cjs"
       - "tests/department-details-interface.cjs"
       - "tests/stock-intake-interface.cjs"
+      - "tests/stock-circulation-interface.cjs"
       - "tests/pi-acceptance-corrections.cjs"
       - "tests/users-roles-interface.cjs"
       - "tests/device-editor-approved.cjs"
@@ -114,6 +116,20 @@ jobs:
         with:
           name: stock-intake-chromium-${{ github.sha }}
           path: ${{ runner.temp }}/stock-intake-evidence
+          if-no-files-found: ignore
+          retention-days: 14
+      - name: Check stock issue, returns, preparation, write-off and safe equipment views
+        env:
+          NODE_PATH: ${{ runner.temp }}/caffoot-browser-tests/node_modules
+          CAFFOOT_CIRCULATION_OUTPUT: ${{ runner.temp }}/stock-circulation-evidence
+          CAFFOOT_CIRCULATION_CAPTURE: "1"
+        run: node tests/stock-circulation-interface.cjs
+      - name: Save stock circulation evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: stock-circulation-chromium-${{ github.sha }}
+          path: ${{ runner.temp }}/stock-circulation-evidence
           if-no-files-found: ignore
           retention-days: 14
       - name: Check Department Details navigation, privacy and visual states

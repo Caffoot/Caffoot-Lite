@@ -78,7 +78,7 @@ async function main(){
  assert.equal(await input().isChecked(),false);
  assert.equal(await input().getAttribute('aria-label'),'Enable IT Assets');
  assert.equal(await card().locator('.description').textContent(),
-  'Receive equipment and record stock quantities, checks and readiness.');
+  'Receive, issue and return equipment, record checks and write off unusable items.');
  const originalCards=await page.locator('[data-feature-card]:not([data-feature-card="it_assets"])').evaluateAll(
   cards=>cards.map(node=>node.outerHTML));
  for(const feature of ['suppliers','equipment_lifecycle']){

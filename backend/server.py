@@ -710,11 +710,12 @@ class Handler(BaseHTTPRequestHandler):
                         result={'movements':stock_movement_history(connection,actor)}
                     elif route=='/api/it-assets/recipients':
                         parameters=parse_qs(parsed.query,keep_blank_values=True)
-                        if set(parameters)-{'query','kind','limit'} or any(len(v)!=1 for v in parameters.values()):
+                        if set(parameters)-{'query','kind','limit','recipientId'} or any(len(v)!=1 for v in parameters.values()):
                             raise ValueError('Invalid recipient search')
                         result={'recipients':stock_recipients(connection,actor,
                             query=parameters.get('query',[''])[0],kind=parameters.get('kind',['staff'])[0],
-                            limit=int(parameters.get('limit',['50'])[0]))}
+                            limit=int(parameters.get('limit',['50'])[0]),
+                            identity=parameters.get('recipientId',[None])[0])}
                     else:
                         result = read_stock(connection, actor, parts[3] if len(parts) == 4 else None)
                 else:

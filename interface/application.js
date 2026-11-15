@@ -9136,7 +9136,7 @@ void (async () => {
           (sessionIsAdmin && (button.closest('#next-user-create-form,#next-user-profile-form,#smtp-settings-form,#smtp-test-form') || button.form?.matches('#role-definition-form'))) ||
           (editPermissions['Staff Members'] && button.form?.matches('#staff-record-form')) ||
           (editPermissions.Departments && button.form?.matches('#staff-department-form')) ||
-          (editPermissions['IT Assets'] && button.form?.matches('#stock-receipt-form,#stock-readiness-form')) ||
+          (editPermissions['IT Assets'] && button.form?.matches('#stock-receipt-form,#stock-readiness-form,#stock-issue-form,#stock-return-form,#stock-writeoff-form,#stock-preparation-form')) ||
           (editPermissions.Devices && button.form?.matches('form[data-device-form="true"],#equipment-assignment-form')) ||
           (editPermissions.IPAM && button.closest('form[data-form-action="ip"],form[data-form-action="bulk-ip"],form[data-form-action="subnet"],form[data-ipam-subnet-creation]')) ||
           (editPermissions.Devices && editPermissions.Racks && button.closest('#rack-shelf-removal-form')) ||
@@ -9665,7 +9665,7 @@ void (async () => {
     ['racks','Network Racks','<rect x="6" y="2" width="12" height="20" rx="1"/><path d="M9 6h6M9 10h6M9 14h6M9 18h6"/>','Document racks, rack accessories and equipment placement within racks.','green'],
     ['suppliers','Suppliers','<circle cx="9" cy="8" r="3"/><path d="M3 20v-2a6 6 0 0 1 12 0v2M17 6a3 3 0 0 1 0 6m1 4a5 5 0 0 1 3 4"/>','Manage supplier records, contacts and related notes and issues.','orange'],
     ['equipment_lifecycle','Equipment Lifecycle','<circle cx="12" cy="12" r="9"/><path d="M12 7v5l4 2"/>','Track equipment lifecycle information, warranty dates and related warnings.',''],
-    ['it_assets','IT Assets','<path d="m12 3 9 5-9 5-9-5 9-5Zm-9 5v8l9 5 9-5V8M12 13v8"/>','Receive equipment and record stock quantities, checks and readiness.','']
+    ['it_assets','IT Assets','<path d="m12 3 9 5-9 5-9-5 9-5Zm-9 5v8l9 5 9-5V8M12 13v8"/>','Receive, issue and return equipment, record checks and write off unusable items.','']
   ];
   let featureSettingsPending=false;
   async function hydrateOptionalFeatureSettings(root){
@@ -10914,7 +10914,7 @@ void (async () => {
         !(editPermissions.Racks && element.closest('form[data-form-action="rack"],form[data-form-action="assign"],#rack-accessory-form')) &&
         !(editPermissions['Staff Members'] && element.form?.matches('#staff-record-form')) &&
         !(editPermissions.Departments && element.form?.matches('#staff-department-form')) &&
-        !(editPermissions['IT Assets'] && element.form?.matches('#stock-receipt-form,#stock-readiness-form')))) {
+        !(editPermissions['IT Assets'] && element.form?.matches('#stock-receipt-form,#stock-readiness-form,#stock-issue-form,#stock-return-form,#stock-writeoff-form,#stock-preparation-form')))) {
       event.preventDefault();
       event.stopImmediatePropagation();
       showToast(!sessionIsAdmin ? 'Edit permission is required for this action.' : 'This inventory operation is not yet connected to SQLite.', 'error');
@@ -10925,7 +10925,7 @@ void (async () => {
     if (event.target.matches('#next-account-password-form,#next-account-mfa-start,#next-account-mfa-confirm,#account-mfa-removal-form,#personal-details-form,#next-user-profile-form,#smtp-settings-form,#smtp-test-form,#account-email-verification-form') ||
         (editPermissions['Staff Members'] && event.target.matches('#staff-record-form')) ||
         (editPermissions.Departments && event.target.matches('#staff-department-form')) ||
-        (editPermissions['IT Assets'] && event.target.matches('#stock-receipt-form,#stock-readiness-form')) ||
+        (editPermissions['IT Assets'] && event.target.matches('#stock-receipt-form,#stock-readiness-form,#stock-issue-form,#stock-return-form,#stock-writeoff-form,#stock-preparation-form')) ||
         (editPermissions.Devices && event.target.matches('form[data-device-form="true"],#equipment-assignment-form')) ||
         (editPermissions.IPAM && event.target.matches('form[data-form-action="ip"],form[data-form-action="bulk-ip"],form[data-form-action="subnet"],form[data-ipam-subnet-creation]')) ||
         (editPermissions.Racks && event.target.matches('form[data-form-action="rack"],form[data-form-action="assign"],#rack-accessory-form')) ||
@@ -10952,14 +10952,15 @@ void (async () => {
     sessionMfaRemovalEligible=session.mfa_removal_eligible===true;
     sessionCanEnterInventory=session.can_enter_inventory===true;
     window.caffootEquipment.configure({
-      csrf:csrfToken,canRead:()=>!!permissions.Devices,canEdit:()=>!!editPermissions.Devices,
+      csrf:csrfToken,canRead:()=>!!permissions.Devices||!!permissions['IT Assets'],canEdit:()=>!!editPermissions.Devices,
+      canIssueStock:()=>!!editPermissions['IT Assets'],
       openModal:html=>openModal(html),closeModal:()=>closeModal(true),
       viewDevice:id=>openDeviceDetailView(id),selectAssignedTab:()=>selectDeviceDetailsTab('assigned'),
       redraw:()=>renderContent(),notify:(message,type)=>showToast(message,type)
     });
     window.caffootStaffDirectory.configure({
       rights:sessionDirectoryPermissions,admin:sessionIsAdmin,csrf:csrfToken,
-      canReadDevices:()=>!!permissions.Devices,
+      canReadDevices:()=>!!permissions.Devices,canReadAssets:()=>!!permissions['IT Assets'],canEditAssets:()=>!!editPermissions['IT Assets'],
       canReadHistory:()=>inventorySectionAccess(),openStaff:()=>switchTab('staff'),
       accountList:()=>users||[],reloadAccounts:async()=>{if(sessionIsAdmin)await loadCentralUsers();},
       redraw:()=>renderContent(),notify:(message,type)=>showToast(message,type),
@@ -10969,7 +10970,8 @@ void (async () => {
       }
     });
     window.caffootStockIntake.configure({csrf:csrfToken,canRead:()=>!!permissions['IT Assets'],
-      canEdit:()=>!!editPermissions['IT Assets'],refreshAccess:refreshStockAccess,
+      canEdit:()=>!!editPermissions['IT Assets'],canEditDevices:()=>!!editPermissions.Devices,refreshAccess:refreshStockAccess,
+      navigate:()=>{closeModal(true);switchTab('it-assets');},viewDevice:id=>openDeviceDetailView(id),
       redraw:()=>{if(currentTab==='it-assets')renderContent();},notify:(message,type)=>showToast(message,type)});
     await loadAccountProfile();
     window.nextMfaEnrolled=sessionMfaEnrolled;

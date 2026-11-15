@@ -104,6 +104,7 @@ def stock_item(connection, item_id):
                  "SELECT id,serial_number,asset_tag,device_id FROM it_asset_stock_units "
                  "WHERE stock_item_id=? ORDER BY id", (item_id,))}
     balances = {}
+    quantity_balances = {}
     latest = 0
     for _, unit_id, quantity, old, new, movement in connection.execute(
             "SELECT e.stock_item_id,e.stock_unit_id,e.quantity,e.from_state,e.to_state,e.movement_id "
@@ -114,6 +115,8 @@ def stock_item(connection, item_id):
         for state, delta in ((old, -quantity), (new, quantity)):
             if state is not None:
                 balances[state] = balances.get(state, 0) + delta
+                if unit_id is None:
+                    quantity_balances[state]=quantity_balances.get(state,0)+delta
                 if unit_id in units:
                     target = units[unit_id]["balances"]
                     target[state] = target.get(state, 0) + delta
@@ -125,6 +128,7 @@ def stock_item(connection, item_id):
     result['stateBalances'] = {key: balances.get(state,0) for key,state in (
         ('awaitingChecks','awaiting_checks'),('awaitingPreparation','awaiting_preparation'),
         ('currentlyIssued','issued'),('writtenOff','written_off'))}
+    result['quantityStateBalances'] = quantity_balances
     for unit in units.values():
         unit["ready"] = unit["balances"].get("ready", 0) == 1
         unit["held"] = sum(unit["balances"].get(key, 0) for key in
@@ -181,9 +185,13 @@ def read_stock(connection, account_id, item_id=None):
     stock_access(connection, account_id)
     if item_id is not None:
         return dict(item=stock_item(connection, item_id), **stock_history(connection, item_id))
-    return dict(items=[stock_item(connection, identity) for identity, in connection.execute(
+    result = dict(items=[stock_item(connection, identity) for identity, in connection.execute(
         "SELECT id FROM it_asset_stock_items ORDER BY name COLLATE NOCASE,id")],
         **stock_history(connection))
+    from backend.stock_circulation import read_stock_issues,stock_movement_history
+    result.update(read_stock_issues(connection,account_id))
+    result['movements']=stock_movement_history(connection,account_id)
+    return result
 
 
 def stock_operation(payload, allowed, required):

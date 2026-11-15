@@ -36,7 +36,7 @@ def device_assignment_dependency(connection, device_id, record):
             JOIN it_asset_stock_movements m ON m.id=e.movement_id WHERE u.device_id=? LIMIT 1''',(device_id,)).fetchone():
             return 'This Device is unavailable for initial allocation. Its existing equipment history must be retained.'
     if connection.execute('SELECT 1 FROM device_assignments WHERE device_id=? LIMIT 1', (device_id,)).fetchone():
-        return 'This Device has assignment history. Return and reissue require the later equipment preparation workflow.'
+        return 'This Device already has assignment history and cannot receive another initial allocation.'
     if record.get('status', 'Active') != 'Active':
         return 'This Device is not active. Return, preparation and stock workflows are required before it can be issued.'
     if record.get('isVirtual') or record.get('virtualHostId') or record.get('type') in ('Virtual Machine', 'Server - Virtual'):
@@ -102,7 +102,13 @@ def read_assignments(connection, actor_id, *, device_id=None, staff_id=None, dep
         from backend.stock_circulation import stock_issue_records,stock_movement_history,canonical_device_choice
         if device_id is not None:
             choice=canonical_device_choice(connection,device_id)
+            original_issue=connection.execute('''SELECT e.id FROM it_asset_stock_entries e
+                JOIN it_asset_stock_movements m ON m.id=e.movement_id
+                WHERE e.device_assignment_id=? AND m.kind='issued' AND e.to_state='issued' ORDER BY e.id DESC LIMIT 1''',
+                (result['current'][0]['id'] if result['current'] else None,)).fetchone()
             result.update(stockHistory=stock_movement_history(connection,actor_id,device_id=device_id),
+                returnSource=('stock:'+str(original_issue[0]) if original_issue else
+                              'device:'+str(result['current'][0]['id']) if result['current'] else None),
                 canReturn=can_access(connection,actor_id,'IT Assets',edit=True) and can_access(connection,actor_id,'Devices',edit=True)
                           and bool(result['current']),
                 canWriteOff=can_access(connection,actor_id,'IT Assets',edit=True) and can_access(connection,actor_id,'Devices',edit=True)

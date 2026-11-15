@@ -8,6 +8,7 @@ import tempfile
 import unittest
 from unittest.mock import patch
 import uuid
+from datetime import datetime,timezone,timedelta
 
 from backend import schema
 from backend.permissions import can_access
@@ -23,23 +24,23 @@ import test_feature_settings_http as feature_http
 def issue_payload(connection, identity, **overrides):
     item=stock_item(connection,identity)
     return dict(dict(operationId=uuid.uuid4().hex,stockItemId=identity,version=item['version'],
-        quantity=1,recipientKind='staff',recipientId='person',issuedOn='2026-11-15',note=''),**overrides)
+        quantity=1,recipientKind='staff',recipientId='person',issuedOn=datetime.now(timezone.utc).date().isoformat(),note=''),**overrides)
 
 
 def return_payload(source, **overrides):
     return dict(dict(operationId=uuid.uuid4().hex,issueEntryId=source['id'],version=source['version'],
-        quantityReturned=1,readyQuantity=0,writeOffQuantity=0,returnedOn='2026-11-15',
-        checks=dict(cleanedWorking=False,wipedReset=False),writeOffReason='',note=''),**overrides)
+        quantityReturned=1,readyQuantity=0,writeOffQuantity=0,returnedOn=datetime.now(timezone.utc).date().isoformat(),
+        checks=dict(cleanedWorking=False,dataPreparationConfirmed=False),writeOffReason='',note=''),**overrides)
 
 
 def preparation_payload(item, **overrides):
     return dict(dict(operationId=uuid.uuid4().hex,stockItemId=item['id'],version=item['version'],quantity=1,
-        checkedOn='2026-11-15',checks=dict(cleanedWorking=True,wipedReset=False),note=''),**overrides)
+        checkedOn=datetime.now(timezone.utc).date().isoformat(),checks=dict(cleanedWorking=True,dataPreparationConfirmed=False),note=''),**overrides)
 
 
 def writeoff_payload(item, **overrides):
     return dict(dict(operationId=uuid.uuid4().hex,stockItemId=item['id'],version=item['version'],
-        quantity=1,fromState='ready',writtenOffOn='2026-11-15',reason='Beyond use',note=''),**overrides)
+        quantity=1,fromState='ready',writtenOffOn=datetime.now(timezone.utc).date().isoformat(),reason='Beyond use',note=''),**overrides)
 
 
 class StockCirculationTests(unittest.TestCase):
@@ -67,9 +68,9 @@ class StockCirculationTests(unittest.TestCase):
     def return_equipment(self, payload):
         return return_stock(self.db,1,self.token,payload)
 
-    def legacy_device(self, *, assigned=True):
+    def legacy_device(self, *, assigned=True, device_type="Laptop"):
         from backend.device_assignments import assign_devices
-        record=dict(id='canonical',name='Fictional Laptop',type='Laptop',status='Active',
+        record=dict(id='canonical',name='Fictional '+device_type,type=device_type,status='Active',
             primaryIp='192.0.2.10',rackId='retained-rack',location='Original Location',
             notes='PRIVATE DEVICE NOTES',typeDetails=dict(password='PRIVATE PASSWORD'))
         self.db.execute("UPDATE organisation_features SET enabled=1 WHERE feature='devices'")
@@ -135,6 +136,8 @@ class StockCirculationTests(unittest.TestCase):
             choices=stock_recipients(self.db,2,kind=kind)
             self.assertTrue(choices)
             self.assertEqual(set(choices[0]),{'id','label','kind'})
+        self.assertEqual(stock_recipients(self.db,2,identity='person'),[dict(id='person',label='Fictional Staff',kind='staff')])
+        self.unchanged(ValueError,lambda:stock_recipients(self.db,2,identity='missing'))
         self.assertFalse(can_access(self.db,2,'Staff Members'))
         self.assertFalse(can_access(self.db,2,'Devices'))
         identity=self.receipt()
@@ -208,7 +211,7 @@ class StockCirculationTests(unittest.TestCase):
         self.issue(identity,quantity=8)
         original=self.db.execute("SELECT * FROM it_asset_stock_entries WHERE to_state='issued'").fetchall()
         result=self.return_equipment(return_payload(self.outstanding(),quantityReturned=5,readyQuantity=3,
-            writeOffQuantity=2,checks=dict(cleanedWorking=True,wipedReset=False),writeOffReason='Broken buttons'))
+            writeOffQuantity=2,checks=dict(cleanedWorking=True,dataPreparationConfirmed=False),writeOffReason='Broken buttons'))
         self.assertEqual(result['awaitingQuantity'],0)
         item=stock_item(self.db,identity)
         self.assertEqual(item['balances']['physicallyHeld'],5)
@@ -224,7 +227,7 @@ class StockCirculationTests(unittest.TestCase):
         self.issue(identity,quantity=5)
         source=self.outstanding()
         for values in (dict(quantityReturned=6),dict(quantityReturned=-1),dict(readyQuantity=2),
-                       dict(writeOffQuantity=1),dict(readyQuantity=1),dict(returnedOn='2026-11-14')):
+                       dict(writeOffQuantity=1),dict(readyQuantity=1),dict(returnedOn=(datetime.now(timezone.utc).date()-timedelta(days=1)).isoformat())):
             self.unchanged(ValueError,lambda:self.return_equipment(return_payload(source,**values)))
         payload=return_payload(source,quantityReturned=5)
         first=self.return_equipment(payload)
@@ -244,7 +247,7 @@ class StockCirculationTests(unittest.TestCase):
             readiness_payload(self.db,identity,readyQuantity=9)))
         self.unchanged(ValueError,lambda:prepare_stock(self.db,1,self.token,preparation_payload(item,quantity=2)))
         held=item['balances']['physicallyHeld']
-        payload=preparation_payload(item,quantity=2,checks=dict(cleanedWorking=True,wipedReset=True))
+        payload=preparation_payload(item,quantity=2,checks=dict(cleanedWorking=True,dataPreparationConfirmed=True))
         result=prepare_stock(self.db,1,self.token,payload)
         self.assertEqual(prepare_stock(self.db,1,self.token,payload),result)
         item=stock_item(self.db,identity)
@@ -269,7 +272,7 @@ class StockCirculationTests(unittest.TestCase):
         identity=self.receipt()
         self.issue(identity,quantity=5)
         payload=return_payload(self.outstanding(),quantityReturned=5,readyQuantity=3,writeOffQuantity=2,
-            checks=dict(cleanedWorking=True,wipedReset=False),writeOffReason='Damaged')
+            checks=dict(cleanedWorking=True,dataPreparationConfirmed=False),writeOffReason='Damaged')
         def fail(*args,**kwargs):
             if args[3]=='written_off':
                 raise RuntimeError('Injected final disposition failure')
@@ -298,7 +301,7 @@ class StockCirculationTests(unittest.TestCase):
         del preparation['stockItemId']
         preparation['stockUnitId']=held['stockUnitId']
         self.unchanged(ValueError,lambda:prepare_stock(self.db,1,self.token,preparation))
-        preparation['checks']['wipedReset']=True
+        preparation['checks']['dataPreparationConfirmed']=True
         prepare_stock(self.db,1,self.token,preparation)
         self.assertEqual(registered_stock_devices(self.db)[0]['states']['ready'],1)
         self.assertEqual(self.db.execute('SELECT * FROM inventory_devices').fetchall(),before)
@@ -521,6 +524,57 @@ class StockCirculationTests(unittest.TestCase):
         self.assertFalse(read_department(self.db,1,'stock-only-department')['canDelete'])
         self.unchanged(FileExistsError,lambda:save_department(self.db,1,self.token,{},
             department_id='stock-only-department',delete=True))
+
+    def test_owner_clarified_preparation_rules_require_confirmation_without_blanket_resets(self):
+        from backend.stock_circulation import preparation_requirements,preparation_checks
+        for category in ('Desktop','Laptop','Server - Physical','Printer','Other','Switch'):
+            rules=preparation_requirements(category)
+            self.assertTrue(rules['dataConfirmationRequired'])
+            with self.assertRaises(ValueError):
+                preparation_checks(dict(cleanedWorking=True,dataPreparationConfirmed=False),requirements=rules,ready=1)
+            confirmation=preparation_checks(dict(cleanedWorking=True,dataPreparationConfirmed=True),requirements=rules,ready=1)
+            self.assertEqual(confirmation['dataCheckLabel'],rules['dataCheckLabel'])
+        for category in ('Monitor','Keyboard','Mouse','Docking Station'):
+            rules=preparation_requirements(category)
+            self.assertFalse(rules['dataConfirmationRequired'])
+            preparation_checks(dict(cleanedWorking=True,dataPreparationConfirmed=False),requirements=rules,ready=1)
+        printer=preparation_requirements('Printer')
+        self.assertFalse(printer['requiresWipe'])
+        self.assertIn('Where Applicable',printer['dataCheckLabel'])
+        self.assertNotIn('Reset',printer['dataCheckLabel'])
+
+    def test_returned_printer_needs_applicable_data_clearing_without_forced_factory_reset(self):
+        source=self.legacy_device(device_type='Printer')
+        original=self.db.execute('SELECT * FROM inventory_devices').fetchall()
+        payload=return_payload(source,readyQuantity=1,checks=dict(cleanedWorking=True,dataPreparationConfirmed=False))
+        payload['deviceAssignmentId']=payload.pop('issueEntryId')
+        self.unchanged(ValueError,lambda:self.return_equipment(payload))
+        payload['checks']['dataPreparationConfirmed']=True
+        self.return_equipment(payload)
+        self.assertEqual(registered_stock_devices(self.db)[0]['states']['ready'],1)
+        self.assertEqual(self.db.execute('SELECT * FROM inventory_devices').fetchall(),original)
+        checked=json.loads(self.db.execute("SELECT checks_json FROM it_asset_stock_movements WHERE kind='readiness_changed'").fetchone()[0])
+        self.assertIn('Stored Documents, Credentials And User Data Cleared Where Applicable',checked['checks']['dataCheckLabel'])
+
+    def test_other_returned_device_requires_applicable_preparation_confirmation(self):
+        from backend.stock_circulation import legacy_device_issue
+        self.legacy_device(assigned=False,device_type='Switch')
+        # A historical allocation does not broaden today's initial eligibility.
+        identity=self.db.execute('''INSERT INTO device_assignments
+            (device_id,staff_id,recipient_label,assigned_at,actor_id,actor_label)
+            VALUES('canonical','person','Original Holder','2026-11-14',1,'Original Technician')''').lastrowid
+        self.db.commit()
+        source=legacy_device_issue(self.db,identity)
+        payload=return_payload(source)
+        payload['deviceAssignmentId']=payload.pop('issueEntryId')
+        self.return_equipment(payload)
+        unit=registered_stock_devices(self.db)[0]
+        preparation=preparation_payload(dict(id='unused',version=unit['version']))
+        del preparation['stockItemId'];preparation['stockUnitId']=unit['stockUnitId']
+        self.unchanged(ValueError,lambda:prepare_stock(self.db,1,self.token,preparation))
+        preparation['checks']['dataPreparationConfirmed']=True
+        prepare_stock(self.db,1,self.token,preparation)
+        self.assertEqual(registered_stock_devices(self.db)[0]['states']['ready'],1)
 
 
 class StockCirculationHttpTests(unittest.TestCase):

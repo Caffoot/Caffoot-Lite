@@ -99,6 +99,31 @@ class AssignmentClosureTests(unittest.TestCase):
             if table not in ('schema_migrations','device_assignments'):
                 self.assertEqual(after[table], before[table], table)
 
+    def test_preexisting_completed_allocations_survive_without_invented_closure_facts(self):
+        device(self.db,'older-device')
+        identity=self.db.execute('''INSERT INTO device_assignments
+            (device_id,staff_id,recipient_label,assigned_at,actor_id,actor_label,ended_at)
+            VALUES('older-device','person','Historic Holder','2026-11-12',1,'Historic Technician','2026-11-13')''').lastrowid
+        self.db.commit()
+        original=self.db.execute('SELECT * FROM device_assignments WHERE id=?',(identity,)).fetchone()
+        self.upgrade()
+        self.assertEqual(self.db.execute('SELECT * FROM device_assignments WHERE id=?',(identity,)).fetchone(),(*original,None))
+        self.assertEqual(self.db.execute('SELECT count(*) FROM it_asset_stock_movements').fetchone(),(0,))
+        for statement in ('UPDATE device_assignments SET ended_at=NULL WHERE id=?',
+                          'DELETE FROM device_assignments WHERE id=?'):
+            with self.assertRaises(sqlite3.IntegrityError):
+                self.db.execute(statement,(identity,))
+            self.db.rollback()
+
+    def test_restart_refuses_missing_closure_guards_without_repair_or_data_changes(self):
+        self.upgrade()
+        self.db.execute('DROP TRIGGER retain_device_assignment_update')
+        self.db.commit()
+        before=tuple(self.db.iterdump())
+        with self.assertRaisesRegex(RuntimeError,'Unexpected assignment closure schema'):
+            self.upgrade()
+        self.assertEqual(tuple(self.db.iterdump()),before)
+
     def test_failure_rolls_back_the_column_guard_and_version_together(self):
         from backend.assignment_closure import ASSIGNMENT_CLOSURE_SQL
         before = tuple(self.db.iterdump())

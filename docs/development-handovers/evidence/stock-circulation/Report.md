@@ -103,3 +103,36 @@ outstanding quantities, personal/shared separation, current membership changes,
 feature-disabled privacy, no inventory/directory grants, original Device regression,
 minimal employee fields and retained Department history. The interface/browser
 half of checkpoint 5 remains pending, as does the preparation type clarification.
+
+## Checkpoint 5B — Integrated Interface
+
+The real issue, mixed/partial return, preparation, held/issued write-off, Device
+closure, Staff/Department links and employee-safe views are integrated using existing
+styles. Original screens, sidebar grouping and controls remain. The earlier
+preparation question is **resolved by the owner's instruction in this session**;
+the [technical guide](../../../development-guide/IT-Assets-Issue-Return-and-Write-Off.md#checkpoint-5b-integrated-interface-and-owner-clarification)
+records the exact rules and reuse of existing check controls. No data-bearing
+field or replacement layout was added.
+
+```sh
+PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=tests:. python3 -m unittest test_stock_circulation test_assignment_closure test_stock_intake test_device_assignments test_device_assignments_http test_staff_directory test_history_permissions -v
+NODE_PATH=/path/to/test-tools/node_modules CAFFOOT_CHROMIUM_PATH=/usr/bin/chromium node tests/stock-circulation-interface.cjs
+```
+
+**107 backend tests passed:** [log](checkpoint-05-interface-backend.log).
+**Complete browser flow passed:** [log](checkpoint-05-browser.log). It checks selected
+Ready limits, restricted recipients, Staff/Department issues, mixed/partial returns,
+cleaning/data confirmations, preparation, held/issued write-offs, canonical Device
+preservation, employee quantities, directory navigation and feature-off retention.
+No page errors occurred. This focused run captured no screenshots.
+
+The first browser harness attempted the inventory URL for an employee who correctly
+has only account/self-service access, and later used fragment-only navigation for
+retained SPA views. Tests now use the existing account/sidebar entry points. The
+Device-to-stock action also exposed a real modal-navigation defect, fixed by closing
+the existing read-only Details modal before navigating. Initial fixture transaction
+and selector mistakes were corrected. No access rule was relaxed to make tests pass.
+
+The existing intake browser regression also passed earlier during integration;
+it will be checked again with the final source in CI. Full final suites, genuine
+screenshots, version-aware final guides and owner visual acceptance remain pending.

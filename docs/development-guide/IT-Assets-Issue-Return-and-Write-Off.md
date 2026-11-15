@@ -181,3 +181,42 @@ for interchangeable quantities after return.
 **Actual focused result:** 76 tests passed, including stock circulation, existing
 Device allocation/HTTP, Staff directory and history privacy. This is the backend
 part of checkpoint 5; the new interface and browser verification are still pending.
+
+## Checkpoint 5B: Integrated Interface And Owner Clarification
+
+Issue Equipment, Return Equipment, Write Off and Movement History extend the
+existing IT Assets tab strip; Receive Stock, Stock Inventory and Receipt History
+remain. Forms, summaries, field grids, actions and table scrolling reuse existing
+production styles. Stock Inventory distinguishes checks, preparation, issued and
+written-off quantities, with real canonical Device history kept separate from
+unregistered quantity stock. Its totals count each physical unit once.
+
+Staff and Department views show outstanding Asset quantities and real history in
+their existing equipment areas. Issue Equipment can begin with the viewed recipient
+preselected. The restricted lookup resolves that exact eligible ID, including
+recipients beyond the first search page, without returning directory/contact data.
+Device Assigned To offers the authorised Return/Write Off entry points; the existing
+Details modal closes before moving to the stock form. My Equipment keeps safe
+personal/shared quantities and the existing employee navigation.
+
+The owner resolved the earlier preparation question in this implementation session:
+
+| Type | Mandatory Confirmation Before Ready |
+| --- | --- |
+| Desktop, Laptop, physical Server | Checked Working and Data Wiped / Reset |
+| Printer | Cleaned And Checked Working; stored documents, credentials and user data cleared where applicable, without requiring every Printer to undergo a factory reset |
+| Monitor, Keyboard, Mouse, Docking Station | Cleaned And Checked Working; no data-wipe requirement |
+| Other types | Working/condition checks and confirmation that applicable preparation, including data clearing where needed, has been completed |
+
+The same existing two check controls use type-specific wording. No data-bearing
+column or new layout is introduced. Metadata stores the exact confirmation labels
+and values with the original actor/date. Return/preparation requests use
+`checks.cleanedWorking` and `checks.dataPreparationConfirmed`; a checked confirmation
+is never inferred from a type or a prior event. Receipt checks remain unchanged.
+
+**Actual focused result:** 107 backend tests passed, and the complete real HTTPS/
+SQLite Chromium circulation flow passed without page errors. The focused browser
+run did not capture screenshots; pinned-source captures and final complete checks
+belong to checkpoint 6. Initial harness navigation mistakes and the Device modal
+navigation defect were corrected before this passing run. No visual acceptance
+or merge is claimed.

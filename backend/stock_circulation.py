@@ -22,9 +22,14 @@ def stock_event_date(value, label):
     return value
 
 
-def stock_recipients(connection, actor, *, query='', kind='staff', limit=50):
+def stock_recipients(connection, actor, *, query='', kind='staff', limit=50, identity=None):
     """Offer the same eligible name-only picker under independent stock rights."""
     stock_access(connection, actor, edit=True)
+    if identity is not None:
+        if query or not isinstance(identity,str) or not identity or len(identity)>200:
+            raise ValueError('Invalid recipient selection')
+        recipient=stock_recipient(connection,kind,identity)
+        return [dict(id=identity,label=recipient['recipient_label'],kind=kind)]
     return assignment_recipients(connection, actor, query=query, kind=kind, limit=limit, section='IT Assets')
 
 
@@ -143,6 +148,8 @@ def issue_stock(connection, actor, token, payload):
         issued=stock_event_date(payload['issuedOn'],'Date Issued')
         note=stock_text(payload['note'],'Issue Note',2000)
         if item['trackingMode']=='quantity':
+            if quantity>item['quantityStateBalances'].get('ready',0):
+                raise ValueError('Quantity To Issue exceeds this item’s unregistered Ready balance')
             if 'stockUnitIds' in payload:
                 raise ValueError('Quantity stock does not accept individual selections')
             entries=[dict(stock_item_id=item['id'],quantity=quantity)]
@@ -184,17 +191,17 @@ def stock_unit_states(connection, identity):
 def registered_stock_devices(connection):
     """Project only actual journalled Device units, using canonical identifiers."""
     result=[]
-    for unit,device_id,name,raw,revision in connection.execute('''SELECT u.id,d.id,d.name,d.record_json,d.revision
+    for unit,device_id,name,raw,revision,stock_item_id in connection.execute('''SELECT u.id,d.id,d.name,d.record_json,d.revision,u.stock_item_id
         FROM it_asset_stock_units u JOIN inventory_devices d ON d.id=u.device_id
         WHERE EXISTS(SELECT 1 FROM it_asset_stock_entries e JOIN it_asset_stock_movements m ON m.id=e.movement_id
                      WHERE e.stock_unit_id=u.id) ORDER BY d.name,d.id'''):
         record=json.loads(raw)
         states=stock_unit_states(connection,unit)
         latest=connection.execute('SELECT coalesce(max(movement_id),0) FROM it_asset_stock_entries WHERE stock_unit_id=?',(unit,)).fetchone()[0]
-        result.append(dict(stockUnitId=unit,deviceId=device_id,name=name,category=record.get('type',''),
+        result.append(dict(stockUnitId=unit,stockItemId=stock_item_id,deviceId=device_id,name=name,category=record.get('type',''),
             manufacturer=record.get('manufacturer',''),model=record.get('model',''),
             serialNumber=record.get('serialNumber',''),assetTag=record.get('assetTag',''),states=states,
-            version=stock_digest([unit,latest,revision]),requiresWipe=preparation_requires_wipe(record.get('type',''),canonical=True)))
+            version=stock_digest([unit,latest,revision]),preparation=preparation_requirements(record.get('type',''))))
     return result
 
 
@@ -213,25 +220,32 @@ def legacy_device_issue(connection, identity):
         recipientLabel=label,issuedOn=assigned[:10],quantity=1,outstanding=1,name=name,
         category=record.get('type',''),stockUnitId=unit[0] if unit else None,
         version=stock_digest([assignment,revision,assigned,unit[0] if unit else None]),
-        requiresWipe=preparation_requires_wipe(record.get('type',''),canonical=True))
+        preparation=preparation_requirements(record.get('type','')))
 
 
-def preparation_requires_wipe(category, *, canonical=False):
+def preparation_requirements(category):
+    """Use the approved checks without treating every reset as a factory reset."""
     if category in ('Desktop','Laptop','Server - Physical'):
-        return True
-    if canonical and category not in ('Monitor','Keyboard','Mouse','Docking Station'):
-        return None
-    return False
+        return dict(dataConfirmationRequired=True,dataCheckLabel='Data Wiped / Reset',
+                    workingCheckLabel='Checked Working',requiresWipe=True)
+    if category=='Printer':
+        return dict(dataConfirmationRequired=True,
+            dataCheckLabel='Stored Documents, Credentials And User Data Cleared Where Applicable',
+            workingCheckLabel='Cleaned And Checked Working',requiresWipe=False)
+    if category in ('Monitor','Keyboard','Mouse','Docking Station'):
+        return dict(dataConfirmationRequired=False,dataCheckLabel='',
+                    workingCheckLabel='Cleaned And Checked Working',requiresWipe=False)
+    return dict(dataConfirmationRequired=True,
+        dataCheckLabel='Applicable Preparation Completed, Including Data Clearing Where Needed',
+        workingCheckLabel='Working And Condition Checked',requiresWipe=False)
 
 
-def preparation_checks(value, *, requires_wipe, ready):
-    if not isinstance(value,dict) or set(value)!={'cleanedWorking','wipedReset'} or any(type(v) is not bool for v in value.values()):
+def preparation_checks(value, *, requirements, ready):
+    if not isinstance(value,dict) or set(value)!={'cleanedWorking','dataPreparationConfirmed'} or any(type(v) is not bool for v in value.values()):
         raise ValueError('Confirm the applicable equipment checks')
-    if ready and requires_wipe is None:
-        raise ValueError('Preparation requirements for this Device type need confirmation before it can become ready')
-    if ready and (not value['cleanedWorking'] or requires_wipe and not value['wipedReset']):
-        raise ValueError('Complete cleaned/working checks and the applicable data wipe/reset before marking equipment ready')
-    return dict(value)
+    if ready and (not value['cleanedWorking'] or requirements['dataConfirmationRequired'] and not value['dataPreparationConfirmed']):
+        raise ValueError('Complete the working/condition check and confirm: '+requirements['dataCheckLabel'])
+    return dict(value,workingCheckLabel=requirements['workingCheckLabel'],dataCheckLabel=requirements['dataCheckLabel'])
 
 
 def require_stock_device_edit(connection, actor, device_id):
@@ -278,7 +292,7 @@ def return_stock(connection, actor, token, payload):
             snapshot=dict(name=source['name'],category=source['category'],deviceId=device_id,
                 originalAssignmentId=source['id'],recipientLabel=source['recipientLabel'],issuedOn=source['issuedOn'])
             closures=[(source['id'],device_id)]
-            requires_wipe=source['requiresWipe']
+            requirements=source['preparation']
         else:
             identity=payload['issueEntryId']
             if type(identity) is not int or identity<1:
@@ -298,7 +312,7 @@ def return_stock(connection, actor, token, payload):
                 require_stock_device_edit(connection,actor,device_id)
                 entry['device_assignment_id']=source['deviceAssignmentId']
                 closures=[(source['deviceAssignmentId'],device_id)]
-            requires_wipe=preparation_requires_wipe(snapshot.get('category',''))
+            requirements=preparation_requirements(snapshot.get('category',''))
         if payload['version']!=source['version']:
             raise FileExistsError('Outstanding equipment changed. Reload the issue before returning it.')
         returned=stock_quantity(payload['quantityReturned'],'Quantity Returned',1)
@@ -311,7 +325,7 @@ def return_stock(connection, actor, token, payload):
         returned_on=stock_event_date(payload['returnedOn'],'Date Returned')
         if returned_on<source['issuedOn']:
             raise ValueError('Date Returned cannot precede the original issue date')
-        checks=preparation_checks(payload['checks'],requires_wipe=requires_wipe,ready=ready)
+        checks=preparation_checks(payload['checks'],requirements=requirements,ready=ready)
         reason=stock_text(payload['writeOffReason'],'Damaged / Write-Off Reason',2000,required=damaged>0)
         note=stock_text(payload['note'],'Return Note',2000)
         entry.update(quantity=returned,to_state='awaiting_preparation',snapshot_json=stock_json(snapshot))
@@ -365,12 +379,12 @@ def prepare_stock(connection, actor, token, payload):
             require_stock_device_edit(connection,actor,item['deviceId'])
             if quantity!=1 or item['states'].get('awaiting_preparation',0)!=1:
                 raise ValueError('This Device is not awaiting preparation')
-            requires_wipe=item['requiresWipe']
+            requirements=item['preparation']
             entries=[dict(stock_unit_id=item['stockUnitId'],quantity=1,
                           snapshot_json=stock_json(dict(name=item['name'],category=item['category'],deviceId=item['deviceId'])))]
         else:
             item=stock_item(connection,payload['stockItemId'])
-            requires_wipe=preparation_requires_wipe(item['category'])
+            requirements=preparation_requirements(item['category'])
             if item['trackingMode']=='quantity':
                 available=stock_state_balance(connection,'stock_item_id',item['id'],'awaiting_preparation')
                 if 'stockUnitIds' in payload or quantity>available:
@@ -385,7 +399,7 @@ def prepare_stock(connection, actor, token, payload):
                 entries=[dict(stock_unit_id=identity,quantity=1,snapshot_json=stock_movement_snapshot(item,available[identity])) for identity in selected]
         if item['version']!=payload['version']:
             raise FileExistsError('Stock changed. Reload before confirming preparation.')
-        checks=preparation_checks(payload['checks'],requires_wipe=requires_wipe,ready=quantity)
+        checks=preparation_checks(payload['checks'],requirements=requirements,ready=quantity)
         checked=stock_event_date(payload['checkedOn'],'Date Checked')
         note=stock_text(payload['note'],'Preparation Note',2000)
         for entry in entries:
