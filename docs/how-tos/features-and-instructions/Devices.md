@@ -2,13 +2,13 @@
 
 [← All feature guides](README.md)
 
-*Some screenshots show an earlier Docker edition for orientation. The instructions describe the published v2.1 interface; older images should not be mistaken for new v2.1 captures.*
+*The screenshots in this guide show an earlier Docker interface and are retained for orientation only. They do not depict the published v2.1 layout. Genuine v2.1 replacements require separate visual approval.*
 
 ## What a device record represents
 
 A device can describe a physical server, switch, workstation, printer or another supported type, with its network address, status, location, optional rack position and type-specific hardware/software information. Supported virtual machines have their own host-related details. Caffoot keeps the established v1.3.3 fields and validations; **not every device type presents the same additional fields**.
 
-The **Device Inventory** view shows saved equipment and its primary addresses. All names and addresses in this screenshot are fictional.
+The **Device Inventory** view shows saved equipment and its primary addresses. The screenshot below is from the earlier interface and uses fictional records.
 
 ![Caffoot Lite Device Inventory listing fictional desktop and switch records with IP addresses](../../screenshots/devices-inventory.png)
 
@@ -36,7 +36,7 @@ The application refuses invalid addresses, incompatible rack positions and other
 
 ## View an existing device
 
-The **Details** action opens the familiar read-only device view, with separate tabs for additional information.
+The **Details** action opens the read-only device view, with separate tabs for additional information. The screenshot below is from the earlier interface.
 
 ![Caffoot Lite read-only switch device details with tabs for hardware, network, software and location](../../screenshots/device-details.png)
 
@@ -93,7 +93,7 @@ Changing device type or virtual purpose refreshes the related OS, version, softw
 
 When adding a physical device, selecting a rack defaults **Location Area** to that rack's matching recorded area. A room already recorded on the rack is offered even if it is not yet in the Device location list; this does not create a managed location or save the draft automatically. You can override it freely; later rack changes will then leave your choice alone. Existing devices retain their saved location, and Duplicate initially keeps its copied location. If a rack has no matching area, choose the location normally.
 
-The read-only Details header uses one labelled × control, while the footer keeps its separate **Close** action. Keyboard/Escape and focus return remain available. Owner-tested scenarios are recorded in #329; this documentation does not announce public availability.
+The read-only Details header uses one labelled × control, while the footer keeps its separate **Close** action. Keyboard/Escape and focus return remain available. Earlier acceptance scenarios are recorded in #329.
 
 ## Troubleshooting
 

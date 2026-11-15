@@ -2,11 +2,11 @@
 
 [← All feature guides](README.md)
 
-*Some screenshots show an earlier Docker edition for orientation. The instructions describe the published v2.1 interface; older images should not be mistaken for new v2.1 captures.*
+*The screenshots in this guide show an earlier Docker interface and are retained for orientation only. They do not depict the published v2.1 layout. Genuine v2.1 replacements require separate visual approval.*
 
 ## Your first visit
 
-The sign-in screen below is from the actual Docker/SQLite application, shown without any entered credentials.
+The sign-in screenshot below is from an earlier Docker interface and contains no entered credentials. Follow the current v2.1 on-screen controls.
 
 ![Caffoot Lite branded sign-in screen with empty username and password fields](../../screenshots/sign-in.png)
 
@@ -22,18 +22,18 @@ For a self-signed HTTPS certificate, **check the identity and fingerprint before
 
 ## Where to find things
 
-The Dashboard's **Network Insights** tab summarises a fictional lab inventory in the screenshot below.
+The older Dashboard screenshot below shows fictional lab inventory for orientation; the published v2.1 Dashboard layout is different.
 
 ![Caffoot Lite Dashboard Network Insights showing fictional devices, IP utilisation and rack capacity](../../screenshots/dashboard.png)
 
 - **Dashboard:** inventory overview and convenient shortcuts.
 - **Devices:** physical/virtual equipment, network identity, hardware/software details and location.
 - **IPAM:** Optional IP Address Blocks, assignable named subnets, individual IP addresses and reservations.
-- **Racks:** enclosures, front/rear views, mounted devices, accessories and U positions.
-- **Change History:** recent inventory actions and changes.
+- **Network Racks:** enclosures, front/rear views, mounted devices, accessories and U positions.
+- **Audit Trail:** recent inventory actions and changes.
 - **Users:** administrator-managed accounts, MFA state and section permissions.
 - **Settings & Data:** administrator-only inventory migration and maintenance.
-- **My account:** personal security, appearance settings, Help & Guides and About.
+- **My Account:** personal security, appearance settings, Help & Guides and About.
 
 Some entries are hidden or read-only for users without suitable rights. The *Appearance* preference is local to your own browser.
 
@@ -54,7 +54,7 @@ See [Devices](Devices.md), [IPAM](IPAM.md) and [Racks](Racks.md) for every step 
 
 ## Using Caffoot with colleagues
 
-An administrator creates additional users under **Users**. New users start without inventory access. They may be granted **Read** or **Edit** separately for Devices, IPAM and Racks; editors and administrators must enrol MFA.
+An administrator creates additional users under **Users**. New users start without inventory access. They may be granted **Read** or **Edit** separately for Devices, IPAM and Racks. Administrators cannot grant **Edit** until the receiving account has enrolled MFA; administrator access also requires enrolment.
 
 A user may view a device that somebody else is editing, but cannot edit it simultaneously. The details screen can name the current editor. Editing different devices in parallel is permitted. Saved changes become visible when users navigate or reopen the records; full browser refreshes are not normally needed.
 

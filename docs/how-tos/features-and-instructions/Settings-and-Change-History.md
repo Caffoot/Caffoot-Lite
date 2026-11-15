@@ -2,23 +2,23 @@
 
 [← All feature guides](README.md)
 
-*Some screenshots show an earlier Docker edition for orientation. The instructions describe the published v2.1 interface; older images should not be mistaken for new v2.1 captures.*
+*The screenshots in this guide show an earlier Docker interface and are retained for orientation only. They do not depict the published v2.1 layout. Genuine v2.1 replacements require separate visual approval.*
 
 ## Two different settings areas
 
-**Settings & Data** is an administrator-only system area. **My account** is available to every signed-in user for personal settings, security and Help & Guides. Keeping them separate means a read-only colleague can update their own password or appearance preference without receiving inventory administration rights.
+**Settings & Data** is an administrator-only system area. **My Account** is available to every signed-in user for personal settings, security and Help & Guides. Keeping them separate means a read-only colleague can update their own password or appearance preference without receiving inventory administration rights.
 
-All signed-in users can find short, locally readable topics under **My account → Help & Guides**, with links to these longer guides.
+All signed-in users can find short, locally readable topics under **My Account → Help & Guides**, with links to these longer guides.
 
-![Caffoot Lite My account Help and Guides with expandable help topics](../../screenshots/help-guides.png)
+![Caffoot Lite My Account Help and Guides with expandable help topics](../../screenshots/help-guides.png)
 
-## My account — step by step
+## My Account — step by step
 
-1. Choose **My account** near the bottom of the sidebar.
+1. Choose **My Account** in the top bar.
 2. Select the **Security** section to manage your password and authenticator enrolment. Follow the current prompts; entering an MFA code in the application is not the same as entering it into a documentation website.
-3. Select **Appearance** to choose **Light Mode**, **Dark Mode** or **Use System Setting**. Your selection is stored in *this browser*. It does not change another person's appearance.
+3. Under **Overview → Personal Preferences → Appearance**, choose **Light**, **Dark** or **System**. Your selection is stored in *this browser*. It does not change another person's appearance.
 4. Choose **Help & Guides**. Expand any existing topic to read brief instructions without depending on an external website. Select its **Read full guide** link to open the longer instructions in a *new tab*, when GitHub is reachable.
-5. Choose **About Caffoot Lite** for the product name, version status, documentation links and licence information.
+5. Choose the **About** tab for the product name, version status, documentation links and licence information.
 
 ## Settings & Data (administrator)
 
@@ -44,17 +44,16 @@ Suppose *lab-switch-01* receives an updated device note. The editor saves the de
 
 ## Important cautions
 
-- **Settings & Data** is administrator-only. **My account** belongs to each signed-in user.
+- **Settings & Data** is administrator-only. **My Account** belongs to each signed-in user.
 - Appearance choice is browser-local; the shared database stores the authoritative inventory.
-- Change History helps explain actions but does not replace a consistent external database backup.
+- Audit Trail helps explain actions but does not replace a consistent external database backup.
 - Clear System and one-way v1.3.3 import have different consequences. Review their confirmation carefully.
 
 See [Users, Permissions and MFA](Users-Permissions-and-MFA.md) and [Migration, Backup and Restore](Migration-Backup-and-Restore.md).
 
-## Email And Audit Trail
+## Email and the audit trail
 
 Administrators configure optional outgoing delivery under Settings & Data → Email and can send a test message. Working test delivery does not verify an account address or prove recovery eligibility. Keep mail credentials private. Normal inventory work does not require SMTP.
 
 Audit Trail includes the approved secondary navigation before relevant cards, filters and recorded detail. Visibility and private detail are permission-filtered; limited users must not receive unrelated sections. Inventory history remains attributed and bounded, including complete bulk subnet counts with omitted-detail notices. It is not a restoration mechanism.
 
-On the intermediate `milestone-1` branch, administrator role changes are saved with attributable before/after history and affected session changes in one transaction. Deleting a custom role preserves its history. Optional security email uses existing SMTP settings and active verified recipients after saving; queue admission does not establish delivery. Missing SMTP or email failure cannot prevent a permission change. The approved interface integration remains Batch 04; do not deploy this branch yet.

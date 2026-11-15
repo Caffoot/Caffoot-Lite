@@ -2,7 +2,7 @@
 
 [← All feature guides](README.md)
 
-*Some screenshots show an earlier Docker edition for orientation. The instructions describe the published v2.1 interface; older images should not be mistaken for new v2.1 captures.*
+*The screenshots in this guide show an earlier Docker interface and are retained for orientation only. They do not depict the published v2.1 layout. Genuine v2.1 replacements require separate visual approval.*
 
 These instructions describe the published v2.1 workflow. Check the [installation guide](../../../INSTALLATION.md) for the versioned image and deployment safeguards.
 
@@ -12,7 +12,7 @@ An **IP Address Block** optionally groups address space. An addressable **subnet
 
 You need **IPAM Edit** to create/update networks or change independent address allocations. A Devices editor with only IPAM Read cannot alter a primary IP through the device form.
 
-The following genuine views show the fictional **Lab Network** in Manage Subnets and the individual IP allocation grid.
+The following earlier-interface screenshots show fictional **Lab Network** examples in Manage Subnets and the individual IP allocation grid. They are not captures of the v2.1 layout.
 
 ![Caffoot Lite IPAM Manage Subnets page showing a fictional Lab Network and VLAN](../../screenshots/ipam-subnets.png)
 

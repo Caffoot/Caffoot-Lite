@@ -27,7 +27,7 @@ Keep track of your devices, IP addresses and network racks in one place. Caffoot
 
 ![Caffoot Lite v2.1 Network Racks in light theme, showing rack units and capacity details](caffoot-v2.1-racks-light-cropped.png)
 
-*All four screenshots are cropped from the running v2.1 light-theme application, with macOS and browser controls removed.*
+*These four images show the running v2.1 light-theme application. The IPAM crop still contains browser controls and clipped content; a corrected image is pending separate visual review.*
 
 ## Install Caffoot Lite
 
