@@ -1,15 +1,15 @@
 # Isolated Upgrade And Restore Rehearsal
 
 This development check starts published v2.1 (schema 10), creates a fictional
-installation, upgrades it to the current schema 12, then restores the whole saved directory
+installation, upgrades it to the historical Stage 1 schema 12, then restores the whole saved directory
 before starting the matching v2.1 image. It does not use an owner's installation
-or establish that a production backup exists. Stage 1 remains under review.
+or establish that a production backup exists. Stage 1 was subsequently accepted and merged via PR #358. This is not a current Milestone 01/schema-15 or production upgrade procedure.
 
 ## Run The Check
 
 Use the local development Docker daemon, with Compose available. Build two
 private images using the repository Dockerfile: one from the exact published
-`v2.1` source and one from the application checkpoint under review. Set each
+`v2.1` source and one from the Stage 1 reference `fcc529f51ccc39f696058abf58f00967515a55e1` (use the verified full revision below). Set each
 image's `CAFFOOT_SOURCE_REVISION` build argument to its full source commit.
 Retain the build output and image IDs. Do not publish these images. Where a
 development proxy requires a certificate, supply it through the Dockerfile's
@@ -22,12 +22,12 @@ CAFFOOT_UPGRADE_RESTORE=1 \
 CAFFOOT_V21_TEST_IMAGE=caffoot-batch05:v21 \
 CAFFOOT_UPGRADE_TEST_IMAGE=caffoot-it-staff:private \
 CAFFOOT_V21_TEST_REVISION=c3237114108cad9f7d4e57657b6aed5e0091a5ef \
-CAFFOOT_UPGRADE_TEST_REVISION="$(git rev-parse HEAD)" \
+CAFFOOT_UPGRADE_TEST_REVISION=fcc529f51ccc39f696058abf58f00967515a55e1 \
 python -m unittest discover -s tests -p 'test_upgrade_restore.py' -v
 ```
 
 The current test expects schema 12, including IT Staff assignment and preserved
-overrides. Build the second image from the current committed source with that
+overrides. Build the second image from that exact Stage 1 reference, not a later milestone HEAD, with its
 exact revision label. The original Batch 05 schema-11 result remains historical
 evidence, not proof of a new two-image run for schema 12. The test verifies image
 labels before creating data. Images are built
@@ -74,6 +74,8 @@ adds full-directory restoration; it does not replace those tests or browser,
 permission, concurrency, MFA and email regression checks.
 
 ## Before Any Future Real Upgrade
+
+The retained checklist below describes Stage 1 planning safeguards, not a newly tested public v2.2 procedure. Completed-milestone compatibility and complete-volume upgrade/restore verification remain Stage 6 work; follow [Development Status](Development-Status.md).
 
 The owner must independently confirm all of the following before a separately
 authorised deployment:

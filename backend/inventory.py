@@ -257,9 +257,9 @@ def _write_detached(connection: sqlite3.Connection, data):
 
 
 def stage_inventory(connection: sqlite3.Connection, data, *, pre_write_check=None):
-    """Atomically stage already-reviewed data in an isolated test database.
+    """Save already-reviewed inventory as one complete database transaction.
 
-    This is deliberately not connected to any application API.
+    The protected import service calls this after its permission and review checks.
     """
     connection.execute("BEGIN IMMEDIATE")
     try:

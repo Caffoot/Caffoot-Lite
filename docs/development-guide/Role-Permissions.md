@@ -1,11 +1,8 @@
 # Shared Roles And Account Permissions
 
-This is development on `milestone-1`; the published release remains v2.1.
-Original Stage 1 was [accepted](https://github.com/Caffoot/Caffoot-Lite/issues/351#issuecomment-6816955325)
-at `53252613cf5302d8e526324c0982b8807472e251`. The additional
-[IT Staff feature](https://github.com/Caffoot/Caffoot-Lite/issues/365) introduces
-schema 12 and requires separate private Raspberry Pi acceptance before any new
-merge decision. PR #358 remains draft and unmerged.
+This describes the **unreleased Stage 1 contract**, accepted and merged via PR #358 at `6008fedfc2c25fc40b49c9e9e21f3a93d61a9f4a` (schema 12), not the published v2.1 image. Later Stage 2/3 work is on `milestone-1`; see [Development Status](Development-Status.md). Published v2.1 instructions are in [Users, Permissions and MFA](../how-tos/features-and-instructions/Users-Permissions-and-MFA.md).
+
+The retained batch-specific implementation and verification statements below describe their original checkpoints; they are not new merge, deployment or release approval.
 
 ## Configurable Built-In Roles — Schema 12
 
@@ -44,7 +41,7 @@ first-admin and new ordinary-account creation continue to assign Staff Member on
 
 Preserved overrides remain authoritative after future role edits. Selecting
 **Inherit** intentionally removes an override and resumes role-derived access.
-See the [Dave and Tim example](../how-tos/features-and-instructions/Users-Permissions-and-MFA.md#it-staff-and-individual-permissions).
+For the published/development distinction, see [Authentication, MFA and permissions](04-Authentication-and-Permissions.md#boundaries-for-future-maintenance). The public v2.1 guide does not describe IT Staff roles.
 
 ## Database Upgrade
 

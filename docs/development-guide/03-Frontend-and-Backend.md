@@ -1,5 +1,7 @@
 # 03 — Frontend, backend and API
 
+**Version boundary:** Published v2.1 is tag `v2.1` at `c3237114108cad9f7d4e57657b6aed5e0091a5ef`, with schema 10. Repository `main` also contains the accepted, unreleased Stage 1 roles/IT Staff foundation (schema 12). Later Milestone 01 development is isolated on `milestone-1`, currently schema 15 through Batch 3.4. A merge is not a public release. See [Development Status](Development-Status.md) before using branch-specific APIs or tests.
+
 ## In simple terms
 
 The familiar inventory screens are still built from the published HTML application's interface. A small integration layer in the new HTML file communicates with the server to load shared data and save changes. The browser shows the forms; **the server decides whether a write is allowed and valid**.
@@ -33,7 +35,7 @@ If an approved future UI change needs new Tailwind utility classes, regenerate t
 
 ## HTTP endpoints
 
-The live route list is defined by the conditions in `Handler.do_GET` and `Handler.do_POST`, not by this summary. Particularly useful route groups are:
+The route summary below describes this checkout, including unreleased Stage 1 additions. It is not a published v2.1 API list: `/account`, `/api/login/mfa/*`, `/api/account/mfa/remove` and `/api/users/roles/*` are development additions. Published v2.1 retains `/api/users/permission` instead of role preview/confirmation. The live route list is defined by the conditions in `Handler.do_GET` and `Handler.do_POST`, not by this summary. Particularly useful route groups are:
 
 | Purpose | Existing routes |
 | --- | --- |

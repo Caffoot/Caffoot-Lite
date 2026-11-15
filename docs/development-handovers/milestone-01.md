@@ -1,5 +1,7 @@
 # Milestone 01 Development Handover
 
+> **Current summary — 15 November 2026:** Published v2.1 remains tag `v2.1` (schema 10). Stage 1 was accepted and merged via PR #358 at `6008fedfc2c25fc40b49c9e9e21f3a93d61a9f4a`; Stage 2 and Stage 3 Batches 3.1–3.4 are integrated separately on `milestone-1` at `05b162aa10a74994c970d0b6dbf111dc59b47513` (schema 15). Batch 3.4 manual/native acceptance is deferred, not passed. See [Development Status](../development-guide/Development-Status.md) and the [documentation correction record](../development-guide/Public-Documentation-Corrections.md). All existing sections below are retained historical checkpoints; their then-draft/pending instructions do not reopen completed work. No merge, release, deployment or Batch 3.5 is authorised.
+
 ## IT Staff — Issue #365
 
 Original Stage 1 was [accepted by the owner](https://github.com/Caffoot/Caffoot-Lite/issues/351#issuecomment-6816955325)

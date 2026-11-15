@@ -1,6 +1,6 @@
 # Caffoot Lite — Features and Instructions
 
-Welcome to the Caffoot Lite user guides. These instructions cover the published v2.1 Docker/SQLite edition ([release](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v2.1)). Established inventory and security safeguards remain, with the approved modular interface and subnet-first workflows.
+Welcome to the Caffoot Lite user guides. These instructions cover the published v2.1 Docker/SQLite edition ([release](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v2.1)). Unreleased v2.2 features are documented separately and are not part of the published v2.1 guides. Established inventory and security safeguards remain, with the approved modular interface and subnet-first workflows.
 
 The guides describe the **real application**, use fictional examples and distinguish viewer and editor permissions. They are maintained here as the shared source for GitHub and website help references. The separate [Development Guide](../../development-guide/README.md) explains the implementation for developers.
 
@@ -12,7 +12,7 @@ The guides describe the **real application**, use fictional examples and disting
 | [Devices](Devices.md) | Create, duplicate, view, edit and retire equipment; record network, hardware, location and mounting |
 | [IPAM](IPAM.md) | Create optional address blocks and named subnets, manage individual IPs, notes and reservations |
 | [Racks](Racks.md) | Set up enclosures, mount devices, use front/rear faces and handle accessories |
-| [Settings and Change History](Settings-and-Change-History.md) | Find personal versus administrator settings, and understand recorded changes |
+| [Settings and Audit Trail](Settings-and-Change-History.md) | Find personal versus administrator settings, and understand recorded changes |
 | [Users, Permissions and MFA](Users-Permissions-and-MFA.md) | Create accounts, assign read/edit rights and enrol authentication |
 | [Migration, Backup and Restore](Migration-Backup-and-Restore.md) | Import published v1.3.3 inventory and protect/restore persistent Docker data |
 
@@ -37,6 +37,6 @@ The detailed [Docker/Portainer installation instructions](../../../INSTALLATION.
 
 ## Help inside Caffoot Lite
 
-All signed-in users can open **My account → Help & Guides** for short built-in help without a public Internet connection. Each topic can also open its longer **Read full guide** in a separate browser tab. The documentation link requires access to GitHub; normal local inventory work does not.
+All signed-in users can open **My Account → Help & Guides** for short built-in help without a public Internet connection. Each topic also has a link to its longer guide, which opens in a separate browser tab. The documentation link requires access to GitHub; normal local inventory work does not.
 
-**Release history:** v2.0 introduced the Docker/SQLite edition; v2.0.1 moved its source to the repository root; v2.0.2 delivered a security correction. The standalone [v1.3.3](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v1.3.3) release remains available for one-way JSON migration.
+**Release history:** v2.0 introduced the Docker/SQLite edition; v2.0.1 moved its source to the repository root; v2.0.2 delivered a security correction; v2.0.3 followed, and v2.1 is the current published release. The standalone [v1.3.3](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v1.3.3) release remains available for one-way JSON migration.

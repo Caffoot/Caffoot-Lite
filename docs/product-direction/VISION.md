@@ -107,6 +107,8 @@ The **v2.1 interface** has been released. [Issue #282](https://github.com/Caffoo
 
 ## From vision to work
 
+Milestone 01 now targets unreleased v2.2, with accepted and partly implemented work recorded in [Development Status](../development-guide/Development-Status.md). This does not change the long-term vision or make future capabilities published features.
+
 The six [long-term planning milestones](PROPOSED-MILESTONES.md) are now recorded as GitHub Milestones #20–#25 and group possible future work into understandable outcomes. It does not authorise development, assign release numbers or promise dates.
 
 Individual feature discussions and decisions belong in [GitHub Issues labelled `future request`](https://github.com/Caffoot/Caffoot-Lite/labels/future%20request). The product owner approves scope before implementation.

@@ -23,11 +23,11 @@ Keep track of your devices, IP addresses and network racks in one place. Caffoot
 
 | Device Inventory | IP Address Management |
 | --- | --- |
-| ![Caffoot Lite v2.1 Device Inventory in light theme, with search, filters and device list](caffoot-v2.1-devices-light-cropped.png) | ![Caffoot Lite v2.1 IP Address Management in light theme, with subnet details and address allocations](caffoot-v2.1-ipam-light-cropped.png) |
+| ![Caffoot Lite v2.1 Device Inventory in light theme, with search, filters and device list](caffoot-v2.1-devices-light-cropped.png) | ![Caffoot Lite v2.1 IP Address Management in light theme, showing a fictional active subnet and address allocations](docs/screenshots/v2.1-review/readme-ipam.png) |
 
 ![Caffoot Lite v2.1 Network Racks in light theme, showing rack units and capacity details](caffoot-v2.1-racks-light-cropped.png)
 
-*All four screenshots are cropped from the running v2.1 light-theme application, with macOS and browser controls removed.*
+*These screenshots show the published v2.1 light-theme interface. The IPAM replacement uses fictional addresses and contains no browser controls.*
 
 ## Install Caffoot Lite
 
@@ -51,7 +51,7 @@ See the [complete Features and Instructions user guides](docs/how-tos/features-a
 
 ## What's next?
 
-Read the [public roadmap](ROADMAP.md) for released functionality, future proposals and longer-term product direction. Published versions are listed in [GitHub Releases](https://github.com/Caffoot/Caffoot-Lite/releases); website work follows its own approval and deployment process.
+Read the [public roadmap](ROADMAP.md) for released functionality, future proposals and longer-term product direction. Published versions are listed in [GitHub Releases](https://github.com/Caffoot/Caffoot-Lite/releases); website work follows its own approval and deployment process. Milestone 01 targets **unreleased v2.2**; accepted development and pending work are distinguished in [Development Status](docs/development-guide/Development-Status.md). Only the published v2.1 installation guidance above applies to public installs.
 
 ## Help Build Caffoot Lite
 

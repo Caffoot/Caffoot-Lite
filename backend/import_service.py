@@ -14,11 +14,11 @@ def replace_from_published_export(connection, raw_bytes, *,
                                   csrf_header, access_point_choices=None,
                                   legacy_mount_approved=False,
                                   replacement_confirmed=False, now=None):
-    """One-shot offline adapter; caller collects v1.3.3 review decisions first.
+    """Replace inventory only after the published v1.3.3 reviews are complete.
 
     Never accept candidate inventory from the client. Rebuild it from original
     bytes on every call. A missing review choice or final confirmation fails
-    without changing inventory. No live endpoint is registered.
+    without changing inventory. The protected HTTP import flow calls this helper.
     """
     if authorised_inventory_import(
         connection, cookie_header, origin, allowed_origin, csrf_header, now=now
