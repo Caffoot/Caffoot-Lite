@@ -182,9 +182,13 @@ async function run(){
   await page.locator('[data-action="toggle-sidebar"]').click();
   assert.equal(await page.locator('#app').evaluate(el=>el.classList.contains('collapsed')),false,
     'The approved menu must expand again');
-  // Stage 3 groups retain the original destinations and add core Staff navigation.
-  assert.equal(await page.locator('#sidebar .nav-item[data-tab]').count(),9,
-    'Existing seven destinations plus approved Staff Members and Departments');
+  // Check every approved destination, including personal equipment, exactly once.
+  assert.deepEqual(await page.locator('#sidebar .nav-item[data-tab]').evaluateAll(buttons=>
+    buttons.map(button=>[button.dataset.tab,button.querySelector('.nav-text').textContent.trim()])), [
+      ['dashboard','Dashboard'],['devices','Devices'],['ipam','IPAM'],['racks','Network Racks'],
+      ['staff','Staff Members'],['departments','Departments'],['users','Permissions'],
+      ['audit','Audit Trail'],['equipment','My Equipment'],['settings','Settings & Data']
+    ], 'The shared sidebar must contain exactly the ten approved navigation destinations');
   assert.deepEqual(await page.locator('#sidebar [data-nav-group="it"] .nav-item[data-tab] .nav-text').allTextContents(),
     ['Devices','IPAM','Network Racks']);
   assert.deepEqual(await page.locator('#sidebar [data-nav-group="staff"] .nav-item[data-tab] .nav-text').allTextContents(),

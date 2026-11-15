@@ -1,0 +1,53 @@
+/* Assignment components retained from the approved Staff functional reference. */
+.equipment-staff.staff-profile-grid{display:grid;grid-template-columns:minmax(0,1.18fr) minmax(300px,.82fr);gap:17px;margin-top:18px;align-items:start}
+.equipment-staff .staff-detail-stack{display:grid;gap:17px;align-content:start}
+.equipment-staff .staff-detail-card{padding:20px}
+.equipment-staff .staff-detail-card h3{font-size:15px;color:var(--heading);margin:0 0 4px}
+.equipment-staff .staff-detail-card .sub{line-height:1.6}
+.equipment-staff .staff-assignment-top{display:flex;align-items:center;justify-content:space-between;gap:13px;flex-wrap:wrap;padding:18px 20px}
+.equipment-staff .staff-assignment-top .field{max-width:250px;width:100%}
+.equipment-staff .staff-assignment-top .field span{display:block;font-size:10px;font-weight:750;color:var(--muted);margin:0 0 6px}
+.equipment-staff .staff-assignment-top .input{min-height:35px}
+.equipment-staff .staff-assign-table .small-table td{vertical-align:middle}
+.equipment-staff .staff-assign-table .small-table th{white-space:nowrap}
+.equipment-staff .staff-assign-foot{padding:13px 20px;border-top:1px solid var(--line);font-size:10.5px;line-height:1.6;color:var(--muted)}
+.equipment-staff .staff-assignment-tip{font-size:11px;color:var(--muted);line-height:1.7;margin:15px 0 0}
+.equipment-staff .staff-assignment-top + .staff-assignment-tip{margin-left:20px;margin-right:20px}
+.equipment-dialog .assignment-modal-head{padding:20px 22px;border-bottom:1px solid var(--line)}
+.equipment-dialog .assignment-modal-head h2{font-size:18px;margin:0 0 5px;color:var(--heading)}
+.equipment-dialog .assignment-modal-head p{margin:0;color:var(--muted);font-size:11px;line-height:1.6}
+.equipment-dialog .assignment-modal-body{padding:19px 22px;display:grid;gap:15px}
+.equipment-dialog .assignment-field{display:grid;gap:6px}
+.equipment-dialog .assignment-field>label{font-size:11px;color:var(--muted);font-weight:750}
+.equipment-dialog .assignment-field .input{width:100%;padding:10px 12px;border:1px solid var(--line);background:var(--white);color:var(--ink);border-radius:9px;font-size:12px}
+.equipment-dialog .assignment-field small{color:var(--muted);font-size:10px;line-height:1.6}
+.equipment-staff{margin-top:17px}
+.equipment-staff h3{color:var(--ink);font-size:14px;margin:0 0 7px}
+.equipment-staff .small-table,.device-details-dialog .small-table{width:100%;border-collapse:collapse;font-size:11px}
+.equipment-staff .small-table th,.equipment-staff .small-table td,.device-details-dialog .small-table th,.device-details-dialog .small-table td{padding:12px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top;overflow-wrap:anywhere}
+.equipment-staff .table-scroll,.device-details-dialog .table-scroll{overflow:auto}
+.equipment-dialog{background:var(--white,#fff);color:var(--ink);border-radius:14px}
+.equipment-dialog .input{width:100%;min-height:40px;border:1px solid var(--line);border-radius:8px;padding:9px;background:var(--white,#fff);color:var(--ink)}
+.equipment-dialog fieldset{min-width:0;border:1px solid var(--line);border-radius:10px;padding:12px}
+.equipment-dialog .device-review-check-item{display:flex;gap:9px;align-items:center;padding:8px 0}
+.device-details-dialog .assignment-bar{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
+.device-details-dialog .assignment-main{display:grid;gap:6px}
+@media(max-width:1000px){.equipment-staff.staff-profile-grid{grid-template-columns:1fr}}
+
+.equipment-dialog .assignment-modal-actions{display:flex;justify-content:flex-end;gap:9px;padding:16px 22px;border-top:1px solid var(--line)}
+@media(max-width:650px){.equipment-staff .staff-assign-table{overflow-x:auto}.equipment-staff .staff-assign-table table{min-width:610px}.equipment-staff .staff-assignment-top{padding:14px}.equipment-staff .staff-assignment-top + .staff-assignment-tip{margin-left:14px;margin-right:14px}.equipment-staff .staff-detail-card{padding:15px}}
+
+.my-equipment .info-row{flex-wrap:wrap}
+.my-equipment .info-row>*{min-width:0;overflow-wrap:anywhere}
+
+.device-details-dialog .small-table{min-width:520px}
+
+.equipment-staff .staff-history-list{width:100%;border-collapse:collapse}
+.equipment-staff .staff-history-list td{padding:12px 0;border-bottom:1px solid var(--line);font-size:11px;vertical-align:top}
+.equipment-staff .staff-history-list td:first-child{width:95px;white-space:nowrap;color:var(--muted)}
+.equipment-staff .staff-history-list tr:last-child td{border:0}
+.equipment-staff .staff-history-list strong{font-size:11px;color:var(--heading)}
+.equipment-staff .staff-history-list small{display:block;color:var(--muted);margin-top:3px;font-size:10px;line-height:1.5}
+
+/* Use the existing dark foreground only for enabled, idle Device choices. */
+html.dark #modal-container .equipment-dialog .device-review-check-item:not(:has(input:checked)):not(:has(input:disabled)):not(:hover){color:var(--theme-text)}

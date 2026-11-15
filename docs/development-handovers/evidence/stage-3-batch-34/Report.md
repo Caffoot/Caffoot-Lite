@@ -1,0 +1,158 @@
+# Device Assignments And My Equipment — Review Evidence
+
+Draft [PR #382](https://github.com/Caffoot/Caffoot-Lite/pull/382) targets
+`milestone-1` from the verified `7ec4ac27eddb1f798fdfcf9fff09b761c7bebd86`
+baseline. Original delivery runtime checkpoint: `d91629bdb308c3012b08e2b3ed724a85d0cfa774`.
+The original documentation/evidence checkpoint is
+`ad184c83c5eb18945d21b0ccb7432ac8a551a8e8`. The corrections below supersede
+that checkpoint. Original screenshot revisions remain in Git history. Docker results and image
+hashes remain evidence for their original runtime; current captures are listed
+in the consolidated review below, without claiming a new image build.
+
+## Final Visual Corrections And Consolidated Review
+
+[The consolidated review](Visual-Review.md) records the two final authorised
+visual corrections following `49b9c8bef2a529d355d9b12f2114443fa683876a`:
+inactive-notice horizontal alignment and legible dark unselected Device labels.
+The current 40 PNGs and `browser-results.json` were regenerated together after
+both stylesheet changes. **18 assignment/API tests and the extended assignment
+browser flow passed**, with zero page errors or document overflow across
+1440px/390px light/dark. Device selection, hover, keyboard focus and native
+disabled state were checked explicitly. The existing status placement and all
+other runtime files are preserved; see `final-visual-preservation.json`.
+
+The earlier status-placement review passed 46 focused tests and both affected
+browser flows on its recorded runtime. Original Docker/image provenance remains
+tied to the earlier runtime; no new Docker build or owner acceptance is claimed.
+Inherited Device footer casing remains explicitly excluded and documented.
+The known baseline IPAM contract failure is unchanged and was not rerun.
+
+## Final Corrections — 14 November 2026
+
+The owner confirmed **Desktop, Laptop and Printer only** in
+[issue #368 comment #6883527160](https://github.com/Caffoot/Caffoot-Lite/issues/368#issuecomment-6883527160).
+The existing eligibility predicate is unchanged. The accepted Departments screen
+and every application interface file are unchanged by these corrections.
+
+- `tests/browser-compat.cjs` now checks the exact ten approved sidebar IDs and
+  labels, including My Equipment, rather than the obsolete count of nine.
+- `assignment_device_choices` now applies OFFSET/LIMIT to eligible matching
+  records after the existing shared eligibility check. Name/ID order, Devices
+  Edit access, canonical identities and the four response fields are preserved.
+  The cursor stops when the requested eligible page is full.
+- The regression fixture starts with 125 ineligible Switches, followed by mixed
+  eligible types, Retired Laptops and virtual records. It checks three complete
+  pages, an empty final page, default search, unchanged storage and denied access.
+  It reproduced empty pages before the fix and passes after it.
+
+**Actual correction checks:**
+
+| Command / Check | Result |
+| --- | --- |
+| `PYTHONPATH=tests:. python3 -m unittest test_device_assignments test_device_assignments_http -v` | **18 passed**, no failures/skips, 1.981 seconds. |
+| `CAFFOOT_CHROMIUM_PATH=/usr/bin/chromium node tests/browser-compat.cjs` | **Passed**, full affected browser compatibility script; final output `PASS: Caffoot Lite focused Chromium compatibility`. The focus environment variable was not set, so the full script ran. |
+| Affected Python compilation, browser-test syntax, Function Index locations and whitespace | **Passed**. |
+
+No additional full backend suite, Docker/image build or visual acceptance was
+performed for this focused correction. The known baseline IPAM contract failure
+was not changed or rerun. No remaining failure occurred in the correction checks.
+Product-owner visual and functional acceptance is still required; PR #382 stays
+draft. No merge, deployment or `main` change.
+
+## Delivered Behaviour
+
+Schema 15 adds one retained allocation relationship referencing existing Device,
+Staff and Department IDs. It records dates and responsible actors, protects
+current/history relationships from deletion and prevents duplicate allocations.
+Multi-Device allocation rechecks sessions, effective Devices Edit, recipients,
+Device revisions and edit reservations under one SQLite write transaction.
+Current names follow recipient renames; historical labels remain as recorded.
+
+The accepted Staff Details screen gains Assigned Equipment and Assignment
+History below its existing profile/login content. The original Device Details
+modal gains Assigned To. Both entry points share the same backend operation.
+Department holders use that relationship without creating personal copies.
+
+My Equipment has the two approved sections, with current account/Staff and
+Department resolution on the server. Employee responses contain only Device ID,
+name, type, manufacturer, model and assignment date. They never contain network
+settings, private notes, other employees' histories or administration rights.
+
+## Checks Actually Performed
+
+| Check | Actual Result |
+| --- | --- |
+| Full Python discovery | **698 tests: 694 passed, four skipped**, no failures, 178.758 seconds. |
+| Final assignment/HTTP tests after current-name preservation | **17 passed**, 2.114 seconds. Covers schema-14 upgrade/idempotence, canonical IDs, multi-allocation rollback, concurrency, lifecycle eligibility, audit attribution/failure rollback, permissions, private personal/shared views, deletion/reset safety, waiting-write session/MFA/permission revocation, requests/CSRF/Origin and current/historical names. |
+| Existing Staff browser test on final runtime | **Passed**: accepted form layout, CRUD, optional login, grouped navigation and Permissions. |
+| New assignment browser test | **Passed**: real HTTPS/SQLite multi-allocation from Staff, Department allocation from Device Details, shared history, private Staff-only equipment, membership refresh, light/dark at 1440px and 390px, no document overflow, modal keyboard containment and visible selected Assigned To tab after resizing. |
+| JavaScript syntax / Python compilation / whitespace | **Passed** for affected scripts, backend/tests and `git diff --check`. |
+| Function Index | **837 definitions**; every indexed declaration points at a source line containing its callable name. |
+| Existing Docker Compose lifecycle | **Passed**, 118.615 seconds, using supported `CAFFOOT_BUILD_CA`. Initial attempt failed because Alpine could not trust the environment proxy certificate. No certificate verification was disabled. |
+| Final local Docker build and provenance | **Passed**: all 12 changed runtime files match the built image byte-for-byte; schema 15 initialises with no inferred allocation. See `image-provenance.json`. No image was pushed or deployed. |
+| Release documentation verifier | **Passed** for published v2.1 consistency; nothing published. |
+| Pinned HTML contract | **Failed on the identical pre-existing `.ipam-modal-body` CSS difference on both untouched baseline and feature branch.** IPAM files were not changed. This is not reported as a pass or repaired outside scope. |
+
+The four full-suite skips were the ordinary opt-in Compose lifecycle test (run
+separately and passed above), the two genuine-v1.3.3-export tests requiring the
+private fixture, and the separate opt-in complete-volume upgrade/restore
+rehearsal. The latter three remain unverified here.
+
+The first full backend run had two failures because old preservation assertions
+had not accounted for the new empty assignment table. Those assertions now
+explicitly verify that it is empty and still compare every original table.
+Their focused 23-test run and the subsequent full run passed.
+
+Hosted CI is separate from these local results. No successful hosted run on the
+final head is claimed; check the PR's current Checks page.
+
+## Design Compliance Review
+
+The three original archived functional HTML files were read from archive commit
+`2dd0f86e008a7018926b6c4b866c7122263bec58`. The original Staff and Assigned To
+references were also rendered and visually compared with the live screenshots.
+The twelve pinned v2.1 originals were retrieved by the contract check.
+
+`source-preservation.json` verifies that removing only the approved additions
+recovers the baseline Staff script, navigation and Device Details markup. The
+existing Device Details renderer also matches after removing its new tab entry.
+Staff styles, Device Details/Inventory styles, Device Inventory markup and My
+Account markup/styles are unchanged. The flat Departments and Add/Edit Staff
+renderers/login controls are therefore retained, not reconstructed.
+
+The live Staff assignment table and two-column history rows use the archived
+Staff component structure below the accepted Batch 3.3 profile/login cards.
+The Device panel uses the current modal's cards, tab strip and footer, with
+Current Assignment and Assignment History from its reference. History retains
+the original Movement heading, with actor attribution alongside the event.
+The existing horizontal-tab helper reveals the selected new tab on mobile.
+
+The live My Equipment view uses existing personal-workspace cards/list rows,
+with exactly **Assigned to Me** and **Shared with My Department**, following the
+later owner decision. Existing My Account/MFA controls and planned cards remain.
+Headings/actions/labels follow Title Case except the owner's exact two section
+names. Explanatory text uses sentence case. Light/dark screenshots and responsive
+checks cover each new view; keyboard focus remains inside the existing dialog.
+
+The screenshots contain fictional fixture data. They are application test
+captures, not replacement designs. Owner visual/functional acceptance, native
+Pi/Safari acceptance and comprehensive assistive-technology testing are still
+pending. Automated tests and this comparison do not constitute owner acceptance.
+
+## Blocked And Deferred
+
+The product owner has [confirmed Desktop, Laptop and Printer as the only
+eligible initial-assignment types](https://github.com/Caffoot/Caffoot-Lite/issues/368#issuecomment-6883527160).
+This resolves the earlier eligibility question without changing the implemented
+restriction. Other Device types, including infrastructure equipment, remain
+blocked unless separately approved.
+
+Return Equipment, reassignment, stock receipts/balances, preparation/Ready,
+write-off/correction, Get From Stock, accessories and Service Desk remain
+excluded. Existing unassigned Devices never become stock or Ready automatically.
+Referenced inventory cannot be deleted, reset or replaced in a way that loses
+assignment history. Later workflows need their separately approved operations.
+
+`main` remains `6008fedfc2c25fc40b49c9e9e21f3a93d61a9f4a`; the permanent archive
+remains `2dd0f86e008a7018926b6c4b866c7122263bec58`. Only the authorised feature
+branch was pushed. The PR remains draft and unmerged; no deployment/publication.

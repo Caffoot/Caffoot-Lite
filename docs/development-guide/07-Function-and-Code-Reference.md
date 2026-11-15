@@ -156,3 +156,31 @@ or declaration location changes in this verification batch. The
 ## Raspberry Pi Acceptance Corrections
 
 `filterDashboardReadAccess` removes Dashboard cards, counts, report sections and actions whose required collections are inaccessible. Dashboard calls `validateApplicationState` with its effective Read scope; other validation callers retain complete-state checks. `showNotification` paints the existing shared notification, while `showToast`, `showDeviceEditorFeedback` and `showSubnetFormError` retain their inline/focus responsibilities. `defaultDeviceLocationFromRack` accepts explicit selection intent for the approved Edit default. See [acceptance corrections](Pi-Acceptance-Corrections.md).
+
+## Device Assignments (Unreleased)
+
+`schema.py:migrate_device_assignments` adds schema 15 without inferring stock,
+readiness or existing holders. `device_assignments.py:assign_devices` validates
+an initial allocation in one write transaction, including the live session,
+effective Devices Edit permission, recipient eligibility, Device revisions and
+edit reservations. `read_assignments` supplies one shared history for authorised
+IT views. `assignment_recipients` offers only eligible names and identifiers;
+it does not grant directory access. `my_equipment` resolves the account's own
+Staff link and current Department on the server and returns employee-safe fields.
+`assignment_device_choices` applies its offset and limit after the shared
+eligibility check, so other Device types cannot hide eligible search results.
+See [Device Assignments](Device-Assignments.md) for API and workflow boundaries.
+
+`interface/equipment.js` supplies `staffPlaceholder`/`loadStaffEquipment`,
+`loadDeviceEquipment`, `renderMyEquipment`/`loadMyEquipment` and the shared
+`showAssignmentDialog`/`saveAssignment` operation. The existing application
+bridge supplies Devices rights and session CSRF proof; server checks remain
+authoritative. `selectDeviceDetailsTab` reuses `revealSectionTab` to keep its
+selected tab visible after narrow-screen changes. The existing Staff forms,
+Department renderer and My Account controls are preserved.
+
+`interface/staff-directory.js:renderStaffDetails` retains the existing Staff
+status action immediately after profile/login content and before the equipment
+placeholder. The action's permission, confirmation and handler are unchanged.
+See the [consolidated Batch 3.4 review](../development-handovers/evidence/stage-3-batch-34/Visual-Review.md)
+for active/inactive administrator/restricted views and current visual follow-ups.

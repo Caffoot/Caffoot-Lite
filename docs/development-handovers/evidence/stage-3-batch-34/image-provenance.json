@@ -1,0 +1,20 @@
+{
+  "schema": 15,
+  "files": {
+    "backend/device_assignments.py": "aaa7ee28d8569472a5ef043c77969e35c8318c57b55756efb05e701c68bb55d7",
+    "backend/device_saves.py": "a37116c37e57174cb0436ca8bbe2f0a7e947246d25f5723999b91b1c959931cb",
+    "backend/schema.py": "34f9dbdbde01198c7cd7478b86340c6d2d8625bbee745726c9c12f3bcd3938d5",
+    "backend/server.py": "d79097212bade253399e5564b36bd3f83da50037f6b5244854ab41db53c3202e",
+    "backend/staff_directory.py": "6b8775b42652e867716f3a6d26bfba5c6b48709127bf65d81e41e3e7f3183f2f",
+    "interface/application.js": "f3656cbe2df22bb94672853dd743bcdd852bf42c94040a58e43b549c4d2c6780",
+    "interface/equipment.js": "fbd2208595cc6202889b6020c685d466f6c5fb3a4968ba4ef03d95ff097ddfaf",
+    "interface/loader.js": "d6a23513a2b64d1f22d4dd14b796ec739e9a5c081060568d74e7c78a63a25383",
+    "interface/screens/devices.html": "42f41493aa280ebc5dafe0f9e616ede9a6f8cf8148e2a9e9bf242d81dd07ed3a",
+    "interface/screens/navigation.html": "f2c3a618323a454faa5e522e4723d1f28a6320c9fdf97daa2b59bf9ebca3802b",
+    "interface/staff-directory.js": "219b8741552babc87a7c27460c22e0d673ed7469e0abfca90902fe955fdc3be5",
+    "interface/styles/equipment.css": "6401817e247582d429e55417d3f648fad5d12732d4701f45c4a6a91dbfc15c84"
+  },
+  "sourceCommit": "d91629bdb308c3012b08e2b3ed724a85d0cfa774",
+  "imageId": "sha256:bcb213265ff1a99fb221393e94c09d520dfd7d1b04eeed8febd1ca594f64bafd",
+  "matchedAllChangedRuntimeFiles": true
+}

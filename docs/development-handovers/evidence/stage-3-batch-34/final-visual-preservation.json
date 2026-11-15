@@ -1,0 +1,16 @@
+{
+  "starting_head": "49b9c8bef2a529d355d9b12f2114443fa683876a",
+  "changed_runtime_files": [
+    "interface/styles/equipment.css"
+  ],
+  "all_other_tracked_backend_and_interface_files_byte_identical": true,
+  "preserved_examples": [
+    "interface/staff-directory.js",
+    "interface/equipment.js",
+    "interface/application.js",
+    "interface/styles/themes.css",
+    "interface/styles/components.css",
+    "interface/styles/dialogs.css"
+  ],
+  "note": "No runtime function declaration changed, so the Function Index is unchanged. Existing status action, footer labels, eligibility, access controls, navigation and schema source match the starting HEAD."
+}

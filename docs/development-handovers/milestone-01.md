@@ -1,6 +1,78 @@
 # Milestone 01 Development Handover — v2.2 Target
 
-> **Current status, 14 November 2026:** v2.2 remains the future Milestone 01 target; the published release is **v2.1**. Stage 1 was accepted and merged into `main` at `6008fedfc2c25fc40b49c9e9e21f3a93d61a9f4a`. Stage 2, including native Pi/Safari corrective retests, was accepted through PR #376 on `milestone-1` at `519842b46861c85fde0eebf78298117c2346599d`. Stage 3 Batch 3.1 was accepted in PR #377 at `97368e734f3e8008a9acc929b999a198eca1cf3f`; Batch 3.2 is an authorised review candidate; later batches and Stages 4–6 remain pending. No merge to `main`, publication or real deployment is authorised. Track remaining work in [#351](https://github.com/Caffoot/Caffoot-Lite/issues/351) and [#366](https://github.com/Caffoot/Caffoot-Lite/issues/366). Dated sections below preserve earlier checkpoints.
+> **Current status, 14 November 2026:** v2.2 remains the future Milestone 01 target; the published release is **v2.1**. Stage 1 was accepted and merged into `main` at `6008fedfc2c25fc40b49c9e9e21f3a93d61a9f4a`. Stage 2, including native Pi/Safari corrective retests, was accepted through PR #376 on `milestone-1` at `519842b46861c85fde0eebf78298117c2346599d`. Stage 3 Batch 3.1 was accepted in PR #377 at `97368e734f3e8008a9acc929b999a198eca1cf3f`; Batches 3.2 and 3.3 were accepted and merged through the verified `7ec4ac27eddb1f798fdfcf9fff09b761c7bebd86` baseline; Batch 3.4 is draft PR #382 with review evidence; initial eligibility is confirmed as Desktop, Laptop and Printer only. Later batches and Stages 4–6 remain pending. No merge to `main`, publication or real deployment is authorised. Track remaining work in [#351](https://github.com/Caffoot/Caffoot-Lite/issues/351) and [#366](https://github.com/Caffoot/Caffoot-Lite/issues/366). Dated sections below preserve earlier checkpoints.
+
+## Batch 3.4 Final Visual Corrections — 14 November 2026
+
+The inactive Staff equipment notice now aligns with its card heading, and enabled
+unselected Device labels in the dark Assign Equipment dialog use the established
+theme text colour. These are exactly the two corrections authorised in
+[issue #368 comment #6884722532](https://github.com/Caffoot/Caffoot-Lite/issues/368#issuecomment-6884722532),
+following verified HEAD `49b9c8bef2a529d355d9b12f2114443fa683876a`.
+
+**18 focused assignment/API tests passed**. The extended application browser flow
+passed with **40 refreshed screenshots** at 1440px/390px, light/dark, zero page
+errors and no document overflow. It verifies active/inactive Staff, administrator
+and restricted views, selection/hover/keyboard focus/disabled states and retained
+assignment, login, Department, personal-equipment, privacy and MFA behaviour.
+See the [updated review and evidence](evidence/stage-3-batch-34/Visual-Review.md).
+
+Only equipment CSS changes runtime source. The accepted status control placement,
+Desktop/Laptop/Printer eligibility, backend/schema, navigation and approved
+layouts remain intact. Device footer labels remain explicitly excluded; their
+inherited casing is the remaining documented visual discrepancy. The known
+baseline IPAM contract failure was not changed or rerun. No repeated full suite,
+Docker run, archive change, merge, deployment or publication. PR #382 stays draft;
+product-owner final visual and functional acceptance remains outstanding.
+
+## Batch 3.4 Status Action And Consolidated Review — 14 November 2026
+
+The existing Mark Inactive / Reactivate action is restored immediately after
+Staff profile/login content and before the additive equipment panels. Its
+markup, styling, access checks, confirmation and handler are unchanged.
+Focused Staff/assignment/API checks: **46 passed**. The extended browser flow
+checks active/inactive administrator and restricted views, actual status
+operations, retained allocations/history/login, both allocation entry points,
+Department sharing, My Equipment and My Account across 1440px/390px light/dark.
+The consolidated flow and existing Staff interface browser test both passed;
+40 captures, geometry/source checks and visual follow-ups are in the
+[consolidated review](evidence/stage-3-batch-34/Visual-Review.md).
+That review recorded inactive-notice inset, a dark unselected-device label and
+inherited Device footer casing. The first two are resolved in the final visual
+correction above; the excluded footer casing remains for separate review.
+Owner acceptance remains outstanding; no merge, deployment or publication.
+
+## Batch 3.4 Final Corrections — 14 November 2026
+
+The owner confirmed Desktop, Laptop and Printer as the only eligible types in
+[issue #368 comment #6883527160](https://github.com/Caffoot/Caffoot-Lite/issues/368#issuecomment-6883527160).
+The existing restriction remains intact. The browser compatibility test now
+asserts the exact ten approved destinations. Eligible Device search applies
+pagination after eligibility filtering, with a mixed-inventory regression test.
+
+**Correction results:** 18 focused assignment/API tests passed; the full affected
+`tests/browser-compat.cjs` script passed with local Chromium. Compilation, syntax,
+Function Index locations and whitespace passed. See the
+[correction evidence](evidence/stage-3-batch-34/Report.md#final-corrections--14-november-2026).
+The Departments layout, canonical Department assignments and Shared with My
+Department remain intact. No application interface or IPAM styling changes.
+PR #382 remains draft; owner visual/functional acceptance is pending.
+
+## Batch 3.4 Draft Review Checkpoint — 14 November 2026
+
+[Draft PR #382](https://github.com/Caffoot/Caffoot-Lite/pull/382) adds canonical
+Device allocation/history, additive Staff/Device panels and private two-section
+My Equipment. See the [test/design report](evidence/stage-3-batch-34/Report.md)
+and real application screenshots. Full backend: 698 tests, 694 passed and four
+existing skips; final assignment/HTTP: 17 passed; both relevant browser flows
+passed. Docker lifecycle and final runtime image provenance passed locally.
+The pinned HTML contract retains its pre-existing baseline IPAM CSS failure.
+
+Desktop, Laptop and Printer are the only eligible initial-assignment types,
+[confirmed in issue #368](https://github.com/Caffoot/Caffoot-Lite/issues/368#issuecomment-6883527160).
+Other types remain blocked.
+Owner acceptance and hosted final-head checks remain unclaimed. No merge,
+deployment, publication, `main` or permanent-archive change.
 
 ## Current Stage 3 Integration Checkpoint — 14 November 2026
 
@@ -9,7 +81,7 @@
 - **PR #378 / Batch 3.2** merged at `221739ae8c1331d396977adb6e79dc910f39380d`.
 - **PR #380** restored the approved Optional Features layout; merged at `953956ef41d036ce3f94d8d8d29fcd10c1c2377e`.
 - **PR #379** retains the corrected, owner-reviewed Stage 3 Staff interface *visual reference* only; it is not an application integration branch and remains unmerged.
-- **Draft PR #381** is the approved Stage 3 **Batch 3.3 application integration**, branched from `953956ef41d036ce3f94d8d8d29fcd10c1c2377e`. It adds source-faithful Staff Directory/Details/Add/Edit, optional login, Departments management, grouped IT/Staff navigation and the existing Permissions management extended to six independently configurable sections. Access is server-verified and permits Staff-only/Department-only users to enter their permitted workspace without inventory access.
+- **PR #381** is the accepted and merged Stage 3 **Batch 3.3 application integration**, originally branched from `953956ef41d036ce3f94d8d8d29fcd10c1c2377e`. It adds source-faithful Staff Directory/Details/Add/Edit, optional login, Departments management, grouped IT/Staff navigation and the existing Permissions management extended to six independently configurable sections. Access is server-verified and permits Staff-only/Department-only users to enter their permitted workspace without inventory access.
 - **Pending for PR #381:** hosted CI review, real rendered app comparisons against the approved Staff and v2.1 references (desktop/mobile/light/dark), owner sign-off, and explicit separate merge approval. This draft is not accepted or safe to deploy merely because source files are committed.
 - Equipment assignment, associated equipment, My Equipment, optional IT Assets stock and the later stages remain excluded.
 
@@ -442,3 +514,15 @@ The measured existing Users sidebar/header/main/KPI/profile-grid widths, columns
 Local backend: 562 tests passed with three documented skips; local existing Chromium and expanded Users/MFA checks passed. Source/template provenance, 733 Function Index locations, compatibility copies, links, syntax, release consistency and whitespace checks passed. No production data, real SMTP delivery or complete private restore rehearsal was used. The existing TOTP verifier is unchanged.
 
 **Batch 04 implementation is complete for review. Stop here; do not treat automated checks as owner acceptance. No Batch 05, PR #358/#359 merge, protected `main` change, deployment or publication.**
+
+### Batch 3.4 Initial Development Checkpoint — 14 November 2026
+
+Canonical Device allocation storage and protected APIs are implemented from
+`7ec4ac27eddb1f798fdfcf9fff09b761c7bebd86` on the existing authorised feature
+branch. Schema 15 creates no inferred assignments or stock states. See
+[Device Assignments](../development-guide/Device-Assignments.md).
+
+Focused model/directory/HTTP/section regression: 45 tests passed. Additional
+allocation HTTP security tests and the additive approved interface integration
+are in progress. This is a partially tested development checkpoint, not ready
+for owner acceptance. No merge, release or deployment is authorised.

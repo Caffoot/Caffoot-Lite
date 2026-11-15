@@ -1,0 +1,17 @@
+{
+  "reviewedBaseline": "db25bea339e8db3b04a1c9bf7175ce28fdf7f005",
+  "onlyStaffDetailsInsertionPositionChanges": true,
+  "otherSourceFilesUnchanged": {
+    "interface/application.js": true,
+    "interface/equipment.js": true,
+    "interface/styles/staff.css": true,
+    "interface/styles/equipment.css": true,
+    "interface/screens/navigation.html": true,
+    "interface/screens/my-account.html": true,
+    "interface/styles/my-account.css": true,
+    "interface/screens/devices.html": true,
+    "backend/device_assignments.py": true,
+    "backend/staff_directory.py": true
+  },
+  "allChecksPassed": true
+}

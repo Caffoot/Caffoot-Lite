@@ -1180,6 +1180,7 @@ function hierarchyValidateTypes(subnets) {
                 users: 'Permissions',
                 staff: 'Staff Members',
                 departments: 'Departments',
+                equipment: 'My Equipment',
                 account: 'My Account'
             };
             document.getElementById('page-title').textContent = titles[tabId];
@@ -1261,7 +1262,11 @@ function hierarchyValidateTypes(subnets) {
                 revealSectionTab(strip,selected);
             });
         }
-        window.addEventListener('resize',()=>revealActiveSectionTabs());
+        window.addEventListener('resize',()=>{
+            revealActiveSectionTabs();
+            const selected=document.querySelector('.device-details-tab[aria-selected="true"]');
+            if(selected)revealSectionTab(selected.parentElement,selected);
+        });
         document.addEventListener('focusin',event=>{
             const button=event.target.closest('button');
             const strip=button?.parentElement;
@@ -1275,11 +1280,11 @@ function hierarchyValidateTypes(subnets) {
             // Clear confirmation secrets before replacing an account view, including while a request is pending.
             container.querySelector('#account-email-verification-form')?.reset();
             document.body.style.overflow='';
-            container.className = ['account','audit','settings'].includes(currentTab) ? '' : 'main';
+            container.className = ['account','equipment','audit','settings'].includes(currentTab) ? '' : 'main';
             const previousStrips=container.dataset.renderedTab===currentTab
                 ? [...container.querySelectorAll('.subnav,.tabs,.audit-tabs,.intelligence-tabs')].map(strip=>strip.scrollLeft) : [];
             const deviceDesign=activeDeviceDetailsTab==='overview'?'devices':activeDeviceDetailsTab==='inventory'?'device-inventory':'device-management';
-            const design = {devices:deviceDesign, audit:'audit-trail', account:'my-account'}[currentTab] || currentTab;
+            const design = {devices:deviceDesign, audit:'audit-trail', account:'my-account',equipment:'my-account'}[currentTab] || currentTab;
             document.getElementById('interface-page-style').textContent = interfaceStyles.get(design);
             // replace the view once, avoiding an extra DOM teardown.
             let html = '';
@@ -1293,6 +1298,7 @@ function hierarchyValidateTypes(subnets) {
                 window.caffootStaffDirectory.enter(currentTab);
                 html = '<div class="users-live staff-live">'+window.caffootStaffDirectory.render(currentTab)+'</div>';
             }
+            else if (currentTab === 'equipment') html = window.caffootEquipment.renderMyEquipment();
             else if (currentTab === 'account') html = nextRenderAccount();
             else if (currentTab === 'settings') html = renderApplicationSettings();
             if (['devices','ipam','racks','users'].includes(currentTab)) {
@@ -1300,6 +1306,7 @@ function hierarchyValidateTypes(subnets) {
                 html = renderSectionHeader(currentTab) + '<section class="' + panelClass + ' active section-page-body"' + (currentTab==='devices'?' data-section="'+activeDeviceDetailsTab+'"':'') + '>' + html + '</section>';
             }
             container.innerHTML = html;
+            window.caffootEquipment.hydrate(container);
             if (currentTab === 'account') hydrateAccount(container);
             if (currentTab === 'audit') hydrateAudit(container);
             if (currentTab === 'settings') hydrateSettings(container);
@@ -4035,7 +4042,7 @@ function openIpModal(ip) {
             });
         }
         function closeModal(force = false, onClosed = null) {
-            if(document.getElementById('subnet-batch-preview')?.dataset.saving==='true')return;
+            if(document.getElementById('subnet-batch-preview')?.dataset.saving==='true'||document.getElementById('equipment-assignment-form')?.dataset.saving==='true')return;
             if(rackShelfReturnContext){returnFromRackShelfCreation();return;}
             if (deviceOptionsReturnContent) {
                 captureInstalledSoftwareSelections();
@@ -4730,7 +4737,7 @@ function openIpModal(ip) {
                 field('Virtual disk (GB)', d.vmDiskGb) + field('Virtual network adapters', d.vmNicCount), false, 'These are the VM’s own allocated resources, not physical host hardware.') : '';
             const hardware = field('Manufacturer', d.manufacturer) + field('Model', d.model) + field('Serial number', d.serialNumber);
             const rackRows = d.rackShelfAccessoryId ? field('Rack Shelf',getRackShelfLocation(d)) : mounted ? field('Rack', rack.name) + field('Face', String(d.face || 'front').toLowerCase() === 'rear' ? 'Rear' : 'Front') + field('Start U', Number.isFinite(uStart) && uStart > 0 ? uStart : 'Not assigned') + field('U height', (Number(d.rackUHeight) || (uEnd-uStart+1) || 1) + 'U') : '';
-            openDeviceReviewModal(renderInterfaceTemplate("devices/open-device-detail-view-7",[safe(d.name),safe(d.type),safe(d.location),safe(status),[['overview','Overview'],...(showVirtualMachinesTab ? [['virtual-machines','Virtual Machines']] : []),...(!isVirtualDevice ? [['hardware','Hardware']] : []),['network','Network'],['software','Software'],['location','Location'],...(historyRows?[['history','History']]:[])].map(([key,label],i)=>`<button type="button" role="tab" id="device-details-tab-${key}" aria-controls="device-details-panel-${key}" aria-selected="${i===0?'true':'false'}" tabindex="${i===0?'0':'-1'}" data-action="select-device-details-tab" data-name="${key}" class="device-details-tab device-review-tab ${i===0?'device-details-tab-active':''}">${label}</button>`).join(''),section('Device Overview', 'fa-circle-info',
+            openDeviceReviewModal(renderInterfaceTemplate("devices/open-device-detail-view-7",[safe(d.name),safe(d.type),safe(d.location),safe(status),[['overview','Overview'],...(showVirtualMachinesTab ? [['virtual-machines','Virtual Machines']] : []),...(!isVirtualDevice ? [['hardware','Hardware']] : []),['network','Network'],['software','Software'],['location','Location'],['assigned','Assigned To'],...(historyRows?[['history','History']]:[])].map(([key,label],i)=>`<button type="button" role="tab" id="device-details-tab-${key}" aria-controls="device-details-panel-${key}" aria-selected="${i===0?'true':'false'}" tabindex="${i===0?'0':'-1'}" data-action="select-device-details-tab" data-name="${key}" class="device-details-tab device-review-tab ${i===0?'device-details-tab-active':''}">${label}</button>`).join(''),section('Device Overview', 'fa-circle-info',
                             field('Device name',d.name)+field('Type',d.type)+field('Status',status)+field('Primary IP',d.primaryIp)+field('Location Area',d.location)+field('Operating System',getEffectiveDevicePlatform(d)), false, 'Recorded identity and status'),isVirtualDevice ? virtualHardware :
                             section('At a Glance','fa-microchip',
                               field('Manufacturer',d.manufacturer)+field('Model',d.model)+field('Serial number',d.serialNumber)+
@@ -4773,6 +4780,8 @@ function openIpModal(ip) {
                 tab.tabIndex=active?0:-1;
                 tab.classList.toggle('device-details-tab-active',active);
             });
+            const selected=root.querySelector('.device-details-tab[aria-selected="true"]');
+            if(selected)revealSectionTab(selected.parentElement,selected);
         }
         // Legacy device-type configurations remain visible as read-only history.
         // Do not restore them into active devices: identity and type are immutable.
@@ -8823,6 +8832,7 @@ function openIpModal(ip) {
                 case 'sidebar-users-overview': activeUsersTab='overview'; switchTab('users'); break;
                 case 'sidebar-users-list': activeUsersTab='list'; switchTab('users'); break;
                 case 'sidebar-users-add': activeUsersTab='add'; switchTab('users'); break;
+                case 'tab-equipment': switchTab('equipment'); break;
                 case 'tab-account': activeAccountSection='overview'; switchTab('account'); break;
                 case 'select-account-section': if (['overview','security','help','about'].includes(target.dataset.section)) { activeAccountSection=target.dataset.section; switchTab('account'); } break;
                 case 'choose-backup-import': document.getElementById('import-file')?.click(); break;
@@ -9108,7 +9118,7 @@ void (async () => {
           (sessionIsAdmin && (button.closest('#next-user-create-form,#next-user-profile-form,#smtp-settings-form,#smtp-test-form') || button.form?.matches('#role-definition-form'))) ||
           (editPermissions['Staff Members'] && button.form?.matches('#staff-record-form')) ||
           (editPermissions.Departments && button.form?.matches('#staff-department-form')) ||
-          (editPermissions.Devices && button.form?.matches('form[data-device-form="true"]')) ||
+          (editPermissions.Devices && button.form?.matches('form[data-device-form="true"],#equipment-assignment-form')) ||
           (editPermissions.IPAM && button.closest('form[data-form-action="ip"],form[data-form-action="bulk-ip"],form[data-form-action="subnet"],form[data-ipam-subnet-creation]')) ||
           (editPermissions.Devices && editPermissions.Racks && button.closest('#rack-shelf-removal-form')) ||
           (editPermissions.Racks && button.closest('form[data-form-action="rack"],form[data-form-action="assign"],#rack-accessory-form'))
@@ -9324,7 +9334,7 @@ void (async () => {
   },true);
   const originalSwitchTab = switchTab;
   switchTab = function(tab) {
-    if ((!sessionCanEnterInventory && !['account','staff','departments'].includes(tab) && !(sessionIsAdmin && ['users','settings'].includes(tab))) || (['dashboard','audit'].includes(tab) && !inventorySectionAccess()) || ((tab === 'users' || tab === 'settings') && !sessionIsAdmin) ||
+    if ((!sessionCanEnterInventory && !['account','equipment','staff','departments'].includes(tab) && !(sessionIsAdmin && ['users','settings'].includes(tab))) || (['dashboard','audit'].includes(tab) && !inventorySectionAccess()) || ((tab === 'users' || tab === 'settings') && !sessionIsAdmin) ||
         (section[tab] && !permissions[section[tab]])) {
       showToast('You do not have access to this section.', 'error');
       return;
@@ -9363,6 +9373,7 @@ void (async () => {
   openDeviceDetailView = function(deviceId) {
     originalOpenDeviceDetailView(deviceId);
     updateDeviceEditorNotice(deviceId);
+    void window.caffootEquipment.loadDeviceEquipment(String(deviceId));
     // Refresh reservation ownership when details open; viewing itself never locks.
     void refreshCentralInventory(false).then(() => updateDeviceEditorNotice(deviceId))
       .catch(error => showToast(error.message, 'error'));
@@ -10877,6 +10888,7 @@ void (async () => {
     if (isBlockedAction(action, element) || (element.matches('button') && element.type==='submit' && element.form &&
         !element.form.matches('form[data-device-form="true"],#role-definition-form,#next-user-create-form,#next-user-profile-form,#next-account-password-form,#next-account-mfa-start,#next-account-mfa-confirm,#account-mfa-removal-form,#personal-details-form,#smtp-settings-form,#smtp-test-form,#account-email-verification-form') &&
         !(editPermissions.IPAM && element.closest('form[data-form-action="ip"],form[data-form-action="bulk-ip"],form[data-form-action="subnet"],form[data-ipam-subnet-creation]')) &&
+        !(editPermissions.Devices && element.form?.matches('#equipment-assignment-form')) &&
         !(editPermissions.Devices && editPermissions.Racks && element.closest('#rack-shelf-removal-form')) &&
         !(editPermissions.Racks && element.closest('form[data-form-action="rack"],form[data-form-action="assign"],#rack-accessory-form')) &&
         !(editPermissions['Staff Members'] && element.form?.matches('#staff-record-form')) &&
@@ -10891,7 +10903,7 @@ void (async () => {
     if (event.target.matches('#next-account-password-form,#next-account-mfa-start,#next-account-mfa-confirm,#account-mfa-removal-form,#personal-details-form,#next-user-profile-form,#smtp-settings-form,#smtp-test-form,#account-email-verification-form') ||
         (editPermissions['Staff Members'] && event.target.matches('#staff-record-form')) ||
         (editPermissions.Departments && event.target.matches('#staff-department-form')) ||
-        (editPermissions.Devices && event.target.matches('form[data-device-form="true"]')) ||
+        (editPermissions.Devices && event.target.matches('form[data-device-form="true"],#equipment-assignment-form')) ||
         (editPermissions.IPAM && event.target.matches('form[data-form-action="ip"],form[data-form-action="bulk-ip"],form[data-form-action="subnet"],form[data-ipam-subnet-creation]')) ||
         (editPermissions.Racks && event.target.matches('form[data-form-action="rack"],form[data-form-action="assign"],#rack-accessory-form')) ||
         (editPermissions.Devices && editPermissions.Racks && event.target.matches('#rack-shelf-removal-form')) ||
@@ -10915,6 +10927,12 @@ void (async () => {
     sessionMfaEnrolled=!!session.mfa_enrolled;
     sessionMfaRemovalEligible=session.mfa_removal_eligible===true;
     sessionCanEnterInventory=session.can_enter_inventory===true;
+    window.caffootEquipment.configure({
+      csrf:csrfToken,canRead:()=>!!permissions.Devices,canEdit:()=>!!editPermissions.Devices,
+      openModal:html=>openModal(html),closeModal:()=>closeModal(true),
+      viewDevice:id=>openDeviceDetailView(id),selectAssignedTab:()=>selectDeviceDetailsTab('assigned'),
+      redraw:()=>renderContent(),notify:(message,type)=>showToast(message,type)
+    });
     window.caffootStaffDirectory.configure({
       rights:sessionDirectoryPermissions,admin:sessionIsAdmin,csrf:csrfToken,
       accountList:()=>users||[],reloadAccounts:async()=>{if(sessionIsAdmin)await loadCentralUsers();},
@@ -10940,9 +10958,9 @@ void (async () => {
     const legacyDestination = {
       dashboard:'dashboard', devices:'devices', ipam:'ipam',
       racks:'racks', audit:'audit', users:'users',
-      settings:'settings', account:'account',staff:'staff',departments:'departments'
+      settings:'settings', account:'account',equipment:'equipment',staff:'staff',departments:'departments'
     }[destination];
-    const canOpen = (legacyDestination === 'dashboard' && inventorySectionAccess()) || legacyDestination === 'account' ||
+    const canOpen = (legacyDestination === 'dashboard' && inventorySectionAccess()) || legacyDestination === 'account' || legacyDestination === 'equipment' ||
       (legacyDestination === 'staff' && permissions['Staff Members']) ||
       (legacyDestination === 'departments' && permissions.Departments) ||
       (legacyDestination === 'devices' && permissions.Devices) ||
