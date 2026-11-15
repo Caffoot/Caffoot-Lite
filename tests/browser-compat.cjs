@@ -185,12 +185,14 @@ async function run(){
   // Check every approved destination, including personal equipment, exactly once.
   assert.deepEqual(await page.locator('#sidebar .nav-item[data-tab]').evaluateAll(buttons=>
     buttons.map(button=>[button.dataset.tab,button.querySelector('.nav-text').textContent.trim()])), [
-      ['dashboard','Dashboard'],['devices','Devices'],['ipam','IPAM'],['racks','Network Racks'],
+      ['dashboard','Dashboard'],['devices','Devices'],['it-assets','IT Assets'],['ipam','IPAM'],['racks','Network Racks'],
       ['staff','Staff Members'],['departments','Departments'],['users','Permissions'],
       ['audit','Audit Trail'],['equipment','My Equipment'],['settings','Settings & Data']
-    ], 'The shared sidebar must contain exactly the ten approved navigation destinations');
+    ], 'The shared sidebar must contain exactly the eleven approved navigation destinations');
   assert.deepEqual(await page.locator('#sidebar [data-nav-group="it"] .nav-item[data-tab] .nav-text').allTextContents(),
-    ['Devices','IPAM','Network Racks']);
+    ['Devices','IT Assets','IPAM','Network Racks']);
+  assert.equal(await page.locator('#sidebar [data-tab="it-assets"]').isVisible(),false,
+    'Default-off IT Assets must remain hidden while existing IT sections stay enabled');
   assert.deepEqual(await page.locator('#sidebar [data-nav-group="staff"] .nav-item[data-tab] .nav-text').allTextContents(),
     ['Staff Members','Departments','Permissions']);
   assert.equal(await page.locator('#sidebar [id$="-sidebar-actions"]').count(),0,

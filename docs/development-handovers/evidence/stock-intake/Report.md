@@ -40,6 +40,7 @@ records the approved functional reference and existing production sources reused
 | Focused receipt/readiness/HTTP suite | **17 passed**, [log](focused.log) |
 | Full backend suite | **745 run, 741 passed, four skipped**, [log](backend.log) |
 | New browser workflow | **Passed**, 24 real Chromium captures, no page errors or checked document overflow; [log](browser.log), [results](browser-results.json) |
+| Existing first-run/inventory browser regression | **Passed**, including exact eleven-destination ordering and default-off IT Assets visibility; [log](existing-browser.log) |
 | Existing Optional Features browser regression | **Passed**, retained cards/styles, cancellation, permissions and data; [log](optional-features.log) |
 | Real isolated Docker Compose lifecycle | **One passed**, configurable port, retained SQLite/TLS after restart/recreate; [log](docker.log) |
 | Documentation, links, syntax, compatibility and source checks | See [actual validation output](documentation-checks.log) |
@@ -65,6 +66,16 @@ public image or installation change was made. Initial browser development runs
 found an incorrectly placed module setup and test navigation assumptions; these
 were corrected before the recorded passing runs. Mobile date wrapping was then
 corrected and the complete capture workflow passed again at the source above.
+
+The first [PR browser CI run](https://github.com/Caffoot/Caffoot-Lite/actions/runs/43745050304)
+passed the new stock flow and Department Details, then found an outdated assertion
+in `tests/browser-compat.cjs`: it still expected ten sidebar destinations. The
+test now checks all eleven destinations in order, the unchanged Staff grouping,
+and that default-off IT Assets remains hidden. Its complete first-run/inventory
+flow passed locally after this test-only correction; application source is unchanged.
+The same head’s backend CI passed 745 tests with four skips; Docker, documentation,
+secret scanning and read-only release preflight also passed. Check the PR for results
+after the correction; an earlier green result is not a claim about a later CI run.
 
 ## Reproduce In An Isolated Checkout
 
