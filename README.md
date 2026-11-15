@@ -7,8 +7,6 @@ Free, open-source IP address management (IPAM), device inventory and network rac
 
 **Release and download status:** Check the [official GitHub Releases page](https://github.com/Caffoot/Caffoot-Lite/releases) for the latest published version and verified images. Source code on `main` is not, by itself, proof of a published Docker image.
 
-**In development — v2.2:** [Milestone 01 — Everyday IT Management](https://github.com/Caffoot/Caffoot-Lite/milestone/20) is the agreed next release target. Stage 1 (roles, individual permissions and IT Staff) has been accepted and merged; People, Assets, Suppliers, Service Desk and the other stages remain in development or planning. Work continues on the [`milestone-1` branch](https://github.com/Caffoot/Caffoot-Lite/tree/milestone-1), with [progress tracked in issue #351](https://github.com/Caffoot/Caffoot-Lite/issues/351). **v2.2 is not published or available as a public install image.** The v2.1 installation guidance below remains current.
-
 Caffoot Lite brings IPAM, device inventory, rack documentation and Audit Trail together for small businesses, IT teams and home labs. v2.1 introduces a modern, responsive interface, clearer physical-server/VM forms, subnet-first networking, optional VLANs, guided bulk subnet creation and improved account/email workflows. It retains central SQLite storage, HTTPS, administrator-managed access, MFA and five-minute device editing reservations.
 
 The repository root contains the Docker application's source: `backend/`, `inventory.html`, `setup.html`, `assets/`, `Dockerfile`, `compose.yaml`, `tests/` and documentation. The old `next/` development folder and standalone HTML build copy remain excluded, as established in v2.0.1. The original standalone version remains separately available in the [published v1.3.3 release](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v1.3.3).
@@ -25,11 +23,11 @@ Keep track of your devices, IP addresses and network racks in one place. Caffoot
 
 | Device Inventory | IP Address Management |
 | --- | --- |
-| ![Caffoot Lite v2.1 Device Inventory in light theme, with search, filters and device list](caffoot-v2.1-devices-light-cropped.png) | ![Caffoot Lite v2.1 IP Address Management in light theme, with subnet details and address allocations](caffoot-v2.1-ipam-light-cropped.png) |
+| ![Caffoot Lite v2.1 Device Inventory in light theme, with search, filters and device list](caffoot-v2.1-devices-light-cropped.png) | ![Caffoot Lite v2.1 IP Address Management in light theme, showing a fictional active subnet and address allocations](docs/screenshots/v2.1-review/readme-ipam.png) |
 
 ![Caffoot Lite v2.1 Network Racks in light theme, showing rack units and capacity details](caffoot-v2.1-racks-light-cropped.png)
 
-*All four screenshots are cropped from the running v2.1 light-theme application, with macOS and browser controls removed.*
+*These screenshots show the published v2.1 light-theme interface. The IPAM replacement uses fictional addresses and contains no browser controls.*
 
 ## Install Caffoot Lite
 
@@ -53,7 +51,7 @@ See the [complete Features and Instructions user guides](docs/how-tos/features-a
 
 ## What's next?
 
-Read the [public roadmap](ROADMAP.md) for released functionality, future proposals and longer-term product direction. Published versions are listed in [GitHub Releases](https://github.com/Caffoot/Caffoot-Lite/releases); website work follows its own approval and deployment process.
+Read the [public roadmap](ROADMAP.md) for released functionality, future proposals and longer-term product direction. Published versions are listed in [GitHub Releases](https://github.com/Caffoot/Caffoot-Lite/releases); website work follows its own approval and deployment process. Milestone 01 targets **unreleased v2.2**; accepted development and pending work are distinguished in [Development Status](docs/development-guide/Development-Status.md). Only the published v2.1 installation guidance above applies to public installs.
 
 ## Help Build Caffoot Lite
 

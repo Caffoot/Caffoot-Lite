@@ -1,0 +1,129 @@
+{
+  "sourceRevision": "c3237114108cad9f7d4e57657b6aed5e0091a5ef",
+  "sourceTag": "v2.1",
+  "capturedAt": "2026-11-15T09:17:12.524Z",
+  "appearance": "Light; viewport 1440 × 1050; device scale 1; full-page captures",
+  "runtime": "isolated Python HTTPS server and SQLite; no Docker or deployed data",
+  "browser": "155.0.8059.79",
+  "fictionalData": "Published visual_fixtures.py demonstration inventory and owner test account",
+  "approval": "Ten images visually approved by product owner on 15 November 2026 for documentation use; PR merge not yet approved",
+  "errors": [],
+  "frames": [
+    {
+      "file": "sign-in.png",
+      "url": "https://127.0.0.1:8080/setup",
+      "title": [
+        "Simplicity in everything.",
+        "Welcome Back"
+      ],
+      "width": 1440,
+      "viewport": 1440,
+      "sha256": "0330d1baae8f09b2a684940f15ab237c02e80b92962411499ede9b307216d985"
+    },
+    {
+      "file": "dashboard.png",
+      "url": "https://127.0.0.1:8080/inventory",
+      "title": [
+        "Dashboard"
+      ],
+      "width": 1440,
+      "viewport": 1440,
+      "sha256": "baf44b57aa463e1d168d5531933cc6a406a390bb4e78574ffb373da6b04fe5e8"
+    },
+    {
+      "file": "devices-inventory.png",
+      "url": "https://127.0.0.1:8080/inventory",
+      "title": [
+        "Devices",
+        "Search & Filter Devices",
+        "Device Inventory"
+      ],
+      "width": 1440,
+      "viewport": 1440,
+      "sha256": "c68d10c946a165164cfa269792b3f3b981c0548804081897acb29a53208c6439"
+    },
+    {
+      "file": "device-details.png",
+      "url": "https://127.0.0.1:8080/inventory",
+      "title": [
+        "Devices",
+        "Search & Filter Devices",
+        "Device Inventory",
+        "Core-Switch-01"
+      ],
+      "width": 1440,
+      "viewport": 1440,
+      "sha256": "b76be027070abbfeaace25dd6327aa0249bdc7f3be691bfd732c10e58df9fdef"
+    },
+    {
+      "file": "ipam-subnets.png",
+      "url": "https://127.0.0.1:8080/inventory",
+      "title": [
+        "IP Address Management",
+        "IP Address Blocks, Networks & VLANs",
+        "VLAN Ownership Check"
+      ],
+      "width": 1440,
+      "viewport": 1440,
+      "sha256": "e58bd9cd9f45b517c1777765db71a2f4587197406ad21d16cf2a4edef55418b9"
+    },
+    {
+      "file": "ipam-addresses.png",
+      "url": "https://127.0.0.1:8080/inventory",
+      "title": [
+        "IP Address Management",
+        "10.0.10.0/24",
+        "IP Address Allocations"
+      ],
+      "width": 1440,
+      "viewport": 1440,
+      "sha256": "6b630c61fa5f753e9563abd907600c943beddf6090e75d81a8ecfeb3e40c93fa"
+    },
+    {
+      "file": "readme-ipam.png",
+      "url": "https://127.0.0.1:8080/inventory",
+      "title": [
+        "IP Address Management",
+        "10.0.10.0/24",
+        "IP Address Allocations"
+      ],
+      "width": 1440,
+      "viewport": 1440,
+      "sha256": "6b630c61fa5f753e9563abd907600c943beddf6090e75d81a8ecfeb3e40c93fa"
+    },
+    {
+      "file": "racks.png",
+      "url": "https://127.0.0.1:8080/inventory",
+      "title": [
+        "Network Racks",
+        "Rack A"
+      ],
+      "width": 1440,
+      "viewport": 1440,
+      "sha256": "600127b729a582307d16d2a660733d056c04de812a52ba64c3499a7486ca0de7"
+    },
+    {
+      "file": "help-guides.png",
+      "url": "https://127.0.0.1:8080/inventory",
+      "title": [
+        "My Account"
+      ],
+      "width": 1440,
+      "viewport": 1440,
+      "sha256": "7750b8270a8227035dda9abb445e3d1fe3778b299aec24bfc59a2a17c6dc786f"
+    },
+    {
+      "file": "users.png",
+      "url": "https://127.0.0.1:8080/inventory",
+      "title": [
+        "Users & Permissions",
+        "Your people, at a glance",
+        "Access, made simple"
+      ],
+      "width": 1440,
+      "viewport": 1440,
+      "sha256": "5930e5c7374ae4a0ce760a632f49a03e8f352b6e77ec275593df1cf0fc90c928"
+    }
+  ],
+  "captureMethod": "Chromium page.screenshot of the unmodified tagged application; authenticated using a fictional fixture account. Normal navigation and rack scroll only; no mocked responses, DOM replacement or image editing."
+}
