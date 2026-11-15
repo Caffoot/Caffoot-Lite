@@ -152,6 +152,9 @@ class StockIntakeTests(unittest.TestCase):
         self.receive(extra)
         units = stock_item(self.db, identity)["units"]
         self.assertEqual(len({unit["id"] for unit in units}), 2)
+        receipts = read_stock(self.db, 1, identity)['receipts']
+        self.assertEqual(receipts[0]['units'][0]['serialNumber'], 'Fictional Serial')
+        self.assertEqual(receipts[1]['units'][0]['serialNumber'], None)
         second = next(unit["id"] for unit in units if unit["id"] != first)
         self.update(readiness_payload(self.db, identity, readyQuantity=1, readyUnitIds=[first]))
         self.unchanged(ValueError, lambda: self.update(readiness_payload(
@@ -229,6 +232,17 @@ class StockIntakeTests(unittest.TestCase):
         for changes in (dict(readyQuantity=11), dict(minimumStockLevel=-1),
                         dict(readyQuantity=2, checks=dict(itemsChecked=False, conditionChecked=True))):
             self.unchanged(ValueError, lambda: self.update(readiness_payload(self.db, identity, **changes)))
+
+    def test_accumulated_held_quantities_remain_exact_in_the_supported_number_range(self):
+        payload = receipt_payload()
+        payload.update(quantity=9007199254740991, readyQuantity=9007199254740991,
+                       checks=dict(itemsChecked=True, conditionChecked=True))
+        identity = self.receive(payload)['stockItemId']
+        item = stock_item(self.db, identity)
+        extra = receipt_payload()
+        del extra['item']
+        extra.update(stockItemId=identity, configurationKey=item['configurationKey'], quantity=1)
+        self.unchanged(ValueError, lambda: self.receive(extra))
 
     def test_read_only_missing_mfa_and_revoked_sessions_cannot_write(self):
         payload = receipt_payload()

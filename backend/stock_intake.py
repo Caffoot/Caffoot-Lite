@@ -144,7 +144,7 @@ def stock_history(connection, item_id=None):
     receipts, readiness = [], []
     for identity, kind, event_date, recorded, actor, reason, supplier, checks, snapshot, quantity, subject in connection.execute(
             "SELECT m.id,m.kind,m.event_date,m.recorded_at,m.actor_label,m.reason,m.supplier_name,"
-            "m.checks_json,e.snapshot_json,sum(e.quantity),coalesce(e.stock_item_id,u.stock_item_id) "
+            "m.checks_json,json_group_array(e.snapshot_json),sum(e.quantity),coalesce(e.stock_item_id,u.stock_item_id) "
             "FROM it_asset_stock_movements m JOIN it_asset_stock_entries e ON e.movement_id=m.id "
             "LEFT JOIN it_asset_stock_units u ON u.id=e.stock_unit_id "
             "WHERE m.kind IN ('received','readiness_changed') "
@@ -152,11 +152,17 @@ def stock_history(connection, item_id=None):
         if item_id is not None and subject != item_id:
             continue
         details = json.loads(checks)
-        original = json.loads(snapshot)
+        snapshots = [json.loads(value) for value in json.loads(snapshot)]
+        original = snapshots[0]
         event = dict(id=identity, stockItemId=subject, name=original.get("name", "Stock Item"),
                      date=event_date, recordedAt=recorded, actor=actor, reason=reason,
                      quantity=quantity, checks=details.get("checks"),
                      notes=details.get("notes", ""))
+        event['specification'] = {key: original.get(key) for key in
+                                 ('category', 'manufacturer', 'model', 'sharedSpecifications')}
+        event['units'] = [dict(id=value['stockUnitId'], serialNumber=value.get('serialNumber'),
+                               assetTag=value.get('assetTag'))
+                          for value in snapshots if value.get('stockUnitId')]
         if kind == "received":
             event.update(supplier=supplier, ready=details.get("readyQuantity"),
                          awaiting=quantity-details["readyQuantity"] if "readyQuantity" in details else None)
@@ -211,10 +217,15 @@ def append_stock_fact(connection, actor, key, kind, item, entries, details,
     snapshot = stock_json({**stock_configuration(item), "name": item["name"]})
     for subject, quantity, old, new in entries:
         column = "stock_unit_id" if subject != item["id"] else "stock_item_id"
+        entry_snapshot = json.loads(snapshot)
+        if column == 'stock_unit_id':
+            serial, tag = connection.execute(
+                'SELECT serial_number,asset_tag FROM it_asset_stock_units WHERE id=?', (subject,)).fetchone()
+            entry_snapshot.update(stockUnitId=subject, serialNumber=serial, assetTag=tag)
         connection.execute(
             "INSERT INTO it_asset_stock_entries(movement_id," + column +
             ",quantity,from_state,to_state,snapshot_json) VALUES(?,?,?,?,?,?)",
-            (movement, subject, quantity, old, new, snapshot))
+            (movement, subject, quantity, old, new, stock_json(entry_snapshot)))
     name = connection.execute("SELECT username FROM accounts WHERE id=?", (actor,)).fetchone()[0]
     connection.execute(
         "INSERT INTO it_asset_stock_movements(id,operation_key,kind,event_date,actor_id,"
@@ -286,6 +297,8 @@ def receive_stock(connection, actor, token, payload):
             item = stock_item(connection, payload["stockItemId"])
             if payload["configurationKey"] != item["configurationKey"]:
                 raise FileExistsError("Stock specifications changed. Reload the item before receiving more.")
+        if item['balances']['physicallyHeld'] + quantity > MAX_QUANTITY:
+            raise ValueError('Physically Held exceeds the supported whole-number range')
         serial = stock_text(payload.get("serialNumber", ""), "Serial Number", 200) or None
         tag = stock_text(payload.get("assetTag", ""), "Asset Tag", 200) or None
         subject = item["id"]

@@ -1,0 +1,18 @@
+/* Reuse the existing Department table and Staff form proportions for stock. */
+.stock-live .stock-panel{padding-top:23px}
+.stock-live .stock-card-stack{display:grid;gap:17px}
+.stock-live .stock-metrics{grid-template-columns:repeat(3,minmax(0,1fr));margin:17px 0}
+.stock-live .table-scroll{overflow-x:auto}
+.stock-live .small-table{width:100%;border-collapse:collapse;font-size:11px}
+.stock-live .small-table th,.stock-live .small-table td{padding:16px 18px;text-align:left;border-bottom:1px solid var(--line);vertical-align:middle;overflow-wrap:anywhere}
+.stock-live .small-table th{color:var(--muted);font-size:10px;font-weight:750}
+.stock-live .small-table td .sub{margin-top:5px}
+.stock-live .small-table .btn{margin-top:7px}
+.stock-live fieldset{border:0;padding:0;margin:0;min-width:0}
+.stock-live .stock-check{display:flex;align-items:center;gap:9px;margin:14px 0;font-size:12px}
+.stock-live .stock-check input{flex:none}
+.stock-live .input{width:100%;min-width:0}
+.stock-live textarea.input{min-height:88px;resize:vertical}
+.stock-live .section-heading{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.stock-live #stock-item-details{margin-top:17px}
+@media(max-width:720px){.stock-live .stock-metrics{grid-template-columns:1fr}.stock-live .small-table{min-width:640px}.stock-live .tabs{gap:18px}}

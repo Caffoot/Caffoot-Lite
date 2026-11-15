@@ -7,6 +7,7 @@ on:
       - "interface/**"
       - "tests/browser-compat.cjs"
       - "tests/department-details-interface.cjs"
+      - "tests/stock-intake-interface.cjs"
       - "tests/pi-acceptance-corrections.cjs"
       - "tests/users-roles-interface.cjs"
       - "tests/device-editor-approved.cjs"
@@ -30,6 +31,7 @@ on:
       - "interface/**"
       - "tests/browser-compat.cjs"
       - "tests/department-details-interface.cjs"
+      - "tests/stock-intake-interface.cjs"
       - "tests/pi-acceptance-corrections.cjs"
       - "tests/users-roles-interface.cjs"
       - "tests/device-editor-approved.cjs"
@@ -101,6 +103,19 @@ jobs:
           NODE_PATH: ${{ runner.temp }}/caffoot-browser-tests/node_modules
           CAFFOOT_EQUIPMENT_OUTPUT: ${{ runner.temp }}/device-assignment-evidence
         run: node tests/device-assignments-interface.cjs
+      - name: Check stock receipts, inventory, readiness and feature privacy
+        env:
+          NODE_PATH: ${{ runner.temp }}/caffoot-browser-tests/node_modules
+          CAFFOOT_STOCK_OUTPUT: ${{ runner.temp }}/stock-intake-evidence
+        run: node tests/stock-intake-interface.cjs
+      - name: Save stock intake evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: stock-intake-chromium-${{ github.sha }}
+          path: ${{ runner.temp }}/stock-intake-evidence
+          if-no-files-found: ignore
+          retention-days: 14
       - name: Check Department Details navigation, privacy and visual states
         env:
           NODE_PATH: ${{ runner.temp }}/caffoot-browser-tests/node_modules
