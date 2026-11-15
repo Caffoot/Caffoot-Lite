@@ -1,0 +1,2 @@
+PASS: complete receipt/inventory/readiness/history flows, independent access, retry and feature-off preservation.
+PASS: 24 real desktop/mobile light/dark captures; zero page errors and checked page overflow.

@@ -1,12 +1,12 @@
 # Optional Features, Basic IPv4 And Link To IPAM
 
-> **Draft v2.2 — Not Published / Not Production Guidance.** This guide includes the separate Batch 3.6 review branch (schema 16), based on `milestone-1` at `2e6c50ba4777b7500258d2a1a28317764d806020`. Batch 3.6 is not merged or released. Batch 3.4 manual acceptance remains deferred. Use the published v2.1 guides for production; these are not installation, upgrade or restore instructions.
+> **Draft v2.2 — Not Published / Not Production Guidance.** Batch 3.6 is merged on `milestone-1` at `774dee3ecaaf1d50ba94dbf55891aa4b79b853c5` (schema 16). Batch 3.7 stock intake is implemented on `feat/it-assets-stock-intake` for draft review; it is not merged or visually accepted. Batch 3.4 manual acceptance remains deferred. Use the published v2.1 guides for production. These are not installation, upgrade or restore instructions.
 
 ## Optional Sections
 
 An administrator opens **Settings & Data → Optional Features** to enable or disable **Devices**, **IP Address Management**, **Network Racks** or **IT Assets**. Disabling asks for confirmation; Cancel retains the setting. Saved data and permissions are retained and become available again under the same permissions when re-enabled.
 
-A feature switch does not grant access. Each user still needs the relevant Read/Edit permission. Staff Members and Departments are core, not optional switches. Suppliers and Equipment Lifecycle are shown as unavailable future features. On the Batch 3.6 review branch, **IT Assets** has its own switch under **Additional Features**. It is disabled by default on fresh installations and upgrades. Enabling it stores the organisation's choice; stock screens and actions are not available yet. It does not classify existing Devices as stock.
+A feature switch does not grant access. Each user still needs the relevant Read/Edit permission. Staff Members and Departments are core, not optional switches. Suppliers and Equipment Lifecycle are shown as unavailable future features. **IT Assets** has its own switch under **Additional Features**, disabled by default on fresh installations and upgrades. On the Batch 3.7 review branch, enabling it allows users with the relevant IT Assets permission to use [Receive Stock, Stock Inventory and Receipt History](IT-Assets-Stock-Intake.md). The switch grants no permission and does not classify existing Devices as stock. Disabling hides the section and denies stock reads/writes while retaining stock and history; re-enabling restores access subject to existing rights and MFA.
 
 Fresh installations default the optional sections off. The existing-installation schema-13 migration preserves working Devices/IPAM/Racks access by initially enabling those three; subsequent restarts retain saved choices. These facts are not instructions to upgrade a production installation.
 

@@ -1,6 +1,27 @@
 # Milestone 01 Development Handover — v2.2 Target
 
-> **Current status, 15 November 2026:** v2.1 remains the published release. `milestone-1` is verified at `2e6c50ba4777b7500258d2a1a28317764d806020` following Batch 3.5 merge PR #386, still schema 15. Batch 3.6 IT Assets foundation is on `feat/it-assets-foundation` for draft review at schema 16; it is not merged, accepted or released. It adds the independent default-off switch, empty stock tables, optional Minimum Stock Level and specification-correction safeguards. Stock workflows remain unimplemented. Batch 3.4 native acceptance remains deferred. Earlier checkpoints and their then-current statuses are retained below. See [Development Status](../development-guide/Development-Status.md), [IT Assets Foundation](../development-guide/IT-Assets-Foundation.md) and the [Batch 3.6 evidence](evidence/it-assets-foundation/Report.md).
+> **Current status, 15 November 2026:** v2.1 remains published. `milestone-1` is verified at `774dee3ecaaf1d50ba94dbf55891aa4b79b853c5` after Batch 3.6 merge PR #387, schema 16. Batch 3.7 Receive Stock, Stock Inventory and readiness are implemented on `feat/it-assets-stock-intake` for draft review, not merged or visually accepted. The foundation schema is unchanged. Batch 3.4 native acceptance remains deferred; later stock workflows and Stages 4–6 remain pending. Earlier dated checkpoints retain their then-current statuses. See [Development Status](../development-guide/Development-Status.md), [Stock Intake](../development-guide/IT-Assets-Stock-Intake.md) and [evidence](evidence/stock-intake/Report.md).
+
+## Batch 3.7 Receive Stock And Stock Inventory — Draft Review, 15 November 2026
+
+Started from verified integration HEAD `774dee3ecaaf1d50ba94dbf55891aa4b79b853c5`.
+The combined batch follows [the start approval](https://github.com/Caffoot/Caffoot-Lite/issues/351#issuecomment-6897927354).
+New/existing deliveries, shared specifications, separate Supplier/date/actor facts,
+individual identities, partial readiness, later checks, reasoned reversals and
+nullable quantity minima use the existing four Schema 16 tables unchanged.
+The IT Assets section reuses existing v2.1 styles and independently protected access.
+
+Checks: **17 focused tests passed**; full backend **745 run, 741 passed, four skipped**;
+Docker lifecycle **one passed**; complete real browser flow **passed with 24 captures**;
+existing Optional Features browser regression **passed**. The Function Index contains
+**901 checked definitions**. See [the evidence and limits](evidence/stock-intake/Report.md),
+[API guide](../development-guide/IT-Assets-Stock-Intake.md) and
+[draft user instructions](../how-tos/features-and-instructions/v2.2-draft/IT-Assets-Stock-Intake.md).
+
+Runtime/capture source is `4480d5df10d56e9d898629cec5ac37f1f1df8a18`.
+Product-owner visual acceptance and merge approval remain separate. No later stock
+workflows, new schema, release, production, main or Raspberry Pi work is included.
+Batch 3.4 native acceptance and Stage 6 complete-volume acceptance remain pending.
 
 ## Batch 3.6 IT Assets Foundation — Draft Review, 15 November 2026
 
