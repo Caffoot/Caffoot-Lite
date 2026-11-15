@@ -46,7 +46,7 @@ The implemented route chain is:
 6. `/api/import/confirm` requires the documented reviews and explicit replacement confirmation. [`import_service.replace_from_published_export`](../../backend/import_service.py) re-derives and validates the candidate, checks permission again inside the database write transaction, and calls [`inventory.stage_inventory`](../../backend/inventory.py).
 7. The transaction replaces inventory-only tables and either commits or rolls back. It does **not** overwrite accounts, passwords, MFA, permissions or sessions.
 
-The server's `/api/import/*` routes are **live**. Several module docstrings still say “offline only” because they describe an earlier checkpoint; always check the current handler and tests rather than repeating that obsolete status. Avoid changing those modules as part of documentation work.
+The server's `/api/import/*` routes are **live**. The protected import helper and staging transaction are called from the running HTTP service after review and confirmation. Their docstrings describe that current behaviour; the live permission checks and transaction handling remain authoritative.
 
 ## What the import is not
 

@@ -2,38 +2,38 @@
 
 [← All feature guides](README.md)
 
-*Some screenshots show an earlier Docker edition for orientation. The instructions describe the published v2.1 interface; older images should not be mistaken for new v2.1 captures.*
+*The screenshots show the published v2.1 light-theme interface with fictional demonstration data.*
 
 ## Your first visit
 
-The sign-in screen below is from the actual Docker/SQLite application, shown without any entered credentials.
+The published v2.1 sign-in form below has empty username and password fields. No real account credentials are shown.
 
-![Caffoot Lite branded sign-in screen with empty username and password fields](../../screenshots/sign-in.png)
+![Published Caffoot Lite v2.1 sign-in form showing empty username and password fields](../../screenshots/v2.1-review/sign-in.png)
 
 The Docker application keeps one shared inventory in its central database. Each person uses their own account; an administrator decides which sections that person may read or edit. There is **no public registration**.
 
 1. Install the application and configure its HTTPS address, certificate and persistent data directory using the [Docker/Portainer guide](../../../INSTALLATION.md).
 2. On a **new database**, open the configured HTTPS address. Set your own first administrator username and password. There is no hard-coded administrator.
 3. Follow the on-screen authenticator setup. Scan the QR code (or enter the displayed secret) into an authenticator app, then confirm the six-digit code.
-4. At the **Sign in** form, enter username and password. Enter an authenticator code when the application requests one. Users without required MFA do not see an unnecessary code field before sign-in.
+4. At the **Sign In** form, enter username and password. Enter an authenticator code when the application requests one. Users without required MFA do not see an unnecessary code field before sign-in.
 5. After signing in with authorised inventory access, the **Dashboard** gives a summary and links to the familiar inventory areas.
 
 For a self-signed HTTPS certificate, **check the identity and fingerprint before trusting it**. Do not blindly bypass a certificate warning when supplying real credentials.
 
 ## Where to find things
 
-The Dashboard's **Network Insights** tab summarises a fictional lab inventory in the screenshot below.
+The **Network Insights** tab on the published v2.1 Dashboard summarises fictional inventory in the screenshot below.
 
-![Caffoot Lite Dashboard Network Insights showing fictional devices, IP utilisation and rack capacity](../../screenshots/dashboard.png)
+![Published Caffoot Lite v2.1 Dashboard Network Insights with fictional IP utilisation, device status and rack capacity](../../screenshots/v2.1-review/dashboard.png)
 
 - **Dashboard:** inventory overview and convenient shortcuts.
 - **Devices:** physical/virtual equipment, network identity, hardware/software details and location.
-- **IPAM:** Optional IP Address Blocks, assignable named subnets, individual IP addresses and reservations.
-- **Racks:** enclosures, front/rear views, mounted devices, accessories and U positions.
-- **Change History:** recent inventory actions and changes.
+- **IPAM:** optional IP Address Blocks, assignable named subnets, individual IP addresses and reservations.
+- **Network Racks:** enclosures, front/rear views, mounted devices, accessories and U positions.
+- **Audit Trail:** recent inventory actions and changes.
 - **Users:** administrator-managed accounts, MFA state and section permissions.
 - **Settings & Data:** administrator-only inventory migration and maintenance.
-- **My account:** personal security, appearance settings, Help & Guides and About.
+- **My Account:** personal security, appearance settings, Help & Guides and About.
 
 Some entries are hidden or read-only for users without suitable rights. The *Appearance* preference is local to your own browser.
 
@@ -44,7 +44,7 @@ The values below are fictional. Use your own network plan and genuine spare addr
 **Example:** *Lab Network* is 192.168.50.0/24, its gateway is 192.168.50.1 and its VLAN is 50. The device is *lab-switch-01* and the enclosure is *Lab Rack*.
 
 1. In **IPAM**, choose **Add Single Subnet**. Enter CIDR, unique name and explicit LAN purpose, optionally VLAN, and the required usable gateway. Choose **Save Subnet**.
-2. In **Racks**, choose **Add Network Rack** if the switch will be mounted. Enter the type and measured height/width/depth, then **Save Rack**.
+2. In **Network Racks**, choose **Add Rack** if the switch will be mounted. Enter the type and measured height/width/depth, then **Save Rack**.
 3. In **Devices**, choose **Add Device**. Enter the device name, physical type, status and location.
 4. Select an existing subnet and a valid **Primary IP**, for example 192.168.50.10 if it is actually available. If rack-mounted, select the rack, front/rear face, free U position and height.
 5. Select **Save Device**. Reopen it to check the details, look at its IP in **IPAM**, and confirm rack occupancy in **Racks**.
@@ -54,7 +54,7 @@ See [Devices](Devices.md), [IPAM](IPAM.md) and [Racks](Racks.md) for every step 
 
 ## Using Caffoot with colleagues
 
-An administrator creates additional users under **Users**. New users start without inventory access. They may be granted **Read** or **Edit** separately for Devices, IPAM and Racks; editors and administrators must enrol MFA.
+An administrator creates additional users under **Users**. New users start without inventory access. They may be granted **Read** or **Edit** separately for Devices, IPAM and Racks. Administrators cannot grant **Edit** until the receiving account has enrolled MFA; administrator access also requires enrolment.
 
 A user may view a device that somebody else is editing, but cannot edit it simultaneously. The details screen can name the current editor. Editing different devices in parallel is permitted. Saved changes become visible when users navigate or reopen the records; full browser refreshes are not normally needed.
 

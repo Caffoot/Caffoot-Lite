@@ -1,72 +1,16 @@
-# Users, Permissions and Multi-factor Authentication
-
-**Development branch notice:** The following controls describe published v2.1. On `milestone-1`, Staff Member is the default for all accounts and grants no inventory access. Any wider Read or Edit access, any enabled additional role, or Administrator status requires MFA; existing voluntary enrolment remains required. Existing grants are preserved. Batch 02 adds server-side password-verified mandatory enrolment and eligible voluntary MFA removal. These operations require a fresh sign-in after completion. Batch 03 adds server-side role management with a reviewed preview and confirmation for each change; the old direct-permission request is retired. Membership changes end that account’s sessions; other role/override changes end sessions where effective access or MFA requirements change. Renaming a role alone preserves sessions. Optional notices go only to active verified email recipients and eligible administrators, and cannot guarantee delivery. Batch 04 now connects these flows to the existing Users, sign-in and My Account screens for owner review. This intermediate build must not be deployed. See [Shared Roles And Account Permissions](../../development-guide/Role-Permissions.md).
+# Users, Permissions and Multi-Factor Authentication
 
 [← All feature guides](README.md)
 
-*Some screenshots show an earlier Docker edition for orientation. The instructions describe the published v2.1 interface; older images should not be mistaken for new v2.1 captures.*
-
-## On The Milestone Development Branch
-
-### IT Staff And Individual Permissions
-
-**Staff Member** is the protected baseline for everyone and grants no inventory
-access. **IT Staff** is a separate built-in role, initially enabled with **Edit**
-for Devices, IPAM and Network Racks. **Administrator** is a separate account
-status with its own safeguards; IT Staff does not make someone an administrator.
-
-In **Manage Roles**, administrators can edit IT Staff's grants and disable or
-re-enable it after reviewing the change. Disabling stops its grants contributing
-but keeps its settings and memberships. Its name and identity cannot be changed
-or deleted. Assign or remove it deliberately in **Manage User**. Newly created
-ordinary accounts still receive Staff Member only; a fresh installation creates
-IT Staff without assigning it to anyone.
-
-When upgrading existing data to schema 12, every active account receives IT Staff,
-including existing administrators and Staff-only users. Disabled accounts are not
-assigned. Previous Devices/IPAM/Racks levels stay exactly as they were. Existing
-individual choices remain, and Read or No Access overrides are added only where
-needed to prevent IT Staff's initial grants widening access. Other memberships
-and role definitions stay intact. Users are signed out after this membership
-change. **MFA becomes mandatory for active IT Staff members even when their
-effective inventory access remains No Access.** Users without an authenticator
-complete the existing enrolment process, then sign in again with their code.
-
-The section cards distinguish **Inherited** access from roles, the user's
-individual choice, and **Effective** access after that choice. **Inherit** uses
-assigned enabled roles. **No Access**, **Read** and **Edit** are individual
-overrides and take precedence even when a role's configured grants change.
-
-For example, **Tim** and **Dave** are both IT Staff. Tim has no overrides and
-inherits **Edit / Edit / Edit**. Dave has Devices **Read** and Racks **Read**
-overrides, while IPAM inherits **Edit**, giving **Read / Edit / Read**. Later
-role edits do not replace Dave's explicit Read choices. Choosing **Inherit** for
-a section is the deliberate way to resume following its role grants. Upgraded
-accounts may retain earlier choices in the same way; review the preview before
-changing them. Disabling a role does not erase existing individual overrides.
-
-**My Account** displays all your assigned roles, including **Staff Member**.
-Disabled assigned roles are labelled **Disabled** and do not grant access.
-Administrator status appears separately from role memberships. This display
-does not change your permissions or MFA requirements.
-
-These additions are for review, not a published release. Existing Overview, User List and Add User tabs remain, with Manage Roles fourth. Administrators can create/manage custom roles, then assign multiple roles in Manage User. Staff Member is automatic and protected; Administrator remains a separate account control.
-
-Each section card shows inherited and effective access. Choose **Inherit** to use role grants, **No Access** to block them deliberately, or **Read/Edit** for an individual override. Each membership or permission change opens **Review Access Change**. Read the before/after access, MFA and session effects, then choose **Confirm Change**. Cancel saves nothing. If the preview becomes outdated, review the refreshed consequences and confirm again. Role creation, edits, disabling and deletion follow the same review process. Personal details, account activation, Administrator controls and deletion remain in Manage User.
-
-An account assigned wider access or an enabled additional role must enrol MFA before normal sign-in. The existing sign-in form shows a QR code/manual key and requests the authenticator's six-digit code. Completion clears the setup details and requires a fresh sign-in with password and authenticator code.
-
-Staff-only users sign in to their existing **My Account** interface at `/account`. This provides their own profile, password, appearance and MFA settings without inventory or administrator access. In **My Account → Security**, eligible enrolled users can open **Remove MFA** and confirm with their current password and code. Successful removal ends all their sessions and requires a fresh sign-in. Administrator status, enabled additional roles or effective wider Read/Edit access prevent removal. Role changes never remove MFA automatically.
-
-Security notices need configured SMTP and eligible verified addresses. A queued notice is not proof that email was delivered.
+*The screenshots show the published v2.1 light-theme interface with fictional demonstration data.*
 
 ## Account basics
 
 Caffoot Lite has **no public registration**. The first account on a new database becomes its administrator after mandatory MFA setup. Administrators create additional users under **Users**. New users have **no inventory access until permission is granted**. This protects the inventory from accidental over-sharing.
 
-An administrator's **Users → Overview** displays account counts, roles and MFA enrolment status, as shown using fictional accounts below.
+An administrator's **Users → Overview** displays account counts, roles and MFA enrolment status. The published v2.1 screenshot below shows one fictional administrator.
 
-![Caffoot Lite Users overview showing fictional account totals, roles and MFA enrolment progress](../../screenshots/users.png)
+![Published Caffoot Lite v2.1 Users Overview showing one fictional administrator and MFA enrolment figures](../../screenshots/v2.1-review/users.png)
 
 ## Create a user — worked example
 
@@ -76,11 +20,12 @@ Imagine you want a colleague to inspect devices and maintain IP address notes wi
 2. Open **Users** in the sidebar and choose **Add User**.
 3. Enter a unique **Username** and a suitable **Initial password** in the **Create User** form.
 4. Select **Create User**. The account starts with no Devices/IPAM/Racks access.
-5. Open **User List**, find the new account and set its section permissions, for example **Devices: Read**, **IPAM: Edit** and **Racks: Read**.
-6. Ask the user to sign in and enrol MFA under **My account → Security / Password & MFA** before their editing permission can be used. Administrators cannot grant effective editing or administrative access to a user who has not completed required enrolment.
-7. Have them check that Devices and Racks are read-only, while the approved independent IPAM edit operations are available.
+5. Open **User List**, find the new account and grant **Devices: Read**, **IPAM: Read** and **Racks: Read** initially. Do not grant Edit yet.
+6. Ask the user to sign in, open **My Account → Security → Multi-Factor Authentication**, and complete enrolment with their authenticator app.
+7. Once MFA is confirmed, sign in as the administrator again and change the new account's IPAM grant to **Edit** in **Users → User List**. Caffoot Lite rejects an Edit grant before enrolment. Changing permissions ends the affected user's current sessions.
+8. Ask the user to sign in again and check that Devices and Racks are read-only, while permitted independent IPAM editing operations are available.
 
-The example demonstrates **permission boundaries**: IPAM Edit does not authorise changing arbitrary device fields. Assign roles according to actual responsibilities.
+The example demonstrates **permission boundaries**: IPAM Edit does not authorise changing arbitrary device fields. Assign permissions according to actual responsibilities.
 
 ## Understand the permission levels
 
@@ -88,7 +33,7 @@ The three inventory sections have individual access controls:
 
 | Section permission | Behaviour |
 | --- | --- |
-| No access | Section not available for that account |
+| No Access | Section not available for that account |
 | Read | May view authorised inventory and related details; cannot change that section |
 | Edit | May change permitted records in that section **after MFA enrolment**, subject to related field permissions |
 
@@ -112,8 +57,8 @@ Having Devices Edit does **not** bypass IPAM Read or Racks Read. The existing De
 
 ## Set up or change MFA
 
-1. Open **My account** and choose its personal security controls.
-2. Follow **Set up MFA** / **Password & MFA** when enrolment is required. Use a trusted authenticator app to scan the QR code or enter the secret.
+1. Open **My Account → Security**.
+2. Follow the **Multi-Factor Authentication** enrolment controls when required. Use a trusted authenticator app to scan the QR code or enter the secret.
 3. Enter the current six-digit code as requested to confirm enrolment.
 4. At sign-in, provide your username and password first; enter an authenticator code when prompted.
 
@@ -148,4 +93,4 @@ See [Devices](Devices.md), [IPAM](IPAM.md), [Racks](Racks.md) and [Getting Start
 
 In My Account → Personal Details, save an optional email address and review its Verified/Not Verified status. Verify Email requires your current password, followed by the eight-digit emailed code; preserve leading zeroes. Codes expire after 15 minutes and are single-use. Editing the saved address removes verification.
 
-Forgot Password? uses **username only**, not email lookup. The neutral response does not confirm account eligibility or delivery. Recovery needs an active account, verified saved address and configured administrator SMTP delivery. Enter the recovery code, new password and authenticator when required. Recovery never bypasses MFA and a successful reset revokes existing sessions. Five failed confirmations exhaust a challenge and the durable account/purpose budget persists across resends/restarts. Delivery failures still need private provider/account investigation. See [Account Recovery](../../development-guide/Account-Recovery.md).
+Forgot Password? uses **username only**, not email lookup. The neutral response does not confirm account eligibility or delivery. Recovery needs an active account, verified saved address and configured administrator SMTP delivery. Enter the recovery code, new password and authenticator when required. Recovery never bypasses MFA and a successful reset revokes existing sessions. Five incorrect confirmation attempts use up a code. Requesting another code or restarting the server does not reset the account’s limit on failed attempts. If delivery fails, ask the administrator to check the email service privately. See [Account Recovery](../../development-guide/Account-Recovery.md).

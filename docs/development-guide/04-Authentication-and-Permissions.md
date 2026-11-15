@@ -1,5 +1,7 @@
 # 04 — Authentication, MFA and permissions
 
+**Version boundary:** Published v2.1 is the tagged schema-10 release. `main` includes accepted but unreleased Stage 1/schema 12; this `milestone-1` development branch is schema 15 through merged Stage 3 Batch 3.4. Batch 3.4 manual/native acceptance remains deferred, not passed. See [Development Status](Development-Status.md) for source checkpoints; documentation synchronisation does not release v2.2.
+
 ## In simple terms
 
 The first person deploying Caffoot Lite chooses an administrator username and password, then enrols an authenticator app before gaining access. That administrator can create users and decide which inventory sections they can view or edit. There is **no public sign-up**. In published v2.1, read-only users can work without MFA. On the `milestone-1` development branch, any wider Read or Edit access requires MFA, including preserved legacy Read grants. The additive Users/sign-in/My Account integration is implemented for Batch 04 review. This intermediate branch must not be deployed before separate owner approval and later authorised verification. See [Shared Roles And Account Permissions](Role-Permissions.md).

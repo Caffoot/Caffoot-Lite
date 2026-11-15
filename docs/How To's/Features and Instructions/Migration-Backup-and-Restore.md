@@ -1,7 +1,5 @@
 # Migration, Backup and Restore
 
-**Development branch notice:** Schema 11 on `milestone-1` preserves existing accounts and configured grants, assigns Staff Member without inventory rights and revokes all old sessions. This intermediate batch is not ready to deploy. Before a future authorised upgrade, back up the complete private `/data` directory and retain the matching v2.1 image. Rollback requires restoring both together; never run v2.1 against a schema-11 database. See [Shared Roles And Account Permissions](../../development-guide/Role-Permissions.md).
-
 [← All feature guides](README.md)
 
 ## Two different jobs
@@ -25,7 +23,7 @@
 4. Read the **Import Inventory from v1.3.3** review screen. Check device, IPAM, rack and historical/custom fields, plus any required corrections. Where access-point mounting choices are required, review each selection; older mount assignments may need to be cleared for those specific records.
 5. If anything looks wrong, **Cancel**, correct the source or review choice as appropriate, then start again. The review is not the final save.
 6. Explicitly **Confirm** the supported inventory replacement only when the proposed results are correct.
-7. After completion, navigate through **Devices**, **IPAM**, **Racks**, **Settings** and **Audit Trail** to check the imported inventory and linked information.
+7. After completion, navigate through **Devices**, **IPAM**, **Network Racks**, **Settings & Data** and **Audit Trail** to check the imported inventory and linked information.
 
 The importer preserves supported inventory data and relationships. It does **not** import user accounts, passwords, roles or MFA from the standalone browser edition. Never use a migration import as an informal way to merge two independent Docker installations.
 
@@ -67,14 +65,14 @@ The product owner verified a local stopped-container copy/restore on a disposabl
 - **Container recreate/update:** should retain the existing mounted data, but does not itself make a backup.
 - **v1.3.3 JSON import:** a one-way inventory migration, not a Docker database backup.
 - **Clear System / Clean Start:** a destructive inventory maintenance action, not a restore mechanism.
-- **Change History:** explains saved changes but is not a copy of the application database.
+- **Audit Trail:** explains saved changes but is not a copy of the application database.
 
 For exact deployment examples, environment names and certificate verification, follow [Docker and Portainer installation](../../../INSTALLATION.md).
 ## v2.1 upgrade and subnet-first compatibility
 
 The v2.1 importer preserves older tagged/unclassified records and the new optional-VLAN/VPN-gateway records. Opening an old subnet does not assign a purpose or migrate it. The subnet-first JSON changes do not themselves require another schema migration. The full v2.1 upgrade reaches schema 10 and retains existing account/security data; see the installation upgrade instructions. New untagged/VPN records must not be made compatible by inventing VLAN 0 or a gateway.
 
-Keep a consistent pre-upgrade private data backup. Earlier releases do not implement the new subnet rules; successful v2.1 round trips do not certify downgrading a new inventory to an older application. Continue using the established private acceptance volume/stack procedure, with no production replacement as part of development.
+Keep a consistent pre-upgrade private data backup. Earlier releases do not implement the new subnet rules; successful v2.1 round trips do not certify downgrading a new inventory to an older application. For an upgrade, preserve the existing `/data` mount and make a consistent complete backup before replacing the image.
 
 
 For a Docker version upgrade, stop and back up **all** of `/data`, including SQLite/sidecars, TLS and `account-email-secret.key` when present, with original ownership/modes. Keep that key with its matching database; it is not included by copying only SQLite. Restore the complete pre-upgrade backup with the old image for rollback; never open a schema-10 database using v2.0.3. See [the v2.1 upgrade steps](../../../INSTALLATION.md#upgrading-v203-to-v21).

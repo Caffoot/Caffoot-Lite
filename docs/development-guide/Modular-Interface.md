@@ -2,7 +2,7 @@
 
 The [Issue #309 presentation amendment](https://github.com/Caffoot/Caffoot-Lite/issues/309) uses one 16px gap between main tabs and the first content block. Headings and secondary navigation keep their own internal spacing. Audit Trail places its tabs before the four shared totals, which remain visible on every Audit tab. Twenty-six previously text-only tabs use the existing shared SVG icons; their labels and actions are unchanged. Focusing a tab reveals its complete label by scrolling only that navigation row. The pinned source files and backend permissions remain unchanged.
 
-This branch replaces the single presentation document with HTML screen modules, separate JavaScript and the twelve pinned approved stylesheets. It is development work for private acceptance, not a published release. The existing `/`, `/setup`, `/inventory` and inventory fragment entry points remain available.
+The modular interface was released in v2.1. It uses HTML screen modules, separate JavaScript and the twelve approved source stylesheets, with recorded owner amendments. The existing `/`, `/setup`, `/inventory` and inventory fragment entry points remain available. See [Development Status](Development-Status.md) to distinguish published source from later account and Staff workspace additions.
 
 ## Source And Rendering
 
@@ -25,9 +25,9 @@ The approved source designs remain in Git history. `future-design` is not restor
 
 ## Access And Persistence
 
-The new presentation resources use an explicit packaged-file allow-list. Application scripts, templates and styles require the same authenticated inventory access as `/inventory`; unknown paths and traversal attempts are not served. Only the three sign-in resources are public. API permissions remain authoritative, including section-specific field editing, MFA, concurrent device reservations and server validation.
+Presentation resources use an explicit packaged-file allow-list and authenticated access; unknown paths and traversal attempts are rejected. Published v2.1 inventory entry requires the established inventory rights. Later own-account and Staff/Department workspace entry deliberately allow the corresponding permitted users without inventory grants. Static resource access does not grant access to protected inventory or administrator data; the relevant server APIs still enforce those rights.
 
-Inventory and account data remain in the existing SQLite database. Schema migration 9 adds only a hashed, expiring email-proof table. Existing account IDs, passwords, MFA, permissions and inventory records are retained. Personal photographs remain private account data in SQLite. SMTP configuration keeps its existing private file beside the database, with protected secret readback.
+Inventory and account data remain in the existing SQLite database. Historical migration 9 added an email-proof table; published v2.1 reaches schema 10 with challenge/attempt protections. Existing account IDs, passwords, MFA, permissions and inventory records are retained. Personal photographs remain private account data in SQLite. SMTP configuration keeps its existing private file beside the database, with protected secret readback.
 
 ## Account Security
 
