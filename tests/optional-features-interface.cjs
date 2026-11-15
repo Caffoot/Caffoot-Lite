@@ -116,7 +116,7 @@ const errors=[],metrics=[],screens=[];
   assert.equal(await owner.locator('#optional-feature-infrastructure article').count(),3);
   assert.equal(await owner.locator('#optional-feature-additional article').count(),2);
   assert.equal(await owner.getByText('Design Review · No Settings Saved',{exact:true}).count(),0);
-  assert.deepEqual(await owner.locator('[data-optional-feature]').evaluateAll(inputs=>inputs.map(input=>input.dataset.optionalFeature)),['devices','ipam','racks','suppliers','equipment_lifecycle']);
+  assert.deepEqual(await owner.locator('[data-optional-feature]').evaluateAll(inputs=>inputs.map(input=>input.dataset.optionalFeature)),['devices','ipam','racks','suppliers','equipment_lifecycle','it_assets']);
   const savedFeatures=(await (await contexts.owner.request.get(address+'/api/settings/features')).json()).features;
   for(const [index,feature] of ['devices','ipam','racks','suppliers','equipment_lifecycle'].entries()){
    const card=owner.locator('[data-feature-card="'+feature+'"]'),approvedCard=approvedFeatures.locator('article').nth(index);

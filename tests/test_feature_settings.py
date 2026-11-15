@@ -36,7 +36,7 @@ class FeatureSettingsTests(unittest.TestCase):
 
     def test_fresh_defaults_and_repeated_initialisation(self):
         schema.initialise_database(self.db)
-        self.assertEqual(self.choices(), dict.fromkeys(('devices', 'ipam', 'racks', 'suppliers', 'equipment_lifecycle'), 0))
+        self.assertEqual(self.choices(), dict.fromkeys(('devices', 'ipam', 'racks', 'suppliers', 'equipment_lifecycle', 'it_assets'), 0))
         self.owner()
         self.save()
         before = self.choices()
@@ -48,7 +48,7 @@ class FeatureSettingsTests(unittest.TestCase):
         with patch.object(schema, 'SCHEMA_VERSION', 12):
             schema.initialise_database(self.db)
         schema.initialise_database(self.db)
-        self.assertEqual(self.choices(), dict(devices=1, ipam=1, racks=1, suppliers=0, equipment_lifecycle=0))
+        self.assertEqual(self.choices(), dict(devices=1, ipam=1, racks=1, suppliers=0, equipment_lifecycle=0, it_assets=0))
 
     def test_populated_upgrade_preserves_every_existing_table_and_session(self):
         with patch.object(schema, 'SCHEMA_VERSION', 12):
@@ -63,6 +63,9 @@ class FeatureSettingsTests(unittest.TestCase):
         self.assertEqual(after.pop('device_assignments'), [])
         self.assertEqual(after.pop('departments'), [])
         self.assertEqual(len(after.pop('staff_members')), 1)
+        for table in ('it_asset_stock_items', 'it_asset_stock_units',
+                      'it_asset_stock_movements', 'it_asset_stock_entries'):
+            self.assertEqual(after.pop(table), [])
         self.assertEqual(after, before)
         self.assertEqual(self.choices()['devices'], 1)
 
