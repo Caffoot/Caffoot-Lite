@@ -71,7 +71,12 @@ def assignment_device_choices(connection, actor_id, *, query='', limit=100, offs
 
 def read_assignments(connection, actor_id, *, device_id=None, staff_id=None, department_id=None):
     """Authorised IT views share the same history and current-holder projection."""
-    require_assignment_access(connection, actor_id)
+    device_access=can_access(connection,actor_id,'Devices')
+    asset_access=can_access(connection,actor_id,'IT Assets')
+    if device_id is not None:
+        require_assignment_access(connection,actor_id)
+    elif not device_access and not asset_access:
+        raise PermissionError('Equipment Read permission required')
     filters = [(key, value) for key, value in (('device_id', device_id), ('staff_id', staff_id), ('department_id', department_id)) if value is not None]
     if len(filters) != 1:
         raise ValueError('One assignment subject is required')
@@ -86,13 +91,28 @@ def read_assignments(connection, actor_id, *, device_id=None, staff_id=None, dep
         LEFT JOIN staff_members s ON s.id=a.staff_id
         LEFT JOIN departments p ON p.id=a.department_id
         WHERE a.{column}=? ORDER BY a.id DESC''', (value,))
-    records = [(dict(zip(('id', 'deviceId', 'deviceName', 'staffId', 'departmentId', 'recipientLabel', 'assignedAt', 'actorId', 'actorLabel', 'endedAt'), row[:10])), row[10]) for row in rows]
+    records = [(dict(zip(('id', 'deviceId', 'deviceName', 'staffId', 'departmentId', 'recipientLabel', 'assignedAt', 'actorId', 'actorLabel', 'endedAt'), row[:10])), row[10]) for row in rows] if device_access else []
     history = [record for record, label in records]
     result = {'current': [{**record, 'recipientLabel': label} for record, label in records if record['endedAt'] is None], 'history': history,
               'canAssign': can_access(connection, actor_id, 'Devices', edit=True)}
     if device_id is not None:
         raw, revision = connection.execute('SELECT record_json,revision FROM inventory_devices WHERE id=?', (device_id,)).fetchone()
         result.update(dependency=device_assignment_dependency(connection, device_id, json.loads(raw)), revision=revision)
+    if asset_access:
+        from backend.stock_circulation import stock_issue_records,stock_movement_history,canonical_device_choice
+        if device_id is not None:
+            choice=canonical_device_choice(connection,device_id)
+            result.update(stockHistory=stock_movement_history(connection,actor_id,device_id=device_id),
+                canReturn=can_access(connection,actor_id,'IT Assets',edit=True) and can_access(connection,actor_id,'Devices',edit=True)
+                          and bool(result['current']),
+                canWriteOff=can_access(connection,actor_id,'IT Assets',edit=True) and can_access(connection,actor_id,'Devices',edit=True)
+                            and choice['physical'] and not choice['states'].get('written_off',0))
+        else:
+            assets=[issue for issue in stock_issue_records(connection,staff_id=staff_id,department_id=department_id)
+                    if not issue['deviceAssignmentId']]
+            result.update(assetCurrent=[issue for issue in assets if issue['outstanding']>0],assetHistory=assets,
+                assetMovements=stock_movement_history(connection,actor_id,staff_id=staff_id,department_id=department_id),
+                canIssueStock=can_access(connection,actor_id,'IT Assets',edit=True))
     return result
 
 
@@ -151,18 +171,29 @@ def assign_devices(connection, actor_id, session_token, payload):
 def my_equipment(connection, actor_id):
     """Resolve the current login link and membership without accepting a client identity."""
     result = {'assignedToMe': [], 'sharedWithMyDepartment': []}
-    if not feature_enabled(connection, 'Devices'):
-        return result
     staff = connection.execute('SELECT id,department_id FROM staff_members WHERE account_id=?', (actor_id,)).fetchone()
     if staff is None:
         return result
     rows = connection.execute('''SELECT a.staff_id,a.department_id,d.id,d.record_json,a.assigned_at
         FROM device_assignments a JOIN inventory_devices d ON d.id=a.device_id
-        WHERE a.ended_at IS NULL AND (a.staff_id=? OR a.department_id=?) ORDER BY d.name,d.id''', staff)
+        WHERE a.ended_at IS NULL AND (a.staff_id=? OR a.department_id=?) ORDER BY d.name,d.id''', staff) if feature_enabled(connection,'Devices') else []
     for staff_id, department_id, device_id, raw, assigned_at in rows:
         record = json.loads(raw)
         safe = {'id': device_id, 'name': record['name'], 'type': record.get('type', ''),
                 'manufacturer': record.get('manufacturer', ''), 'model': record.get('model', ''),
                 'assignedAt': assigned_at}
         result['assignedToMe' if staff_id == staff[0] else 'sharedWithMyDepartment'].append(safe)
+    if feature_enabled(connection,'IT Assets'):
+        from backend.stock_circulation import stock_issue_records
+        for key,filters in (('assignedToMe',{'staff_id':staff[0]}),
+                            ('sharedWithMyDepartment',{'department_id':staff[1]})):
+            if key=='sharedWithMyDepartment' and staff[1] is None:
+                continue
+            for issue in stock_issue_records(connection,**filters):
+                if issue['outstanding']<1 or issue['deviceAssignmentId']:
+                    continue
+                original=issue['specification']
+                result[key].append(dict(id='stock-issue-'+str(issue['id']),name=issue['name'],
+                    type=original.get('category',''),manufacturer=original.get('manufacturer',''),
+                    model=original.get('model',''),assignedAt=issue['issuedOn'],quantity=issue['outstanding'],equipmentKind='IT Asset'))
     return result

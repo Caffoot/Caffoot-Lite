@@ -21,7 +21,7 @@ from .inventory_projection import project_inventory_response
 from .feature_settings import read_feature_settings, save_feature_setting, unique_feature_fields
 from .stock_intake import stock_access, read_stock, receive_stock, update_stock_readiness
 from .stock_circulation import (issue_stock, read_stock_issues, stock_recipients,
-                              return_stock, prepare_stock, write_off_stock)
+                              return_stock, prepare_stock, write_off_stock, stock_movement_history)
 from .smtp_settings import (config_path as smtp_config_path, public_settings as smtp_public_settings,
                             save_settings as save_smtp_settings, send_test_email)
 from .device_catalogue import change_device_catalogue
@@ -678,7 +678,7 @@ class Handler(BaseHTTPRequestHandler):
         parts = parsed.path.strip('/').split('/')
         route = parsed.path
         reading = self.command == 'GET'
-        valid = (route in ('/api/it-assets/stock','/api/it-assets/issues','/api/it-assets/recipients') and reading or
+        valid = (route in ('/api/it-assets/stock','/api/it-assets/issues','/api/it-assets/recipients','/api/it-assets/history') and reading or
                  len(parts) == 4 and parts[:3] == ['api', 'it-assets', 'stock'] and reading or
                  route in ('/api/it-assets/receive', '/api/it-assets/readiness','/api/it-assets/issue',
                            '/api/it-assets/return','/api/it-assets/preparation','/api/it-assets/write-off') and not reading)
@@ -706,6 +706,8 @@ class Handler(BaseHTTPRequestHandler):
                 if reading:
                     if route=='/api/it-assets/issues':
                         result=read_stock_issues(connection,actor)
+                    elif route=='/api/it-assets/history':
+                        result={'movements':stock_movement_history(connection,actor)}
                     elif route=='/api/it-assets/recipients':
                         parameters=parse_qs(parsed.query,keep_blank_values=True)
                         if set(parameters)-{'query','kind','limit'} or any(len(v)!=1 for v in parameters.values()):

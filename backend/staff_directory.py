@@ -64,6 +64,9 @@ def department_has_associations(connection, department_id):
     if connection.execute('SELECT 1 FROM device_assignments WHERE department_id=? LIMIT 1',
                           (department_id,)).fetchone():
         return True
+    if connection.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name='it_asset_stock_entries'").fetchone():
+        if connection.execute('SELECT 1 FROM it_asset_stock_entries WHERE department_id=? LIMIT 1',(department_id,)).fetchone():
+            return True
     if connection.execute('SELECT 1 FROM staff_members WHERE department_id=? LIMIT 1',
                           (department_id,)).fetchone():
         return True

@@ -450,6 +450,78 @@ class StockCirculationTests(unittest.TestCase):
         with patch('backend.stock_circulation.record_actor_event',side_effect=RuntimeError('Injected audit failure')):
             self.unchanged(RuntimeError,lambda:write_off_stock(self.db,1,self.token,payload))
 
+    def test_staff_and_department_views_use_outstanding_canonical_stock_relationships(self):
+        from backend.device_assignments import read_assignments
+        personal=self.receipt(model='Personal Equipment')
+        shared=self.receipt(model='Department Equipment')
+        self.issue(personal,quantity=3)
+        self.issue(shared,quantity=2,recipientKind='department',recipientId='department')
+        staff=read_assignments(self.db,2,staff_id='person')
+        department=read_assignments(self.db,2,department_id='department')
+        self.assertEqual(staff['current'],[])
+        self.assertEqual([r['outstanding'] for r in staff['assetCurrent']],[3])
+        self.assertEqual([r['outstanding'] for r in department['assetCurrent']],[2])
+        self.assertTrue(all(r['departmentId']=='department' for r in department['assetCurrent']))
+        self.assertFalse(staff['canIssueStock'])
+        self.assertNotIn('reader@example.invalid',json.dumps(staff))
+        source=next(r for r in read_stock_issues(self.db,1)['issues'] if r['stockItemId']==personal)
+        self.return_equipment(return_payload(source))
+        staff=read_assignments(self.db,2,staff_id='person')
+        self.assertEqual(staff['assetCurrent'][0]['outstanding'],2)
+        self.assertEqual([row['kind'] for row in staff['assetMovements']],['returned','issued'])
+
+    def test_employee_projection_needs_no_stock_or_directory_grant_and_keeps_sharing_separate(self):
+        from backend.device_assignments import my_equipment
+        personal=self.receipt(model='Personal Equipment')
+        shared=self.receipt(model='Shared Equipment')
+        other=self.receipt(model='Other Person Equipment')
+        self.issue(personal,quantity=3)
+        self.issue(shared,quantity=2,recipientKind='department',recipientId='department')
+        self.issue(other,quantity=4,recipientId='other')
+        self.db.execute('DELETE FROM account_permission_overrides WHERE account_id=2')
+        self.db.commit()
+        self.assertFalse(can_access(self.db,2,'IT Assets'))
+        result=my_equipment(self.db,2)
+        self.assertEqual([r['quantity'] for r in result['assignedToMe']],[3])
+        self.assertEqual([r['quantity'] for r in result['sharedWithMyDepartment']],[2])
+        self.assertEqual(set(result['assignedToMe'][0]),{'id','name','type','manufacturer','model','assignedAt','quantity','equipmentKind'})
+        self.assertNotIn('Supplier',json.dumps(result))
+        self.assertNotIn('Other Person',json.dumps(result))
+        self.unchanged(PermissionError,lambda:read_stock_issues(self.db,2))
+        self.db.execute("UPDATE staff_members SET department_id=NULL WHERE id='person'")
+        self.db.commit()
+        self.assertEqual(my_equipment(self.db,2)['sharedWithMyDepartment'],[])
+        self.db.execute("UPDATE organisation_features SET enabled=0 WHERE feature='it_assets'")
+        self.db.commit()
+        self.assertEqual(my_equipment(self.db,2),dict(assignedToMe=[],sharedWithMyDepartment=[]))
+
+    def test_stock_history_and_device_history_are_independently_filtered(self):
+        from backend.stock_circulation import stock_movement_history
+        source=self.legacy_device()
+        payload=return_payload(source)
+        payload['deviceAssignmentId']=payload.pop('issueEntryId')
+        self.return_equipment(payload)
+        self.assertTrue(stock_movement_history(self.db,1,device_id='canonical'))
+        self.assertEqual(stock_movement_history(self.db,2),[])
+        self.unchanged(PermissionError,lambda:stock_movement_history(self.db,2,device_id='canonical'))
+        self.db.execute("UPDATE organisation_features SET enabled=0 WHERE feature='devices'")
+        self.db.commit()
+        self.assertEqual(stock_movement_history(self.db,1),[])
+        self.db.execute("UPDATE organisation_features SET enabled=0 WHERE feature='it_assets'")
+        self.db.commit()
+        self.unchanged(PermissionError,lambda:stock_movement_history(self.db,1))
+
+    def test_department_stock_history_blocks_unsafe_deletion_after_full_return(self):
+        from backend.staff_directory import read_department,save_department
+        self.db.execute("INSERT INTO departments(id,name) VALUES('stock-only-department','Stock Only Department')")
+        self.db.commit()
+        identity=self.receipt()
+        self.issue(identity,quantity=2,recipientKind='department',recipientId='stock-only-department')
+        self.return_equipment(return_payload(self.outstanding(),quantityReturned=2))
+        self.assertFalse(read_department(self.db,1,'stock-only-department')['canDelete'])
+        self.unchanged(FileExistsError,lambda:save_department(self.db,1,self.token,{},
+            department_id='stock-only-department',delete=True))
+
 
 class StockCirculationHttpTests(unittest.TestCase):
     setUp=feature_http.FeatureSettingsHttpTests.setUp

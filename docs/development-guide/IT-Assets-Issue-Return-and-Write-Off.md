@@ -157,3 +157,27 @@ fields, with no notes, account details or unrelated Device properties.
 Device allocations and history privacy. The outstanding type-check clarification
 still applies to preparation; it does not prevent Write Off. Equipment projections,
 interface, full final verification and screenshots remain pending.
+
+## Checkpoint 5A: Protected Equipment Projections
+
+Existing assignment reads now return permitted outstanding IT Assets and genuine
+movement history alongside permitted Devices. Each section keeps its own access;
+Staff/Department directory access is not granted. Department equipment includes
+only Department-held issues, not personal equipment owned by its members. Historical
+stock references prevent unsafe Department deletion after equipment has returned.
+
+My Equipment resolves the signed-in account's real Staff link and current Department.
+It projects only safe equipment identity, type, shared model, assigned date and
+outstanding quantity. It does not require or grant general stock/directory rights.
+Personal and Department-shared lists stay separate. Canonical Devices remain on
+the original Device relationship, without duplicate Asset rows. Disabling a feature
+hides its corresponding equipment while retaining records.
+
+`GET /api/it-assets/history` projects real immutable receipt/issue/return/preparation/
+write-off facts under existing effective Read and independent Device gates. It omits
+request digests, private fields and hidden Device history. It never invents a holder
+for interchangeable quantities after return.
+
+**Actual focused result:** 76 tests passed, including stock circulation, existing
+Device allocation/HTTP, Staff directory and history privacy. This is the backend
+part of checkpoint 5; the new interface and browser verification are still pending.

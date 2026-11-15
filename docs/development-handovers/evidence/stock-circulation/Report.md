@@ -85,3 +85,21 @@ unchanged operational records, no automatic accessory write-off, failed-audit
 rollback, duplicate/stale/reason/permission rejection and initial-allocation bypass
 protection with IT Assets disabled. No full suite or UI acceptance is claimed.
 The preparation type-mapping question remains open; checkpoints 5–6 are pending.
+
+## Checkpoint 5A — Backend Equipment Integration
+
+Protected Staff/Department equipment reads and employee-safe My Equipment now show
+actual outstanding Asset quantities alongside independently permitted Devices.
+Sharing uses the Department as holder; no per-member issue is created. Device
+relationships are not duplicated. Historical stock references block unsafe
+Department deletion. Journal history is independently filtered for Device access.
+
+```sh
+PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=tests:. python3 -m unittest test_stock_circulation test_device_assignments test_device_assignments_http test_staff_directory test_history_permissions -v
+```
+
+**76 tests passed:** [log](checkpoint-05-projections.log). Checks cover partial
+outstanding quantities, personal/shared separation, current membership changes,
+feature-disabled privacy, no inventory/directory grants, original Device regression,
+minimal employee fields and retained Department history. The interface/browser
+half of checkpoint 5 remains pending, as does the preparation type clarification.
