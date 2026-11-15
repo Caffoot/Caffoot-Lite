@@ -2,18 +2,13 @@
 
 [← All feature guides](README.md)
 
-*The historical illustrations below show an earlier Docker interface, not the published v2.1 layout. Follow the written v2.1 instructions. [Genuine replacement captures await visual approval](../../development-guide/Public-Documentation-Corrections.md#screenshots-awaiting-approval).*
+*The screenshots show the published v2.1 light-theme interface with fictional demonstration data.*
 
 ## Your first visit
 
-The sign-in screenshot below is from an earlier Docker interface and contains no entered credentials. Follow the current v2.1 on-screen controls.
+The published v2.1 sign-in form below has empty username and password fields. No real account credentials are shown.
 
-<details>
-<summary>Historical illustration — earlier interface</summary>
-
-![Caffoot Lite branded sign-in screen with empty username and password fields](../../screenshots/sign-in.png)
-
-</details>
+![Published Caffoot Lite v2.1 sign-in form showing empty username and password fields](../../screenshots/v2.1-review/sign-in.png)
 
 The Docker application keeps one shared inventory in its central database. Each person uses their own account; an administrator decides which sections that person may read or edit. There is **no public registration**.
 
@@ -27,14 +22,9 @@ For a self-signed HTTPS certificate, **check the identity and fingerprint before
 
 ## Where to find things
 
-The older Dashboard screenshot below shows fictional lab inventory for orientation; the published v2.1 Dashboard layout is different.
+The **Network Insights** tab on the published v2.1 Dashboard summarises fictional inventory in the screenshot below.
 
-<details>
-<summary>Historical illustration — earlier interface</summary>
-
-![Caffoot Lite Dashboard Network Insights showing fictional devices, IP utilisation and rack capacity](../../screenshots/dashboard.png)
-
-</details>
+![Published Caffoot Lite v2.1 Dashboard Network Insights with fictional IP utilisation, device status and rack capacity](../../screenshots/v2.1-review/dashboard.png)
 
 - **Dashboard:** inventory overview and convenient shortcuts.
 - **Devices:** physical/virtual equipment, network identity, hardware/software details and location.

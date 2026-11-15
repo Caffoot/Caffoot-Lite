@@ -2,20 +2,15 @@
 
 [← All feature guides](README.md)
 
-*The historical illustrations below show an earlier Docker interface, not the published v2.1 layout. Follow the written v2.1 instructions. [Genuine replacement captures await visual approval](../../development-guide/Public-Documentation-Corrections.md#screenshots-awaiting-approval).*
+*The screenshots show the published v2.1 light-theme interface with fictional demonstration data.*
 
 ## What a device record represents
 
 A device can describe a physical server, switch, workstation, printer or another supported type, with its network address, status, location, optional rack position and type-specific hardware/software information. Supported virtual machines have their own host-related details. Caffoot keeps the established v1.3.3 fields and validations; **not every device type presents the same additional fields**.
 
-The **Device Inventory** view shows saved equipment and its primary addresses. The screenshot below is from the earlier interface and uses fictional records.
+The **Device Inventory** view shows saved equipment and primary IP addresses. The published v2.1 example below uses fictional equipment records.
 
-<details>
-<summary>Historical illustration — earlier interface</summary>
-
-![Caffoot Lite Device Inventory listing fictional desktop and switch records with IP addresses](../../screenshots/devices-inventory.png)
-
-</details>
+![Published Caffoot Lite v2.1 Device Inventory showing six fictional devices with filters and primary IP addresses](../../screenshots/v2.1-review/devices-inventory.png)
 
 ## Prepare before you add a device
 
@@ -41,14 +36,9 @@ The application refuses invalid addresses, incompatible rack positions and other
 
 ## View an existing device
 
-The **Details** action opens the read-only device view, with separate tabs for additional information. The screenshot below is from the earlier interface.
+The **Details** action opens the read-only device view, with separate tabs for additional information. The published v2.1 screenshot below shows the **Overview** tab for a fictional switch.
 
-<details>
-<summary>Historical illustration — earlier interface</summary>
-
-![Caffoot Lite read-only switch device details with tabs for hardware, network, software and location](../../screenshots/device-details.png)
-
-</details>
+![Published Caffoot Lite v2.1 read-only Core-Switch-01 device details with the Overview tab open](../../screenshots/v2.1-review/device-details.png)
 
 Select a device from the inventory. Its read-only details allow you to inspect sections such as Overview, Hardware, Network, Software, Location and History where relevant. Opening and viewing a device **does not reserve it for editing**.
 

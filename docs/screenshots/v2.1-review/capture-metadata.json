@@ -6,7 +6,7 @@
   "runtime": "isolated Python HTTPS server and SQLite; no Docker or deployed data",
   "browser": "155.0.8059.79",
   "fictionalData": "Published visual_fixtures.py demonstration inventory and owner test account",
-  "approval": "Pending product-owner visual approval",
+  "approval": "Ten images visually approved by product owner on 15 November 2026 for documentation use; PR merge not yet approved",
   "errors": [],
   "frames": [
     {

@@ -2,7 +2,7 @@
 
 [← All feature guides](README.md)
 
-*The historical illustrations below show an earlier Docker interface, not the published v2.1 layout. Follow the written v2.1 instructions. [Genuine replacement captures await visual approval](../../development-guide/Public-Documentation-Corrections.md#screenshots-awaiting-approval).*
+*The screenshots show the published v2.1 light-theme interface with fictional demonstration data.*
 
 ## What is recorded
 
@@ -10,14 +10,9 @@ Caffoot Lite documents the rack enclosure's name, physical type and dimensions, 
 
 Users require **Racks Edit** to change rack data or equipment placement. Racks Read permits inspection but not movement.
 
-The older-interface screenshot below shows the front elevation of a fictional 12U **Lab Rack**, with a mounted switch, patch panel and vertical PDU.
+The published v2.1 rack view below shows **Rack A** with three fictional devices mounted on the front face. Its scrollable rack display is positioned to show the occupied units.
 
-<details>
-<summary>Historical illustration — earlier interface</summary>
-
-![Caffoot Lite Lab Rack front elevation showing rack units, mounted equipment and capacity details](../../screenshots/racks.png)
-
-</details>
+![Published Caffoot Lite v2.1 Network Racks front view showing three mounted devices in Rack A](../../screenshots/v2.1-review/racks.png)
 
 ## Worked example — create a rack
 

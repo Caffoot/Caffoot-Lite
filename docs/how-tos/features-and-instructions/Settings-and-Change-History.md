@@ -2,20 +2,15 @@
 
 [← All feature guides](README.md)
 
-*The historical illustrations below show an earlier Docker interface, not the published v2.1 layout. Follow the written v2.1 instructions. [Genuine replacement captures await visual approval](../../development-guide/Public-Documentation-Corrections.md#screenshots-awaiting-approval).*
+*The screenshots show the published v2.1 light-theme interface with fictional demonstration data.*
 
 ## Two different settings areas
 
 **Settings & Data** is an administrator-only system area. **My Account** is available to every signed-in user for personal settings, security and Help & Guides. Keeping them separate means a read-only colleague can update their own password or appearance preference without receiving inventory administration rights.
 
-All signed-in users can find short, locally readable topics under **My Account → Help & Guides**, with links to these longer guides.
+All signed-in users can find short, locally readable topics under **My Account → Help & Guides**, with links to these longer guides. The published v2.1 screenshot below shows the **Getting Started** topic expanded.
 
-<details>
-<summary>Historical illustration — earlier interface</summary>
-
-![Caffoot Lite My Account Help and Guides with expandable help topics](../../screenshots/help-guides.png)
-
-</details>
+![Published Caffoot Lite v2.1 My Account Help & Guides tab with Getting Started expanded](../../screenshots/v2.1-review/help-guides.png)
 
 ## My Account — step by step
 

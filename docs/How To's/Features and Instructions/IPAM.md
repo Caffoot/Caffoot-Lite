@@ -2,7 +2,7 @@
 
 [← All feature guides](README.md)
 
-*The historical illustrations below show an earlier Docker interface, not the published v2.1 layout. Follow the written v2.1 instructions. [Genuine replacement captures await visual approval](../../development-guide/Public-Documentation-Corrections.md#screenshots-awaiting-approval).*
+*The screenshots show the published v2.1 light-theme interface with fictional demonstration data.*
 
 These instructions describe the published v2.1 workflow. Check the [installation guide](../../../INSTALLATION.md) for the versioned image and deployment safeguards.
 
@@ -12,21 +12,11 @@ An **IP Address Block** optionally groups address space. An addressable **subnet
 
 You need **IPAM Edit** to create/update networks or change independent address allocations. A Devices editor with only IPAM Read cannot alter a primary IP through the device form.
 
-The following earlier-interface screenshots show fictional **Lab Network** examples in Manage Subnets and the individual IP allocation grid. They are not captures of the v2.1 layout.
+The published v2.1 screenshots below show fictional networks in **Manage Subnets** and an individual IP address allocation grid. The demonstration networks retain historical **Not assigned** purposes; new subnets still require an explicit purpose.
 
-<details>
-<summary>Historical illustration — earlier interface</summary>
+![Published Caffoot Lite v2.1 Manage Subnets view showing three fictional networks](../../screenshots/v2.1-review/ipam-subnets.png)
 
-![Caffoot Lite IPAM Manage Subnets page showing a fictional Lab Network and VLAN](../../screenshots/ipam-subnets.png)
-
-</details>
-
-<details>
-<summary>Historical illustration — earlier interface</summary>
-
-![Caffoot Lite IPAM address grid with assigned, reserved and available fictional lab addresses](../../screenshots/ipam-addresses.png)
-
-</details>
+![Published Caffoot Lite v2.1 IP Addresses grid with fictional assigned, reserved and available addresses](../../screenshots/v2.1-review/ipam-addresses.png)
 
 ## Worked example — add one subnet
 

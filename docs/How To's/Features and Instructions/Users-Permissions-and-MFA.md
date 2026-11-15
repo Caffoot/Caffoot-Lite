@@ -2,20 +2,15 @@
 
 [← All feature guides](README.md)
 
-*The historical illustrations below show an earlier Docker interface, not the published v2.1 layout. Follow the written v2.1 instructions. [Genuine replacement captures await visual approval](../../development-guide/Public-Documentation-Corrections.md#screenshots-awaiting-approval).*
+*The screenshots show the published v2.1 light-theme interface with fictional demonstration data.*
 
 ## Account basics
 
 Caffoot Lite has **no public registration**. The first account on a new database becomes its administrator after mandatory MFA setup. Administrators create additional users under **Users**. New users have **no inventory access until permission is granted**. This protects the inventory from accidental over-sharing.
 
-An administrator's **Users → Overview** displays account counts, roles and MFA enrolment status. The historical illustration below uses fictional accounts; its layout differs from v2.1.
+An administrator's **Users → Overview** displays account counts, roles and MFA enrolment status. The published v2.1 screenshot below shows one fictional administrator.
 
-<details>
-<summary>Historical illustration — earlier interface</summary>
-
-![Caffoot Lite Users overview showing fictional account totals, roles and MFA enrolment progress](../../screenshots/users.png)
-
-</details>
+![Published Caffoot Lite v2.1 Users Overview showing one fictional administrator and MFA enrolment figures](../../screenshots/v2.1-review/users.png)
 
 ## Create a user — worked example
 
