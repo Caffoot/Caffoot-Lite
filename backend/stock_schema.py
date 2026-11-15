@@ -585,4 +585,3 @@ def migrate_it_asset_stock(connection):
                   "it_asset_stock_movements", "it_asset_stock_entries"):
         if connection.execute(f"SELECT 1 FROM {table} LIMIT 1").fetchone():
             raise RuntimeError("Stock upgrade must not infer existing stock")
-

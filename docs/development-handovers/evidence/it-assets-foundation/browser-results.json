@@ -1,0 +1,141 @@
+{
+  "baseline": "2e6c50ba4777b7500258d2a1a28317764d806020",
+  "captureSource": "4efb32bb22b00ddbaf992446ffcb3c1e13787e62",
+  "screenshots": [
+    "optional-features-enabled-light-1440.png",
+    "optional-features-enabled-dark-1440.png",
+    "optional-features-enabled-light-390.png",
+    "optional-features-enabled-dark-390.png",
+    "optional-features-disabled-light-1440.png",
+    "optional-features-disabled-dark-1440.png",
+    "optional-features-disabled-light-390.png",
+    "optional-features-disabled-dark-390.png"
+  ],
+  "metrics": [
+    {
+      "enabled": true,
+      "width": 1440,
+      "theme": "light",
+      "style": {
+        "padding": "20px 21px",
+        "radius": "15px",
+        "font": "Inter, ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", Arial, sans-serif",
+        "background": "rgb(255, 255, 255)",
+        "colour": "rgb(34, 59, 83)",
+        "width": 560.8125
+      }
+    },
+    {
+      "enabled": true,
+      "width": 1440,
+      "theme": "dark",
+      "style": {
+        "padding": "20px 21px",
+        "radius": "15px",
+        "font": "Inter, ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", Arial, sans-serif",
+        "background": "rgb(30, 41, 59)",
+        "colour": "rgb(241, 245, 249)",
+        "width": 560.8125
+      }
+    },
+    {
+      "enabled": true,
+      "width": 390,
+      "theme": "light",
+      "style": {
+        "padding": "17px",
+        "radius": "15px",
+        "font": "Inter, ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", Arial, sans-serif",
+        "background": "rgb(255, 255, 255)",
+        "colour": "rgb(34, 59, 83)",
+        "width": 293
+      }
+    },
+    {
+      "enabled": true,
+      "width": 390,
+      "theme": "dark",
+      "style": {
+        "padding": "17px",
+        "radius": "15px",
+        "font": "Inter, ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", Arial, sans-serif",
+        "background": "rgb(30, 41, 59)",
+        "colour": "rgb(241, 245, 249)",
+        "width": 293
+      }
+    },
+    {
+      "enabled": false,
+      "width": 1440,
+      "theme": "light",
+      "style": {
+        "padding": "20px 21px",
+        "radius": "15px",
+        "font": "Inter, ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", Arial, sans-serif",
+        "background": "rgb(255, 255, 255)",
+        "colour": "rgb(34, 59, 83)",
+        "width": 560.8125
+      }
+    },
+    {
+      "enabled": false,
+      "width": 1440,
+      "theme": "dark",
+      "style": {
+        "padding": "20px 21px",
+        "radius": "15px",
+        "font": "Inter, ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", Arial, sans-serif",
+        "background": "rgb(30, 41, 59)",
+        "colour": "rgb(241, 245, 249)",
+        "width": 560.8125
+      }
+    },
+    {
+      "enabled": false,
+      "width": 390,
+      "theme": "light",
+      "style": {
+        "padding": "17px",
+        "radius": "15px",
+        "font": "Inter, ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", Arial, sans-serif",
+        "background": "rgb(255, 255, 255)",
+        "colour": "rgb(34, 59, 83)",
+        "width": 293
+      }
+    },
+    {
+      "enabled": false,
+      "width": 390,
+      "theme": "dark",
+      "style": {
+        "padding": "17px",
+        "radius": "15px",
+        "font": "Inter, ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", Arial, sans-serif",
+        "background": "rgb(30, 41, 59)",
+        "colour": "rgb(241, 245, 249)",
+        "width": 293
+      }
+    }
+  ],
+  "unchangedSourceHashes": {
+    "interface/screens/settings.html": "b4502d6d8e09275c23c945a3b5255f5744501ef0c8ba2f095264ac4886e485b1",
+    "interface/styles/settings.css": "9efef942d7f113d55ee5bcd17905724fcb477c62150c003aff2a2a679d9e618b",
+    "interface/styles/components.css": "82163f2918063cd710a26121db3a662cf8832f10e4b6612d14462e93234d7d2c",
+    "interface/styles/staff.css": "05d5c8622fb540f605d08f16aefa6806f66d6da38c871080e97931be8838cdd6",
+    "interface/staff-directory.js": "3f75719151471448a51e8de58be26580acf3b030ba2ba505e89ac7e022a4c864",
+    "interface/design-sources.json": "592f9e2357101d2bc4a82b34c4d9a502bf286f4e0305a671143ce1e4cef03812"
+  },
+  "pageErrors": [],
+  "checks": [
+    "Default Off",
+    "Additional Features",
+    "Saved Choice",
+    "Cancel Sends No POST",
+    "Existing Cards Preserved",
+    "Retained Data And Security",
+    "Keyboard Toggle",
+    "Independent Permissions",
+    "No Stock API Or Navigation",
+    "Responsive Light And Dark"
+  ]
+}

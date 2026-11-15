@@ -1,6 +1,6 @@
 # Roles, Section Permissions And MFA
 
-> **Draft v2.2 — Not Published / Not Production Guidance.** This describes development merged through Batch 3.4 at `05b162aa10a74994c970d0b6dbf111dc59b47513` (schema 15). Batch 3.4 manual acceptance is deferred, not passed. v2.1 remains the published release. These are feature instructions for an authorised test instance, not installation, upgrade or restore steps.
+> **Draft v2.2 — Not Published / Not Production Guidance.** This guide includes the separate Batch 3.6 review branch (schema 16), based on `milestone-1` at `2e6c50ba4777b7500258d2a1a28317764d806020`. Batch 3.6 is not merged or released. Batch 3.4 manual acceptance remains deferred. Use the published v2.1 guides for production; these are not installation, upgrade or restore instructions.
 
 Only authorised administrators manage Caffoot accounts, roles, section permissions and MFA administration through **Staff → Permissions**. Directory editing is not account administration.
 
@@ -10,7 +10,7 @@ The existing permission controls cover **Devices**, **IPAM**, **Racks**, **Staff
 
 - **Staff Members** and **Departments** are core sections, but still require their own permissions.
 - **Devices**, **IPAM** and **Network Racks** also require their organisation feature switches to be enabled.
-- **IT Assets** permissions can be configured, but effective access remains unavailable until its separately approved optional feature is implemented. A grant cannot enable it.
+- **IT Assets** uses its own organisation switch and existing Read/Edit rights on the Batch 3.6 review branch. The switch defaults off and a grant cannot enable it. Enabling the switch grants no Staff Members, Departments or Devices access. Stock screens and actions are not available yet.
 - **Devices Edit** permits eligible initial Device assignments. Its restricted recipient search does not grant access to Staff contacts, general directory records or account details.
 - A normal linked employee can use **My Equipment** without inventory Read/Edit. Department membership gives no general section access.
 

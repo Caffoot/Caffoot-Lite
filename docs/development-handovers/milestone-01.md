@@ -1,6 +1,26 @@
 # Milestone 01 Development Handover — v2.2 Target
 
-> **Current status, 15 November 2026:** v2.2 remains an unreleased Milestone 01 target; published v2.1 remains the current release. Public documentation corrections merged into `main` via PR #384 at `3d66c3ee6fd9d9c51ecbdd5822bc1c4fe98b8e7b`. Stage 1 is accepted and merged via PR #358. Stage 2 is accepted through PR #376 at `519842b46861c85fde0eebf78298117c2346599d`, with the later Optional Features design correction merged via PR #380. Stage 3 Batches 3.1–3.4 are merged via PRs #377, #378, #381 and #382; the last application implementation checkpoint is `05b162aa10a74994c970d0b6dbf111dc59b47513` (schema 15). Approved public documentation was subsequently synchronised to `milestone-1` by PR #385 at `47c2ebe3d9249199c0c42dc71fd571b9f6411641`; the schema and application behaviour remain unchanged. Batch 3.4 manual acceptance is deferred, not passed. Later Stage 3 batches and Stages 4–6 remain pending. Initial Device eligibility remains Desktop, Laptop and Printer only. The owner approved the four-tab Department Details preview and authorised Batch 3.5 on 15 November. Integration on `feat/department-details` is under review; this does not constitute final acceptance or merge approval. See the [correction checks and limits](evidence/pre-batch-35-documentation/Report.md). The [pre-Batch 3.5 documentation corrections](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-6891608596) and [draft v2.2 user guides](../how-tos/features-and-instructions/v2.2-draft/README.md) do not authorise Batch 3.5, deployment, publication or a merge to `main`. Track remaining work in [#351](https://github.com/Caffoot/Caffoot-Lite/issues/351) and [#366](https://github.com/Caffoot/Caffoot-Lite/issues/366). Dated sections below preserve earlier checkpoints and their then-current statuses.
+> **Current status, 15 November 2026:** v2.1 remains the published release. `milestone-1` is verified at `2e6c50ba4777b7500258d2a1a28317764d806020` following Batch 3.5 merge PR #386, still schema 15. Batch 3.6 IT Assets foundation is on `feat/it-assets-foundation` for draft review at schema 16; it is not merged, accepted or released. It adds the independent default-off switch, empty stock tables, optional Minimum Stock Level and specification-correction safeguards. Stock workflows remain unimplemented. Batch 3.4 native acceptance remains deferred. Earlier checkpoints and their then-current statuses are retained below. See [Development Status](../development-guide/Development-Status.md), [IT Assets Foundation](../development-guide/IT-Assets-Foundation.md) and the [Batch 3.6 evidence](evidence/it-assets-foundation/Report.md).
+
+## Batch 3.6 IT Assets Foundation — Draft Review, 15 November 2026
+
+Started from verified `milestone-1` HEAD `2e6c50ba4777b7500258d2a1a28317764d806020`.
+The dedicated `feat/it-assets-foundation` branch adds Schema 16, four empty stock
+tables and the independent default-off IT Assets switch in the existing Additional
+Features group. Existing rights, MFA, accounts, Devices and assignments are retained.
+No existing Device becomes stock and no opening quantities or movements are created.
+
+The owner's two amendments are included: a nullable quantity-only Minimum Stock
+Level, and attributed metadata-only specification corrections with immutable
+before/after values. There is no fifth table or user-facing correction workflow.
+Tracking mode remains locked after movement or linked assignment history.
+
+Focused results: **90 backend/HTTP/migration/regression tests passed**, plus the
+real HTTPS/SQLite Chromium browser test with **eight desktop/mobile light/dark
+enabled/disabled captures**. The Function Index contains 852 checked definitions.
+See [the implementation report, screenshots and limits](evidence/it-assets-foundation/Report.md).
+Runtime source is checkpoint `4efb32b`. Product-owner visual acceptance, merge and
+release remain separate; Batch 3.4 native acceptance remains deferred.
 
 ## Batch 3.5 Department Details — Implementation Checkpoint, 15 November 2026
 

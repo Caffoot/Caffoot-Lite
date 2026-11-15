@@ -1,6 +1,6 @@
 # Departments And Shared Equipment
 
-> **Draft v2.2 — Not Published / Not Production Guidance.** This describes development merged through Batch 3.4 at `05b162aa10a74994c970d0b6dbf111dc59b47513` (schema 15). Batch 3.4 manual acceptance is deferred, not passed. v2.1 remains the published release. These are feature instructions for an authorised test instance, not installation, upgrade or restore steps.
+> **Draft v2.2 — Not Published / Not Production Guidance.** This describes Department features merged through Batch 3.5 at `2e6c50ba4777b7500258d2a1a28317764d806020` (schema 15). Batch 3.4 manual acceptance remains deferred. v2.1 remains the published release. These are feature instructions for an authorised test instance, not installation, upgrade or restore steps.
 
 Departments are simple, flat groups, such as a fictional **Accounts** Department. Membership does not grant inventory, directory or account-administration rights.
 
@@ -23,11 +23,11 @@ For example, a Printer assigned to Accounts remains owned by that Department. It
 
 A linked employee in Accounts sees the Printer under **My Equipment → Shared with My Department**, without gaining general inventory access. Their personal equipment remains separate. Changing membership changes shared visibility on the next request without moving the Printer.
 
-## Department Details — Batch 3.5 draft review
+## Department Details — Unreleased v2.2
 
-The owner approved the functional preview on 15 November. The screen is implemented
-on the separate `feat/department-details` review branch; it is not merged or finally
-accepted. It uses the existing application styling.
+The owner approved the functional preview on 15 November. The screen was merged into
+`milestone-1` through PR #386 at `2e6c50ba4777b7500258d2a1a28317764d806020`.
+It uses the existing application styling and remains unreleased.
 
 1. Open **Staff → Departments** and choose **View Details** beside a Department.
 2. **Overview** shows the recorded name, status and membership availability. Staff and

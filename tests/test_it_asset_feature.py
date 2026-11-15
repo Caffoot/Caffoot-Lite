@@ -138,4 +138,3 @@ class ItAssetsHttpTests(unittest.TestCase):
             self.assertEqual(len(rows), 2)
             self.assertEqual([row["changes"][0]["label"] for row in rows], ["it_assets"] * 2)
             self.assertEqual([row["actorId"] for row in rows], [1, 1])
-

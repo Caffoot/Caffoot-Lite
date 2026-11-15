@@ -1,12 +1,12 @@
 # Optional Features, Basic IPv4 And Link To IPAM
 
-> **Draft v2.2 — Not Published / Not Production Guidance.** This describes development merged through Batch 3.4 at `05b162aa10a74994c970d0b6dbf111dc59b47513` (schema 15). Batch 3.4 manual acceptance is deferred, not passed. v2.1 remains the published release. These are feature instructions for an authorised test instance, not installation, upgrade or restore steps.
+> **Draft v2.2 — Not Published / Not Production Guidance.** This guide includes the separate Batch 3.6 review branch (schema 16), based on `milestone-1` at `2e6c50ba4777b7500258d2a1a28317764d806020`. Batch 3.6 is not merged or released. Batch 3.4 manual acceptance remains deferred. Use the published v2.1 guides for production; these are not installation, upgrade or restore instructions.
 
 ## Optional Sections
 
-An administrator opens **Settings & Data → Optional Features** to enable or disable **Devices**, **IP Address Management** or **Network Racks**. Disabling asks for confirmation; Cancel retains the setting. Saved data and permissions are retained and become available again under the same permissions when re-enabled.
+An administrator opens **Settings & Data → Optional Features** to enable or disable **Devices**, **IP Address Management**, **Network Racks** or **IT Assets**. Disabling asks for confirmation; Cancel retains the setting. Saved data and permissions are retained and become available again under the same permissions when re-enabled.
 
-A feature switch does not grant access. Each user still needs the relevant Read/Edit permission. Staff Members and Departments are core, not optional switches. Suppliers and Equipment Lifecycle are shown as unavailable future features. IT Assets is independently optional in the approved plan, but its switch and stock functionality are not implemented yet.
+A feature switch does not grant access. Each user still needs the relevant Read/Edit permission. Staff Members and Departments are core, not optional switches. Suppliers and Equipment Lifecycle are shown as unavailable future features. On the Batch 3.6 review branch, **IT Assets** has its own switch under **Additional Features**. It is disabled by default on fresh installations and upgrades. Enabling it stores the organisation's choice; stock screens and actions are not available yet. It does not classify existing Devices as stock.
 
 Fresh installations default the optional sections off. The existing-installation schema-13 migration preserves working Devices/IPAM/Racks access by initially enabling those three; subsequent restarts retain saved choices. These facts are not instructions to upgrade a production installation.
 

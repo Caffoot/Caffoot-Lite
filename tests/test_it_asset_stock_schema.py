@@ -507,4 +507,3 @@ class StockConstraintTests(unittest.TestCase):
             with concurrent.futures.ThreadPoolExecutor(max_workers=2) as pool:
                 results = list(pool.map(lambda _: issue(), range(2)))
             self.assertEqual(sorted(results), [False, True])
-
