@@ -1,6 +1,6 @@
 # Milestone 01 Development Handover — v2.2 Target
 
-> **Current status, 15 November 2026:** v2.1 remains published. `milestone-1` is verified at `774dee3ecaaf1d50ba94dbf55891aa4b79b853c5` after Batch 3.6 merge PR #387, schema 16. Batch 3.7 Receive Stock, Stock Inventory and readiness are implemented on `feat/it-assets-stock-intake` for draft review, not merged or visually accepted. The foundation schema is unchanged. Batch 3.4 native acceptance remains deferred; later stock workflows and Stages 4–6 remain pending. Earlier dated checkpoints retain their then-current statuses. See [Development Status](../development-guide/Development-Status.md), [Stock Intake](../development-guide/IT-Assets-Stock-Intake.md) and [evidence](evidence/stock-intake/Report.md).
+> **Current status, 15 November 2026:** Batch 3.7/PR #388 is merged and visually accepted at `milestone-1` HEAD `7f91f5d42feb3916cfab060abd5ca4b1558a92ba`. v2.1 remains published. Batch 3.8 is work in progress on `feat/it-assets-issue-return-writeoff`: the first checkpoint adds the narrowly approved Schema 17 assignment closure guards, with 44 focused tests passed. Issue/return/write-off workflows and interface verification are pending. See [the technical guide](../development-guide/IT-Assets-Issue-Return-and-Write-Off.md) and [checkpoint evidence](evidence/stock-circulation/Report.md). Batch 3.4 native acceptance and Stage 6 acceptance remain deferred. Earlier dated checkpoints retain their then-current statuses.
 
 ## Batch 3.7 Receive Stock And Stock Inventory — Draft Review, 15 November 2026
 

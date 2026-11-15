@@ -12,6 +12,7 @@ For the full source-pinned list of named declarations, owning bridge methods and
 | --- | --- | --- |
 | [`backend/server.py`](../../backend/server.py) | `Handler.do_GET`, `Handler.do_POST`, `Handler.handle_import`, `main` | HTTPS entry point and request routing |
 | [`backend/schema.py`](../../backend/schema.py) | `SCHEMA_VERSION`, `initialise_database` | SQLite definitions and migrations |
+| [`backend/assignment_closure.py`](../../backend/assignment_closure.py) | `migrate_assignment_closure`, `validate_assignment_closure` | Schema 17 one-way closure linked to a permanent stock fact and audit; see [Stock Circulation](IT-Assets-Issue-Return-and-Write-Off.md) |
 | [`backend/stock_intake.py`](../../backend/stock_intake.py) | `receive_stock`, `update_stock_readiness`, `read_stock` | Protected, atomic receipt/readiness records and stock/history projections; see [Stock Intake](IT-Assets-Stock-Intake.md) |
 | [`interface/stock-intake.js`](../../interface/stock-intake.js) | `renderStock`, `hydrateStock` | Existing-style Receive Stock, Stock Inventory and Receipt History views |
 | [`backend/stock_schema.py`](../../backend/stock_schema.py) | `migrate_it_asset_stock`, `validate_it_asset_stock` | Empty stock foundation, retained feature choices and permanent-history guards; see [IT Assets Foundation](IT-Assets-Foundation.md) |
