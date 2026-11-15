@@ -30,6 +30,11 @@ def assignment_recipients(connection, actor_id, *, query='', kind='staff', limit
 
 def device_assignment_dependency(connection, device_id, record):
     """An initial allocation records a holder; it never declares stock or readiness."""
+    if connection.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name='it_asset_stock_units'").fetchone():
+        if connection.execute('''SELECT 1 FROM it_asset_stock_units u
+            JOIN it_asset_stock_entries e ON e.stock_unit_id=u.id
+            JOIN it_asset_stock_movements m ON m.id=e.movement_id WHERE u.device_id=? LIMIT 1''',(device_id,)).fetchone():
+            return 'This Device is unavailable for initial allocation. Its existing equipment history must be retained.'
     if connection.execute('SELECT 1 FROM device_assignments WHERE device_id=? LIMIT 1', (device_id,)).fetchone():
         return 'This Device has assignment history. Return and reissue require the later equipment preparation workflow.'
     if record.get('status', 'Active') != 'Active':

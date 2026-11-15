@@ -14,7 +14,7 @@ from backend.permissions import can_access
 from backend.request_auth import csrf_for_session
 from backend.stock_intake import receive_stock, stock_item, update_stock_readiness
 from backend.stock_circulation import (issue_stock, read_stock_issues, stock_recipients,
-    return_stock, prepare_stock, registered_stock_devices)
+    return_stock, prepare_stock, registered_stock_devices, write_off_stock, canonical_device_choice)
 from test_stock_intake import receipt_payload
 import test_stock_intake as intake_fixture
 import test_feature_settings_http as feature_http
@@ -35,6 +35,11 @@ def return_payload(source, **overrides):
 def preparation_payload(item, **overrides):
     return dict(dict(operationId=uuid.uuid4().hex,stockItemId=item['id'],version=item['version'],quantity=1,
         checkedOn='2026-11-15',checks=dict(cleanedWorking=True,wipedReset=False),note=''),**overrides)
+
+
+def writeoff_payload(item, **overrides):
+    return dict(dict(operationId=uuid.uuid4().hex,stockItemId=item['id'],version=item['version'],
+        quantity=1,fromState='ready',writtenOffOn='2026-11-15',reason='Beyond use',note=''),**overrides)
 
 
 class StockCirculationTests(unittest.TestCase):
@@ -62,7 +67,7 @@ class StockCirculationTests(unittest.TestCase):
     def return_equipment(self, payload):
         return return_stock(self.db,1,self.token,payload)
 
-    def legacy_device(self):
+    def legacy_device(self, *, assigned=True):
         from backend.device_assignments import assign_devices
         record=dict(id='canonical',name='Fictional Laptop',type='Laptop',status='Active',
             primaryIp='192.0.2.10',rackId='retained-rack',location='Original Location',
@@ -71,8 +76,10 @@ class StockCirculationTests(unittest.TestCase):
         self.db.execute('INSERT INTO inventory_devices(id,name,record_json,ordinal) VALUES(?,?,?,0)',
                         ('canonical',record['name'],json.dumps(record)))
         self.db.commit()
-        assign_devices(self.db,1,self.token,dict(recipientKind='staff',recipientId='person',devices=[dict(id='canonical',revision=0)]))
-        return read_stock_issues(self.db,1)['deviceAssignments'][0]
+        if assigned:
+            assign_devices(self.db,1,self.token,dict(recipientKind='staff',recipientId='person',devices=[dict(id='canonical',revision=0)]))
+            return read_stock_issues(self.db,1)['deviceAssignments'][0]
+        return canonical_device_choice(self.db,'canonical')
 
     def unchanged(self, exception, operation):
         before=tuple(self.db.iterdump())
@@ -342,6 +349,106 @@ class StockCirculationTests(unittest.TestCase):
                 self.assertEqual(sorted(pool.map(save,range(2))),[False,True])
             with sqlite3.connect(path) as db:
                 self.assertEqual(read_stock_issues(db,1)['issues'][0]['outstanding'],2)
+
+    def test_writeoff_removes_only_the_selected_physical_state(self):
+        identity=self.receipt(10,ready=6)
+        item=stock_item(self.db,identity)
+        write_off_stock(self.db,1,self.token,writeoff_payload(item,quantity=2))
+        item=stock_item(self.db,identity)
+        self.assertEqual(item['balances'],dict(physicallyHeld=8,readyToIssue=4,awaitingChecks=4))
+        write_off_stock(self.db,1,self.token,writeoff_payload(item,fromState='awaiting_checks',quantity=3))
+        item=stock_item(self.db,identity)
+        self.assertEqual(item['balances'],dict(physicallyHeld=5,readyToIssue=4,awaitingChecks=1))
+        self.assertEqual(item['stateBalances']['writtenOff'],5)
+        self.unchanged(ValueError,lambda:write_off_stock(self.db,1,self.token,writeoff_payload(item,quantity=5)))
+
+    def test_issued_individual_writeoff_preserves_holder_without_fabricating_a_return(self):
+        identity=self.receipt(1,individual=True)
+        unit=stock_item(self.db,identity)['units'][0]['id']
+        self.issue(identity,stockUnitIds=[unit])
+        source=self.outstanding()
+        payload=writeoff_payload(dict(id='unused',version=source['version']),fromState='issued')
+        del payload['stockItemId'];payload['issueEntryId']=source['id']
+        write_off_stock(self.db,1,self.token,payload)
+        item=stock_item(self.db,identity)
+        self.assertEqual(item['balances']['physicallyHeld'],0)
+        self.assertEqual(item['stateBalances']['writtenOff'],1)
+        self.assertEqual(read_stock_issues(self.db,1)['issues'][0]['outstanding'],0)
+        self.assertEqual(read_stock_issues(self.db,1)['issues'][0]['staffId'],'person')
+        self.assertEqual(item['units'][0]['id'],unit)
+        self.assertEqual(self.db.execute("SELECT count(*) FROM it_asset_stock_movements WHERE kind='returned'").fetchone(),(0,))
+        self.unchanged(ValueError,lambda:self.issue(identity,stockUnitIds=[unit]))
+
+    def test_assigned_device_writeoff_closes_once_and_does_not_write_off_other_equipment(self):
+        self.legacy_device()
+        identity=self.receipt(1,individual=True)
+        unit=stock_item(self.db,identity)['units'][0]['id']
+        self.issue(identity,stockUnitIds=[unit])
+        source=canonical_device_choice(self.db,'canonical')
+        original=self.db.execute('SELECT * FROM inventory_devices').fetchall()
+        payload=writeoff_payload(dict(id='unused',version=source['version']),fromState='unrecorded')
+        del payload['stockItemId'];payload['deviceId']='canonical'
+        result=write_off_stock(self.db,1,self.token,payload)
+        self.assertEqual(write_off_stock(self.db,1,self.token,payload),result)
+        self.assertIsNotNone(self.db.execute('SELECT ended_at FROM device_assignments').fetchone()[0])
+        self.assertEqual(self.db.execute('SELECT * FROM inventory_devices').fetchall(),original)
+        self.assertEqual(self.outstanding()['stockUnitId'],unit)
+        self.assertEqual(registered_stock_devices(self.db)[0]['states'],dict(written_off=1))
+        self.assertEqual(self.db.execute("SELECT count(*) FROM it_asset_stock_movements WHERE kind='returned'").fetchone(),(0,))
+
+    def test_unassigned_device_writeoff_never_invents_held_stock_or_changes_device_status(self):
+        source=self.legacy_device(assigned=False)
+        original=self.db.execute('SELECT * FROM inventory_devices').fetchall()
+        payload=writeoff_payload(dict(id='unused',version=source['version']),fromState='unrecorded')
+        del payload['stockItemId'];payload['deviceId']='canonical'
+        write_off_stock(self.db,1,self.token,payload)
+        self.assertEqual(self.db.execute('SELECT * FROM inventory_devices').fetchall(),original)
+        self.assertEqual(self.db.execute('SELECT count(*) FROM device_assignments').fetchone(),(0,))
+        self.assertEqual(registered_stock_devices(self.db)[0]['states'],dict(written_off=1))
+        self.assertEqual(self.db.execute('SELECT kind FROM it_asset_stock_movements').fetchall(),[('written_off',)])
+        from backend.device_assignments import assign_devices
+        self.db.execute("UPDATE organisation_features SET enabled=0 WHERE feature='it_assets'")
+        self.db.commit()
+        self.unchanged(FileExistsError,lambda:assign_devices(self.db,1,self.token,
+            dict(recipientKind='staff',recipientId='person',devices=[dict(id='canonical',revision=0)])))
+
+    def test_writeoff_requires_reason_live_rights_and_matching_version(self):
+        identity=self.receipt()
+        item=stock_item(self.db,identity)
+        for changes in (dict(reason=' '),dict(quantity=0),dict(quantity=-1),dict(quantity=True),dict(fromState='issued')):
+            self.unchanged(ValueError,lambda:write_off_stock(self.db,1,self.token,writeoff_payload(item,**changes)))
+        self.unchanged(PermissionError,lambda:write_off_stock(self.db,2,'a'*64,writeoff_payload(item)))
+        stale=writeoff_payload(item)
+        write_off_stock(self.db,1,self.token,writeoff_payload(item))
+        self.unchanged(FileExistsError,lambda:write_off_stock(self.db,1,self.token,stale))
+        source=self.legacy_device(assigned=False)
+        self.db.execute("UPDATE account_permission_overrides SET level='edit' WHERE account_id=2 AND section='IT Assets'")
+        self.db.commit()
+        payload=writeoff_payload(dict(id='unused',version=source['version']),fromState='unrecorded')
+        del payload['stockItemId'];payload['deviceId']='canonical'
+        self.unchanged(PermissionError,lambda:write_off_stock(self.db,2,'a'*64,payload))
+
+    def test_held_device_writeoff_keeps_its_return_and_preparation_history(self):
+        source=self.legacy_device()
+        returned=return_payload(source)
+        returned['deviceAssignmentId']=returned.pop('issueEntryId')
+        self.return_equipment(returned)
+        unit=registered_stock_devices(self.db)[0]['stockUnitId']
+        source=canonical_device_choice(self.db,'canonical')
+        payload=writeoff_payload(dict(id='unused',version=source['version']),fromState='awaiting_preparation')
+        del payload['stockItemId'];payload['deviceId']='canonical'
+        write_off_stock(self.db,1,self.token,payload)
+        self.assertEqual(registered_stock_devices(self.db)[0]['stockUnitId'],unit)
+        self.assertEqual(registered_stock_devices(self.db)[0]['states']['written_off'],1)
+        self.assertEqual(self.db.execute('SELECT kind FROM it_asset_stock_movements ORDER BY id').fetchall(),[('returned',),('written_off',)])
+
+    def test_writeoff_audit_failure_keeps_assignment_and_canonical_identity(self):
+        source=self.legacy_device()
+        choice=canonical_device_choice(self.db,source['deviceId'])
+        payload=writeoff_payload(dict(id='unused',version=choice['version']),fromState='unrecorded')
+        del payload['stockItemId'];payload['deviceId']=choice['deviceId']
+        with patch('backend.stock_circulation.record_actor_event',side_effect=RuntimeError('Injected audit failure')):
+            self.unchanged(RuntimeError,lambda:write_off_stock(self.db,1,self.token,payload))
 
 
 class StockCirculationHttpTests(unittest.TestCase):

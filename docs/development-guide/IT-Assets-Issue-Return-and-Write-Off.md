@@ -130,3 +130,30 @@ No new data-bearing field or screen is introduced by this checkpoint.
 **Actual focused result:** 56 tests passed across circulation, intake, closure and
 history privacy. Standalone Write Off, equipment projections, UI and final complete
 verification remain pending. The open clarification is not final acceptance.
+
+## Checkpoint 4: Standalone Write Off Backend
+
+`POST /api/it-assets/write-off` records a mandatory reason, Date Written Off,
+quantity, selected state and optional note. It supports held quantity/individual
+stock, an original outstanding individual issue, or a canonical physical Device.
+The server verifies the exact state and version and records permanent attributed
+facts atomically. It cannot make stock negative or process an identity twice.
+
+An issued identified item goes directly to Written Off; no physical return or
+Ready state is invented. A canonical Device requires both Edit permissions and
+enabled features. Its original assignment closes under the guarded journal/audit
+contract. An explicitly written-off Device which was never recorded as stock gets
+only its permanent identity link and write-off fact: no held balance, receipt or
+return is fabricated. Device JSON/status, addresses, Rack and Location are retained.
+Other accessories/issued equipment are not written off automatically.
+
+Recorded Device stock history blocks the ordinary initial-allocation path, even
+when IT Assets is later disabled. This does not enable Device reissue or alter
+unrelated initial-allocation eligibility. The sanctioned reissue path remains
+Batch 3.9. Canonical Device choices expose only permitted equipment identity/state
+fields, with no notes, account details or unrelated Device properties.
+
+**Actual focused result:** 61 tests passed across circulation, closure, existing
+Device allocations and history privacy. The outstanding type-check clarification
+still applies to preparation; it does not prevent Write Off. Equipment projections,
+interface, full final verification and screenshots remain pending.

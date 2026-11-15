@@ -67,3 +67,21 @@ Device types beyond the explicitly covered computers and non-data examples.
 Other Device types are blocked from Ready pending that answer; no assumed wipe
 rule is advertised as approved. Standalone Write Off, Staff/Department/My Equipment
 integration, browser/UI, full suites and final evidence remain work in progress.
+
+## Checkpoint 4
+
+Standalone Write Off handles selected held states, issued individual Assets and
+canonical Devices, with mandatory reason/date/actor and retry/version protection.
+Issued Device closure is atomic and creates no return. Existing Device JSON and
+other equipment are retained; unrecorded Devices never acquire fabricated held stock.
+
+```sh
+PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=tests:. python3 -m unittest test_stock_circulation test_assignment_closure test_device_assignments test_history_permissions -v
+```
+
+**61 tests passed:** [log](checkpoint-04.log). Checks include Ready/Awaiting stock
+balances, issued identities, held/assigned/unassigned canonical Device cases,
+unchanged operational records, no automatic accessory write-off, failed-audit
+rollback, duplicate/stale/reason/permission rejection and initial-allocation bypass
+protection with IT Assets disabled. No full suite or UI acceptance is claimed.
+The preparation type-mapping question remains open; checkpoints 5–6 are pending.

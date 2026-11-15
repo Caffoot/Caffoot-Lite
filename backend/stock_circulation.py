@@ -106,13 +106,19 @@ def read_stock_issues(connection, actor):
     if not devices:
         issues=[issue for issue in issues if not issue['deviceAssignmentId']]
     assignments=[]
+    choices=[]
     if devices:
         for identity, in connection.execute('''SELECT a.id FROM device_assignments a WHERE a.ended_at IS NULL
             AND NOT EXISTS(SELECT 1 FROM it_asset_stock_entries e JOIN it_asset_stock_movements m ON m.id=e.movement_id
                 WHERE e.device_assignment_id=a.id AND m.kind='issued') ORDER BY a.id DESC'''):
             assignments.append(legacy_device_issue(connection,identity))
+        for identity, in connection.execute('SELECT id FROM inventory_devices ORDER BY name,id'):
+            choice=canonical_device_choice(connection,identity)
+            if choice['physical']:
+                choices.append(choice)
     return dict(issues=issues,deviceAssignments=assignments,
-                registeredDevices=registered_stock_devices(connection) if devices else [])
+                registeredDevices=registered_stock_devices(connection) if devices else [],
+                deviceChoices=choices)
 
 
 def issue_stock(connection, actor, token, payload):
@@ -231,6 +237,8 @@ def preparation_checks(value, *, requires_wipe, ready):
 def require_stock_device_edit(connection, actor, device_id):
     if not can_access(connection,actor,'Devices',edit=True):
         raise PermissionError('Devices Edit and IT Assets Edit are required')
+    if not isinstance(device_id,str) or not device_id or len(device_id)>200:
+        raise ValueError('Invalid Device identity')
     if connection.execute("SELECT 1 FROM device_edit_reservations WHERE device_id=? AND expires_at>strftime('%s','now')",(device_id,)).fetchone():
         raise FileExistsError('Device is being edited; try again after editing finishes')
 
@@ -400,3 +408,133 @@ def stock_state_balance(connection, column, identity, state):
     return connection.execute('''SELECT coalesce(sum(e.quantity*((e.to_state IS ?)-(e.from_state IS ?))),0)
         FROM it_asset_stock_entries e JOIN it_asset_stock_movements m ON m.id=e.movement_id
         WHERE e.'''+column+'=?',(state,state,identity)).fetchone()[0]
+
+
+def canonical_device_choice(connection, identity):
+    if not isinstance(identity,str) or not identity or len(identity)>200:
+        raise ValueError('Invalid Device identity')
+    row=connection.execute('SELECT name,record_json,revision FROM inventory_devices WHERE id=?',(identity,)).fetchone()
+    if row is None:
+        raise LookupError('Device not found')
+    name,raw,revision=row
+    record=json.loads(raw)
+    unit=connection.execute('SELECT id FROM it_asset_stock_units WHERE device_id=?',(identity,)).fetchone()
+    states=stock_unit_states(connection,unit[0]) if unit else {}
+    assignment=connection.execute('SELECT id FROM device_assignments WHERE device_id=? AND ended_at IS NULL',(identity,)).fetchone()
+    latest=connection.execute('SELECT coalesce(max(movement_id),0) FROM it_asset_stock_entries WHERE stock_unit_id=?',
+                             (unit[0] if unit else None,)).fetchone()[0]
+    physical=not (record.get('isVirtual') or record.get('virtualHostId') or record.get('type') in ('Virtual Machine','Server - Virtual'))
+    return dict(deviceId=identity,name=name,category=record.get('type',''),physical=physical,
+        stockUnitId=unit[0] if unit else None,states=states,deviceAssignmentId=assignment[0] if assignment else None,
+        version=stock_digest([identity,revision,unit[0] if unit else None,latest,assignment[0] if assignment else None]))
+
+
+def write_off_stock(connection, actor, token, payload):
+    """Write off a real item once, preserving its identity and any original holder."""
+    fields={'operationId','stockItemId','stockUnitIds','issueEntryId','deviceId','version',
+            'quantity','fromState','writtenOffOn','reason','note'}
+    operation,digest=stock_operation(payload,fields,fields-{'stockItemId','stockUnitIds','issueEntryId','deviceId'})
+    if sum(key in payload for key in ('stockItemId','issueEntryId','deviceId'))!=1:
+        raise ValueError('Select one stock item, issued individual item or canonical Device')
+    key='stock:writeoff:'+str(actor)+':'+operation
+    connection.execute('BEGIN IMMEDIATE')
+    try:
+        stock_write_access(connection,actor,token)
+        replay=stock_replay(connection,key,digest)
+        if replay is not None:
+            connection.commit()
+            return replay
+        quantity=stock_quantity(payload['quantity'],'Quantity To Write Off',1)
+        written=stock_event_date(payload['writtenOffOn'],'Date Written Off')
+        reason=stock_text(payload['reason'],'Write-Off Reason',2000,required=True)
+        note=stock_text(payload['note'],'Write-Off Note',2000)
+        state=payload['fromState']
+        closures=[]
+        device_id=None
+        item_id=None
+        if 'deviceId' in payload:
+            device_id=payload['deviceId']
+            require_stock_device_edit(connection,actor,device_id)
+            item=canonical_device_choice(connection,device_id)
+            if not item['physical'] or quantity!=1 or item['states'].get('written_off',0):
+                raise ValueError('Select an available physical Device that has not been written off')
+            if item['version']!=payload['version']:
+                raise FileExistsError('Device changed. Reload before writing it off.')
+            if item['deviceAssignmentId']:
+                source=legacy_device_issue(connection,item['deviceAssignmentId'])
+                if written<source['issuedOn']:
+                    raise ValueError('Date Written Off cannot precede the original issue')
+                closures=[(source['id'],device_id)]
+            if item['stockUnitId'] is None:
+                import uuid
+                item['stockUnitId']=uuid.uuid4().hex
+                connection.execute('INSERT INTO it_asset_stock_units(id,device_id) VALUES(?,?)',(item['stockUnitId'],device_id))
+            entries=[dict(stock_unit_id=item['stockUnitId'],quantity=1,
+                snapshot_json=stock_json(dict(name=item['name'],category=item['category'],deviceId=device_id)))]
+            if not item['states']:
+                if state!='unrecorded':
+                    raise ValueError('This Device has no recorded physical stock balance')
+                entries[0]['from_state']=None
+            elif state=='issued':
+                source=next((row for row in stock_issue_records(connection) if row['deviceAssignmentId']==item['deviceAssignmentId'] and row['outstanding']==1),None)
+                if source is None:
+                    raise ValueError('Original issued Device stock reference not found')
+                entries[0].update(from_state='issued',source_issue_entry_id=source['id'],
+                    staff_id=source['staffId'],department_id=source['departmentId'],recipient_label=source['recipientLabel'])
+            elif state in ('ready','awaiting_checks','awaiting_preparation') and item['states'].get(state,0)==1:
+                entries[0]['from_state']=state
+            else:
+                raise ValueError('The Device is not held in the selected state')
+            if closures:
+                entries[0]['device_assignment_id']=closures[0][0]
+        elif 'issueEntryId' in payload:
+            identity=payload['issueEntryId']
+            if type(identity) is not int or identity<1:
+                raise ValueError('Invalid original issue')
+            source=next((row for row in stock_issue_records(connection) if row['id']==identity),None)
+            if source is None or source['stockUnitId'] is None or source['outstanding']!=1 or quantity!=1 or state!='issued':
+                raise ValueError('Select one outstanding individually identified issue')
+            if source['version']!=payload['version']:
+                raise FileExistsError('The outstanding issue changed. Reload before writing it off.')
+            if written<source['issuedOn']:
+                raise ValueError('Date Written Off cannot precede the original issue')
+            if source['deviceAssignmentId']:
+                device_id=connection.execute('SELECT device_id FROM it_asset_stock_units WHERE id=?',(source['stockUnitId'],)).fetchone()[0]
+                require_stock_device_edit(connection,actor,device_id)
+                closures=[(source['deviceAssignmentId'],device_id)]
+            entries=[dict(stock_unit_id=source['stockUnitId'],quantity=1,from_state='issued',
+                source_issue_entry_id=source['id'],staff_id=source['staffId'],department_id=source['departmentId'],
+                recipient_label=source['recipientLabel'],snapshot_json=stock_json(source['specification']))]
+            if source['deviceAssignmentId']:
+                entries[0]['device_assignment_id']=source['deviceAssignmentId']
+        else:
+            item=stock_item(connection,payload['stockItemId'])
+            item_id=item['id']
+            if item['version']!=payload['version']:
+                raise FileExistsError('Stock changed. Reload before writing it off.')
+            if state not in ('ready','awaiting_checks','awaiting_preparation'):
+                raise ValueError('Select the correct physically held state')
+            if item['trackingMode']=='quantity':
+                if 'stockUnitIds' in payload or quantity>stock_state_balance(connection,'stock_item_id',item['id'],state):
+                    raise ValueError('Quantity exceeds this item’s selected held balance')
+                entries=[dict(stock_item_id=item['id'],quantity=quantity,from_state=state,snapshot_json=stock_movement_snapshot(item))]
+            else:
+                selected=payload.get('stockUnitIds')
+                available={unit['id']:unit for unit in item['units'] if unit['balances'].get(state,0)==1 and not unit['deviceLinked']}
+                if (not isinstance(selected,list) or any(not isinstance(identity,str) for identity in selected)
+                        or len(selected)!=quantity or len(set(selected))!=quantity or set(selected)-available.keys()):
+                    raise ValueError('Select each individual unit in the stated held condition')
+                entries=[dict(stock_unit_id=identity,quantity=1,from_state=state,
+                    snapshot_json=stock_movement_snapshot(item,available[identity])) for identity in selected]
+        for entry in entries:
+            entry['to_state']='written_off'
+        movement=connection.execute('SELECT coalesce(max(id),0)+1 FROM it_asset_stock_movements').fetchone()[0]
+        result=dict(writeOffMovementId=movement,quantity=quantity)
+        publish_stock_movement(connection,actor,key,'written_off',entries,
+            dict(operationHash=digest,result=result,note=note,stockItemId=item_id,deviceId=device_id),
+            event_date=written,reason=reason,closures=closures)
+        connection.commit()
+        return result
+    except BaseException:
+        connection.rollback()
+        raise

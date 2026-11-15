@@ -6,7 +6,7 @@ Scope: named JavaScript declarations/assignments in the six application scripts,
 
 The account hydration/photo functions now have purpose-based callable bindings matching their function names: `hydrateAccount` and `removeAccountPhoto`. The immutable design manifest retains its historical integration-entry names; those metadata names are not the runtime's current function map. Pinned source paths, revisions and hashes are unchanged.
 
-**Recorded definitions: 922.** Checked against the source in this commit. This remains a definition map, not a call graph. See [coding conventions](06-Coding-and-Naming-Conventions.md) and the [code reference](07-Function-and-Code-Reference.md).
+**Recorded definitions: 924.** Checked against the source in this commit. This remains a definition map, not a call graph. See [coding conventions](06-Coding-and-Naming-Conventions.md) and the [code reference](07-Function-and-Code-Reference.md).
 
 ## interface/loader.js
 
@@ -770,10 +770,10 @@ The account hydration/photo functions now have purpose-based callable bindings m
 | [`require_assignment_access`](../../backend/device_assignments.py#L10) | 10 |
 | [`assignment_recipients`](../../backend/device_assignments.py#L15) | 15 |
 | [`device_assignment_dependency`](../../backend/device_assignments.py#L31) | 31 |
-| [`assignment_device_choices`](../../backend/device_assignments.py#L44) | 44 |
-| [`read_assignments`](../../backend/device_assignments.py#L67) | 67 |
-| [`assign_devices`](../../backend/device_assignments.py#L94) | 94 |
-| [`my_equipment`](../../backend/device_assignments.py#L146) | 146 |
+| [`assignment_device_choices`](../../backend/device_assignments.py#L49) | 49 |
+| [`read_assignments`](../../backend/device_assignments.py#L72) | 72 |
+| [`assign_devices`](../../backend/device_assignments.py#L99) | 99 |
+| [`my_equipment`](../../backend/device_assignments.py#L151) | 151 |
 
 ## backend/device_catalogue.py
 
@@ -1184,16 +1184,18 @@ The account hydration/photo functions now have purpose-based callable bindings m
 | [`publish_stock_movement`](../../backend/stock_circulation.py#L52) | 52 |
 | [`stock_issue_records`](../../backend/stock_circulation.py#L78) | 78 |
 | [`read_stock_issues`](../../backend/stock_circulation.py#L102) | 102 |
-| [`issue_stock`](../../backend/stock_circulation.py#L118) | 118 |
-| [`stock_unit_states`](../../backend/stock_circulation.py#L167) | 167 |
-| [`registered_stock_devices`](../../backend/stock_circulation.py#L178) | 178 |
-| [`legacy_device_issue`](../../backend/stock_circulation.py#L195) | 195 |
-| [`preparation_requires_wipe`](../../backend/stock_circulation.py#L213) | 213 |
-| [`preparation_checks`](../../backend/stock_circulation.py#L221) | 221 |
-| [`require_stock_device_edit`](../../backend/stock_circulation.py#L231) | 231 |
-| [`return_stock`](../../backend/stock_circulation.py#L238) | 238 |
-| [`prepare_stock`](../../backend/stock_circulation.py#L335) | 335 |
-| [`stock_state_balance`](../../backend/stock_circulation.py#L397) | 397 |
+| [`issue_stock`](../../backend/stock_circulation.py#L124) | 124 |
+| [`stock_unit_states`](../../backend/stock_circulation.py#L173) | 173 |
+| [`registered_stock_devices`](../../backend/stock_circulation.py#L184) | 184 |
+| [`legacy_device_issue`](../../backend/stock_circulation.py#L201) | 201 |
+| [`preparation_requires_wipe`](../../backend/stock_circulation.py#L219) | 219 |
+| [`preparation_checks`](../../backend/stock_circulation.py#L227) | 227 |
+| [`require_stock_device_edit`](../../backend/stock_circulation.py#L237) | 237 |
+| [`return_stock`](../../backend/stock_circulation.py#L246) | 246 |
+| [`prepare_stock`](../../backend/stock_circulation.py#L343) | 343 |
+| [`stock_state_balance`](../../backend/stock_circulation.py#L405) | 405 |
+| [`canonical_device_choice`](../../backend/stock_circulation.py#L413) | 413 |
+| [`write_off_stock`](../../backend/stock_circulation.py#L432) | 432 |
 
 ## backend/stock_intake.py
 
