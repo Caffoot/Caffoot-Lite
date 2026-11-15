@@ -65,3 +65,28 @@ inferred to be stock during migration. No destructive downgrade is provided.
 **Actual focused result:** 44 tests passed (closure, existing allocation and
 historical stock-foundation suites). See [checkpoint evidence](../development-handovers/evidence/stock-circulation/Report.md).
 Issue/return/write-off APIs and interface work are still pending at this checkpoint.
+
+## Checkpoint 2: Issue Equipment Backend
+
+`POST /api/it-assets/issue` uses existing session, Origin, CSRF and IT Assets Edit
+checks and rechecks access after taking the write lock. A request selects the
+stock item/version, positive whole quantity, eligible Staff/Department recipient,
+Date Issued and optional note. Individual stock also names each ready unit.
+Registered Device reissue is deliberately outside this stock-issue path.
+
+The live selected-item Ready quantity is authoritative. Awaiting, already-issued
+or written-off units cannot be issued. The immutable issue entries retain original
+recipient IDs/labels and unit identities; their entry IDs anchor future partial
+returns. The journal and existing attributed audit commit together. Identical
+operation-reference retries return the original result; stale or changed requests
+are refused without changes. No Device is created or modified.
+
+`GET /api/it-assets/issues` exposes genuine issue/outstanding records to authorised
+stock readers. `GET /api/it-assets/recipients` requires IT Assets Edit and reuses the
+existing restricted eligible-recipient lookup with only ID, name label and kind.
+It grants no Staff/Department directory or Devices access. Existing Device lookup
+still requires Devices Edit. No new permission or role is introduced.
+
+**Actual focused result:** 51 tests passed across stock circulation, stock intake,
+closure and existing Device allocations. Return, preparation, write-off and UI
+remain pending at this checkpoint.

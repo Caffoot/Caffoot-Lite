@@ -28,3 +28,20 @@ No full backend, Docker, browser or screenshot acceptance has been run for this
 checkpoint. Issue, return, preparation, write-off, protected projections and UI
 remain to be implemented. Product-owner visual acceptance and merge approval are
 separate. Main, releases, production and Raspberry Pi hardware are untouched.
+
+## Checkpoint 2
+
+Issue Equipment backend, immutable issue/outstanding references and the restricted
+name-only recipient lookup are implemented. Existing Device allocations remain
+independent. No return, write-off or new interface is claimed yet.
+
+```sh
+PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=tests:. python3 -m unittest test_stock_circulation test_stock_intake test_assignment_closure test_device_assignments -v
+```
+
+**51 tests passed:** [log](checkpoint-02.log). Checks include quantity/individual
+issues, Staff/Department holders, inactive/archived rejection, selected-item Ready
+limits, concurrency, retry/stale protection, audit rollback, MFA/Read/feature-off
+controls, narrow recipient privacy and protected HTTP routes. Initial fixture
+mistakes (grant column name and duplicate catalogue data) were corrected without
+changing application safeguards. Full final suites and screenshots remain pending.
