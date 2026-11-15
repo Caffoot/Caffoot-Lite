@@ -6,7 +6,7 @@ Scope: named JavaScript declarations/assignments in the five application scripts
 
 The account hydration/photo functions now have purpose-based callable bindings matching their function names: `hydrateAccount` and `removeAccountPhoto`. The immutable design manifest retains its historical integration-entry names; those metadata names are not the runtime's current function map. Pinned source paths, revisions and hashes are unchanged.
 
-**Recorded definitions: 837.** Regenerate after changing declarations or their lines. See [coding conventions](06-Coding-and-Naming-Conventions.md) and the [code reference](07-Function-and-Code-Reference.md).
+**Recorded definitions: 835.** The pre-Batch 3.5 correction removes two non-callable entries (`rows` and `controls`); the count is checked against the remaining table entries, without claiming a full regeneration. Regenerate after changing declarations or their lines. See [coding conventions](06-Coding-and-Naming-Conventions.md) and the [code reference](07-Function-and-Code-Reference.md).
 
 ## interface/loader.js
 
@@ -602,7 +602,6 @@ The account hydration/photo functions now have purpose-based callable bindings m
 | [`assignmentHistory`](../../interface/equipment.js#L14) | 14 |
 | [`staffPlaceholder`](../../interface/equipment.js#L19) | 19 |
 | [`loadStaffEquipment`](../../interface/equipment.js#L23) | 23 |
-| [`rows`](../../interface/equipment.js#L28) | 28 |
 | [`loadDeviceEquipment`](../../interface/equipment.js#L32) | 32 |
 | [`renderMyEquipment`](../../interface/equipment.js#L44) | 44 |
 | [`loadMyEquipment`](../../interface/equipment.js#L47) | 47 |
@@ -613,7 +612,6 @@ The account hydration/photo functions now have purpose-based callable bindings m
 | [`searchDevices`](../../interface/equipment.js#L82) | 82 |
 | [`leaveAssignmentDialog`](../../interface/equipment.js#L90) | 90 |
 | [`saveAssignment`](../../interface/equipment.js#L96) | 96 |
-| [`controls`](../../interface/equipment.js#L103) | 103 |
 | [`caffootEquipment.configure`](../../interface/equipment.js#L142) | 142 |
 
 ## backend/access_point_review.py

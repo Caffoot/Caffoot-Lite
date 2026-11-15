@@ -662,7 +662,7 @@ class Handler(BaseHTTPRequestHandler):
         self.respond(200, {"status": "signed in"}, cookie=session_cookie(token))
 
     def handle_equipment_request(self):
-        """Keep self-service private and all allocation writes session/CSRF protected."""
+        """Show only permitted equipment and verify the signed-in user before saving."""
         parsed = urlsplit(self.path)
         origin = self.headers.get('Origin')
         if (self.headers.get('Sec-Fetch-Site') == 'cross-site'

@@ -28,6 +28,8 @@ Approved milestone direction still awaiting dependent implementation includes:
 
 **v2.2 is not publicly installable.** No release date is promised. The [six planning milestones](docs/product-direction/PROPOSED-MILESTONES.md) organise later work without approving every proposal. Their dated original structure remains historical context, not an alternative to later issue decisions.
 
+The separate [draft v2.2 user guides](docs/how-tos/features-and-instructions/v2.2-draft/README.md) describe implemented milestone features through Batch 3.4. They are not published instructions, an approved upgrade procedure or evidence of completed manual acceptance.
+
 ## Ideas under consideration — not yet scheduled
 
 The community is welcome to suggest and discuss improvements. Current individual proposals include:

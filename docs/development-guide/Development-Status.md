@@ -4,7 +4,7 @@ Caffoot Lite **v2.1 is the published release**. Its tagged source is [c323711410
 
 ## Repository source is not a released image
 
-As verified on 15 November 2026:
+The table below records the **15 November 2026 pre-synchronisation checkpoints**. Subsequently, approved public-documentation corrections were merged into `main` via PR #384 at `3d66c3ee6fd9d9c51ecbdd5822bc1c4fe98b8e7b` and synchronised to `milestone-1` via PR #385 at `47c2ebe3d9249199c0c42dc71fd571b9f6411641`. Those documentation merges did **not** publish v2.2 or change the milestone's schema-15 application behaviour. The draft v2.2 guides are [here](../how-tos/features-and-instructions/v2.2-draft/README.md).
 
 | Source | Status | Relevant behaviour |
 | --- | --- | --- |

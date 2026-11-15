@@ -56,7 +56,7 @@ roles, MFA and account-profile details are never joined into Staff responses.
 Staff membership contains the Department ID, without exposing another section's
 list or account administration. Contact details are excluded from new audit events.
 
-## Batch 3.3 Directory Presentation Extensions (Draft)
+## Batch 3.3 Directory Presentation Extensions — Merged
 
 The Stage 3.3 integration retains the Stage 3.2 API contracts and adds the following
 small, permission-scoped outputs to support the approved forms:
@@ -81,8 +81,11 @@ small, permission-scoped outputs to support the approved forms:
   edit status and account status remain independent. The approved two-column
   layout uses the owner's accepted Cancel / Save Staff Member controls.
 
-This is part of **draft PR #381**, not yet final product acceptance. The
-original Stage 3.2 contract and all original access restrictions remain.
+Batches 3.2 and 3.3 merged via PRs #378 and #381. Batch 3.4 subsequently
+merged via PR #382 at `05b162aa10a74994c970d0b6dbf111dc59b47513` (schema 15);
+its manual acceptance is deferred, not passed. The original access restrictions
+remain. See [Device Assignments](Device-Assignments.md) and the
+[draft v2.2 user guides](../how-tos/features-and-instructions/v2.2-draft/README.md).
 
 ## Transaction And Lifecycle Rules
 
