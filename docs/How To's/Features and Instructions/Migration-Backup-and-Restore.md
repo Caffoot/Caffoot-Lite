@@ -65,7 +65,7 @@ The product owner verified a local stopped-container copy/restore on a disposabl
 - **Container recreate/update:** should retain the existing mounted data, but does not itself make a backup.
 - **v1.3.3 JSON import:** a one-way inventory migration, not a Docker database backup.
 - **Clear System / Clean Start:** a destructive inventory maintenance action, not a restore mechanism.
-- **Change History:** explains saved changes but is not a copy of the application database.
+- **Audit Trail:** explains saved changes but is not a copy of the application database.
 
 For exact deployment examples, environment names and certificate verification, follow [Docker and Portainer installation](../../../INSTALLATION.md).
 ## v2.1 upgrade and subnet-first compatibility

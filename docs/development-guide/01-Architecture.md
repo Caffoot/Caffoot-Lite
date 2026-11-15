@@ -2,11 +2,7 @@
 
 ## In simple terms
 
-The current `milestone-1` addition is schema 12 and IT Staff. It reuses the same
-role tables, permission policy, MFA flow and administrator preview/confirmation
-service. Only built-in identity constraints and the approved access-preserving
-upgrade change; no parallel permissions system, new framework or future
-departmental roles are introduced. See [IT Staff](Role-Permissions.md#configurable-built-in-roles--schema-12).
+**Version boundary:** Published v2.1 is tag `v2.1` at `c3237114108cad9f7d4e57657b6aed5e0091a5ef`, with schema 10. Repository `main` also contains the accepted, unreleased Stage 1 roles/IT Staff foundation (schema 12). Later Milestone 01 development is isolated on `milestone-1`, currently schema 15 through Batch 3.4. A merge is not a public release. See [Development Status](Development-Status.md) before using branch-specific APIs or tests.
 
 The Docker version of Caffoot Lite is a small web application, not a collection of separate services. A browser opens the application's HTTPS page; the Python server serves that page and processes its requests; SQLite stores the shared inventory and account details. A Portainer stack or Docker Compose configuration starts the same application.
 
@@ -26,7 +22,7 @@ The server listens on **HTTPS on internal port 8080**. `CAFFOOT_PORT` controls t
 
 ## A request through the application
 
-The `milestone-1` branch shares account access and MFA decisions through `backend/role_policy.py`. The server, permissions, authentication, sessions and recovery call that policy over the four schema-11 role tables. The old permission table is historical only. See [Shared Roles And Account Permissions](Role-Permissions.md); the branch remains an intermediate development build awaiting owner review and later authorised verification. Existing-account pre-login enrolment and voluntary MFA removal reuse the account services, shared policy, TOTP verifier and SQLite write transactions; they create no restricted session or separate authentication system. `backend/roles.py` uses that same policy for administrator impact previews and confirmation. Preview simulation is rolled back; confirmed values, history and affected revocation commit together. Optional existing security email is queued only afterwards. Batch 04 adds the approved interface integration without changing the schema or deployment. Its authenticated `/account` entry reuses My Account for Staff-only users; it loads own-account data and packaged static resources while inventory and administrator APIs retain their independent checks.
+The unreleased Stage 1 source on `main` shares role/MFA decisions through `backend/role_policy.py` and adds reviewed role operations and Staff-only own-account entry. These are not published v2.1 APIs. Published v2.1 uses direct section grants and the original account routes. Later Staff-directory entry and independent feature gates belong to `milestone-1`. Read [Authentication](04-Authentication-and-Permissions.md) and [Development Status](Development-Status.md) for the distinction.
 
 1. The browser loads `/setup` for initial account setup or sign-in, then `/inventory` for inventory.
 2. `server.py` serves the browser files and checks the session on API requests.

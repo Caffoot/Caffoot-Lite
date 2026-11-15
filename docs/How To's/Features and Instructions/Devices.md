@@ -2,7 +2,7 @@
 
 [← All feature guides](README.md)
 
-*The screenshots in this guide show an earlier Docker interface and are retained for orientation only. They do not depict the published v2.1 layout. Genuine v2.1 replacements require separate visual approval.*
+*The historical illustrations below show an earlier Docker interface, not the published v2.1 layout. Follow the written v2.1 instructions. [Genuine replacement captures await visual approval](../../development-guide/Public-Documentation-Corrections.md#screenshots-awaiting-approval).*
 
 ## What a device record represents
 
@@ -10,7 +10,12 @@ A device can describe a physical server, switch, workstation, printer or another
 
 The **Device Inventory** view shows saved equipment and its primary addresses. The screenshot below is from the earlier interface and uses fictional records.
 
+<details>
+<summary>Historical illustration — earlier interface</summary>
+
 ![Caffoot Lite Device Inventory listing fictional desktop and switch records with IP addresses](../../screenshots/devices-inventory.png)
+
+</details>
 
 ## Prepare before you add a device
 
@@ -24,10 +29,10 @@ The **Device Inventory** view shows saved equipment and its primary addresses. T
 Imagine recording *lab-switch-01*, a fictional switch on subnet 192.168.50.0/24. The example address 192.168.50.10 must actually be spare if you use it.
 
 1. Open **Devices** and select **Add Device**. The dialog heading is **Add New Device**.
-2. Enter a unique **Device Name**, such as *lab-switch-01*. Select **Physical device** under **Device deployment**, then a supported **Physical device type**.
-3. Under **Hardware & lifecycle**, choose a suitable **Device Status** (such as Active). Supply manufacturer, model and serial number if known. **Manage Hardware Catalogue** maintains reusable manufacturer/model suggestions.
+2. Enter a unique **Device Name**, such as *lab-switch-01*. On **General**, select the physical deployment and supported device type under **Device Identity**, and choose **Device Status** (such as Active).
+3. On **Hardware**, under **Hardware & Lifecycle**, supply manufacturer, model and serial number if known. **Manage Hardware Catalogue** maintains reusable manufacturer/model suggestions.
 4. Complete any relevant **Additional details for this device type**, such as hardware properties, installed software or supported service flags. These vary by device type.
-5. Under **Mounting & location**, choose **Device Mounting** and **Location Area**. For rack-mounted equipment, select the rack, **Face**, **Start U** and **U Height**. Use a free position for the entire height.
+5. On **General**, choose **Location Area** under **Device Identity**, then **Device Mounting** under **Mounting & Rack Configuration**. For rack-mounted equipment, select the rack, **Face**, **Start U** and **U Height**. Use a free position for the entire height.
 6. Under **Networking → Network Identity**, optionally filter by **IP Address Block**, choose **Subnet Name — CIDR** then use **Choose an Available IP Address** or enter a **Primary IP Address** in the field below it. Both choices update the same address. The read-only VLAN is taken from the subnet or displays **Not assigned**; change a VLAN on the subnet in IPAM, not on the device. If the network is missing, create it in IPAM and return to the form.
 7. Optionally fill **Notes / Details**, then select **Save Device**.
 8. Reopen the saved record and check the name, hardware, network details and location. In IPAM and Racks, verify the related records where applicable.
@@ -38,7 +43,12 @@ The application refuses invalid addresses, incompatible rack positions and other
 
 The **Details** action opens the read-only device view, with separate tabs for additional information. The screenshot below is from the earlier interface.
 
+<details>
+<summary>Historical illustration — earlier interface</summary>
+
 ![Caffoot Lite read-only switch device details with tabs for hardware, network, software and location](../../screenshots/device-details.png)
+
+</details>
 
 Select a device from the inventory. Its read-only details allow you to inspect sections such as Overview, Hardware, Network, Software, Location and History where relevant. Opening and viewing a device **does not reserve it for editing**.
 
@@ -55,7 +65,7 @@ If another user already has the reservation, the read-only screen remains availa
 
 ## Duplicate a device
 
-Use the established **Duplicate Device** action on an existing record to start a *new* record using its details as a starting point. Supply a unique hostname and primary IP. The copied serial number/IP are cleared and the mount position needs review. The source device is not overwritten.
+Use the established **Duplicate** action on an existing record to start a *new* record using its details as a starting point. Supply a unique hostname and primary IP. The copied serial number/IP are cleared and the mount position needs review. The source device is not overwritten.
 
 ## Remove or retire a device
 
@@ -63,7 +73,7 @@ Use **Device Status** to record a supported lifecycle state such as Active, Main
 
 ## Virtual machines
 
-When an eligible physical hypervisor host exists and is configured accordingly, **Device deployment** offers **Virtual Machine (VM)**. Select a suitable virtual purpose and the physical host, then record resource information such as vCPU, RAM, disk and network adapters where requested. Existing historical VM relationships are preserved.
+When an eligible physical hypervisor host exists and is configured accordingly, the deployment selector offers **Virtual Machine (VM)**. Select a suitable virtual purpose and the physical host, then record resource information such as vCPU, RAM, disk and network adapters where requested. Existing historical VM relationships are preserved.
 
 ## v2.1 Device Forms
 
@@ -93,7 +103,7 @@ Changing device type or virtual purpose refreshes the related OS, version, softw
 
 When adding a physical device, selecting a rack defaults **Location Area** to that rack's matching recorded area. A room already recorded on the rack is offered even if it is not yet in the Device location list; this does not create a managed location or save the draft automatically. You can override it freely; later rack changes will then leave your choice alone. Existing devices retain their saved location, and Duplicate initially keeps its copied location. If a rack has no matching area, choose the location normally.
 
-The read-only Details header uses one labelled × control, while the footer keeps its separate **Close** action. Keyboard/Escape and focus return remain available. Earlier acceptance scenarios are recorded in #329.
+Use the labelled × control or **Close** to leave read-only details. Escape also closes the view and returns keyboard focus to the control that opened it.
 
 ## Troubleshooting
 

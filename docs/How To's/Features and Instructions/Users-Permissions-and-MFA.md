@@ -2,15 +2,20 @@
 
 [← All feature guides](README.md)
 
-*The screenshots in this guide show an earlier Docker interface and are retained for orientation only. They do not depict the published v2.1 layout. Genuine v2.1 replacements require separate visual approval.*
+*The historical illustrations below show an earlier Docker interface, not the published v2.1 layout. Follow the written v2.1 instructions. [Genuine replacement captures await visual approval](../../development-guide/Public-Documentation-Corrections.md#screenshots-awaiting-approval).*
 
 ## Account basics
 
 Caffoot Lite has **no public registration**. The first account on a new database becomes its administrator after mandatory MFA setup. Administrators create additional users under **Users**. New users have **no inventory access until permission is granted**. This protects the inventory from accidental over-sharing.
 
-An administrator's **Users → Overview** displays account counts, roles and MFA enrolment status, as shown using fictional accounts below.
+An administrator's **Users → Overview** displays account counts, roles and MFA enrolment status. The historical illustration below uses fictional accounts; its layout differs from v2.1.
+
+<details>
+<summary>Historical illustration — earlier interface</summary>
 
 ![Caffoot Lite Users overview showing fictional account totals, roles and MFA enrolment progress](../../screenshots/users.png)
+
+</details>
 
 ## Create a user — worked example
 
@@ -33,7 +38,7 @@ The three inventory sections have individual access controls:
 
 | Section permission | Behaviour |
 | --- | --- |
-| No access | Section not available for that account |
+| No Access | Section not available for that account |
 | Read | May view authorised inventory and related details; cannot change that section |
 | Edit | May change permitted records in that section **after MFA enrolment**, subject to related field permissions |
 
@@ -93,4 +98,4 @@ See [Devices](Devices.md), [IPAM](IPAM.md), [Racks](Racks.md) and [Getting Start
 
 In My Account → Personal Details, save an optional email address and review its Verified/Not Verified status. Verify Email requires your current password, followed by the eight-digit emailed code; preserve leading zeroes. Codes expire after 15 minutes and are single-use. Editing the saved address removes verification.
 
-Forgot Password? uses **username only**, not email lookup. The neutral response does not confirm account eligibility or delivery. Recovery needs an active account, verified saved address and configured administrator SMTP delivery. Enter the recovery code, new password and authenticator when required. Recovery never bypasses MFA and a successful reset revokes existing sessions. Five failed confirmations exhaust a challenge and the durable account/purpose budget persists across resends/restarts. Delivery failures still need private provider/account investigation. See [Account Recovery](../../development-guide/Account-Recovery.md).
+Forgot Password? uses **username only**, not email lookup. The neutral response does not confirm account eligibility or delivery. Recovery needs an active account, verified saved address and configured administrator SMTP delivery. Enter the recovery code, new password and authenticator when required. Recovery never bypasses MFA and a successful reset revokes existing sessions. Five incorrect confirmation attempts use up a code. Requesting another code or restarting the server does not reset the account’s limit on failed attempts. If delivery fails, ask the administrator to check the email service privately. See [Account Recovery](../../development-guide/Account-Recovery.md).

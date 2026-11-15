@@ -2,7 +2,7 @@
 
 [← All feature guides](README.md)
 
-*The screenshots in this guide show an earlier Docker interface and are retained for orientation only. They do not depict the published v2.1 layout. Genuine v2.1 replacements require separate visual approval.*
+*The historical illustrations below show an earlier Docker interface, not the published v2.1 layout. Follow the written v2.1 instructions. [Genuine replacement captures await visual approval](../../development-guide/Public-Documentation-Corrections.md#screenshots-awaiting-approval).*
 
 ## Two different settings areas
 
@@ -10,14 +10,19 @@
 
 All signed-in users can find short, locally readable topics under **My Account → Help & Guides**, with links to these longer guides.
 
+<details>
+<summary>Historical illustration — earlier interface</summary>
+
 ![Caffoot Lite My Account Help and Guides with expandable help topics](../../screenshots/help-guides.png)
+
+</details>
 
 ## My Account — step by step
 
 1. Choose **My Account** in the top bar.
-2. Select the **Security** section to manage your password and authenticator enrolment. Follow the current prompts; entering an MFA code in the application is not the same as entering it into a documentation website.
+2. Select the **Security** section to manage your password and authenticator enrolment. Follow the on-screen prompts in Caffoot Lite.
 3. Under **Overview → Personal Preferences → Appearance**, choose **Light**, **Dark** or **System**. Your selection is stored in *this browser*. It does not change another person's appearance.
-4. Choose **Help & Guides**. Expand any existing topic to read brief instructions without depending on an external website. Select its **Read full guide** link to open the longer instructions in a *new tab*, when GitHub is reachable.
+4. Choose **Help & Guides**. Expand any existing topic to read brief instructions without depending on an external website. Select its guide link to open the longer instructions in a *new tab*, when GitHub is reachable.
 5. Choose the **About** tab for the product name, version status, documentation links and licence information.
 
 ## Settings & Data (administrator)
@@ -53,7 +58,6 @@ See [Users, Permissions and MFA](Users-Permissions-and-MFA.md) and [Migration, B
 
 ## Email and the audit trail
 
-Administrators configure optional outgoing delivery under Settings & Data → Email and can send a test message. Working test delivery does not verify an account address or prove recovery eligibility. Keep mail credentials private. Normal inventory work does not require SMTP.
+Administrators configure optional outgoing delivery under **Settings & Data → Email Settings** and can send a test message. Working test delivery does not verify an account address or prove recovery eligibility. Keep mail credentials private. Normal inventory work does not require SMTP.
 
-Audit Trail includes the approved secondary navigation before relevant cards, filters and recorded detail. Visibility and private detail are permission-filtered; limited users must not receive unrelated sections. Inventory history remains attributed and bounded, including complete bulk subnet counts with omitted-detail notices. It is not a restoration mechanism.
-
+Audit Trail offers summary and filtering controls for recorded changes. What you can see depends on your permissions; private account events and unrelated inventory sections are protected. Large bulk-subnet operations show their full count even when some individual entries are omitted. These records explain changes; they cannot restore them.

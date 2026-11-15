@@ -2,7 +2,7 @@
 
 [← All feature guides](README.md)
 
-*The screenshots in this guide show an earlier Docker interface and are retained for orientation only. They do not depict the published v2.1 layout. Genuine v2.1 replacements require separate visual approval.*
+*The historical illustrations below show an earlier Docker interface, not the published v2.1 layout. Follow the written v2.1 instructions. [Genuine replacement captures await visual approval](../../development-guide/Public-Documentation-Corrections.md#screenshots-awaiting-approval).*
 
 These instructions describe the published v2.1 workflow. Check the [installation guide](../../../INSTALLATION.md) for the versioned image and deployment safeguards.
 
@@ -14,9 +14,19 @@ You need **IPAM Edit** to create/update networks or change independent address a
 
 The following earlier-interface screenshots show fictional **Lab Network** examples in Manage Subnets and the individual IP allocation grid. They are not captures of the v2.1 layout.
 
+<details>
+<summary>Historical illustration — earlier interface</summary>
+
 ![Caffoot Lite IPAM Manage Subnets page showing a fictional Lab Network and VLAN](../../screenshots/ipam-subnets.png)
 
+</details>
+
+<details>
+<summary>Historical illustration — earlier interface</summary>
+
 ![Caffoot Lite IPAM address grid with assigned, reserved and available fictional lab addresses](../../screenshots/ipam-addresses.png)
+
+</details>
 
 ## Worked example — add one subnet
 

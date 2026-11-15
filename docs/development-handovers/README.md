@@ -6,7 +6,7 @@ Use the handover to pick up where the last session finished. The relevant GitHub
 
 ## Current work
 
-Caffoot Lite v2.1 is the published baseline. Milestone 01 development is tracked in [issue #351](https://github.com/Caffoot/Caffoot-Lite/issues/351) on `milestone-1`, with [draft PR #358](https://github.com/Caffoot/Caffoot-Lite/pull/358). The [Milestone 01 handover](milestone-01.md) records the authorised Batch 01 work and remaining integration. Completed release work stays in [historical handovers](../historical/development-handovers/).
+Caffoot Lite v2.1 is published. Milestone 01 targets unreleased v2.2: Stage 1 is accepted and merged via PR #358; Stage 2 and Stage 3 Batches 3.1–3.4 are integrated separately on `milestone-1`. Batch 3.4 manual acceptance is deferred, not passed. See [Development Status](../development-guide/Development-Status.md), the [milestone tracker #351](https://github.com/Caffoot/Caffoot-Lite/issues/351), and the [active handover](milestone-01.md). Its dated sections and [historical handovers](../historical/development-handovers/) remain evidence, not instructions to repeat completed work.
 
 ## Keeping this useful
 

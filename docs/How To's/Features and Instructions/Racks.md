@@ -2,7 +2,7 @@
 
 [← All feature guides](README.md)
 
-*The screenshots in this guide show an earlier Docker interface and are retained for orientation only. They do not depict the published v2.1 layout. Genuine v2.1 replacements require separate visual approval.*
+*The historical illustrations below show an earlier Docker interface, not the published v2.1 layout. Follow the written v2.1 instructions. [Genuine replacement captures await visual approval](../../development-guide/Public-Documentation-Corrections.md#screenshots-awaiting-approval).*
 
 ## What is recorded
 
@@ -12,13 +12,18 @@ Users require **Racks Edit** to change rack data or equipment placement. Racks R
 
 The older-interface screenshot below shows the front elevation of a fictional 12U **Lab Rack**, with a mounted switch, patch panel and vertical PDU.
 
+<details>
+<summary>Historical illustration — earlier interface</summary>
+
 ![Caffoot Lite Lab Rack front elevation showing rack units, mounted equipment and capacity details](../../screenshots/racks.png)
+
+</details>
 
 ## Worked example — create a rack
 
 Imagine a fictional **Lab Rack** in **Lab Equipment Room**. Measure your own enclosure before entering dimensions.
 
-1. Open **Racks**, then select **Add Network Rack**. The form heading is **Add Network Rack Enclosure**.
+1. Open **Network Racks**, then select **Add Rack**. The form heading is **Add Network Rack Enclosure**.
 2. Enter **Rack Name**, choose a **Rack Type**, and set **Height (U)**, **Width (mm)** and **Depth (mm)**.
 3. Choose a standard height or **Custom…** if needed. Height must be a positive whole number between **1 and 100U**, and dimensions must be valid positive millimetre values.
 4. Optionally enter **Location Room**, such as *Lab Equipment Room*.
@@ -28,10 +33,10 @@ Imagine a fictional **Lab Rack** in **Lab Equipment Room**. Measure your own enc
 
 1. Ensure the device already exists in **Devices** with a supported **Rack Mounted** mounting type. It must be eligible for placement.
 2. Open the rack and choose an unoccupied U position on the intended face.
-3. In **Rack Placement**, choose **Mount device** instead of **Add accessory**.
-4. Use **Select Device from Inventory** to choose the existing device.
-5. Confirm **Rack Face** (Front Mount or Rear Mount) and **Start U Position**, checking that enough contiguous U space is available.
-6. Choose **Mount Device**. Reopen the rack and device details to verify the recorded placement.
+3. In **Place Device / Horizontal Accessory at U…**, set **Placement Type** to **Device**.
+4. Use **Device** to choose the existing record.
+5. Confirm **Rack Face** (**Front** or **Rear**), **Start U** and **Height (U)**, checking that enough contiguous U space is available.
+6. Choose **Place Equipment**. Reopen the rack and device details to verify the recorded placement.
 
 Alternatively, where you have the required permissions, set rack, face, start U and height from the Device editor. The same rack-position permission requirements apply regardless of where you start.
 
@@ -43,7 +48,7 @@ A user with **Racks Edit but Devices Read** can use the established rack-placeme
 
 ## Add an accessory
 
-Selecting an available position opens a shared placement dialog with **Mount device** and **Add accessory** choices. Choose **Add accessory**, enter its supported details and save. Review the result in the rack display, including applicable side-rail/vertical accessories.
+Select an available U position and set **Placement Type** to **Horizontal Accessory**. Choose its type, name, face, start U and height, then select **Place Equipment**. Patch panels also offer a port count. Vertical 0U accessories use the separate controls on the side rails; they are not placed through the horizontal dialog.
 
 ## Edit the rack versus correcting dimensions
 
@@ -68,4 +73,4 @@ Related: [Devices](Devices.md), [Users and Permissions](Users-Permissions-and-MF
 
 ## Shelves And Existing Placement
 
-Supported tabletop/shelf equipment can retain an optional shelf association through its Device form. The read-only location includes the recorded shelf/rack. Shelf removal uses the existing explicit review: linked equipment must be reassigned or deliberately retired together, atomically, with required permissions. Do not delete shelves to bypass that review. Horizontal/vertical drag previews, collision checks, saved positions and successful vertical-drop scroll preservation remain. Optional same-tab printing remains optional; this release does not change its default.
+Supported tabletop/shelf equipment can retain an optional shelf association through its Device form. The read-only location includes the recorded shelf/rack. Shelf removal uses the existing explicit review: linked equipment must be reassigned or deliberately retired together, atomically, with required permissions. Do not delete shelves to bypass that review. You can also drag supported equipment to a new position; review the preview and any collision warning before saving. **Print / PDF** opens a printable view of the rack.

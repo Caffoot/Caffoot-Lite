@@ -8,14 +8,11 @@ The code keeps Devices, IPAM and Racks records in separate tables, along with ac
 
 ## Source and schema version
 
-The `milestone-1` branch uses schema 12. The accepted schema-11 four-table role
-migration is retained, followed by the configurable built-in-role constraint
-upgrade and access-preserving active-account IT Staff assignment described in
-[Shared Roles And Account Permissions](Role-Permissions.md). All steps run in
-one atomic transaction with foreign keys enabled. This is not a published release;
-the v2.1 schema/release remain unchanged. Schema 12 requires private owner acceptance.
+**Version boundary:** Published v2.1 is tag `v2.1` at `c3237114108cad9f7d4e57657b6aed5e0091a5ef`, with schema 10. Repository `main` also contains the accepted, unreleased Stage 1 roles/IT Staff foundation (schema 12). Later Milestone 01 development is isolated on `milestone-1`, currently schema 15 through Batch 3.4. A merge is not a public release. See [Development Status](Development-Status.md) before using branch-specific APIs or tests.
 
-The exact definitions are in [`backend/schema.py`](../../backend/schema.py). The 30 October 2026 checkpoint had schema 7. The later modular v2.1 baseline used schema 9: migration 8 added profiles/photos and migration 9 added email proofs. The published v2.1 database uses schema 10, adding challenge identifiers, attempt counters and durable failed-attempt timestamps; it explicitly invalidates outstanding old-format email proofs at upgrade. The function `initialise_database(connection)` applies missing numbered migrations in a transaction and rejects databases marked newer than this application.
+The table summary below describes published v2.1. Stage 1 adds `roles`, `role_grants`, `account_roles` and `account_permission_overrides`; later Staff/Department/assignment tables are on the separate milestone branch. Earlier migration steps remain transactional and are not production upgrade instructions.
+
+Read [published v2.1 schema definitions](https://github.com/Caffoot/Caffoot-Lite/blob/v2.1/backend/schema.py) for the released tables, and [`backend/schema.py`](../../backend/schema.py) for this checkout. The 30 October 2026 checkpoint had schema 7. The later modular v2.1 baseline used schema 9: migration 8 added profiles/photos and migration 9 added email proofs. The published v2.1 database uses schema 10, adding challenge identifiers, attempt counters and durable failed-attempt timestamps; it explicitly invalidates outstanding old-format email proofs at upgrade. The function `initialise_database(connection)` applies missing numbered migrations in a transaction and rejects databases marked newer than this application.
 
 | Table | Primary key and relevant columns | What it contains |
 | --- | --- | --- |

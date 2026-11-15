@@ -6,7 +6,7 @@ Welcome. This guide explains **how Caffoot Lite actually works**, from the every
 
 ## In simple terms
 
-Original Stage 1 was accepted at `53252613cf5302d8e526324c0982b8807472e251`. Current work adds [IT Staff and schema 12](Role-Permissions.md#configurable-built-in-roles--schema-12) under [issue #365](https://github.com/Caffoot/Caffoot-Lite/issues/365), preserving existing access and mandatory MFA. This additional feature requires private Raspberry Pi acceptance before any new merge decision; PR #358 remains draft. The published baseline remains v2.1. See the [active handover](../development-handovers/milestone-01.md).
+**Version boundary:** Published v2.1 is tag `v2.1` at `c3237114108cad9f7d4e57657b6aed5e0091a5ef`, with schema 10. Repository `main` also contains the accepted, unreleased Stage 1 roles/IT Staff foundation (schema 12). Later Milestone 01 development is isolated on `milestone-1`, currently schema 15 through Batch 3.4. A merge is not a public release. See [Development Status](Development-Status.md) before using branch-specific APIs or tests. The [public documentation correction record](Public-Documentation-Corrections.md) covers this review; the [active handover](../development-handovers/milestone-01.md) retains dated evidence.
 
 Caffoot Lite helps small IT teams document their devices, IP addresses, network racks and changes. The earlier HTML release saves its inventory in one browser. The Docker application keeps a **shared inventory** in a central SQLite database so authorised users see the same information.
 
@@ -24,6 +24,8 @@ For example, when somebody edits a device, the browser requests an exclusive, te
 
 | Guide | What it answers |
 | --- | --- |
+| [Published and development versions](Development-Status.md) | Which source/version a guide describes |
+| [Public documentation corrections](Public-Documentation-Corrections.md) | Audit fixes, checks and pending screenshot approval |
 | [01 — Architecture](01-Architecture.md) | What runs where, and how the components fit together |
 | [02 — Database](02-Database.md) | Which SQLite tables exist, and how changes are saved |
 | [03 — Frontend and backend](03-Frontend-and-Backend.md) | How browser actions reach backend functions and APIs |

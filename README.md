@@ -27,7 +27,7 @@ Keep track of your devices, IP addresses and network racks in one place. Caffoot
 
 ![Caffoot Lite v2.1 Network Racks in light theme, showing rack units and capacity details](caffoot-v2.1-racks-light-cropped.png)
 
-*These four images show the running v2.1 light-theme application. The IPAM crop still contains browser controls and clipped content; a corrected image is pending separate visual review.*
+*These four images show the running v2.1 light-theme application. The IPAM crop still contains browser controls and clipped content; [a corrected image is pending separate visual review](docs/screenshots/v2.1-review/README.md).*
 
 ## Install Caffoot Lite
 
@@ -51,7 +51,7 @@ See the [complete Features and Instructions user guides](docs/how-tos/features-a
 
 ## What's next?
 
-Read the [public roadmap](ROADMAP.md) for released functionality, future proposals and longer-term product direction. Published versions are listed in [GitHub Releases](https://github.com/Caffoot/Caffoot-Lite/releases); website work follows its own approval and deployment process.
+Read the [public roadmap](ROADMAP.md) for released functionality, future proposals and longer-term product direction. Published versions are listed in [GitHub Releases](https://github.com/Caffoot/Caffoot-Lite/releases); website work follows its own approval and deployment process. Milestone 01 targets **unreleased v2.2**; accepted development and pending work are distinguished in [Development Status](docs/development-guide/Development-Status.md). Only the published v2.1 installation guidance above applies to public installs.
 
 ## Help Build Caffoot Lite
 
