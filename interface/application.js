@@ -9645,7 +9645,8 @@ void (async () => {
     ['ipam','IP Address Management','<rect x="9" y="3" width="6" height="6" rx="1"/><rect x="2" y="16" width="7" height="5" rx="1"/><rect x="15" y="16" width="7" height="5" rx="1"/><path d="M12 9v4M5.5 16v-3h13v3"/>','Manage subnets, IP address allocations and VLANs. Without IPAM, Devices still offers basic IP entry.',''],
     ['racks','Network Racks','<rect x="6" y="2" width="12" height="20" rx="1"/><path d="M9 6h6M9 10h6M9 14h6M9 18h6"/>','Document racks, rack accessories and equipment placement within racks.','green'],
     ['suppliers','Suppliers','<circle cx="9" cy="8" r="3"/><path d="M3 20v-2a6 6 0 0 1 12 0v2M17 6a3 3 0 0 1 0 6m1 4a5 5 0 0 1 3 4"/>','Manage supplier records, contacts and related notes and issues.','orange'],
-    ['equipment_lifecycle','Equipment Lifecycle','<circle cx="12" cy="12" r="9"/><path d="M12 7v5l4 2"/>','Track equipment lifecycle information, warranty dates and related warnings.','']
+    ['equipment_lifecycle','Equipment Lifecycle','<circle cx="12" cy="12" r="9"/><path d="M12 7v5l4 2"/>','Track equipment lifecycle information, warranty dates and related warnings.',''],
+    ['it_assets','IT Assets','<path d="m12 3 9 5-9 5-9-5 9-5Zm-9 5v8l9 5 9-5V8M12 13v8"/>','Choose whether your organisation uses IT Assets. Stock screens and actions are not available yet.','']
   ];
   let featureSettingsPending=false;
   async function hydrateOptionalFeatureSettings(root){
@@ -9657,8 +9658,8 @@ void (async () => {
       const result=await response.json();
       if(!response.ok)throw Error(result.error||'Unable to load feature settings.');
       if(!root.isConnected)return;
-      const cards=optionalFeatureDescriptions.map(([key,label,icon,description,colour],index)=>{
-        const future=index>2,enabled=!future&&result.features[key]===true;
+      const cards=optionalFeatureDescriptions.map(([key,label,icon,description,colour])=>{
+        const future=['suppliers','equipment_lifecycle'].includes(key),enabled=!future&&result.features[key]===true;
         return renderInterfaceTemplate('settings/optional-feature-card',[key,icon,label,description,future?'Coming in Stage 4':enabled?'Enabled':'Disabled',future?'Not Available Yet':enabled?'Enabled':'Enable Feature',future?label+' — Coming in Stage 4':(enabled?'Disable ':'Enable ')+label,String(enabled),enabled?'checked':'',future?'disabled':'',colour,future?'planned':enabled?'enabled':'',future?'unavailable':'',future?'<div class="detail">This feature cannot be enabled until Stage 4 functionality is developed and approved.</div>':'',key.replaceAll('_','-')]);
       });
       root.querySelector('#optional-feature-infrastructure').innerHTML=cards.slice(0,3).join('');

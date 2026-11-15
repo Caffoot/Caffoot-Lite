@@ -5,8 +5,9 @@ email-challenge tables support the authenticated server without changing
 the published inventory import format."""
 import sqlite3
 from backend.role_policy import evaluate_role_policy
+from backend.stock_schema import migrate_it_asset_stock, validate_it_asset_stock
 
-SCHEMA_VERSION = 15
+SCHEMA_VERSION = 16
 
 DDL = """
 CREATE TABLE IF NOT EXISTS inventory_devices (
@@ -216,6 +217,12 @@ def initialise_database(connection: sqlite3.Connection) -> None:
         if SCHEMA_VERSION >= 15 and 15 not in versions:
             migrate_device_assignments(connection)
             connection.execute("INSERT INTO schema_migrations(version) VALUES(15)")
+        if SCHEMA_VERSION >= 16:
+            if 16 not in versions:
+                migrate_it_asset_stock(connection)
+                connection.execute("INSERT INTO schema_migrations(version) VALUES(16)")
+            else:
+                validate_it_asset_stock(connection)
         connection.commit()
     except BaseException:
         connection.rollback()

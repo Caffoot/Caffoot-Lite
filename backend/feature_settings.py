@@ -3,8 +3,8 @@ from backend.audit_events import record_actor_event
 from backend.permissions import _admin
 from backend.sessions import session_account
 
-FEATURES = ('devices', 'ipam', 'racks', 'suppliers', 'equipment_lifecycle')
-AVAILABLE_FEATURES = frozenset(('devices', 'ipam', 'racks'))
+FEATURES = ('devices', 'ipam', 'racks', 'suppliers', 'equipment_lifecycle', 'it_assets')
+AVAILABLE_FEATURES = frozenset(('devices', 'ipam', 'racks', 'it_assets'))
 
 
 def unique_feature_fields(pairs):

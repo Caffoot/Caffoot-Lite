@@ -64,6 +64,13 @@ class StaffDirectoryMigrationTests(unittest.TestCase):
         self.assertEqual(after.pop('device_assignments'), [])
         self.assertEqual(after.pop('departments'), [])
         staff = after.pop('staff_members')
+        for table in ('it_asset_stock_items', 'it_asset_stock_units',
+                      'it_asset_stock_movements', 'it_asset_stock_entries'):
+            self.assertEqual(after.pop(table), [])
+        self.assertEqual(
+            [row for row in after['organisation_features'] if row[0] == 'it_assets'],
+            [('it_assets', 0)])
+        after['organisation_features'].remove(('it_assets', 0))
         self.assertEqual(before, after)
         self.assertEqual(len(staff), 5)
         self.assertEqual(len({row[0] for row in staff}), 5)

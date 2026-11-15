@@ -165,7 +165,7 @@ class DeviceAssignmentTests(unittest.TestCase):
         schema.initialise_database(db)
         self.assertEqual(db.execute('SELECT * FROM inventory_devices').fetchall(), before)
         self.assertEqual(db.execute('SELECT * FROM device_assignments').fetchall(), [])
-        self.assertEqual(db.execute('SELECT max(version) FROM schema_migrations').fetchone()[0], 15)
+        self.assertEqual(db.execute('SELECT max(version) FROM schema_migrations').fetchone()[0], schema.SCHEMA_VERSION)
 
     def test_audit_failure_rolls_back_every_device_and_general_history(self):
         before = self.snapshot()

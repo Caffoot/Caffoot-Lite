@@ -1,18 +1,18 @@
 # Optional Features — Development Foundation
 
-This is unpublished v2.2 development under [issue #238](https://github.com/Caffoot/Caffoot-Lite/issues/238#issuecomment-6821230015). Stage 2 was accepted through PR #376 at `519842b46861c85fde0eebf78298117c2346599d`; the later approved Optional Features design correction merged via PR #380. Stage 3 Batches 3.1–3.4 are merged through PR #382 at `05b162aa10a74994c970d0b6dbf111dc59b47513` (schema 15); Batch 3.4 manual acceptance is deferred, not passed. The technical sections below describe the Stage 2 implementation. See the [draft v2.2 Optional Features guide](../how-tos/features-and-instructions/v2.2-draft/Optional-Features-and-Link-To-IPAM.md). No public v2.2 installation or deployment is authorised.
+This is unpublished v2.2 development under [issue #238](https://github.com/Caffoot/Caffoot-Lite/issues/238#issuecomment-6821230015). Stage 2 was accepted through PR #376 at `519842b46861c85fde0eebf78298117c2346599d`; the later approved Optional Features design correction merged via PR #380. Stage 3 Batches 3.1–3.4 are merged through PR #382 at `05b162aa10a74994c970d0b6dbf111dc59b47513` (schema 15); Batch 3.4 manual acceptance is deferred, not passed. The technical sections below include the separate, unmerged Batch 3.6 IT Assets switch and schema-16 foundation; historical Stage 2 evidence remains unchanged. See the [draft v2.2 Optional Features guide](../how-tos/features-and-instructions/v2.2-draft/Optional-Features-and-Link-To-IPAM.md). No public v2.2 installation or deployment is authorised.
 
 ## Storage And Upgrade
 
-Schema 13 adds `organisation_features`, separate from `inventory_settings`. The allowlisted keys are `devices`, `ipam`, `racks`, `suppliers` and `equipment_lifecycle`; values are booleans. SQLite also prevents enabling the two future features.
+Schema 13 adds `organisation_features`, separate from `inventory_settings`. Schema 16 on the Batch 3.6 review branch adds `it_assets` to `devices`, `ipam`, `racks`, `suppliers` and `equipment_lifecycle`; values are booleans. SQLite still prevents enabling Suppliers and Equipment Lifecycle. See [IT Assets Foundation](IT-Assets-Foundation.md) for the transaction and stock safeguards.
 
-A database with no application tables before initialisation starts with all five off. An existing database upgrading to schema 13 starts with Devices, IPAM and Network Racks on, even if its inventory is empty. Suppliers and Equipment Lifecycle stay off. The migration seeds once, in the existing schema transaction. Restart and later upgrades retain choices.
+A database with no application tables before initialisation starts with all optional features off. An existing database upgrading to schema 13 starts with Devices, IPAM and Network Racks on, even if its inventory is empty. Schema 16 preserves those saved choices and always adds IT Assets off. Suppliers and Equipment Lifecycle stay off. The migrations seed once, in the existing schema transaction. Restart and later upgrades retain choices.
 
 Inventory imports and Clean Start replace inventory settings, but never this table. Existing whole-database backup/restore includes it; there is no separate backup mechanism. No toggle changes inventory records, roles, grants or sessions. Successful transitions append attributable history with the previous and new boolean; repeated unchanged values add no event. Existing inventory history retention rules still apply.
 
 ## Administrator API
 
-`GET /api/settings/features` returns `{"features":{"devices":false,"ipam":false,"racks":false,"suppliers":false,"equipment_lifecycle":false}}` on a fresh installation. It requires a live session for an active administrator with confirmed MFA. Responses use the existing no-store policy. Cross-site requests and any supplied foreign Origin are rejected; ordinary same-origin browser GET requests need no Origin header.
+`GET /api/settings/features` returns `{"features":{"devices":false,"ipam":false,"racks":false,"suppliers":false,"equipment_lifecycle":false,"it_assets":false}}` on a fresh Schema 16 database. It requires a live session for an active administrator with confirmed MFA. Responses use the existing no-store policy. Cross-site requests and any supplied foreign Origin are rejected; ordinary same-origin browser GET requests need no Origin header.
 
 `POST /api/settings/features` uses the same identity, plus the existing configured Origin, session cookie and `X-CSRF-Token` checks. Send JSON of at most 4096 bytes:
 
@@ -26,7 +26,7 @@ Every disable request must explicitly confirm the action:
 {"feature":"devices","enabled":false,"confirmDisable":true}
 ```
 
-The interface asks for confirmation every time, including empty inventories; cancellation sends no request. `confirmDisable` is a boolean acknowledgement, not a new security proof. Unknown keys, duplicate JSON fields, non-boolean values, extra fields and any Suppliers/Lifecycle mutation are rejected. Only Devices, IPAM and Network Racks can change. Success returns the current `features` object. Missing/invalid GET authentication returns 401; insufficient rights or failed POST authentication/Origin/CSRF returns 403; invalid JSON/shape/size/choice returns 400; non-JSON POST returns 415.
+The interface asks for confirmation every time, including empty inventories; cancellation sends no request. `confirmDisable` is a boolean acknowledgement, not a new security proof. Unknown keys, duplicate JSON fields, non-boolean values, extra fields and any Suppliers/Lifecycle mutation are rejected. Devices, IPAM, Network Racks and IT Assets can change. Success returns the current `features` object. Missing/invalid GET authentication returns 401; insufficient rights or failed POST authentication/Origin/CSRF returns 403; invalid JSON/shape/size/choice returns 400; non-JSON POST returns 415.
 
 The service owns a write transaction, rechecks session validity and administrator/MFA status after obtaining the database lock, and commits the setting with its audit entry. A failure rolls both back. These endpoints do not depend on inventory section permissions.
 
@@ -83,7 +83,7 @@ It restores the Optional Features heading and explanation, the exact Your Inform
 Stays Safe banner, Infrastructure and Additional Features groups, and the source
 card icons, descriptions, dividers, bottom status badges and contextual switch labels.
 Suppliers and Equipment Lifecycle retain their unavailable Stage 4 indications.
-No Staff, Department or IT Assets switches are added.
+That Stage 2 correction added no Staff, Department or IT Assets switches.
 
 `hydrateOptionalFeatureSettings` still reads the live feature API and displays its
 saved values. The existing disable confirmation, cancellation, pending controls,

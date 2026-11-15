@@ -94,8 +94,8 @@ def feature_enabled(connection, section):
     """Unknown or missing organisation choices deny access, including for admins."""
     if section in ("Staff Members", "Departments"):
         return True
-    # IT Assets stays unavailable until its separately approved feature switch.
-    feature = {"Devices": "devices", "IPAM": "ipam", "Racks": "racks"}.get(section)
+    feature = {"Devices": "devices", "IPAM": "ipam", "Racks": "racks",
+               "IT Assets": "it_assets"}.get(section)
     if feature is None:
         return False
     return connection.execute(
