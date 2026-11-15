@@ -90,6 +90,13 @@ async function main(){
   await target.evaluate(()=>window.scrollTo(0,0));await target.waitForTimeout(250);
   const geometry=await target.evaluate(()=>({viewport:innerWidth,width:document.documentElement.scrollWidth}));
   assert.ok(geometry.width<=geometry.viewport,JSON.stringify({name,...geometry}));
+  if(name.startsWith('directory-')){
+   const overlaps=await target.locator('.staff-live .userrow').evaluateAll(rows=>rows.filter(row=>{
+    const title=row.querySelector('.username').getBoundingClientRect(),actions=row.querySelector('.actions').getBoundingClientRect();
+    return title.right>actions.left&&title.bottom>actions.top&&title.top<actions.bottom;
+   }).length);
+   assert.equal(overlaps,0,'Department names must fit beside the existing action column');
+  }
   await target.screenshot({path:path.join(output,name+'.png'),fullPage:true});report.captures[name]=geometry;
  }
  await page.locator('[data-staff-action="department-back"]').click();
