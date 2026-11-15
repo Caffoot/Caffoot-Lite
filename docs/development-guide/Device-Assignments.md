@@ -4,6 +4,7 @@ This is unreleased Milestone 01 development. The published v2.1 installation
 is unchanged. Batch 3.4 merged via PR #382 at
 `05b162aa10a74994c970d0b6dbf111dc59b47513`; manual acceptance is deferred,
 not passed. See the [draft user guide](../how-tos/features-and-instructions/v2.2-draft/Device-Assignments-and-My-Equipment.md).
+The sections below retain the initial-allocation contract. [Batch 3.8 circulation](IT-Assets-Issue-Return-and-Write-Off.md) adds protected stock projections and Schema 17 one-way closure; no original assignment field becomes editable.
 Scope: [Batch 3.4](https://github.com/Caffoot/Caffoot-Lite/issues/368#issuecomment-6881744109).
 
 Schema 15 introduces `device_assignments`. Each dated record references the
@@ -48,11 +49,6 @@ existing same-origin, session-bound CSRF proof and an active verified session.
 Personal equipment contains only ID, name, type, manufacturer, model and
 allocation date. It contains no network configuration, notes, contacts, other
 holders, history or administration actions. Membership changes take effect on
-the next request, without changing any equipment holder. Devices feature-off
-returns two empty sections and denies the IT assignment APIs.
+the next request, without changing any equipment holder. My Equipment now also includes safe outstanding Asset quantities. Each feature independently hides its equipment; disabling both returns two empty sections. No stock or directory grant is conferred.
 
-Returns, direct reassignment, stock receipt/readiness/preparation, balances,
-write-off/correction, Get From Stock, associated accessories and Service Desk
-remain later workflows. No corresponding mutation endpoint or placeholder
-action is offered. Any future closing of an allocation requires its own approved
-audited workflow and migration of the history guards.
+[Stock intake](IT-Assets-Stock-Intake.md) and [circulation](IT-Assets-Issue-Return-and-Write-Off.md) document the implemented development workflows. Schema 17 closes outstanding assignments only with a matching stock operation and audit. With both Read permissions, assignment history also includes the real closure kind, date and historical actor; IT Assets feature-off omits that stock fact. Get From Stock, Device reissue, associated accessories, corrections and Service Desk remain later work.

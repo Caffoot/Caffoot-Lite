@@ -1,8 +1,26 @@
 # IT Assets: Issue, Return And Write Off
 
-> **Unreleased v2.2 — Work In Progress.** Batch 3.8 starts from `milestone-1`
+> **Unreleased v2.2 — Implemented For Draft Review.** Batch 3.8 starts from `milestone-1`
 > at `7f91f5d42feb3916cfab060abd5ca4b1558a92ba`, following merged and visually
 > accepted Batch 3.7/PR #388. This branch is not merged or visually accepted.
+
+## Current Implementation
+
+Issue, partial/mixed return, preparation, held/issued write-off and protected
+Staff/Department/My Equipment projections are implemented in [draft PR #389](https://github.com/Caffoot/Caffoot-Lite/pull/389).
+Runtime/capture source: `11cf6beaf39e53c1abaad9c2649a64b5edfb93c6`.
+Full backend at `c205cfa`: 790 run, 786 passed, four documented skips. The final
+read-only holder-label projection passed all 62 affected tests at `11cf6be`; final
+PR CI also checks the complete backend. The real browser flow
+passed with 52 desktop/mobile light/dark captures. Docker passed separately at
+`e78358b`; the final display-only change is also checked in PR CI. See the
+[final evidence, commands and limits](../development-handovers/evidence/stock-circulation/Report.md)
+and [draft user instructions](../how-tos/features-and-instructions/v2.2-draft/IT-Assets-Issue-Return-and-Write-Off.md).
+Product-owner visual acceptance and merge approval remain pending.
+
+The dated checkpoint sections below preserve the implementation sequence.
+Preparation type mapping was clarified by the owner and implemented in checkpoint
+5B; earlier open-question wording describes that earlier checkpoint only.
 
 ## Authority And Scope
 
@@ -220,3 +238,23 @@ run did not capture screenshots; pinned-source captures and final complete check
 belong to checkpoint 6. Initial harness navigation mistakes and the Device modal
 navigation defect were corrected before this passing run. No visual acceptance
 or merge is claimed.
+
+## Final Verification And History Display
+
+Schema 17 definitions and stock-operation rules remain as documented above. An
+assignment read includes the journal’s closure kind, event date and actor only
+when both Devices and IT Assets are available to the reader. Staff, Department
+and Device views can therefore attribute genuine returns/write-offs without
+inventing an actor for old completed rows or leaking stock-derived facts when
+IT Assets is off. Original allocation attribution remains unchanged. Movement History also resolves
+the original holder label from the existing assignment reference, with the same
+independent Device/IT Assets access checks.
+
+The complete backend suite covers Devices/IPAM/Racks, accounts, MFA, effective
+roles/overrides, migrations, import protections, stock constraints, closure and
+circulation. Existing browser regressions run through the PR workflow alongside
+the new circulation test. The four stock tables, existing screen fragments,
+shared styling and published v2.1 guides/install instructions are unchanged.
+The Function Index records 945 verified declarations. Detailed pass/skip counts,
+source hashes, screenshot hashes and exact commands are in the linked report.
+No owner acceptance, native hardware test, Stage 6 restore or later batch is claimed.

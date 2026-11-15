@@ -1,9 +1,6 @@
 # IT Assets: Receive Stock And Stock Inventory
 
-> **Draft v2.2 — Not Published / Not Production Guidance.** These instructions describe
-> Batch 3.7 on `feat/it-assets-stock-intake`, based on schema-16 `milestone-1`
-> at `774dee3ecaaf1d50ba94dbf55891aa4b79b853c5`. The implementation awaits
-> product-owner visual review and merge approval. v2.1 remains the published release.
+> **Draft v2.2 — Not Published / Not Production Guidance.** Batches 3.1–3.7 are merged through PR #388 at `7f91f5d42feb3916cfab060abd5ca4b1558a92ba` (schema 16). Batch 3.8 is implemented for review on `feat/it-assets-issue-return-writeoff` (draft PR #389, schema 17); it is not merged or visually accepted. Batch 3.4 native acceptance remains deferred. Use the published v2.1 guides for production. These are not installation, upgrade or restore instructions.
 
 ## Before You Start
 
@@ -13,8 +10,9 @@ Additional Features**. It starts disabled. Enabling the feature does not grant a
 receipts and readiness updates. Existing role, override and MFA rules still apply.
 These permissions do not grant access to Devices, Staff Members or Departments.
 
-Choose **IT → IT Assets**. The three tabs are **Receive Stock**, **Stock Inventory**
-and **Receipt History**. A user with Read access can view inventory and history,
+Choose **IT → IT Assets**. The original intake tabs are **Receive Stock**,
+**Stock Inventory** and **Receipt History**. Batch 3.8 adds **Issue Equipment**,
+**Return Equipment**, **Write Off** and **Movement History**; see [circulation](IT-Assets-Issue-Return-and-Write-Off.md). A user with Read access can view inventory and history,
 but cannot submit the receipt or readiness forms. Disabling IT Assets hides the
 section and prevents stock access, while retaining all stock and history.
 
@@ -58,7 +56,14 @@ An identical new entry is refused so that you can select the existing item inste
 
 - **Physically Held:** equipment on hand, including equipment awaiting checks.
 - **Ready:** equipment explicitly checked and confirmed Ready To Issue.
-- **Awaiting:** held equipment still Awaiting Checks.
+- **Awaiting Checks:** received equipment still awaiting receipt checks.
+- **Awaiting Preparation:** returned equipment awaiting its applicable checks.
+- **Currently Issued:** the outstanding quantity with its original recipient.
+- **Written Off:** equipment permanently removed from usable stock.
+
+Returned stock uses **Prepare Returned Equipment**, not the receipt-readiness form.
+Registered Devices appear separately under their original identities. Neither
+issued nor written-off quantities count as Physically Held.
 
 Choose **View / Update** beside an item. Read-only users see **View Details** instead.
 The details show its specifications, quantities and individual identities where applicable.
@@ -89,8 +94,9 @@ checks, notes, specifications and account. Open **Receipt Checks**
 where shown to see the recorded individual identifiers. Readiness changes appear
 separately, with their genuine dates, quantities, checks and reasons.
 
-Issue, Return, Write Off, Device registration, associated equipment, corrections,
-dashboards, Low Stock warnings, Supplier Management and Stocktakes are later work.
+[Issue, Return, preparation and Write Off](IT-Assets-Issue-Return-and-Write-Off.md)
+are implemented for Batch 3.8 review. Device registration/reissue, associated equipment,
+corrections, dashboards, Low Stock warnings, Supplier Management and Stocktakes remain later work.
 This guide does not provide installation, upgrade, backup or restore instructions.
 
 See [Optional Features](Optional-Features-and-Link-To-IPAM.md),

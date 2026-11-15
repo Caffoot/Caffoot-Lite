@@ -1,6 +1,6 @@
 # Roles, Section Permissions And MFA
 
-> **Draft v2.2 — Not Published / Not Production Guidance.** This guide includes the separate Batch 3.6 review branch (schema 16), based on `milestone-1` at `2e6c50ba4777b7500258d2a1a28317764d806020`. Batch 3.6 is not merged or released. Batch 3.4 manual acceptance remains deferred. Use the published v2.1 guides for production; these are not installation, upgrade or restore instructions.
+> **Draft v2.2 — Not Published / Not Production Guidance.** Batches 3.1–3.7 are merged through PR #388 at `7f91f5d42feb3916cfab060abd5ca4b1558a92ba` (schema 16). Batch 3.8 is implemented for review on `feat/it-assets-issue-return-writeoff` (draft PR #389, schema 17); it is not merged or visually accepted. Batch 3.4 native acceptance remains deferred. Use the published v2.1 guides for production. These are not installation, upgrade or restore instructions.
 
 Only authorised administrators manage Caffoot accounts, roles, section permissions and MFA administration through **Staff → Permissions**. Directory editing is not account administration.
 
@@ -10,7 +10,7 @@ The existing permission controls cover **Devices**, **IPAM**, **Racks**, **Staff
 
 - **Staff Members** and **Departments** are core sections, but still require their own permissions.
 - **Devices**, **IPAM** and **Network Racks** also require their organisation feature switches to be enabled.
-- **IT Assets** uses its own organisation switch and existing Read/Edit rights on the Batch 3.6 review branch. The switch defaults off and a grant cannot enable it. Enabling the switch grants no Staff Members, Departments or Devices access. Stock screens and actions are not available yet.
+- **IT Assets** uses its own organisation switch and existing Read/Edit rights in the development build. The switch defaults off and a grant cannot enable it. Enabling the switch grants no Staff Members, Departments or Devices access. Read permits stock/history viewing; Edit permits receipts, issues, returns, preparation and write-offs. Canonical Device return/write-off/preparation also requires Devices Edit. The restricted recipient picker grants no directory or private contact access.
 - **Devices Edit** permits eligible initial Device assignments. Its restricted recipient search does not grant access to Staff contacts, general directory records or account details.
 - A normal linked employee can use **My Equipment** without inventory Read/Edit. Department membership gives no general section access.
 

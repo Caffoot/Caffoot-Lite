@@ -1,8 +1,9 @@
 # IT Assets Stock Intake
 
-> Unreleased v2.2 work on `feat/it-assets-stock-intake`, based on
-> `milestone-1` at `774dee3ecaaf1d50ba94dbf55891aa4b79b853c5`.
-> This batch is implemented for draft review and has not been visually accepted or merged.
+> Unreleased v2.2. Batch 3.7 merged and was visually accepted via PR #388 at
+> `7f91f5d42feb3916cfab060abd5ca4b1558a92ba`. The dated verification below records
+> that batch. [Batch 3.8 circulation](IT-Assets-Issue-Return-and-Write-Off.md) extends
+> these screens on its separate draft branch; it is not merged or visually accepted.
 
 ## Interface Source Mapping
 
@@ -89,8 +90,9 @@ existing Optional Features browser regression passed with eight further captures
 See [the evidence report](../development-handovers/evidence/stock-intake/Report.md)
 for exact commands, Docker/documentation checks, screenshots and limitations.
 
-No issue/return, write-off, movement/specification editor, Device registration,
-associated equipment, dashboard, Low Stock warning, Supplier directory, Service Desk
-or Stocktake operation is exposed. Batch 3.4 native acceptance remains deferred;
+At the recorded Batch 3.7 checkpoint, issue/return and write-off were not exposed.
+Those are now implemented for separate [Batch 3.8 review](IT-Assets-Issue-Return-and-Write-Off.md).
+Movement/specification editors, Device registration, associated equipment, dashboards,
+Low Stock warnings, Supplier Management, Service Desk and Stocktakes remain later work. Batch 3.4 native acceptance remains deferred;
 complete-volume upgrade/restore and final milestone acceptance remain Stage 6 work.
 Product-owner visual acceptance and merge approval remain separate.

@@ -792,8 +792,8 @@ The account hydration/photo functions now have purpose-based callable bindings m
 | [`device_assignment_dependency`](../../backend/device_assignments.py#L31) | 31 |
 | [`assignment_device_choices`](../../backend/device_assignments.py#L49) | 49 |
 | [`read_assignments`](../../backend/device_assignments.py#L72) | 72 |
-| [`assign_devices`](../../backend/device_assignments.py#L125) | 125 |
-| [`my_equipment`](../../backend/device_assignments.py#L177) | 177 |
+| [`assign_devices`](../../backend/device_assignments.py#L132) | 132 |
+| [`my_equipment`](../../backend/device_assignments.py#L184) | 184 |
 
 ## backend/device_catalogue.py
 
