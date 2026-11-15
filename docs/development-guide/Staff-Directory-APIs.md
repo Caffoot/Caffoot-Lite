@@ -125,3 +125,18 @@ guards, duplicate fields, statuses, search, record privacy and administrator-onl
 login creation. Queued writes test session/MFA/permission revocation and archived
 Departments after waiting for the database lock. HTTP and wider regression evidence is recorded in the active
 [Milestone 01 handover](../development-handovers/milestone-01.md) and Batch 3.2 PR.
+
+## Department Details — Batch 3.5 review branch
+
+The four-tab screen reuses the existing contracts; no endpoint, schema, permission or
+feature is added. Department Read allows its own record only. Staff membership is
+filtered from fully paginated Staff responses, requiring Staff Members Read. Equipment
+comes from `GET /api/equipment/assignments?departmentId=…` plus the protected Devices
+projection; Devices must be enabled and readable. Personal Staff assignments are excluded.
+
+The existing Audit Trail response may provide Department changes to authorised viewers.
+Its established filtering is preserved: many limited accounts receive no Department events.
+The screen filters returned events by the exact Department ID and combines them with
+its canonical assignment history, without manufacturing lifecycle dates or new events.
+Empty/restricted states describe availability, not an absence of historical changes.
+The accepted source of truth remains the application's existing server-side policy.

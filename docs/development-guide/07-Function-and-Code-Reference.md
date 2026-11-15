@@ -14,6 +14,7 @@ For the full source-pinned list of named declarations, owning bridge methods and
 | [`backend/schema.py`](../../backend/schema.py) | `SCHEMA_VERSION`, `initialise_database` | SQLite definitions and migrations |
 | [`backend/inventory.py`](../../backend/inventory.py) | `reconstruct_inventory`, `stage_inventory`, `inspect_export` | Source-shaped inventory, import storage, export format |
 | [`interface/application.js`](../../interface/application.js) | `renderDevicesHTML`, `renderRackHubV13`, `refreshCentralInventory`, `postInventory`, `applyAllowedControls` | Inventory calculations, actions and server integration; HTML lives in `interface/screens/` |
+| [`interface/staff-directory.js`](../../interface/staff-directory.js) | `renderDepartmentDetails`, `loadDepartmentDetails`, `selectDepartmentTab` | Department tabs using existing protected records, independent access and original Staff navigation |
 | [`interface/sign-in.js`](../../interface/sign-in.js) and [`setup.html`](../../setup.html) | `/api/setup`, `/api/login` | Account setup and sign-in |
 
 Presentation corrections use `renderDeviceCategoryCatalogue`, `renderCatalogueRecord` and `renderCatalogueButton` for approved catalogue fragments, and `revealActiveSectionTabs` for narrow section navigation. Existing catalogue saves and permissions remain in their original handlers.

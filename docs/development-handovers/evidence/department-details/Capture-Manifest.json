@@ -1,0 +1,142 @@
+{
+  "archived-equipment-390-dark.png": {
+    "sha256": "7142f2a882733e736a3c792f94b831b57143a140b23eb4e89c3bd6165bae38c2",
+    "width": 390,
+    "height": 979
+  },
+  "department-devices-390-dark.png": {
+    "sha256": "1a0c394bb49fdfe81a9291866a95013bdd761d375ca8238b51589fa5be68886a",
+    "width": 390,
+    "height": 1501
+  },
+  "department-only-390-dark.png": {
+    "sha256": "dd236a7ac91fa076bfd4ddc1dee041541c9c2e9535f8ed6f1538dd01654d36a0",
+    "width": 390,
+    "height": 1501
+  },
+  "department-staff-390-dark.png": {
+    "sha256": "cff5318bfc4d5dde038a5f5dd3c7e706d0fb215e03f37b18eef893e57caeb756",
+    "width": 390,
+    "height": 1501
+  },
+  "devices-disabled-390-dark.png": {
+    "sha256": "83628643487815b1ca02daf7063c07fe54cda4e0834380337b6a2727b195de95",
+    "width": 390,
+    "height": 844
+  },
+  "directory-1440-dark.png": {
+    "sha256": "fb4e27b543fdb7c8f3ab94463e00ab2ca577960c74249248d5a252650e75cb3f",
+    "width": 1440,
+    "height": 1050
+  },
+  "directory-1440-light.png": {
+    "sha256": "735b0b50a58fe3f47ee0101c36d5a0ae1263ba4d29b4a6a0f77d3a58ab6cb4dc",
+    "width": 1440,
+    "height": 1050
+  },
+  "directory-390-dark.png": {
+    "sha256": "2c317abe7770581c1e19e2105124ee5ec6b612c58833340f36261a15325e27e5",
+    "width": 390,
+    "height": 984
+  },
+  "directory-390-light.png": {
+    "sha256": "c9d77d140e9c6b413c84baf4dacd6c1a74e829b2fda4f72a85bf8f7c2fd68d91",
+    "width": 390,
+    "height": 984
+  },
+  "empty-equipment.png": {
+    "sha256": "a81936d2f26bc14df136fa0b0a5c0c5aa9fc79f7d0211f56b2535b336d0d3b75",
+    "width": 1440,
+    "height": 1050
+  },
+  "empty-history.png": {
+    "sha256": "58b77bf39df9b2fb2e55fabaffad2c43d2beba9a956340ffb5377a51e92733c3",
+    "width": 1440,
+    "height": 1050
+  },
+  "empty-staff.png": {
+    "sha256": "fe754ef4bec2909b92a82c2e02a64906317a2183ee953a1f986fe4d6ef6852de",
+    "width": 1440,
+    "height": 1050
+  },
+  "equipment-1440-dark.png": {
+    "sha256": "413cfb9a214edb4dac205d73fb881cd98632d35d5301d71a98ece2b4ad680443",
+    "width": 1440,
+    "height": 1050
+  },
+  "equipment-1440-light.png": {
+    "sha256": "0f6e3fbcf410f0ebce5fd4363fec0a565ffc2d27f811b55bc4a617faf6b6a8e7",
+    "width": 1440,
+    "height": 1050
+  },
+  "equipment-390-dark.png": {
+    "sha256": "8e1675723bb85b18795306843184723e23b24ab1a3c47abd92d6e85f8b0e9caf",
+    "width": 390,
+    "height": 961
+  },
+  "equipment-390-light.png": {
+    "sha256": "95560359d72e9e4163a4f448df242e845f5570a112fa31a01476bc138f586426",
+    "width": 390,
+    "height": 961
+  },
+  "history-1440-dark.png": {
+    "sha256": "d7dad6fe75834eb4d358c1be038dfd4bd2d08c642d25360c0aaf9800ab92ae76",
+    "width": 1440,
+    "height": 1050
+  },
+  "history-1440-light.png": {
+    "sha256": "9700b1099fb3ed2dbb266e9e6c188a3ad3f29c1542b9a05d1cebc420df9d401f",
+    "width": 1440,
+    "height": 1050
+  },
+  "history-390-dark.png": {
+    "sha256": "4dbae151b01bf4d3d2a8e2ca8418da8013a1fb5da140a0e6c733523b957aaa42",
+    "width": 390,
+    "height": 844
+  },
+  "history-390-light.png": {
+    "sha256": "0fb24aebd8c4e8a04fb4e3e63c88026aad5764b9be3637108a71fe6da36cff87",
+    "width": 390,
+    "height": 844
+  },
+  "overview-1440-dark.png": {
+    "sha256": "91805805075588eb794ceccf8c504f9dc161647265c6f5fed75d4905d42b8866",
+    "width": 1440,
+    "height": 1050
+  },
+  "overview-1440-light.png": {
+    "sha256": "c4759c83d2c88d71038e3dfef77fe0a705c32f66da40c3636b41c2dc6b19d6c0",
+    "width": 1440,
+    "height": 1050
+  },
+  "overview-390-dark.png": {
+    "sha256": "943c891d4e99bfdfcfa3e7b787067b3721fb8c1fc297d82077a812c46fb8df6a",
+    "width": 390,
+    "height": 1501
+  },
+  "overview-390-light.png": {
+    "sha256": "9190831bee46aa9521be7906fd9b49af2a5c2bcbb78a5a9c4df60f7d6b27cedc",
+    "width": 390,
+    "height": 1501
+  },
+  "staff-1440-dark.png": {
+    "sha256": "96e6b0f0b34fee7968a308f36ac225e46d91004694739458a3b172d2e8167f41",
+    "width": 1440,
+    "height": 1050
+  },
+  "staff-1440-light.png": {
+    "sha256": "ee498da7738aafcf17067c7bc9b3ade62919483399d7e5d738ee705eb11fe9a4",
+    "width": 1440,
+    "height": 1050
+  },
+  "staff-390-dark.png": {
+    "sha256": "14732ea95216ee9551faa30497dfd3a51ad7f914971ceccd288822db88676a49",
+    "width": 390,
+    "height": 844
+  },
+  "staff-390-light.png": {
+    "sha256": "5532e9e0af71c841e18dba9c0e68fc728fb85baff42e87ece278a89968d8eb4a",
+    "width": 390,
+    "height": 844
+  }
+}

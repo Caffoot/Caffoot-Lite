@@ -66,3 +66,23 @@
 .staff-live .preview-staff-directory .list-header{min-width:750px}
 .staff-live .preview-staff-directory .userrow{min-width:750px}
 .staff-live .staff-restricted,.staff-live .staff-account-fields{line-height:1.5}
+
+/* Department Details reuse the existing cards, tabs and assignment table layout. */
+.department-details .info-row{border-color:var(--line)}
+.department-details .department-status{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.department-details .department-status p{margin:0}
+.department-details .department-tab-panel{padding-top:23px}
+.department-details .two-col{margin-top:18px}
+.department-details .department-metrics{grid-template-columns:repeat(3,minmax(0,1fr));margin-top:17px}
+.department-details .statnum{overflow-wrap:anywhere}
+.department-details .table-scroll{overflow-x:auto}
+.department-details .small-table{width:100%;border-collapse:collapse;font-size:11px}
+.department-details .small-table th,.department-details .small-table td{padding:16px 18px;text-align:left;border-bottom:1px solid var(--line);vertical-align:middle;overflow-wrap:anywhere}
+.department-details .small-table th{color:var(--muted);font-size:10px;font-weight:750}
+.department-details .small-table td .sub{margin-top:5px}
+.department-details .small-table .btn{margin-top:7px}
+.department-details .department-history-card{margin-top:17px}
+.department-empty{padding:26px 22px;text-align:center;line-height:1.6}
+.department-empty strong{display:block;color:var(--ink)}
+.department-empty p{margin:7px 0 0}
+@media(max-width:720px){.department-details .department-metrics{grid-template-columns:1fr}.department-details .small-table{min-width:560px}.department-details .tabs{gap:18px}}

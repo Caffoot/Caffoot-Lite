@@ -1,0 +1,137 @@
+{
+  "base": "ff7a088bbe8e24322c84106e417ab1b03f3dfe70",
+  "sourceHashes": {
+    "interface/application.js": "c644717d201af76230b5d132b366eb6462effee6e61b08caa853e1516ad07f2f",
+    "interface/staff-directory.js": "3f75719151471448a51e8de58be26580acf3b030ba2ba505e89ac7e022a4c864",
+    "interface/styles/staff.css": "05d5c8622fb540f605d08f16aefa6806f66d6da38c871080e97931be8838cdd6",
+    "interface/styles/shared.css": "7e09d6e586e003a37c891f9393b83483e568ea404c792f9d15fdc8e8be3ef00f",
+    "interface/styles/users.css": "de3ffc23f5d14efeffee5415a79aefd5f4dd7f2fe9d0a8863cf84ff3bd72f6e5",
+    "interface/styles/device-details.css": "e99fe7b8b0b12c8c308de665e1d79ce378be671088eadcdcc1d0cf9ca7df844d"
+  },
+  "browser": "155.0.8059.79",
+  "sourceRevision": "80adee938c47011efa518a9fd2ac55b55346462e",
+  "captures": {
+    "directory-1440-light": {
+      "viewport": 1440,
+      "width": 1440
+    },
+    "directory-1440-dark": {
+      "viewport": 1440,
+      "width": 1440
+    },
+    "directory-390-light": {
+      "viewport": 390,
+      "width": 390
+    },
+    "directory-390-dark": {
+      "viewport": 390,
+      "width": 390
+    },
+    "overview-1440-light": {
+      "viewport": 1440,
+      "width": 1440
+    },
+    "staff-1440-light": {
+      "viewport": 1440,
+      "width": 1440
+    },
+    "equipment-1440-light": {
+      "viewport": 1440,
+      "width": 1440
+    },
+    "history-1440-light": {
+      "viewport": 1440,
+      "width": 1440
+    },
+    "overview-1440-dark": {
+      "viewport": 1440,
+      "width": 1440
+    },
+    "staff-1440-dark": {
+      "viewport": 1440,
+      "width": 1440
+    },
+    "equipment-1440-dark": {
+      "viewport": 1440,
+      "width": 1440
+    },
+    "history-1440-dark": {
+      "viewport": 1440,
+      "width": 1440
+    },
+    "overview-390-light": {
+      "viewport": 390,
+      "width": 390
+    },
+    "staff-390-light": {
+      "viewport": 390,
+      "width": 390
+    },
+    "equipment-390-light": {
+      "viewport": 390,
+      "width": 390
+    },
+    "history-390-light": {
+      "viewport": 390,
+      "width": 390
+    },
+    "overview-390-dark": {
+      "viewport": 390,
+      "width": 390
+    },
+    "staff-390-dark": {
+      "viewport": 390,
+      "width": 390
+    },
+    "equipment-390-dark": {
+      "viewport": 390,
+      "width": 390
+    },
+    "history-390-dark": {
+      "viewport": 390,
+      "width": 390
+    },
+    "empty-staff": {
+      "viewport": 1440,
+      "width": 1440
+    },
+    "empty-equipment": {
+      "viewport": 1440,
+      "width": 1440
+    },
+    "empty-history": {
+      "viewport": 1440,
+      "width": 1440
+    },
+    "department-only-390-dark": {
+      "viewport": 390,
+      "width": 390
+    },
+    "department-staff-390-dark": {
+      "viewport": 390,
+      "width": 390
+    },
+    "department-devices-390-dark": {
+      "viewport": 390,
+      "width": 390
+    },
+    "archived-equipment-390-dark": {
+      "viewport": 390,
+      "width": 390
+    },
+    "devices-disabled-390-dark": {
+      "viewport": 390,
+      "width": 390
+    }
+  },
+  "checks": [
+    "Four tabs and keyboard navigation",
+    "Paginated Staff counts and existing Staff Details",
+    "Canonical Department-only equipment and genuine history",
+    "Independent read-only access and private states",
+    "Desktop/mobile light/dark with no document overflow",
+    "Read-only data preservation",
+    "Existing manage/archive/reactivate controls",
+    "Devices feature-off"
+  ]
+}

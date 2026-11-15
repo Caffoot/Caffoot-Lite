@@ -6,7 +6,7 @@ Scope: named JavaScript declarations/assignments in the five application scripts
 
 The account hydration/photo functions now have purpose-based callable bindings matching their function names: `hydrateAccount` and `removeAccountPhoto`. The immutable design manifest retains its historical integration-entry names; those metadata names are not the runtime's current function map. Pinned source paths, revisions and hashes are unchanged.
 
-**Recorded definitions: 835.** The pre-Batch 3.5 correction removes two non-callable entries (`rows` and `controls`); the count is checked against the remaining table entries, without claiming a full regeneration. Regenerate after changing declarations or their lines. See [coding conventions](06-Coding-and-Naming-Conventions.md) and the [code reference](07-Function-and-Code-Reference.md).
+**Recorded definitions: 847.** Regenerated for Department Details within the existing documented scope, with declaration names and source lines checked. This remains a definition map, not a call graph. See [coding conventions](06-Coding-and-Naming-Conventions.md) and the [code reference](07-Function-and-Code-Reference.md).
 
 ## interface/loader.js
 
@@ -560,36 +560,48 @@ The account hydration/photo functions now have purpose-based callable bindings m
 
 | Function | Line |
 | --- | ---: |
-| [`escapeHtml`](../../interface/staff-directory.js#L9) | 9 |
-| [`displayName`](../../interface/staff-directory.js#L10) | 10 |
-| [`departmentName`](../../interface/staff-directory.js#L11) | 11 |
-| [`isAdministrator`](../../interface/staff-directory.js#L12) | 12 |
-| [`canReadStaff`](../../interface/staff-directory.js#L13) | 13 |
-| [`canEditStaff`](../../interface/staff-directory.js#L14) | 14 |
-| [`canReadDepartments`](../../interface/staff-directory.js#L15) | 15 |
-| [`canEditDepartments`](../../interface/staff-directory.js#L16) | 16 |
-| [`icon`](../../interface/staff-directory.js#L17) | 17 |
-| [`button`](../../interface/staff-directory.js#L18) | 18 |
-| [`badge`](../../interface/staff-directory.js#L19) | 19 |
-| [`header`](../../interface/staff-directory.js#L20) | 20 |
-| [`renderStaffDirectory`](../../interface/staff-directory.js#L23) | 23 |
-| [`detailRow`](../../interface/staff-directory.js#L29) | 29 |
-| [`renderStaffDetails`](../../interface/staff-directory.js#L30) | 30 |
-| [`field`](../../interface/staff-directory.js#L34) | 34 |
-| [`renderStaffForm`](../../interface/staff-directory.js#L35) | 35 |
-| [`cardHeading`](../../interface/staff-directory.js#L39) | 39 |
-| [`renderDepartments`](../../interface/staff-directory.js#L64) | 64 |
-| [`request`](../../interface/staff-directory.js#L69) | 69 |
-| [`readAll`](../../interface/staff-directory.js#L76) | 76 |
-| [`refresh`](../../interface/staff-directory.js#L86) | 86 |
-| [`render`](../../interface/staff-directory.js#L104) | 104 |
-| [`enter`](../../interface/staff-directory.js#L114) | 114 |
-| [`redraw`](../../interface/staff-directory.js#L121) | 121 |
-| [`saveStaff`](../../interface/staff-directory.js#L122) | 122 |
-| [`openDepartmentDialog`](../../interface/staff-directory.js#L140) | 140 |
-| [`closeDepartmentDialog`](../../interface/staff-directory.js#L151) | 151 |
-| [`saveDepartment`](../../interface/staff-directory.js#L152) | 152 |
-| [`configure`](../../interface/staff-directory.js#L159) | 159 |
+| [`escapeHtml`](../../interface/staff-directory.js#L10) | 10 |
+| [`displayName`](../../interface/staff-directory.js#L11) | 11 |
+| [`departmentName`](../../interface/staff-directory.js#L12) | 12 |
+| [`isAdministrator`](../../interface/staff-directory.js#L13) | 13 |
+| [`canReadStaff`](../../interface/staff-directory.js#L14) | 14 |
+| [`canEditStaff`](../../interface/staff-directory.js#L15) | 15 |
+| [`canReadDepartments`](../../interface/staff-directory.js#L16) | 16 |
+| [`canEditDepartments`](../../interface/staff-directory.js#L17) | 17 |
+| [`icon`](../../interface/staff-directory.js#L18) | 18 |
+| [`button`](../../interface/staff-directory.js#L19) | 19 |
+| [`badge`](../../interface/staff-directory.js#L20) | 20 |
+| [`header`](../../interface/staff-directory.js#L21) | 21 |
+| [`renderStaffDirectory`](../../interface/staff-directory.js#L24) | 24 |
+| [`detailRow`](../../interface/staff-directory.js#L30) | 30 |
+| [`renderStaffDetails`](../../interface/staff-directory.js#L31) | 31 |
+| [`field`](../../interface/staff-directory.js#L35) | 35 |
+| [`renderStaffForm`](../../interface/staff-directory.js#L36) | 36 |
+| [`cardHeading`](../../interface/staff-directory.js#L40) | 40 |
+| [`renderDepartments`](../../interface/staff-directory.js#L65) | 65 |
+| [`departmentCard`](../../interface/staff-directory.js#L70) | 70 |
+| [`departmentNotice`](../../interface/staff-directory.js#L73) | 73 |
+| [`departmentDate`](../../interface/staff-directory.js#L76) | 76 |
+| [`departmentTable`](../../interface/staff-directory.js#L80) | 80 |
+| [`departmentAssignmentRows`](../../interface/staff-directory.js#L83) | 83 |
+| [`renderDepartmentOverview`](../../interface/staff-directory.js#L86) | 86 |
+| [`renderDepartmentStaff`](../../interface/staff-directory.js#L96) | 96 |
+| [`renderDepartmentEquipment`](../../interface/staff-directory.js#L101) | 101 |
+| [`renderDepartmentHistory`](../../interface/staff-directory.js#L110) | 110 |
+| [`renderDepartmentDetails`](../../interface/staff-directory.js#L117) | 117 |
+| [`selectDepartmentTab`](../../interface/staff-directory.js#L124) | 124 |
+| [`loadDepartmentDetails`](../../interface/staff-directory.js#L130) | 130 |
+| [`request`](../../interface/staff-directory.js#L156) | 156 |
+| [`readAll`](../../interface/staff-directory.js#L163) | 163 |
+| [`refresh`](../../interface/staff-directory.js#L173) | 173 |
+| [`render`](../../interface/staff-directory.js#L191) | 191 |
+| [`enter`](../../interface/staff-directory.js#L204) | 204 |
+| [`redraw`](../../interface/staff-directory.js#L212) | 212 |
+| [`saveStaff`](../../interface/staff-directory.js#L213) | 213 |
+| [`openDepartmentDialog`](../../interface/staff-directory.js#L231) | 231 |
+| [`closeDepartmentDialog`](../../interface/staff-directory.js#L242) | 242 |
+| [`saveDepartment`](../../interface/staff-directory.js#L243) | 243 |
+| [`configure`](../../interface/staff-directory.js#L250) | 250 |
 
 ## interface/equipment.js
 

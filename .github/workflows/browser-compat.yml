@@ -6,6 +6,7 @@ on:
     paths:
       - "interface/**"
       - "tests/browser-compat.cjs"
+      - "tests/department-details-interface.cjs"
       - "tests/pi-acceptance-corrections.cjs"
       - "tests/users-roles-interface.cjs"
       - "tests/device-editor-approved.cjs"
@@ -28,6 +29,7 @@ on:
     paths:
       - "interface/**"
       - "tests/browser-compat.cjs"
+      - "tests/department-details-interface.cjs"
       - "tests/pi-acceptance-corrections.cjs"
       - "tests/users-roles-interface.cjs"
       - "tests/device-editor-approved.cjs"
@@ -99,6 +101,19 @@ jobs:
           NODE_PATH: ${{ runner.temp }}/caffoot-browser-tests/node_modules
           CAFFOOT_EQUIPMENT_OUTPUT: ${{ runner.temp }}/device-assignment-evidence
         run: node tests/device-assignments-interface.cjs
+      - name: Check Department Details navigation, privacy and visual states
+        env:
+          NODE_PATH: ${{ runner.temp }}/caffoot-browser-tests/node_modules
+          CAFFOOT_DEPARTMENT_OUTPUT: ${{ runner.temp }}/department-details-evidence
+        run: node tests/department-details-interface.cjs
+      - name: Save Department Details evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: department-details-${{ github.sha }}
+          path: ${{ runner.temp }}/department-details-evidence
+          if-no-files-found: ignore
+          retention-days: 14
       - name: Save Device assignment interface evidence
         if: always()
         uses: actions/upload-artifact@v4
