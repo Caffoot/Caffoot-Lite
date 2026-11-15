@@ -504,7 +504,7 @@ class StockCirculationTests(unittest.TestCase):
         payload=return_payload(source)
         payload['deviceAssignmentId']=payload.pop('issueEntryId')
         self.return_equipment(payload)
-        self.assertTrue(stock_movement_history(self.db,1,device_id='canonical'))
+        self.assertEqual(stock_movement_history(self.db,1,device_id='canonical')[0]['recipientLabel'],source['recipientLabel'])
         from backend.device_assignments import read_assignments
         closure=read_assignments(self.db,1,device_id='canonical')['history'][0]['closure']
         self.assertEqual(closure,dict(kind='returned',date=payload['returnedOn'],actor='Fictional Owner'))

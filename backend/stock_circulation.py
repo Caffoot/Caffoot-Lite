@@ -563,9 +563,10 @@ def stock_movement_history(connection, actor, *, staff_id=None, department_id=No
     events=[]
     for row in connection.execute('''SELECT m.id,m.kind,m.event_date,m.recorded_at,m.actor_label,m.reason,
         m.supplier_name,m.checks_json,e.id,e.quantity,e.from_state,e.to_state,e.staff_id,e.department_id,
-        e.recipient_label,e.source_issue_entry_id,e.snapshot_json,u.device_id,e.stock_item_id,u.stock_item_id
+        COALESCE(e.recipient_label,a.recipient_label),e.source_issue_entry_id,e.snapshot_json,u.device_id,e.stock_item_id,u.stock_item_id
         FROM it_asset_stock_movements m JOIN it_asset_stock_entries e ON e.movement_id=m.id
-        LEFT JOIN it_asset_stock_units u ON u.id=e.stock_unit_id ORDER BY m.id DESC,e.id'''):
+        LEFT JOIN it_asset_stock_units u ON u.id=e.stock_unit_id
+        LEFT JOIN device_assignments a ON a.id=e.device_assignment_id ORDER BY m.id DESC,e.id'''):
         (movement,kind,happened,recorded,actor_label,reason,supplier,details,entry,quantity,old,new,
          staff,department,holder,source,snapshot,device,item,unit_item)=row
         if device and not device_access or device_id is not None and device!=device_id:
