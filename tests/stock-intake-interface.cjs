@@ -203,8 +203,13 @@ async function main(){
   await page.setViewportSize({width,height});
   for(const theme of ['light','dark']){
    await page.evaluate(theme=>caffootSetTheme(theme),theme);
-   for(const view of ['receive','inventory','details','individual','history']){
-    if(view==='details')await details(computer);
+   for(const view of ['receive','receive-new','inventory','details','individual','history']){
+    if(view==='receive-new'){
+     await stockTab('receive');
+     await page.locator('[data-stock-action="mode-new"]').click();
+     await page.locator('#stock-category').selectOption('Desktop');
+     await page.locator('#stock-trackingMode').selectOption('quantity');
+    }else if(view==='details')await details(computer);
     else if(view==='individual')await details(monitor);
     else await stockTab(view);
     await page.waitForFunction(()=>!document.getElementById('toast')||Number(getComputedStyle(document.getElementById('toast')).opacity)===0);
