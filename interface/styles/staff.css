@@ -68,6 +68,7 @@
 .staff-live .staff-restricted,.staff-live .staff-account-fields{line-height:1.5}
 
 /* Department Details reuse the existing cards, tabs and assignment table layout. */
+.department-details .info-row{border-color:var(--line)}
 .department-details .department-status{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
 .department-details .department-status p{margin:0}
 .department-details .department-tab-panel{padding-top:23px}

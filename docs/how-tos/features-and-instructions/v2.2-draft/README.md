@@ -12,6 +12,6 @@ These guides cover features already implemented on `milestone-1`. They use ficti
 | [Device Assignments And My Equipment](Device-Assignments-and-My-Equipment.md) | Allocate eligible existing Devices and view personal or Department-shared equipment |
 | [Optional Features, Basic IPv4 And Link To IPAM](Optional-Features-and-Link-To-IPAM.md) | Control optional sections and deliberately link a basic address |
 
-Department Details is not implemented and needs separate visual approval. IT Assets stock, equipment returns/reassignment, preparation, write-off/corrections, Suppliers and Service Desk remain future work. There is no IT Assets switch available yet. No new screenshots or completed upgrade/restore verification are claimed here.
+Department Details is implemented on the separate Batch 3.5 review branch, following approval of its functional preview; final implementation acceptance and merge are pending. Its guide distinguishes this work from merged Batch 3.4. IT Assets stock, equipment returns/reassignment, preparation, write-off/corrections, Suppliers and Service Desk remain future work. There is no IT Assets switch available yet. The Batch 3.5 handover links real application screenshots; no completed milestone upgrade/restore verification is claimed.
 
 See the [active milestone handover](../../../development-handovers/milestone-01.md) and [documentation scope #366](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-6891608596) for status, evidence and remaining review gates.

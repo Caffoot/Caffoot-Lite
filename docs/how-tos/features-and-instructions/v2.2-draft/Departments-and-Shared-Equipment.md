@@ -23,6 +23,32 @@ For example, a Printer assigned to Accounts remains owned by that Department. It
 
 A linked employee in Accounts sees the Printer under **My Equipment → Shared with My Department**, without gaining general inventory access. Their personal equipment remains separate. Changing membership changes shared visibility on the next request without moving the Printer.
 
-**There is currently no Department Details or consolidated Department equipment/history screen.** That design needs separate owner visual approval. Use the existing Device assignment view for now. Returns, reassignment and IT Assets stock are not implemented.
+## Department Details — Batch 3.5 draft review
+
+The owner approved the functional preview on 15 November. The screen is implemented
+on the separate `feat/department-details` review branch; it is not merged or finally
+accepted. It uses the existing application styling.
+
+1. Open **Staff → Departments** and choose **View Details** beside a Department.
+2. **Overview** shows the recorded name, status and membership availability. Staff and
+   shared-Device counts appear only when the corresponding data is available with your
+   independent access. **Not Available** is not a zero count.
+3. **Staff Members** lists currently linked records, including inactive Staff whose
+   membership is retained. **View Staff Details** opens the existing authorised screen.
+   Change membership through the Staff Add/Edit form.
+4. **Equipment** lists only Devices assigned directly to the Department, followed by
+   their recorded assignment history. Equipment personally assigned to Staff is excluded.
+   **View Device** opens the original Device record.
+5. **History** shows only Department changes supplied by the existing Audit Trail service
+   and authorised Device assignments. An empty state describes what is available with
+   your current access; it does not mean the Department has never changed.
+6. **Manage Department** uses the same rename/archive/reactivate/delete controls as the
+   directory. **Back To Departments** returns to the list.
+
+On narrow screens, scroll the tab row or a wide table sideways to reach its other
+controls and columns. Arrow keys, Home and End also move between tabs.
+
+Devices feature-off removes equipment content without changing saved relationships.
+IT Asset assignments, returns, reassignment and stock workflows are unavailable.
 
 [← Draft v2.2 Guides](README.md) · [Published v2.1 Guides](../README.md)
