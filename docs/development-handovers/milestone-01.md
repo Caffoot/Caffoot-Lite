@@ -1,6 +1,27 @@
 # Milestone 01 Development Handover — v2.2 Target
 
-> **Current status, 15 November 2026:** v2.2 remains an unreleased Milestone 01 target; published v2.1 remains the current release. Public documentation corrections merged into `main` via PR #384 at `3d66c3ee6fd9d9c51ecbdd5822bc1c4fe98b8e7b`. Stage 1 is accepted and merged via PR #358. Stage 2 is accepted through PR #376 at `519842b46861c85fde0eebf78298117c2346599d`, with the later Optional Features design correction merged via PR #380. Stage 3 Batches 3.1–3.4 are merged via PRs #377, #378, #381 and #382; the last application implementation checkpoint is `05b162aa10a74994c970d0b6dbf111dc59b47513` (schema 15). Approved public documentation was subsequently synchronised to `milestone-1` by PR #385 at `47c2ebe3d9249199c0c42dc71fd571b9f6411641`; the schema and application behaviour remain unchanged. Batch 3.4 manual acceptance is deferred, not passed. Later Stage 3 batches and Stages 4–6 remain pending. Initial Device eligibility remains Desktop, Laptop and Printer only. Department Details requires separate owner visual approval and is not implemented. See the [correction checks and limits](evidence/pre-batch-35-documentation/Report.md). The [pre-Batch 3.5 documentation corrections](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-6891608596) and [draft v2.2 user guides](../how-tos/features-and-instructions/v2.2-draft/README.md) do not authorise Batch 3.5, deployment, publication or a merge to `main`. Track remaining work in [#351](https://github.com/Caffoot/Caffoot-Lite/issues/351) and [#366](https://github.com/Caffoot/Caffoot-Lite/issues/366). Dated sections below preserve earlier checkpoints and their then-current statuses.
+> **Current status, 15 November 2026:** v2.2 remains an unreleased Milestone 01 target; published v2.1 remains the current release. Public documentation corrections merged into `main` via PR #384 at `3d66c3ee6fd9d9c51ecbdd5822bc1c4fe98b8e7b`. Stage 1 is accepted and merged via PR #358. Stage 2 is accepted through PR #376 at `519842b46861c85fde0eebf78298117c2346599d`, with the later Optional Features design correction merged via PR #380. Stage 3 Batches 3.1–3.4 are merged via PRs #377, #378, #381 and #382; the last application implementation checkpoint is `05b162aa10a74994c970d0b6dbf111dc59b47513` (schema 15). Approved public documentation was subsequently synchronised to `milestone-1` by PR #385 at `47c2ebe3d9249199c0c42dc71fd571b9f6411641`; the schema and application behaviour remain unchanged. Batch 3.4 manual acceptance is deferred, not passed. Later Stage 3 batches and Stages 4–6 remain pending. Initial Device eligibility remains Desktop, Laptop and Printer only. The owner approved the four-tab Department Details preview and authorised Batch 3.5 on 15 November. Integration on `feat/department-details` is under review; this does not constitute final acceptance or merge approval. See the [correction checks and limits](evidence/pre-batch-35-documentation/Report.md). The [pre-Batch 3.5 documentation corrections](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-6891608596) and [draft v2.2 user guides](../how-tos/features-and-instructions/v2.2-draft/README.md) do not authorise Batch 3.5, deployment, publication or a merge to `main`. Track remaining work in [#351](https://github.com/Caffoot/Caffoot-Lite/issues/351) and [#366](https://github.com/Caffoot/Caffoot-Lite/issues/366). Dated sections below preserve earlier checkpoints and their then-current statuses.
+
+## Batch 3.5 Department Details — Implementation Checkpoint, 15 November 2026
+
+Started from verified `milestone-1` HEAD `ff7a088bbe8e24322c84106e417ab1b03f3dfe70`.
+The owner's current instruction approves the attached four-tab functional composition,
+while existing v2.1 application styles remain authoritative. The attachment's older
+proposal/unapproved notices are its historical review state, superseded by that instruction.
+
+The additive View Details entry retains the five-column directory and existing management.
+Overview, Staff Members, Equipment and History reuse protected Department, Staff,
+Device and audit reads; backend contracts and schema remain unchanged. Staff and Device
+counts require their own access. Department equipment excludes personal allocations.
+History uses only returned Department events and canonical assignment records.
+Unavailable data is not converted into a zero count or a fabricated event.
+
+Initial focused checks: 49 backend/HTTP tests passed; the new real application browser
+flow passed with 24 desktop/mobile light/dark captures, keyboard/navigation checks,
+independent access, canonical data preservation, feature-off and archive/reactivation.
+Directory visual captures and safe-delete coverage are being completed. This checkpoint
+is not final visual acceptance. Function Index regenerated: 847 definitions.
+Batch 3.4 native acceptance remains deferred. No merge, release, production or Pi work.
 
 ## Batch 3.4 Final Visual Corrections — 14 November 2026
 

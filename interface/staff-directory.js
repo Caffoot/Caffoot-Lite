@@ -6,6 +6,7 @@
   let staff=[],departments=[],managedDepartments=[],users=[];
   let currentStaffId=null,searchText='',statusFilter='all',createLoginIntent=false;
   let mode='list',config=null,loaded=false,loading=false,activeSection='staff';
+  let currentDepartmentId=null,departmentTab='overview',departmentDetails=null,departmentRequest=0;
   const escapeHtml=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const displayName=record=>[record.firstName,record.lastName].filter(Boolean).join(' ')||'Name Not Recorded';
   const departmentName=id=>departments.find(item=>item.id===id)?.name||'No Department';
@@ -62,9 +63,95 @@ function renderStaffForm(record, createLogin=false) {
 }
 
 function renderDepartments() {
-  return header('Departments','Simple, flat Departments with preserved Staff relationships.',canEditDepartments()?button('+ Add Department','department-add','',true):'')+`<section class="section active"><div class="card users-list-card"><div class="users-list-table-scroll"><div class="list-header"><span>Department</span><span>Status</span><span>Membership</span><span>Availability</span><span>Manage</span></div>${departments.map(item=>`<div class="userrow"><div class="who"><span class="initial" aria-hidden="true">${escapeHtml(item.name.slice(0,1))}</span><div><h3 class="username">${escapeHtml(item.name)}</h3></div></div><div class="role-cell">${badge(item.archived?'Archived':'Active',item.archived?'amber':'green')}</div><div class="mfa-cell"><span class="userdesc">${item.archived?'Existing Links Retained':'Optional Staff Membership'}</span></div><div class="permissions-cell"><span class="userdesc">${item.archived?'No New Membership':'Available For New Membership'}</span></div><div class="actions">${canEditDepartments()?button('Manage','department-edit',item.id):'Read Only'}</div></div>`).join('')}</div><div class="list-footer">${departments.length} Departments</div></div><p class="formhint">Archive Departments with current or historical associations. Permanent deletion is only available when the server confirms there are none.</p></section>`;
+  return header('Departments','Simple, flat Departments with preserved Staff relationships.',canEditDepartments()?button('+ Add Department','department-add','',true):'')+`<section class="section active"><div class="card users-list-card"><div class="users-list-table-scroll"><div class="list-header"><span>Department</span><span>Status</span><span>Membership</span><span>Availability</span><span>Manage</span></div>${departments.map(item=>`<div class="userrow"><div class="who"><span class="initial" aria-hidden="true">${escapeHtml(item.name.slice(0,1))}</span><div><h3 class="username">${escapeHtml(item.name)}</h3></div></div><div class="role-cell">${badge(item.archived?'Archived':'Active',item.archived?'amber':'green')}</div><div class="mfa-cell"><span class="userdesc">${item.archived?'Existing Links Retained':'Optional Staff Membership'}</span></div><div class="permissions-cell"><span class="userdesc">${item.archived?'No New Membership':'Available For New Membership'}</span></div><div class="actions preview-row-actions">${button('View Details','department-details',item.id)}${canEditDepartments()?button('Manage','department-edit',item.id):''}</div></div>`).join('')}</div><div class="list-footer">${departments.length} Departments</div></div><p class="formhint">Archive Departments with current or historical associations. Permanent deletion is only available when the server confirms there are none.</p></section>`;
 }
 
+
+  function departmentCard(title,description,content,symbol='users'){
+    return `<article class="card card-padded"><div class="card-head"><span class="iconwrap">${icon(symbol)}</span><div><h3>${title}</h3><p class="sub">${description}</p></div></div><div class="divider"></div>${content}</article>`;
+  }
+  function departmentNotice(title,message){
+    return `<div class="department-empty" role="status"><strong>${title}</strong><p class="sub">${message}</p></div>`;
+  }
+  function departmentDate(value){
+    const date=value?new Date(value):null;
+    return date&&!Number.isNaN(date.getTime())?date.toLocaleDateString('en-GB'):'Date Not Recorded';
+  }
+  function departmentTable(headings,rows,empty){
+    return rows?`<div class="table-scroll"><table class="small-table"><thead><tr>${headings.map(label=>`<th scope="col">${label}</th>`).join('')}</tr></thead><tbody>${rows}</tbody></table></div>`:empty;
+  }
+  function departmentAssignmentRows(){
+    return (departmentDetails.assignments?.history||[]).map(item=>`<tr><td>${escapeHtml(departmentDate(item.assignedAt))}</td><td><strong>Device Assigned</strong><div class="sub">${escapeHtml(item.deviceName)} · Assigned To ${escapeHtml(item.recipientLabel)}</div></td><td>${escapeHtml(item.actorLabel||'Not Recorded')}</td></tr>`).join('');
+  }
+  function renderDepartmentOverview(record){
+    const people=departmentDetails.people,assignments=departmentDetails.assignments;
+    const staffCount=people?String(people.length):'Not Available';
+    const deviceCount=assignments?String(assignments.current.length):'Not Available';
+    const status=record.archived?'Archived':'Active';
+    const information=detailRow('Department Name',record.name)+detailRow('Status',status)+detailRow('Structure','Independent Department')+detailRow('New Membership',record.archived?'Unavailable':'Available');
+    const summary=detailRow('Staff Members',staffCount)+detailRow('Department-Owned Devices',deviceCount)+detailRow('IT Assets','Not Available')+detailRow('Permissions','Independent Section Rights');
+    const metrics=[['Staff Members',staffCount,people?'Currently linked Staff records.':'Staff Members information is not available.'],['Shared Devices',deviceCount,assignments?'Devices assigned to this Department.':'Device information is not available.'],['Department Status',status,'Membership does not grant additional permissions.']];
+    return `<div class="two-col">${departmentCard('Department Information','Recorded Department details and status.',information)}${departmentCard('Department Summary','Each total requires access to its own section.',summary)}</div><div class="cards4 department-metrics">${metrics.map(([label,value,help])=>`<div class="card card-padded stat"><div class="stathead">${label}</div><div class="statnum">${value}</div><div class="statfoot">${help}</div></div>`).join('')}</div>`;
+  }
+  function renderDepartmentStaff(){
+    if(!departmentDetails.people)return departmentNotice('Staff Members Not Available',departmentDetails.staffError||'Staff Members access is required to view Department membership.');
+    const rows=departmentDetails.people.map(person=>`<tr><td><strong>${escapeHtml(displayName(person))}</strong></td><td>${escapeHtml(person.jobTitle||'Not Recorded')}</td><td>${badge(person.active?'Active':'Inactive',person.active?'green':'red')}</td><td>${button('View Staff Details','staff-details',person.id)}</td></tr>`).join('');
+    return `<div class="section-heading"><div><h2>Staff Members</h2><p>Staff currently linked to this Department. Manage membership from the existing Staff form.</p></div></div><div class="card">${departmentTable(['Staff Member','Job Title','Status','Details'],rows,departmentNotice('No Staff Members In This Department','No current Staff membership is recorded.'))}</div>`;
+  }
+  function renderDepartmentEquipment(){
+    const data=departmentDetails.assignments;
+    if(!data)return departmentNotice('Department Equipment Not Available',departmentDetails.equipmentError||'Devices must be enabled and you need Devices access to view shared equipment.');
+    const rows=data.current.map(item=>{
+      const device=departmentDetails.devices.find(record=>record.id===item.deviceId);
+      return `<tr><td><strong>${escapeHtml(item.deviceName)}</strong><div><button type="button" class="btn" data-equipment-action="view-device" data-id="${escapeHtml(item.deviceId)}">View Device</button></div></td><td>${escapeHtml(device?.type||'Not Recorded')}</td><td>${escapeHtml(item.recipientLabel)}</td><td>Current Holder<div class="sub">Assigned ${escapeHtml(departmentDate(item.assignedAt))}</div></td></tr>`;
+    }).join('');
+    return `<div class="section-heading"><div><h2>Department-Owned Equipment</h2><p>Shared Devices assigned to this Department. Personally assigned Staff equipment is not included.</p></div></div><div class="card">${departmentTable(['Device','Type','Assigned To','Assignment'],rows,departmentNotice('No Current Department-Owned Devices','No Devices are currently assigned to this Department.'))}</div><div class="department-history-card">${departmentCard('Assignment History','Recorded allocations on the original Device relationships.',departmentTable(['Date','Event','Recorded By'],departmentAssignmentRows(),departmentNotice('No Recorded Assignments','No Device assignment history is available for this Department.')))}</div><p class="formhint">IT Asset assignments are not available. Devices keep their existing identity and assignment history.</p>`;
+  }
+  function renderDepartmentHistory(){
+    const directoryRows=(departmentDetails.history||[]).flatMap(event=>(event.changes||[]).filter(change=>change.kind==='Department'&&change.label===currentDepartmentId).map(change=>({at:event.at,actor:event.actor,action:change.action,name:change.after?.name||change.before?.name||''})));
+    const activity=directoryRows.map(item=>({...item,title:'Department '+item.action,description:item.name})).concat((departmentDetails.assignments?.history||[]).map(item=>({at:item.assignedAt,actor:item.actorLabel,title:'Device Assigned',description:item.deviceName+' · Assigned To '+item.recipientLabel})));
+    activity.sort((a,b)=>(Date.parse(b.at)||0)-(Date.parse(a.at)||0));
+    const rows=activity.map(item=>`<tr><td>${escapeHtml(departmentDate(item.at))}</td><td><strong>${escapeHtml(item.title)}</strong><div class="sub">${escapeHtml(item.description)}</div></td><td>${escapeHtml(item.actor||'Not Recorded')}</td></tr>`).join('');
+    return `<div class="section-heading"><div><h2>Department History</h2><p>Department activity and Device assignments available with your current access.</p></div></div>${departmentCard('Recorded Activity','Saved Department changes and equipment assignment records.',departmentTable(['Date','Event','Recorded By'],rows,departmentNotice('No Recorded Activity Available','No Department changes or Device assignments are available with your current access.')))}${departmentDetails.historyError?'<p class="formhint" role="status">Department activity could not be loaded. Reopen Details to try again.</p>':''}`;
+  }
+  function renderDepartmentDetails(){
+    const detail=departmentDetails,record=detail?.record;
+    if(!record)return header('Department Details','',button('Back To Departments','department-back'))+departmentNotice(detail?.loading?'Loading Department Details…':'Department Details Not Available',detail?.error||'');
+    const tabs=[['overview','Overview'],['staff','Staff Members'],['equipment','Equipment'],['history','History']];
+    const panels=[renderDepartmentOverview(record),renderDepartmentStaff(),renderDepartmentEquipment(),renderDepartmentHistory()];
+    return `<div class="department-details">${header(record.name,'Department Details · Current Staff and shared equipment',button('Back To Departments','department-back')+(canEditDepartments()?button('Manage Department','department-edit',record.id):''))}<div class="department-status">${badge(record.archived?'Archived':'Active',record.archived?'amber':'green')}<p class="sub">${record.archived?'Existing relationships are retained. New membership and assignments are unavailable.':'Membership does not grant additional permissions.'}</p></div><nav class="tabs" role="tablist" aria-label="Department Details">${tabs.map(([key,label])=>`<button class="tab${departmentTab===key?' active':''}" type="button" id="department-tab-${key}" role="tab" aria-selected="${departmentTab===key}" aria-controls="department-panel-${key}" tabindex="${departmentTab===key?'0':'-1'}" data-staff-action="department-tab" data-tab="${key}">${label}</button>`).join('')}</nav>${tabs.map(([key],index)=>`<section class="department-tab-panel" id="department-panel-${key}" role="tabpanel" aria-labelledby="department-tab-${key}" tabindex="0" ${departmentTab===key?'':'hidden'}>${panels[index]}</section>`).join('')}</div>`;
+  }
+  function selectDepartmentTab(tab){
+    if(!['overview','staff','equipment','history'].includes(tab)||!currentDepartmentId)return;
+    departmentTab=tab;redraw();
+    document.getElementById('department-tab-'+tab)?.focus({preventScroll:true});
+    document.getElementById('department-tab-'+tab)?.scrollIntoView({block:'nearest',inline:'nearest'});
+  }
+  async function loadDepartmentDetails(id){
+    const requestId=++departmentRequest;
+    departmentDetails={loading:true};redraw();
+    try{
+      // Every source checks its own current permissions on the server.
+      // Missing access never becomes a zero total or a copied relationship.
+      const {department}=await request('/api/departments/'+encodeURIComponent(id));
+      const [people,equipment,history]=await Promise.allSettled([
+        canReadStaff()?readAll('/api/staff-members','staffMembers'):Promise.resolve(null),
+        config.canReadDevices()?Promise.all([request('/api/equipment/assignments?departmentId='+encodeURIComponent(id)),request('/api/inventory/devices')]):Promise.resolve(null),
+        config.canReadHistory()?request('/api/inventory/history'):Promise.resolve(null)
+      ]);
+      if(requestId!==departmentRequest||id!==currentDepartmentId)return;
+      departmentDetails={record:department,
+        people:people.status==='fulfilled'&&people.value?people.value.filter(person=>person.departmentId===id):null,
+        assignments:equipment.status==='fulfilled'&&equipment.value?equipment.value[0]:null,
+        devices:equipment.status==='fulfilled'&&equipment.value?equipment.value[1].devices:[],
+        history:history.status==='fulfilled'?history.value?.changeHistory:null,
+        staffError:people.status==='rejected'?'Staff membership could not be loaded. Reopen Details to try again.':null,
+        equipmentError:equipment.status==='rejected'?'Device assignments could not be loaded. Check your access or reopen Details.':null,
+        historyError:history.status==='rejected'};
+      if(people.status==='fulfilled'&&people.value)staff=people.value;
+    }catch(error){if(requestId===departmentRequest)departmentDetails={error:'Department Details could not be loaded. Check your access or return to the directory.'};}
+    if(requestId===departmentRequest&&activeSection==='departments')redraw();
+  }
 
   async function request(path,data){
     const headers=data===undefined?{}:{'Content-Type':'application/json','X-CSRF-Token':config.csrf};
@@ -103,7 +190,10 @@ function renderDepartments() {
   }
   function render(section){
     if(!loaded)return '<p role="status" class="card cardpad">Loading directory…</p>';
-    if(section==='departments')return canReadDepartments()?renderDepartments():'<p role="status">Department access is required.</p>';
+    if(section==='departments'){
+      if(!canReadDepartments())return '<p role="status">Department access is required.</p>';
+      return currentDepartmentId?renderDepartmentDetails():renderDepartments();
+    }
     if(!canReadStaff())return '<p role="status">Staff Members access is required.</p>';
     const record=staff.find(item=>item.id===currentStaffId);
     if(mode==='details'&&record)return renderStaffDetails();
@@ -115,6 +205,7 @@ function renderDepartments() {
     if(section!==activeSection){
       activeSection=section;
       mode='list';currentStaffId=null;createLoginIntent=false;
+      currentDepartmentId=null;departmentDetails=null;departmentRequest++;
     }
     if(!loaded)void refresh();
   }
@@ -153,11 +244,12 @@ function renderDepartments() {
     const name=String(new FormData(form).get('name')||'').trim();
     const id=form.dataset.id;
     const result=await request('/api/departments'+(id?'/'+encodeURIComponent(id):''),{name});
-    closeDepartmentDialog();await refresh();config.notify('Department saved.');
+    closeDepartmentDialog();await refresh();if(currentDepartmentId===id)await loadDepartmentDetails(id);config.notify('Department saved.');
     return result;
   }
   function configure(settings){
     config=settings;loaded=false;mode='list';activeSection='';
+    currentDepartmentId=null;departmentDetails=null;departmentRequest++;
     staff=[];departments=[];managedDepartments=[];users=[];
   }
   document.addEventListener('click',event=>{
@@ -165,10 +257,18 @@ function renderDepartments() {
     if(!control.closest('#main-content'))return;
     event.preventDefault();event.stopImmediatePropagation();
     const action=control.dataset.staffAction,id=control.dataset.id;
+    if(action==='department-back'){currentDepartmentId=null;departmentDetails=null;departmentRequest++;redraw();document.querySelector('[data-staff-action="department-details"]')?.focus();return;}
+    if(action==='department-tab'){selectDepartmentTab(control.dataset.tab);return;}
+    if(action==='department-details'&&canReadDepartments()){currentDepartmentId=id;departmentTab='overview';void loadDepartmentDetails(id);return;}
     if(action==='staff-back'){mode='list';currentStaffId=null;createLoginIntent=false;redraw();return;}
     if(action==='staff-add'&&canEditStaff()){mode='form';currentStaffId=null;createLoginIntent=false;redraw();return;}
     const record=staff.find(item=>item.id===id);
-    if(action==='staff-details'&&record){mode='details';currentStaffId=id;redraw();return;}
+    if(action==='staff-details'&&record&&canReadStaff()){
+      mode='details';currentStaffId=id;
+      if(activeSection==='departments'){activeSection='staff';currentDepartmentId=null;departmentDetails=null;departmentRequest++;config.openStaff();}
+      else redraw();
+      return;
+    }
     if(action==='staff-edit'&&record&&canEditStaff()){mode='form';currentStaffId=id;createLoginIntent=false;redraw();return;}
     if(action==='staff-create-login'&&record&&canEditStaff()&&isAdministrator()&&!record.accountId){mode='form';currentStaffId=id;createLoginIntent=true;redraw();return;}
     if(action==='manage-login'&&record?.accountId&&isAdministrator()){config.manageLogin(record.accountId);return;}
@@ -184,11 +284,11 @@ function renderDepartments() {
     if(action==='department-toggle'&&department&&canEditDepartments()){
       const archived=!department.archived;
       if(!confirm((archived?'Archive':'Reactivate')+' '+department.name+'? Existing associations will be preserved.'))return;
-      void request('/api/departments/'+encodeURIComponent(id),{archived}).then(async()=>{closeDepartmentDialog();await refresh();config.notify('Department status saved.');}).catch(e=>config.notify(e.message,'error'));return;
+      void request('/api/departments/'+encodeURIComponent(id),{archived}).then(async()=>{closeDepartmentDialog();await refresh();if(currentDepartmentId===id)await loadDepartmentDetails(id);config.notify('Department status saved.');}).catch(e=>config.notify(e.message,'error'));return;
     }
     if(action==='department-delete'&&department?.canDelete&&canEditDepartments()){
       if(!confirm('Permanently delete the unused Department '+department.name+'? This cannot be undone.'))return;
-      void request('/api/departments/'+encodeURIComponent(id)+'/delete',{}).then(async()=>{closeDepartmentDialog();await refresh();config.notify('Unused Department deleted.');}).catch(e=>config.notify(e.message,'error'));
+      void request('/api/departments/'+encodeURIComponent(id)+'/delete',{}).then(async()=>{closeDepartmentDialog();if(currentDepartmentId===id){currentDepartmentId=null;departmentDetails=null;departmentRequest++;}await refresh();config.notify('Unused Department deleted.');}).catch(e=>config.notify(e.message,'error'));
     }
   },true);
   document.addEventListener('submit',event=>{
@@ -222,6 +322,13 @@ function renderDepartments() {
       if(fields){fields.hidden=!checked;fields.querySelectorAll('[name="username"],[name="password"],[name="confirmPassword"]').forEach(input=>input.required=checked);}
     }
   });
-  document.addEventListener('keydown',event=>{if(event.key==='Escape'&&document.querySelector('[data-staff-dialog]'))closeDepartmentDialog();});
+  document.addEventListener('keydown',event=>{
+    const tab=event.target.closest('[data-staff-action="department-tab"]');
+    if(tab){
+      const order=['overview','staff','equipment','history'],index=order.indexOf(departmentTab);
+      const next={ArrowRight:order[(index+1)%4],ArrowLeft:order[(index+3)%4],Home:order[0],End:order[3]}[event.key];
+      if(next){event.preventDefault();selectDepartmentTab(next);}
+    }
+    if(event.key==='Escape'&&document.querySelector('[data-staff-dialog]'))closeDepartmentDialog();});
   window.caffootStaffDirectory={configure,refresh,enter,render};
 })();

@@ -10935,6 +10935,8 @@ void (async () => {
     });
     window.caffootStaffDirectory.configure({
       rights:sessionDirectoryPermissions,admin:sessionIsAdmin,csrf:csrfToken,
+      canReadDevices:()=>!!permissions.Devices,
+      canReadHistory:()=>inventorySectionAccess(),openStaff:()=>switchTab('staff'),
       accountList:()=>users||[],reloadAccounts:async()=>{if(sessionIsAdmin)await loadCentralUsers();},
       redraw:()=>renderContent(),notify:(message,type)=>showToast(message,type),
       manageLogin:accountId=>{
