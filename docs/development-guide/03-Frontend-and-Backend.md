@@ -1,5 +1,7 @@
 # 03 — Frontend, backend and API
 
+**Version boundary:** Published v2.1 is the tagged schema-10 release. `main` includes accepted but unreleased Stage 1/schema 12; this `milestone-1` development branch is schema 15 through merged Stage 3 Batch 3.4. Batch 3.4 manual/native acceptance remains deferred, not passed. See [Development Status](Development-Status.md) for source checkpoints; documentation synchronisation does not release v2.2.
+
 ## In simple terms
 
 The familiar inventory screens are still built from the published HTML application's interface. A small integration layer in the new HTML file communicates with the server to load shared data and save changes. The browser shows the forms; **the server decides whether a write is allowed and valid**.
