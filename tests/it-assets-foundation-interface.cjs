@@ -78,7 +78,7 @@ async function main(){
  assert.equal(await input().isChecked(),false);
  assert.equal(await input().getAttribute('aria-label'),'Enable IT Assets');
  assert.equal(await card().locator('.description').textContent(),
-  'Choose whether your organisation uses IT Assets. Stock screens and actions are not available yet.');
+  'Receive equipment and record stock quantities, checks and readiness.');
  const originalCards=await page.locator('[data-feature-card]:not([data-feature-card="it_assets"])').evaluateAll(
   cards=>cards.map(node=>node.outerHTML));
  for(const feature of ['suppliers','equipment_lifecycle']){
@@ -97,8 +97,8 @@ async function main(){
  await panel();assert.equal(await input().isChecked(),true);
  assert.deepEqual(await page.locator('[data-feature-card]:not([data-feature-card="it_assets"])').evaluateAll(
   cards=>cards.map(node=>node.outerHTML)),originalCards);
- assert.equal((await context.request.get(address+'/api/it-assets/stock')).status(),404);
- assert.equal(await page.locator('nav [data-tab="it_assets"],nav [data-tab="it-assets"]').count(),0);
+ assert.equal((await context.request.get(address+'/api/it-assets/stock')).status(),200);
+ assert.equal(await page.locator('[data-action="tab-it-assets"]').isVisible(),true);
  for(const enabled of [true,false]){
   if(!enabled){
    page.once('dialog',dialog=>{assert.equal(dialog.message(),'Disable IT Assets? Saved data and permissions will be retained.');return dialog.accept();});
@@ -162,7 +162,7 @@ async function main(){
   screenshots:screens,metrics,unchangedSourceHashes:hashes,pageErrors:errors,
   checks:['Default Off','Additional Features','Saved Choice','Cancel Sends No POST',
    'Existing Cards Preserved','Retained Data And Security','Keyboard Toggle',
-   'Independent Permissions','No Stock API Or Navigation','Responsive Light And Dark']
+   'Independent Permissions','Stock Access Follows Feature Choice','Responsive Light And Dark']
  },null,2)+'\n');
  console.log('PASS: Optional Features persistence, cancellation, permissions, retained data, existing cards and source styles.');
  console.log('PASS: '+screens.length+' real desktop/mobile light/dark screenshots; no page errors or horizontal page overflow.');

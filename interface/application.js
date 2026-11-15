@@ -1172,6 +1172,7 @@ function hierarchyValidateTypes(subnets) {
                 dashboard: 'Dashboard',
                 ipam: 'IPAM',
                 devices: 'Devices',
+                'it-assets': 'IT Assets',
                 racks: 'Network Racks',
 
 
@@ -1294,6 +1295,10 @@ function hierarchyValidateTypes(subnets) {
             else if (currentTab === 'racks') html = renderRackHubV13();
             else if (currentTab === 'audit') html = renderAuditHTML();
             else if (currentTab === 'users') html = nextRenderUsers();
+            else if (currentTab === 'it-assets') {
+                window.caffootStockIntake.enter();
+                html = window.caffootStockIntake.render();
+            }
             else if (currentTab === 'staff' || currentTab === 'departments') {
                 window.caffootStaffDirectory.enter(currentTab);
                 html = '<div class="users-live staff-live">'+window.caffootStaffDirectory.render(currentTab)+'</div>';
@@ -1306,6 +1311,7 @@ function hierarchyValidateTypes(subnets) {
                 html = renderSectionHeader(currentTab) + '<section class="' + panelClass + ' active section-page-body"' + (currentTab==='devices'?' data-section="'+activeDeviceDetailsTab+'"':'') + '>' + html + '</section>';
             }
             container.innerHTML = html;
+            if (currentTab === 'it-assets') window.caffootStockIntake.hydrate();
             window.caffootEquipment.hydrate(container);
             if (currentTab === 'account') hydrateAccount(container);
             if (currentTab === 'audit') hydrateAudit(container);
@@ -8901,6 +8907,7 @@ function openIpModal(ip) {
                 }
                 case 'tab-dashboard': switchTab('dashboard'); break;
                 case 'tab-devices': switchTab('devices'); break;
+                case 'tab-it-assets': switchTab('it-assets'); break;
 
 
                 case 'tab-ipam': switchTab('ipam'); break;
@@ -8941,7 +8948,7 @@ function openIpModal(ip) {
 // Caffoot Lite: published inventory UI, authoritative SQLite persistence.
 void (async () => {
   const collections = ['devices','subnets','vlans','racks','rackAccessories','ipAllocations'];
-  const section = {devices:'Devices',ipam:'IPAM',racks:'Racks',staff:'Staff Members',departments:'Departments'};
+  const section = {devices:'Devices','it-assets':'IT Assets',ipam:'IPAM',racks:'Racks',staff:'Staff Members',departments:'Departments'};
   let permissions = {};
   let editPermissions = {};
   let deviceRevisions = {};
@@ -8953,12 +8960,23 @@ void (async () => {
   let sessionIsAdmin = false;
   let sessionCanEnterInventory = false;
   let sessionDirectoryPermissions = {staffMembers:{read:false,edit:false},departments:{read:false,edit:false}};
+  let sessionStockPermissions = {read:false,edit:false};
   const inventorySectionAccess = () => ['Devices','IPAM','Racks'].some(key=>permissions[key]);
   function addDirectoryAccess(){
     permissions['Staff Members']=!!sessionDirectoryPermissions.staffMembers?.read;
     permissions.Departments=!!sessionDirectoryPermissions.departments?.read;
     editPermissions['Staff Members']=!!sessionDirectoryPermissions.staffMembers?.edit;
     editPermissions.Departments=!!sessionDirectoryPermissions.departments?.edit;
+    permissions['IT Assets']=!!sessionStockPermissions.read;
+    editPermissions['IT Assets']=!!sessionStockPermissions.edit;
+  }
+  async function refreshStockAccess(){
+    const response=await fetch('/api/session',{cache:'no-store'});
+    const session=response.ok?await response.json():{};
+    sessionStockPermissions=session.stock_permissions||{read:false,edit:false};
+    addDirectoryAccess();
+    if(!permissions['IT Assets'])window.caffootStockIntake.clear();
+    applyAllowedControls();
   }
   async function refreshCentralInventory(render = true) {
     const response = await fetch('/api/inventory/state', {cache:'no-store'});
@@ -9118,6 +9136,7 @@ void (async () => {
           (sessionIsAdmin && (button.closest('#next-user-create-form,#next-user-profile-form,#smtp-settings-form,#smtp-test-form') || button.form?.matches('#role-definition-form'))) ||
           (editPermissions['Staff Members'] && button.form?.matches('#staff-record-form')) ||
           (editPermissions.Departments && button.form?.matches('#staff-department-form')) ||
+          (editPermissions['IT Assets'] && button.form?.matches('#stock-receipt-form,#stock-readiness-form')) ||
           (editPermissions.Devices && button.form?.matches('form[data-device-form="true"],#equipment-assignment-form')) ||
           (editPermissions.IPAM && button.closest('form[data-form-action="ip"],form[data-form-action="bulk-ip"],form[data-form-action="subnet"],form[data-ipam-subnet-creation]')) ||
           (editPermissions.Devices && editPermissions.Racks && button.closest('#rack-shelf-removal-form')) ||
@@ -9334,7 +9353,7 @@ void (async () => {
   },true);
   const originalSwitchTab = switchTab;
   switchTab = function(tab) {
-    if ((!sessionCanEnterInventory && !['account','equipment','staff','departments'].includes(tab) && !(sessionIsAdmin && ['users','settings'].includes(tab))) || (['dashboard','audit'].includes(tab) && !inventorySectionAccess()) || ((tab === 'users' || tab === 'settings') && !sessionIsAdmin) ||
+    if ((!sessionCanEnterInventory && !['account','equipment','staff','departments','it-assets'].includes(tab) && !(sessionIsAdmin && ['users','settings'].includes(tab))) || (['dashboard','audit'].includes(tab) && !inventorySectionAccess()) || ((tab === 'users' || tab === 'settings') && !sessionIsAdmin) ||
         (section[tab] && !permissions[section[tab]])) {
       showToast('You do not have access to this section.', 'error');
       return;
@@ -9646,7 +9665,7 @@ void (async () => {
     ['racks','Network Racks','<rect x="6" y="2" width="12" height="20" rx="1"/><path d="M9 6h6M9 10h6M9 14h6M9 18h6"/>','Document racks, rack accessories and equipment placement within racks.','green'],
     ['suppliers','Suppliers','<circle cx="9" cy="8" r="3"/><path d="M3 20v-2a6 6 0 0 1 12 0v2M17 6a3 3 0 0 1 0 6m1 4a5 5 0 0 1 3 4"/>','Manage supplier records, contacts and related notes and issues.','orange'],
     ['equipment_lifecycle','Equipment Lifecycle','<circle cx="12" cy="12" r="9"/><path d="M12 7v5l4 2"/>','Track equipment lifecycle information, warranty dates and related warnings.',''],
-    ['it_assets','IT Assets','<path d="m12 3 9 5-9 5-9-5 9-5Zm-9 5v8l9 5 9-5V8M12 13v8"/>','Choose whether your organisation uses IT Assets. Stock screens and actions are not available yet.','']
+    ['it_assets','IT Assets','<path d="m12 3 9 5-9 5-9-5 9-5Zm-9 5v8l9 5 9-5V8M12 13v8"/>','Receive equipment and record stock quantities, checks and readiness.','']
   ];
   let featureSettingsPending=false;
   async function hydrateOptionalFeatureSettings(root){
@@ -9682,6 +9701,7 @@ void (async () => {
     void(async()=>{
       try{
         await postInventory('/api/settings/features',{feature:input.dataset.optionalFeature,enabled,confirmDisable:!enabled});
+        await refreshStockAccess();
         await refreshCentralInventory(false);
         await loadCentralUsers();
         if(currentTab==='settings')renderContent();
@@ -10893,7 +10913,8 @@ void (async () => {
         !(editPermissions.Devices && editPermissions.Racks && element.closest('#rack-shelf-removal-form')) &&
         !(editPermissions.Racks && element.closest('form[data-form-action="rack"],form[data-form-action="assign"],#rack-accessory-form')) &&
         !(editPermissions['Staff Members'] && element.form?.matches('#staff-record-form')) &&
-        !(editPermissions.Departments && element.form?.matches('#staff-department-form')))) {
+        !(editPermissions.Departments && element.form?.matches('#staff-department-form')) &&
+        !(editPermissions['IT Assets'] && element.form?.matches('#stock-receipt-form,#stock-readiness-form')))) {
       event.preventDefault();
       event.stopImmediatePropagation();
       showToast(!sessionIsAdmin ? 'Edit permission is required for this action.' : 'This inventory operation is not yet connected to SQLite.', 'error');
@@ -10904,6 +10925,7 @@ void (async () => {
     if (event.target.matches('#next-account-password-form,#next-account-mfa-start,#next-account-mfa-confirm,#account-mfa-removal-form,#personal-details-form,#next-user-profile-form,#smtp-settings-form,#smtp-test-form,#account-email-verification-form') ||
         (editPermissions['Staff Members'] && event.target.matches('#staff-record-form')) ||
         (editPermissions.Departments && event.target.matches('#staff-department-form')) ||
+        (editPermissions['IT Assets'] && event.target.matches('#stock-receipt-form,#stock-readiness-form')) ||
         (editPermissions.Devices && event.target.matches('form[data-device-form="true"],#equipment-assignment-form')) ||
         (editPermissions.IPAM && event.target.matches('form[data-form-action="ip"],form[data-form-action="bulk-ip"],form[data-form-action="subnet"],form[data-ipam-subnet-creation]')) ||
         (editPermissions.Racks && event.target.matches('form[data-form-action="rack"],form[data-form-action="assign"],#rack-accessory-form')) ||
@@ -10920,6 +10942,7 @@ void (async () => {
     const session=await sessionResponse.json();
     csrfToken=session.csrf_token;
     sessionDirectoryPermissions=session.directory_permissions||sessionDirectoryPermissions;
+    sessionStockPermissions=session.stock_permissions||sessionStockPermissions;
     addDirectoryAccess();
     sessionIsAdmin=!!session.is_admin;
     sessionAssignedRoles=session.assigned_roles||[];
@@ -10945,6 +10968,9 @@ void (async () => {
         activeUsersTab='list';activeUserEditorId=Number(accountId);switchTab('users');
       }
     });
+    window.caffootStockIntake.configure({csrf:csrfToken,canRead:()=>!!permissions['IT Assets'],
+      canEdit:()=>!!editPermissions['IT Assets'],refreshAccess:refreshStockAccess,
+      redraw:()=>{if(currentTab==='it-assets')renderContent();},notify:(message,type)=>showToast(message,type)});
     await loadAccountProfile();
     window.nextMfaEnrolled=sessionMfaEnrolled;
     document.getElementById('next-users-nav').classList.toggle('hidden', !sessionIsAdmin);
@@ -10955,15 +10981,16 @@ void (async () => {
       await window.caffootStaffDirectory.refresh();
     // Hide only the browser-backup actions excluded from the server application by issue #215.
     document.querySelectorAll('[data-action="settings-backup"],[data-action="export-data"],[data-action="export-backup"]').forEach(el=>el.hidden=true);
-    switchTab(window.location.pathname==='/account'?'account':inventorySectionAccess()?'dashboard':sessionDirectoryPermissions.staffMembers?.read?'staff':sessionDirectoryPermissions.departments?.read?'departments':sessionIsAdmin?'settings':'account');
+    switchTab(window.location.pathname==='/account'?'account':inventorySectionAccess()?'dashboard':sessionDirectoryPermissions.staffMembers?.read?'staff':sessionDirectoryPermissions.departments?.read?'departments':permissions['IT Assets']?'it-assets':sessionIsAdmin?'settings':'account');
     // Preserve existing fragment entry points without changing server permissions.
     const destination = window.location.hash.slice(1);
     const legacyDestination = {
       dashboard:'dashboard', devices:'devices', ipam:'ipam',
       racks:'racks', audit:'audit', users:'users',
-      settings:'settings', account:'account',equipment:'equipment',staff:'staff',departments:'departments'
+      settings:'settings', account:'account',equipment:'equipment',staff:'staff',departments:'departments','it-assets':'it-assets'
     }[destination];
     const canOpen = (legacyDestination === 'dashboard' && inventorySectionAccess()) || legacyDestination === 'account' || legacyDestination === 'equipment' ||
+      (legacyDestination === 'it-assets' && permissions['IT Assets']) ||
       (legacyDestination === 'staff' && permissions['Staff Members']) ||
       (legacyDestination === 'departments' && permissions.Departments) ||
       (legacyDestination === 'devices' && permissions.Devices) ||

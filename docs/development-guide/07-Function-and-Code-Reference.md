@@ -12,6 +12,8 @@ For the full source-pinned list of named declarations, owning bridge methods and
 | --- | --- | --- |
 | [`backend/server.py`](../../backend/server.py) | `Handler.do_GET`, `Handler.do_POST`, `Handler.handle_import`, `main` | HTTPS entry point and request routing |
 | [`backend/schema.py`](../../backend/schema.py) | `SCHEMA_VERSION`, `initialise_database` | SQLite definitions and migrations |
+| [`backend/stock_intake.py`](../../backend/stock_intake.py) | `receive_stock`, `update_stock_readiness`, `read_stock` | Protected, atomic receipt/readiness records and stock/history projections; see [Stock Intake](IT-Assets-Stock-Intake.md) |
+| [`interface/stock-intake.js`](../../interface/stock-intake.js) | `renderStock`, `hydrateStock` | Existing-style Receive Stock, Stock Inventory and Receipt History views |
 | [`backend/stock_schema.py`](../../backend/stock_schema.py) | `migrate_it_asset_stock`, `validate_it_asset_stock` | Empty stock foundation, retained feature choices and permanent-history guards; see [IT Assets Foundation](IT-Assets-Foundation.md) |
 | [`backend/inventory.py`](../../backend/inventory.py) | `reconstruct_inventory`, `stage_inventory`, `inspect_export` | Source-shaped inventory, import storage, export format |
 | [`interface/application.js`](../../interface/application.js) | `renderDevicesHTML`, `renderRackHubV13`, `refreshCentralInventory`, `postInventory`, `applyAllowedControls` | Inventory calculations, actions and server integration; HTML lives in `interface/screens/` |

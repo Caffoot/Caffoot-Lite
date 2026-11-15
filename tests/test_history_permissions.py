@@ -1,4 +1,4 @@
-"""Focused, defensive history projection regression tests for v2.0.2."""
+"""Permission-filtered history retains existing inventory and stock boundaries."""
 import json
 import sqlite3
 import unittest
@@ -20,7 +20,7 @@ class HistoryPermissionProjectionTests(unittest.TestCase):
         self.allowed = {"Devices": True, "IPAM": False, "Racks": False}
         self.access = patch("backend.history_permissions.can_access",
                             side_effect=lambda _db, _user, section:
-                            self.allowed[section])
+                            self.allowed.get(section, False))
         self.access.start()
         self.addCleanup(self.access.stop)
         self.addCleanup(self.db.close)

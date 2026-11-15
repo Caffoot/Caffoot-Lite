@@ -1,18 +1,14 @@
 # IT Assets Foundation
 
-> Unreleased v2.2 development. Batch 3.6 is on the separate
-> `feat/it-assets-foundation` review branch, based on `milestone-1` at
-> `2e6c50ba4777b7500258d2a1a28317764d806020`. It is not merged or released.
-> Published v2.1 remains unchanged. Batch 3.4 native acceptance remains deferred.
+> Unreleased v2.2 development. Batch 3.6 merged via PR #387 at
+> `774dee3ecaaf1d50ba94dbf55891aa4b79b853c5`, schema 16. The foundation introduced empty
+> stock tables and a default-off switch; it did not create stock for existing Devices.
+> [Batch 3.7 Stock Intake](IT-Assets-Stock-Intake.md) now uses that unchanged foundation
+> on a separate draft-review branch. This does not release v2.2.
 
-This foundation adds an independent organisation choice and empty stock tables.
-It does not provide stock screens, receipts, issues, returns, readiness, write-off,
-corrections, Device registration, dashboards or associated equipment.
-
-The scope follows [#368](https://github.com/Caffoot/Caffoot-Lite/issues/368),
-[#352](https://github.com/Caffoot/Caffoot-Lite/issues/352) and
-[#232](https://github.com/Caffoot/Caffoot-Lite/issues/232), with the owner's
-Minimum Stock Level and specification-correction amendments.
+The sections below describe the Batch 3.6 foundation checkpoint and its safeguards.
+Statements about absent screens or writers refer to that checkpoint. The linked
+Batch 3.7 guide describes current receipt, inventory and readiness operations.
 
 ## Schema 16
 
@@ -154,7 +150,7 @@ endpoint is introduced here.
 
 Settings & Data → Optional Features reuses the existing card template and styles.
 IT Assets appears after Suppliers and Equipment Lifecycle in Additional Features.
-Its description explicitly says stock screens and actions are unavailable.
+At the Batch 3.6 checkpoint its description said stock screens and actions were unavailable. Batch 3.7 updates that description to the implemented receipt/readiness functionality, retaining the card, switches and disable confirmation.
 
 The existing secured feature API accepts `it_assets`. Administrator/MFA/session,
 Origin, CSRF, disable confirmation, cancellation, atomic audit and no-op rules are
@@ -163,7 +159,7 @@ unchanged. A switch grants no section rights and changes no MFA requirement.
 `can_access` combines the flag with existing IT Assets Read/Edit roles and
 overrides. Missing/off flags deny access, including for administrators. Staff
 Members and Departments remain core; Devices remain independent. No new role or
-stock navigation is introduced. Current APIs do not project the new stock tables.
+stock navigation was introduced by the foundation. Batch 3.7 adds independently protected stock navigation and APIs; it does not add stock to the existing inventory projections.
 
 ## Checks And Remaining Work
 
@@ -172,8 +168,9 @@ records focused tests, genuine screenshots and limits.
 
 The current assignment update/delete guards are retained. A later Device return
 or write-off needs a separately approved change allowing audited assignment
-closure. Receiving, preparation, issue/return, corrections, associated equipment,
-Device registration, dashboards, Suppliers and Service Desk remain unimplemented.
+closure. Batch 3.7 adds receiving and readiness; issue/return, write-off, corrections,
+associated equipment, Device registration, dashboards/warnings, Suppliers and
+Service Desk remain unimplemented.
 
 Complete-milestone import compatibility and full-volume upgrade/restore acceptance
 remain Stage 6 work. This guide is not a tested production upgrade procedure.

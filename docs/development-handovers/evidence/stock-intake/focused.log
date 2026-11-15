@@ -1,0 +1,35 @@
+test_authentication_csrf_payload_and_unapproved_routes (test_stock_intake.StockIntakeHttpTests.test_authentication_csrf_payload_and_unapproved_routes) ... 127.0.0.1 - - [15/Nov/2026 17:44:42] "GET /api/it-assets/stock HTTP/1.1" 401 -
+127.0.0.1 - - [15/Nov/2026 17:44:42] "POST /api/it-assets/receive HTTP/1.1" 403 -
+127.0.0.1 - - [15/Nov/2026 17:44:42] "POST /api/it-assets/receive HTTP/1.1" 400 -
+127.0.0.1 - - [15/Nov/2026 17:44:42] "POST /api/it-assets/issue HTTP/1.1" 404 -
+127.0.0.1 - - [15/Nov/2026 17:44:42] "POST /api/it-assets/return HTTP/1.1" 404 -
+127.0.0.1 - - [15/Nov/2026 17:44:42] "POST /api/it-assets/write-off HTTP/1.1" 404 -
+127.0.0.1 - - [15/Nov/2026 17:44:42] "POST /api/it-assets/correct HTTP/1.1" 404 -
+127.0.0.1 - - [15/Nov/2026 17:44:42] "POST /api/it-assets/register HTTP/1.1" 404 -
+127.0.0.1 - - [15/Nov/2026 17:44:42] "POST /api/it-assets/specifications HTTP/1.1" 404 -
+ok
+test_protected_receipt_readiness_and_history_round_trip (test_stock_intake.StockIntakeHttpTests.test_protected_receipt_readiness_and_history_round_trip) ... 127.0.0.1 - - [15/Nov/2026 17:44:43] "GET /api/it-assets/stock HTTP/1.1" 403 -
+127.0.0.1 - - [15/Nov/2026 17:44:43] "POST /api/it-assets/receive HTTP/1.1" 200 -
+127.0.0.1 - - [15/Nov/2026 17:44:43] "POST /api/it-assets/readiness HTTP/1.1" 200 -
+127.0.0.1 - - [15/Nov/2026 17:44:43] "GET /api/it-assets/stock/169bb4990ea0494a9639c6d63ecc1cae HTTP/1.1" 200 -
+ok
+test_accumulated_held_quantities_remain_exact_in_the_supported_number_range (test_stock_intake.StockIntakeTests.test_accumulated_held_quantities_remain_exact_in_the_supported_number_range) ... ok
+test_additional_deliveries_keep_separate_supplier_dates_and_quantities (test_stock_intake.StockIntakeTests.test_additional_deliveries_keep_separate_supplier_dates_and_quantities) ... ok
+test_concurrent_receipts_and_stale_readiness_keep_every_unit_and_history (test_stock_intake.StockIntakeTests.test_concurrent_receipts_and_stale_readiness_keep_every_unit_and_history) ... ok
+test_duplicate_configuration_is_rejected_and_different_specifications_are_distinct (test_stock_intake.StockIntakeTests.test_duplicate_configuration_is_rejected_and_different_specifications_are_distinct) ... ok
+test_failure_after_receipt_or_readiness_rolls_back_all_partial_records (test_stock_intake.StockIntakeTests.test_failure_after_receipt_or_readiness_rolls_back_all_partial_records) ... ok
+test_feature_disabled_history_does_not_leak_even_to_an_inventory_administrator (test_stock_intake.StockIntakeTests.test_feature_disabled_history_does_not_leak_even_to_an_inventory_administrator) ... ok
+test_individual_identity_optional_identifiers_and_selected_readiness (test_stock_intake.StockIntakeTests.test_individual_identity_optional_identifiers_and_selected_readiness) ... ok
+test_invalid_quantities_checks_specifications_and_identifiers_save_nothing (test_stock_intake.StockIntakeTests.test_invalid_quantities_checks_specifications_and_identifiers_save_nothing) ... ok
+test_minimum_is_optional_zero_is_distinct_and_no_movement_is_fabricated (test_stock_intake.StockIntakeTests.test_minimum_is_optional_zero_is_distinct_and_no_movement_is_fabricated) ... ok
+test_partial_checked_readiness_is_atomic_and_keeps_original_receipt (test_stock_intake.StockIntakeTests.test_partial_checked_readiness_is_atomic_and_keeps_original_receipt) ... ok
+test_read_only_missing_mfa_and_revoked_sessions_cannot_write (test_stock_intake.StockIntakeTests.test_read_only_missing_mfa_and_revoked_sessions_cannot_write) ... ok
+test_readiness_and_reasoned_reversal_preserve_held_and_receipts (test_stock_intake.StockIntakeTests.test_readiness_and_reasoned_reversal_preserve_held_and_receipts) ... ok
+test_receipt_is_held_unready_and_preserves_other_records (test_stock_intake.StockIntakeTests.test_receipt_is_held_unready_and_preserves_other_records) ... ok
+test_retries_are_idempotent_and_changed_payload_cannot_reuse_a_reference (test_stock_intake.StockIntakeTests.test_retries_are_idempotent_and_changed_payload_cannot_reuse_a_reference) ... ok
+test_stale_updates_unchecked_increases_and_negative_minimum_are_refused (test_stock_intake.StockIntakeTests.test_stale_updates_unchecked_increases_and_negative_minimum_are_refused) ... ok
+
+----------------------------------------------------------------------
+Ran 17 tests in 1.680s
+
+OK

@@ -97,7 +97,7 @@ class ItAssetsHttpTests(unittest.TestCase):
     request = feature_http.FeatureSettingsHttpTests.request
     post = feature_http.FeatureSettingsHttpTests.post
 
-    def test_enabled_and_disabled_stock_is_not_exposed_as_an_unfinished_api(self):
+    def test_stock_reads_respect_the_independent_feature_gate(self):
         with sqlite3.connect(self.path) as connection:
             stock_item = item(connection)
             connection.execute("UPDATE it_asset_stock_items SET name=? WHERE id=?",
@@ -115,8 +115,9 @@ class ItAssetsHttpTests(unittest.TestCase):
                 status, raw, _ = self.request(endpoint, COOKIE_NAME + "=" + self.token)
                 self.assertIn(status, (200, 403))
                 self.assertNotIn("PRIVATE_STOCK_SPECIFICATION", raw.decode())
-            status, _, _ = self.request("/api/it-assets/stock", COOKIE_NAME + "=" + self.token)
-            self.assertEqual(status, 404)
+            status, raw, _ = self.request("/api/it-assets/stock", COOKIE_NAME + "=" + self.token)
+            self.assertEqual(status, 200 if enabled else 403)
+            self.assertEqual("PRIVATE_STOCK_SPECIFICATION" in raw.decode(), enabled)
 
     def test_assets_switch_has_existing_csrf_confirmation_and_atomic_audit_guards(self):
         with patch("backend.server.PUBLIC_ORIGIN", "https://caffoot.example"):

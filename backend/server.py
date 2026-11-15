@@ -19,6 +19,7 @@ from .collection_saves import (change_inventory_record, remove_linked_rack_shelf
 from .settings_saves import save_inventory_setting
 from .inventory_projection import project_inventory_response
 from .feature_settings import read_feature_settings, save_feature_setting, unique_feature_fields
+from .stock_intake import stock_access, read_stock, receive_stock, update_stock_readiness
 from .smtp_settings import (config_path as smtp_config_path, public_settings as smtp_public_settings,
                             save_settings as save_smtp_settings, send_test_email)
 from .device_catalogue import change_device_catalogue
@@ -126,6 +127,9 @@ class Handler(BaseHTTPRequestHandler):
         super().end_headers()
 
     def do_GET(self):
+        if urlsplit(self.path).path.startswith('/api/it-assets/'):
+            self.handle_stock_request()
+            return
         if self.path.startswith(("/api/equipment/", "/api/my-equipment")):
             self.handle_equipment_request()
             return
@@ -201,7 +205,7 @@ class Handler(BaseHTTPRequestHandler):
                     self.respond(401, {"error": "unauthorised"})
                     return
                 if self.path != "/account" and not evaluate_role_policy(connection, account_id).is_admin and not any(can_access(connection, account_id, section)
-                           for section in ("Devices", "IPAM", "Racks", "Staff Members", "Departments")):
+                           for section in ("Devices", "IPAM", "Racks", "Staff Members", "Departments", "IT Assets")):
                     self.respond(403, {"error": "forbidden"})
                     return
             body = (Path(__file__).resolve().parent.parent / "inventory.html").read_bytes()
@@ -468,8 +472,10 @@ class Handler(BaseHTTPRequestHandler):
                     ),
                     "can_enter_workspace": bool(account[1]) or any(
                         can_access(connection, account_id, section)
-                        for section in ("Devices", "IPAM", "Racks", "Staff Members", "Departments")
+                        for section in ("Devices", "IPAM", "Racks", "Staff Members", "Departments", "IT Assets")
                     ),
+                    "stock_permissions": {"read": can_access(connection, account_id, "IT Assets"),
+                                          "edit": can_access(connection, account_id, "IT Assets", edit=True)},
                     "directory_permissions": {
                         "staffMembers": {"read": can_access(connection, account_id, "Staff Members"),
                                          "edit": can_access(connection, account_id, "Staff Members", edit=True)},
@@ -482,6 +488,9 @@ class Handler(BaseHTTPRequestHandler):
             self.respond(404, {"error": "not found"})
 
     def do_POST(self):
+        if urlsplit(self.path).path.startswith('/api/it-assets/'):
+            self.handle_stock_request()
+            return
         if self.path.startswith(("/api/equipment/", "/api/my-equipment")):
             self.handle_equipment_request()
             return
@@ -660,6 +669,60 @@ class Handler(BaseHTTPRequestHandler):
             self.respond(401, {"error": "invalid credentials"})
             return
         self.respond(200, {"status": "signed in"}, cookie=session_cookie(token))
+
+    def handle_stock_request(self):
+        """Protect stock reads and saves with the existing session and request checks."""
+        parsed = urlsplit(self.path)
+        parts = parsed.path.strip('/').split('/')
+        route = parsed.path
+        reading = self.command == 'GET'
+        valid = (route == '/api/it-assets/stock' and reading or
+                 len(parts) == 4 and parts[:3] == ['api', 'it-assets', 'stock'] and reading or
+                 route in ('/api/it-assets/receive', '/api/it-assets/readiness') and not reading)
+        if not valid or parsed.query or route.endswith('/'):
+            self.respond(404, {'error': 'not found'})
+            return
+        origin = self.headers.get('Origin')
+        if (self.headers.get('Sec-Fetch-Site') == 'cross-site'
+                or origin is not None and (not PUBLIC_ORIGIN or not require_same_origin(origin, PUBLIC_ORIGIN))
+                or not reading and (not PUBLIC_ORIGIN or not require_same_origin(origin, PUBLIC_ORIGIN))):
+            self.respond(403, {'error': 'forbidden'})
+            return
+        try:
+            with connect() as connection:
+                cookie = self.headers.get('Cookie')
+                if reading:
+                    connection.execute('BEGIN')
+                actor = (authenticated_account(connection, cookie) if reading else
+                         authorised_mutation(connection, cookie, origin, PUBLIC_ORIGIN,
+                                             self.headers.get('X-CSRF-Token')))
+                if actor is None:
+                    self.respond(401 if reading else 403, {'error': 'unauthorised'})
+                    return
+                stock_access(connection, actor, edit=not reading)
+                if reading:
+                    result = read_stock(connection, actor, parts[3] if len(parts) == 4 else None)
+                else:
+                    length = self.headers.get('Content-Length', '')
+                    if not length.isdecimal() or not 0 < int(length) <= 65536:
+                        raise ValueError('Invalid stock request size')
+                    if self.headers.get('Content-Type', '').split(';')[0].strip().lower() != 'application/json':
+                        self.respond(415, {'error': 'JSON required'})
+                        return
+                    payload = json.loads(self.rfile.read(int(length)), object_pairs_hook=unique_directory_fields)
+                    writer = receive_stock if route.endswith('/receive') else update_stock_readiness
+                    result = writer(connection, actor, read_session_cookie(cookie), payload)
+            self.respond(200, result)
+        except PermissionError:
+            self.respond(403, {'error': 'forbidden'})
+        except LookupError as exc:
+            self.respond(404, {'error': str(exc)})
+        except FileExistsError as exc:
+            self.respond(409, {'error': str(exc)})
+        except sqlite3.IntegrityError:
+            self.respond(409, {'error': 'Stock balance or identity conflict; reload the item before retrying'})
+        except (ValueError, TypeError, UnicodeError) as exc:
+            self.respond(400, {'error': str(exc)})
 
     def handle_equipment_request(self):
         """Show only permitted equipment and verify the signed-in user before saving."""
