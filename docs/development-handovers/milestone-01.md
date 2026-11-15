@@ -16,12 +16,16 @@ counts require their own access. Department equipment excludes personal allocati
 History uses only returned Department events and canonical assignment records.
 Unavailable data is not converted into a zero count or a fabricated event.
 
-Initial focused checks: 49 backend/HTTP tests passed; the new real application browser
-flow passed with 24 desktop/mobile light/dark captures, keyboard/navigation checks,
-independent access, canonical data preservation, feature-off and archive/reactivation.
-Directory visual captures and safe-delete coverage are being completed. This checkpoint
-is not final visual acceptance. Function Index regenerated: 847 definitions.
-Batch 3.4 native acceptance remains deferred. No merge, release, production or Pi work.
+Final focused checks: **49 backend/HTTP tests passed**. The new real HTTPS/SQLite
+browser flow passed with **28 desktop/mobile light/dark captures**, zero page errors,
+keyboard/navigation, independent access, canonical data preservation, feature-off,
+archive/reactivation and safe unused deletion. The existing Staff interface browser
+test also passed. Source comparisons retain accepted Staff/forms, Department editor,
+all backend/schema and shared styles. Function Index regenerated: **847 definitions**.
+See the [implementation review, source hashes, screenshots and limits](evidence/department-details/Report.md).
+Runtime/capture source: `80adee938c47011efa518a9fd2ac55b55346462e`; later evidence changes
+do not alter it. Final owner implementation acceptance and merge approval are pending.
+Batch 3.4 native acceptance remains deferred. No release, production or Pi work.
 
 ## Batch 3.4 Final Visual Corrections — 14 November 2026
 
