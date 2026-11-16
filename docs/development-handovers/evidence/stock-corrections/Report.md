@@ -2,7 +2,7 @@
 
 **Draft PR:** [#392](https://github.com/Caffoot/Caffoot-Lite/pull/392), targeting `milestone-1`.
 **Verified starting remote HEAD:** `53b04328c4f895bfc1f72f0416c43a519b2e8b42`.
-**Captured runtime:** `7bf5b76bd84ec80dd07531dfd102a20bd3881722`.
+**Captured runtime:** `0e72633c6820b9225b26f4e451f474ca901397fe`.
 The final evidence commit follows that runtime without changing application code.
 [Runtime hashes and browser results](browser-results.json) identify all six changed
 runtime files; [screenshot hashes](screenshot-hashes.json) identify the original PNGs.
@@ -47,7 +47,7 @@ local functional or browser failure remains.
 
 ## GitHub Actions
 
-At checkpoint `66bc4d4bb4a15ea3431b3f5af881b52ce6167b32`, backend,
+At checkpoint `66bc4d4bb4a15ea3431b3f5af881b52ce6167b32`, backend (940 tests, four skips),
 Docker lifecycle, documentation, secret scan and release preflight passed.
 The [browser run](https://github.com/Caffoot/Caffoot-Lite/actions/runs/43904472792)
 failed on that same hover-colour assertion; its Firefox and WebKit jobs passed.
@@ -75,7 +75,7 @@ readable reasons and correction history, orange primary/secondary actions,
 whole-form action placement, balance text, blocked explanations and both themes.
 The browser also exercised labelled fields, required reasons, live validation,
 focus return and the existing keyboard-safe discard dialog. Unsaved changes,
-Cancel, Escape, theme redraw, stale saves and read-only presentation were checked.
+Cancel, Escape, shared My Account navigation, theme redraw, stale saves and read-only presentation were checked. A rejected stale save clears the allowed result and disables Save until a fresh validation succeeds.
 This is engineering visual review, not product-owner visual acceptance.
 
 | State | Desktop Light | Desktop Dark | Mobile Light | Mobile Dark |
