@@ -3975,7 +3975,7 @@ function openIpModal(ip) {
                 .map(field => [field.id || field.name || '', field.type, field.type === 'checkbox' || field.type === 'radio' ? field.checked : field.value]));
         }
         function rememberModalForm() {
-            const form = document.querySelector('#modal-content form[data-device-form="true"], #modal-content form[data-ipam-subnet-creation], #modal-content form[data-form-action="subnet"], #modal-content form[data-form-action="rack"], #modal-content form[data-form-action="ip"], #modal-content form[data-form-action="assign"], #modal-content form[data-form-action="bulk-ip"], #modal-content form[data-form-action="manufacturer"], #modal-content form[data-form-action="model"], #modal-content form[data-form-action="software"], #modal-content form[data-form-action="server-service"]');
+            const form = document.querySelector('#modal-content #stock-reissue-form[data-direct-handover="true"], #modal-content form[data-device-form="true"], #modal-content form[data-ipam-subnet-creation], #modal-content form[data-form-action="subnet"], #modal-content form[data-form-action="rack"], #modal-content form[data-form-action="ip"], #modal-content form[data-form-action="assign"], #modal-content form[data-form-action="bulk-ip"], #modal-content form[data-form-action="manufacturer"], #modal-content form[data-form-action="model"], #modal-content form[data-form-action="software"], #modal-content form[data-form-action="server-service"]');
             if (form) modalFormSnapshots.set(form, modalFormSnapshot(form));
         }
         let pendingDeviceFormDiscardCallback=null;
@@ -4060,7 +4060,7 @@ function openIpModal(ip) {
                 content.querySelector('form[data-device-form="true"]')?.querySelector('input,select,textarea')?.focus();
                 return;
             }
-            const editableForm = document.querySelector('#modal-content form[data-device-form="true"], #modal-content form[data-ipam-subnet-creation], #modal-content form[data-form-action="subnet"], #modal-content form[data-form-action="rack"], #modal-content form[data-form-action="ip"], #modal-content form[data-form-action="assign"], #modal-content form[data-form-action="bulk-ip"], #modal-content form[data-form-action="manufacturer"], #modal-content form[data-form-action="model"], #modal-content form[data-form-action="software"], #modal-content form[data-form-action="server-service"]');
+            const editableForm = document.querySelector('#modal-content #stock-reissue-form[data-direct-handover="true"], #modal-content form[data-device-form="true"], #modal-content form[data-ipam-subnet-creation], #modal-content form[data-form-action="subnet"], #modal-content form[data-form-action="rack"], #modal-content form[data-form-action="ip"], #modal-content form[data-form-action="assign"], #modal-content form[data-form-action="bulk-ip"], #modal-content form[data-form-action="manufacturer"], #modal-content form[data-form-action="model"], #modal-content form[data-form-action="software"], #modal-content form[data-form-action="server-service"]');
             if (!force && editableForm && modalFormSnapshots.has(editableForm) &&
                 modalFormSnapshot(editableForm) !== modalFormSnapshots.get(editableForm) &&
                 !confirmDiscardDeviceFormChanges(() => closeModal(true, onClosed))) return;
@@ -11119,6 +11119,7 @@ void (async () => {
       navigate:()=>{closeModal(true);switchTab('it-assets');},viewDevice:id=>openDeviceDetailView(id),
       viewAssociations:id=>{closeModal(true);switchTab('devices');openDeviceDetailView(id);selectDeviceDetailsTab('associated');},
       openModal:html=>openModal(html),viewAssigned:id=>{closeModal(true);switchTab('devices');openDeviceDetailView(id);selectDeviceDetailsTab('assigned');},
+      cancelHandover:(id,onDiscard)=>closeModal(false,()=>{onDiscard();switchTab('devices');openDeviceDetailView(id);selectDeviceDetailsTab('assigned');}),
       registerDevice:id=>{closeModal(true);switchTab('devices');openDeviceModal();void loadDeviceStockSources(id);},
       redraw:()=>{if(currentTab==='it-assets')renderContent();},notify:(message,type)=>showToast(message,type)});
     await loadAccountProfile();
