@@ -81,6 +81,7 @@
       <p class="formhint" id="stock-readiness-summary"></p><p class="formhint" data-stock-feedback role="alert"></p>
       <div class="preview-details-actions">${stockButton('Cancel','cancel-readiness')}<button class="btn primary" type="submit">Save Readiness Change</button></div></form>`;
     return `<section id="stock-item-details" class="stock-card-stack"><div class="section-heading"><div><h2 tabindex="-1">${safe(stockLabel(item))}</h2><p>Stock Item Details</p></div>${stockButton('Close Details','close-details')}</div>${stockMetrics(item.balances)}
+      ${canEdit()&&config.canEditDevices()&&item.trackingMode==='quantity'&&['Desktop','Laptop','Server - Physical'].includes(item.category)&&(item.quantityStateBalances.ready||0)>0?'<div class="preview-details-actions">'+stockButton('Brand New — Get From Stock','register-device',item.id)+'</div>':''}
       ${stockCard('Current Stock Details','Manufacturer and Model remain separate from purchasing Supplier provenance.',information.map(([label,value])=>`<div class="info-row"><label>${label}</label><b>${safe(value)}</b></div>`).join(''))}
       ${stockCard(canEdit()?'Update Ready To Issue Quantity':'Read Only','Receipt checks preserve Physically Held. Returned equipment uses the preparation checks below.',canEdit()?edit:individual?stockTable(['Serial Number','Asset Tag','State','Ready'],units,'No Individual Units Recorded'):`<p class="sub">Minimum Stock Level: ${item.minimumStockLevel??'Not Configured'}</p>`)}${renderStockPreparation(item)}</section>`;
   }
@@ -229,6 +230,7 @@
     const action=button.dataset.stockAction;event.preventDefault();
     if(action==='tab'){tab=button.dataset.tab;error='';config.redraw();document.getElementById('stock-tab-'+tab)?.focus();return;}
     if(action==='reload'){void refreshStock();return;}
+    if(action==='register-device'){if(canEdit()&&config.canEditDevices())config.registerDevice(button.dataset.id);return;}
     if(action==='issue-item'){openStockWorkflow('issue',{stockItemId:button.dataset.id});return;}
     if(action==='writeoff-item'){openStockWorkflow('writeoff',{stockItemId:button.dataset.id});return;}
     if(action==='writeoff-device'){openStockWorkflow('writeoff',{deviceId:button.dataset.id});return;}
@@ -341,7 +343,7 @@
     return registeredDevices.length?`<h2>Registered Devices In Stock History</h2><div class="card">${stockTable(['Device','Physically Held','Ready','Awaiting Preparation','Currently Issued','Written Off','Details'],rows,'No Registered Stock Devices')}</div>${detail}`:'';
   }
   function renderStockMovements(){
-    const labels={received:'Received',issued:'Issued',returned:'Returned',readiness_changed:'Readiness Changed',written_off:'Written Off',registered:'Registered',corrected:'Corrected'};
+    const labels={registered:'Registered',received:'Received',issued:'Issued',returned:'Returned',readiness_changed:'Readiness Changed',written_off:'Written Off',registered:'Registered',corrected:'Corrected'};
     const rows=movements.map(event=>`<tr><td>${stockDate(event.date)}<div class="sub">${safe(event.actor)}</div></td><td>${safe(event.name)}</td><td>${labels[event.kind]||safe(event.kind)}</td><td>${event.quantity}</td><td>${safe(event.recipientLabel||'—')}</td><td>${safe(stockStateLabel(event.fromState))} → ${safe(stockStateLabel(event.toState))}</td><td>${safe(event.reason||event.note||'—')}<details><summary>Movement Details</summary><p>Recorded: ${safe(event.recordedAt)}</p>${event.sourceIssueEntryId?`<p>Original Issue: ${event.sourceIssueEntryId}</p>`:''}${event.physicalReturnConfirmed?'<p>Physical Return Confirmed. No recorded issue or current assignment was closed.</p>':''}${event.checks?`<p>${Object.entries(event.checks).filter(([name,value])=>typeof value==='boolean'&&!(name==='dataPreparationConfirmed'&&event.checks.dataCheckLabel==='')).map(([name,value])=>`${safe({itemsChecked:'Items Checked',conditionChecked:'Condition Checked',cleanedWorking:event.checks.workingCheckLabel||'Cleaned And Checked Working',dataPreparationConfirmed:event.checks.dataCheckLabel||'Data Wiped / Reset'}[name]||name)}: ${stockCheckLabel(value)}`).join('<br>')}</p>`:''}${event.supplier?'<p>Supplier: '+safe(event.supplier)+'</p>':''}</details></td></tr>`).join('');
     return `<div class="stock-card-stack"><h2>Stock Movement History</h2><p class="sub">Original receipt, issue, return, preparation and write-off facts are retained.</p><div class="card">${stockTable(['Date / Actor','Equipment','Movement','Quantity','Original Holder','State Change','Reason / Note'],rows,'No Recorded Stock Movements')}</div></div>`;
   }

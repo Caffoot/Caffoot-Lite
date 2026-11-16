@@ -6873,6 +6873,7 @@ function openIpModal(ip) {
             return {
                 deviceId: form.dataset.deviceId || null,
                 duplicatedFrom: form.dataset.duplicateSourceId || null,
+                stockRegistration: form.stockRegistration || null,
                 activeDeviceTab: form.dataset.activeDeviceTab || 'general',
                 name: document.getElementById('dev-name')?.value || '',
                 type: document.getElementById('dev-type')?.value || '',
@@ -9467,14 +9468,69 @@ void (async () => {
       }
     }
   }
+  function installDeviceStockControls(selection=null) {
+    const form=document.querySelector('[data-device-form="true"]');
+    if(!form||form.dataset.deviceId||!editPermissions.Devices||!editPermissions['IT Assets'])return;
+    form.stockRegistration=selection;
+    const controls=document.createElement('div');
+    controls.className='device-review-field';
+    controls.id='device-stock-controls';
+    controls.innerHTML='<div class="preview-details-actions"><button type="button" class="btn" id="device-get-from-stock">Brand New — Get From Stock</button><button type="button" class="btn" id="device-clear-stock" hidden>Use Direct Device Add</button></div><div id="device-stock-selection" hidden><label for="device-stock-source">Ready Unregistered Computer Stock</label><select class="input" id="device-stock-source"><option value="">Select Stock…</option></select></div><p class="formhint" id="device-stock-feedback" role="status"></p>';
+    form.querySelector('#device-form-panel-general .form-section-card')?.prepend(controls);
+    if(!controls.isConnected)form.querySelector('#device-form-panel-general')?.prepend(controls);
+    const feedback=controls.querySelector('#device-stock-feedback');
+    if(selection){feedback.textContent='From Stock: '+selection.name+'. One registered Device remains held and Ready To Issue after saving.';controls.querySelector('#device-clear-stock').hidden=false;}
+    controls.querySelector('#device-get-from-stock').onclick=()=>loadDeviceStockSources();
+    controls.querySelector('#device-clear-stock').onclick=()=>{form.stockRegistration=null;feedback.textContent='Direct Device Add selected.';controls.querySelector('#device-clear-stock').hidden=true;controls.querySelector('#device-stock-selection').hidden=true;};
+  }
+  async function loadDeviceStockSources(preselectedId='') {
+    const form=document.querySelector('[data-device-form="true"]'),feedback=document.getElementById('device-stock-feedback');
+    if(!form||!feedback)return;
+    feedback.textContent='Loading compatible Ready stock…';
+    try{
+      const response=await fetch('/api/it-assets/device-sources',{cache:'no-store'});
+      const result=await response.json();
+      if(!response.ok)throw Error(result.error||'Get From Stock is unavailable.');
+      if(!form.isConnected)return;
+      const select=document.getElementById('device-stock-source');
+      select.innerHTML='<option value="">Select Stock…</option>'+result.sources.map(source=>'<option value="'+escapeHtml(source.id)+'">'+escapeHtml(source.name)+' · '+source.ready+' Unregistered Ready</option>').join('');
+      document.getElementById('device-stock-selection').hidden=false;
+      feedback.textContent=result.sources.length?'Select one compatible batch. Stock changes only after the Device is saved.':'No compatible unregistered Ready computer stock is available.';
+      select.onchange=()=>{
+        const source=result.sources.find(source=>source.id===select.value);
+        if(!source)return;
+        const type=document.getElementById('dev-type');
+        if(!Array.from(type.options).some(option=>option.value===source.prefill.type))throw Error('This Device Type is unavailable in the existing editor.');
+        document.getElementById('dev-deployment').value='physical';
+        type.value=source.prefill.type;
+        type.dispatchEvent(new Event('change',{bubbles:true}));
+        document.getElementById('dev-manufacturer').value=source.prefill.manufacturer;
+        document.getElementById('dev-model').value=source.prefill.model;
+        refreshHardwareSuggestions(true);
+        captureDeviceDetailFieldValues();
+        Object.assign(deviceDetailFormValues,source.prefill.typeDetails);
+        const panel=document.getElementById('device-detail-fields-panel');
+        panel.innerHTML=renderDeviceDetailFields(source.prefill.type,deviceDetailFormValues,'hardware');
+        form.stockRegistration={stockItemId:source.id,version:source.version,name:source.name,operationId:crypto.randomUUID(),deviceId:crypto.randomUUID()};
+        document.getElementById('device-clear-stock').hidden=false;
+        feedback.textContent='From Stock: '+source.name+'. Verify the individual Device Name, optional Serial Number and other details. No stock has changed.';
+      };
+      if(preselectedId){
+        if(!result.sources.some(source=>source.id===preselectedId))throw Error('The selected stock is no longer available. Select compatible unregistered Ready stock.');
+        select.value=preselectedId;select.onchange();
+      }else select.focus();
+    }catch(error){if(form.isConnected)feedback.textContent=error.message;}
+  }
   openDeviceModal = function(deviceId = null) {
     if (!editPermissions.Devices) {
       showToast('Devices edit permission required.', 'error');
       return;
     }
     if (!deviceId) {
+      const stockRegistration=deviceFormDraft?.stockRegistration;
       originalOpenDeviceModal(null);
       applyDeviceFormSectionPermissions(null);
+      installDeviceStockControls(stockRegistration);
       return;
     }
     (async () => {
@@ -9546,13 +9602,20 @@ void (async () => {
       const payload = deviceId
         ? {deviceId, revision:activeEdit.revision, record:outboundRecord, relatedDevices}
         : {record:outboundRecord};
-      await postInventory(deviceId ? '/api/devices/edit/save' : '/api/devices/create',payload);
+      const stockRegistration=!deviceId&&document.querySelector('[data-device-form="true"]')?.stockRegistration;
+      if(stockRegistration){
+        payload.record.id=stockRegistration.deviceId;
+        await postInventory('/api/it-assets/register-device',{record:payload.record,stockItemId:stockRegistration.stockItemId,version:stockRegistration.version,operationId:stockRegistration.operationId});
+        window.caffootStockIntake.clear();
+      }else await postInventory(deviceId ? '/api/devices/edit/save' : '/api/devices/create',payload);
       activeEdit = null;
       try { await refreshCentralInventory(false); }
       catch (error) { showToast('Device saved. Unable to refresh the latest inventory.', 'error'); return true; }
       showToast('Device saved.');
       return true;
     } catch (error) {
+      const feedback=document.getElementById('device-stock-feedback');
+      if(feedback)feedback.textContent=error.message;
       showToast(error.message,'error');
       return false;
     } finally { pendingSave=false; }
@@ -10972,6 +11035,7 @@ void (async () => {
     window.caffootStockIntake.configure({csrf:csrfToken,canRead:()=>!!permissions['IT Assets'],
       canEdit:()=>!!editPermissions['IT Assets'],canEditDevices:()=>!!editPermissions.Devices,refreshAccess:refreshStockAccess,
       navigate:()=>{closeModal(true);switchTab('it-assets');},viewDevice:id=>openDeviceDetailView(id),
+      registerDevice:id=>{closeModal(true);switchTab('devices');openDeviceModal();void loadDeviceStockSources(id);},
       redraw:()=>{if(currentTab==='it-assets')renderContent();},notify:(message,type)=>showToast(message,type)});
     await loadAccountProfile();
     window.nextMfaEnrolled=sessionMfaEnrolled;

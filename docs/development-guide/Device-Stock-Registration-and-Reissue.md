@@ -101,3 +101,20 @@ retry/stale selection, physical compatibility, optional serial, feature/session
 gates, existing direct creation, stock circulation and schema protections.
 An initial new-test import/fixture error was corrected before this passing run.
 Interface, reissue, hardware, screenshots and final checks remain pending.
+
+## Existing Add Device Integration Checkpoint
+
+Brand New — Get From Stock is an optional control inside the existing General
+card of Add Device. It loads only the protected compatible-source projection and
+prefills common fields. The existing five-tab editor and save validation remain.
+A matching authorised Stock Item Details action opens that same editor. Source
+selection, cancellation and editing fields do not write anything. A stale-source
+failure remains inline beside the stock control. Direct creation remains available.
+
+The real HTTPS/SQLite Chromium check passed via
+`CAFFOOT_CHROMIUM_PATH=/usr/bin/chromium node tests/device-stock-interface.cjs`:
+both entry points, shared prefill, blank individual identity/networking, unchanged
+quantity before save/cancel, and the 10 → 9 unregistered / 10 held save result.
+No page errors. Initial harness selectors were corrected for the existing fixed
+footer and hidden-on-close modal before the passing run. Both changed JavaScript
+files passed `node --check`. Reissue, hardware, captures and final gates remain.
