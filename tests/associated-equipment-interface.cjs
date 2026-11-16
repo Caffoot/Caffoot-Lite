@@ -90,9 +90,16 @@ async function main(){
  assert.equal((await read('/api/it-assets/stock/'+identity.item)).item.balances.physicallyHeld,before.item.balances.physicallyHeld-3);
  await page.locator('[data-equipment-action="add-associated"]').click();
  await page.locator('#stock-associationMethod').selectOption('existing');
+ await page.locator('#stock-issue-form button[type="reset"]').click();
+ await page.waitForFunction(()=>{const form=document.getElementById('stock-issue-form');return form?.elements.associationMethod.value==='new'&&!form.querySelector('#stock-association-new').disabled&&form.querySelector('#stock-association-existing').disabled;});
+ assert.equal(await page.locator('#stock-association-new').isVisible(),true,'Reset must show the issue-from-ready fields');
+ assert.equal(await page.locator('#stock-association-existing').isVisible(),false,'Reset must hide and disable existing-issue fields');
+ await page.locator('#stock-associationMethod').selectOption('existing');
  await page.locator('#stock-existingIssue').selectOption(String(identity.existing));
  const optionLabels=await page.locator('#stock-existingIssue option').allTextContents();
  assert.equal(optionLabels.length,1,'Wrong-holder, returned and already linked issues are excluded');
+ assert.ok(optionLabels[0].includes('Issue #'+identity.existing),'Already-issued selection must identify the exact original issue');
+ assert.ok((await page.locator('#stock-issue-availability').textContent()).includes('Issue #'+identity.existing),'Summary must identify the selected issue');
  await captureChangedScreen('add-equipment-existing','#stock-issue-form');
  const issuedBefore=await read('/api/it-assets/stock/'+identity.item);
  const linked=page.waitForResponse(response=>response.url().endsWith('/api/equipment/associations')&&response.request().method()==='POST');
