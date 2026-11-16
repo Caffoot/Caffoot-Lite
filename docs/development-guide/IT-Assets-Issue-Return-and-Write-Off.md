@@ -249,6 +249,29 @@ part of checkpoint 5; the new interface and browser verification are still pendi
 
 ## Checkpoint 5B: Integrated Interface And Owner Clarification
 
+### Final Issue Equipment Confirmation
+
+The [16 November owner decision](https://github.com/Caffoot/Caffoot-Lite/issues/352#issuecomment-6913521817)
+adds a final confirmation to ordinary Issue Equipment, for quantity stock and
+selected individual units. `showStockIssueConfirmation` presents the equipment,
+quantity and the selected recipient's actual name using existing cards and actions.
+`editStockIssue` returns to the same form, retaining every value and selection.
+The actual form and its unsaved baseline survive theme redraws.
+
+Confirm Issue calls the existing `submitStockCirculation` writer and protected
+`POST /api/it-assets/issue`, retaining the version reviewed at confirmation.
+The controls and existing pending guard prevent simultaneous submissions.
+Identical retries reuse the existing operation identifier, including after a
+lost response; edited payloads receive a fresh identifier. Failed saves retain
+the form and show the server's explanation without a success notification.
+Changes after confirmation require another review. No API, schema, backend
+validation, permissions, audit or stock writer changes are introduced.
+Add Equipment/association and Device reassignment keep their existing behaviour.
+
+The [focused evidence](../development-handovers/evidence/issue-equipment-confirmation/Report.md)
+records browser/backend results and genuine captures of this added confirmation.
+The following checkpoint text retains its original Batch 3.8 scope.
+
 Issue Equipment, Return Equipment, Write Off and Movement History extend the
 existing IT Assets tab strip; Receive Stock, Stock Inventory and Receipt History
 remain. Forms, summaries, field grids, actions and table scrolling reuse existing

@@ -27,6 +27,8 @@ async function main(){
   '   result=dict(account=identity,staff=db.execute("SELECT id FROM staff_members WHERE account_id=?",(identity,)).fetchone()[0])',
   '  db.commit()',
   ' db.execute("INSERT INTO staff_members(id,first_name) VALUES(\'other-recipient\',\'Other Fictional Recipient\')")',
+  ' db.execute("INSERT INTO staff_members(id,first_name) VALUES(\'confirmation-recipient\',\'Fictional Confirmation Recipient\')")',
+  ' db.execute("INSERT INTO departments(id,name) VALUES(\'confirmation-department\',\'Fictional Confirmation Department\')")',
   ' db.commit();print(json.dumps(result))'
  ].join('\n'),[database,credentials.secret]));
  const log=fs.openSync(path.join(temporary,'server.log'),'w');
@@ -52,14 +54,16 @@ async function main(){
  const staff=await browser.newContext({ignoreHTTPSErrors:true,locale:'en-GB',viewport:{width:1440,height:1050}});
  const technicianSession=await login(technician,'circulation-technician','Fictional-Account-Password-2026!');
  await login(reader,'circulation-reader','Fictional-Account-Password-2026!');await login(staff,'circulation-employee','Fictional-Account-Password-2026!');
- const retained=fingerprint(),receiptFacts=python('import sqlite3,sys,json;db=sqlite3.connect(sys.argv[1]);print(json.dumps(db.execute("SELECT * FROM it_asset_stock_movements WHERE kind=\'received\' ORDER BY id").fetchall()))',[database]);
- const originalAssignments=JSON.parse(python('import sqlite3,sys,json;db=sqlite3.connect(sys.argv[1]);print(json.dumps(db.execute("SELECT id,device_id,staff_id,department_id,recipient_label,assigned_at,actor_id,actor_label FROM device_assignments ORDER BY id").fetchall()))',[database]));
  const errors=[],screens=[];page=await technician.newPage();page.on('pageerror',failure=>errors.push(String(failure)));
  await page.goto(address+'/inventory#it-assets');await page.locator('#stock-receipt-form').waitFor();
  async function tab(target,selected){await target.locator('[data-stock-action="tab"][data-tab="'+selected+'"]').click();}
- async function save(target,form,route){const pending=target.waitForResponse(response=>response.url()===address+'/api/it-assets/'+route&&response.request().method()==='POST');await target.locator('#'+form+' [type="submit"]').click();const response=await pending;assert.equal(response.status(),200,await response.text());await target.waitForFunction(()=>document.getElementById('stock-tab-inventory')?.getAttribute('aria-selected')==='true');return response.json();}
+ async function save(target,form,route){if(route==='issue'){await target.getByRole('button',{name:'Issue Equipment',exact:true}).click();await target.locator('#stock-issue-confirmation').waitFor();}const pending=target.waitForResponse(response=>response.url()===address+'/api/it-assets/'+route&&response.request().method()==='POST');await target.locator('#'+form+' [type="submit"]:visible').click();const response=await pending;assert.equal(response.status(),200,await response.text());await target.waitForFunction(()=>document.getElementById('stock-tab-inventory')?.getAttribute('aria-selected')==='true');return response.json();}
  async function captures(name,target,setup){if(!capture)return;for(const [width,height] of [[1440,1050],[390,844]])for(const theme of ['light','dark']){await target.setViewportSize({width,height});await target.evaluate(theme=>caffootSetTheme(theme),theme);await setup();await target.waitForFunction(()=>!document.getElementById('toast')||Number(getComputedStyle(document.getElementById('toast')).opacity)===0);await target.evaluate(()=>scrollTo(0,0));assert.ok(await target.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),'Horizontal page overflow');const filename=name+'-'+theme+'-'+width+'.png';await target.screenshot({path:path.join(output,filename),fullPage:true});screens.push(filename);}await target.setViewportSize({width:1440,height:1050});await target.evaluate(()=>caffootSetTheme('light'));await setup();}
  async function issueForm(target,item,kind,recipient,quantity){await tab(target,'issue');await target.locator('#stock-issueItem').selectOption(item);await target.locator('#stock-recipientKind').selectOption(kind);await target.locator('#stock-recipientId option[value="'+recipient+'"]').waitFor({state:'attached'});await target.locator('#stock-recipientId').selectOption(recipient);const choices=target.locator('#stock-issue-unit-choices input');if(await choices.count())await choices.first().check();else await target.locator('#stock-issueQuantity').fill(String(quantity));}
+ await require('./stock-issue-confirmation.cjs')({page,owner,session,technician,technicianSession,reader,staff,address,post,stock,issueForm,output,errors});
+ if(process.env.CAFFOOT_ISSUE_CONFIRMATION_ONLY==='1')return;
+ const retained=fingerprint(),receiptFacts=python('import sqlite3,sys,json;db=sqlite3.connect(sys.argv[1]);print(json.dumps(db.execute("SELECT * FROM it_asset_stock_movements WHERE kind=\'received\' ORDER BY id").fetchall()))',[database]);
+ const originalAssignments=JSON.parse(python('import sqlite3,sys,json;db=sqlite3.connect(sys.argv[1]);print(json.dumps(db.execute("SELECT id,device_id,staff_id,department_id,recipient_label,assigned_at,actor_id,actor_label FROM device_assignments ORDER BY id").fetchall()))',[database]));
  await issueForm(page,mouse,'staff',employee.staff,8);
  await page.locator('#stock-issueQuantity').fill('11');assert.ok(await page.locator('#stock-issue-form [type="submit"]').isDisabled());
  await page.locator('#stock-issueQuantity').fill('8');

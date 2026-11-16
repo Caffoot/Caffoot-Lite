@@ -1,6 +1,6 @@
 # IT Assets: Issue, Return And Write Off
 
-> **Draft v2.2 — Not Published / Not Production Guidance.** These instructions describe Batch 3.8 on `feat/it-assets-issue-return-writeoff` (draft PR #389, schema 17), based on `milestone-1` at `7f91f5d42feb3916cfab060abd5ca4b1558a92ba`. The implementation awaits product-owner visual acceptance and merge approval. v2.1 remains published. These are feature instructions for an authorised test instance, not installation, upgrade or restore steps.
+> **Draft v2.2 — Not Published / Not Production Guidance.** Stock circulation is merged on `milestone-1`, now at `505ec1a60daccdfed4c2c36c9379a29ea6f5367d` after PR #392 (schema 19). These instructions also describe the final Issue Equipment confirmation on `feat/issue-equipment-confirmation`, awaiting independent review and explicit product-owner approval. v2.1 remains published. These are feature instructions for an authorised test instance, not installation, upgrade or restore steps.
 
 ## Before You Start
 
@@ -15,13 +15,16 @@ Open **IT → IT Assets**. The original **Receive Stock**, **Stock Inventory** a
 1. Open **Issue Equipment** and select the stock item. Read **Ready To Issue For This Item**: it is the selected item's actual available quantity.
 2. For quantity stock, enter a positive whole **Quantity To Issue** within that balance. For individual stock, select each actual unit; the quantity follows the selection. Serial numbers and asset tags may be absent without losing individual identity.
 3. Select **Staff Member** or **Department**, search for the recipient and select their name. Only active Staff Members and unarchived Departments can receive new equipment.
-4. Enter **Date Issued** and an optional note, then choose **Issue Equipment**. If stock has changed, reload and review the live availability before trying again.
+4. Enter **Date Issued** and an optional note, then choose **Issue Equipment**. This opens a final confirmation; it does not record stock yet.
+5. Check the equipment, quantity and actual Staff Member or Department name. For individually tracked equipment, check the selected units, including serial numbers and asset tags where recorded.
+6. Choose **Back To Edit** to correct anything. Your selected equipment, quantity, recipient, date and note are retained. Choose **Issue Equipment** again to review the revised details.
+7. Choose **Confirm Issue** to save. Wait for the result; the buttons are unavailable while saving. A rejected save keeps your entries and explains the problem. If stock has changed, reload and review live availability before trying again. If the connection fails, retrying the same confirmation protects against recording it twice.
 
 Awaiting Checks, Awaiting Preparation, issued and written-off equipment are unavailable for issue. Concurrent requests cannot consume the same available units. A saved issue retains its date, technician, original recipient and permanent reference.
 
 Staff Details and Department Details also offer **Issue Equipment** when independently authorised. These links preselect the person or Department. Department equipment is shared once with the Department; it is not issued separately to every member.
 
-This stock form does not register a new managed Device or reissue a returned managed Device. **Brand New / Get From Stock** and **Reissue Existing Device** remain Batch 3.9.
+This stock form does not register a new managed Device or reissue a returned managed Device. Use the separate [Device registration and reissue workflows](Device-Stock-Registration-and-Reissue.md). **Add Equipment** associations and **Reassign Device** keep their existing actions; this confirmation applies to ordinary **Issue Equipment**.
 
 ## Return Equipment
 

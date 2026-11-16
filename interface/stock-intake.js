@@ -5,6 +5,7 @@
   let error='',receiptMode='new',pending=false,generation=0,detailRequest=0;
   let issues=[],deviceAssignments=[],registeredDevices=[],deviceChoices=[],movements=[],stockContext={},selectedRegisteredId=null,reissueDevices=[];
   let correction=null,correctionRequest=0,correctionTimer,returnCorrection=null;
+  let issueDraft=null;
   const safe=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   function canRead(){return !!config?.canRead();}
   function canEdit(){return !!config?.canEdit();}
@@ -99,6 +100,7 @@
     return `<div class="stock-card-stack"><h2>Stock Receipts</h2><div class="card">${stockTable(['Date / Actor','Stock Item','Supplier','Received','Ready','Awaiting','Checks / Notes'],receiptRows,'No Recorded Receipts')}</div><h2>Readiness Changes</h2><p class="sub">Later checks are separate movements. Original receipts are retained.</p><div class="card">${stockTable(['Date / Actor','Stock Item','Ready Before → After','Reason / Checks'],changed,'No Recorded Readiness Changes')}</div></div>`;
   }
   function clearStock(){
+    issueDraft=null;
     correction=null;returnCorrection=null;correctionRequest++;clearTimeout(correctionTimer);
     generation++;detailRequest++;items=[];receipts=[];changes=[];issues=[];deviceAssignments=[];registeredDevices=[];deviceChoices=[];reissueDevices=[];movements=[];stockContext={};selectedRegisteredId=null;detail=null;loaded=false;loading=false;
   }
@@ -129,6 +131,7 @@
     if(!loaded&&!loading)void refreshStock();
   }
   function renderStock(){
+    if(tab!=='issue'||stockContext.association||!canEdit())issueDraft=null;
     if(!canRead())return stockNotice('IT Assets Not Available','The feature and IT Assets Read access are required.');
     const title={receive:'Receive Stock',inventory:'Stock Inventory',history:'Receipt History',issue:stockContext.association?'Add Equipment':'Issue Equipment',return:'Return Equipment',writeoff:'Write Off',reissue:'Reissue Existing Device',movements:'Movement History'}[tab];
     const total=items.reduce((sum,item)=>{for(const key of Object.keys(sum))sum[key]+=BigInt(item.balances[key]);return sum;},{physicallyHeld:0n,readyToIssue:0n,awaitingChecks:0n});
@@ -235,6 +238,10 @@
   document.addEventListener('click',event=>{
     const button=event.target.closest('[data-stock-action]');if(!button||!config)return;
     const action=button.dataset.stockAction;event.preventDefault();
+    if(action==='edit-issue'){
+      if(!pending)editStockIssue(button.closest('form'));
+      return;
+    }
     if(action==='correct-return-movement'){
       const form=button.closest('form'),source=form&&stockSelectedReturn(form);
       if(!canEdit()||pending||returnCorrection?.refreshRequired||!stockReturnCorrectionEntry(source))return;
@@ -295,7 +302,7 @@
     }
     const form=event.target;if(!form.matches('#stock-receipt-form,#stock-readiness-form,#stock-issue-form,#stock-return-form,#stock-writeoff-form,#stock-preparation-form,#stock-reissue-form'))return;
     event.preventDefault();
-    void (form.matches('#stock-receipt-form,#stock-readiness-form')?submitStock(form):submitStockCirculation(form)).catch(failure=>{const feedback=form.querySelector('[data-stock-feedback]');if(feedback?.isConnected)feedback.textContent=failure.message;config.notify(failure.message,'error');});
+    void (form.matches('#stock-receipt-form,#stock-readiness-form')?submitStock(form):submitStockCirculation(form,event.submitter?.matches('#stock-issue-confirmation [type="submit"]')===true)).catch(failure=>{const feedback=form.querySelector('[data-stock-feedback]');if(feedback?.isConnected)feedback.textContent=failure.message;config.notify(failure.message,'error');});
   });
   document.addEventListener('input',event=>{if(event.target.closest('#stock-receipt-form,#stock-readiness-form,#stock-issue-form,#stock-return-form,#stock-writeoff-form,#stock-preparation-form,#stock-reissue-form'))hydrateStock();});
   document.addEventListener('change',event=>{if(event.target.closest('#stock-receipt-form,#stock-readiness-form,#stock-issue-form,#stock-return-form,#stock-writeoff-form,#stock-preparation-form,#stock-reissue-form'))hydrateStock();});
@@ -350,6 +357,7 @@
     if(!canEdit())return stockNotice('Read Only','IT Assets Edit is required to issue equipment.');
     if(stockContext.association&&!config.canEditDevices())return stockNotice('Read Only','Devices Edit and IT Assets Edit are required to add equipment.');
     const association=stockContext.association;
+    if(issueDraft&&!association)return '<div id="stock-issue-draft"></div>';
     const choices=items.map(item=>[item.id,stockLabel(item)+' · '+stockIssueReady(item)+' Ready']);
     const recipient=association?`<p class="formhint">Issued To: <strong>${safe(association.recipientLabel)}</strong>. Equipment is linked to this Device only when you save.</p>`:`${stockSelect('Assign To','recipientKind',[['staff','Staff Member'],['department','Department']], '',stockContext.recipientKind||'staff')}${stockField('Find A Recipient','recipientSearch','search','','maxlength="100"')}${stockSelect('Staff Member Or Department','recipientId',[['','Select An Eligible Recipient']], 'required')}`;
     const methods=association?`${stockSelect('Add Equipment From','associationMethod',[['new','Issue And Associate'],['existing','Associate Already Issued Equipment']])}${recipient}<fieldset id="stock-association-existing" hidden disabled>${stockSelect('Already Issued Equipment','existingIssue',(stockContext.existingIssues||[]).map(issue=>[issue.id,stockExistingIssueLabel(issue)]).concat((stockContext.existingIssues||[]).length?[]:[['','No Eligible Issued Equipment']]),'required')}<p class="formhint">The entire outstanding original issue is linked. Stock is not issued or deducted again.</p></fieldset>`:'';
@@ -358,6 +366,34 @@
       <div id="stock-issue-unit-choices"></div>${stockNote('Issue Note (Optional)','issueNote')}</fieldset><p class="formhint" id="stock-issue-validation" role="status"></p>`;
     return stockWorkflowForm('issue',association?'Add Equipment':'Issue Equipment',association?'Use Ready stock or equipment already issued to this Device’s current holder.':'Choose ready stock and an eligible recipient. Individual equipment keeps its existing identity.',content,
       '<div id="stock-issue-availability" aria-live="polite"></div><p class="formhint">Awaiting, issued and written-off equipment cannot be issued. No managed Device is created by this form.</p>',association?'Add Equipment':'Issue Equipment');
+  }
+  function editStockIssue(form){
+    form.querySelector('#stock-issue-confirmation')?.remove();
+    for(const section of form.children)section.hidden=false;
+    if(issueDraft)issueDraft.values=null;
+    form.querySelector('[type="submit"]').focus();
+  }
+  function showStockIssueConfirmation(form){
+    if(!form.reportValidity())return;
+    const item=items.find(item=>item.id===form.elements.issueItem.value);
+    const quantity=Number(form.elements.issueQuantity.value),recipient=form.elements.recipientId.selectedOptions[0];
+    if(!item||!Number.isSafeInteger(quantity)||quantity<1||quantity>stockIssueReady(item)||!recipient?.value)
+      throw Error('Select ready equipment, a valid quantity and an eligible recipient.');
+    const selected=[...form.querySelectorAll('[name="issueUnitIds"]:checked')].map(input=>input.value);
+    const units=item.units.filter(unit=>selected.includes(unit.id));
+    if(item.trackingMode==='individual'&&(units.length!==quantity||units.some(unit=>!unit.ready||unit.deviceLinked)))
+      throw Error('Select the individual equipment to issue from Ready stock.');
+    // Keep the actual form so going back or changing theme retains every entered value.
+    issueDraft={form,values:JSON.stringify([...new FormData(form)]),version:item.version};
+    const identity=units.map(unit=>`<div class="info-row"><label>Individual Unit</label><b>${safe([unit.serialNumber?'Serial Number: '+unit.serialNumber:'',unit.assetTag?'Asset Tag: '+unit.assetTag:''].filter(Boolean).join(' · ')||'Individual Unit '+unit.id)}</b></div>`).join('');
+    const summary=`<div class="info-row"><label>Equipment</label><b>${safe(stockLabel(item))} · ${safe(item.category)}</b></div>${identity}<div class="info-row"><label>Quantity</label><b>${quantity}</b></div><div class="info-row"><label>${form.elements.recipientKind.value==='staff'?'Staff Member':'Department'}</label><b>${safe(recipient.textContent)}</b></div>`;
+    for(const section of form.children)section.hidden=true;
+    const confirmation=document.createElement('section');
+    confirmation.id='stock-issue-confirmation';confirmation.className='stock-card-stack';
+    confirmation.setAttribute('aria-labelledby','stock-issue-confirmation-title');
+    confirmation.innerHTML=`<h2 id="stock-issue-confirmation-title" tabindex="-1">Confirm Issue Equipment</h2>${stockCard('Issue Summary','Check the equipment, quantity and recipient before confirming this issue.',summary)}<p class="formhint" data-stock-feedback role="alert"></p><div class="stock-form-actions">${stockButton('Back To Edit','edit-issue')}<button class="btn btn-primary" type="submit">Confirm Issue</button></div>`;
+    form.prepend(confirmation);
+    confirmation.querySelector('h2').focus();
   }
   function stockReturnSources(){
     if(stockContext.returnSource?.startsWith('unassigned-device:')){
@@ -575,7 +611,7 @@
       }
     }
     const issue=document.getElementById('stock-issue-form');
-    if(issue){
+    if(issue&&!pending){
       const existing=issue.elements.associationMethod?.value==='existing';
       const newFields=issue.querySelector('#stock-association-new'),existingFields=issue.querySelector('#stock-association-existing');
       newFields.hidden=existing;newFields.disabled=existing;
@@ -672,9 +708,18 @@
       hydrateStockCirculation();
     }catch(failure){if(form.isConnected)form.querySelector('[data-stock-feedback]').textContent=failure.message;}
   }
-  async function submitStockCirculation(form){
+  async function submitStockCirculation(form,issueConfirmed=false){
     const handover=stockContext.handover;
     if(pending||!(handover?config.canEditDevices():canEdit()))return;
+    const confirmingIssue=form.id==='stock-issue-form'&&!stockContext.association;
+    if(confirmingIssue){
+      if(!form.querySelector('#stock-issue-confirmation')){showStockIssueConfirmation(form);return;}
+      if(!issueConfirmed)return;
+      if(issueDraft?.form!==form||issueDraft.values!==JSON.stringify([...new FormData(form)])){
+        editStockIssue(form);
+        throw Error('The issue details changed. Review them and choose Issue Equipment again.');
+      }
+    }
     const data=new FormData(form),operationId=form.dataset.operationId||(form.dataset.operationId=crypto.randomUUID());
     let payload={operationId},route;
     if(form.id==='stock-reissue-form'){
@@ -717,12 +762,21 @@
       payload[form.dataset.registered==='true'?'stockUnitId':'stockItemId']=form.dataset.id;
       if(form.dataset.registered!=='true'&&detail.item.trackingMode==='individual')payload.stockUnitIds=data.getAll('prepareUnitIds');
     }
+    if(confirmingIssue){
+      payload.version=issueDraft.version;
+      // An unchanged retry must not issue twice if the first response was lost.
+      // Edited details need their own operation identifier.
+      const key=JSON.stringify({...payload,operationId:undefined});
+      if(form.dataset.operationPayload!==key){form.dataset.operationId=crypto.randomUUID();form.dataset.operationPayload=key;}
+      payload.operationId=form.dataset.operationId;
+    }
     pending=true;if(handover)form.dataset.saving='true';const controls=[...form.elements].map(control=>[control,control.disabled]);controls.forEach(([control])=>control.disabled=true);
     try{const associated=stockContext.association;await stockRequest(route,payload);delete form.dataset.saving;returnCorrection=null;stockContext={};if(handover){config.viewAssigned(handover.deviceId);config.notify('Device reassigned after confirmed preparation.');return;}if(route!=='preparation'){tab='inventory';detail=null;}await refreshStock();if(associated)config.viewAssociations(associated.deviceId);config.notify(associated?'Equipment associated.':{'reissue-device':'Device reissued.',issue:'Equipment issued.',return:'Equipment return recorded.','write-off':'Equipment written off.',preparation:'Preparation recorded.'}[route]);}
     finally{delete form.dataset.saving;pending=false;controls.forEach(([control,disabled])=>{if(control.isConnected)control.disabled=disabled;});}
   }
   function openStockWorkflow(action,context={}){
     if(!canEdit())return;
+    issueDraft=null;
     stockContext={...context};tab=action;detail=null;selectedRegisteredId=null;
     if(stockContext.association||stockContext.returnSource?.startsWith('unassigned-device:'))loaded=false;
     config.navigate();if(!loaded&&!loading)void refreshStock();else config.redraw();
@@ -736,6 +790,8 @@
   }
 
   function hydrateStockPage(){
+    const retainedIssue=document.getElementById('stock-issue-draft');
+    if(retainedIssue&&issueDraft)retainedIssue.replaceWith(issueDraft.form);
     restoreStockReturn();
     hydrateStock();
     document.querySelectorAll('#stock-panel form[data-stock-cancellable="true"]').forEach(form=>config.rememberStockForm(form,

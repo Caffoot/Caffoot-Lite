@@ -1,0 +1,21 @@
+test_quantity_issues_keep_original_records_and_distinct_outstanding_references (test_stock_circulation.StockCirculationTests.test_quantity_issues_keep_original_records_and_distinct_outstanding_references) ... ok
+test_individual_issue_retains_selected_identity_and_optional_identifiers (test_stock_circulation.StockCirculationTests.test_individual_issue_retains_selected_identity_and_optional_identifiers) ... ok
+test_only_the_selected_ready_balance_can_be_issued (test_stock_circulation.StockCirculationTests.test_only_the_selected_ready_balance_can_be_issued) ... ok
+test_minimum_recipient_picker_does_not_grant_directory_or_devices_access (test_stock_circulation.StockCirculationTests.test_minimum_recipient_picker_does_not_grant_directory_or_devices_access) ... ok
+test_inactive_and_archived_recipients_are_rechecked (test_stock_circulation.StockCirculationTests.test_inactive_and_archived_recipients_are_rechecked) ... ok
+test_retries_are_idempotent_but_stale_or_changed_requests_fail (test_stock_circulation.StockCirculationTests.test_retries_are_idempotent_but_stale_or_changed_requests_fail) ... ok
+test_audit_failure_rolls_back_entries_and_header (test_stock_circulation.StockCirculationTests.test_audit_failure_rolls_back_entries_and_header) ... ok
+test_read_only_mfa_revocation_and_feature_off_deny_operations (test_stock_circulation.StockCirculationTests.test_read_only_mfa_revocation_and_feature_off_deny_operations) ... ok
+test_concurrent_technicians_cannot_double_issue_available_stock (test_stock_circulation.StockCirculationTests.test_concurrent_technicians_cannot_double_issue_available_stock) ... ok
+test_issue_routes_use_existing_session_csrf_and_narrow_picker (test_stock_circulation.StockCirculationHttpTests.test_issue_routes_use_existing_session_csrf_and_narrow_picker) ... 127.0.0.1 - - [16/Nov/2026 18:15:58] "GET /api/it-assets/issues HTTP/1.1" 401 -
+127.0.0.1 - - [16/Nov/2026 18:15:58] "POST /api/it-assets/receive HTTP/1.1" 200 -
+127.0.0.1 - - [16/Nov/2026 18:15:58] "POST /api/it-assets/issue HTTP/1.1" 403 -
+127.0.0.1 - - [16/Nov/2026 18:15:58] "POST /api/it-assets/issue HTTP/1.1" 200 -
+127.0.0.1 - - [16/Nov/2026 18:15:58] "GET /api/it-assets/recipients?kind=staff HTTP/1.1" 200 -
+127.0.0.1 - - [16/Nov/2026 18:15:58] "GET /api/it-assets/issues HTTP/1.1" 200 -
+ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 1.198s
+
+OK

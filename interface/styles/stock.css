@@ -16,6 +16,8 @@
 .stock-live textarea.input{min-height:88px;resize:vertical}
 .stock-live .section-heading{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
 .stock-live #stock-item-details{margin-top:17px}
+.stock-live #stock-issue-form > [hidden]{display:none}
+.stock-live #stock-issue-confirmation .info-row b{min-width:0;overflow-wrap:anywhere}
 @media(max-width:720px){.stock-live .stock-metrics{grid-template-columns:1fr}.stock-live .small-table{min-width:640px}.stock-live .tabs{gap:18px}}
 
 .stock-live .stock-inventory-table .small-table{min-width:1000px}
