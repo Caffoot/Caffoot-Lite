@@ -19,6 +19,7 @@
 @media(max-width:720px){.stock-live .stock-metrics{grid-template-columns:1fr}.stock-live .small-table{min-width:640px}.stock-live .tabs{gap:18px}}
 
 .stock-live .stock-inventory-table .small-table{min-width:1000px}
+.stock-live .stock-movement-table .small-table{min-width:1100px}
 .stock-live .small-table th{overflow-wrap:normal;min-width:48px}
 
 /* Match approved right-aligned form actions, without changing stock list actions. */

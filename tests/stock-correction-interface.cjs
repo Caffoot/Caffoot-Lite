@@ -62,6 +62,7 @@ async function main(){
   if(!capture)return;
   for(const [width,height] of [[1440,1050],[390,844]])for(const theme of ['light','dark']){
    await target.setViewportSize({width,height});await target.evaluate(theme=>caffootSetTheme(theme),theme);
+   await target.mouse.move(1,1);
    await target.waitForFunction(()=>!document.getElementById('toast')||Number(getComputedStyle(document.getElementById('toast')).opacity)===0);
    await target.evaluate(()=>scrollTo(0,0));
    if(width===390&&['movement-history','read-only-history'].includes(name))await target.locator('#stock-panel .table-scroll').last().evaluate(node=>node.scrollLeft=node.scrollWidth);
@@ -79,6 +80,7 @@ async function main(){
  const form=page.locator('#stock-correction-form');
  assert.equal(await form.locator('[type="submit"]').isDisabled(),true);
  assert.deepEqual((await form.locator('.stock-form-actions button').allTextContents()).map(value=>value.trim()),['Cancel','Save Correction']);
+ await page.mouse.move(1,1);
  assert.equal(await form.locator('[type="submit"]').evaluate(button=>getComputedStyle(button).backgroundColor),'rgb(237, 133, 50)');
  assert.equal(await form.locator('.stock-form-actions').evaluate(node=>getComputedStyle(node).justifyContent),'flex-end');
  await propose(18,'');assert.equal(await form.locator('[type="submit"]').isDisabled(),true);assert.match(await page.locator('#stock-correction-validation').innerText(),/Reason For Correction/);
