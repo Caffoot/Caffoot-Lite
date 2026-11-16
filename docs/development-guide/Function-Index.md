@@ -697,17 +697,17 @@ The account hydration/photo functions now have purpose-based callable bindings m
 | [`previewStockCorrection`](../../interface/stock-intake.js#L445) | 445 |
 | [`scheduleStockCorrection`](../../interface/stock-intake.js#L465) | 465 |
 | [`submitStockCorrection`](../../interface/stock-intake.js#L475) | 475 |
-| [`stockSelectedReturn`](../../interface/stock-intake.js#L502) | 502 |
-| [`stockSelectedWriteOff`](../../interface/stock-intake.js#L503) | 503 |
-| [`hydrateStockCirculation`](../../interface/stock-intake.js#L507) | 507 |
-| [`loadHandoverRecipients`](../../interface/stock-intake.js#L585) | 585 |
-| [`loadStockRecipients`](../../interface/stock-intake.js#L611) | 611 |
-| [`submitStockCirculation`](../../interface/stock-intake.js#L622) | 622 |
-| [`openStockWorkflow`](../../interface/stock-intake.js#L670) | 670 |
-| [`openDirectHandover`](../../interface/stock-intake.js#L676) | 676 |
-| [`hydrateStockPage`](../../interface/stock-intake.js#L684) | 684 |
-| [`dismissHandover`](../../interface/stock-intake.js#L698) | 698 |
-| [`configureStock`](../../interface/stock-intake.js#L699) | 699 |
+| [`stockSelectedReturn`](../../interface/stock-intake.js#L512) | 512 |
+| [`stockSelectedWriteOff`](../../interface/stock-intake.js#L513) | 513 |
+| [`hydrateStockCirculation`](../../interface/stock-intake.js#L517) | 517 |
+| [`loadHandoverRecipients`](../../interface/stock-intake.js#L595) | 595 |
+| [`loadStockRecipients`](../../interface/stock-intake.js#L621) | 621 |
+| [`submitStockCirculation`](../../interface/stock-intake.js#L632) | 632 |
+| [`openStockWorkflow`](../../interface/stock-intake.js#L680) | 680 |
+| [`openDirectHandover`](../../interface/stock-intake.js#L686) | 686 |
+| [`hydrateStockPage`](../../interface/stock-intake.js#L694) | 694 |
+| [`dismissHandover`](../../interface/stock-intake.js#L708) | 708 |
+| [`configureStock`](../../interface/stock-intake.js#L709) | 709 |
 
 ## backend/access_point_review.py
 

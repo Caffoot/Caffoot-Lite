@@ -96,6 +96,7 @@ async function main(){
  await page.keyboard.press('Escape');await page.locator('#discard-dialog').waitFor();await page.keyboard.press('Escape');assert.equal(await page.locator('#discard-dialog').count(),0);
  await page.keyboard.press('Escape');await page.locator('#discard-dialog [data-action="discard-device-form-changes"]').click();assert.equal(await form.count(),0);
  await select();await propose(18);await page.locator('#stock-tab-inventory').click();await page.locator('#discard-dialog').waitFor();await page.locator('#discard-dialog [data-action="keep-editing"]').click();
+ await page.locator('.header-account').click();await page.locator('#discard-dialog').waitFor();await page.locator('#discard-dialog [data-action="keep-editing"]').click();assert.equal(await page.locator('#stock-correctedQuantity').inputValue(),'18');
  const saving=page.waitForResponse(response=>response.url()===address+'/api/it-assets/corrections'&&response.request().method()==='POST');
  await form.locator('[type="submit"]').click();const response=await saving;assert.equal(response.status(),200,await response.text());
  await page.waitForFunction(()=>document.getElementById('stock-correction-details')?.textContent.includes('20 → 18'));
@@ -110,6 +111,7 @@ async function main(){
  const openContext=await (await owner.request.get(address+'/api/it-assets/corrections/'+original.entryId)).json();
  await post(owner,session,'/api/it-assets/corrections',{operationId:crypto.randomUUID(),entryId:original.entryId,version:openContext.version,correctedQuantity:19,reason:'Another technician confirmed the delivery.'});
  const stale=page.waitForResponse(response=>response.url()===address+'/api/it-assets/corrections'&&response.request().method()==='POST');await form.locator('[type="submit"]').click();assert.equal((await stale).status(),409);await form.locator('[data-stock-feedback]').getByText(/history changed/).waitFor();
+ assert.equal(await form.locator('[type="submit"]').isDisabled(),true);assert.match(await page.locator('#stock-correction-validation').innerText(),/Correction Blocked/);
  await form.locator('[data-stock-action="cancel-correction"]').click();await page.locator('#discard-dialog [data-action="discard-device-form-changes"]').click();
  const reader=await browser.newContext({ignoreHTTPSErrors:true,locale:'en-GB',viewport:{width:1440,height:1050}});
  const readerSession=await login(reader,'circulation-reader','Fictional-Account-Password-2026!');

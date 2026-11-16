@@ -107,7 +107,7 @@
     const result=await response.json();
     if(!response.ok){
       if([401,403].includes(response.status)){clearStock();await config.refreshAccess();config.redraw();}
-      throw Error(result.error||'Unable to complete the stock operation.');
+      const failure=Error(result.error||'Unable to complete the stock operation.');failure.status=response.status;throw failure;
     }
     return result;
   }
@@ -485,12 +485,22 @@
       correction=null;correctionRequest++;await refreshStock();
       await openStockCorrection(entry);
       config.notify('Correction saved. The original movement and subsequent history are retained.');
-    }finally{pending=false;delete form.dataset.saving;controls.forEach(([control,disabled])=>{if(control.isConnected)control.disabled=disabled;});}
+    }catch(failure){
+      if(form.isConnected&&[400,409].includes(failure.status)){
+        correction.preview=null;correction.previewPayload='';form.dataset.validatedPayload='';
+        form.querySelector('#stock-correction-validation').textContent='Correction Blocked: '+failure.message;
+        form.querySelector('#stock-correction-validation').dataset.allowed='false';
+      }
+      throw failure;
+    }finally{
+      pending=false;delete form.dataset.saving;controls.forEach(([control,disabled])=>{if(control.isConnected)control.disabled=disabled;});
+      if(form.isConnected&&!form.dataset.validatedPayload)form.querySelector('[type="submit"]').disabled=true;
+    }
   }
   document.addEventListener('input',event=>{const form=event.target.closest('#stock-correction-form');if(form&&correction)scheduleStockCorrection(form);});
   document.addEventListener('click',event=>{
     if(!correction||event.target.closest('[data-stock-action]')||event.target.closest('#discard-dialog'))return;
-    const navigation=event.target.closest('#sidebar [data-action],a[href]');
+    const navigation=event.target.closest('#sidebar [data-action],[data-action^="tab-"],a[href]');
     if(!navigation)return;
     event.preventDefault();event.stopImmediatePropagation();
     leaveStockCorrection(()=>{correction=null;correctionRequest++;navigation.click();});
