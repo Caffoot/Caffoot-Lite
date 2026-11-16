@@ -780,8 +780,10 @@ class Handler(BaseHTTPRequestHandler):
                         raise ValueError('My Equipment does not accept identity parameters')
                     result = my_equipment(connection, actor)
                 elif self.command == 'GET' and parsed.path == '/api/equipment/recipients':
-                    if set(parameters) - {'query', 'kind'}:
+                    if set(parameters) - {'query', 'kind', 'offset'}:
                         raise ValueError('Invalid recipient parameters')
+                    if 'offset' in parameters:
+                        parameters['offset'] = int(parameters['offset'])
                     result = {'recipients': assignment_recipients(connection, actor, **parameters)}
                 elif self.command == 'GET' and parsed.path == '/api/equipment/available-devices':
                     if set(parameters) - {'query', 'limit', 'offset'}:
