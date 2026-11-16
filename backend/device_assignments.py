@@ -12,19 +12,20 @@ def require_assignment_access(connection, actor_id, *, edit=False):
         raise PermissionError('Devices Edit permission required' if edit else 'Devices Read permission required')
 
 
-def assignment_recipients(connection, actor_id, *, query='', kind='staff', limit=50, section='Devices'):
+def assignment_recipients(connection, actor_id, *, query='', kind='staff', limit=50, offset=0, section='Devices'):
     """Offer only eligible recipient names and IDs, without directory/contact data."""
     if section not in ('Devices', 'IT Assets') or not can_access(connection, actor_id, section, edit=True):
         raise PermissionError('Equipment Edit permission required')
     if kind not in ('staff', 'department') or not isinstance(query, str) or len(query) > 100:
         raise ValueError('Invalid recipient search')
-    if type(limit) is not int or not 1 <= limit <= 100:
+    if (type(limit) is not int or not 1 <= limit <= 100 or
+            type(offset) is not int or not 0 <= offset <= 1000000):
         raise ValueError('Invalid recipient limit')
     pattern = '%' + query.replace('!', '!!').replace('%', '!%').replace('_', '!_') + '%'
     if kind == 'staff':
-        rows = connection.execute("SELECT id,trim(first_name||' '||last_name) FROM staff_members WHERE active=1 AND trim(first_name||' '||last_name) LIKE ? ESCAPE '!' ORDER BY last_name,first_name,id LIMIT ?", (pattern, limit))
+        rows = connection.execute("SELECT id,trim(first_name||' '||last_name) FROM staff_members WHERE active=1 AND trim(first_name||' '||last_name) LIKE ? ESCAPE '!' ORDER BY last_name,first_name,id LIMIT ? OFFSET ?", (pattern, limit, offset))
     else:
-        rows = connection.execute("SELECT id,name FROM departments WHERE archived=0 AND name LIKE ? ESCAPE '!' ORDER BY name,id LIMIT ?", (pattern, limit))
+        rows = connection.execute("SELECT id,name FROM departments WHERE archived=0 AND name LIKE ? ESCAPE '!' ORDER BY name,id LIMIT ? OFFSET ?", (pattern, limit, offset))
     return [{'id': row[0], 'label': row[1] or 'Name Not Recorded', 'kind': kind} for row in rows]
 
 
