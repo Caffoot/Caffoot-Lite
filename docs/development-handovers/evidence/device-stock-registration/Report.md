@@ -119,6 +119,27 @@ actual source for each refreshed screenshot. No image was artificially
 retouched, and no owner visual acceptance or merge is claimed.
 Final-head Actions must still be verified after this evidence commit.
 
+## ZFS Action Button Spacing — Owner-Requested Visual Correction
+
+Following the owner's visual review, the existing **Remove Pool**, **Remove VDEV**
+and **Add VDEV** buttons received **spacing-only** adjustments within their
+original nested Pool and VDEV fieldsets. Button wording, colour, functionality
+and the Device Hardware form layout were preserved.
+
+The browser test confirms the spacing between the Pool Name field and Remove
+Pool, the next VDEV fieldset, the Drive Type field and Remove VDEV, and the
+Add VDEV action below the VDEV border. The true
+[read-only Chromium capture](https://github.com/Caffoot/Caffoot-Lite/actions/runs/43833938108)
+passed on source commit `2c55c616d372da2305a2c8cf4f1e3fcd72a3af43` using fictional data.
+
+Eight genuine changed-screen PNGs were refreshed: the existing ZFS Boot Pool and
+VDEV views in desktop/mobile light/dark. The 28 unaffected PNGs remain
+unchanged. Their individual source and SHA-256 metadata is in the
+[capture manifest](capture-manifest.json). The temporary capture workflow was
+removed in the evidence commit. **Owner visual acceptance of this spacing
+correction is still outstanding.** No merge or release is claimed. Latest
+final-head Actions must be checked following the evidence update.
+
 ## Changed-Screen Gallery
 
 **36 genuine screenshots**, fictional data, desktop **1440 × 1050** and mobile

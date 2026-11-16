@@ -148,47 +148,51 @@
     },
     {
       "path": "storage/server-zfs-boot-pool-desktop-dark.png",
-      "bytes": 120270,
-      "sha256": "a4ae8e207db9faacf88f024231351021d89af91a85724cb61930ef5e6dd833ec",
-      "runtimeSource": "e2520afedf62ea5d63681adb5d2bcd73cc3ca1e7"
+      "bytes": 120119,
+      "sha256": "6107a21520a76783f3078bd6323b57f138f3a3339d9f74c84020e51fe5dba9a5",
+      "runtimeSource": "2c55c616d372da2305a2c8cf4f1e3fcd72a3af43"
     },
     {
       "path": "storage/server-zfs-boot-pool-desktop-light.png",
-      "bytes": 120447,
-      "sha256": "5fa380bb530a1c29886e61c1bde53e650e6846f0ab3fdb5f43bec1b935e13e22",
-      "runtimeSource": "e2520afedf62ea5d63681adb5d2bcd73cc3ca1e7"
+      "bytes": 120250,
+      "sha256": "cc700fe1827a59fe358575317ea68fd4646ef8de3a5d3c7ff3e0f168950c0131",
+      "runtimeSource": "2c55c616d372da2305a2c8cf4f1e3fcd72a3af43"
     },
     {
       "path": "storage/server-zfs-boot-pool-mobile-dark.png",
-      "bytes": 73202,
-      "sha256": "8f5441e34257212441aae3def99b50838089ca3fd5b796fabab0c90230ba7497",
-      "runtimeSource": "e2520afedf62ea5d63681adb5d2bcd73cc3ca1e7"
+      "bytes": 71397,
+      "sha256": "fd41444ab7b758957cd323bf260299b753f3feaf20b93fc59827e8cee81aa07c",
+      "runtimeSource": "2c55c616d372da2305a2c8cf4f1e3fcd72a3af43"
     },
     {
       "path": "storage/server-zfs-boot-pool-mobile-light.png",
-      "bytes": 72520,
-      "sha256": "15a32530e9d54ab4bdcc1728da9976c8a2fbf70cd7234264f2218f4018037054",
-      "runtimeSource": "e2520afedf62ea5d63681adb5d2bcd73cc3ca1e7"
+      "bytes": 70918,
+      "sha256": "5f842ef1ecc6bb50f953cc10d78bd7b5dff9086d1e72beb12ce85ca02de27a44",
+      "runtimeSource": "2c55c616d372da2305a2c8cf4f1e3fcd72a3af43"
     },
     {
       "path": "storage/server-zfs-vdev-desktop-dark.png",
-      "bytes": 117342,
-      "sha256": "04a5a41c401b5c90ce8639b787fd35bde54995fdb9392304b840dd5c96642fe2"
+      "bytes": 109511,
+      "sha256": "0e466e19a82569346a33ee3d1f8eacd0d8ffb0eeeb6f7c715fa44e018306b152",
+      "runtimeSource": "2c55c616d372da2305a2c8cf4f1e3fcd72a3af43"
     },
     {
       "path": "storage/server-zfs-vdev-desktop-light.png",
-      "bytes": 118247,
-      "sha256": "83b01e535a783f2dcd1e034c3155e446a74cacb2ad55e44d403764e14f31d06b"
+      "bytes": 109577,
+      "sha256": "8b416bc1ba64d3ebe4bd445cfbb609da8f100f05239f41c05e503bca2ade9f22",
+      "runtimeSource": "2c55c616d372da2305a2c8cf4f1e3fcd72a3af43"
     },
     {
       "path": "storage/server-zfs-vdev-mobile-dark.png",
-      "bytes": 72113,
-      "sha256": "1151eab8440698d62f2fbabdf769e2feb777ae93b98b98263e70337c170330ef"
+      "bytes": 63330,
+      "sha256": "12e07facad211905a1bf8efb222367fb6bc197f41464f67d8a793320e73ca765",
+      "runtimeSource": "2c55c616d372da2305a2c8cf4f1e3fcd72a3af43"
     },
     {
       "path": "storage/server-zfs-vdev-mobile-light.png",
-      "bytes": 72916,
-      "sha256": "f1f957a776fc213f242e724843dc64b8bb6385ec7dc1eba97bc686a99a09afaa"
+      "bytes": 63772,
+      "sha256": "55034c791e76981030b3206321b116c89d3513f18f63722694068f5e7b51915f",
+      "runtimeSource": "2c55c616d372da2305a2c8cf4f1e3fcd72a3af43"
     }
   ],
   "runtimeFiles": {
@@ -222,5 +226,21 @@
       "storage/server-zfs-boot-pool-mobile-dark.png"
     ],
     "note": "Only eight screens were recaptured; the other 28 retain the original runtimeSource at the manifest root."
+  },
+  "zfsActionSpacing": {
+    "captureSource": "2c55c616d372da2305a2c8cf4f1e3fcd72a3af43",
+    "run": "https://github.com/Caffoot/Caffoot-Lite/actions/runs/43833938108",
+    "captureTest": "tests/device-storage-interface.cjs",
+    "screens": [
+      "storage/server-zfs-vdev-desktop-light.png",
+      "storage/server-zfs-vdev-desktop-dark.png",
+      "storage/server-zfs-vdev-mobile-light.png",
+      "storage/server-zfs-vdev-mobile-dark.png",
+      "storage/server-zfs-boot-pool-desktop-light.png",
+      "storage/server-zfs-boot-pool-desktop-dark.png",
+      "storage/server-zfs-boot-pool-mobile-light.png",
+      "storage/server-zfs-boot-pool-mobile-dark.png"
+    ],
+    "note": "Eight ZFS action layout captures updated; other 28 images unchanged. Temporary capture workflow removed after collection."
   }
 }
