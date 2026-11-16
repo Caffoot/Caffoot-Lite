@@ -20,9 +20,10 @@ Source inspection establishes these boundaries:
 - `device_assignments.assign_devices` owns its transaction and accepts only
   initial allocations. It must not become the reassignment writer.
 - `stock_circulation.issue_stock` and `return_stock` each acquire a write lock,
-  validate the session and permissions, and commit their own operation. The
-  future combined issue/link writer needs one enclosing transaction; calling
-  the existing writer and committing a link afterwards would be unsafe.
+  validate the session and permissions, and commit their own operation.
+  `issue_stock_in_transaction` now shares the existing issue validation and
+  ledger writer without committing. The combined issue/link writer must own
+  its enclosing write transaction; committing a link afterwards would be unsafe.
 - `stock_circulation.publish_stock_movement` writes within its caller's
   transaction. Stock entries, original issue references and canonical assignment
   closures remain authoritative. Schema 16 stock guards and Schema 17 assignment
@@ -113,6 +114,12 @@ accepted screenshots remain intact. Raspberry Pi/native Safari, private legacy
 data and the previously deferred native/restore acceptance remain unverified.
 
 ## Continuation
+
+**Checkpoint B preparation:** the transaction-aware issue helper is implemented.
+65 focused stock/registration/intake/helper tests passed, including caller-owned
+rollback and replay; the two helper tests also passed after the test import was
+tidied. The ordinary issue endpoint retains its original result, permissions,
+idempotency and commit boundary. No new association write route is exposed yet.
 
 1. **Checkpoint B:** expose no write route until issue and association can share
    one write transaction. Revalidate the current assignment, exact recipient,

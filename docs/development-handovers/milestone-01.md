@@ -1,5 +1,12 @@
 # Milestone 01 Development Handover — v2.2 Target
 
+> **Batch 3.10 B preparation, 16 November 2026:** continuing from verified
+> `51bd7a775e769888880729676973e25fd133ab8a` and its green Checkpoint A Actions.
+> The ordinary stock issue writer now delegates to a transaction-aware helper;
+> 65 focused stock/intake/registration/helper tests passed. Two helper tests
+> confirm caller-owned rollback and replay. The API and screens are unchanged;
+> Checkpoint B's combined writes and new request tests remain in progress.
+
 > **Latest checkpoint, 16 November 2026 — Batch 3.10 A:** started from verified
 > `milestone-1` commit `6276225e5d527c83f2ffaf36812ab7c7c5a5269f` after PR #390
 > merged. The `feat/associated-equipment-handovers` branch adds Schema 18's empty,
