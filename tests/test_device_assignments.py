@@ -93,6 +93,33 @@ class DeviceAssignmentTests(unittest.TestCase):
         self.department({'archived': True}, department_id=self.dept)
         self.assertEqual(assignment_recipients(self.db, 2, kind='department'), [])
 
+    def test_recipient_pages_reach_every_eligible_staff_and_department(self):
+        self.db.execute("INSERT INTO account_permission_overrides VALUES(2,'Devices','edit')")
+        self.db.executemany(
+            'INSERT INTO staff_members(id,first_name,last_name,active) VALUES(?,?,?,?)',
+            [(f'paged-staff-{i:03d}', 'Paged', f'Employee {i:03d}', int(i % 19 != 0))
+             for i in range(130)])
+        self.db.executemany(
+            'INSERT INTO departments(id,name,archived) VALUES(?,?,?)',
+            [(f'paged-dept-{i:03d}', f'Paged Department {i:03d}', int(i % 17 == 0))
+             for i in range(130)])
+        self.db.commit()
+        for kind, condition in (('staff', 'active=1'), ('department', 'archived=0')):
+            pages = [assignment_recipients(self.db, 2, kind=kind, query='Paged',
+                         limit=50, offset=offset) for offset in (0, 50, 100, 150)]
+            combined = [item for page in pages for item in page]
+            table = 'staff_members' if kind == 'staff' else 'departments'
+            eligible = self.db.execute(f"SELECT count(*) FROM {table} WHERE {condition}").fetchone()[0] - 1
+            self.assertEqual(len(combined), eligible)
+            self.assertEqual(len({item['id'] for item in combined}), len(combined))
+            self.assertEqual({item['kind'] for item in combined}, {kind})
+            self.assertEqual(pages[-1], [])
+        for offset in (-1, '0', 1000001):
+            with self.assertRaises(ValueError):
+                assignment_recipients(self.db, 2, offset=offset)
+        with self.assertRaises(PermissionError):
+            assignment_recipients(self.db, 3, offset=50)
+
     def test_self_service_uses_current_link_membership_and_safe_fields(self):
         other = self.staff(dict(firstName='Other', lastName='Person'))['id']
         self.db.execute('UPDATE staff_members SET account_id=3,department_id=? WHERE id=?', (self.dept, self.person))
