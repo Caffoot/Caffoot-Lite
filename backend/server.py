@@ -19,6 +19,7 @@ from .collection_saves import (change_inventory_record, remove_linked_rack_shelf
 from .settings_saves import save_inventory_setting
 from .inventory_projection import project_inventory_response
 from .feature_settings import read_feature_settings, save_feature_setting, unique_feature_fields
+from .stock_reporting import read_stock_report
 from .stock_intake import stock_access, read_stock, receive_stock, update_stock_readiness
 from .stock_corrections import stock_correction_context, preview_stock_correction, save_stock_correction
 from .device_stock import (device_stock_sources, register_stock_device,
@@ -683,13 +684,13 @@ class Handler(BaseHTTPRequestHandler):
         parts = parsed.path.strip('/').split('/')
         route = parsed.path
         reading = self.command == 'GET'
-        valid = (route in ('/api/it-assets/stock','/api/it-assets/issues','/api/it-assets/recipients','/api/it-assets/history','/api/it-assets/device-sources','/api/it-assets/reissue-devices') and reading or
+        valid = (route in ('/api/it-assets/report','/api/it-assets/stock','/api/it-assets/issues','/api/it-assets/recipients','/api/it-assets/history','/api/it-assets/device-sources','/api/it-assets/reissue-devices') and reading or
                  len(parts) == 4 and parts[:3] == ['api', 'it-assets', 'stock'] and reading or
                  len(parts) == 4 and parts[:3] == ['api', 'it-assets', 'corrections'] and parts[3].isdecimal() and reading or
                  route in ('/api/it-assets/receive', '/api/it-assets/readiness','/api/it-assets/issue',
                            '/api/it-assets/return','/api/it-assets/preparation','/api/it-assets/write-off','/api/it-assets/register-device','/api/it-assets/reissue-device',
                            '/api/it-assets/corrections/preview','/api/it-assets/corrections') and not reading)
-        if not valid or (parsed.query and route!='/api/it-assets/recipients') or route.endswith('/'):
+        if not valid or (parsed.query and route not in ('/api/it-assets/recipients','/api/it-assets/report')) or route.endswith('/'):
             self.respond(404, {'error': 'not found'})
             return
         origin = self.headers.get('Origin')
@@ -719,6 +720,13 @@ class Handler(BaseHTTPRequestHandler):
                         result=device_stock_sources(connection,actor)
                     elif route=='/api/it-assets/issues':
                         result=read_stock_issues(connection,actor)
+                    elif route=='/api/it-assets/report':
+                        parameters=parse_qs(parsed.query,keep_blank_values=True)
+                        if set(parameters)-{'days','category'} or any(len(value)!=1 for value in parameters.values()):
+                            raise ValueError('Invalid stock reporting filter')
+                        result=read_stock_report(connection,actor,
+                            days=int(parameters.get('days',['30'])[0]),
+                            category=parameters.get('category',[None])[0])
                     elif route=='/api/it-assets/history':
                         result={'movements':stock_movement_history(connection,actor)}
                     elif route=='/api/it-assets/recipients':

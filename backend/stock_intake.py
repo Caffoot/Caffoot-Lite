@@ -184,13 +184,28 @@ def stock_history(connection, item_id=None):
 def read_stock(connection, account_id, item_id=None):
     stock_access(connection, account_id)
     if item_id is not None:
-        return dict(item=stock_item(connection, item_id), **stock_history(connection, item_id))
+        return project_stock_details(connection, account_id,
+            dict(item=stock_item(connection, item_id), **stock_history(connection, item_id)))
     result = dict(items=[stock_item(connection, identity) for identity, in connection.execute(
         "SELECT id FROM it_asset_stock_items ORDER BY name COLLATE NOCASE,id")],
         **stock_history(connection))
     from backend.stock_circulation import read_stock_issues,stock_movement_history
     result.update(read_stock_issues(connection,account_id))
     result['movements']=stock_movement_history(connection,account_id)
+    return project_stock_details(connection, account_id, result)
+
+
+def project_stock_details(connection, actor, result):
+    """Keep authorised stock totals but omit individual hidden Device units."""
+    if can_access(connection, actor, "Devices"):
+        return result
+    hidden = {row[0] for row in connection.execute(
+        "SELECT id FROM it_asset_stock_units WHERE device_id IS NOT NULL")}
+    for item in result.get("items", [result["item"]] if "item" in result else []):
+        item["units"] = [unit for unit in item["units"] if unit["id"] not in hidden]
+    for key in ("receipts", "readinessChanges"):
+        result[key] = [event for event in result.get(key, [])
+                       if not any(unit["id"] in hidden for unit in event.get("units", []))]
     return result
 
 
