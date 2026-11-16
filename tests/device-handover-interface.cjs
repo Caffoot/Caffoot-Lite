@@ -201,8 +201,16 @@ async function main(){
  assert.equal(inventorySnapshot(),inventoryBefore);
  const issues=(await read('/api/it-assets/issues')).issues.filter(issue=>issue.stockUnitId===identity.computer.stockUnitId);
  assert.deepEqual(issues.map(issue=>issue.outstanding),[1,0]);assert.equal(issues[0].departmentId,'department');
+ // Escape from a direct handover must clear context even when Cancel was never clicked.
+ await page.locator('[data-equipment-action="reassign-device"]').click();
+ await page.locator('#stock-reissue-form[data-direct-handover]').waitFor();
+ await page.keyboard.press('Escape');
+ await page.locator('#modal-container.hidden').waitFor();
  await page.getByRole('button',{name:'Close device details',exact:true}).click();
  await page.locator('#sidebar [data-action="tab-it-assets"]').click();
+ await page.getByRole('tab',{name:'Reissue Existing Device',exact:true}).click();
+ await page.locator('#stock-reissue-form:not([data-direct-handover])').waitFor();
+ assert.equal(await page.locator('#stock-reissueDevice').count(),1,'Escape must clear prior Device handover context');
  await page.getByRole('tab',{name:'Movement History',exact:true}).click();
  await page.getByRole('cell',{name:'Reassigned',exact:true}).waitFor();
  await captureChangedScreen('stock-custody-history','#stock-panel');
