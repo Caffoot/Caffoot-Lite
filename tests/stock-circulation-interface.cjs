@@ -93,6 +93,7 @@ async function main(){
  const prepareActions=ownerPage.locator('#stock-preparation-form .stock-form-actions');
  assert.deepEqual((await prepareActions.locator('button').allTextContents()).map(value=>value.trim()),['Cancel','Mark Ready To Issue']);
  assert.equal(await prepareActions.locator('[type="submit"]').getAttribute('class'),'btn btn-primary');
+ assert.equal(await prepareActions.locator('[type="submit"]').evaluate(button=>getComputedStyle(button).backgroundColor),'rgb(237, 133, 50)','Preparation action must use Caffoot orange');
  assert.equal(await prepareActions.evaluate(node=>getComputedStyle(node).justifyContent),'flex-end');
  await prepareActions.locator('[data-stock-action="cancel-stock"]').click();
  await ownerPage.locator('#discard-dialog').waitFor();

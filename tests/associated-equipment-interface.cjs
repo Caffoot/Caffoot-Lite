@@ -81,6 +81,7 @@ async function main(){
  assert.deepEqual((await addActions.locator('button').allTextContents()).map(label=>label.trim()),['Cancel','Add Equipment']);
  assert.equal(await addActions.evaluate(node=>getComputedStyle(node).justifyContent),'flex-end');
  assert.equal(await addActions.locator('[type="submit"]').getAttribute('class'),'btn btn-primary');
+ assert.equal(await addActions.locator('[type="submit"]').evaluate(button=>getComputedStyle(button).backgroundColor),'rgb(237, 133, 50)','Add Equipment must use Caffoot orange');
  assert.equal(await page.locator('#stock-issue-form [type="reset"]').count(),0);
  await addActions.locator('[data-stock-action="cancel-stock"]').click();
  assert.equal(await page.locator('#discard-dialog').count(),0,'Clean Add Equipment cancel does not ask to discard');

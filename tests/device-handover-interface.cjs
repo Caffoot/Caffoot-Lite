@@ -76,6 +76,21 @@ async function main(){
  }
 
 
+ async function captureHandoverFooter(name){
+  if(process.env.CAFFOOT_HANDOVER_CAPTURE!=='1')return;
+  for(const width of [1440,390])for(const theme of ['light','dark']){
+   await page.setViewportSize({width,height:1050});
+   await page.evaluate(theme=>{localStorage.setItem('caffoot_theme_preference',theme);caffootApplyTheme();},theme);
+   const footer=page.locator('#stock-reissue-form > .assignment-modal-actions');
+   await footer.scrollIntoViewIfNeeded();
+   assert.equal(await footer.evaluate(node=>getComputedStyle(node).justifyContent),'flex-end');
+   const file=name+'-'+(width===1440?'desktop':'mobile')+'-'+theme+'.png';
+   await page.screenshot({path:path.join(output,file),fullPage:false});
+   screens.push(file);
+  }
+  await page.setViewportSize({width:1440,height:1050});
+  await page.evaluate(()=>{localStorage.setItem('caffoot_theme_preference','light');caffootApplyTheme();});
+ }
  const ownerPage=page;
  async function read(route,context=owner){const response=await context.request.get(address+route);assert.equal(response.status(),200,await response.text());return response.json();}
  async function post(route,data){const response=await owner.request.post(address+route,{headers:{Origin:address,'X-CSRF-Token':session.csrf_token},data});assert.equal(response.status(),200,await response.text());return response.json();}
@@ -143,6 +158,7 @@ async function main(){
  assert.equal(await page.locator('#stock-reissue-form [name="cleanedWorking"]').isChecked(),false);
  assert.equal(await page.locator('#stock-reissue-form [name="dataPreparationConfirmed"]').isChecked(),false);
  await captureChangedScreen('direct-handover-checks-required','#stock-reissue-form');
+ await captureHandoverFooter('direct-handover-footer-checks-required');
  // Unmodified Cancel returns directly, without a discard prompt.
  await page.locator('[data-stock-action="cancel-handover"]').click();
  await page.locator('#device-details-panel-assigned .assignment-main strong').getByText('Fictional Staff',{exact:true}).waitFor();
@@ -194,6 +210,7 @@ async function main(){
  await page.locator('[data-equipment-action="reassign-device"]').click();
  await chooseRecipient('department','department');await confirmChecks();
  await captureChangedScreen('direct-handover-registered','#stock-reissue-form');
+ await captureHandoverFooter('direct-handover-footer-registered');
  await saveHandover();
  await page.locator('#device-details-panel-assigned .assignment-main strong').getByText('Fictional Department',{exact:true}).waitFor();
  const afterRegistered=await read('/api/it-assets/stock/'+identity.computer.stockItemId);

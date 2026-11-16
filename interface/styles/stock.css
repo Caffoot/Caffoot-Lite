@@ -24,3 +24,12 @@
 /* Match approved right-aligned form actions, without changing stock list actions. */
 .stock-live #stock-panel .stock-form-actions{display:flex;justify-content:flex-end;align-items:center;gap:16px;flex-wrap:wrap;margin-top:22px;padding:18px 0 0;border-top:1px solid var(--line)}
 .stock-live #stock-panel .stock-form-actions .btn{min-height:42px;padding:10px 18px}
+
+/* IT Assets form-only visual corrections, retaining the approved actions and workflows. */
+.stock-live #stock-panel .stock-form-actions .btn.btn-primary{background:var(--orange);border-color:var(--orange);color:white}
+.stock-live #stock-panel .stock-form-actions .btn.btn-primary:hover{background:#da782d}
+.stock-live #stock-panel #stock-receipt-form .preview-details-actions[role="group"]{margin-bottom:20px}
+.stock-live #stock-panel #stock-receipt-form #stock-computer-fields,
+.stock-live #stock-panel #stock-receipt-form #stock-individual-fields{margin-top:20px}
+.stock-live #stock-panel #stock-return-form #stock-original-issue{margin:14px 0 18px;line-height:1.6}
+.stock-live #stock-panel #stock-return-form .stock-card-stack>.card>.preview-form-field:last-child{margin-top:18px}
