@@ -119,6 +119,23 @@ async function main(){
  await page.locator('[data-server-storage-field^="vdev-"][data-server-storage-field$="-driveType"]').selectOption('SATA SSD');
  await page.locator('[data-server-storage-field="boot-source"]').selectOption('pool');
  await page.locator('[data-server-storage-field="boot-poolId"]').selectOption({label:'Fictional Boot Pool'});
+ // Source-scoped action spacing must keep the three buttons inside their correct sections.
+ const bounds=await page.evaluate(()=>{
+   const rect=selector=>{const r=document.querySelector(selector)?.getBoundingClientRect();return r?{top:r.top,bottom:r.bottom}:null;};
+   return {
+     poolName:rect('[data-server-storage-field^="pool-"]'),
+     removePool:rect('#server-storage-controls [data-operation="remove-pool"]'),
+     vdevPanel:rect('#server-storage-controls .server-storage-vdev'),
+     driveType:rect('[data-server-storage-field$="-driveType"]'),
+     removeVdev:rect('#server-storage-controls [data-operation="remove-vdev"]'),
+     addVdev:rect('#server-storage-controls [data-operation="add-vdev"]')
+   };
+ });
+ assert.ok(Object.values(bounds).every(Boolean),'Pool/VDEV action layout controls exist');
+ assert.ok(bounds.removePool.top-bounds.poolName.bottom>=12,'Remove Pool has breathing room below Pool Name');
+ assert.ok(bounds.vdevPanel.top-bounds.removePool.bottom>=16,'VDEV section has room after Remove Pool');
+ assert.ok(bounds.removeVdev.top-bounds.driveType.bottom>=12,'Remove VDEV is separated from the drive fields');
+ assert.ok(bounds.addVdev.top-bounds.vdevPanel.bottom>=14,'Add VDEV is separated from the VDEV section');
  await captureChangedScreen('server-zfs-boot-pool','[data-server-storage-field="boot-poolId"]');
  await captureChangedScreen('server-zfs-vdev','[data-server-storage-field$="-layout"]');
  await save();device=await record();

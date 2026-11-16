@@ -343,6 +343,17 @@ html.dark #modal-container .device-editor-dialog #device-form-installed-software
  flex:none;accent-color:#e88130;
 }
 
+/* Keep nested Server ZFS actions visually separate from fields and adjacent VDEVs. */
+#modal-content .device-editor-dialog #server-storage-controls .server-storage-pool-action {
+ display:flex;align-items:center;margin:16px 0 22px;
+}
+#modal-content .device-editor-dialog #server-storage-controls .server-storage-vdev-action {
+ display:flex;align-items:center;margin-top:18px;
+}
+#modal-content .device-editor-dialog #server-storage-controls .server-storage-add-vdev {
+ display:flex;align-items:center;margin-top:18px;
+}
+
 /* Keep the approved Details close icon within the existing light/dark palette. */
 #modal-content .device-details-dialog .device-review-close{background:var(--theme-control,#fff);color:var(--theme-text,#50697e);border-color:var(--theme-border,#dce4eb)}
 
