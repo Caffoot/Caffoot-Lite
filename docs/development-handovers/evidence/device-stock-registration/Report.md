@@ -92,6 +92,33 @@ and original Device Details HTML are unchanged. No Associated Equipment, correct
 dashboards/Low Stock, Supplier directory, Service Desk, stocktakes, retirement,
 backup/release or website feature is introduced.
 
+## Owner-Approved Boot Storage Checkbox Correction — Updated Visual Evidence
+
+The product owner identified the oversized, detached **Record Boot Storage**
+checkbox in the original Server hardware screenshots and approved a narrow
+presentation correction plus a registered-stock readiness limit.
+
+The correction is in commits `084f465` and `7bda5ef`: a compact, inline 17 px
+checkbox within the existing approved Device form, and readiness editing that
+cannot move the registered Ready portion of quantity-based stock. Focused backend
+and actual-browser regression tests are part of the PR.
+
+**Eight affected genuine screenshots were re-captured** from the corrected
+application source at `e2520afedf62ea5d63681adb5d2bcd73cc3ca1e7` through the existing
+`tests/device-storage-interface.cjs` Chromium test, with fictional records.
+[The capture workflow](https://github.com/Caffoot/Caffoot-Lite/actions/runs/43830964329) succeeded; it had read-only repository
+permissions. Both desktop/mobile and light/dark states were checked.
+The one-off capture workflow is removed in the evidence-update commit.
+
+Those eight images replace only the corresponding original **ordinary Boot Storage**
+and **existing ZFS Boot Pool** PNGs in the gallery below. The other **28 genuine
+images** remain from the original runtime source
+`3f5297480cadafbf257cacdd2a6ead44bfd6bfe7`; they were not altered.
+The [manifest](capture-manifest.json) gives SHA-256, byte length and the
+actual source for each refreshed screenshot. No image was artificially
+retouched, and no owner visual acceptance or merge is claimed.
+Final-head Actions must still be verified after this evidence commit.
+
 ## Changed-Screen Gallery
 
 **36 genuine screenshots**, fictional data, desktop **1440 × 1050** and mobile

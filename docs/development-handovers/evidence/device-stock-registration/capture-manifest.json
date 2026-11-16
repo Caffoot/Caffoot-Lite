@@ -104,23 +104,27 @@
     },
     {
       "path": "storage/server-independent-boot-desktop-dark.png",
-      "bytes": 126503,
-      "sha256": "c18051ef08f386209d30ea9761c7021b804e97bd5ad93f50b79d5a3b4679042f"
+      "bytes": 120720,
+      "sha256": "631806f2d0c6af7a68d194b735ff50af7b0b78356e2c62226f4749b560fad235",
+      "runtimeSource": "e2520afedf62ea5d63681adb5d2bcd73cc3ca1e7"
     },
     {
       "path": "storage/server-independent-boot-desktop-light.png",
-      "bytes": 125843,
-      "sha256": "43d434604100a89cd68214b3a9c53b6244494416ba96b0d764742bddaa287bfb"
+      "bytes": 119510,
+      "sha256": "3f5a1774157edebf100ade71d142bea56c2161c782fa05a30f7a68cc4bb3077b",
+      "runtimeSource": "e2520afedf62ea5d63681adb5d2bcd73cc3ca1e7"
     },
     {
       "path": "storage/server-independent-boot-mobile-dark.png",
-      "bytes": 74467,
-      "sha256": "165ea40d308f4b38d8f02c83dd04fb60705fa08f3ddcaa51b1365f69f286db97"
+      "bytes": 71559,
+      "sha256": "2ebb43b6ebdb7f1dd1f972687d5ca17c884e204f7c1ff892c5fed30fb6ec7fb5",
+      "runtimeSource": "e2520afedf62ea5d63681adb5d2bcd73cc3ca1e7"
     },
     {
       "path": "storage/server-independent-boot-mobile-light.png",
-      "bytes": 74974,
-      "sha256": "07ee941d934930431c611c705521c7a0e21b9455263df5e127cf697cecb231f3"
+      "bytes": 71481,
+      "sha256": "8488abc626bc0e3aa7520676d937b8c4fa9c7eb16ad6a53f1556195cb450fbc8",
+      "runtimeSource": "e2520afedf62ea5d63681adb5d2bcd73cc3ca1e7"
     },
     {
       "path": "storage/server-storage-details-desktop-dark.png",
@@ -144,23 +148,27 @@
     },
     {
       "path": "storage/server-zfs-boot-pool-desktop-dark.png",
-      "bytes": 124025,
-      "sha256": "5affe3e9f1298f5dd1a2c0dc255ae56d3693ee24cdb96f85e21bd9d2e9e0fd08"
+      "bytes": 120270,
+      "sha256": "a4ae8e207db9faacf88f024231351021d89af91a85724cb61930ef5e6dd833ec",
+      "runtimeSource": "e2520afedf62ea5d63681adb5d2bcd73cc3ca1e7"
     },
     {
       "path": "storage/server-zfs-boot-pool-desktop-light.png",
-      "bytes": 124804,
-      "sha256": "9ddb00d991a14d9bc5a076d1b706b7622c3b5b31caabecd9764b6ff079211d3f"
+      "bytes": 120447,
+      "sha256": "5fa380bb530a1c29886e61c1bde53e650e6846f0ab3fdb5f43bec1b935e13e22",
+      "runtimeSource": "e2520afedf62ea5d63681adb5d2bcd73cc3ca1e7"
     },
     {
       "path": "storage/server-zfs-boot-pool-mobile-dark.png",
-      "bytes": 77629,
-      "sha256": "75c1f7df41e33db3284233c31c462d218e91b3ad77afe476bc48b4450881babe"
+      "bytes": 73202,
+      "sha256": "8f5441e34257212441aae3def99b50838089ca3fd5b796fabab0c90230ba7497",
+      "runtimeSource": "e2520afedf62ea5d63681adb5d2bcd73cc3ca1e7"
     },
     {
       "path": "storage/server-zfs-boot-pool-mobile-light.png",
-      "bytes": 78218,
-      "sha256": "5c94845ecaaba75a45bf6a40d03cf77cbab85611f6bb293c91e2897b58f895be"
+      "bytes": 72520,
+      "sha256": "15a32530e9d54ab4bdcc1728da9976c8a2fbf70cd7234264f2218f4018037054",
+      "runtimeSource": "e2520afedf62ea5d63681adb5d2bcd73cc3ca1e7"
     },
     {
       "path": "storage/server-zfs-vdev-desktop-dark.png",
@@ -197,5 +205,22 @@
     "interface/equipment.js": "7037ee56bb03a6640e6156fa23c46de98fe1b28f3136fa39ac2a2ef8455b26df",
     "interface/stock-intake.js": "b44763085734e44f56a17b13d3e573b4da0b7f8320ca30214b6d7dc955f245c6",
     "interface/screens/device-details.html": "6ca67123707f632821d7a8c332cb4cfe29c61d8f5a95d012f983f82f06d15863"
+  },
+  "correctedBootStorage": {
+    "captureSource": "e2520afedf62ea5d63681adb5d2bcd73cc3ca1e7",
+    "correctionSource": "7bda5ef3a9173849fe2a6677f37da7f4451c3307",
+    "run": "https://github.com/Caffoot/Caffoot-Lite/actions/runs/43830964329",
+    "captureTest": "tests/device-storage-interface.cjs",
+    "screens": [
+      "storage/server-independent-boot-desktop-light.png",
+      "storage/server-independent-boot-desktop-dark.png",
+      "storage/server-independent-boot-mobile-light.png",
+      "storage/server-independent-boot-mobile-dark.png",
+      "storage/server-zfs-boot-pool-desktop-light.png",
+      "storage/server-zfs-boot-pool-desktop-dark.png",
+      "storage/server-zfs-boot-pool-mobile-light.png",
+      "storage/server-zfs-boot-pool-mobile-dark.png"
+    ],
+    "note": "Only eight screens were recaptured; the other 28 retain the original runtimeSource at the manifest root."
   }
 }
