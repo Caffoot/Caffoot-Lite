@@ -9053,7 +9053,7 @@ void (async () => {
     const session=response.ok?await response.json():{};
     sessionStockPermissions=session.stock_permissions||{read:false,edit:false};
     addDirectoryAccess();
-    if(!permissions['IT Assets'])window.caffootStockIntake.clear();
+    window.caffootStockIntake.clear();
     applyAllowedControls();
   }
   async function refreshCentralInventory(render = true) {
@@ -9166,6 +9166,8 @@ void (async () => {
       !(editPermissions.Racks && actionCanEditRack.has(action));
   }
   function applyAllowedControls() {
+    const stockControls=document.getElementById('device-stock-controls');
+    if(stockControls)stockControls.hidden=!editPermissions.Devices||!editPermissions['IT Assets'];
     document.querySelectorAll('#sidebar [data-tab]').forEach(button=>{
       const area=section[button.dataset.tab];
       if(area)button.hidden=!permissions[area];
@@ -9681,6 +9683,7 @@ void (async () => {
         : {record:outboundRecord};
       const stockRegistration=!deviceId&&document.querySelector('[data-device-form="true"]')?.stockRegistration;
       if(stockRegistration){
+        if(!editPermissions.Devices||!editPermissions['IT Assets'])throw Error('Devices Edit and IT Assets Edit are required. Reopen Get From Stock after access is restored.');
         payload.record.id=stockRegistration.deviceId;
         await postInventory('/api/it-assets/register-device',{record:payload.record,stockItemId:stockRegistration.stockItemId,version:stockRegistration.version,operationId:stockRegistration.operationId});
         window.caffootStockIntake.clear();

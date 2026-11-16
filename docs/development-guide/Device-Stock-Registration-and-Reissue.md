@@ -166,3 +166,22 @@ both manufacturer lists. Initial fictional-fixture placement was corrected to
 match the existing Device editor's normal saved shape before the passing run.
 The existing browser Actions workflow now also runs both new real-browser checks;
 all existing gates remain. Complete final-head verification is still pending.
+
+## Documentation And Final Source Checkpoint
+
+The [draft user guide](../how-tos/features-and-instructions/v2.2-draft/Device-Stock-Registration-and-Reissue.md)
+explains both entry points, direct Add versus receipt/registration/reissue,
+preparation, independent permissions, optional hardware and the ten-computer
+example. Current guide indexes and the active handover point to the batch;
+published v2.1 instructions and historical screenshots remain unchanged.
+
+Final review clears cached stock after access refresh and hides stock controls
+when the independent Edit rights disappear. A selected registration cannot fall
+back to direct creation if access is lost. Additional tests cover both independent
+registration grants and Laptop/physical Server registration without IPAM/Racks.
+The 32 new backend tests passed in focused runs. Both real Chromium flows passed,
+including feature-off concealment, persistent custom manufacturer entries and
+hidden Ubiquiti preferences. Capture helpers verify the actual theme and retain
+only changed-screen evidence. The Function Index has 968 source-mapped definitions.
+Complete final-source backend/browser/Docker/documentation and Actions results are
+recorded in the [evidence report](../development-handovers/evidence/device-stock-registration/Report.md).

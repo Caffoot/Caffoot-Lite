@@ -62,12 +62,27 @@ async function main(){
  const session=await login(owner,'owner','Fictional-Owner-Password-2026!');
  page=await owner.newPage();const errors=[],screens=[];page.setDefaultTimeout(10000);
  page.on('pageerror',failure=>errors.push(String(failure)));
+ async function captureChangedScreen(name,selector){
+  if(process.env.CAFFOOT_DEVICE_CAPTURE!=='1')return;
+  for(const width of [1440,390])for(const theme of ['light','dark']){
+   await page.setViewportSize({width,height:1050});
+   await page.evaluate(theme=>{localStorage.setItem('caffoot_theme_preference',theme);caffootApplyTheme();},theme);
+   assert.equal(await page.evaluate(()=>document.documentElement.classList.contains('dark')),theme==='dark');
+   await page.locator(selector).scrollIntoViewIfNeeded();
+   const file=name+'-'+(width===1440?'desktop':'mobile')+'-'+theme+'.png';
+   await page.screenshot({path:path.join(output,file),fullPage:true});
+   assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'Page overflow at '+file);
+   screens.push(file);
+  }
+  await page.setViewportSize({width:1440,height:1050});await page.evaluate(()=>{localStorage.setItem('caffoot_theme_preference','light');caffootApplyTheme();});
+ }
+
 
  async function post(route,data){const response=await owner.request.post(address+route,{headers:{Origin:address,'X-CSRF-Token':session.csrf_token},data});assert.equal(response.status(),200,await response.text());return response.json();}
  const receipt=await post('/api/it-assets/receive',{operationId:crypto.randomUUID(),quantity:10,readyQuantity:10,receivedOn:'2026-11-16',supplier:'Fictional Supplier',notes:'',checks:{itemsChecked:true,conditionChecked:true},item:{category:'Desktop',trackingMode:'quantity',manufacturer:'Dell',model:'OptiPlex',sharedSpecifications:{processor:'Fictional CPU',memory:16,memoryUnit:'GB',storage:512,storageUnit:'GB',storageMedium:'NVMe SSD'}}});
  const item=async()=> (await (await owner.request.get(address+'/api/it-assets/stock/'+receipt.stockItemId)).json()).item;
  await page.goto(address+'/inventory');
- await page.locator('[data-action="tab-devices"]').click();
+ await page.locator('#sidebar [data-action="tab-devices"]').click();
  await page.locator('[data-action="open-device-modal"]').first().click();
  await page.locator('#device-get-from-stock').click();
  await page.locator('#device-stock-source option[value="'+receipt.stockItemId+'"]').waitFor({state:'attached'});
@@ -79,11 +94,14 @@ async function main(){
  assert.equal(await page.locator('#dev-model').inputValue(),'OptiPlex');
  assert.equal(await page.locator('#dev-ip').inputValue(),'');
  assert.equal((await item()).quantityStateBalances.ready,10);
+ await captureChangedScreen('get-from-stock','#device-stock-controls');
  await page.locator('#dev-name').fill('Fictional Stock Computer');
  await page.locator('#dev-location').selectOption('Unknown');
  await page.locator('#device-form-tab-hardware').click();
  assert.equal(await page.locator('[data-device-detail-field="memory"]').inputValue(),'16');
  assert.equal(await page.locator('[data-device-detail-field="processor"]').inputValue(),'Fictional CPU');
+ assert.equal(await page.locator('[data-device-detail-field="storageType"]').inputValue(),'NVMe SSD');
+ await captureChangedScreen('desktop-storage-type','[data-device-detail-field="storageType"]');
  await page.locator('#device-form-tab-general').click();
  const responsePromise=page.waitForResponse(r=>r.url().endsWith('/api/it-assets/register-device')&&r.request().method()==='POST');
  await page.locator('.device-review-footer [type="submit"]').click();
@@ -94,6 +112,7 @@ async function main(){
  await page.locator('[data-action="tab-it-assets"]').click();
  await page.locator('[data-stock-action="tab"][data-tab="inventory"]').click();
  await page.locator('[data-stock-action="details"][data-id="'+receipt.stockItemId+'"]').last().click();
+ await captureChangedScreen('stock-registration-action','#stock-item-details');
  await page.locator('[data-stock-action="register-device"]').click();
  await page.locator('#device-stock-feedback').filter({hasText:'From Stock:'}).waitFor();
  assert.equal(await page.locator('#dev-name').inputValue(),'');
@@ -106,6 +125,7 @@ async function main(){
  await page.locator('#stock-reissue-form').waitFor();
  await page.locator('#stock-recipientId option[value="retained-person"]').waitFor({state:'attached'});
  await page.locator('#stock-recipientId').selectOption('retained-person');
+ await captureChangedScreen('reissue-existing-device','#stock-reissue-form');
  const reissued=page.waitForResponse(r=>r.url().endsWith('/api/it-assets/reissue-device')&&r.request().method()==='POST');
  await page.locator('#stock-reissue-form [type="submit"]').click();
  const reissueResponse=await reissued;assert.equal(reissueResponse.status(),200,await reissueResponse.text());
@@ -113,8 +133,15 @@ async function main(){
  assert.equal((await item()).balances.readyToIssue,9);
  const assignment=await (await owner.request.get(address+'/api/equipment/assignments?staffId=retained-person')).json();
  assert.ok(assignment.current.some(entry=>entry.deviceName==='Fictional Stock Computer'));
+ await post('/api/settings/features',{feature:'it_assets',enabled:false,confirmDisable:true});
+ await page.reload();await page.locator('#sidebar [data-action="tab-devices"]').click();
+ await page.locator('[data-action="open-device-modal"]').first().click();
+ assert.equal(await page.locator('#device-get-from-stock').count(),0);
+ assert.equal((await owner.request.get(address+'/api/it-assets/device-sources')).status(),403);
+ const savedDevices=await (await owner.request.get(address+'/api/inventory/state')).json();
+ assert.ok(savedDevices.devices.some(device=>device.name==='Fictional Stock Computer'));
  assert.deepEqual(errors,[]);
- fs.writeFileSync(path.join(output,'browser-results.json'),JSON.stringify({checks:['Existing Add Device Form','Shared Prefill Only','Atomic Accounting','Stock Entry Point','Cancellation Has No Writes','Separate Reissue Route','Canonical Staff Assignment'],pageErrors:errors},null,2));
+ fs.writeFileSync(path.join(output,'browser-results.json'),JSON.stringify({checks:['Existing Add Device Form','Shared Prefill Only','Atomic Accounting','Stock Entry Point','Cancellation Has No Writes','Separate Reissue Route','Canonical Staff Assignment'],pageErrors:errors,screenshots:screens,source:spawnSync('git',['rev-parse','HEAD'],{cwd:root,encoding:'utf8'}).stdout.trim()},null,2));
  console.log('PASS: existing Add Device and stock entry routes, shared prefill, atomic registration, cancellation and canonical reissue.');
 }
 main().catch(async failure=>{

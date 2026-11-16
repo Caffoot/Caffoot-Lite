@@ -62,12 +62,27 @@ async function main(){
  const session=await login(owner,'owner','Fictional-Owner-Password-2026!');
  page=await owner.newPage();const errors=[],screens=[];page.setDefaultTimeout(10000);
  page.on('pageerror',failure=>errors.push(String(failure)));
+ async function captureChangedScreen(name,selector){
+  if(process.env.CAFFOOT_DEVICE_CAPTURE!=='1')return;
+  for(const width of [1440,390])for(const theme of ['light','dark']){
+   await page.setViewportSize({width,height:1050});
+   await page.evaluate(theme=>{localStorage.setItem('caffoot_theme_preference',theme);caffootApplyTheme();},theme);
+   assert.equal(await page.evaluate(()=>document.documentElement.classList.contains('dark')),theme==='dark');
+   await page.locator(selector).scrollIntoViewIfNeeded();
+   const file=name+'-'+(width===1440?'desktop':'mobile')+'-'+theme+'.png';
+   await page.screenshot({path:path.join(output,file),fullPage:true});
+   assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'Page overflow at '+file);
+   screens.push(file);
+  }
+  await page.setViewportSize({width:1440,height:1050});await page.evaluate(()=>{localStorage.setItem('caffoot_theme_preference','light');caffootApplyTheme();});
+ }
+
 
  async function post(route,data){const response=await owner.request.post(address+route,{headers:{Origin:address,'X-CSRF-Token':session.csrf_token},data});assert.equal(response.status(),200,await response.text());return response.json();}
 
  await post('/api/devices/create',{record:{id:'fictional-server',name:'Fictional Storage Server',type:'Server - Physical',status:'Maintenance',mountType:'Desktop',face:'front',rackId:'',rackUStart:null,rackUEnd:null,rackUHeight:null,location:'Unknown',primaryIp:'',manufacturer:'Dell',model:'PowerEdge',serialNumber:'',typeDetails:{raid:'Legacy RAID Choice',storage:'12',storageUnit:'TB',driveCount:'8',storageType:'Legacy Storage Medium'}}});
  await page.goto(address+'/inventory');
- await page.locator('[data-action="tab-devices"]').click();
+ await page.locator('#sidebar [data-action="tab-devices"]').click();
  async function open(id){await page.evaluate(id=>openDeviceModal(id),id);await page.locator('#device-editor-form').waitFor({state:'visible'});}
  async function close(){await page.evaluate(()=>closeModal(true));await page.locator('#device-editor-form').waitFor({state:'hidden'});}
  async function save(){const saved=page.waitForResponse(r=>r.url().endsWith('/api/devices/edit/save')&&r.request().method()==='POST');await page.locator('.device-review-footer [type="submit"]').click();const response=await saved;assert.equal(response.status(),200,await response.text());await page.locator('#device-editor-form').waitFor({state:'hidden'});}
@@ -82,6 +97,7 @@ async function main(){
  await page.locator('[data-server-storage-field="boot-capacity"]').fill('500');
  await page.locator('[data-server-storage-field="boot-unit"]').selectOption('GB');
  await page.locator('[data-server-storage-field="boot-configuration"]').selectOption('Mirror');
+ await captureChangedScreen('server-independent-boot','#server-storage-controls');
  await save();
  let device=await record();assert.equal(device.typeDetails.bootStorage.source,'independent');assert.equal(device.typeDetails.raid,'Legacy RAID Choice');assert.equal(device.typeDetails.storage,'12');assert.equal(device.status,'Maintenance');
  await open('fictional-server');await page.locator('#device-form-tab-hardware').click();
@@ -94,15 +110,18 @@ async function main(){
  await page.locator('[data-server-storage-field^="vdev-"][data-server-storage-field$="-driveType"]').selectOption('SATA SSD');
  await page.locator('[data-server-storage-field="boot-source"]').selectOption('pool');
  await page.locator('[data-server-storage-field="boot-poolId"]').selectOption({label:'Fictional Boot Pool'});
+ await captureChangedScreen('server-zfs-boot-pool','[data-server-storage-field="boot-poolId"]');
+ await captureChangedScreen('server-zfs-vdev','[data-server-storage-field$="-layout"]');
  await save();device=await record();
  assert.deepEqual(Object.keys(device.typeDetails.bootStorage).sort(),['poolId','source']);
  assert.equal(device.typeDetails.zfsPools.length,1);assert.equal(device.typeDetails.zfsPools[0].vdevs.length,1);
  assert.equal(device.typeDetails.storage,'12');assert.equal(device.typeDetails.raid,'Legacy RAID Choice');
  await page.evaluate(()=>openDeviceDetailView('fictional-server'));
  assert.match(await page.locator('.device-details-dialog').textContent(),/Fictional Boot Pool/);
+ await captureChangedScreen('server-storage-details','.device-details-dialog');
  await page.evaluate(()=>closeModal(true));
  await open(null);await page.locator('#dev-type').selectOption('Laptop');await page.locator('#device-form-tab-hardware').click();
- assert.equal(await page.locator('[data-device-detail-field="storageType"]').count(),1);assert.equal(await page.locator('#server-storage-controls').count(),0);await close();
+ assert.equal(await page.locator('[data-device-detail-field="storageType"]').count(),1);assert.equal(await page.locator('#server-storage-controls').count(),0);await captureChangedScreen('laptop-storage-type','[data-device-detail-field="storageType"]');await close();
  const expected={UPS:['APC (Schneider Electric)','Eaton','Vertiv','CyberPower','Riello UPS','Socomec','Ubiquiti'],PDU:['APC (Schneider Electric)','Eaton','Vertiv','CyberPower','Raritan','Server Technology','ATEN','Ubiquiti']};
  for(const type of ['UPS','PDU']){
   await open(null);await page.locator('#dev-type').selectOption(type);
@@ -111,8 +130,18 @@ async function main(){
   assert.equal(makers.filter(maker=>maker==='Ubiquiti').length,1);
   await close();
  }
+ const custom=[{id:'fictional-ups-maker',type:'UPS',manufacturer:'Fictional Custom UPS',model:'Fictional Model'}];
+ const preferences={'maker:ubiquiti':{label:'Ubiquiti',hidden:true}};
+ await post('/api/inventory/settings/save',{key:'hardwareCatalogue',value:custom});
+ await post('/api/inventory/settings/save',{key:'hardwareSeedPreferences',value:preferences});
+ await page.reload();await page.locator('#sidebar [data-action="tab-devices"]').click();await open(null);await page.locator('#dev-type').selectOption('UPS');
+ const customMakers=await page.locator('#dev-manufacturer-select option').allTextContents();
+ assert.ok(customMakers.includes('Fictional Custom UPS'));assert.ok(!customMakers.includes('Ubiquiti'));
+ await close();
+ const preserved=await (await owner.request.get(address+'/api/inventory/state')).json();
+ assert.deepEqual(preserved.settings.hardwareCatalogue,custom);assert.deepEqual(preserved.settings.hardwareSeedPreferences,preferences);
  assert.deepEqual(errors,[]);
- fs.writeFileSync(path.join(output,'browser-results.json'),JSON.stringify({checks:['Legacy Storage Type','Conventional RAID Preserved','Ordinary Boot Storage Without ZFS','Pool VDEV Persistence','Existing Boot Pool Link Without Duplicate Drives','Laptop Applicability','UPS/PDU Ubiquiti Suggestions'],pageErrors:errors},null,2));
+ fs.writeFileSync(path.join(output,'browser-results.json'),JSON.stringify({checks:['Legacy Storage Type','Conventional RAID Preserved','Ordinary Boot Storage Without ZFS','Pool VDEV Persistence','Existing Boot Pool Link Without Duplicate Drives','Laptop Applicability','UPS/PDU Ubiquiti Suggestions'],pageErrors:errors,screenshots:screens,source:spawnSync('git',['rev-parse','HEAD'],{cwd:root,encoding:'utf8'}).stdout.trim()},null,2));
  console.log('PASS: Storage Type, ordinary boot, ZFS/VDEV link, legacy fields and UPS/PDU suggestions.');
 }
 main().catch(async failure=>{

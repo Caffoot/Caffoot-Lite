@@ -143,6 +143,28 @@ class DeviceStockTests(unittest.TestCase):
         with self.assertRaises(RuntimeError):
             create_device_in_transaction(self.db, 1, {})
 
+    def test_registration_requires_both_independent_edit_rights(self):
+        identity = self.source()
+        payload = registration_payload(self.db, identity)
+        for device_grant, stock_grant in (('read', 'read'), ('edit', 'read'), ('read', 'edit')):
+            self.db.execute('DELETE FROM account_permission_overrides WHERE account_id=2')
+            for section, grant in (('Devices', device_grant), ('IT Assets', stock_grant)):
+                self.db.execute('INSERT INTO account_permission_overrides VALUES(?,?,?)', (2, section, grant))
+            self.db.commit()
+            self.unchanged(PermissionError, lambda: register_stock_device(self.db, 2, 'a'*64, payload))
+            with self.assertRaises(PermissionError):
+                device_stock_sources(self.db, 2)
+
+    def test_laptop_and_physical_server_need_no_network_or_rack_dependency(self):
+        self.db.execute("UPDATE organisation_features SET enabled=1 WHERE feature='devices'")
+        self.db.commit()
+        for category in ('Laptop', 'Server - Physical'):
+            identity = self.receipt(category=category, model='Fictional '+category)
+            payload = registration_payload(self.db, identity)
+            payload['record']['name'] = 'Fictional '+category
+            self.register(payload)
+            self.assertEqual(stock_item(self.db, identity)['balances']['physicallyHeld'], 10)
+
     def test_two_concurrent_registrations_cannot_consume_the_same_ready_unit(self):
         identity = self.source(quantity=1)
         payload = registration_payload(self.db, identity)
