@@ -9,6 +9,8 @@ on:
       - "tests/department-details-interface.cjs"
       - "tests/stock-intake-interface.cjs"
       - "tests/stock-circulation-interface.cjs"
+      - "tests/device-stock-interface.cjs"
+      - "tests/device-storage-interface.cjs"
       - "tests/unassigned-device-return-interface.cjs"
       - "tests/pi-acceptance-corrections.cjs"
       - "tests/users-roles-interface.cjs"
@@ -35,6 +37,8 @@ on:
       - "tests/department-details-interface.cjs"
       - "tests/stock-intake-interface.cjs"
       - "tests/stock-circulation-interface.cjs"
+      - "tests/device-stock-interface.cjs"
+      - "tests/device-storage-interface.cjs"
       - "tests/unassigned-device-return-interface.cjs"
       - "tests/pi-acceptance-corrections.cjs"
       - "tests/users-roles-interface.cjs"
@@ -118,6 +122,24 @@ jobs:
         with:
           name: stock-intake-chromium-${{ github.sha }}
           path: ${{ runner.temp }}/stock-intake-evidence
+          if-no-files-found: ignore
+          retention-days: 14
+      - name: Check canonical Device registration, reissue and optional storage
+        env:
+          NODE_PATH: ${{ runner.temp }}/caffoot-browser-tests/node_modules
+          CAFFOOT_DEVICE_STOCK_OUTPUT: ${{ runner.temp }}/device-stock-evidence
+          CAFFOOT_STORAGE_OUTPUT: ${{ runner.temp }}/device-storage-evidence
+        run: |
+          node tests/device-stock-interface.cjs
+          node tests/device-storage-interface.cjs
+      - name: Save Device stock and storage evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: device-stock-storage-chromium-${{ github.sha }}
+          path: |
+            ${{ runner.temp }}/device-stock-evidence
+            ${{ runner.temp }}/device-storage-evidence
           if-no-files-found: ignore
           retention-days: 14
       - name: Check stock issue, returns, preparation, write-off and safe equipment views

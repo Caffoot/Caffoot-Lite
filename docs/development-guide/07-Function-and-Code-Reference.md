@@ -1,5 +1,13 @@
 # 07 — Function and code reference
 
+Batch 3.9 adds [`device_stock.py`](../../backend/device_stock.py) for atomic stock
+registration and separate canonical reissue, and
+[`device_storage.py`](../../backend/device_storage.py) for optional storage
+validation. `create_device_in_transaction` reuses the normal writer without a
+nested commit; direct creation retains its own wrapper. Existing stock journal
+and assignment protections remain. See [the source/transaction mapping](Device-Stock-Registration-and-Reissue.md).
+
+
 ## In simple terms
 
 This page tells you where to look. Search for a function's exact name, then read the source and its callers before changing anything. Line numbers change, so this guide uses file paths and searchable identifiers.

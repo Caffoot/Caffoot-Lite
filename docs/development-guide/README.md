@@ -1,5 +1,16 @@
 # Caffoot Lite — Development Guide
 
+> **Latest development checkpoint — 16 November 2026:** Batch 3.8/PR #389 is merged
+> on `milestone-1` at `7f11598b50bbb1fbd11893a2ad34bc152ff12ed1`. Batch 3.9
+> registration/reissue and approved optional hardware are implemented for review
+> in [draft PR #390](https://github.com/Caffoot/Caffoot-Lite/pull/390), with
+> [transaction/source mapping](Device-Stock-Registration-and-Reissue.md),
+> [draft instructions](../how-tos/features-and-instructions/v2.2-draft/Device-Stock-Registration-and-Reissue.md)
+> and [actual verification/gallery](../development-handovers/evidence/device-stock-registration/Report.md).
+> Local verification and changed-screen evidence are recorded; final-head Actions are linked in PR #390; no owner visual approval, merge, release or
+> deployment is claimed. Earlier dated checkpoints below retain their original status.
+
+
 Welcome. This guide explains **how Caffoot Lite actually works**, from the everyday user experience through to the Python backend, SQLite database and tests. It is written for the product owner, new contributors and maintainers.
 
 **Status:** v2.1 is the published Docker/SQLite baseline. It includes the modular interface, profiles, email/recovery workflows and Audit Trail. See [Modular Interface](Modular-Interface.md), [Account Recovery](Account-Recovery.md) and the [v2.1 handover archived for release preparation](../historical/development-handovers/v2.1.md) for release-preparation evidence and acceptance limits. [Issue #215](https://github.com/Caffoot/Caffoot-Lite/issues/215) documents completed historical work; it does not control future development. [CONTRIBUTING.md](../../CONTRIBUTING.md) describes the mandatory standards for every future contribution. The original [v2.0](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v2.0) and standalone [v1.3.3](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v1.3.3) tags are preserved.

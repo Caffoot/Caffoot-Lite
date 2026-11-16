@@ -15,6 +15,16 @@ Before changing Caffoot Lite, identify the existing behaviour that must remain i
 | [`app/` at the published v1.3.3 tag](https://github.com/Caffoot/Caffoot-Lite/tree/v1.3.3/app) | Original HTML application's historical source and tests, excluded from the current Docker source |
 | [Published v1.3.3 source and tests](https://github.com/Caffoot/Caffoot-Lite/tree/v1.3.3/app) | Authoritative published inventory compatibility baseline; check later fixes before using older audit findings |
 
+## Device Registration, Reissue And Optional Storage
+
+Focused backend commands and source/transaction boundaries are recorded in
+[Device Stock Registration And Reissue](Device-Stock-Registration-and-Reissue.md).
+The existing browser workflow also runs `tests/device-stock-interface.cjs` and
+`tests/device-storage-interface.cjs` against real isolated HTTPS/SQLite. Set
+`CAFFOOT_DEVICE_CAPTURE=1` for changed-screen desktop/mobile light/dark captures,
+with `CAFFOOT_DEVICE_STOCK_OUTPUT` and `CAFFOOT_STORAGE_OUTPUT` as destinations.
+See [actual results and gallery](../development-handovers/evidence/device-stock-registration/Report.md).
+
 ## Unreleased Stock Circulation Checks
 
 Batch 3.8 adds [assignment-closure tests](../../tests/test_assignment_closure.py),

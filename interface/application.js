@@ -4683,7 +4683,7 @@ function openIpModal(ip) {
                     const display = typeof value === 'boolean' ? (value ? 'Yes' : 'No') : value;
                     return field(getDeviceDetailFieldLabel(key, device.type), display);
                 });
-            return rows.join('');
+            return rows.join('')+(device.type==='Server - Physical'&&!device.isVirtual?serverStorageDetailRows(details,field):'');
         }
         // Preserve the existing authenticated modal and focus/discard/permission controls.
         // The source overlay and container are shared by Device Details and Add/Edit.
@@ -4960,6 +4960,8 @@ function openIpModal(ip) {
             'Server - Physical': {'Dell':['PowerEdge'],'HPE':['ProLiant DL','ProLiant ML'],'Lenovo':['ThinkSystem'],'Supermicro':['SuperServer']},
             'Switch': {'Cisco':['Catalyst','Nexus'],'Aruba':['CX'],'HPE':['FlexNetwork'],'Ubiquiti':['UniFi Switch']},
             'Firewall': {'Fortinet':['FortiGate'],'Cisco':['Firepower'],'Sophos':['XGS'],'Palo Alto Networks':['PA Series']},
+            'UPS': {'APC (Schneider Electric)':[],'Eaton':[],'Vertiv':[],'CyberPower':[],'Riello UPS':[],'Socomec':[],'Ubiquiti':[]},
+            'PDU': {'APC (Schneider Electric)':[],'Eaton':[],'Vertiv':[],'CyberPower':[],'Raritan':[],'Server Technology':[],'ATEN':[],'Ubiquiti':[]},
             'NAS': {'Synology':['DiskStation','RackStation'],'QNAP':['TS Series']}
         };
         // User-managed hardware suggestions are stored with the offline inventory.
@@ -5164,7 +5166,7 @@ function openIpModal(ip) {
             if(!await nextSettingsBridge.save('installedSoftware')){const prior=JSON.parse(snapshot);Object.keys(appState).forEach(k=>delete appState[k]);Object.assign(appState,prior);showToast('Could not save the change.','error');return;}
             openConfiguredSoftwareCatalogueManager();
         }
-        const deviceDetailFieldLabels = {"portCount":"Number of ports","networkCard":"Network card","networkConnection":"Network connection method","printerColour":"Printer colour type","printerDesign":"Printer design type","windowsLicence":"Windows licence","os":"Operating system","processor":"Processor","graphics":"Graphics card","memory":"Memory size","memoryUnit":"Memory unit","storage":"Storage size","storageUnit":"Storage unit","raid":"RAID type","driveCount":"Number of hard drives","handsetCount":"Number of handsets","powerOutlets":"UPS power outlets","serialPort":"UPS serial port","usbPort":"UPS USB port","Swan":"Swan","MicrosoftOffice":"Microsoft Office","Planet":"Planet","SpindleSoftware":"Spindle Software","Preactor":"Preactor","RedLionApp":"Red Lion App","SalesBase":"Sales Base","HelpDesk":"Help Desk","ProductionITHelpDeskDashboards":"Production I T Help Desk Dashboards","PDA":"P D A","TMS":"T M S","PhoneBook":"Phone Book","EasyLabel":"Easy Label","SwanServer":"Swan Server","SQLServer":"S Q L Server","TMSServer":"T M S Server","printserver":"printserver","keriserver":"keriserver","ActiveDirectory":"Active Directory","AntivirusSoftware":"Antivirus Software","DNS":"D N S","DHCP":"D H C P","ExchangeServer":"Exchange Server","BackupSoftware":"Backup Software","PlanetDB":"Planet D B","SystemsDatabaseBackEndTables":"Systems Database Back End Tables","PDASystem":"P D A System"};
+        const deviceDetailFieldLabels = {"portCount":"Number of ports","networkCard":"Network card","networkConnection":"Network connection method","printerColour":"Printer colour type","printerDesign":"Printer design type","windowsLicence":"Windows licence","os":"Operating system","processor":"Processor","graphics":"Graphics card","memory":"Memory size","memoryUnit":"Memory unit","storage":"Storage size","storageUnit":"Storage unit","storageType":"Storage Type (Optional)","raid":"RAID type","driveCount":"Number of hard drives","handsetCount":"Number of handsets","powerOutlets":"UPS power outlets","serialPort":"UPS serial port","usbPort":"UPS USB port","Swan":"Swan","MicrosoftOffice":"Microsoft Office","Planet":"Planet","SpindleSoftware":"Spindle Software","Preactor":"Preactor","RedLionApp":"Red Lion App","SalesBase":"Sales Base","HelpDesk":"Help Desk","ProductionITHelpDeskDashboards":"Production I T Help Desk Dashboards","PDA":"P D A","TMS":"T M S","PhoneBook":"Phone Book","EasyLabel":"Easy Label","SwanServer":"Swan Server","SQLServer":"S Q L Server","TMSServer":"T M S Server","printserver":"printserver","keriserver":"keriserver","ActiveDirectory":"Active Directory","AntivirusSoftware":"Antivirus Software","DNS":"D N S","DHCP":"D H C P","ExchangeServer":"Exchange Server","BackupSoftware":"Backup Software","PlanetDB":"Planet D B","SystemsDatabaseBackEndTables":"Systems Database Back End Tables","PDASystem":"P D A System"};
         const deviceTypeDetailGroups = {
             'switch':'switch','router':'router','firewall':'network','print servers':'network',
             'printer':'printer','scanner':'printer',
@@ -5177,6 +5179,7 @@ function openIpModal(ip) {
             portCount:['4','8','12','16','24','48'],networkConnection:['Ethernet','Wi-Fi','Fibre','Other'],printerColour:['Colour','Monochrome'],
             printerDesign:['Laser','Inkjet','Thermal','Dot matrix','Other'],
             memoryUnit:['MB','GB','TB'],storageUnit:['GB','TB','PB'],
+            storageType:['HDD','SATA SSD','NVMe SSD','Other'],
             raid:['None','RAID 0','RAID 1','RAID 5','RAID 6','RAID 10','Other']
         };
         const booleanDeviceDetailFields = new Set(['Swan','MicrosoftOffice','Planet','SpindleSoftware','Preactor','RedLionApp','SalesBase','HelpDesk','ProductionITHelpDeskDashboards','PDA','TMS','PhoneBook','EasyLabel','SwanServer','SQLServer','TMSServer','printserver','keriserver','ActiveDirectory','AntivirusSoftware','DNS','DHCP','ExchangeServer','BackupSoftware','PlanetDB','SystemsDatabaseBackEndTables','PDASystem','serialPort','usbPort']);
@@ -5287,8 +5290,8 @@ function openIpModal(ip) {
         }
         function getDetailFieldsForDeviceType(type) {
             const group=deviceTypeDetailGroups[String(type||'').toLowerCase().trim()];
-            if(group==='computer')return [...deviceDetailFieldProfiles.computer.filter(k=>!legacySoftwareFieldKeys.includes(k)),...getSoftwareFieldsForDeviceType(type)];
-            if(group==='server')return [...deviceDetailFieldProfiles.server.filter(k=>!legacyServerServiceFieldKeys.includes(k)),...getAvailableServerServiceFieldKeys(),...getSoftwareFieldsForDeviceType(type)];
+            if(group==='computer')return [...(['Desktop','Laptop'].includes(type)?['storageType']:[]),...deviceDetailFieldProfiles.computer.filter(k=>!legacySoftwareFieldKeys.includes(k)),...getSoftwareFieldsForDeviceType(type)];
+            if(group==='server')return [...(type==='Server - Physical'?['storageType']:[]),...deviceDetailFieldProfiles.server.filter(k=>!legacyServerServiceFieldKeys.includes(k)),...getAvailableServerServiceFieldKeys(),...getSoftwareFieldsForDeviceType(type)];
             return [...(deviceDetailFieldProfiles[group] || []),...getSoftwareFieldsForDeviceType(type)];
         }
         // Keep persisted typeDetails keys unchanged while separating physical and software controls.
@@ -5560,6 +5563,78 @@ function openIpModal(ip) {
             }finally{if(button?.isConnected)button.disabled=false;}
         }
 
+        function serverStorageField(label,key,value='',choices=null,extra='') {
+            const id='server-storage-'+key;
+            const options=choices?[...new Set([...choices,...(value&&!choices.includes(String(value))?[String(value)]:[])])]:null;
+            return '<div class="device-review-field"><label for="'+escapeHtml(id)+'">'+label+'</label>'+(options?'<select id="'+escapeHtml(id)+'" data-server-storage-field="'+escapeHtml(key)+'" '+extra+'><option value="">Not Recorded</option>'+options.map(option=>'<option value="'+escapeHtml(option)+'" '+(String(value)===option?'selected':'')+'>'+escapeHtml(key==='boot-source'?({independent:'Independent Boot Drives (ZFS Not Required)',pool:'Use An Existing ZFS Pool'}[option]||option):key==='boot-poolId'?(deviceDetailFormValues.zfsPools||[]).find(pool=>pool.id===option)?.name||option:option)+'</option>').join('')+'</select>':'<input id="'+escapeHtml(id)+'" data-server-storage-field="'+escapeHtml(key)+'" value="'+escapeHtml(value)+'" '+extra+'>')+'</div>';
+        }
+        function renderServerStorageFields(values) {
+            const boot=values.bootStorage||null,pools=Array.isArray(values.zfsPools)?values.zfsPools:[];
+            const media=['HDD','SATA SSD','NVMe SSD','Other'];
+            const action=(label,operation,pool='',vdev='')=>'<button type="button" class="btn btn-outline" data-action="server-storage-action" data-operation="'+operation+'" data-pool="'+escapeHtml(pool)+'" data-vdev="'+escapeHtml(vdev)+'">'+label+'</button>';
+            let bootFields='';
+            if(boot){
+                bootFields=serverStorageField('Boot Storage Source','boot-source',boot.source,['independent','pool'],'data-storage-toggle');
+                if(boot.source==='pool'){
+                    bootFields='<div class="device-review-form-grid">'+bootFields+serverStorageField('Existing ZFS Boot Pool','boot-poolId',boot.poolId,pools.map(pool=>pool.id),'required')+'</div><p class="device-review-quiet">The existing pool and its VDEVs are recorded once. No independent boot drives are added.</p>';
+                }else bootFields='<div class="device-review-form-grid">'+bootFields+serverStorageField('Boot Drive Type','boot-driveType',boot.driveType,media,'required')+serverStorageField('Number Of Boot Drives','boot-driveCount',boot.driveCount,null,'type="number" min="1" step="1" required')+serverStorageField('Capacity Per Drive','boot-capacity',boot.capacity,null,'type="number" min="0.000001" step="any" required')+serverStorageField('Capacity Unit','boot-unit',boot.unit,['GB','TB'],'required')+serverStorageField('Boot Configuration','boot-configuration',boot.configuration,['Single','Mirror','Other'],'required')+serverStorageField('Boot Pool Name (Optional)','boot-poolName',boot.poolName||'',null,'maxlength="100"')+'</div>';
+            }
+            const poolFields=pools.map((pool,index)=>'<fieldset class="device-review-panel full"><legend>ZFS Pool '+(index+1)+'</legend>'+serverStorageField('Pool Name','pool-'+pool.id+'-name',pool.name,null,'required maxlength="100"')+ '<div class="server-storage-pool-action">' +action('Remove Pool','remove-pool',pool.id)+'</div>'+pool.vdevs.map((vdev,vindex)=>'<fieldset class="device-review-panel full server-storage-vdev"><legend>VDEV '+(vindex+1)+'</legend><div class="device-review-form-grid">'+serverStorageField('VDEV Layout','vdev-'+pool.id+'-'+vdev.id+'-layout',vdev.layout,['Single','Mirror','RAIDZ1','RAIDZ2','RAIDZ3'],'required')+serverStorageField('Number Of Drives','vdev-'+pool.id+'-'+vdev.id+'-driveCount',vdev.driveCount,null,'type="number" min="1" step="1" required')+serverStorageField('Capacity Per Drive','vdev-'+pool.id+'-'+vdev.id+'-capacity',vdev.capacity,null,'type="number" min="0.000001" step="any" required')+serverStorageField('Capacity Unit','vdev-'+pool.id+'-'+vdev.id+'-unit',vdev.unit,['GB','TB'],'required')+serverStorageField('Drive Type','vdev-'+pool.id+'-'+vdev.id+'-driveType',vdev.driveType,media,'required')+'</div><div class="server-storage-vdev-action">'+action('Remove VDEV','remove-vdev',pool.id,vdev.id)+'</div></fieldset>').join('')+'<div class="server-storage-add-vdev">'+action('Add VDEV','add-vdev',pool.id)+'</div></fieldset>').join('');
+            const root='<div id="server-storage-controls" class="device-review-field full"><h4>Boot Storage (Optional)</h4><label class="device-review-checkbox server-storage-boot-toggle"><input type="checkbox" data-server-boot-enabled '+(boot?'checked':'')+'> Record Boot Storage</label>'+bootFields+'<div class="divider"></div><h4>ZFS Pools (Optional)</h4><p class="device-review-quiet">Record named pools and their VDEVs for inventory documentation.</p>'+poolFields+action('Add Pool','add-pool')+'<p class="device-review-quiet">RAID Type, Number Of Hard Drives and Storage Size / Unit remain independently recorded. These details do not recalculate those fields.</p></div>';
+            return root;
+        }
+        function captureServerStorageValues() {
+            const root=document.getElementById('server-storage-controls');
+            if(!root||document.getElementById('dev-type')?.value!=='Server - Physical')return;
+            const values=deviceDetailFormValues;
+            const pools=Array.isArray(values.zfsPools)?values.zfsPools:[];
+            const enabled=root.querySelector('[data-server-boot-enabled]').checked;
+            if(!enabled)values.bootStorage=null;
+            else if(!values.bootStorage)values.bootStorage={source:'independent'};
+            for(const input of root.querySelectorAll('[data-server-storage-field]')){
+                const key=input.dataset.serverStorageField;
+                if(key.startsWith('boot-')){if(enabled)values.bootStorage[key.slice(5)]=input.value;continue;}
+                for(const pool of pools){
+                    if(key==='pool-'+pool.id+'-name')pool.name=input.value;
+                    for(const vdev of pool.vdevs){const prefix='vdev-'+pool.id+'-'+vdev.id+'-';if(key.startsWith(prefix))vdev[key.slice(prefix.length)]=input.value;}
+                }
+            }
+            if(values.bootStorage?.source==='pool')values.bootStorage={source:'pool',poolId:values.bootStorage.poolId||''};
+            if(values.bootStorage?.source==='independent')delete values.bootStorage.poolId;
+            if(pools.length||Object.hasOwn(values,'zfsPools'))values.zfsPools=pools;
+        }
+        function refreshServerStorageControls() {
+            captureDeviceDetailFieldValues();
+            const root=document.getElementById('server-storage-controls');
+            if(root)root.outerHTML=renderServerStorageFields(deviceDetailFormValues);
+            const boot=deviceDetailFormValues.bootStorage;
+            if(boot?.source==='pool'){
+                const select=document.querySelector('[data-server-storage-field="boot-poolId"]');
+                for(const pool of deviceDetailFormValues.zfsPools||[]){const option=Array.from(select.options).find(option=>option.value===pool.id);if(option)option.textContent=pool.name||'Unnamed Pool';}
+            }
+        }
+        function updateServerStorage(action,poolId='',vdevId='') {
+            captureDeviceDetailFieldValues();
+            const pools=deviceDetailFormValues.zfsPools||[];
+            const pool=pools.find(pool=>pool.id===poolId);
+            const vdev=()=>({id:crypto.randomUUID().replaceAll('-',''),layout:'',driveCount:'',capacity:'',unit:'',driveType:''});
+            if(action==='add-pool')pools.push({id:crypto.randomUUID().replaceAll('-',''),name:'',vdevs:[vdev()]});
+            if(action==='remove-pool')pools.splice(pools.findIndex(pool=>pool.id===poolId),1);
+            if(action==='add-vdev'&&pool)pool.vdevs.push(vdev());
+            if(action==='remove-vdev'&&pool)pool.vdevs=pool.vdevs.filter(vdev=>vdev.id!==vdevId);
+            deviceDetailFormValues.zfsPools=pools;
+            refreshServerStorageControls();
+        }
+        function serverStorageDetailRows(details,field) {
+            const pools=Array.isArray(details.zfsPools)?details.zfsPools:[],boot=details.bootStorage;
+            let rows='';
+            if(boot?.source==='pool')rows+=field('Boot Storage','Existing ZFS Pool: '+(pools.find(pool=>pool.id===boot.poolId)?.name||'Recorded Pool'));
+            else if(boot)rows+=field('Boot Storage',[boot.driveCount+' × '+boot.capacity+' '+boot.unit,boot.driveType,boot.configuration,boot.poolName].filter(Boolean).join(' · '));
+            for(const pool of pools)for(const [index,vdev] of pool.vdevs.entries())rows+=field('ZFS Pool '+pool.name+' — VDEV '+(index+1),[vdev.layout,vdev.driveCount+' × '+vdev.capacity+' '+vdev.unit,vdev.driveType].join(' · '));
+            return rows;
+        }
+        document.addEventListener('change',event=>{if(event.target.matches('[data-server-boot-enabled],[data-storage-toggle]'))refreshServerStorageControls();});
+
         function renderDeviceDetailFields(type, values={}, section='all') {
             const keys=getDetailFieldsForDeviceType(type).filter(key =>
                 key !== 'os' && key !== 'windowsLicence' && !(type === 'Server - Physical' && key === 'serverService_Hypervisor' && section === 'services') && (section === 'all' || (section === 'hardware' && !isSoftwareDetailField(key)) || (section === 'services' && getAvailableServerServiceFieldKeys().includes(key)) || (section === 'installed' && getAvailableSoftwareCatalogueEntries().some(x=>x.key===key)) || (section === 'software' && isSoftwareDetailField(key))));
@@ -5572,10 +5647,10 @@ function openIpModal(ip) {
                     const tile = section === 'services' || section === 'installed';
                     return tile ? renderInterfaceTemplate("devices/render-device-detail-fields-1",[escapeHtml(key),value===true?'checked':'',escapeHtml(label)]) : renderInterfaceTemplate("devices/render-device-detail-fields-2",[escapeHtml(key),value===true?'checked':'',escapeHtml(label)]);
                 }
-                const choices=deviceDetailFieldChoices[key];
+                const choices=['storageType','raid'].includes(key)?[...new Set([...deviceDetailFieldChoices[key],...(value?[String(value)]:[])])]:deviceDetailFieldChoices[key];
                 if(choices) return renderInterfaceTemplate("devices/render-device-detail-fields-3",[escapeHtml(key),escapeHtml(label),escapeHtml(key),escapeHtml(key),choices.map(opt=>`<option value="${escapeHtml(opt)}" ${value===opt?'selected':''}>${escapeHtml(opt)}</option>`).join('')]);
                 return renderInterfaceTemplate("devices/render-device-detail-fields-4",[escapeHtml(key),escapeHtml(label),escapeHtml(key),escapeHtml(key),numericDeviceDetailFields.has(key)?'number':'text',numericDeviceDetailFields.has(key)?'min="0" step="any"':'',escapeHtml(String(value))]);
-            }).join('')+'</div>';
+            }).join('')+'</div>'+((section==='all'||section==='hardware')&&type==='Server - Physical'?renderServerStorageFields(values):'');
         }
         // Offline, device-type-aware platform suggestions. Names are not version claims.
         const platformOptionsByDeviceGroup = Object.freeze({
@@ -6130,6 +6205,7 @@ function openIpModal(ip) {
         }
         function captureDeviceDetailFieldValues() {
             captureSoftwarePlatformFields();
+            captureServerStorageValues();
             document.querySelectorAll('[data-device-detail-field]').forEach(el=>{
                 deviceDetailFormValues[el.dataset.deviceDetailField]=el.type==='checkbox'?el.checked:el.value;
             });
@@ -6700,7 +6776,7 @@ function openIpModal(ip) {
                 }
             }, true);
             // Field labels use the pinned form's typography rather than legacy utility classes.
-            form.querySelectorAll('.device-review-field label').forEach(label=>{label.className='';});
+            form.querySelectorAll('.device-review-field label:not(.server-storage-boot-toggle)').forEach(label=>{label.className='';});
             form.querySelector('label[for="dev-mount-type"] .required-mark')?.remove();
             activate(active);
             // Use the approved dialog's fixed header/footer and scrolling body.
@@ -6873,6 +6949,7 @@ function openIpModal(ip) {
             return {
                 deviceId: form.dataset.deviceId || null,
                 duplicatedFrom: form.dataset.duplicateSourceId || null,
+                stockRegistration: form.stockRegistration || null,
                 activeDeviceTab: form.dataset.activeDeviceTab || 'general',
                 name: document.getElementById('dev-name')?.value || '',
                 type: document.getElementById('dev-type')?.value || '',
@@ -8665,6 +8742,7 @@ function openIpModal(ip) {
                 case 'manufacturer-none': document.querySelectorAll('input[name="catalogue-manufacturer-device-type"]:not(:disabled)').forEach(x=>x.checked=false); break;
                 case 'save-catalogue-manufacturer': saveHardwareManufacturer(name); break;
                 case 'confirm-remove-catalogue-manufacturer': saveHardwareManufacturer(name,true); break;
+                case 'server-storage-action': updateServerStorage(target.dataset.operation,target.dataset.pool,target.dataset.vdev); break;
                 case 'open-device-modal': openDeviceModal(); break;
                 case 'edit-device': openDeviceModal(id); break;
                 case 'view-device': openDeviceDetailView(id); break;
@@ -8975,7 +9053,7 @@ void (async () => {
     const session=response.ok?await response.json():{};
     sessionStockPermissions=session.stock_permissions||{read:false,edit:false};
     addDirectoryAccess();
-    if(!permissions['IT Assets'])window.caffootStockIntake.clear();
+    window.caffootStockIntake.clear();
     applyAllowedControls();
   }
   async function refreshCentralInventory(render = true) {
@@ -9088,6 +9166,8 @@ void (async () => {
       !(editPermissions.Racks && actionCanEditRack.has(action));
   }
   function applyAllowedControls() {
+    const stockControls=document.getElementById('device-stock-controls');
+    if(stockControls)stockControls.hidden=!editPermissions.Devices||!editPermissions['IT Assets'];
     document.querySelectorAll('#sidebar [data-tab]').forEach(button=>{
       const area=section[button.dataset.tab];
       if(area)button.hidden=!permissions[area];
@@ -9136,7 +9216,7 @@ void (async () => {
           (sessionIsAdmin && (button.closest('#next-user-create-form,#next-user-profile-form,#smtp-settings-form,#smtp-test-form') || button.form?.matches('#role-definition-form'))) ||
           (editPermissions['Staff Members'] && button.form?.matches('#staff-record-form')) ||
           (editPermissions.Departments && button.form?.matches('#staff-department-form')) ||
-          (editPermissions['IT Assets'] && button.form?.matches('#stock-receipt-form,#stock-readiness-form,#stock-issue-form,#stock-return-form,#stock-writeoff-form,#stock-preparation-form')) ||
+          (editPermissions['IT Assets'] && button.form?.matches('#stock-receipt-form,#stock-readiness-form,#stock-issue-form,#stock-return-form,#stock-writeoff-form,#stock-preparation-form,#stock-reissue-form')) ||
           (editPermissions.Devices && button.form?.matches('form[data-device-form="true"],#equipment-assignment-form')) ||
           (editPermissions.IPAM && button.closest('form[data-form-action="ip"],form[data-form-action="bulk-ip"],form[data-form-action="subnet"],form[data-ipam-subnet-creation]')) ||
           (editPermissions.Devices && editPermissions.Racks && button.closest('#rack-shelf-removal-form')) ||
@@ -9467,14 +9547,69 @@ void (async () => {
       }
     }
   }
+  function installDeviceStockControls(selection=null) {
+    const form=document.querySelector('[data-device-form="true"]');
+    if(!form||form.dataset.deviceId||!editPermissions.Devices||!editPermissions['IT Assets'])return;
+    form.stockRegistration=selection;
+    const controls=document.createElement('div');
+    controls.className='device-review-field';
+    controls.id='device-stock-controls';
+    controls.innerHTML='<div class="preview-details-actions"><button type="button" class="btn" id="device-get-from-stock">Brand New — Get From Stock</button><button type="button" class="btn" id="device-clear-stock" hidden>Use Direct Device Add</button></div><div id="device-stock-selection" hidden><label for="device-stock-source">Ready Unregistered Computer Stock</label><select class="input" id="device-stock-source"><option value="">Select Stock…</option></select></div><p class="formhint" id="device-stock-feedback" role="status"></p>';
+    form.querySelector('#device-form-panel-general .form-section-card')?.prepend(controls);
+    if(!controls.isConnected)form.querySelector('#device-form-panel-general')?.prepend(controls);
+    const feedback=controls.querySelector('#device-stock-feedback');
+    if(selection){feedback.textContent='From Stock: '+selection.name+'. One registered Device remains held and Ready To Issue after saving.';controls.querySelector('#device-clear-stock').hidden=false;}
+    controls.querySelector('#device-get-from-stock').onclick=()=>loadDeviceStockSources();
+    controls.querySelector('#device-clear-stock').onclick=()=>{form.stockRegistration=null;feedback.textContent='Direct Device Add selected.';controls.querySelector('#device-clear-stock').hidden=true;controls.querySelector('#device-stock-selection').hidden=true;};
+  }
+  async function loadDeviceStockSources(preselectedId='') {
+    const form=document.querySelector('[data-device-form="true"]'),feedback=document.getElementById('device-stock-feedback');
+    if(!form||!feedback)return;
+    feedback.textContent='Loading compatible Ready stock…';
+    try{
+      const response=await fetch('/api/it-assets/device-sources',{cache:'no-store'});
+      const result=await response.json();
+      if(!response.ok)throw Error(result.error||'Get From Stock is unavailable.');
+      if(!form.isConnected)return;
+      const select=document.getElementById('device-stock-source');
+      select.innerHTML='<option value="">Select Stock…</option>'+result.sources.map(source=>'<option value="'+escapeHtml(source.id)+'">'+escapeHtml(source.name)+' · '+source.ready+' Unregistered Ready</option>').join('');
+      document.getElementById('device-stock-selection').hidden=false;
+      feedback.textContent=result.sources.length?'Select one compatible batch. Stock changes only after the Device is saved.':'No compatible unregistered Ready computer stock is available.';
+      select.onchange=()=>{
+        const source=result.sources.find(source=>source.id===select.value);
+        if(!source)return;
+        const type=document.getElementById('dev-type');
+        if(!Array.from(type.options).some(option=>option.value===source.prefill.type)){feedback.textContent='This Device Type is unavailable in the existing editor. Select a compatible stock item or restore the Device Type before continuing.';select.value='';return;}
+        document.getElementById('dev-deployment').value='physical';
+        type.value=source.prefill.type;
+        type.dispatchEvent(new Event('change',{bubbles:true}));
+        document.getElementById('dev-manufacturer').value=source.prefill.manufacturer;
+        document.getElementById('dev-model').value=source.prefill.model;
+        refreshHardwareSuggestions(true);
+        captureDeviceDetailFieldValues();
+        Object.assign(deviceDetailFormValues,source.prefill.typeDetails);
+        const panel=document.getElementById('device-detail-fields-panel');
+        panel.innerHTML=renderDeviceDetailFields(source.prefill.type,deviceDetailFormValues,'hardware');
+        form.stockRegistration={stockItemId:source.id,version:source.version,name:source.name,operationId:crypto.randomUUID(),deviceId:crypto.randomUUID()};
+        document.getElementById('device-clear-stock').hidden=false;
+        feedback.textContent='From Stock: '+source.name+'. Verify the individual Device Name, optional Serial Number and other details. No stock has changed.';
+      };
+      if(preselectedId){
+        if(!result.sources.some(source=>source.id===preselectedId))throw Error('The selected stock is no longer available. Select compatible unregistered Ready stock.');
+        select.value=preselectedId;select.onchange();
+      }else select.focus();
+    }catch(error){if(form.isConnected)feedback.textContent=error.message;}
+  }
   openDeviceModal = function(deviceId = null) {
     if (!editPermissions.Devices) {
       showToast('Devices edit permission required.', 'error');
       return;
     }
     if (!deviceId) {
+      const stockRegistration=deviceFormDraft?.stockRegistration;
       originalOpenDeviceModal(null);
       applyDeviceFormSectionPermissions(null);
+      installDeviceStockControls(stockRegistration);
       return;
     }
     (async () => {
@@ -9546,13 +9681,21 @@ void (async () => {
       const payload = deviceId
         ? {deviceId, revision:activeEdit.revision, record:outboundRecord, relatedDevices}
         : {record:outboundRecord};
-      await postInventory(deviceId ? '/api/devices/edit/save' : '/api/devices/create',payload);
+      const stockRegistration=!deviceId&&document.querySelector('[data-device-form="true"]')?.stockRegistration;
+      if(stockRegistration){
+        if(!editPermissions.Devices||!editPermissions['IT Assets'])throw Error('Devices Edit and IT Assets Edit are required. Reopen Get From Stock after access is restored.');
+        payload.record.id=stockRegistration.deviceId;
+        await postInventory('/api/it-assets/register-device',{record:payload.record,stockItemId:stockRegistration.stockItemId,version:stockRegistration.version,operationId:stockRegistration.operationId});
+        window.caffootStockIntake.clear();
+      }else await postInventory(deviceId ? '/api/devices/edit/save' : '/api/devices/create',payload);
       activeEdit = null;
       try { await refreshCentralInventory(false); }
       catch (error) { showToast('Device saved. Unable to refresh the latest inventory.', 'error'); return true; }
       showToast('Device saved.');
       return true;
     } catch (error) {
+      const feedback=document.getElementById('device-stock-feedback');
+      if(feedback)feedback.textContent=error.message;
       showToast(error.message,'error');
       return false;
     } finally { pendingSave=false; }
@@ -10914,7 +11057,7 @@ void (async () => {
         !(editPermissions.Racks && element.closest('form[data-form-action="rack"],form[data-form-action="assign"],#rack-accessory-form')) &&
         !(editPermissions['Staff Members'] && element.form?.matches('#staff-record-form')) &&
         !(editPermissions.Departments && element.form?.matches('#staff-department-form')) &&
-        !(editPermissions['IT Assets'] && element.form?.matches('#stock-receipt-form,#stock-readiness-form,#stock-issue-form,#stock-return-form,#stock-writeoff-form,#stock-preparation-form')))) {
+        !(editPermissions['IT Assets'] && element.form?.matches('#stock-receipt-form,#stock-readiness-form,#stock-issue-form,#stock-return-form,#stock-writeoff-form,#stock-preparation-form,#stock-reissue-form')))) {
       event.preventDefault();
       event.stopImmediatePropagation();
       showToast(!sessionIsAdmin ? 'Edit permission is required for this action.' : 'This inventory operation is not yet connected to SQLite.', 'error');
@@ -10925,7 +11068,7 @@ void (async () => {
     if (event.target.matches('#next-account-password-form,#next-account-mfa-start,#next-account-mfa-confirm,#account-mfa-removal-form,#personal-details-form,#next-user-profile-form,#smtp-settings-form,#smtp-test-form,#account-email-verification-form') ||
         (editPermissions['Staff Members'] && event.target.matches('#staff-record-form')) ||
         (editPermissions.Departments && event.target.matches('#staff-department-form')) ||
-        (editPermissions['IT Assets'] && event.target.matches('#stock-receipt-form,#stock-readiness-form,#stock-issue-form,#stock-return-form,#stock-writeoff-form,#stock-preparation-form')) ||
+        (editPermissions['IT Assets'] && event.target.matches('#stock-receipt-form,#stock-readiness-form,#stock-issue-form,#stock-return-form,#stock-writeoff-form,#stock-preparation-form,#stock-reissue-form')) ||
         (editPermissions.Devices && event.target.matches('form[data-device-form="true"],#equipment-assignment-form')) ||
         (editPermissions.IPAM && event.target.matches('form[data-form-action="ip"],form[data-form-action="bulk-ip"],form[data-form-action="subnet"],form[data-ipam-subnet-creation]')) ||
         (editPermissions.Racks && event.target.matches('form[data-form-action="rack"],form[data-form-action="assign"],#rack-accessory-form')) ||
@@ -10972,6 +11115,7 @@ void (async () => {
     window.caffootStockIntake.configure({csrf:csrfToken,canRead:()=>!!permissions['IT Assets'],
       canEdit:()=>!!editPermissions['IT Assets'],canEditDevices:()=>!!editPermissions.Devices,refreshAccess:refreshStockAccess,
       navigate:()=>{closeModal(true);switchTab('it-assets');},viewDevice:id=>openDeviceDetailView(id),
+      registerDevice:id=>{closeModal(true);switchTab('devices');openDeviceModal();void loadDeviceStockSources(id);},
       redraw:()=>{if(currentTab==='it-assets')renderContent();},notify:(message,type)=>showToast(message,type)});
     await loadAccountProfile();
     window.nextMfaEnrolled=sessionMfaEnrolled;

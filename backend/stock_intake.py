@@ -378,8 +378,11 @@ def update_stock_readiness(connection, actor, token, payload):
         if item["trackingMode"] == "quantity":
             if "readyUnitIds" in payload:
                 raise ValueError("Quantity stock does not accept individual unit selections")
+            registered_ready = old_ready - item['quantityStateBalances'].get('ready', 0)
+            if ready < registered_ready:
+                raise ValueError('Registered Ready Devices cannot be changed through quantity readiness')
             delta = ready-old_ready
-            if delta>item['stateBalances']['awaitingChecks']:
+            if delta>item['quantityStateBalances'].get('awaiting_checks', 0):
                 raise ValueError('Complete the returned-equipment preparation checks before marking this quantity ready')
             if delta:
                 returned=connection.execute('''SELECT 1 FROM it_asset_stock_entries e

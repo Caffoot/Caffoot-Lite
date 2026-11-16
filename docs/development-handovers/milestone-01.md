@@ -1,5 +1,19 @@
 # Milestone 01 Development Handover — v2.2 Target
 
+> **Latest checkpoint, 16 November 2026:** Batch 3.8/PR #389 is merged at
+> `7f11598b50bbb1fbd11893a2ad34bc152ff12ed1`. Batch 3.9 is implemented on
+> `feat/it-assets-device-registration-reissue` in [draft PR #390](https://github.com/Caffoot/Caffoot-Lite/pull/390):
+> atomic Brand New registration through the existing editor, separate canonical
+> reissue and approved optional hardware/manufacturer additions. Schema 16/17 and
+> initial-allocation restrictions are unchanged. See the
+> [source mapping and checkpoints](../development-guide/Device-Stock-Registration-and-Reissue.md),
+> [draft user guide](../how-tos/features-and-instructions/v2.2-draft/Device-Stock-Registration-and-Reissue.md)
+> and [verification/gallery](evidence/device-stock-registration/Report.md).
+> Local final-source verification passed: 835 backend tests (831 passed, four documented skips), complete Chromium compatibility, both new browser flows, Docker lifecycle and documentation checks; 36 changed-screen captures are recorded. Final-head Actions remain separately recorded in PR #390. No Batch 3.9 visual acceptance, merge,
+> release, deployment or production change is claimed. The older dated notes below
+> preserve their original checkpoint statuses.
+
+
 > **Follow-up, 16 November 2026:** the owner approved the earlier Batch 3.8 screenshots and the narrow unassigned physical-Device return correction. Its protected backend and existing-form integration are implemented: 73 focused tests passed; the full local backend ran 803 tests (799 passed, four documented skips); both focused browser flows passed; 16 genuine desktop/mobile light/dark captures are pinned to `80b49fa3ae83ab93f137f432fa3aed52521842b5`. Final CI is recorded in PR #389, including Docker; no local Docker rebuild was repeated. Changed-screen owner visual acceptance remains pending. The reviewed starting HEAD is `f4ac367984b68f81eb9566d7d8d057b6a26bc5fb`; all prior checkpoints remain. See [the correction report](evidence/unassigned-device-return/Report.md). PR #389 remains draft; changed-screen visual acceptance and merge approval are separate.
 
 > **Current status, 15 November 2026:** v2.1 remains published. Batch 3.7/PR #388 is merged and visually accepted at `milestone-1` HEAD `7f91f5d42feb3916cfab060abd5ca4b1558a92ba`. Batch 3.8 is implemented for review on `feat/it-assets-issue-return-writeoff` (draft PR #389), including narrow Schema 17 closure, circulation, protected equipment views and existing-style UI. Runtime/capture source is `11cf6beaf39e53c1abaad9c2649a64b5edfb93c6`. Full backend at `c205cfa`: 790 run, 786 passed, four documented skips; final read-only holder projection: 62 affected tests passed; real browser flow: passed with 52 genuine captures; Docker: one passed at `e78358b` before the final display-only correction. The owner’s preparation clarification is implemented without a new field or layout. See [the guide](../development-guide/IT-Assets-Issue-Return-and-Write-Off.md) and [full evidence and limits](evidence/stock-circulation/Report.md). Batch 3.8 visual acceptance and merge approval are pending; Batch 3.4 native acceptance and Stage 6 remain deferred. Earlier dated checkpoints retain their then-current statuses.

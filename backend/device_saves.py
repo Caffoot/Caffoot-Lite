@@ -7,6 +7,7 @@ from datetime import datetime, timezone
 from .application_integrity import validate_live_application_state as validate_detached_application_state
 from .device_addresses import prepare_device_address, is_basic_address
 from .device_rack_fields import prepare_device_rack_fields
+from .device_storage import validate_device_storage
 from .inventory import reconstruct_inventory
 from .normalisation_validation import validate_normalisation_devices
 from .permissions import can_access, feature_enabled
@@ -132,6 +133,7 @@ def save_reserved_device(connection, account_id, device_id, revision, record, se
         previous = next(device for device in candidate["devices"] if device["id"] == device_id)
         record = prepare_device_rack_fields(connection, record, previous)
         record = prepare_device_address(connection, account_id, record, previous)
+        validate_device_storage(record, previous)
         changed = {key for key in set(previous) | set(record)
                    if previous.get(key) != record.get(key)}
         if changed.intersection({"primaryIp", "ipReserved"}) and (is_basic_address(previous) or is_basic_address(record)) and not can_access(connection, account_id, "Devices", edit=True):
@@ -240,8 +242,10 @@ def save_reserved_device(connection, account_id, device_id, revision, record, se
         raise
 
 
-def create_device(connection, account_id, record):
-    """Create a published-shape device with its IPAM allocation atomically."""
+def create_device_in_transaction(connection, account_id, record):
+    """Save the normal Device, allocation and audit within the caller’s transaction."""
+    if not connection.in_transaction:
+        raise RuntimeError("Device creation requires an active transaction")
     if not can_access(connection, account_id, "Devices", edit=True):
         raise PermissionError("Devices edit permission required")
     if (not isinstance(record, dict) or not isinstance(record.get("id"), str)
@@ -252,69 +256,76 @@ def create_device(connection, account_id, record):
         connection, account_id, "Racks", edit=True
     ):
         raise PermissionError("Racks edit permission required to add a rack-mounted device")
+    if not can_access(connection, account_id, "Devices", edit=True):
+        raise PermissionError("Section edit permission was revoked")
+    record = prepare_device_rack_fields(connection, record)
+    record = prepare_device_address(connection, account_id, record)
+    validate_device_storage(record)
+    if record.get("primaryIp") and not is_basic_address(record) and not can_access(connection, account_id, "IPAM", edit=True):
+        raise PermissionError("IPAM edit permission required for managed address changes")
+    if (record.get("rackId") or record.get("mountType") == "Rack Mounted") and not can_access(
+            connection, account_id, "Racks", edit=True):
+        raise PermissionError("Racks edit permission required")
+    candidate = reconstruct_inventory(connection)
+    if any(device.get("id") == record["id"] for device in candidate["devices"]):
+        raise ValueError("Device identifier already exists")
+    candidate["devices"].append(record)
+    new_ip = record.get("primaryIp")
+    if new_ip and not is_basic_address(record):
+        _check_primary_ip_claim(candidate["ipAllocations"], new_ip, record["id"])
+        allocation = candidate["ipAllocations"].get(new_ip)
+        if allocation is None:
+            allocation = {"status": "Available", "deviceId": "", "hostname": "", "notes": ""}
+            candidate["ipAllocations"][new_ip] = allocation
+        allocation.update({
+            "deviceId": record["id"],
+            "status": "Reserved" if record.get("ipReserved") else "Assigned",
+            "hostname": record["name"],
+        })
+    validate_normalisation_devices(candidate)
+    errors = validate_detached_application_state(candidate)
+    if errors:
+        raise ValueError(errors[0])
+    conflicts = find_rack_import_conflicts(candidate)
+    if conflicts:
+        raise ValueError(conflicts[0])
+    ordinal = connection.execute(
+        "SELECT COALESCE(MAX(ordinal),-1)+1 FROM inventory_devices"
+    ).fetchone()[0]
+    connection.execute(
+        "INSERT INTO inventory_devices(id,name,record_json,ordinal) VALUES(?,?,?,?)",
+        (record["id"], record["name"],
+         json.dumps(record, ensure_ascii=False, allow_nan=False), ordinal),
+    )
+    if new_ip and not is_basic_address(record):
+        connection.execute(
+            "INSERT INTO inventory_ip_allocations(ip,record_json) VALUES(?,?) "
+            "ON CONFLICT(ip) DO UPDATE SET record_json=excluded.record_json",
+            (new_ip, json.dumps(candidate["ipAllocations"][new_ip],
+                                ensure_ascii=False, allow_nan=False)),
+        )
+    changes = [{"action": "Created", "kind": "Device",
+                "label": record["name"][:100], "fields": []}]
+    if new_ip and not is_basic_address(record):
+        changes.append({"action": "Updated", "kind": "IPAM",
+                        "label": new_ip, "fields": ["deviceId", "status", "hostname"]})
+    event = {"at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
+             "reason": "Inventory saved", "changes": changes, "omitted": 0}
+    connection.execute(
+        "INSERT INTO inventory_change_history(record_json) VALUES(?)",
+        (json.dumps(attribute_event(connection, account_id, event), ensure_ascii=False),),
+    )
+
+    return 0
+
+
+def create_device(connection, account_id, record):
+    """Create a normal Device and commit all of its related changes together."""
     connection.execute("BEGIN IMMEDIATE")
     try:
-        if not can_access(connection, account_id, "Devices", edit=True):
-            raise PermissionError("Section edit permission was revoked")
-        record = prepare_device_rack_fields(connection, record)
-        record = prepare_device_address(connection, account_id, record)
-        if record.get("primaryIp") and not is_basic_address(record) and not can_access(connection, account_id, "IPAM", edit=True):
-            raise PermissionError("IPAM edit permission required for managed address changes")
-        if (record.get("rackId") or record.get("mountType") == "Rack Mounted") and not can_access(
-                connection, account_id, "Racks", edit=True):
-            raise PermissionError("Racks edit permission required")
-        candidate = reconstruct_inventory(connection)
-        if any(device.get("id") == record["id"] for device in candidate["devices"]):
-            raise ValueError("Device identifier already exists")
-        candidate["devices"].append(record)
-        new_ip = record.get("primaryIp")
-        if new_ip and not is_basic_address(record):
-            _check_primary_ip_claim(candidate["ipAllocations"], new_ip, record["id"])
-            allocation = candidate["ipAllocations"].get(new_ip)
-            if allocation is None:
-                allocation = {"status": "Available", "deviceId": "", "hostname": "", "notes": ""}
-                candidate["ipAllocations"][new_ip] = allocation
-            allocation.update({
-                "deviceId": record["id"],
-                "status": "Reserved" if record.get("ipReserved") else "Assigned",
-                "hostname": record["name"],
-            })
-        validate_normalisation_devices(candidate)
-        errors = validate_detached_application_state(candidate)
-        if errors:
-            raise ValueError(errors[0])
-        conflicts = find_rack_import_conflicts(candidate)
-        if conflicts:
-            raise ValueError(conflicts[0])
-        ordinal = connection.execute(
-            "SELECT COALESCE(MAX(ordinal),-1)+1 FROM inventory_devices"
-        ).fetchone()[0]
-        connection.execute(
-            "INSERT INTO inventory_devices(id,name,record_json,ordinal) VALUES(?,?,?,?)",
-            (record["id"], record["name"],
-             json.dumps(record, ensure_ascii=False, allow_nan=False), ordinal),
-        )
-        if new_ip and not is_basic_address(record):
-            connection.execute(
-                "INSERT INTO inventory_ip_allocations(ip,record_json) VALUES(?,?) "
-                "ON CONFLICT(ip) DO UPDATE SET record_json=excluded.record_json",
-                (new_ip, json.dumps(candidate["ipAllocations"][new_ip],
-                                    ensure_ascii=False, allow_nan=False)),
-            )
-        changes = [{"action": "Created", "kind": "Device",
-                    "label": record["name"][:100], "fields": []}]
-        if new_ip and not is_basic_address(record):
-            changes.append({"action": "Updated", "kind": "IPAM",
-                            "label": new_ip, "fields": ["deviceId", "status", "hostname"]})
-        event = {"at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
-                 "reason": "Inventory saved", "changes": changes, "omitted": 0}
-        connection.execute(
-            "INSERT INTO inventory_change_history(record_json) VALUES(?)",
-            (json.dumps(attribute_event(connection, account_id, event), ensure_ascii=False),),
-        )
-
+        revision = create_device_in_transaction(connection, account_id, record)
         connection.commit()
-        return 0
+        return revision
     except BaseException:
         connection.rollback()
         raise

@@ -1,0 +1,246 @@
+{
+  "runtimeSource": "3f5297480cadafbf257cacdd2a6ead44bfd6bfe7",
+  "baseline": "7f11598b50bbb1fbd11893a2ad34bc152ff12ed1",
+  "screenshots": [
+    {
+      "path": "stock/desktop-storage-type-desktop-dark.png",
+      "bytes": 128089,
+      "sha256": "699139c3dc33c7fb73967322332b515010aea21763359dac0aa7969206a0f4f2"
+    },
+    {
+      "path": "stock/desktop-storage-type-desktop-light.png",
+      "bytes": 127796,
+      "sha256": "65320d7f13037fb254b556ae849c02e0ab7c60f42fbf3f7057968d1179d0f343"
+    },
+    {
+      "path": "stock/desktop-storage-type-mobile-dark.png",
+      "bytes": 70975,
+      "sha256": "38dd799e8df0240fe5af849b68936f5a3b2347775899a028264168b9ea1a9db2"
+    },
+    {
+      "path": "stock/desktop-storage-type-mobile-light.png",
+      "bytes": 71287,
+      "sha256": "9d50bf04ef63cf21ad7ef553d29efb0040953951c50c16e9cdc4bc17d046d582"
+    },
+    {
+      "path": "stock/get-from-stock-desktop-dark.png",
+      "bytes": 139917,
+      "sha256": "afc46221ac1254241ad80afe7122e6dd493507099433aad484da49d961c0185b"
+    },
+    {
+      "path": "stock/get-from-stock-desktop-light.png",
+      "bytes": 138730,
+      "sha256": "cadf7875007a83dfb1e0b2b1f1130c2832759b1ed3ea92a8bbf2b43df9473fc4"
+    },
+    {
+      "path": "stock/get-from-stock-mobile-dark.png",
+      "bytes": 84964,
+      "sha256": "c42fc62539c05a326e188c360fb44c9f12120602c63e81d22bdd09ee9ab85de5"
+    },
+    {
+      "path": "stock/get-from-stock-mobile-light.png",
+      "bytes": 84546,
+      "sha256": "e3c69804b22f1289582c8a063d826fc049c74050a351901b6970583e10020820"
+    },
+    {
+      "path": "stock/reissue-existing-device-desktop-dark.png",
+      "bytes": 127253,
+      "sha256": "09e8060eb9dd4ab042ce073f141682f5c7f012f9b18ab9d76fb9e3c3dbea9427"
+    },
+    {
+      "path": "stock/reissue-existing-device-desktop-light.png",
+      "bytes": 125402,
+      "sha256": "3828bf6f3f6caa28d368233839ac2dea74134cf00faefef7d25bce672dd44c07"
+    },
+    {
+      "path": "stock/reissue-existing-device-mobile-dark.png",
+      "bytes": 99382,
+      "sha256": "6d28e6e10e346adb842416cf2e999d47b83e11b43c9027db166fcf6ada1290c7"
+    },
+    {
+      "path": "stock/reissue-existing-device-mobile-light.png",
+      "bytes": 97485,
+      "sha256": "b1f3d5cba04887632b2aa485b90fa82e0e101888e2ab6289e0e96c8c5a60a517"
+    },
+    {
+      "path": "stock/stock-registration-action-desktop-dark.png",
+      "bytes": 198089,
+      "sha256": "96de08695b3ad806cffe4f10024580035c32c3683e001abf766f8994e9712c59"
+    },
+    {
+      "path": "stock/stock-registration-action-desktop-light.png",
+      "bytes": 196030,
+      "sha256": "45d3f06788f3bd683271075b3854f14c28c4ff4403d4f400a9e967a0d0f660ef"
+    },
+    {
+      "path": "stock/stock-registration-action-mobile-dark.png",
+      "bytes": 149352,
+      "sha256": "2eea0bd19394ac4fed96d14f697294bed1808b3917c8bd5a3bac44b3de8ff9ce"
+    },
+    {
+      "path": "stock/stock-registration-action-mobile-light.png",
+      "bytes": 146672,
+      "sha256": "a19e2681ee866807143b36af5ad8194b976f79e71190b44091b7f15bd39dba59"
+    },
+    {
+      "path": "storage/laptop-storage-type-desktop-dark.png",
+      "bytes": 130131,
+      "sha256": "1b2715e0a9618160b605cc8844e01823bcd828fde25f61d561b5985d6fe851ce"
+    },
+    {
+      "path": "storage/laptop-storage-type-desktop-light.png",
+      "bytes": 130665,
+      "sha256": "21dd9166315d505f7f162845b8775a315ff1a146204b73dee9b0c1ba3385b95d"
+    },
+    {
+      "path": "storage/laptop-storage-type-mobile-dark.png",
+      "bytes": 78716,
+      "sha256": "5c7fddd713cafac4063a88e4f8b85622a38edf854be6809fd4d2bb1b6f32605a"
+    },
+    {
+      "path": "storage/laptop-storage-type-mobile-light.png",
+      "bytes": 80929,
+      "sha256": "a401a414dec50d68c3dcfd73a50204722693918610f2974310e9da393aac8c48"
+    },
+    {
+      "path": "storage/server-independent-boot-desktop-dark.png",
+      "bytes": 120720,
+      "sha256": "631806f2d0c6af7a68d194b735ff50af7b0b78356e2c62226f4749b560fad235",
+      "runtimeSource": "e2520afedf62ea5d63681adb5d2bcd73cc3ca1e7"
+    },
+    {
+      "path": "storage/server-independent-boot-desktop-light.png",
+      "bytes": 119510,
+      "sha256": "3f5a1774157edebf100ade71d142bea56c2161c782fa05a30f7a68cc4bb3077b",
+      "runtimeSource": "e2520afedf62ea5d63681adb5d2bcd73cc3ca1e7"
+    },
+    {
+      "path": "storage/server-independent-boot-mobile-dark.png",
+      "bytes": 71559,
+      "sha256": "2ebb43b6ebdb7f1dd1f972687d5ca17c884e204f7c1ff892c5fed30fb6ec7fb5",
+      "runtimeSource": "e2520afedf62ea5d63681adb5d2bcd73cc3ca1e7"
+    },
+    {
+      "path": "storage/server-independent-boot-mobile-light.png",
+      "bytes": 71481,
+      "sha256": "8488abc626bc0e3aa7520676d937b8c4fa9c7eb16ad6a53f1556195cb450fbc8",
+      "runtimeSource": "e2520afedf62ea5d63681adb5d2bcd73cc3ca1e7"
+    },
+    {
+      "path": "storage/server-storage-details-desktop-dark.png",
+      "bytes": 131307,
+      "sha256": "d822a10f097027d22b7a6604ac874c9de2cec5467ccc6a9fe542de20b49476bd"
+    },
+    {
+      "path": "storage/server-storage-details-desktop-light.png",
+      "bytes": 131006,
+      "sha256": "fcf1fe26512595a5d042e1e1d64a43b4cc4ae5f62027672bace864f9a57e1334"
+    },
+    {
+      "path": "storage/server-storage-details-mobile-dark.png",
+      "bytes": 74970,
+      "sha256": "e1c1c3f4fd2fdf1f13353457724800c09a01d36d67267c943c44435f57f14d16"
+    },
+    {
+      "path": "storage/server-storage-details-mobile-light.png",
+      "bytes": 75213,
+      "sha256": "738cad6e2c1ffe87ec6e460bc57704ae4d233855054c4753eaa0714778359ec5"
+    },
+    {
+      "path": "storage/server-zfs-boot-pool-desktop-dark.png",
+      "bytes": 120119,
+      "sha256": "6107a21520a76783f3078bd6323b57f138f3a3339d9f74c84020e51fe5dba9a5",
+      "runtimeSource": "2c55c616d372da2305a2c8cf4f1e3fcd72a3af43"
+    },
+    {
+      "path": "storage/server-zfs-boot-pool-desktop-light.png",
+      "bytes": 120250,
+      "sha256": "cc700fe1827a59fe358575317ea68fd4646ef8de3a5d3c7ff3e0f168950c0131",
+      "runtimeSource": "2c55c616d372da2305a2c8cf4f1e3fcd72a3af43"
+    },
+    {
+      "path": "storage/server-zfs-boot-pool-mobile-dark.png",
+      "bytes": 71397,
+      "sha256": "fd41444ab7b758957cd323bf260299b753f3feaf20b93fc59827e8cee81aa07c",
+      "runtimeSource": "2c55c616d372da2305a2c8cf4f1e3fcd72a3af43"
+    },
+    {
+      "path": "storage/server-zfs-boot-pool-mobile-light.png",
+      "bytes": 70918,
+      "sha256": "5f842ef1ecc6bb50f953cc10d78bd7b5dff9086d1e72beb12ce85ca02de27a44",
+      "runtimeSource": "2c55c616d372da2305a2c8cf4f1e3fcd72a3af43"
+    },
+    {
+      "path": "storage/server-zfs-vdev-desktop-dark.png",
+      "bytes": 109511,
+      "sha256": "0e466e19a82569346a33ee3d1f8eacd0d8ffb0eeeb6f7c715fa44e018306b152",
+      "runtimeSource": "2c55c616d372da2305a2c8cf4f1e3fcd72a3af43"
+    },
+    {
+      "path": "storage/server-zfs-vdev-desktop-light.png",
+      "bytes": 109577,
+      "sha256": "8b416bc1ba64d3ebe4bd445cfbb609da8f100f05239f41c05e503bca2ade9f22",
+      "runtimeSource": "2c55c616d372da2305a2c8cf4f1e3fcd72a3af43"
+    },
+    {
+      "path": "storage/server-zfs-vdev-mobile-dark.png",
+      "bytes": 63330,
+      "sha256": "12e07facad211905a1bf8efb222367fb6bc197f41464f67d8a793320e73ca765",
+      "runtimeSource": "2c55c616d372da2305a2c8cf4f1e3fcd72a3af43"
+    },
+    {
+      "path": "storage/server-zfs-vdev-mobile-light.png",
+      "bytes": 63772,
+      "sha256": "55034c791e76981030b3206321b116c89d3513f18f63722694068f5e7b51915f",
+      "runtimeSource": "2c55c616d372da2305a2c8cf4f1e3fcd72a3af43"
+    }
+  ],
+  "runtimeFiles": {
+    "backend/device_saves.py": "6c43505fb05dc49500894f119df399c6b039815656810a09cefa3e31f0c2abd2",
+    "backend/device_stock.py": "dacf5b526df7e3893129644098971d1c1b5cf764d7316274f46df411b98cf7c7",
+    "backend/device_storage.py": "c2810b1ae55cad10dbb1f90b7a9c99fc7a6e062288d35785fabff1429aa3df34",
+    "backend/device_assignments.py": "0265906fe63d34809da9ce7083fdf660ceeaee09206e7c1d1b8f8415e3ad4cd0",
+    "backend/stock_circulation.py": "c791ba2038e33851c7b0a130b48ac35d23debc0d21b5ef6f07abd4d2d9ddd67c",
+    "backend/stock_intake.py": "988fb4937bd6bbd4e4149998185994a3b875500e9d7504b0728632a27b24c676",
+    "backend/stock_schema.py": "4ce79fe3536a1f73e8924fdcfabd6effff68033c13e6ea4a6c5030dee9d2a954",
+    "backend/assignment_closure.py": "030693fd1bd167e486bb8982030368b3f7a36264c2231ce06d61fdcd9109559b",
+    "backend/server.py": "5644cd171aff84164005d480eabf7c7aa6f93f127ef7c901fc13aa92723d3156",
+    "interface/application.js": "ff86c16194f2c5f70314cf63a89db6d9d4c9b33728170c78a175aff3890d7c94",
+    "interface/equipment.js": "7037ee56bb03a6640e6156fa23c46de98fe1b28f3136fa39ac2a2ef8455b26df",
+    "interface/stock-intake.js": "b44763085734e44f56a17b13d3e573b4da0b7f8320ca30214b6d7dc955f245c6",
+    "interface/screens/device-details.html": "6ca67123707f632821d7a8c332cb4cfe29c61d8f5a95d012f983f82f06d15863"
+  },
+  "correctedBootStorage": {
+    "captureSource": "e2520afedf62ea5d63681adb5d2bcd73cc3ca1e7",
+    "correctionSource": "7bda5ef3a9173849fe2a6677f37da7f4451c3307",
+    "run": "https://github.com/Caffoot/Caffoot-Lite/actions/runs/43830964329",
+    "captureTest": "tests/device-storage-interface.cjs",
+    "screens": [
+      "storage/server-independent-boot-desktop-light.png",
+      "storage/server-independent-boot-desktop-dark.png",
+      "storage/server-independent-boot-mobile-light.png",
+      "storage/server-independent-boot-mobile-dark.png",
+      "storage/server-zfs-boot-pool-desktop-light.png",
+      "storage/server-zfs-boot-pool-desktop-dark.png",
+      "storage/server-zfs-boot-pool-mobile-light.png",
+      "storage/server-zfs-boot-pool-mobile-dark.png"
+    ],
+    "note": "Only eight screens were recaptured; the other 28 retain the original runtimeSource at the manifest root."
+  },
+  "zfsActionSpacing": {
+    "captureSource": "2c55c616d372da2305a2c8cf4f1e3fcd72a3af43",
+    "run": "https://github.com/Caffoot/Caffoot-Lite/actions/runs/43833938108",
+    "captureTest": "tests/device-storage-interface.cjs",
+    "screens": [
+      "storage/server-zfs-vdev-desktop-light.png",
+      "storage/server-zfs-vdev-desktop-dark.png",
+      "storage/server-zfs-vdev-mobile-light.png",
+      "storage/server-zfs-vdev-mobile-dark.png",
+      "storage/server-zfs-boot-pool-desktop-light.png",
+      "storage/server-zfs-boot-pool-desktop-dark.png",
+      "storage/server-zfs-boot-pool-mobile-light.png",
+      "storage/server-zfs-boot-pool-mobile-dark.png"
+    ],
+    "note": "Eight ZFS action layout captures updated; other 28 images unchanged. Temporary capture workflow removed after collection."
+  }
+}

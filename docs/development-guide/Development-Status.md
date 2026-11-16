@@ -1,5 +1,16 @@
 # Published and development versions
 
+> **Latest development checkpoint — 16 November 2026:** Batch 3.8/PR #389 is merged
+> on `milestone-1` at `7f11598b50bbb1fbd11893a2ad34bc152ff12ed1`. Batch 3.9
+> registration/reissue and approved optional hardware are implemented for review
+> in [draft PR #390](https://github.com/Caffoot/Caffoot-Lite/pull/390), with
+> [transaction/source mapping](Device-Stock-Registration-and-Reissue.md),
+> [draft instructions](../how-tos/features-and-instructions/v2.2-draft/Device-Stock-Registration-and-Reissue.md)
+> and [actual verification/gallery](../development-handovers/evidence/device-stock-registration/Report.md).
+> Local verification and changed-screen evidence are recorded; final-head Actions are linked in PR #390; no owner visual approval, merge, release or
+> deployment is claimed. Earlier dated checkpoints below retain their original status.
+
+
 Caffoot Lite **v2.1 is the published release**. Its tagged source is [c3237114108cad9f7d4e57657b6aed5e0091a5ef](https://github.com/Caffoot/Caffoot-Lite/tree/v2.1); it uses schema 10. The [published user guides](../how-tos/features-and-instructions/README.md) and [installation instructions](../../INSTALLATION.md) describe that release.
 
 ## Repository source is not a released image
