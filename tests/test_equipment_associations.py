@@ -153,6 +153,23 @@ class EquipmentAssociationTests(unittest.TestCase):
         self.assertEqual(records['history'][0]['issue']['actor'], issue['actor'])
         self.assertEqual(self.db.execute('SELECT count(*) FROM device_equipment_associations').fetchone(), (1,))
 
+    def test_outstanding_historical_accessory_remains_visible_after_workstation_return(self):
+        """A real Device return must not hide the original outstanding accessory."""
+        from backend.device_assignments import read_assignments
+        issue = self.issued(quantity=2)
+        self.link(issue)
+        original = legacy_device_issue(self.db, self.assignment)
+        returned = circulation.return_payload(original)
+        returned['deviceAssignmentId'] = returned.pop('issueEntryId')
+        return_stock(self.db, 1, self.token, returned)
+        result = read_equipment_associations(self.db, 1, 'canonical')
+        self.assertEqual(result['current'], [])
+        self.assertEqual(len(result['history']), 1)
+        self.assertIsNotNone(result['history'][0]['assignmentEndedAt'])
+        self.assertEqual(result['history'][0]['issue']['id'], issue['id'])
+        self.assertEqual(result['history'][0]['issue']['outstanding'], 2)
+        self.assertFalse(read_assignments(self.db, 1, device_id='canonical')['canReissue'])
+
     def test_individual_identity_and_writeoff_history_are_retained(self):
         from backend.stock_circulation import write_off_stock
         issue = self.issued(individual=True)
