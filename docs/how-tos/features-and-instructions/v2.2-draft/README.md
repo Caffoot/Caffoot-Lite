@@ -1,5 +1,7 @@
 # Draft v2.2 User Guides
 
+> **Batch 3.12 review branch:** [IT Assets Overview](IT-Assets-Dashboard.md) describes the implemented dashboard and permission boundary. See [verification evidence](../../../development-handovers/evidence/stock-dashboard/Report.md); visual approval and final focused verification remain outstanding. This supersedes older pending-dashboard notes below.
+
 > **Draft v2.2 — Not Yet Published / Not Production Guidance.** Batches 3.1–3.10 are merged on `milestone-1` through accepted PR #391 at `53b04328c4f895bfc1f72f0416c43a519b2e8b42` (schema 19). Batch 3.11 Correct Movement is implemented for review in [draft PR #392](https://github.com/Caffoot/Caffoot-Lite/pull/392); its merge and owner visual acceptance are pending. Batch 3.4 native acceptance remains deferred. Use published v2.1 guides for production; these are not installation, upgrade or restore instructions.
 
 These guides cover implemented milestone features and clearly labelled work on the separate Batch 3.11 review branch. They use fictional examples and do not announce a release or authorise deployment. Keep using the [published v2.1 guides](../README.md) for the published application.

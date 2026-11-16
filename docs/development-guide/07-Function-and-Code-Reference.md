@@ -1,5 +1,7 @@
 # 07 — Function and code reference
 
+The Batch 3.12 review branch adds `backend/stock_reporting.py:read_stock_report`, `backend/schema.py:migrate_it_staff_stock_default` and the Overview rendering/filter functions in `interface/stock-intake.js`. See the [dashboard contract and upgrade boundary](IT-Assets-Dashboard.md) and [actual verification limits](../development-handovers/evidence/stock-dashboard/Report.md).
+
 Batch 3.9 adds [`device_stock.py`](../../backend/device_stock.py) for atomic stock
 registration and separate canonical reissue, and
 [`device_storage.py`](../../backend/device_storage.py) for optional storage
