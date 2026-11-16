@@ -1,5 +1,6 @@
 """Corrections preserve original facts and validate later stock and assignment history."""
 import concurrent.futures
+import http.client
 import json
 from pathlib import Path
 import sqlite3
@@ -83,6 +84,110 @@ class StockCorrectionTests(unittest.TestCase):
     def test_receipt_cannot_remove_later_checked_or_registered_stock(self):
         self.receipt(10, ready=4)
         self.blocked(self.entry('received'), 3)
+
+    def test_return_decrease_and_issue_increase_recalculate_real_balances(self):
+        identity = self.receipt()
+        self.issue(identity, quantity=5)
+        issue = self.entry('issued')
+        self.return_equipment(return_payload(self.outstanding(), quantityReturned=3))
+        returned = self.entry('returned')
+        result = self.correct(returned, 2)
+        self.assertEqual(result['outstanding'], 3)
+        result = self.correct(issue, 6)
+        self.assertEqual((result['outstanding'], result['balances']['physicallyHeld']), (4, 6))
+
+    def test_database_independently_rejects_a_compensation_that_breaks_later_readiness(self):
+        from test_it_asset_stock_schema import post_fixture
+        self.receipt(10, ready=8)
+        entry = self.entry('received')
+        update_stock_readiness(self.db, 1, self.token, readiness_payload(self.db,
+            self.db.execute('SELECT stock_item_id FROM it_asset_stock_entries WHERE id=?', (entry,)).fetchone()[0],
+            readyQuantity=4, reason='Recheck'))
+        original = self.db.execute('SELECT stock_item_id,snapshot_json FROM it_asset_stock_entries WHERE id=?', (entry,)).fetchone()
+        compensation = dict(stock_item_id=original[0], snapshot_json=original[1], quantity=4,
+                            from_state='awaiting_checks', to_state=None)
+        self.unchanged(sqlite3.IntegrityError, lambda: post_fixture(self.db, 'corrected', [compensation],
+            corrects_entry_id=entry, previous_quantity=10, corrected_quantity=6, reason='Invalid chronology'))
+
+    def test_registered_stock_receipt_correction_keeps_device_identity_and_held_count(self):
+        from backend.device_stock import register_stock_device
+        from test_device_stock import registration_payload
+        self.db.execute("UPDATE organisation_features SET enabled=1 WHERE feature='devices'")
+        self.db.commit()
+        identity = self.receipt(10, ready=5, category='Desktop')
+        entry = self.entry('received')
+        registered = register_stock_device(self.db, 1, self.token, registration_payload(self.db, identity))
+        original = self.db.execute('SELECT * FROM inventory_devices').fetchall()
+        self.blocked(entry, 4)
+        result = self.correct(entry, 8)
+        self.assertEqual(result['balances']['physicallyHeld'], 8)
+        self.assertEqual(result['balances']['readyToIssue'], 5)
+        self.assertEqual(stock_item(self.db, identity)['units'][0]['id'], registered['stockUnitId'])
+        self.assertEqual(self.db.execute('SELECT * FROM inventory_devices').fetchall(), original)
+
+    def test_associated_equipment_requires_devices_edit_and_cannot_reopen_after_handover(self):
+        from backend.equipment_associations import add_associated_equipment, read_equipment_associations
+        from backend.device_handovers import reassign_device
+        from test_device_handovers import handover_payload
+        assignment = self.legacy_device()['id']
+        identity = self.receipt()
+        self.issue(identity, quantity=3)
+        issue = self.outstanding()
+        add_associated_equipment(self.db, 1, self.token, dict(operationId=uuid.uuid4().hex,
+            deviceId='canonical', deviceRevision=0, deviceAssignmentId=assignment, issueEntryId=issue['id'], version=issue['version']))
+        payload = correction_payload(self.db, issue['id'], 2)
+        self.db.execute("UPDATE account_permission_overrides SET level='edit' WHERE account_id=2 AND section='IT Assets'")
+        self.db.commit()
+        for grant in ('deny', 'read'):
+            self.db.execute("INSERT OR REPLACE INTO account_permission_overrides VALUES(2,'Devices',?)", (grant,))
+            self.db.commit()
+            self.unchanged(PermissionError, lambda: preview_stock_correction(self.db, 2, 'a'*64, preview_payload(payload)))
+            self.unchanged(PermissionError, lambda: save_stock_correction(self.db, 2, 'a'*64, payload))
+        self.db.execute("INSERT OR REPLACE INTO account_permission_overrides VALUES(2,'Devices','edit')")
+        self.db.commit()
+        self.assertTrue(preview_stock_correction(self.db, 2, 'a'*64, preview_payload(payload))['allowed'])
+        self.correct(issue['id'], 2)
+        self.assertEqual(read_equipment_associations(self.db, 1, 'canonical')['current'][0]['issue']['outstanding'], 2)
+        self.return_equipment(return_payload(self.outstanding(), quantityReturned=2))
+        returned = self.entry('returned')
+        reassign_device(self.db, 1, self.token, handover_payload(self.db))
+        self.assertIn('reopen associated equipment', self.blocked(returned, 1)['message'])
+        self.assertIn('reopen associated equipment', self.blocked(issue['id'], 3)['message'])
+
+    def test_multi_entry_individual_issue_is_selected_by_entry_and_keeps_every_identity(self):
+        identity = self.receipt(1, individual=True)
+        item = stock_item(self.db, identity)
+        receipt = receipt_payload()
+        del receipt['item']
+        receipt.update(stockItemId=identity, configurationKey=item['configurationKey'], quantity=1, readyQuantity=1,
+                       checks=dict(itemsChecked=True, conditionChecked=True))
+        receive_stock(self.db, 1, self.token, receipt)
+        units = [unit['id'] for unit in stock_item(self.db, identity)['units']]
+        result = self.issue(identity, quantity=2, stockUnitIds=units)
+        entries = self.db.execute('SELECT id FROM it_asset_stock_entries WHERE movement_id=?', (result['movementId'],)).fetchall()
+        self.assertEqual(len(entries), 2)
+        for entry, in entries:
+            context = stock_correction_context(self.db, 1, entry)
+            self.assertEqual(context['originalQuantity'], 1)
+            self.blocked(entry, 2)
+
+    def test_registered_direct_handover_entries_cannot_create_extra_units(self):
+        import test_device_handovers as handover_fixture
+        # Reuse the established registered custody fixture and real writer.
+        fixture = handover_fixture.DeviceHandoverTests()
+        fixture.setUp()
+        self.addCleanup(fixture.doCleanups)
+        _, device = fixture.stock_device()
+        fixture.save(handover_fixture.handover_payload(fixture.db, device))
+        rows = fixture.db.execute("SELECT e.id FROM it_asset_stock_entries e JOIN it_asset_stock_movements m ON m.id=e.movement_id WHERE json_extract(m.checks_json,'$.directHandover')=1").fetchall()
+        self.assertEqual(len(rows), 2)
+        before = tuple(fixture.db.iterdump())
+        for entry, in rows:
+            payload = correction_payload(fixture.db, entry, 2)
+            self.assertFalse(preview_stock_correction(fixture.db, 1, fixture.token, preview_payload(payload))['allowed'])
+            with self.assertRaises(ValueError):
+                save_stock_correction(fixture.db, 1, fixture.token, payload)
+        self.assertEqual(tuple(fixture.db.iterdump()), before)
 
     def test_issue_corrections_keep_partial_returns_and_original_assignment_balances(self):
         identity = self.receipt()
@@ -299,3 +404,46 @@ class StockCorrectionHttpTests(unittest.TestCase):
         with patch('backend.server.PUBLIC_ORIGIN', 'https://caffoot.example'):
             for endpoint, body in (('/api/it-assets/corrections', payload), ('/api/it-assets/corrections/preview', preview_payload(payload))):
                 self.assertEqual(self.post(endpoint, body, self.token, csrf_for_session(self.token))[0], 403)
+
+    def test_no_access_read_and_edit_are_enforced_on_each_route(self):
+        from backend.permissions import create_user
+        from backend.sessions import _digest
+        payload = self.seed()
+        token = 'c'*64
+        with sqlite3.connect(self.path) as db:
+            actor = create_user(db, 1, 'correction-technician', 'Fictional Password')
+            db.execute("UPDATE accounts SET mfa_secret='fixture secret',mfa_confirmed=1 WHERE id=?", (actor,))
+            db.execute('INSERT INTO account_sessions VALUES(?,?,9999999999,1)', (_digest(token), actor))
+        with patch('backend.server.PUBLIC_ORIGIN', 'https://caffoot.example'):
+            for grant in ('deny', 'read', 'edit'):
+                with sqlite3.connect(self.path) as db:
+                    db.execute('INSERT OR REPLACE INTO account_permission_overrides VALUES(?,?,?)', (actor, 'IT Assets', grant))
+                self.assertEqual(self.request('/api/it-assets/history', COOKIE_NAME+'='+token)[0], 403 if grant=='deny' else 200)
+                self.assertEqual(self.request('/api/it-assets/corrections/'+str(payload['entryId']), COOKIE_NAME+'='+token)[0], 200 if grant=='edit' else 403)
+                self.assertEqual(self.post('/api/it-assets/corrections/preview', preview_payload(payload), token, csrf_for_session(token))[0], 200 if grant=='edit' else 403)
+                if grant!='edit':
+                    self.assertEqual(self.post('/api/it-assets/corrections', payload, token, csrf_for_session(token))[0], 403)
+            self.assertEqual(self.post('/api/it-assets/corrections', payload, token, csrf_for_session(token))[0], 200)
+
+    def test_cross_site_duplicate_json_and_invalid_body_cannot_write(self):
+        payload = self.seed()
+        def raw(body, **overrides):
+            connection = http.client.HTTPConnection('127.0.0.1', self.server.server_port)
+            headers = dict(Origin='https://caffoot.example', Cookie=COOKIE_NAME+'='+self.token,
+                           **{'X-CSRF-Token': csrf_for_session(self.token), 'Content-Type': 'application/json'})
+            headers.update(overrides)
+            connection.request('POST', '/api/it-assets/corrections', body, headers)
+            response = connection.getresponse()
+            status = response.status
+            response.read()
+            connection.close()
+            return status
+        with patch('backend.server.PUBLIC_ORIGIN', 'https://caffoot.example'):
+            self.assertEqual(raw(json.dumps(payload), **{'Sec-Fetch-Site':'cross-site'}), 403)
+            self.assertEqual(raw(json.dumps(payload), Origin='https://foreign.example'), 403)
+            self.assertEqual(raw(json.dumps(payload), **{'Content-Type':'text/plain'}), 415)
+            self.assertEqual(raw('{"entryId":1,'+json.dumps(payload)[1:]), 400)
+            self.assertEqual(raw('{broken'), 400)
+            self.assertEqual(raw(' '*65537), 400)
+        with sqlite3.connect(self.path) as db:
+            self.assertEqual(db.execute("SELECT count(*) FROM it_asset_stock_movements WHERE kind='corrected'").fetchone()[0], 0)

@@ -137,13 +137,13 @@ def validate_stock_correction(connection, actor, payload):
     result = dict(allowed=False, version=version, before=before, after=None)
     try:
         quantity = stock_quantity(payload['correctedQuantity'], 'Corrected Quantity', 1)
-        reason = stock_text(payload['reason'], 'Reason For Correction', 2000, required=True)
         if quantity == source['effective_quantity']:
             raise ValueError('No change: enter a quantity different from the current effective quantity.')
         if source['stock_unit_id'] is not None:
             raise ValueError('Individually tracked equipment must retain its one permanent identity. '
                              'A quantity correction cannot create, remove or replace a Device or individual unit.')
         result['after'] = replay_corrected_stock(connection, source, quantity)
+        stock_text(payload['reason'], 'Reason For Correction', 2000, required=True)
         result.update(allowed=True, message='Ready To Save: all subsequent movements and original issue balances remain valid.')
     except ValueError as exc:
         result['message'] = 'Correction Blocked: ' + str(exc)

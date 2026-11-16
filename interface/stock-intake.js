@@ -414,10 +414,12 @@
   }
   function renderStockCorrection(){
     const selected=correction;
-    const details=[['Original Movement',`${selected.movementId} · Entry ${selected.entryId} · ${selected.kind.replace('_',' ')}`],['Equipment',selected.name],['Original Recorded Quantity',selected.originalQuantity],['Current Effective Quantity',selected.effectiveQuantity],['Recorded By',selected.actor],['Movement Date',selected.date],['Recorded At',selected.recordedAt],['Supplier / Source',selected.supplier||'Not Recorded'],['Original Recipient',selected.recipientLabel||'Not Applicable'],['Original Issue',selected.sourceIssueEntryId||'Not Applicable'],['Individual Unit / Device',selected.deviceId||selected.stockUnitId||'Quantity-Based Stock']];
+    const proposed=selected.draftQuantity??String(selected.effectiveQuantity),reason=selected.draftReason||'';
+    const kind={received:'Received',issued:'Issued',returned:'Returned',written_off:'Written Off'}[selected.kind];
+    const details=[['Original Movement',`${selected.movementId} · Entry ${selected.entryId} · ${kind}`],['Equipment',selected.name],['Original Recorded Quantity',selected.originalQuantity],['Current Effective Quantity',selected.effectiveQuantity],['Recorded By',selected.actor],['Movement Date',selected.date],['Recorded At',selected.recordedAt],['Supplier / Source',selected.supplier||'Not Recorded'],['Original Recipient',selected.recipientLabel||'Not Applicable'],['Original Issue',selected.sourceIssueEntryId||'Not Applicable'],['Individual Unit / Device',selected.deviceId||selected.stockUnitId||'Quantity-Based Stock']];
     const original=details.map(([label,value])=>`<div class="info-row"><label>${label}</label><b>${safe(value)}</b></div>`).join('');
-    const history=selected.history.map(row=>`<tr><td>${row.previousQuantity} → ${row.correctedQuantity}</td><td>${safe(row.reason)}</td><td>${safe(row.actor)}<div class="sub">${safe(row.recordedAt)}</div></td><td>${row.id}</td></tr>`).join('');
-    return `<section id="stock-correction-details" class="stock-card-stack"><h2 tabindex="-1">Correct Stock Movement</h2><form id="stock-correction-form" class="preview-aligned-form" data-stock-cancellable="true"><div class="staff-main-grid"><div class="stock-card-stack">${stockCard('Original Movement Details','The original transaction, supplier and all later records are retained.',original)}${stockCard('Correction Details','Enter the corrected total for this original entry, rather than the difference.',`<div class="staff-fields">${stockField('Corrected Quantity','correctedQuantity','number',selected.effectiveQuantity,'required min="1" max="9007199254740991" step="1"')}</div>${stockNote('Reason For Correction (Required)','correctionReason')}`)}<p class="formhint" data-stock-feedback role="alert"></p></div><aside class="staff-side-stack">${stockCard('Stock Impact Before Saving','Calculated by the server against the complete movement history.',`<div id="stock-correction-impact">${renderCorrectionImpact(selected.before,null)}</div><p id="stock-correction-validation" class="stock-correction-validation" role="status" aria-live="polite">Enter a changed quantity and a reason to check this correction.</p>`)}</aside></div><div class="stock-form-actions">${stockButton('Cancel','cancel-correction')}<button class="btn btn-primary" type="submit" disabled>Save Correction</button></div></form>${stockCard('Correction History','Every correction remains linked to the original entry.',stockTable(['Previous → Corrected','Reason','Actor / Date','Correction Reference'],history,'No Corrections Recorded'))}</section>`;
+    const history=selected.history.length?`<ol class="stock-correction-history">${selected.history.map(row=>`<li><h4>Previous → Corrected: ${row.previousQuantity} → ${row.correctedQuantity}</h4><p>${safe(row.reason)}</p><p class="sub">${safe(row.actor)} · ${safe(row.recordedAt)} · Correction ${row.id}</p></li>`).join('')}</ol>`:stockNotice('No Corrections Recorded','Corrections to this original entry will appear here.');
+    return `<section id="stock-correction-details" class="stock-card-stack"><h2 tabindex="-1">Correct Stock Movement</h2><form id="stock-correction-form" class="preview-aligned-form" data-stock-cancellable="true"><div class="staff-main-grid"><div class="stock-card-stack">${stockCard('Original Movement Details','The original transaction, supplier and all later records are retained.',original)}${stockCard('Correction Details','Enter the corrected total for this original entry, rather than the difference.',`<div class="staff-fields">${stockField('Corrected Quantity','correctedQuantity','number',proposed,'required min="1" max="9007199254740991" step="1"')}</div><div class="preview-form-field"><label for="stock-correctionReason">Reason For Correction (Required)</label><textarea class="input" id="stock-correctionReason" name="correctionReason" required maxlength="2000">${safe(reason)}</textarea></div>`)}<p class="formhint" data-stock-feedback role="alert"></p></div><aside class="staff-side-stack">${stockCard('Stock Impact Before Saving','Calculated by the server against the complete movement history.',`<div id="stock-correction-impact">${renderCorrectionImpact(selected.before,selected.preview?.after)}</div><p id="stock-correction-validation" class="stock-correction-validation" role="status" aria-live="polite">${safe(selected.preview?.message||'Enter a changed quantity and a reason to check this correction.')}</p>`)}</aside></div><div class="stock-form-actions">${stockButton('Cancel','cancel-correction')}<button class="btn btn-primary" type="submit" disabled>Save Correction</button></div></form>${stockCard('Correction History','Every correction remains linked to the original entry.',history)}</section>`;
   }
   function renderCorrectionImpact(before,after){
     const labels=[['Physically Held','physicallyHeld'],['Ready To Issue','readyToIssue'],['Awaiting Checks','awaitingChecks'],['Awaiting Preparation','awaitingPreparation'],['Currently Issued','currentlyIssued'],['Written Off','writtenOff']];
@@ -436,7 +438,6 @@
     correction=result;tab='movements';config.redraw();
     document.querySelector('#stock-correction-details h2')?.focus();
     document.getElementById('stock-correction-details')?.scrollIntoView({block:'start'});
-    document.getElementById('stock-correction-form').elements.correctionReason.required=true;
   }
   function stockCorrectionValues(form){
     return {entryId:correction.entryId,version:correction.version,correctedQuantity:form.elements.correctedQuantity.value===''?null:Number(form.elements.correctedQuantity.value),reason:form.elements.correctionReason.value};
@@ -448,11 +449,13 @@
     try{
       const result=await stockRequest('corrections/preview',body);
       if(!form.isConnected||form.dataset.previewRequest!==key)return;
+      correction.preview=result;correction.previewPayload=key;
       form.querySelector('#stock-correction-impact').innerHTML=renderCorrectionImpact(result.before,result.after);
       const validation=form.querySelector('#stock-correction-validation');
       validation.textContent=result.message;validation.dataset.allowed=String(result.allowed);
       form.dataset.validatedPayload=result.allowed?key:'';
       form.querySelector('[type="submit"]').disabled=!result.allowed;
+      form.dataset.previewCompleted=key;
     }catch(failure){
       if(!form.isConnected||form.dataset.previewRequest!==key)return;
       form.querySelector('#stock-correction-validation').textContent=failure.message;
@@ -461,7 +464,8 @@
   }
   function scheduleStockCorrection(form){
     clearTimeout(correctionTimer);
-    form.dataset.previewRequest='';form.dataset.validatedPayload='';
+    correction.draftQuantity=form.elements.correctedQuantity.value;correction.draftReason=form.elements.correctionReason.value;correction.preview=null;correction.previewPayload='';
+    form.dataset.previewRequest='';form.dataset.previewCompleted='';form.dataset.validatedPayload='';
     form.querySelector('[type="submit"]').disabled=true;
     form.querySelector('#stock-correction-impact').innerHTML=renderCorrectionImpact(correction.before,null);
     form.querySelector('#stock-correction-validation').textContent='Checking the proposed correction…';
@@ -679,7 +683,17 @@
 
   function hydrateStockPage(){
     hydrateStock();
-    document.querySelectorAll('#stock-panel form[data-stock-cancellable="true"]').forEach(form=>config.rememberStockForm(form));
+    document.querySelectorAll('#stock-panel form[data-stock-cancellable="true"]').forEach(form=>config.rememberStockForm(form,
+      form.id==='stock-correction-form'?{'stock-correctedQuantity':String(correction.effectiveQuantity),'stock-correctionReason':''}:null));
+    const form=document.getElementById('stock-correction-form');
+    if(form&&correction){
+      if(correction.preview&&correction.previewPayload===JSON.stringify(stockCorrectionValues(form))){
+        form.dataset.previewRequest=correction.previewPayload;form.dataset.previewCompleted=correction.previewPayload;
+        form.dataset.validatedPayload=correction.preview.allowed?correction.previewPayload:'';
+        form.querySelector('#stock-correction-validation').dataset.allowed=String(correction.preview.allowed);
+        form.querySelector('[type="submit"]').disabled=!correction.preview.allowed;
+      }else if(correction.draftQuantity!==undefined)scheduleStockCorrection(form);
+    }
   }
   function dismissHandover(){if(stockContext.handover)stockContext={};}
   function configureStock(options){config=options;}

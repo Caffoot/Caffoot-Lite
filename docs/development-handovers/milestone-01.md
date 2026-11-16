@@ -1,5 +1,18 @@
 # Milestone 01 Development Handover — v2.2 Target
 
+> **Batch 3.11, 16 November 2026:** Correct Movement is implemented on
+> `feat/correct-stock-movement`, [draft PR #392](https://github.com/Caffoot/Caffoot-Lite/pull/392),
+> from verified `53b04328c4f895bfc1f72f0416c43a519b2e8b42` after accepted PR #391.
+> It reuses the reserved correction journal with no migration (schema 19).
+> [The technical contract](../development-guide/IT-Assets-Correct-Movement.md),
+> [draft instructions](../how-tos/features-and-instructions/v2.2-draft/IT-Assets-Correct-Movement.md)
+> and [evidence report](evidence/stock-corrections/Report.md) describe the final
+> behaviour, actual verification and review gates. Original movements, Supplier
+> provenance, canonical identities and later chronological records remain permanent.
+> Owner visual acceptance and explicit merge approval remain outstanding.
+> No merge, release, deployment or Batch 3.12 work is authorised. Older checkpoints
+> below retain their dated verification scope.
+
 > **Batch 3.10 E review evidence, 16 November 2026:** D is pushed at
 > `b83e061211b2a4784f8db7198228241da0942940`; E changes docs/tests/CI only.
 > [36 genuine desktop/mobile light/dark captures](evidence/associated-equipment-final/Report.md)

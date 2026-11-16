@@ -36,6 +36,10 @@
 
 .stock-live #stock-correction-details{scroll-margin-top:24px}
 .stock-live #stock-correction-form .card>.preview-form-field{margin-top:18px}
+.stock-live #stock-panel #stock-correction-form textarea.input{min-height:104px;height:auto;font:inherit;line-height:1.6}
+.stock-live .stock-correction-history{list-style:none;padding:0;margin:0}
+.stock-live .stock-correction-history li{padding:12px 0;overflow-wrap:anywhere}
+.stock-live .stock-correction-history li+li{border-top:1px solid var(--line)}
 .stock-live .stock-correction-balances{min-width:0}
 .stock-live .stock-correction-balances th,.stock-live .stock-correction-balances td{padding:12px 8px}
 .stock-live .stock-correction-validation{font-size:12px;line-height:1.6;margin-top:18px;padding:12px;border:1px solid var(--line);border-radius:10px}
