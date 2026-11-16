@@ -20,3 +20,7 @@
 
 .stock-live .stock-inventory-table .small-table{min-width:1000px}
 .stock-live .small-table th{overflow-wrap:normal;min-width:48px}
+
+/* Match approved right-aligned form actions, without changing stock list actions. */
+.stock-live #stock-panel .stock-form-actions{display:flex;justify-content:flex-end;align-items:center;gap:16px;flex-wrap:wrap;margin-top:22px;padding:18px 0 0;border-top:1px solid var(--line)}
+.stock-live #stock-panel .stock-form-actions .btn{min-height:42px;padding:10px 18px}
