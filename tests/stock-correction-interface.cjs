@@ -146,6 +146,10 @@ async function main(){
  await page.locator('#stock-tab-inventory').click();await page.locator('#discard-dialog [data-action="keep-editing"]').click();await form.waitFor();
  await page.locator('.header-account').click();await page.locator('#discard-dialog [data-action="keep-editing"]').click();await form.waitFor();
  await propose(7,'Allocation record confirms seven issued.');
+ const unloadBlocked=await page.evaluate(()=>{const event=new Event('beforeunload',{cancelable:true});window.dispatchEvent(event);return event.defaultPrevented;});assert.equal(unloadBlocked,true);
+ await page.locator('#stock-tab-inventory').click();await page.locator('#discard-dialog [data-action="discard-device-form-changes"]').click();
+ await page.locator('#discard-dialog [data-action="keep-editing"]').click();await form.waitFor();
+ assert.equal(await page.locator('#stock-correctedQuantity').inputValue(),'7');
  await captureState('return-correction-impact',page,'#stock-correction-details',returnCapture);
  // A concurrent correction invalidates the save without losing either form's entries.
  const concurrent=await (await owner.request.get(address+'/api/it-assets/corrections/'+original.entryId)).json();
@@ -168,6 +172,7 @@ async function main(){
  await returnForm.locator('[data-stock-feedback]').getByText(/Reload Stock/).waitFor();assert.deepEqual(blockedReturns,[]);page.off('request',recordReturnRequest);
  await page.locator('[data-stock-action="reload"]').click();
  await page.locator('#stock-return-refresh').getByText(/Quantities and versions have been refreshed/).waitFor();
+ assert.equal(await returnForm.locator('[data-stock-feedback]').innerText(),'');
  const refreshedIssue=(await stock()).issues.find(row=>row.id===originalIssue.entryId);
  assert.notEqual(refreshedIssue.version,staleIssue.version);assert.equal(refreshedIssue.outstanding,2);
  assert.deepEqual(await returnForm.evaluate(form=>Object.fromEntries(new FormData(form))),returnValues);
@@ -207,6 +212,8 @@ async function main(){
  await returnForm.locator('[name="returnSource"]').selectOption('stock:'+otherEligible);
  assert.equal(await returnForm.locator('[name="quantityReturned"]').inputValue(),'1');
  assert.equal(await returnForm.locator('[type="submit"]').isEnabled(),true);
+ await page.keyboard.press('Escape');assert.equal(await returnForm.locator('[name="returnNote"]').inputValue(),'Keep this note when eligibility changes.');
+ await returnForm.locator('[data-stock-action="cancel-stock"]').click();await page.locator('#discard-dialog [data-action="keep-editing"]').click();await returnForm.waitFor();
  await page.locator('#stock-tab-movements').click();await page.locator('#discard-dialog [data-action="keep-editing"]').click();await returnForm.waitFor();
  await page.locator('#stock-tab-movements').click();await page.locator('#discard-dialog [data-action="discard-device-form-changes"]').click();
  const reader=await browser.newContext({ignoreHTTPSErrors:true,locale:'en-GB',viewport:{width:1440,height:1050}});

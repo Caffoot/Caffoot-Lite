@@ -118,7 +118,7 @@
       const result=await stockRequest('stock');
       if(request!==generation||!canRead())return;
       reissueDevices=result.reissueDevices||[];items=result.items;receipts=result.receipts;changes=result.readinessChanges;issues=result.issues||[];deviceAssignments=result.deviceAssignments||[];registeredDevices=result.registeredDevices||[];deviceChoices=result.deviceChoices||[];movements=result.movements||[];loaded=true;error='';
-      if(returnCorrection)returnCorrection.refreshRequired=false;
+      if(returnCorrection){returnCorrection.refreshRequired=false;returnCorrection.form.querySelector('[data-stock-feedback]').textContent='';}
       if(detail)detail=await stockRequest('stock/'+detail.item.id);
     }catch(failure){if(request===generation)error=failure.message;}
     finally{if(request===generation){loading=false;config.redraw();}}
