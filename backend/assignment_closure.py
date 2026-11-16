@@ -60,7 +60,7 @@ def assignment_schema_objects(connection):
         "SELECT name,sql FROM sqlite_master WHERE tbl_name='device_assignments' AND sql IS NOT NULL")}
 
 
-def expected_assignment_schema(*, closed):
+def expected_assignment_schema(*, closed, handovers=False):
     """Keep the original migration intact when comparing the approved extension."""
     from backend.schema import migrate_device_assignments
     with sqlite3.connect(':memory:') as reference:
@@ -70,12 +70,22 @@ def expected_assignment_schema(*, closed):
             reference.execute('DROP TRIGGER retain_device_assignment_update')
             for statement in stock_schema_statements(ASSIGNMENT_CLOSURE_SQL):
                 reference.execute(statement)
+        if handovers:
+            from backend.handover_schema import HANDOVER_COLUMNS, handover_assignment_statements
+            for statement in HANDOVER_COLUMNS:
+                reference.execute(statement)
+            reference.execute('DROP TRIGGER device_assignment_closed_insert_guard')
+            reference.execute('DROP TRIGGER retain_device_assignment_update')
+            for statement in handover_assignment_statements():
+                reference.execute(statement)
         return assignment_schema_objects(reference)
 
 
-def validate_assignment_closure(connection):
+def validate_assignment_closure(connection, *, handovers=None):
     """Reject missing or unexpected closure guards without changing records."""
-    if assignment_schema_objects(connection) != expected_assignment_schema(closed=True):
+    if handovers is None:
+        handovers = connection.execute('SELECT 1 FROM schema_migrations WHERE version=19').fetchone() is not None
+    if assignment_schema_objects(connection) != expected_assignment_schema(closed=True, handovers=handovers):
         raise RuntimeError('Unexpected assignment closure schema; review required')
     if connection.execute('PRAGMA foreign_key_check').fetchone():
         raise RuntimeError('Assignment closure relationships failed verification')

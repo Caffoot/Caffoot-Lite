@@ -5,6 +5,7 @@
   const escapeHtml=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const dateLabel=value=>/^\d{4}-\d{2}-\d{2}$/.test(value)?value.slice(8,10)+'/'+value.slice(5,7)+'/'+value.slice(0,4):value?new Date(value).toLocaleDateString('en-GB'):'—';
   const button=(label,action,id='')=>`<button type="button" class="btn btn-outline" data-equipment-action="${action}" data-id="${escapeHtml(id)}">${label}</button>`;
+  function canReadAssociations(){return !!config?.canReadAssociations();}
   async function request(path,payload){
     const response=await fetch(path,{cache:'no-store',...(payload?{method:'POST',headers:{'Content-Type':'application/json','X-CSRF-Token':config.csrf},body:JSON.stringify(payload)}:{})});
     const data=await response.json();
@@ -13,11 +14,11 @@
   }
   function assignmentHistory(history,deviceView=false){
     if(!history.length)return '<p class="sub">No equipment assignment history.</p>';
-    if(!deviceView)return `<table class="staff-history-list"><tbody>${history.map(item=>`<tr><td>${escapeHtml(dateLabel(item.assignedAt))}</td><td><strong>Assigned · ${escapeHtml(item.deviceName)}</strong><small>Assigned To ${escapeHtml(item.recipientLabel)} · Recorded By ${escapeHtml(item.actorLabel)}</small>${item.closure?`<small>${item.closure.kind==='returned'?'Returned':'Written Off'} ${escapeHtml(dateLabel(item.closure.date))} · Recorded By ${escapeHtml(item.closure.actor)}</small>`:''}</td></tr>`).join('')}</tbody></table>`;
-    return `<div class="table-scroll"><table class="small-table"><thead><tr><th>Staff Member / Department</th><th>Issue Date</th><th>Return / End Date</th><th>Movement</th></tr></thead><tbody>${history.map(item=>`<tr><td>${escapeHtml(item.recipientLabel)}</td><td>${escapeHtml(dateLabel(item.assignedAt))}</td><td>${escapeHtml(dateLabel(item.closure?.date||item.endedAt))}</td><td>Assigned<br>Recorded By ${escapeHtml(item.actorLabel)}${item.closure?`<br>${item.closure.kind==='returned'?'Returned':'Written Off'} · Recorded By ${escapeHtml(item.closure.actor)}`:''}</td></tr>`).join('')}</tbody></table></div>`;
+    if(!deviceView)return `<table class="staff-history-list"><tbody>${history.map(item=>`<tr><td>${escapeHtml(dateLabel(item.assignedAt))}</td><td><strong>Assigned · ${escapeHtml(item.deviceName)}</strong><small>Assigned To ${escapeHtml(item.recipientLabel)} · Recorded By ${escapeHtml(item.actorLabel)}</small>${item.closure?`<small>${({returned:'Returned',written_off:'Written Off',reassigned:'Reassigned'})[item.closure.kind]||'Closed'} ${escapeHtml(dateLabel(item.closure.date))} · Recorded By ${escapeHtml(item.closure.actor)}</small>`:''}</td></tr>`).join('')}</tbody></table>`;
+    return `<div class="table-scroll"><table class="small-table"><thead><tr><th>Staff Member / Department</th><th>Issue Date</th><th>Return / End Date</th><th>Movement</th></tr></thead><tbody>${history.map(item=>`<tr><td>${escapeHtml(item.recipientLabel)}</td><td>${escapeHtml(dateLabel(item.assignedAt))}</td><td>${escapeHtml(dateLabel(item.closure?.date||item.endedAt))}</td><td>Assigned<br>Recorded By ${escapeHtml(item.actorLabel)}${item.closure?`<br>${({returned:'Returned',written_off:'Written Off',reassigned:'Reassigned'})[item.closure.kind]||'Closed'} · Recorded By ${escapeHtml(item.closure.actor)}`:''}</td></tr>`).join('')}</tbody></table></div>`;
   }
   function assetMovementHistory(history,deviceView=false){
-    const labels={registered:'Device Registered',issued:'Equipment Issued',returned:'Equipment Returned',readiness_changed:'Equipment Prepared',written_off:'Equipment Written Off'};
+    const labels={registered:'Device Registered',issued:'Equipment Issued',reassigned:'Device Reassigned',returned:'Equipment Returned',readiness_changed:'Equipment Prepared',written_off:'Equipment Written Off'};
     if(deviceView&&history?.some(item=>item.physicalReturnConfirmed))return `<div class="table-scroll"><table class="small-table"><thead><tr><th>Date</th><th>Movement</th><th>Recorded By</th></tr></thead><tbody>${history.map(item=>`<tr><td>${escapeHtml(dateLabel(item.date))}</td><td><strong>${labels[item.kind]||'Equipment Movement'}</strong><br>${escapeHtml(item.name)}<br>Quantity: ${item.quantity}</td><td>${escapeHtml(item.actor)}</td></tr>`).join('')}</tbody></table></div>`;
     return history?.length?`<table class="staff-history-list"><tbody>${history.map(item=>`<tr><td>${escapeHtml(dateLabel(item.date))}</td><td><strong>${labels[item.kind]||'Equipment Movement'} · ${escapeHtml(item.name)}</strong><small>Quantity: ${item.quantity} · Recorded By ${escapeHtml(item.actor)}</small></td></tr>`).join('')}</tbody></table>`:'';
   }
@@ -42,9 +43,33 @@
       const result=await request('/api/equipment/assignments?deviceId='+encodeURIComponent(deviceId));
       if(!host.isConnected||host.dataset.deviceId!==deviceId)return;
       const current=result.current[0];
-      host.innerHTML=`<section class="device-details-section device-review-panel full"><h3><span class="mini-icon" aria-hidden="true">♙</span>Current Assignment</h3><p>Current Staff Member or Department holder of this Device.</p><div class="assignment-bar"><div class="assignment-main"><strong>${escapeHtml(current?.recipientLabel||'Unassigned')}</strong><small>${current?'Issue Date: '+escapeHtml(dateLabel(current.assignedAt)):'No current Staff or Department assignment.'}</small></div>${result.canAssign&&!result.dependency?button('Assign Device','assign-device',deviceId):''}${result.canReissue?button('Reissue Existing Device','reissue-device-stock',deviceId):''}${result.canReturn?button('Return Equipment','return-device-stock',result.returnSource):''}${result.canWriteOff?button('Write Off','writeoff-device-stock',deviceId):''}</div>${result.dependency?'<p class="device-review-quiet">'+escapeHtml(result.dependency)+'</p>':''}</section><section class="device-details-section device-review-panel full"><h3><span class="mini-icon" aria-hidden="true">↻</span>Assignment History</h3><p>Shared with the original Staff or Department assignment record.</p>${assignmentHistory(result.history,true)}${assetMovementHistory(result.stockHistory,true)}</section>`;
+      host.innerHTML=`<section class="device-details-section device-review-panel full"><h3><span class="mini-icon" aria-hidden="true">♙</span>Current Assignment</h3><p>Current Staff Member or Department holder of this Device.</p><div class="assignment-bar"><div class="assignment-main"><strong>${escapeHtml(current?.recipientLabel||'Unassigned')}</strong><small>${current?'Issue Date: '+escapeHtml(dateLabel(current.assignedAt)):'No current Staff or Department assignment.'}</small></div>${result.canAssign&&!result.dependency?button('Assign Device','assign-device',deviceId):''}${result.handoverContext?button('Reassign Device','reassign-device',deviceId):''}${result.canReissue?button('Reissue Existing Device','reissue-device-stock',deviceId):''}${result.canReturn?button('Return Equipment','return-device-stock',result.returnSource):''}${result.canWriteOff?button('Write Off','writeoff-device-stock',deviceId):''}</div>${result.dependency?'<p class="device-review-quiet">'+escapeHtml(result.dependency)+'</p>':''}${result.reissueBlockReason?'<p class="device-review-quiet">'+escapeHtml(result.reissueBlockReason)+'</p>':''}</section><section class="device-details-section device-review-panel full"><h3><span class="mini-icon" aria-hidden="true">↻</span>Assignment History</h3><p>Shared with the original Staff or Department assignment record.</p>${assignmentHistory(result.history,true)}${assetMovementHistory(result.stockHistory,true)}</section>`;
       host.dataset.revision=String(result.revision);
     }catch(error){if(host.isConnected)host.innerHTML='<p role="status">'+escapeHtml(error.message)+'</p>';}
+  }
+  async function loadAssociatedEquipment(deviceId){
+    const host=document.getElementById('device-details-panel-associated');
+    if(!host)return;
+    host.dataset.deviceId=deviceId;
+    if(!config.canReadAssociations()){host.replaceChildren();return;}
+    try{
+      const result=await request('/api/equipment/associations?deviceId='+encodeURIComponent(deviceId));
+      if(!host.isConnected||host.dataset.deviceId!==deviceId||!config.canReadAssociations())return;
+      const current=result.current.map(record=>{const issue=record.issue;return `<tr><td><strong>${escapeHtml(issue.name)}</strong>${issue.stockUnitId?'<br>'+escapeHtml(issue.specification.serialNumber||issue.specification.assetTag||'Individually Tracked'):''}</td><td>${issue.outstanding}</td><td>${escapeHtml(issue.recipientLabel)}</td><td>${escapeHtml(dateLabel(issue.issuedOn))}</td><td>${config.canIssueStock()?'<div class="flex flex-wrap gap-2">'+button('Return Equipment','return-stock',String(issue.id))+button('Write Off','writeoff-associated',String(issue.id))+'</div>': 'Read Only'}</td></tr>`;}).join('');
+      const history=result.history.map(record=>{const issue=record.issue;
+        const previousOutstanding=record.assignmentEndedAt!==null&&issue.outstanding>0;
+        const resolve=previousOutstanding?(config.canIssueStock()?'<div class="flex flex-wrap gap-2">'+button('Return Equipment','return-stock',String(issue.id))+button('Write Off','writeoff-associated',String(issue.id))+'</div>':'Read Only'):'—';
+        return `<tr><td>${escapeHtml(issue.name)}${issue.stockUnitId?'<br>'+escapeHtml(issue.specification.serialNumber||issue.specification.assetTag||'Individually Tracked'):''}</td><td>${issue.quantity} Issued · ${issue.outstanding} Outstanding</td><td>${escapeHtml(issue.recipientLabel)}</td><td>${escapeHtml(dateLabel(record.associatedAt))}<br>Recorded By ${escapeHtml(record.actorLabel)}<br>Issued ${escapeHtml(dateLabel(issue.issuedOn))} · ${escapeHtml(issue.actor)}${record.movements.map(movement=>`<br>${escapeHtml({returned:"Returned",written_off:"Written Off",readiness_changed:"Prepared"}[movement.kind]||"Movement")} ${movement.quantity} · ${escapeHtml(dateLabel(movement.date))} · ${escapeHtml(movement.actor)}`).join('')}</td><td>${resolve}</td></tr>`;}).join('');
+      host.innerHTML=`<section class="device-details-section device-review-panel full"><h3><span class="mini-icon" aria-hidden="true">▣</span>Associated Equipment</h3><p>Equipment explicitly linked to this Device. Sharing a holder does not create a link.</p><div class="assignment-bar"><div class="assignment-main"><strong>${result.current.length} Current ${result.current.length===1?'Association':'Associations'}</strong></div>${result.canAdd?button('Add Equipment','add-associated',deviceId):''}</div><div class="table-scroll"><table class="small-table"><thead><tr><th>Equipment</th><th>Outstanding</th><th>Issued To</th><th>Issue Date</th><th>Manage</th></tr></thead><tbody>${current||'<tr><td colspan="5">No currently associated equipment.</td></tr>'}</tbody></table></div></section><section class="device-details-section device-review-panel full"><h3><span class="mini-icon" aria-hidden="true">↻</span>Association History</h3><p>Original issues, quantities and technician records are retained after equipment is returned or written off. Resolve any outstanding equipment from earlier assignments here before reissuing the Device.</p><div class="table-scroll"><table class="small-table"><thead><tr><th>Equipment</th><th>Quantity</th><th>Original Holder</th><th>Association / Issue</th><th>Manage</th></tr></thead><tbody>${history||'<tr><td colspan="5">No association history.</td></tr>'}</tbody></table></div></section>`;
+    }catch(error){if(host.isConnected)host.innerHTML='<p role="status">'+escapeHtml(error.message)+'</p>';}
+  }
+  async function openAssociatedEquipment(deviceId){
+    if(!config.canReadAssociations()||!config.canEdit()||!config.canIssueStock())return;
+    try{
+      const result=await request('/api/equipment/associations?deviceId='+encodeURIComponent(deviceId));
+      if(!result.canAdd)throw Error('An eligible current holder and Devices / IT Assets Edit are required.');
+      window.caffootStockIntake.openWorkflow('issue',{association:result.context,existingIssues:result.existingIssues});
+    }catch(error){config.notify(error.message,'error');}
   }
   function renderMyEquipment(){
     return '<div class="account-page my-equipment"><div class="main"><div class="header"><div><div class="eyebrow">YOUR WORKSPACE</div><h1>My Equipment</h1><p>Your personally assigned Devices and equipment shared with your current Department.</p></div></div><section class="card card-padded" aria-labelledby="my-equipment-personal-heading"><div class="card-head"><div><h3 id="my-equipment-personal-heading">Assigned to Me</h3></div></div><div data-personal-equipment role="status">Loading equipment…</div></section><section class="card card-padded" style="margin-top:17px" aria-labelledby="my-equipment-shared-heading"><div class="card-head"><div><h3 id="my-equipment-shared-heading">Shared with My Department</h3><p>Shared equipment remains assigned to your Department.</p></div></div><div data-shared-equipment role="status">Loading equipment…</div></section></div></div>';
@@ -117,8 +142,11 @@
     event.preventDefault();event.stopImmediatePropagation();
     const action=control.dataset.equipmentAction,id=control.dataset.id;
     if(action==='view-device'){config.viewDevice(id);return;}
+    if(action==='add-associated'){void openAssociatedEquipment(id);return;}
+    if(action==='writeoff-associated'){window.caffootStockIntake.openWorkflow('writeoff',{issueEntryId:Number(id)});return;}
     if(action==='issue-stock-staff'){window.caffootStockIntake.openWorkflow('issue',{recipientKind:'staff',recipientId:id});return;}
     if(action==='return-stock'){window.caffootStockIntake.openWorkflow('return',{returnSource:'stock:'+id});return;}
+    if(action==='reassign-device'){void request('/api/equipment/assignments?deviceId='+encodeURIComponent(id)).then(result=>{if(!result.handoverContext)throw Error('This Device is not currently eligible for reassignment.');window.caffootStockIntake.openHandover(result.handoverContext);}).catch(error=>config.notify(error.message,'error'));return;}
     if(action==='reissue-device-stock'){window.caffootStockIntake.openWorkflow('reissue',{deviceId:id});return;}
     if(action==='return-device-stock'){window.caffootStockIntake.openWorkflow('return',{returnSource:id});return;}
     if(action==='writeoff-device-stock'){window.caffootStockIntake.openWorkflow('writeoff',{deviceId:id});return;}
@@ -149,5 +177,5 @@
       config.notify(error.message,'error');
     });
   });
-  window.caffootEquipment={configure(settings){config=settings;},staffPlaceholder,hydrate,loadDeviceEquipment,renderMyEquipment};
+  window.caffootEquipment={configure(settings){config=settings;},staffPlaceholder,hydrate,loadDeviceEquipment,loadAssociatedEquipment,canReadAssociations,renderMyEquipment};
 })();

@@ -58,6 +58,8 @@ from .tls import ensure_certificate
 from .deployment_settings import validate_published_port
 from .device_assignments import (assignment_recipients, assignment_device_choices,
     read_assignments, assign_devices, my_equipment)
+from .equipment_associations import read_equipment_associations, add_associated_equipment
+from .device_handovers import reassign_device
 from .staff_directory import (require_directory_access, list_directory,
                                read_staff_member, read_department,
                                save_staff_member, save_department, unique_directory_fields,
@@ -778,8 +780,10 @@ class Handler(BaseHTTPRequestHandler):
                         raise ValueError('My Equipment does not accept identity parameters')
                     result = my_equipment(connection, actor)
                 elif self.command == 'GET' and parsed.path == '/api/equipment/recipients':
-                    if set(parameters) - {'query', 'kind'}:
+                    if set(parameters) - {'query', 'kind', 'offset'}:
                         raise ValueError('Invalid recipient parameters')
+                    if 'offset' in parameters:
+                        parameters['offset'] = int(parameters['offset'])
                     result = {'recipients': assignment_recipients(connection, actor, **parameters)}
                 elif self.command == 'GET' and parsed.path == '/api/equipment/available-devices':
                     if set(parameters) - {'query', 'limit', 'offset'}:
@@ -788,12 +792,18 @@ class Handler(BaseHTTPRequestHandler):
                         if key in parameters:
                             parameters[key] = int(parameters[key])
                     result = {'devices': assignment_device_choices(connection, actor, **parameters)}
+                elif self.command == 'GET' and parsed.path == '/api/equipment/associations':
+                    if set(parameters) != {'deviceId'}:
+                        raise ValueError('One Device is required')
+                    result = read_equipment_associations(connection, actor, parameters['deviceId'])
                 elif self.command == 'GET' and parsed.path == '/api/equipment/assignments':
                     names = {'deviceId': 'device_id', 'staffId': 'staff_id', 'departmentId': 'department_id'}
                     if len(parameters) != 1 or set(parameters) - names.keys():
                         raise ValueError('One assignment subject is required')
                     result = read_assignments(connection, actor, **{names[key]: value for key, value in parameters.items()})
-                elif self.command == 'POST' and parsed.path == '/api/equipment/assignments' and not parameters:
+                elif self.command == 'POST' and parsed.path in (
+                        '/api/equipment/assignments', '/api/equipment/associations',
+                        '/api/equipment/issue-and-associate', '/api/equipment/reassign') and not parameters:
                     length = self.headers.get('Content-Length', '')
                     if not length.isdecimal() or not 0 < int(length) <= MAX_LOGIN_BYTES:
                         raise ValueError('Invalid request size')
@@ -801,7 +811,13 @@ class Handler(BaseHTTPRequestHandler):
                         self.respond(415, {'error': 'JSON required'})
                         return
                     payload = json.loads(self.rfile.read(int(length)), object_pairs_hook=unique_directory_fields)
-                    result = assign_devices(connection, actor, read_session_cookie(cookie), payload)
+                    if parsed.path == '/api/equipment/assignments':
+                        result = assign_devices(connection, actor, read_session_cookie(cookie), payload)
+                    elif parsed.path == '/api/equipment/reassign':
+                        result = reassign_device(connection, actor, read_session_cookie(cookie), payload)
+                    else:
+                        result = add_associated_equipment(connection, actor, read_session_cookie(cookie), payload,
+                            issue_new=parsed.path == '/api/equipment/issue-and-associate')
                 else:
                     self.respond(404, {'error': 'not found'})
                     return

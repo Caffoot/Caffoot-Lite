@@ -8,6 +8,23 @@ The code keeps Devices, IPAM and Racks records in separate tables, along with ac
 
 ## Source and schema version
 
+**Batch 3.10 Checkpoint D:** Schema 19 adds nullable `handover_event_id` and
+`successor_assignment_id` references to the canonical `device_assignments` table.
+The audited direct closure is separate from the existing physical-return guard.
+Referenced preparation audits and assignment links are immutable. Registered
+custody uses a guarded pair of existing stock entries, without held/Ready stock
+or a receipt; Devices-only handovers create no stock. The upgrade preserves
+Schema 18, existing records, grants and feature choices, and rejects altered
+definitions transactionally. See [the approved sequence](Direct-Handover-Decision.md)
+and [the writer contract](Associated-Equipment.md#direct-handover-checkpoint-d).
+
+**Batch 3.10 Checkpoint A:** Schema 18 adds one empty, permanent explicit
+`device_equipment_associations` table and protected history reads. Stock and
+assignment schemas remain unchanged. No existing recipient match creates an
+association. See [Associated Equipment](Associated-Equipment.md) for migration,
+privacy, transaction boundaries and remaining work. The earlier checkpoints
+below retain their historical scope; this is not a production upgrade guide.
+
 **Version boundary:** Published v2.1 remains the tagged schema-10 release. `main` includes accepted but unreleased Stage 1/schema 12. Stage 3 Batches 3.1–3.7 are merged on `milestone-1` at `7f91f5d42feb3916cfab060abd5ca4b1558a92ba` (schema 16, PR #388). Batch 3.7 stock intake is visually accepted. Batch 3.8 issue, return, preparation and write-off are implemented for review on `feat/it-assets-issue-return-writeoff` (draft PR #389), including the narrow Schema 17 assignment-closure migration. Batch 3.8 is not merged, visually accepted or released. Batch 3.4 manual/native acceptance remains deferred. Device stock registration/reissue, associations, corrections, dashboards/warnings and Stages 4–6 remain pending. See [Development Status](Development-Status.md); these are not production upgrade instructions.
 
 Stage 2 adds schema 13; Batch 3.1 adds independent Staff Members and flat Departments at schema 14; Batch 3.4 adds current and historical Device assignments at schema 15. Batch 3.6 adds schema 16: an independently disabled IT Assets choice and stock-foundation tables, an optional quantity-stock minimum and attributed specification-correction safeguards. Batch 3.7 adds receipt/readiness writers without changing these definitions. Batch 3.8 adds Schema 17: one nullable closure-movement reference and narrow one-way assignment guards. The four stock tables remain unchanged; no stock or closure is inferred for existing Devices. See [the closure contract](IT-Assets-Issue-Return-and-Write-Off.md#checkpoint-1-guarded-schema-17-closure). Earlier migrations are retained. See [Staff Directory Foundation](Staff-Directory-Foundation.md), [Staff Directory APIs](Staff-Directory-APIs.md), [Device Assignments](Device-Assignments.md), [IT Assets Foundation](IT-Assets-Foundation.md) and [Stock Intake](IT-Assets-Stock-Intake.md).
@@ -25,6 +42,7 @@ The exact definitions are in [`backend/schema.py`](../../backend/schema.py). The
 | `departments` | independent text `id`, unique `name`, `archived` | Flat Department records |
 | `staff_members` | independent text `id`, optional unique `account_id`, optional `department_id`, profile details, `active` | Directory records independent of logins |
 | `device_assignments` | numbered `id`, canonical `device_id`, exactly one `staff_id`/`department_id`, dated recipient/actor snapshots | Current allocations and retained history; schema 15, unique open allocation per Device; schema-17 guarded `closure_movement_id` |
+| `device_equipment_associations` | numbered `id`, original `device_assignment_id`, unique accessory `issue_entry_id`, operation key/hash, dated actor snapshot | Schema 18 explicit links only; no copied quantities, automatic association or stock movement |
 | `inventory_devices` | `id`, case-insensitive unique `name`, `record_json`, `revision`, `ordinal` | Device identity, variable device properties, optimistic revision and original list order |
 | `inventory_subnets` | `id`, `record_json`, `ordinal` | Subnet records |
 | `inventory_vlans` | `id`, `record_json`, `ordinal` | VLAN records |

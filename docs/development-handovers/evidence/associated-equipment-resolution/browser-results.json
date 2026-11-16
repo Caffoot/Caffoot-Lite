@@ -1,0 +1,48 @@
+{
+  "checks": [
+    "Separate Device Tab",
+    "Assigned To Preserved",
+    "Explicit Links Only",
+    "Issue And Associate",
+    "Selected Item Availability",
+    "Associate Existing Without Deduction",
+    "Exact Recipient Choices",
+    "Read Only",
+    "Feature-Off Privacy",
+    "Desktop/Mobile Light/Dark",
+    "No Page Errors",
+    "Missing Issued Quantity Without Return"
+  ],
+  "pageErrors": [],
+  "screenshots": [
+    "add-equipment-ready-desktop-light.png",
+    "add-equipment-ready-desktop-dark.png",
+    "add-equipment-ready-mobile-light.png",
+    "add-equipment-ready-mobile-dark.png",
+    "add-equipment-existing-desktop-light.png",
+    "add-equipment-existing-desktop-dark.png",
+    "add-equipment-existing-mobile-light.png",
+    "add-equipment-existing-mobile-dark.png",
+    "associated-equipment-desktop-light.png",
+    "associated-equipment-desktop-dark.png",
+    "associated-equipment-mobile-light.png",
+    "associated-equipment-mobile-dark.png",
+    "missing-issued-quantity-desktop-light.png",
+    "missing-issued-quantity-desktop-dark.png",
+    "missing-issued-quantity-mobile-light.png",
+    "missing-issued-quantity-mobile-dark.png"
+  ],
+  "sourceParent": "d99d8485f0953f2ac3976a744273be6e6d51cbf8",
+  "sourceHashes": {
+    "interface/application.js": "21ec6f63580d6a2f9fe2aa287e37c60e4041249300a9d0b4a9810cf25152b86a",
+    "interface/equipment.js": "ee3fdd56f266b36c75e61923854b4e7847553f82ea293af7aaed0226a77a1e55",
+    "interface/stock-intake.js": "fb3d03b83ff02bc9016b91028739e9e27654670265283600d57f95168d3d2a19",
+    "interface/screens/devices.html": "04ee7e74df4120d69a4570b0c71991232e217eb3811b016188f55ed15a25dd9b",
+    "interface/styles/equipment.css": "9f22d56c8f36f91ef07070f0a387deaef42f9b091efc76fe9dea8262a462fe25",
+    "interface/styles/stock.css": "a16fdb7450f382cfcc3b79edd8c9ee9ec777f8df104f0df9fc4e82ac287cb00d",
+    "backend/equipment_associations.py": "8a8b681c795454ba490d01c82a543a594aef15bc9232b7063eb264df5cc7acf8",
+    "backend/stock_circulation.py": "4e3b923ce219b24e90bf5c18f3f154de2a02a0430651155e3153fa52d284461a",
+    "backend/device_stock.py": "fac4859ddff9064ec2a4dcddd83f1854015c01728ec38e8f07689ffaebf33f72",
+    "backend/device_assignments.py": "394334fa00f05b343e01a9cbb434f8cb429bcd0fee3eb7401e47116abfe079ae"
+  }
+}

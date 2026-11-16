@@ -272,7 +272,8 @@ async function test(){
  await page.locator('#device-details-tab-assigned').click();
  await page.locator('#device-details-panel-assigned').getByText('Alex Morgan',{exact:true}).first().waitFor();
  assert.equal(await page.locator('.device-review-footer button').count()>=4,true);
- assert.equal(await page.locator('#device-details-panel-assigned').getByRole('button',{name:/Return|Reassign/}).count(),0);
+ assert.equal(await page.locator('#device-details-panel-assigned').getByRole('button',{name:/Return/}).count(),0);
+ assert.equal(await page.locator('#device-details-panel-assigned').getByRole('button',{name:'Reassign Device',exact:true}).count(),1);
  for(const width of [1440,390]){
   await page.setViewportSize({width,height:width===390?844:950});
   for(const theme of ['light','dark']){await page.evaluate(theme=>caffootSetTheme(theme),theme);await capture(`device-${width}-${theme}`);}

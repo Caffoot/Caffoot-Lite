@@ -1,5 +1,99 @@
 # Milestone 01 Development Handover — v2.2 Target
 
+> **Batch 3.10 E review evidence, 16 November 2026:** D is pushed at
+> `b83e061211b2a4784f8db7198228241da0942940`; E changes docs/tests/CI only.
+> [36 genuine desktop/mobile light/dark captures](evidence/associated-equipment-final/Report.md)
+> match that runtime, preserving earlier evidence. **146 D tests, 64 adjacent
+> regressions and both final Chromium journeys passed.** The existing browser
+> Actions workflow includes direct handover and evidence upload. Updated draft
+> user instructions explain exact resolution/preparation/confirmation and rights.
+> The 988-definition index is current. Final-head Actions and exact E SHA are
+> recorded in [draft PR #391](https://github.com/Caffoot/Caffoot-Lite/pull/391).
+> No further product decision is open; owner review/native/private-data/Stage 6
+> acceptance remains. No merge, release or deployment.
+
+
+> **Batch 3.10 D complete, 16 November 2026:** the approved Reassign Device
+> action is in Assigned To and reuses the existing form/preparation controls.
+> Confirm Ready And Reassign commits the old/new canonical assignments,
+> preparation evidence and registered custody together. Failure preserves the
+> old holder. Devices-only operation remains independent; registered stock needs
+> both Edit gates. Schema 19 adds audited/successor references without weakening
+> physical-return safeguards or changing Schema 18. No fictional receipt,
+> held/Ready increase or Device property change occurs. **146 focused tests and
+> both association/direct Chromium journeys passed**, including 20 genuine
+> direct-handover captures. See [the contract and verification](../development-guide/Associated-Equipment.md#direct-handover-checkpoint-d).
+> E's permanent gallery, final instructions and final-head Actions follow this
+> pushed D checkpoint. Earlier dated notes retain their historical scope;
+> the placement decision below is resolved. No merge/release/deployment.
+
+
+> **Direct-handover approval and migration preparation, 16 November 2026:** the
+> owner approved [the exact placement/sequence](../development-guide/Direct-Handover-Decision.md)
+> and a narrow separate migration. Schema 19 adds canonical audit/successor links
+> and checked custody transfer without a receipt; the original physical closure
+> conditions remain intact. **58 focused migration/closure/stock/reissue tests
+> passed.** No direct-handover API or controls are exposed by this preparatory
+> checkpoint. D's writer/UI and E acceptance are next; no merge or release.
+
+> **Latest checkpoint, 16 November 2026 — safe partial D:** missing issued
+> quantity write-off uses the existing form and ledger, with no invented return
+> or held/Ready increase. Genuine reissue is blocked by any outstanding explicit
+> accessory, including former-assignment links. **102 focused tests (seven new)
+> and two Chromium journeys passed**, with [16 source-recorded captures](evidence/associated-equipment-resolution/Report.md).
+> Schema 18 and immutable stock/closure guards remain unchanged. The Function
+> Index has 978 definitions; syntax and diff checks passed. **D is incomplete;
+> E final acceptance is deferred.** The necessary direct-handover confirmation
+> placement/sequence needs [this precise owner decision](../development-guide/Direct-Handover-Decision.md).
+> No direct-handover endpoint or fictional receipt was introduced. Earlier accepted
+> evidence remains intact; no merge, release, deployment or production change.
+
+> **Latest checkpoint, 16 November 2026 — Batch 3.10 C complete:** the separately
+> approved Associated Equipment tab and both Add Equipment routes now use the
+> existing Device Details and stock form controls. Assigned To and Schema 18 are
+> unchanged; live Read/Edit gates, exact-recipient choices and feature-off privacy
+> remain enforced. **78 focused tests and two real Chromium journeys passed**,
+> with [12 genuine desktop/mobile light/dark captures and source hashes](evidence/associated-equipment/Report.md).
+> Draft user instructions and the 977-definition Function Index are updated.
+> D/E remain pending. Existing accepted evidence is preserved; no merge/release.
+
+> **Latest checkpoint, 16 November 2026 — Batch 3.10 B complete:** the same
+> `feat/associated-equipment-handovers` branch and [draft PR #391](https://github.com/Caffoot/Caffoot-Lite/pull/391)
+> now provide atomic issue-and-associate and exact-recipient existing-issue
+> association. Stock issue, links and the final audit share one transaction;
+> existing issues are never issued or deducted again. Schema 18 is unchanged.
+> **131 focused tests passed**, including 28 new helper/writer/HTTP tests covering
+> versions, eligibility, live rights/features/sessions, CSRF/MFA, rollback and
+> concurrent writes/retries. Python compilation and diff checks passed; the
+> Function Index has 974 definitions. See [the API contract and continuation](../development-guide/Associated-Equipment.md).
+> No B product blocker remains. C–E remain unstarted: existing screens, Assigned
+> To and accepted screenshots are untouched. No full local suite/browser/Docker
+> rerun, merge, release, deployment or production change is claimed. New-head
+> Actions are separate from Checkpoint A's independently verified green runs.
+
+> **Batch 3.10 B preparation, 16 November 2026:** continuing from verified
+> `51bd7a775e769888880729676973e25fd133ab8a` and its green Checkpoint A Actions.
+> The ordinary stock issue writer now delegates to a transaction-aware helper;
+> 65 focused stock/intake/registration/helper tests passed. Two helper tests
+> confirm caller-owned rollback and replay. The API and screens are unchanged;
+> Checkpoint B's combined writes and new request tests remain in progress.
+
+> **Latest checkpoint, 16 November 2026 — Batch 3.10 A:** started from verified
+> `milestone-1` commit `6276225e5d527c83f2ffaf36812ab7c7c5a5269f` after PR #390
+> merged. The `feat/associated-equipment-handovers` branch adds Schema 18's empty,
+> permanent explicit association table and a history API requiring both Devices
+> and IT Assets Read access. Stock and assignment guards, quantities, Assigned To,
+> My Equipment and all screens are unchanged. See [the source preflight, data/API
+> contract and precise continuation](../development-guide/Associated-Equipment.md).
+> Add Equipment (B), the new tab (C), preparation/reassignment (D) and final
+> documentation/screenshots/Actions (E) remain incomplete. The direct handover
+> sequence still needs source-faithful review before changing accepted closure
+> behaviour. Earlier accepted evidence is preserved; no merge or release is claimed.
+> Verification: **123 focused backend/HTTP/migration tests passed**, including
+> 16 new association tests; Python compilation and diff checks passed. The
+> Function Index has 972 definitions. No new browser/Docker collection or
+> screenshot capture was run for this backend-only checkpoint.
+
 > **Latest checkpoint, 16 November 2026:** Batch 3.8/PR #389 is merged at
 > `7f11598b50bbb1fbd11893a2ad34bc152ff12ed1`. Batch 3.9 is implemented on
 > `feat/it-assets-device-registration-reissue` in [draft PR #390](https://github.com/Caffoot/Caffoot-Lite/pull/390):

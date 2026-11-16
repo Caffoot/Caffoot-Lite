@@ -134,54 +134,61 @@ def read_stock_issues(connection, actor):
 
 
 def issue_stock(connection, actor, token, payload):
-    """Issue only selected ready stock to an eligible recipient under the write lock."""
-    fields={'operationId','stockItemId','version','quantity','stockUnitIds','recipientKind','recipientId','issuedOn','note'}
-    operation,digest=stock_operation(payload,fields,fields-{'stockUnitIds'})
-    key='stock:issue:'+str(actor)+':'+operation
+    """Keep the ordinary issue route's validation and commit boundary intact."""
     connection.execute('BEGIN IMMEDIATE')
     try:
-        stock_write_access(connection,actor,token)
-        replay=stock_replay(connection,key,digest)
-        if replay is not None:
-            connection.commit()
-            return replay
-        item=stock_item(connection,payload['stockItemId'])
-        if payload['version']!=item['version']:
-            raise FileExistsError('Stock changed. Reload the selected item before issuing equipment.')
-        quantity=stock_quantity(payload['quantity'],'Quantity To Issue',1)
-        if quantity>item['balances']['readyToIssue']:
-            raise ValueError('Quantity To Issue exceeds this item’s Ready To Issue balance')
-        recipient=stock_recipient(connection,payload['recipientKind'],payload['recipientId'])
-        issued=stock_event_date(payload['issuedOn'],'Date Issued')
-        note=stock_text(payload['note'],'Issue Note',2000)
-        if item['trackingMode']=='quantity':
-            if quantity>item['quantityStateBalances'].get('ready',0):
-                raise ValueError('Quantity To Issue exceeds this item’s unregistered Ready balance')
-            if 'stockUnitIds' in payload:
-                raise ValueError('Quantity stock does not accept individual selections')
-            entries=[dict(stock_item_id=item['id'],quantity=quantity)]
-        else:
-            selected=payload.get('stockUnitIds')
-            if (not isinstance(selected,list) or any(not isinstance(identity,str) for identity in selected)
-                    or len(selected)!=quantity or len(set(selected))!=quantity):
-                raise ValueError('Select each individual unit to issue')
-            available={unit['id']:unit for unit in item['units'] if unit['ready'] and not unit['deviceLinked']}
-            if set(selected)-available.keys():
-                raise ValueError('Selected equipment is unavailable or requires the Device reissue workflow')
-            entries=[dict(stock_unit_id=identity,quantity=1,
-                          snapshot_json=stock_movement_snapshot(item,available[identity])) for identity in selected]
-        for entry in entries:
-            entry.update(recipient,from_state='ready',to_state='issued')
-            entry.setdefault('snapshot_json',stock_movement_snapshot(item))
-        movement=connection.execute('SELECT coalesce(max(id),0)+1 FROM it_asset_stock_movements').fetchone()[0]
-        result=dict(stockItemId=item['id'],movementId=movement,issuedQuantity=quantity)
-        publish_stock_movement(connection,actor,key,'issued',entries,
-            dict(operationHash=digest,result=result,stockItemId=item['id'],note=note),event_date=issued)
+        result = issue_stock_in_transaction(connection, actor, token, payload)
         connection.commit()
         return result
     except BaseException:
         connection.rollback()
         raise
+
+
+def issue_stock_in_transaction(connection, actor, token, payload, *, operation_key=None):
+    """Issue selected Ready stock without committing part of a combined save."""
+    if not connection.in_transaction:
+        raise RuntimeError('Stock issue requires an active write transaction')
+    fields={'operationId','stockItemId','version','quantity','stockUnitIds','recipientKind','recipientId','issuedOn','note'}
+    operation,digest=stock_operation(payload,fields,fields-{'stockUnitIds'})
+    key=operation_key or 'stock:issue:'+str(actor)+':'+operation
+    stock_write_access(connection,actor,token)
+    replay=stock_replay(connection,key,digest)
+    if replay is not None:
+        return replay
+    item=stock_item(connection,payload['stockItemId'])
+    if payload['version']!=item['version']:
+        raise FileExistsError('Stock changed. Reload the selected item before issuing equipment.')
+    quantity=stock_quantity(payload['quantity'],'Quantity To Issue',1)
+    if quantity>item['balances']['readyToIssue']:
+        raise ValueError('Quantity To Issue exceeds this item’s Ready To Issue balance')
+    recipient=stock_recipient(connection,payload['recipientKind'],payload['recipientId'])
+    issued=stock_event_date(payload['issuedOn'],'Date Issued')
+    note=stock_text(payload['note'],'Issue Note',2000)
+    if item['trackingMode']=='quantity':
+        if quantity>item['quantityStateBalances'].get('ready',0):
+            raise ValueError('Quantity To Issue exceeds this item’s unregistered Ready balance')
+        if 'stockUnitIds' in payload:
+            raise ValueError('Quantity stock does not accept individual selections')
+        entries=[dict(stock_item_id=item['id'],quantity=quantity)]
+    else:
+        selected=payload.get('stockUnitIds')
+        if (not isinstance(selected,list) or any(not isinstance(identity,str) for identity in selected)
+                or len(selected)!=quantity or len(set(selected))!=quantity):
+            raise ValueError('Select each individual unit to issue')
+        available={unit['id']:unit for unit in item['units'] if unit['ready'] and not unit['deviceLinked']}
+        if set(selected)-available.keys():
+            raise ValueError('Selected equipment is unavailable or requires the Device reissue workflow')
+        entries=[dict(stock_unit_id=identity,quantity=1,
+                      snapshot_json=stock_movement_snapshot(item,available[identity])) for identity in selected]
+    for entry in entries:
+        entry.update(recipient,from_state='ready',to_state='issued')
+        entry.setdefault('snapshot_json',stock_movement_snapshot(item))
+    movement=connection.execute('SELECT coalesce(max(id),0)+1 FROM it_asset_stock_movements').fetchone()[0]
+    result=dict(stockItemId=item['id'],movementId=movement,issuedQuantity=quantity)
+    publish_stock_movement(connection,actor,key,'issued',entries,
+        dict(operationHash=digest,result=result,stockItemId=item['id'],note=note),event_date=issued)
+    return result
 
 
 def stock_unit_states(connection, identity):
@@ -546,17 +553,22 @@ def write_off_stock(connection, actor, token, payload):
             if type(identity) is not int or identity<1:
                 raise ValueError('Invalid original issue')
             source=next((row for row in stock_issue_records(connection) if row['id']==identity),None)
-            if source is None or source['stockUnitId'] is None or source['outstanding']!=1 or quantity!=1 or state!='issued':
-                raise ValueError('Select one outstanding individually identified issue')
+            if (source is None or source['outstanding']<1
+                    or (source['stockUnitId'] is not None and quantity!=1) or state!='issued'):
+                raise ValueError('Select a genuinely outstanding issued quantity or one individually identified issue')
             if source['version']!=payload['version']:
                 raise FileExistsError('The outstanding issue changed. Reload before writing it off.')
+            if quantity>source['outstanding']:
+                raise ValueError('Quantity To Write Off exceeds this original issue’s outstanding quantity')
             if written<source['issuedOn']:
                 raise ValueError('Date Written Off cannot precede the original issue')
             if source['deviceAssignmentId']:
                 device_id=connection.execute('SELECT device_id FROM it_asset_stock_units WHERE id=?',(source['stockUnitId'],)).fetchone()[0]
                 require_stock_device_edit(connection,actor,device_id)
                 closures=[(source['deviceAssignmentId'],device_id)]
-            entries=[dict(stock_unit_id=source['stockUnitId'],quantity=1,from_state='issued',
+            item_id=source['stockItemId']
+            entries=[dict({('stock_unit_id' if source['stockUnitId'] else 'stock_item_id'):
+                source['stockUnitId'] or source['stockItemId']},quantity=quantity,from_state='issued',
                 source_issue_entry_id=source['id'],staff_id=source['staffId'],department_id=source['departmentId'],
                 recipient_label=source['recipientLabel'],snapshot_json=stock_json(source['specification']))]
             if source['deviceAssignmentId']:
@@ -614,6 +626,10 @@ def stock_movement_history(connection, actor, *, staff_id=None, department_id=No
         if (staff_id is not None or department_id is not None) and device:
             continue
         metadata=json.loads(details)
+        if metadata.get('directHandover') is True:
+            if new!='issued':
+                continue
+            kind='reassigned'
         original_source=metadata.get('sourceIssueEntryId')
         if source is None and type(original_source) is int:
             source=original_source
@@ -628,6 +644,8 @@ def stock_movement_history(connection, actor, *, staff_id=None, department_id=No
             sourceIssueEntryId=source,recipientLabel=holder,name=original.get('name','Equipment'),
             stockItemId=item or unit_item,deviceId=device,
             checks=metadata.get('checks'),note=metadata.get('note',metadata.get('notes',''))))
+        if metadata.get('directHandover') is True:
+            events[-1].update(directHandover=True,fromState='issued')
         if metadata.get('physicalReturnConfirmed') is True:
             events[-1].update(physicalReturnConfirmed=True,returnOrigin='unassigned_device')
     return events

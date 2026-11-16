@@ -108,6 +108,62 @@ async function main(){
  await page.locator('[data-action="tab-it-assets"]').waitFor({state:'visible'});
  await page.locator('[data-action="tab-it-assets"]').click();
  await page.locator('#stock-receipt-form').waitFor();
+ // All full-page stock workflows use the approved right-aligned Cancel / orange primary footer.
+ for(const [tabName,formId,submitText] of [
+   ['receive','stock-receipt-form','Record Receipt'],
+   ['issue','stock-issue-form','Issue Equipment'],
+   ['return','stock-return-form','Record Return'],
+   ['writeoff','stock-writeoff-form','Record Write Off'],
+   ['reissue','stock-reissue-form','Reissue Existing Device']
+ ]){
+   // On fresh installations Devices is disabled until explicitly enabled.
+   if(tabName==='reissue'&&await page.locator('#stock-tab-reissue').count()===0)continue;
+   if(tabName!=='receive')await stockTab(tabName);
+   const form=page.locator('#'+formId);
+   await form.waitFor();
+   const footer=form.locator(':scope > .stock-form-actions');
+   assert.deepEqual((await footer.locator('button').allTextContents()).map(value=>value.trim()),['Cancel',submitText]);
+   assert.equal(await footer.locator('[type="submit"]').getAttribute('class'),'btn btn-primary');
+   for(const theme of ['light','dark']){
+    await page.evaluate(theme=>caffootSetTheme(theme),theme);
+    assert.equal(await footer.locator('[type="submit"]').evaluate(button=>getComputedStyle(button).backgroundColor),'rgb(237, 133, 50)',formId+' primary action must be orange in '+theme);
+    assert.equal(await footer.locator('[type="submit"]').evaluate(button=>getComputedStyle(button).color),'rgb(255, 255, 255)',formId+' primary action must have white text in '+theme);
+   }
+   await page.evaluate(()=>caffootSetTheme('light'));
+   assert.equal(await footer.evaluate(node=>getComputedStyle(node).justifyContent),'flex-end');
+   assert.equal(await form.locator('button[type="reset"]').count(),0);
+   await footer.locator('[data-stock-action="cancel-stock"]').click();
+   assert.equal(await page.locator('#discard-dialog').count(),0,'Unchanged '+tabName+' cancels immediately');
+   assert.equal(await page.locator('#stock-tab-inventory').getAttribute('aria-selected'),'true');
+ }
+ await stockTab('receive');
+ const receiptGaps=await page.locator('#stock-receipt-form').evaluate(form=>{
+  const choice=form.querySelector('.preview-details-actions[role="group"]');
+  const newFields=form.querySelector('#stock-new-fields');
+  const initialFields=newFields.querySelector(':scope > .staff-fields');
+  const specifications=form.querySelector('#stock-computer-fields');
+  return {choice:newFields.getBoundingClientRect().top-choice.getBoundingClientRect().bottom,
+    specifications:specifications.getBoundingClientRect().top-initialFields.getBoundingClientRect().bottom};
+ });
+ assert.ok(receiptGaps.choice>=18,'Receive Stock mode buttons need clear spacing before fields: '+JSON.stringify(receiptGaps));
+ assert.ok(receiptGaps.specifications>=18,'Shared Computer Specifications needs subsection spacing: '+JSON.stringify(receiptGaps));
+ await stockTab('return');
+ const returnGaps=await page.locator('#stock-return-form').evaluate(form=>({
+  originalIssue:form.querySelector('.staff-fields').getBoundingClientRect().top-form.querySelector('#stock-original-issue').getBoundingClientRect().bottom,
+  returnNoteMargin:parseFloat(getComputedStyle(form.querySelector('.stock-card-stack>.card>.preview-form-field:last-child')).marginTop)
+ }));
+ assert.ok(returnGaps.originalIssue>=16,'Original issue and return fields need separation: '+JSON.stringify(returnGaps));
+ assert.ok(returnGaps.returnNoteMargin>=16,'Return notes need section spacing: '+JSON.stringify(returnGaps));
+ await stockTab('receive');
+ await page.locator('#stock-supplier').fill('Discard this unsaved delivery');
+ await page.locator('#stock-receipt-form [data-stock-action="cancel-stock"]').click();
+ await page.locator('#discard-dialog').waitFor();
+ await page.locator('#discard-dialog [data-action="keep-editing"]').click();
+ assert.equal(await page.locator('#stock-supplier').inputValue(),'Discard this unsaved delivery');
+ await page.locator('#stock-receipt-form [data-stock-action="cancel-stock"]').click();
+ await page.locator('#discard-dialog [data-action="discard-device-form-changes"]').click();
+ assert.equal(await page.locator('#stock-tab-inventory').getAttribute('aria-selected'),'true');
+ await stockTab('receive');
  await newComputer(16,10,'Fictional Supplier A');
  await page.locator('#stock-receivedOn').fill('2026-11-13');
  await page.locator('#stock-notes').fill('First fictional delivery');
@@ -135,6 +191,8 @@ async function main(){
  await stockTab('receive');await page.locator('[data-stock-action="mode-new"]').click();
  await page.locator('#stock-category').selectOption('Monitor');
  await page.locator('#stock-trackingMode').selectOption('individual');
+ const individualGap=await page.locator('#stock-receipt-form').evaluate(form=>form.querySelector('#stock-individual-fields').getBoundingClientRect().top-form.querySelector('#stock-new-fields').getBoundingClientRect().bottom);
+ assert.ok(individualGap>=18,'Individual Equipment heading needs the same subsection spacing: '+individualGap);
  assert.equal(await page.locator('#stock-computer-fields').isVisible(),false);
  assert.equal(await page.locator('#stock-quantity').inputValue(),'1');
  await page.locator('#stock-manufacturer').fill('Fictional Displays');await page.locator('#stock-model').fill('Screen 27');
@@ -145,6 +203,21 @@ async function main(){
  await page.locator('#stock-serialNumber').fill('Fictional Serial 002');
  await save('stock-receipt-form','receive');
  assert.equal((await current(monitor)).item.units.length,2);
+ await details(computer);
+ const readinessActions=page.locator('#stock-readiness-form .stock-form-actions');
+ assert.deepEqual((await readinessActions.locator('button').allTextContents()).map(value=>value.trim()),['Cancel','Save Readiness Change']);
+ assert.equal(await readinessActions.locator('[type="submit"]').getAttribute('class'),'btn btn-primary');
+ assert.equal(await readinessActions.locator('[type="submit"]').evaluate(button=>getComputedStyle(button).backgroundColor),'rgb(237, 133, 50)');
+ await page.locator('#stock-reason').fill('Not saved');
+ await readinessActions.locator('[data-stock-action="cancel-readiness"]').click();
+ await page.locator('#discard-dialog').waitFor();
+ await page.keyboard.press('Escape');
+ assert.equal(await page.locator('#discard-dialog').count(),0,'Escape in discard confirmation keeps editing');
+ assert.equal(await page.locator('#stock-reason').inputValue(),'Not saved');
+ await readinessActions.locator('[data-stock-action="cancel-readiness"]').click();
+ await page.locator('#discard-dialog [data-action="discard-device-form-changes"]').click();
+ assert.equal(await page.locator('#stock-tab-inventory').getAttribute('aria-selected'),'true');
+ assert.equal(await page.locator('#stock-readiness-form').count(),0,'Cancelled readiness closes stock details');
  await details(computer);await page.locator('#stock-readyQuantity').fill('10');
  await page.locator('[name="itemsChecked"]').check();await page.locator('[name="conditionChecked"]').check();
  await save('stock-readiness-form','readiness');

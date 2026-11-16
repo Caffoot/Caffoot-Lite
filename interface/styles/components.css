@@ -468,3 +468,18 @@ html.dark #main-content .users-live button.btn.primary[data-role-command="create
 #sidebar.collapsed .preview-group-children,#app.collapsed #sidebar .preview-group-children{padding-left:0}
 #sidebar.collapsed .preview-group-chevron,#app.collapsed #sidebar .preview-group-chevron{display:none}
 @media(max-width:720px){#sidebar .preview-group-children{padding-left:0}#sidebar .preview-group-chevron{display:none}}
+
+/* Direct reassignment opens on Devices, without the Staff or IT Assets page styles. */
+.equipment-dialog #stock-reissue-form[data-direct-handover="true"] .staff-main-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:18px}
+.equipment-dialog #stock-reissue-form[data-direct-handover="true"] .stock-card-stack,.equipment-dialog #stock-reissue-form[data-direct-handover="true"] .staff-side-stack{display:grid;gap:17px;min-width:0}
+.equipment-dialog #stock-reissue-form[data-direct-handover="true"] .staff-fields{display:grid;grid-template-columns:minmax(0,1fr);row-gap:21px}
+.equipment-dialog #stock-reissue-form[data-direct-handover="true"] .preview-form-field{display:flex;flex-direction:column;gap:9px;min-width:0}
+.equipment-dialog #stock-reissue-form[data-direct-handover="true"] .preview-form-field>label{font-size:12px;line-height:18px;min-height:18px;margin:0}
+.equipment-dialog #stock-reissue-form[data-direct-handover="true"] .preview-form-field>.input{box-sizing:border-box;width:100%;min-width:0;min-height:42px;padding:10px 11px;margin:0;font-size:12px;line-height:20px}
+.equipment-dialog #stock-reissue-form[data-direct-handover="true"] .preview-form-field>textarea.input{height:auto;min-height:78px;resize:vertical}
+.equipment-dialog #stock-reissue-form[data-direct-handover="true"] .stock-check{display:flex;align-items:center;gap:9px;margin:12px 0;line-height:1.5}
+.equipment-dialog #stock-reissue-form[data-direct-handover="true"] .stock-check input{flex:none}
+.equipment-dialog #stock-reissue-form[data-direct-handover="true"] .preview-details-actions{display:flex;align-items:center;flex-wrap:wrap;gap:16px;margin-top:22px}
+.equipment-dialog #stock-reissue-form[data-direct-handover="true"] .preview-details-actions .btn{min-height:42px;padding:10px 18px}
+.equipment-dialog #stock-reissue-form[data-direct-handover="true"] > .assignment-modal-actions{display:flex;justify-content:flex-end;align-items:center;gap:16px;flex-wrap:wrap;margin-top:22px;padding:18px 0 0;border-top:1px solid var(--line)}
+.equipment-dialog #stock-reissue-form[data-direct-handover="true"] > .assignment-modal-actions .btn{min-height:42px;padding:10px 18px}

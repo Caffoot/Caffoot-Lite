@@ -52,6 +52,15 @@ class DeviceAssignmentHttpTests(unittest.TestCase):
             db.execute('DELETE FROM account_sessions WHERE account_id=2')
         self.assertEqual(self.request('/api/equipment/assignments', method='POST', actor=2, payload=self.payload)[0], 403)
 
+    def test_recipient_page_offset_and_request_validation(self):
+        status, result, _ = self.request('/api/equipment/recipients?kind=staff&offset=1', actor=2)
+        self.assertEqual(status, 200)
+        self.assertEqual(result['recipients'], [])
+        for offset in ('-1', 'not-a-number', '1.5', '1000001'):
+            self.assertEqual(self.request('/api/equipment/recipients?offset='+offset, actor=2)[0], 400)
+        self.assertEqual(self.request('/api/equipment/recipients?offset=0&offset=1', actor=2)[0], 400)
+        self.assertEqual(self.request('/api/equipment/recipients?offset=0', actor=3)[0], 403)
+
     def test_strict_request_shape_and_unimplemented_actions(self):
         self.assertEqual(self.request('/api/equipment/assignments', method='POST', raw=b'{"devices":[],"devices":[]}')[0], 400)
         self.assertEqual(self.request('/api/equipment/return', method='POST', payload={})[0], 404)

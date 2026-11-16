@@ -12,19 +12,20 @@ def require_assignment_access(connection, actor_id, *, edit=False):
         raise PermissionError('Devices Edit permission required' if edit else 'Devices Read permission required')
 
 
-def assignment_recipients(connection, actor_id, *, query='', kind='staff', limit=50, section='Devices'):
+def assignment_recipients(connection, actor_id, *, query='', kind='staff', limit=50, offset=0, section='Devices'):
     """Offer only eligible recipient names and IDs, without directory/contact data."""
     if section not in ('Devices', 'IT Assets') or not can_access(connection, actor_id, section, edit=True):
         raise PermissionError('Equipment Edit permission required')
     if kind not in ('staff', 'department') or not isinstance(query, str) or len(query) > 100:
         raise ValueError('Invalid recipient search')
-    if type(limit) is not int or not 1 <= limit <= 100:
+    if (type(limit) is not int or not 1 <= limit <= 100 or
+            type(offset) is not int or not 0 <= offset <= 1000000):
         raise ValueError('Invalid recipient limit')
     pattern = '%' + query.replace('!', '!!').replace('%', '!%').replace('_', '!_') + '%'
     if kind == 'staff':
-        rows = connection.execute("SELECT id,trim(first_name||' '||last_name) FROM staff_members WHERE active=1 AND trim(first_name||' '||last_name) LIKE ? ESCAPE '!' ORDER BY last_name,first_name,id LIMIT ?", (pattern, limit))
+        rows = connection.execute("SELECT id,trim(first_name||' '||last_name) FROM staff_members WHERE active=1 AND trim(first_name||' '||last_name) LIKE ? ESCAPE '!' ORDER BY last_name,first_name,id LIMIT ? OFFSET ?", (pattern, limit, offset))
     else:
-        rows = connection.execute("SELECT id,name FROM departments WHERE archived=0 AND name LIKE ? ESCAPE '!' ORDER BY name,id LIMIT ?", (pattern, limit))
+        rows = connection.execute("SELECT id,name FROM departments WHERE archived=0 AND name LIKE ? ESCAPE '!' ORDER BY name,id LIMIT ? OFFSET ?", (pattern, limit, offset))
     return [{'id': row[0], 'label': row[1] or 'Name Not Recorded', 'kind': kind} for row in rows]
 
 
@@ -93,25 +94,42 @@ def read_assignments(connection, actor_id, *, device_id=None, staff_id=None, dep
         WHERE a.{column}=? ORDER BY a.id DESC''', (value,))
     records = [(dict(zip(('id', 'deviceId', 'deviceName', 'staffId', 'departmentId', 'recipientLabel', 'assignedAt', 'actorId', 'actorLabel', 'endedAt'), row[:10])), row[10]) for row in rows] if device_access else []
     history = [record for record, label in records]
+    if device_access:
+        for record in history:
+            handover = connection.execute('''SELECT h.record_json FROM device_assignments a
+                JOIN inventory_change_history h ON h.id=a.handover_event_id WHERE a.id=?''', (record['id'],)).fetchone()
+            if handover:
+                event=json.loads(handover[0]); details=event['changes'][0]['after']
+                record['closure']=dict(kind='reassigned',date=details['handedOverOn'],actor=event['actor'],
+                                       readyConfirmed=details['readyConfirmed'],checks=details['checks'])
     if device_access and asset_access:
         for record in history:
             closure=connection.execute('''SELECT m.kind,m.event_date,m.actor_label
                 FROM device_assignments a JOIN it_asset_stock_movements m ON m.id=a.closure_movement_id
                 WHERE a.id=?''',(record['id'],)).fetchone()
-            if closure:
+            if closure and 'closure' not in record:
                 record['closure']=dict(kind=closure[0],date=closure[1],actor=closure[2])
     result = {'current': [{**record, 'recipientLabel': label} for record, label in records if record['endedAt'] is None], 'history': history,
               'canAssign': can_access(connection, actor_id, 'Devices', edit=True)}
     if device_id is not None:
         raw, revision = connection.execute('SELECT record_json,revision FROM inventory_devices WHERE id=?', (device_id,)).fetchone()
         result.update(dependency=device_assignment_dependency(connection, device_id, json.loads(raw)), revision=revision)
+        from backend.device_handovers import device_handover_context
+        result['handoverContext']=device_handover_context(connection,actor_id,device_id)
     if asset_access:
         from backend.stock_circulation import stock_issue_records,stock_movement_history,canonical_device_choice
         if device_id is not None:
             choice=canonical_device_choice(connection,device_id)
             from backend.device_stock import device_ready_for_reissue
+            from backend.equipment_associations import has_outstanding_associated_equipment
+            ready_for_reissue=device_ready_for_reissue(choice)
+            blocked_by_accessories=has_outstanding_associated_equipment(connection,device_id)
             result['canReissue']=(can_access(connection,actor_id,'Devices',edit=True)
-                and can_access(connection,actor_id,'IT Assets',edit=True) and device_ready_for_reissue(choice))
+                and can_access(connection,actor_id,'IT Assets',edit=True) and ready_for_reissue
+                and not blocked_by_accessories)
+            result['reissueBlockReason']=('Outstanding associated equipment must be returned or written off '
+                'before this Device can be reissued. Use Associated Equipment to resolve the original issues.'
+                if ready_for_reissue and blocked_by_accessories else None)
             original_issue=connection.execute('''SELECT e.id FROM it_asset_stock_entries e
                 JOIN it_asset_stock_movements m ON m.id=e.movement_id
                 WHERE e.device_assignment_id=? AND m.kind='issued' AND e.to_state='issued' ORDER BY e.id DESC LIMIT 1''',

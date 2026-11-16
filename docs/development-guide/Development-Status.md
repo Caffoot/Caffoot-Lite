@@ -1,14 +1,16 @@
 # Published and development versions
 
-> **Latest development checkpoint — 16 November 2026:** Batch 3.8/PR #389 is merged
-> on `milestone-1` at `7f11598b50bbb1fbd11893a2ad34bc152ff12ed1`. Batch 3.9
-> registration/reissue and approved optional hardware are implemented for review
-> in [draft PR #390](https://github.com/Caffoot/Caffoot-Lite/pull/390), with
-> [transaction/source mapping](Device-Stock-Registration-and-Reissue.md),
-> [draft instructions](../how-tos/features-and-instructions/v2.2-draft/Device-Stock-Registration-and-Reissue.md)
-> and [actual verification/gallery](../development-handovers/evidence/device-stock-registration/Report.md).
-> Local verification and changed-screen evidence are recorded; final-head Actions are linked in PR #390; no owner visual approval, merge, release or
-> deployment is claimed. Earlier dated checkpoints below retain their original status.
+> **Latest development checkpoint — 16 November 2026:** Batches 3.8/3.9 are
+> merged through PR #390 at `6276225e5d527c83f2ffaf36812ab7c7c5a5269f`.
+> Batch 3.10 associations and prepared canonical reassignment are implemented
+> on [draft PR #391](https://github.com/Caffoot/Caffoot-Lite/pull/391), schema 19.
+> The [contract](Associated-Equipment.md), [approved direct sequence](Direct-Handover-Decision.md),
+> [draft instructions](../how-tos/features-and-instructions/v2.2-draft/Associated-Equipment.md)
+> and [36-capture final review report](../development-handovers/evidence/associated-equipment-final/Report.md)
+> record the actual implementation and verification. Final-head Actions are
+> reported in PR #391. Owner visual acceptance, merge and release are not claimed;
+> native/private-data/Stage 6 acceptance remains deferred. Earlier dated source
+> checkpoints below retain their historical scope.
 
 
 Caffoot Lite **v2.1 is the published release**. Its tagged source is [c3237114108cad9f7d4e57657b6aed5e0091a5ef](https://github.com/Caffoot/Caffoot-Lite/tree/v2.1); it uses schema 10. The [published user guides](../how-tos/features-and-instructions/README.md) and [installation instructions](../../INSTALLATION.md) describe that release.
