@@ -23,6 +23,9 @@ Batch 3.8 adds [assignment-closure tests](../../tests/test_assignment_closure.py
 52 fictional desktop/mobile light/dark views when `CAFFOOT_CIRCULATION_CAPTURE=1`.
 See [the version-pinned report](../development-handovers/evidence/stock-circulation/Report.md)
 for actual commands, passes, skips, source hashes and separate owner visual review.
+The [unassigned-Device return tests](../../tests/test_unassigned_device_returns.py) and
+[real browser flow](../../tests/unassigned-device-return-interface.cjs) cover the separately
+approved 16 November correction, with [16 affected-screen captures and evidence](../development-handovers/evidence/unassigned-device-return/Report.md).
 These tests do not replace deferred native acceptance or Stage 6 verification.
 
 ## Archived audit and migration evidence

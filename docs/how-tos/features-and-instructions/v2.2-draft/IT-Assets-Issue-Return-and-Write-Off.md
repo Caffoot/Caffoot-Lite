@@ -43,6 +43,8 @@ The same canonical Device remains in Devices. Its original assignment closes per
 
 ### Return A Currently Unassigned Device
 
+[Changed-screen evidence and review status](../../../development-handovers/evidence/unassigned-device-return/Report.md#changed-screen-gallery--awaiting-owner-visual-acceptance).
+
 This correction was separately approved on 16 November and awaits review of its
 changed screens. Open the original **Device Details → Assigned To** tab and choose
 **Return Equipment**. Both Devices Edit and IT Assets Edit are required, with their

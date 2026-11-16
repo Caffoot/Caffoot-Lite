@@ -1,0 +1,24 @@
+OK: README.md
+OK: INSTALLATION.md
+OK: portainer-v2.1.yaml
+OK: docs/historical/release-notes/Release-Notes-v2.1.md
+OK: docs/historical/development-handovers/v2.1.md
+OK: docs/How To's/Features and Instructions/README.md
+OK: docs/how-tos/features-and-instructions/README.md
+OK: docs/development-guide/README.md
+Guide paths agree: Devices.md
+Guide paths agree: Getting-Started.md
+Guide paths agree: IPAM.md
+Guide paths agree: Migration-Backup-and-Restore.md
+Guide paths agree: README.md
+Guide paths agree: Racks.md
+Guide paths agree: Settings-and-Change-History.md
+Guide paths agree: Users-Permissions-and-MFA.md
+PASS: 7 affected Markdown files, 1050 local links/paths, 949 fragments, 0 embedded-image references (gallery links checked as paths).
+PASS: 945 Function Index names, source declaration locations and displayed line numbers.
+PASS: four changed runtime files match the capture source; final backend equals the full local test source.
+PASS: 52 schema/security/screen/style/installation files, all eight published guide pairs, historical records and all 52 owner-approved screenshots unchanged.
+PASS: 16 genuine PNG hashes/dimensions; no edited replacement images; source agreement verified.
+PASS: 158 Python files parsed, six application/two browser scripts syntax-checked, changed workflow YAML parsed and git diff --check.
+Reviewed: changed version boundaries, clear British English, Title Case labels, explicit confirmation, preparation-only result and no invented issue/holder.
+Limit: external links were not comprehensively crawled; the exact two owner approvals were fetched directly.

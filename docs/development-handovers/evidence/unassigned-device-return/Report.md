@@ -6,6 +6,68 @@ branch `feat/it-assets-issue-return-writeoff`, starting from verified
 `7f91f5d42feb3916cfab060abd5ca4b1558a92ba`; main remains
 `3d66c3ee6fd9d9c51ecbdd5822bc1c4fe98b8e7b`.
 
+## Final Local Review Position — 16 November 2026
+
+The approved correction is implemented for review. Runtime/capture source:
+`80b49fa3ae83ab93f137f432fa3aed52521842b5`. The later evidence commit changes no
+runtime. **Changed-screen owner acceptance and merge approval remain pending.**
+The original 52 owner-approved captures and all previous checkpoint commits remain.
+
+| Check | Actual Result |
+| --- | --- |
+| Focused backend, existing circulation, assignment and closure tests | **73 passed**; [log](backend-focused.log) |
+| Full local backend at `aa1f526` | **803 run: 799 passed, four skipped**, 140.934 s; [log](backend-final.log). Backend files are byte-identical in the final runtime. |
+| New real HTTPS/SQLite browser flow at `80b49fa` | **Passed, 16 genuine captures**, no page errors or document overflow; [log](browser-final.log), [results](browser-results.json) |
+| Existing real circulation browser regression | **Passed** during integration without replacement screenshots; [log](circulation-regression.log). Final CI reruns it with the existing browser suite. |
+| Documentation/source checks | [Actual check output](documentation-check.log); local paths/anchors/images, 945 Function Index declarations, eight unchanged compatibility pairs, screenshot hashes/dimensions, syntax and `git diff --check` |
+| Final GitHub Actions, including Docker | Current final-head results are recorded in [PR #389](https://github.com/Caffoot/Caffoot-Lite/pull/389); no local Docker rebuild was repeated. |
+
+The four backend skips are the opt-in Docker test (covered separately by CI), two
+unavailable private genuine v1.3.3 exports and Stage 6 complete-volume restore.
+Native Raspberry Pi/Safari acceptance, genuine legacy-export acceptance and Stage 6
+remain deferred. No release, deployment, production upgrade/restore, new stock
+workflow or Batch 3.9 work is claimed. External links were not comprehensively
+crawled; the two authoritative approvals were fetched directly before implementation.
+
+[Source checks](Source-Checks.json) pin the four changed runtime files and verify
+Schema 17, stock tables/triggers, roles/MFA/session/feature checks, screen fragments,
+all styles, installation files and published v2.1 documents against the reviewed
+baseline. The new journal/audit confirmation records physical possession, not an
+invented original issue, holder or receipt. Status/IP/Rack/Location and all existing
+Device/security/assignment records are preserved by focused and browser assertions.
+
+## Changed-Screen Gallery — Awaiting Owner Visual Acceptance
+
+All images are raw running-application captures with fictional data. Device Details
+uses 1440 × 1050 / 390 × 844 viewport captures; the Return form and Movement History
+use full-page captures at those widths. [The manifest](Capture-Manifest.json) records
+actual dimensions and hashes. Wide tables/tabs retain existing horizontal scrolling.
+
+| View | Desktop Light | Desktop Dark | Mobile Light | Mobile Dark |
+| --- | --- | --- | --- | --- |
+| Unassigned Device Details: Existing Return Action | [Light 1440](screenshots/device-details-unassigned-light-1440.png) | [Dark 1440](screenshots/device-details-unassigned-dark-1440.png) | [Light 390](screenshots/device-details-unassigned-light-390.png) | [Dark 390](screenshots/device-details-unassigned-dark-390.png) |
+| Preselected Device And Explicit Record Return Declaration | [Light 1440](screenshots/return-unassigned-device-light-1440.png) | [Dark 1440](screenshots/return-unassigned-device-dark-1440.png) | [Light 390](screenshots/return-unassigned-device-light-390.png) | [Dark 390](screenshots/return-unassigned-device-dark-390.png) |
+| Device Details: Genuine Return With No Invented Assignment | [Light 1440](screenshots/device-details-return-recorded-light-1440.png) | [Dark 1440](screenshots/device-details-return-recorded-dark-1440.png) | [Light 390](screenshots/device-details-return-recorded-light-390.png) | [Dark 390](screenshots/device-details-return-recorded-dark-390.png) |
+| Movement Details: Physical Confirmation Provenance | [Light 1440](screenshots/physical-return-provenance-light-1440.png) | [Dark 1440](screenshots/physical-return-provenance-dark-1440.png) | [Light 390](screenshots/physical-return-provenance-light-390.png) | [Dark 390](screenshots/physical-return-provenance-dark-390.png) |
+
+Representative light/dark desktop/mobile views were visually inspected against the
+existing Device Details table/action/modal conventions and the earlier approved
+Return Equipment form. No shared style or screen-fragment change was required.
+This is implementation review, not owner acceptance or a pixel-match claim. All
+16 images are provided for separate owner review; no generated mock-ups or edited
+screenshots replace actual captures. The earlier approved 52-image set is unchanged.
+
+## Preserved Correction Checkpoints
+
+| Checkpoint | Pushed Commit | Actual Checks |
+| --- | --- | --- |
+| Protected backend | `105e89a79ee1c6ac13be39e979d9749f1e43ecd0` | 73 focused tests passed |
+| Existing-form integration | `aa1f526e7cc7e430b2e5126caef4bee8cafd8691` | Both real focused browser flows passed; full local backend passed |
+| History presentation | `80b49fa3ae83ab93f137f432fa3aed52521842b5` | Focused browser passed; 16 refreshed committed-source captures passed |
+| Final documentation/evidence | Commit containing this report | Documentation checks; final PR Actions recorded separately |
+
+The sections below retain their then-current checkpoint results and limitations.
+
 ## Approval And Scope
 
 The [PR approval](https://github.com/Caffoot/Caffoot-Lite/pull/389#issuecomment-6907931718)

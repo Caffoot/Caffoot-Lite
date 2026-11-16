@@ -26,7 +26,9 @@ Schema 17 and all stock-table definitions/guards are unchanged.
 
 **Backend checkpoint:** 73 focused tests passed. The integrated interface now also
 passes the focused new browser flow and the existing complete circulation flow.
-Final full-suite/CI verification and committed-source captures remain pending. The first added empty-unit fixture used a non-UUID ID;
+The full local backend ran 803 tests (799 passed, four documented skips); 16 genuine
+affected-screen captures are pinned to `80b49fa3ae83ab93f137f432fa3aed52521842b5`.
+Final CI is recorded in PR #389; changed-screen owner acceptance remains pending. The first added empty-unit fixture used a non-UUID ID;
 it was corrected without changing the schema constraint. See [correction evidence](../development-handovers/evidence/unassigned-device-return/Report.md).
 
 ### Existing Interface Integration
