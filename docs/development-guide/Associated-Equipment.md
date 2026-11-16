@@ -2,8 +2,9 @@
 
 Checkpoint A of Batch 3.10 adds explicit accessory relationships and protected
 history reads. Checkpoint B adds atomic issue-and-associate and existing-issue
-association writes. The Device Details tab and reassignment safeguards remain
-pending. This is development work for v2.2, not a published feature.
+association writes. Checkpoint C integrates the separate tab and both routes
+within the existing Device Details and stock form controls. Full reassignment
+remains pending. This is development work for v2.2, not a published feature.
 
 ## Approved Scope And Source Preflight
 
@@ -200,15 +201,24 @@ results; previous green Checkpoint A Actions are not evidence for the new head.
 
 ## Continuation
 
-Checkpoint B is complete, with no unresolved B product decision. Screens and
-accepted visual evidence are untouched. Continue only when the next checkpoint
-is authorised:
+**Checkpoint C complete:** the additive Associated Equipment tab uses the same
+panels, table scrolling, typography and tab navigation as the existing Device
+Details. Assigned To is unchanged. The protected read projection now provides
+`canAdd`, a versioned eligible-holder `context` and unlinked `existingIssues` to
+editors only; read-only users receive no edit context/choices. History includes
+the original issue's actual return, readiness and write-off movements, read
+directly from the canonical ledger. Add Equipment reuses the stock issue form,
+keeps its recipient fixed and returns to the Device after saving either route.
+Both original backend writer contracts and Schema 18 are unchanged.
 
-1. **Checkpoint C:** add the separate Associated Equipment tab using the current
-   v2.1 Device Details layout and existing stock controls. Preserve Assigned To,
-   navigation, responsiveness, scrolling and feature-off privacy; run targeted
-   Chromium checks before pushing.
-2. **Checkpoint D:** all outstanding linked accessories must follow the existing
+78 focused backend/HTTP tests and both new/existing stock Chromium journeys
+passed. Twelve genuine desktop/mobile light/dark captures, source hashes and
+limits are in [the C evidence report](../development-handovers/evidence/associated-equipment/Report.md).
+The Function Index contains 977 definitions; JavaScript/Python syntax and diff
+checks passed. [Draft user instructions](../how-tos/features-and-instructions/v2.2-draft/Associated-Equipment.md)
+cover implemented behaviour. Existing accepted screenshots remain intact.
+
+1. **Checkpoint D:** all outstanding linked accessories must follow the existing
    actual Return Equipment checks/dispositions before a holder change. Workstation
    checks and explicit Ready confirmation are mandatory even for direct transfer.
    Existing assignment closure requires a physical stock fact; it cannot be
@@ -216,7 +226,7 @@ is authorised:
    missing-return/write-off handling and transaction/UI sequencing remain subject
    to the approval boundary above. Push completed safe work before requesting
    any required owner decision. Do not invent a preparation screen or receipt.
-3. **Checkpoint E:** finish draft user instructions, genuine changed-screen
+2. **Checkpoint E:** finish draft user instructions, genuine changed-screen
    desktop/mobile light/dark captures and applicable final-head GitHub Actions.
    Preserve all accepted earlier screenshots and deferred native acceptance.
 

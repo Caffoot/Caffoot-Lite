@@ -1,5 +1,14 @@
 # Milestone 01 Development Handover — v2.2 Target
 
+> **Latest checkpoint, 16 November 2026 — Batch 3.10 C complete:** the separately
+> approved Associated Equipment tab and both Add Equipment routes now use the
+> existing Device Details and stock form controls. Assigned To and Schema 18 are
+> unchanged; live Read/Edit gates, exact-recipient choices and feature-off privacy
+> remain enforced. **78 focused tests and two real Chromium journeys passed**,
+> with [12 genuine desktop/mobile light/dark captures and source hashes](evidence/associated-equipment/Report.md).
+> Draft user instructions and the 977-definition Function Index are updated.
+> D/E remain pending. Existing accepted evidence is preserved; no merge/release.
+
 > **Latest checkpoint, 16 November 2026 — Batch 3.10 B complete:** the same
 > `feat/associated-equipment-handovers` branch and [draft PR #391](https://github.com/Caffoot/Caffoot-Lite/pull/391)
 > now provide atomic issue-and-associate and exact-recipient existing-issue

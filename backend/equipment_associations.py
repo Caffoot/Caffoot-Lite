@@ -99,13 +99,32 @@ def read_equipment_associations(connection, actor_id, device_id):
         FROM device_equipment_associations l
         JOIN device_assignments a ON a.id=l.device_assignment_id
         WHERE a.device_id=? ORDER BY l.id DESC''', (device_id,)).fetchall()
-    issues = {issue['id']: issue for issue in stock_issue_records(connection)} if rows else {}
+    assignment = connection.execute('''SELECT a.id,a.staff_id,a.department_id,a.recipient_label,d.revision,
+        coalesce(s.active,1),coalesce(p.archived,0)
+        FROM device_assignments a JOIN inventory_devices d ON d.id=a.device_id
+        LEFT JOIN staff_members s ON s.id=a.staff_id LEFT JOIN departments p ON p.id=a.department_id
+        WHERE a.device_id=? AND a.ended_at IS NULL''', (device_id,)).fetchone()
+    can_add = bool(assignment and assignment[5] and not assignment[6]
+                  and all(can_access(connection, actor_id, section, edit=True) for section in ('Devices', 'IT Assets')))
+    issues = {issue['id']: issue for issue in stock_issue_records(connection)} if rows or can_add else {}
     history = [dict(id=identity, deviceAssignmentId=assignment, associatedAt=associated,
         actorId=actor, actorLabel=label, assignmentEndedAt=ended, issue=issues[issue])
         for identity, assignment, issue, associated, actor, label, ended in rows]
+    for record in history:
+        record['movements'] = [dict(kind=kind,date=date,quantity=quantity,actor=actor)
+            for kind,date,quantity,actor in connection.execute('''SELECT m.kind,m.event_date,sum(e.quantity),m.actor_label
+                FROM it_asset_stock_movements m JOIN it_asset_stock_entries e ON e.movement_id=m.id
+                WHERE e.source_issue_entry_id=? OR json_extract(m.checks_json,'$.sourceIssueEntryId')=?
+                GROUP BY m.id ORDER BY m.id''', (record['issue']['id'],record['issue']['id']))]
+    linked = {row[0] for row in connection.execute('SELECT issue_entry_id FROM device_equipment_associations')} if can_add else set()
+    context = (dict(deviceId=device_id,deviceRevision=assignment[4],deviceAssignmentId=assignment[0],
+                    staffId=assignment[1],departmentId=assignment[2],recipientLabel=assignment[3]) if can_add else None)
     return dict(current=[record for record in history
                          if record['assignmentEndedAt'] is None and record['issue']['outstanding'] > 0],
-                history=history)
+                history=history,canAdd=can_add,context=context,
+                existingIssues=[issue for issue in issues.values() if can_add and issue['outstanding']>0
+                    and issue['deviceAssignmentId'] is None and issue['id'] not in linked
+                    and (issue['staffId'],issue['departmentId'])==(assignment[1],assignment[2])])
 
 
 def add_associated_equipment(connection, actor_id, token, payload, *, issue_new=False):

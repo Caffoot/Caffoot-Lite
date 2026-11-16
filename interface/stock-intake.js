@@ -101,7 +101,7 @@
     generation++;detailRequest++;items=[];receipts=[];changes=[];issues=[];deviceAssignments=[];registeredDevices=[];deviceChoices=[];reissueDevices=[];movements=[];stockContext={};selectedRegisteredId=null;detail=null;loaded=false;loading=false;
   }
   async function stockRequest(path,payload){
-    const response=await fetch('/api/it-assets/'+path,{cache:'no-store',...(payload?{method:'POST',headers:{'Content-Type':'application/json','X-CSRF-Token':config.csrf},body:JSON.stringify(payload)}:{})});
+    const response=await fetch(path.startsWith('/api/')?path:'/api/it-assets/'+path,{cache:'no-store',...(payload?{method:'POST',headers:{'Content-Type':'application/json','X-CSRF-Token':config.csrf},body:JSON.stringify(payload)}:{})});
     const result=await response.json();
     if(!response.ok){
       if([401,403].includes(response.status)){clearStock();await config.refreshAccess();config.redraw();}
@@ -127,10 +127,10 @@
   }
   function renderStock(){
     if(!canRead())return stockNotice('IT Assets Not Available','The feature and IT Assets Read access are required.');
-    const title={receive:'Receive Stock',inventory:'Stock Inventory',history:'Receipt History',issue:'Issue Equipment',return:'Return Equipment',writeoff:'Write Off',reissue:'Reissue Existing Device',movements:'Movement History'}[tab];
+    const title={receive:'Receive Stock',inventory:'Stock Inventory',history:'Receipt History',issue:stockContext.association?'Add Equipment':'Issue Equipment',return:'Return Equipment',writeoff:'Write Off',reissue:'Reissue Existing Device',movements:'Movement History'}[tab];
     const total=items.reduce((sum,item)=>{for(const key of Object.keys(sum))sum[key]+=BigInt(item.balances[key]);return sum;},{physicallyHeld:0n,readyToIssue:0n,awaitingChecks:0n});
     for(const device of registeredDevices.filter(device=>!device.stockItemId)){total.physicallyHeld+=BigInt(['ready','awaiting_checks','awaiting_preparation'].reduce((sum,key)=>sum+(device.states[key]||0),0));total.readyToIssue+=BigInt(device.states.ready||0);total.awaitingChecks+=BigInt((device.states.awaiting_checks||0)+(device.states.awaiting_preparation||0));}
-    const tabs=[...(canEdit()?[['receive','Receive Stock']]:[]),['inventory','Stock Inventory'],...(canEdit()&&config.canEditDevices()?[["reissue","Reissue Existing Device"]]:[]),['history','Receipt History'],...(canEdit()?[['issue','Issue Equipment'],['return','Return Equipment'],['writeoff','Write Off']]:[]),['movements','Movement History']];
+    const tabs=[...(canEdit()?[['receive','Receive Stock']]:[]),['inventory','Stock Inventory'],...(canEdit()&&config.canEditDevices()?[["reissue","Reissue Existing Device"]]:[]),['history','Receipt History'],...(canEdit()?[['issue',stockContext.association?'Add Equipment':'Issue Equipment'],['return','Return Equipment'],['writeoff','Write Off']]:[]),['movements','Movement History']];
     return `<div class="users-live stock-live"><div class="section-page-header"><div class="eyebrow">IT Assets</div><div class="header"><div><h1>${title}</h1><p>Receive, issue and return equipment, record checks and retain its history.</p></div></div></div>
       <nav class="tabs" role="tablist" aria-label="IT Assets">${tabs.map(([key,label])=>`<button class="tab${tab===key?' active':''}" type="button" id="stock-tab-${key}" role="tab" aria-selected="${tab===key}" aria-controls="stock-panel" tabindex="${tab===key?'0':'-1'}" data-stock-action="tab" data-tab="${key}">${label}</button>`).join('')}</nav>
       <section class="stock-panel" id="stock-panel" role="tabpanel" aria-labelledby="stock-tab-${tab}">${error?stockNotice('Stock Could Not Be Loaded',error)+stockButton('Reload Stock','reload'):''}${!loaded?stockNotice('Loading Stock','Retrieving permitted stock records…'):stockMetrics(total)+(tab==='receive'?renderStockReceipt():tab==='inventory'?renderStockInventory():tab==='history'?renderStockHistory():tab==='reissue'?renderDeviceReissue():tab==='issue'?renderStockIssue():tab==='return'?renderStockReturn():tab==='writeoff'?renderStockWriteOff():renderStockMovements())}</section></div>`;
@@ -232,7 +232,7 @@
   document.addEventListener('click',event=>{
     const button=event.target.closest('[data-stock-action]');if(!button||!config)return;
     const action=button.dataset.stockAction;event.preventDefault();
-    if(action==='tab'){tab=button.dataset.tab;error='';config.redraw();document.getElementById('stock-tab-'+tab)?.focus();return;}
+    if(action==='tab'){if(stockContext.association&&button.dataset.tab!=='issue')stockContext={};tab=button.dataset.tab;error='';config.redraw();document.getElementById('stock-tab-'+tab)?.focus();return;}
     if(action==='reload'){void refreshStock();return;}
     if(action==='reissue-device'){if(canEdit()&&config.canEditDevices())openStockWorkflow('reissue',{deviceId:button.dataset.id});return;}
     if(action==='register-device'){if(canEdit()&&config.canEditDevices())config.registerDevice(button.dataset.id);return;}
@@ -290,13 +290,16 @@
   }
   function renderStockIssue(){
     if(!canEdit())return stockNotice('Read Only','IT Assets Edit is required to issue equipment.');
+    if(stockContext.association&&!config.canEditDevices())return stockNotice('Read Only','Devices Edit and IT Assets Edit are required to add equipment.');
+    const association=stockContext.association;
     const choices=items.map(item=>[item.id,stockLabel(item)+' · '+stockIssueReady(item)+' Ready']);
-    const content=`<div class="staff-fields">${stockSelect('Ready Equipment','issueItem',choices.length?choices:[['','No Stock Items']], 'required',stockContext.stockItemId)}${stockField('Quantity To Issue','issueQuantity','number','1','required min="1" step="1"')}
-      ${stockSelect('Assign To','recipientKind',[['staff','Staff Member'],['department','Department']], '',stockContext.recipientKind||'staff')}${stockField('Find A Recipient','recipientSearch','search','','maxlength="100"')}
-      ${stockSelect('Staff Member Or Department','recipientId',[['','Select An Eligible Recipient']], 'required')}${stockField('Date Issued','issuedOn','date',new Date().toLocaleDateString('en-CA'),'required')}</div>
-      <div id="stock-issue-unit-choices"></div>${stockNote('Issue Note (Optional)','issueNote')}<p class="formhint" id="stock-issue-validation" role="status"></p>`;
-    return stockWorkflowForm('issue','Issue Equipment','Choose ready stock and an eligible recipient. Individual equipment keeps its existing identity.',content,
-      '<div id="stock-issue-availability" aria-live="polite"></div><p class="formhint">Awaiting, issued and written-off equipment cannot be issued. No managed Device is created by this form.</p>','Issue Equipment');
+    const recipient=association?`<p class="formhint">Issued To: <strong>${safe(association.recipientLabel)}</strong>. Equipment is linked to this Device only when you save.</p>`:`${stockSelect('Assign To','recipientKind',[['staff','Staff Member'],['department','Department']], '',stockContext.recipientKind||'staff')}${stockField('Find A Recipient','recipientSearch','search','','maxlength="100"')}${stockSelect('Staff Member Or Department','recipientId',[['','Select An Eligible Recipient']], 'required')}`;
+    const methods=association?`${stockSelect('Add Equipment From','associationMethod',[['new','Issue And Associate'],['existing','Associate Already Issued Equipment']])}${recipient}<fieldset id="stock-association-existing" hidden disabled>${stockSelect('Already Issued Equipment','existingIssue',(stockContext.existingIssues||[]).map(issue=>[issue.id,issue.name+' · '+issue.outstanding+' Outstanding · Issued '+issue.issuedOn]).concat((stockContext.existingIssues||[]).length?[]:[['','No Eligible Issued Equipment']]),'required')}<p class="formhint">The entire outstanding original issue is linked. Stock is not issued or deducted again.</p></fieldset>`:'';
+    const content=`${methods}<fieldset id="stock-association-new"><div class="staff-fields">${stockSelect('Ready Equipment','issueItem',choices.length?choices:[['','No Stock Items']], 'required',stockContext.stockItemId)}${stockField('Quantity To Issue','issueQuantity','number','1','required min="1" step="1"')}
+      ${association?'':recipient}${stockField('Date Issued','issuedOn','date',new Date().toLocaleDateString('en-CA'),'required')}</div>
+      <div id="stock-issue-unit-choices"></div>${stockNote('Issue Note (Optional)','issueNote')}</fieldset><p class="formhint" id="stock-issue-validation" role="status"></p>`;
+    return stockWorkflowForm('issue',association?'Add Equipment':'Issue Equipment',association?'Use Ready stock or equipment already issued to this Device’s current holder.':'Choose ready stock and an eligible recipient. Individual equipment keeps its existing identity.',content,
+      '<div id="stock-issue-availability" aria-live="polite"></div><p class="formhint">Awaiting, issued and written-off equipment cannot be issued. No managed Device is created by this form.</p>',association?'Add Equipment':'Issue Equipment');
   }
   function stockReturnSources(){
     if(stockContext.returnSource?.startsWith('unassigned-device:')){
@@ -374,6 +377,10 @@
     }
     const issue=document.getElementById('stock-issue-form');
     if(issue){
+      const existing=issue.elements.associationMethod?.value==='existing';
+      const newFields=issue.querySelector('#stock-association-new'),existingFields=issue.querySelector('#stock-association-existing');
+      newFields.hidden=existing;newFields.disabled=existing;
+      if(existingFields){existingFields.hidden=!existing;existingFields.disabled=!existing;}
       const item=items.find(item=>item.id===issue.elements.issueItem.value),ready=stockIssueReady(item),individual=item?.trackingMode==='individual';
       if(issue.dataset.selected!==item?.id){issue.dataset.selected=item?.id||'';issue.querySelector('#stock-issue-unit-choices').innerHTML=individual?item.units.filter(unit=>unit.ready&&!unit.deviceLinked).map(unit=>`<label class="stock-check"><input type="checkbox" name="issueUnitIds" value="${safe(unit.id)}">${safe(unit.serialNumber||unit.assetTag||'Individual Unit '+unit.id.slice(0,8))}</label>`).join(''):'';}
       if(individual)issue.elements.issueQuantity.value=String(issue.querySelectorAll('[name="issueUnitIds"]:checked').length);
@@ -381,9 +388,10 @@
       const quantity=Number(issue.elements.issueQuantity.value),valid=Number.isSafeInteger(quantity)&&quantity>0&&quantity<=ready;
       issue.querySelector('#stock-issue-availability').textContent=(item?stockLabel(item):'No Equipment Selected')+' · '+ready+' Ready To Issue For This Item';
       issue.querySelector('#stock-issue-validation').textContent=valid?'':`Enter a whole quantity from 1 to ${ready}. Awaiting or already issued equipment is unavailable.`;
-      issue.querySelector('[type="submit"]').disabled=!valid||!issue.elements.recipientId.value;
-      const searchKey=issue.elements.recipientKind.value+'|'+issue.elements.recipientSearch.value;
-      if(issue.dataset.recipientQuery!==searchKey){issue.dataset.recipientQuery=searchKey;void loadStockRecipients(issue,searchKey);}
+      issue.querySelector('[type="submit"]').disabled=existing?!issue.elements.existingIssue.value:!valid||(!stockContext.association&&!issue.elements.recipientId.value);
+      if(existing){const original=(stockContext.existingIssues||[]).find(item=>String(item.id)===issue.elements.existingIssue.value);issue.querySelector('#stock-issue-availability').textContent=original?original.name+' · '+original.outstanding+' Outstanding · No Stock Deduction':'No Eligible Issued Equipment';issue.querySelector('#stock-issue-validation').textContent=original?'':'Select eligible equipment already issued to this exact holder.';}
+      if(!stockContext.association){const searchKey=issue.elements.recipientKind.value+'|'+issue.elements.recipientSearch.value;
+        if(issue.dataset.recipientQuery!==searchKey){issue.dataset.recipientQuery=searchKey;void loadStockRecipients(issue,searchKey);}}
     }
     const returned=document.getElementById('stock-return-form');
     if(returned){
@@ -448,10 +456,18 @@
       if(!device)throw Error('Select a Ready registered Device.');
       route='reissue-device';Object.assign(payload,{deviceId:device.deviceId,version:device.version,recipientKind:String(data.get('recipientKind')),recipientId:String(data.get('recipientId')),issuedOn:String(data.get('issuedOn')),note:String(data.get('issueNote')||'')});
     }else if(form.id==='stock-issue-form'){
+      if(stockContext.association&&data.get('associationMethod')==='existing'){
+        const original=(stockContext.existingIssues||[]).find(item=>String(item.id)===data.get('existingIssue'));
+        if(!original)throw Error('Select eligible already issued equipment.');
+        route='/api/equipment/associations';Object.assign(payload,{issueEntryId:original.id,version:original.version});
+      }else{
       const item=items.find(item=>item.id===data.get('issueItem'));
       if(!item)throw Error('Select ready equipment.');
       route='issue';Object.assign(payload,{stockItemId:item.id,version:item.version,quantity:Number(data.get('issueQuantity')),recipientKind:String(data.get('recipientKind')),recipientId:String(data.get('recipientId')),issuedOn:String(data.get('issuedOn')),note:String(data.get('issueNote')||'')});
       if(item.trackingMode==='individual')payload.stockUnitIds=data.getAll('issueUnitIds');
+      if(stockContext.association){route='/api/equipment/issue-and-associate';delete payload.recipientKind;delete payload.recipientId;}
+      }
+      if(stockContext.association){const context=stockContext.association;Object.assign(payload,{deviceId:context.deviceId,deviceRevision:context.deviceRevision,deviceAssignmentId:context.deviceAssignmentId});}
     }else if(form.id==='stock-return-form'){
       const source=stockSelectedReturn(form);if(!source)throw Error('Select an outstanding issue.');
       route='return';Object.assign(payload,{version:source.version,quantityReturned:Number(data.get('quantityReturned')),readyQuantity:Number(data.get('readyReturnQuantity')),writeOffQuantity:Number(data.get('writeOffReturnQuantity')),returnedOn:String(data.get('returnedOn')),checks:{cleanedWorking:data.get('cleanedWorking')==='on',dataPreparationConfirmed:data.get('dataPreparationConfirmed')==='on'},writeOffReason:String(data.get('writeOffReason')||''),note:String(data.get('returnNote')||'')});
@@ -468,13 +484,13 @@
       if(form.dataset.registered!=='true'&&detail.item.trackingMode==='individual')payload.stockUnitIds=data.getAll('prepareUnitIds');
     }
     pending=true;const controls=[...form.elements].map(control=>[control,control.disabled]);controls.forEach(([control])=>control.disabled=true);
-    try{await stockRequest(route,payload);stockContext={};if(route!=='preparation'){tab='inventory';detail=null;}await refreshStock();config.notify({'reissue-device':'Device reissued.',issue:'Equipment issued.',return:'Equipment return recorded.','write-off':'Equipment written off.',preparation:'Preparation recorded.'}[route]);}
+    try{const associated=stockContext.association;await stockRequest(route,payload);stockContext={};if(route!=='preparation'){tab='inventory';detail=null;}await refreshStock();if(associated)config.viewAssociations(associated.deviceId);config.notify(associated?'Equipment associated.':{'reissue-device':'Device reissued.',issue:'Equipment issued.',return:'Equipment return recorded.','write-off':'Equipment written off.',preparation:'Preparation recorded.'}[route]);}
     finally{pending=false;controls.forEach(([control,disabled])=>{if(control.isConnected)control.disabled=disabled;});}
   }
   function openStockWorkflow(action,context={}){
     if(!canEdit())return;
     stockContext={...context};tab=action;detail=null;selectedRegisteredId=null;
-    if(stockContext.returnSource?.startsWith('unassigned-device:'))loaded=false;
+    if(stockContext.association||stockContext.returnSource?.startsWith('unassigned-device:'))loaded=false;
     config.navigate();if(!loaded&&!loading)void refreshStock();else config.redraw();
   }
 

@@ -115,7 +115,12 @@ class EquipmentAssociationTests(unittest.TestCase):
 
     def test_same_recipient_does_not_infer_association_and_link_does_not_move_stock(self):
         issue = self.issued()
-        self.assertEqual(read_equipment_associations(self.db, 1, 'canonical'), dict(current=[], history=[]))
+        unlinked = read_equipment_associations(self.db, 1, 'canonical')
+        self.assertEqual(unlinked['current'], [])
+        self.assertEqual(unlinked['history'], [])
+        self.assertTrue(unlinked['canAdd'])
+        self.assertEqual(unlinked['existingIssues'], [issue])
+        self.assertEqual(unlinked['context']['deviceAssignmentId'], self.assignment)
         before = {table: self.db.execute('SELECT * FROM ' + table).fetchall() for table in
                   ('it_asset_stock_entries', 'it_asset_stock_movements', 'device_assignments', 'inventory_devices')}
         identity = self.link(issue)
@@ -248,6 +253,10 @@ class EquipmentAssociationTests(unittest.TestCase):
         self.db.execute("INSERT INTO account_permission_overrides VALUES(2,'Devices','read')")
         self.db.commit()
         self.assertEqual(len(read_equipment_associations(self.db, 2, 'canonical')['history']), 1)
+        readonly = read_equipment_associations(self.db, 2, 'canonical')
+        self.assertFalse(readonly['canAdd'])
+        self.assertIsNone(readonly['context'])
+        self.assertEqual(readonly['existingIssues'], [])
         self.assertNotIn('Association Technician', json.dumps(my_equipment(self.db, 2)))
         for feature in ('devices', 'it_assets'):
             self.db.execute('UPDATE organisation_features SET enabled=0 WHERE feature=?', (feature,))

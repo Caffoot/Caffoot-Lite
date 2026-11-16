@@ -4743,7 +4743,7 @@ function openIpModal(ip) {
                 field('Virtual disk (GB)', d.vmDiskGb) + field('Virtual network adapters', d.vmNicCount), false, 'These are the VM’s own allocated resources, not physical host hardware.') : '';
             const hardware = field('Manufacturer', d.manufacturer) + field('Model', d.model) + field('Serial number', d.serialNumber);
             const rackRows = d.rackShelfAccessoryId ? field('Rack Shelf',getRackShelfLocation(d)) : mounted ? field('Rack', rack.name) + field('Face', String(d.face || 'front').toLowerCase() === 'rear' ? 'Rear' : 'Front') + field('Start U', Number.isFinite(uStart) && uStart > 0 ? uStart : 'Not assigned') + field('U height', (Number(d.rackUHeight) || (uEnd-uStart+1) || 1) + 'U') : '';
-            openDeviceReviewModal(renderInterfaceTemplate("devices/open-device-detail-view-7",[safe(d.name),safe(d.type),safe(d.location),safe(status),[['overview','Overview'],...(showVirtualMachinesTab ? [['virtual-machines','Virtual Machines']] : []),...(!isVirtualDevice ? [['hardware','Hardware']] : []),['network','Network'],['software','Software'],['location','Location'],['assigned','Assigned To'],...(historyRows?[['history','History']]:[])].map(([key,label],i)=>`<button type="button" role="tab" id="device-details-tab-${key}" aria-controls="device-details-panel-${key}" aria-selected="${i===0?'true':'false'}" tabindex="${i===0?'0':'-1'}" data-action="select-device-details-tab" data-name="${key}" class="device-details-tab device-review-tab ${i===0?'device-details-tab-active':''}">${label}</button>`).join(''),section('Device Overview', 'fa-circle-info',
+            openDeviceReviewModal(renderInterfaceTemplate("devices/open-device-detail-view-7",[safe(d.name),safe(d.type),safe(d.location),safe(status),[['overview','Overview'],...(showVirtualMachinesTab ? [['virtual-machines','Virtual Machines']] : []),...(!isVirtualDevice ? [['hardware','Hardware']] : []),['network','Network'],['software','Software'],['location','Location'],['assigned','Assigned To'],...(window.caffootEquipment?.canReadAssociations()?[['associated','Associated Equipment']]:[]),...(historyRows?[['history','History']]:[])].map(([key,label],i)=>`<button type="button" role="tab" id="device-details-tab-${key}" aria-controls="device-details-panel-${key}" aria-selected="${i===0?'true':'false'}" tabindex="${i===0?'0':'-1'}" data-action="select-device-details-tab" data-name="${key}" class="device-details-tab device-review-tab ${i===0?'device-details-tab-active':''}">${label}</button>`).join(''),section('Device Overview', 'fa-circle-info',
                             field('Device name',d.name)+field('Type',d.type)+field('Status',status)+field('Primary IP',d.primaryIp)+field('Location Area',d.location)+field('Operating System',getEffectiveDevicePlatform(d)), false, 'Recorded identity and status'),isVirtualDevice ? virtualHardware :
                             section('At a Glance','fa-microchip',
                               field('Manufacturer',d.manufacturer)+field('Model',d.model)+field('Serial number',d.serialNumber)+
@@ -9473,6 +9473,7 @@ void (async () => {
     originalOpenDeviceDetailView(deviceId);
     updateDeviceEditorNotice(deviceId);
     void window.caffootEquipment.loadDeviceEquipment(String(deviceId));
+    void window.caffootEquipment.loadAssociatedEquipment(String(deviceId));
     // Refresh reservation ownership when details open; viewing itself never locks.
     void refreshCentralInventory(false).then(() => updateDeviceEditorNotice(deviceId))
       .catch(error => showToast(error.message, 'error'));
@@ -11096,6 +11097,7 @@ void (async () => {
     sessionCanEnterInventory=session.can_enter_inventory===true;
     window.caffootEquipment.configure({
       csrf:csrfToken,canRead:()=>!!permissions.Devices||!!permissions['IT Assets'],canEdit:()=>!!editPermissions.Devices,
+      canReadAssociations:()=>!!permissions.Devices&&!!permissions['IT Assets'],
       canIssueStock:()=>!!editPermissions['IT Assets'],
       openModal:html=>openModal(html),closeModal:()=>closeModal(true),
       viewDevice:id=>openDeviceDetailView(id),selectAssignedTab:()=>selectDeviceDetailsTab('assigned'),
@@ -11115,6 +11117,7 @@ void (async () => {
     window.caffootStockIntake.configure({csrf:csrfToken,canRead:()=>!!permissions['IT Assets'],
       canEdit:()=>!!editPermissions['IT Assets'],canEditDevices:()=>!!editPermissions.Devices,refreshAccess:refreshStockAccess,
       navigate:()=>{closeModal(true);switchTab('it-assets');},viewDevice:id=>openDeviceDetailView(id),
+      viewAssociations:id=>{closeModal(true);switchTab('devices');openDeviceDetailView(id);selectDeviceDetailsTab('associated');},
       registerDevice:id=>{closeModal(true);switchTab('devices');openDeviceModal();void loadDeviceStockSources(id);},
       redraw:()=>{if(currentTab==='it-assets')renderContent();},notify:(message,type)=>showToast(message,type)});
     await loadAccountProfile();
