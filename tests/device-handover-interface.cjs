@@ -206,9 +206,11 @@ async function main(){
  await page.locator('#stock-reissue-form[data-direct-handover]').waitFor();
  await page.keyboard.press('Escape');
  await page.locator('#modal-container.hidden').waitFor({state:'attached'});
+ assert.equal(await page.locator('#stock-reissue-form').count(),0,'Closed direct handover must leave no duplicate reissue form in the page');
  await page.locator('#sidebar [data-action="tab-it-assets"]').click();
  await page.getByRole('tab',{name:'Reissue Existing Device',exact:true}).click();
  await page.locator('#stock-reissue-form:not([data-direct-handover])').waitFor();
+ assert.equal(await page.locator('#stock-reissue-form').count(),1,'Only the actual stock reissue form remains');
  assert.equal(await page.locator('#stock-reissueDevice').count(),1,'Escape must clear prior Device handover context');
  await page.getByRole('tab',{name:'Movement History',exact:true}).click();
  await page.getByRole('cell',{name:'Reassigned',exact:true}).waitFor();
