@@ -201,6 +201,36 @@ results; previous green Checkpoint A Actions are not evidence for the new head.
 
 ## Continuation
 
+**Safe partial D checkpoint:** the [missing-equipment approval](https://github.com/Caffoot/Caffoot-Lite/issues/352#issuecomment-6913302245)
+is implemented through existing Write Off controls. A positive whole missing
+quantity, no greater than the original issued line's outstanding balance, moves
+directly from issued to written off. Original recipient, unit/item, quantity,
+date/reason/technician and immutable history are retained; no physical return or
+held/Ready increase occurs. Individually tracked issued write-off and returned
+damage dispositions retain their existing behaviour. Associated Equipment adds
+a shortcut to that same Write Off form.
+
+Genuine held-stock reissue now checks **all** outstanding linked accessories,
+including those on former closed assignments, under the existing write lock.
+Choices and Assigned To's reissue control are withheld until resolution. Actual
+physical return can still be recorded accurately before accessories are resolved.
+Workstation working/data preparation remains mandatory before physical reissue;
+accessories never follow the workstation automatically. The schema/ledger guards
+are unchanged; existing ledger transitions support the approved quantity extension.
+
+102 focused tests (seven new) and both Chromium journeys passed. See
+[the partial D report and 16 captures](../development-handovers/evidence/associated-equipment-resolution/Report.md).
+The new journey is added to the existing Chromium Actions workflow, with its
+normal read-only evidence upload. The Function Index has 978 definitions.
+
+**Direct handover is blocked on confirmation placement and sequence**, not on
+the already settled requirement to prepare equipment or resolve accessories.
+The existing closure guard requires a physical return/write-off, while the
+existing preparation/reissue form offers held stock only. The precise proposed
+reuse of those controls is in [the owner decision](Direct-Handover-Decision.md).
+No direct-handover endpoint, new screen, automatic Ready state or fictitious
+receipt is implemented. D is incomplete and E final acceptance remains deferred.
+
 **Checkpoint C complete:** the additive Associated Equipment tab uses the same
 panels, table scrolling, typography and tab navigation as the existing Device
 Details. Assigned To is unchanged. The protected read projection now provides

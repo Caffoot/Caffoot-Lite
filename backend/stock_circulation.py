@@ -553,17 +553,22 @@ def write_off_stock(connection, actor, token, payload):
             if type(identity) is not int or identity<1:
                 raise ValueError('Invalid original issue')
             source=next((row for row in stock_issue_records(connection) if row['id']==identity),None)
-            if source is None or source['stockUnitId'] is None or source['outstanding']!=1 or quantity!=1 or state!='issued':
-                raise ValueError('Select one outstanding individually identified issue')
+            if (source is None or source['outstanding']<1
+                    or (source['stockUnitId'] is not None and quantity!=1) or state!='issued'):
+                raise ValueError('Select a genuinely outstanding issued quantity or one individually identified issue')
             if source['version']!=payload['version']:
                 raise FileExistsError('The outstanding issue changed. Reload before writing it off.')
+            if quantity>source['outstanding']:
+                raise ValueError('Quantity To Write Off exceeds this original issue’s outstanding quantity')
             if written<source['issuedOn']:
                 raise ValueError('Date Written Off cannot precede the original issue')
             if source['deviceAssignmentId']:
                 device_id=connection.execute('SELECT device_id FROM it_asset_stock_units WHERE id=?',(source['stockUnitId'],)).fetchone()[0]
                 require_stock_device_edit(connection,actor,device_id)
                 closures=[(source['deviceAssignmentId'],device_id)]
-            entries=[dict(stock_unit_id=source['stockUnitId'],quantity=1,from_state='issued',
+            item_id=source['stockItemId']
+            entries=[dict({('stock_unit_id' if source['stockUnitId'] else 'stock_item_id'):
+                source['stockUnitId'] or source['stockItemId']},quantity=quantity,from_state='issued',
                 source_issue_entry_id=source['id'],staff_id=source['staffId'],department_id=source['departmentId'],
                 recipient_label=source['recipientLabel'],snapshot_json=stock_json(source['specification']))]
             if source['deviceAssignmentId']:

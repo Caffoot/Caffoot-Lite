@@ -5,6 +5,7 @@ import uuid
 from backend.audit_events import record_actor_event
 from backend.device_saves import create_device_in_transaction
 from backend.permissions import can_access
+from backend.equipment_associations import has_outstanding_associated_equipment
 from backend.stock_intake import (COMPUTER_TYPES, append_stock_fact, stock_item,
     stock_operation, stock_replay, stock_write_access, stock_text, stock_json)
 from backend.stock_circulation import (canonical_device_choice, require_stock_device_edit,
@@ -114,7 +115,8 @@ def reissue_device_choices(connection, actor):
     require_device_stock_access(connection, actor)
     return {'devices': [choice for identity, in connection.execute(
         'SELECT id FROM inventory_devices ORDER BY name,id')
-        if device_ready_for_reissue(choice := canonical_device_choice(connection, identity))]}
+        if device_ready_for_reissue(choice := canonical_device_choice(connection, identity))
+        and not has_outstanding_associated_equipment(connection,identity)]}
 
 
 def reissue_stock_device(connection, actor, token, payload):
@@ -137,6 +139,8 @@ def reissue_stock_device(connection, actor, token, payload):
             raise FileExistsError('Device or stock history changed. Reload before reissuing it.')
         if not device_ready_for_reissue(choice):
             raise ValueError('Choose an unassigned physical Device recorded as held and Ready To Issue')
+        if has_outstanding_associated_equipment(connection,device_id):
+            raise ValueError('Resolve all associated equipment through Return Equipment or Write Off before reissuing this Device')
         recipient = stock_recipient(connection, payload['recipientKind'], payload['recipientId'])
         issued = stock_event_date(payload['issuedOn'], 'Date Issued')
         note = stock_text(payload['note'], 'Issue Note', 2000)

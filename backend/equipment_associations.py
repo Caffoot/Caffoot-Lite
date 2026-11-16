@@ -203,3 +203,14 @@ def add_associated_equipment(connection, actor_id, token, payload, *, issue_new=
     except BaseException:
         connection.rollback()
         raise
+
+
+def has_outstanding_associated_equipment(connection, device_id):
+    """Count unresolved accessories across every former and current holder."""
+    return connection.execute('''SELECT coalesce(sum(e.quantity*
+        ((e.to_state IS 'issued')-(e.from_state IS 'issued'))),0)
+        FROM device_equipment_associations l
+        JOIN device_assignments a ON a.id=l.device_assignment_id
+        JOIN it_asset_stock_entries e ON e.id=l.issue_entry_id OR e.source_issue_entry_id=l.issue_entry_id
+        JOIN it_asset_stock_movements m ON m.id=e.movement_id
+        WHERE a.device_id=?''', (device_id,)).fetchone()[0] > 0

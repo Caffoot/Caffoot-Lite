@@ -110,8 +110,10 @@ def read_assignments(connection, actor_id, *, device_id=None, staff_id=None, dep
         if device_id is not None:
             choice=canonical_device_choice(connection,device_id)
             from backend.device_stock import device_ready_for_reissue
+            from backend.equipment_associations import has_outstanding_associated_equipment
             result['canReissue']=(can_access(connection,actor_id,'Devices',edit=True)
-                and can_access(connection,actor_id,'IT Assets',edit=True) and device_ready_for_reissue(choice))
+                and can_access(connection,actor_id,'IT Assets',edit=True) and device_ready_for_reissue(choice)
+                and not has_outstanding_associated_equipment(connection,device_id))
             original_issue=connection.execute('''SELECT e.id FROM it_asset_stock_entries e
                 JOIN it_asset_stock_movements m ON m.id=e.movement_id
                 WHERE e.device_assignment_id=? AND m.kind='issued' AND e.to_state='issued' ORDER BY e.id DESC LIMIT 1''',

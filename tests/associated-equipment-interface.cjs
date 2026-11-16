@@ -123,12 +123,25 @@ async function main(){
   }
   python('import sqlite3,sys;db=sqlite3.connect(sys.argv[1]);db.execute("UPDATE organisation_features SET enabled=1 WHERE feature=?",(sys.argv[2],));db.commit()',[database,feature]);
  }
+ await page.reload();await openDevice();await page.locator('#device-details-tab-associated').click();
+ await page.locator('[data-equipment-action="writeoff-associated"][data-id="'+identity.existing+'"]').click();
+ await page.locator('#stock-writeoff-form').waitFor();
+ assert.equal(await page.locator('#stock-writeOffQuantity').getAttribute('readonly'),null);
+ await page.locator('#stock-writeOffQuantity').fill('1');await page.locator('#stock-writeOffReason').fill('One mouse missing');
+ await captureChangedScreen('missing-issued-quantity','#stock-writeoff-form');
+ const beforeMissing=await read('/api/it-assets/stock/'+identity.item);
+ const missing=page.waitForResponse(response=>response.url().endsWith('/api/it-assets/write-off')&&response.request().method()==='POST');
+ await page.locator('#stock-writeoff-form [type="submit"]').click();assert.equal((await missing).status(),200);
+ const afterMissing=await read('/api/it-assets/stock/'+identity.item);
+ assert.deepEqual(afterMissing.item.balances,beforeMissing.item.balances,'Missing equipment never enters held or Ready stock');
+ const originalIssue=(await read('/api/it-assets/issues')).issues.find(issue=>issue.id===identity.existing);
+ assert.equal(originalIssue.quantity,2);assert.equal(originalIssue.outstanding,1);
  await reader.close();assert.deepEqual(errors,[]);
- const sourceFiles=['interface/application.js','interface/equipment.js','interface/stock-intake.js','interface/screens/devices.html','interface/styles/equipment.css','interface/styles/stock.css','backend/equipment_associations.py'];
+ const sourceFiles=['interface/application.js','interface/equipment.js','interface/stock-intake.js','interface/screens/devices.html','interface/styles/equipment.css','interface/styles/stock.css','backend/equipment_associations.py','backend/stock_circulation.py','backend/device_stock.py','backend/device_assignments.py'];
  const crypto=require('node:crypto');
  const sourceHashes=Object.fromEntries(sourceFiles.map(file=>[file,crypto.createHash('sha256').update(fs.readFileSync(path.join(root,file))).digest('hex')]));
- fs.writeFileSync(path.join(output,'browser-results.json'),JSON.stringify({checks:['Separate Device Tab','Assigned To Preserved','Explicit Links Only','Issue And Associate','Selected Item Availability','Associate Existing Without Deduction','Exact Recipient Choices','Read Only','Feature-Off Privacy','Desktop/Mobile Light/Dark','No Page Errors'],pageErrors:errors,screenshots:screens,sourceParent:spawnSync('git',['rev-parse','HEAD'],{cwd:root,encoding:'utf8'}).stdout.trim(),sourceHashes},null,2));
- console.log('PASS: Associated Equipment, both Add Equipment routes, permissions/privacy and 12 genuine responsive light/dark captures.');
+ fs.writeFileSync(path.join(output,'browser-results.json'),JSON.stringify({checks:['Separate Device Tab','Assigned To Preserved','Explicit Links Only','Issue And Associate','Selected Item Availability','Associate Existing Without Deduction','Exact Recipient Choices','Read Only','Feature-Off Privacy','Desktop/Mobile Light/Dark','No Page Errors','Missing Issued Quantity Without Return'],pageErrors:errors,screenshots:screens,sourceParent:spawnSync('git',['rev-parse','HEAD'],{cwd:root,encoding:'utf8'}).stdout.trim(),sourceHashes},null,2));
+ console.log('PASS: Associated Equipment, both Add Equipment routes, permissions/privacy and missing quantity write-off; captures: '+screens.length);
 }
 
 main().catch(async failure=>{

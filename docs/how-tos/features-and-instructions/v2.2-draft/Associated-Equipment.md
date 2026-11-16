@@ -24,9 +24,17 @@ refreshed. Saving returns you to the Device's Associated Equipment tab.
 Use **Return Equipment** for equipment physically handed back and record its
 actual checks and dispositions in the existing form. Returned equipment is not
 automatically Ready. Original issues and association history remain available.
+For a missing issued accessory, choose **Write Off** and select the actual missing
+quantity, date and reason. A missing quantity is written off directly from its
+original issue; it is never recorded as physically returned or Ready stock.
+Individually tracked equipment keeps its one original identity. Physically
+returned broken equipment continues through Return Equipment's damage disposition.
+Outstanding associated accessories must all be resolved before a prepared Device
+can be reissued from physical stock, even if its earlier assignment has closed.
 Read-only users cannot add or return equipment. The tab and its records are
 unavailable when either required feature or Read permission is missing.
 
-Workstation preparation and reassignment remain a separate, incomplete part of
-Batch 3.10. Do not treat this tab as approval to bypass checks or move accessories
-automatically to a new holder.
+Direct workstation handover remains an incomplete part of Batch 3.10, awaiting
+review of confirmation placement. Do not bypass checks or move accessories
+automatically to a new holder. Genuine physical return, preparation and reissue
+remain the existing workflow.

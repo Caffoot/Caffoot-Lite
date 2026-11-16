@@ -322,14 +322,14 @@
   function renderStockWriteOff(){
     if(!canEdit())return stockNotice('Read Only','IT Assets Edit is required to write off equipment.');
     const choices=[...items.map(item=>['item:'+item.id,stockLabel(item)+' · Stock Item']),
-      ...issues.filter(issue=>issue.stockUnitId&&!issue.deviceAssignmentId&&issue.outstanding===1).map(issue=>['issue:'+issue.id,issue.name+' · Issued To '+issue.recipientLabel]),
+      ...issues.filter(issue=>!issue.deviceAssignmentId&&issue.outstanding>0).map(issue=>['issue:'+issue.id,issue.name+' · Issued To '+issue.recipientLabel+' · '+issue.outstanding+' Outstanding']),
       ...(config.canEditDevices()?deviceChoices.filter(device=>!device.states.written_off).map(device=>['device:'+device.deviceId,device.name+' · Existing Device']):[])];
     const selected=stockContext.deviceId?'device:'+stockContext.deviceId:stockContext.issueEntryId?'issue:'+stockContext.issueEntryId:stockContext.stockItemId?'item:'+stockContext.stockItemId:null;
     const content=`${stockSelect('Equipment To Write Off','writeOffTarget',choices.length?choices:[['','No Eligible Equipment']], 'required',selected)}<div class="staff-fields">${stockSelect('Current State','writeOffState',[['','Select Equipment']],'required')}
       ${stockField('Quantity To Write Off','writeOffQuantity','number','1','required min="1" step="1"')}${stockField('Date Written Off','writtenOffOn','date',new Date().toLocaleDateString('en-CA'),'required')}
       ${stockField('Write-Off Reason','writeOffReason','text','','required maxlength="2000"')}</div><div id="stock-writeoff-unit-choices"></div>${stockNote('Write-Off Note (Optional)','writeOffNote')}
       <p class="formhint">This is a permanent historical action. The original equipment and holder history are retained. Other accessories are not written off automatically.</p>`;
-    return stockWorkflowForm('writeoff','Write Off Equipment','Record the actual equipment and a reason. Issued identified equipment is written off without a return to stock.',content,
+    return stockWorkflowForm('writeoff','Write Off Equipment','Record the actual equipment and a reason. Missing issued equipment is written off without a return to stock.',content,
       '<div id="stock-writeoff-summary" aria-live="polite"></div>','Record Write Off');
   }
   function stockPreparationRequirement(item,registered){
@@ -421,7 +421,7 @@
         if(kind==='device'&&item&&!Object.keys(states).length)options.push(['unrecorded',1]);
         writeoff.elements.writeOffState.innerHTML=options.map(([state,count])=>`<option value="${state}">${state==='unrecorded'&&item.deviceAssignmentId?'Currently Assigned':stockStateLabel(state)} · ${count}</option>`).join('');
       }
-      const state=writeoff.elements.writeOffState.value,individual=kind!=='item'||item?.trackingMode==='individual';
+      const state=writeoff.elements.writeOffState.value,individual=kind==='issue'?!!item?.stockUnitId:kind!=='item'||item?.trackingMode==='individual';
       const units=kind==='item'&&individual?item.units.filter(unit=>!unit.deviceLinked&&unit.balances[state]===1):[];
       const unitKey=writeoff.elements.writeOffTarget.value+'|'+state;
       if(writeoff.dataset.unitSelection!==unitKey){writeoff.dataset.unitSelection=unitKey;writeoff.querySelector('#stock-writeoff-unit-choices').innerHTML=units.map(unit=>`<label class="stock-check"><input type="checkbox" name="writeOffUnitIds" value="${safe(unit.id)}">${safe(unit.serialNumber||unit.assetTag||'Individual Unit '+unit.id.slice(0,8))}</label>`).join('');}

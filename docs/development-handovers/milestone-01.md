@@ -1,5 +1,17 @@
 # Milestone 01 Development Handover — v2.2 Target
 
+> **Latest checkpoint, 16 November 2026 — safe partial D:** missing issued
+> quantity write-off uses the existing form and ledger, with no invented return
+> or held/Ready increase. Genuine reissue is blocked by any outstanding explicit
+> accessory, including former-assignment links. **102 focused tests (seven new)
+> and two Chromium journeys passed**, with [16 source-recorded captures](evidence/associated-equipment-resolution/Report.md).
+> Schema 18 and immutable stock/closure guards remain unchanged. The Function
+> Index has 978 definitions; syntax and diff checks passed. **D is incomplete;
+> E final acceptance is deferred.** The necessary direct-handover confirmation
+> placement/sequence needs [this precise owner decision](../development-guide/Direct-Handover-Decision.md).
+> No direct-handover endpoint or fictional receipt was introduced. Earlier accepted
+> evidence remains intact; no merge, release, deployment or production change.
+
 > **Latest checkpoint, 16 November 2026 — Batch 3.10 C complete:** the separately
 > approved Associated Equipment tab and both Add Equipment routes now use the
 > existing Device Details and stock form controls. Assigned To and Schema 18 are

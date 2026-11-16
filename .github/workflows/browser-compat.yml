@@ -10,6 +10,7 @@ on:
       - "tests/stock-intake-interface.cjs"
       - "tests/stock-circulation-interface.cjs"
       - "tests/device-stock-interface.cjs"
+      - "tests/associated-equipment-interface.cjs"
       - "tests/device-storage-interface.cjs"
       - "tests/unassigned-device-return-interface.cjs"
       - "tests/pi-acceptance-corrections.cjs"
@@ -38,6 +39,7 @@ on:
       - "tests/stock-intake-interface.cjs"
       - "tests/stock-circulation-interface.cjs"
       - "tests/device-stock-interface.cjs"
+      - "tests/associated-equipment-interface.cjs"
       - "tests/device-storage-interface.cjs"
       - "tests/unassigned-device-return-interface.cjs"
       - "tests/pi-acceptance-corrections.cjs"
@@ -140,6 +142,20 @@ jobs:
           path: |
             ${{ runner.temp }}/device-stock-evidence
             ${{ runner.temp }}/device-storage-evidence
+          if-no-files-found: ignore
+          retention-days: 14
+      - name: Check associated equipment and missing issued quantities
+        env:
+          NODE_PATH: ${{ runner.temp }}/caffoot-browser-tests/node_modules
+          CAFFOOT_ASSOCIATION_OUTPUT: ${{ runner.temp }}/associated-equipment-evidence
+          CAFFOOT_ASSOCIATION_CAPTURE: "1"
+        run: node tests/associated-equipment-interface.cjs
+      - name: Save associated equipment evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: associated-equipment-chromium-${{ github.sha }}
+          path: ${{ runner.temp }}/associated-equipment-evidence
           if-no-files-found: ignore
           retention-days: 14
       - name: Check stock issue, returns, preparation, write-off and safe equipment views

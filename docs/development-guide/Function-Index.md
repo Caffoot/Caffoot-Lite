@@ -6,7 +6,7 @@ Scope: named JavaScript declarations/assignments in the six application scripts,
 
 The account hydration/photo functions now have purpose-based callable bindings matching their function names: `hydrateAccount` and `removeAccountPhoto`. The immutable design manifest retains its historical integration-entry names; those metadata names are not the runtime's current function map. Pinned source paths, revisions and hashes are unchanged.
 
-**Recorded definitions: 977.** Checked against the source in this commit. This remains a definition map, not a call graph. See [coding conventions](06-Coding-and-Naming-Conventions.md) and the [code reference](07-Function-and-Code-Reference.md).
+**Recorded definitions: 978.** Checked against the source in this commit. This remains a definition map, not a call graph. See [coding conventions](06-Coding-and-Naming-Conventions.md) and the [code reference](07-Function-and-Code-Reference.md).
 
 ## interface/loader.js
 
@@ -641,7 +641,7 @@ The account hydration/photo functions now have purpose-based callable bindings m
 | [`searchDevices`](../../interface/equipment.js#L109) | 109 |
 | [`leaveAssignmentDialog`](../../interface/equipment.js#L117) | 117 |
 | [`saveAssignment`](../../interface/equipment.js#L123) | 123 |
-| [`caffootEquipment.configure`](../../interface/equipment.js#L175) | 175 |
+| [`caffootEquipment.configure`](../../interface/equipment.js#L176) | 176 |
 
 ## interface/stock-intake.js
 
@@ -806,8 +806,8 @@ The account hydration/photo functions now have purpose-based callable bindings m
 | [`device_assignment_dependency`](../../backend/device_assignments.py#L31) | 31 |
 | [`assignment_device_choices`](../../backend/device_assignments.py#L49) | 49 |
 | [`read_assignments`](../../backend/device_assignments.py#L72) | 72 |
-| [`assign_devices`](../../backend/device_assignments.py#L136) | 136 |
-| [`my_equipment`](../../backend/device_assignments.py#L188) | 188 |
+| [`assign_devices`](../../backend/device_assignments.py#L138) | 138 |
+| [`my_equipment`](../../backend/device_assignments.py#L190) | 190 |
 
 ## backend/device_catalogue.py
 
@@ -1232,7 +1232,7 @@ The account hydration/photo functions now have purpose-based callable bindings m
 | [`stock_state_balance`](../../backend/stock_circulation.py#L465) | 465 |
 | [`canonical_device_choice`](../../backend/stock_circulation.py#L473) | 473 |
 | [`write_off_stock`](../../backend/stock_circulation.py#L493) | 493 |
-| [`stock_movement_history`](../../backend/stock_circulation.py#L604) | 604 |
+| [`stock_movement_history`](../../backend/stock_circulation.py#L609) | 609 |
 
 ## backend/stock_intake.py
 
@@ -1298,15 +1298,14 @@ The account hydration/photo functions now have purpose-based callable bindings m
 
 | Function | Line |
 | --- | ---: |
-| [`require_device_stock_access`](../../backend/device_stock.py#L14) | 14 |
-| [`registration_source_ready`](../../backend/device_stock.py#L22) | 22 |
-| [`device_stock_sources`](../../backend/device_stock.py#L27) | 27 |
-| [`validate_registration_identity`](../../backend/device_stock.py#L45) | 45 |
-| [`register_stock_device`](../../backend/device_stock.py#L63) | 63 |
-| [`device_ready_for_reissue`](../../backend/device_stock.py#L103) | 103 |
-| [`reissue_device_choices`](../../backend/device_stock.py#L113) | 113 |
-| [`reissue_stock_device`](../../backend/device_stock.py#L120) | 120 |
-
+| [`require_device_stock_access`](../../backend/device_stock.py#L15) | 15 |
+| [`registration_source_ready`](../../backend/device_stock.py#L23) | 23 |
+| [`device_stock_sources`](../../backend/device_stock.py#L28) | 28 |
+| [`validate_registration_identity`](../../backend/device_stock.py#L46) | 46 |
+| [`register_stock_device`](../../backend/device_stock.py#L64) | 64 |
+| [`device_ready_for_reissue`](../../backend/device_stock.py#L104) | 104 |
+| [`reissue_device_choices`](../../backend/device_stock.py#L114) | 114 |
+| [`reissue_stock_device`](../../backend/device_stock.py#L122) | 122 |
 
 ## backend/device_storage.py
 
@@ -1325,4 +1324,5 @@ The account hydration/photo functions now have purpose-based callable bindings m
 | [`migrate_equipment_associations`](../../backend/equipment_associations.py#L78) | 78 |
 | [`read_equipment_associations`](../../backend/equipment_associations.py#L89) | 89 |
 | [`add_associated_equipment`](../../backend/equipment_associations.py#L130) | 130 |
+| [`has_outstanding_associated_equipment`](../../backend/equipment_associations.py#L208) | 208 |
 
