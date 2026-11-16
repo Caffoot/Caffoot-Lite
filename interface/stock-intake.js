@@ -232,7 +232,7 @@
   document.addEventListener('click',event=>{
     const button=event.target.closest('[data-stock-action]');if(!button||!config)return;
     const action=button.dataset.stockAction;event.preventDefault();
-    if(action==='cancel-handover'){if(!pending&&stockContext.handover){const deviceId=stockContext.handover.deviceId;stockContext={};config.viewAssigned(deviceId);}return;}
+    if(action==='cancel-handover'){if(!pending&&stockContext.handover){const deviceId=stockContext.handover.deviceId;config.cancelHandover(deviceId,()=>{stockContext={};});}return;}
     if(action==='tab'){if(stockContext.association&&button.dataset.tab!=='issue')stockContext={};tab=button.dataset.tab;error='';config.redraw();document.getElementById('stock-tab-'+tab)?.focus();return;}
     if(action==='reload'){void refreshStock();return;}
     if(action==='reissue-device'){if(canEdit()&&config.canEditDevices())openStockWorkflow('reissue',{deviceId:button.dataset.id});return;}
@@ -283,7 +283,7 @@
     const actions=handover
       ?`<div class="assignment-modal-actions">${stockButton('Cancel','cancel-handover')}${submit}</div>`
       :`<div class="preview-details-actions"><button class="btn" type="reset">Reset</button>${submit}</div>`;
-    return `<form id="stock-${id}-form" class="preview-aligned-form"><div class="staff-main-grid"><div class="stock-card-stack">${stockCard(title,description,content)}<p class="formhint" data-stock-feedback role="alert"></p>${confirmation?`<p class="formhint" id="stock-physical-return-confirmation">${confirmation}</p>`:''}${handover?'':actions}</div><aside class="staff-side-stack">${stockCard('Selected Equipment','Only the selected equipment and its genuine quantities are used.',summary)}</aside></div>${handover?actions:''}</form>`;
+    return `<form id="stock-${id}-form" class="preview-aligned-form"${handover?' data-direct-handover="true"':''}><div class="staff-main-grid"><div class="stock-card-stack">${stockCard(title,description,content)}<p class="formhint" data-stock-feedback role="alert"></p>${confirmation?`<p class="formhint" id="stock-physical-return-confirmation">${confirmation}</p>`:''}${handover?'':actions}</div><aside class="staff-side-stack">${stockCard('Selected Equipment','Only the selected equipment and its genuine quantities are used.',summary)}</aside></div>${handover?actions:''}</form>`;
   }
   function stockIssueReady(item){return !item?0:item.trackingMode==='quantity'?(item.quantityStateBalances.ready||0):item.units.filter(unit=>unit.ready&&!unit.deviceLinked).length;}
   function renderDeviceReissue(){
