@@ -4064,9 +4064,11 @@ function openIpModal(ip) {
             if (!force && editableForm && modalFormSnapshots.has(editableForm) &&
                 modalFormSnapshot(editableForm) !== modalFormSnapshots.get(editableForm) &&
                 !confirmDiscardDeviceFormChanges(() => closeModal(true, onClosed))) return;
+            const dismissedHandover=!!document.querySelector('#modal-content #stock-reissue-form[data-direct-handover="true"]');
             const container = document.getElementById('modal-container');
             container.classList.add('hidden');
             container.classList.remove('flex');
+            if (dismissedHandover) window.caffootStockIntake?.dismissHandover();
             if (nextDeviceModalClosed) nextDeviceModalClosed();
             if (nextImportModalClosed) nextImportModalClosed();
             if (modalReturnFocus && modalReturnFocus.isConnected) modalReturnFocus.focus();
