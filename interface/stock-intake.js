@@ -279,7 +279,7 @@
   function stockNote(label,name){return `<div class="preview-form-field"><label for="stock-${name}">${label}</label><textarea class="input" id="stock-${name}" name="${name}" maxlength="2000"></textarea></div>`;}
   function stockWorkflowForm(id,title,description,content,summary,action,confirmation=''){
     const handover=id==='reissue'&&!!stockContext.handover;
-    const submit=`<button class="btn primary" type="submit"${confirmation?' aria-describedby="stock-physical-return-confirmation"':''}>${action}</button>`;
+    const submit=`<button class="btn ${handover?'btn-primary':'primary'}" type="submit"${confirmation?' aria-describedby="stock-physical-return-confirmation"':''}>${action}</button>`;
     const actions=handover
       ?`<div class="assignment-modal-actions">${stockButton('Cancel','cancel-handover')}${submit}</div>`
       :`<div class="preview-details-actions"><button class="btn" type="reset">Reset</button>${submit}</div>`;
