@@ -792,8 +792,8 @@ The account hydration/photo functions now have purpose-based callable bindings m
 | [`device_assignment_dependency`](../../backend/device_assignments.py#L31) | 31 |
 | [`assignment_device_choices`](../../backend/device_assignments.py#L49) | 49 |
 | [`read_assignments`](../../backend/device_assignments.py#L72) | 72 |
-| [`assign_devices`](../../backend/device_assignments.py#L132) | 132 |
-| [`my_equipment`](../../backend/device_assignments.py#L184) | 184 |
+| [`assign_devices`](../../backend/device_assignments.py#L133) | 133 |
+| [`my_equipment`](../../backend/device_assignments.py#L185) | 185 |
 
 ## backend/device_catalogue.py
 
@@ -1202,21 +1202,21 @@ The account hydration/photo functions now have purpose-based callable bindings m
 | [`stock_recipient`](../../backend/stock_circulation.py#L36) | 36 |
 | [`stock_movement_snapshot`](../../backend/stock_circulation.py#L50) | 50 |
 | [`publish_stock_movement`](../../backend/stock_circulation.py#L57) | 57 |
-| [`stock_issue_records`](../../backend/stock_circulation.py#L83) | 83 |
-| [`read_stock_issues`](../../backend/stock_circulation.py#L107) | 107 |
-| [`issue_stock`](../../backend/stock_circulation.py#L129) | 129 |
-| [`stock_unit_states`](../../backend/stock_circulation.py#L180) | 180 |
-| [`registered_stock_devices`](../../backend/stock_circulation.py#L191) | 191 |
-| [`legacy_device_issue`](../../backend/stock_circulation.py#L208) | 208 |
-| [`preparation_requirements`](../../backend/stock_circulation.py#L226) | 226 |
-| [`preparation_checks`](../../backend/stock_circulation.py#L243) | 243 |
-| [`require_stock_device_edit`](../../backend/stock_circulation.py#L251) | 251 |
-| [`return_stock`](../../backend/stock_circulation.py#L260) | 260 |
-| [`prepare_stock`](../../backend/stock_circulation.py#L357) | 357 |
-| [`stock_state_balance`](../../backend/stock_circulation.py#L419) | 419 |
-| [`canonical_device_choice`](../../backend/stock_circulation.py#L427) | 427 |
-| [`write_off_stock`](../../backend/stock_circulation.py#L446) | 446 |
-| [`stock_movement_history`](../../backend/stock_circulation.py#L557) | 557 |
+| [`stock_issue_records`](../../backend/stock_circulation.py#L87) | 87 |
+| [`read_stock_issues`](../../backend/stock_circulation.py#L111) | 111 |
+| [`issue_stock`](../../backend/stock_circulation.py#L133) | 133 |
+| [`stock_unit_states`](../../backend/stock_circulation.py#L184) | 184 |
+| [`registered_stock_devices`](../../backend/stock_circulation.py#L195) | 195 |
+| [`legacy_device_issue`](../../backend/stock_circulation.py#L212) | 212 |
+| [`preparation_requirements`](../../backend/stock_circulation.py#L230) | 230 |
+| [`preparation_checks`](../../backend/stock_circulation.py#L247) | 247 |
+| [`require_stock_device_edit`](../../backend/stock_circulation.py#L255) | 255 |
+| [`return_stock`](../../backend/stock_circulation.py#L264) | 264 |
+| [`prepare_stock`](../../backend/stock_circulation.py#L393) | 393 |
+| [`stock_state_balance`](../../backend/stock_circulation.py#L455) | 455 |
+| [`canonical_device_choice`](../../backend/stock_circulation.py#L463) | 463 |
+| [`write_off_stock`](../../backend/stock_circulation.py#L483) | 483 |
+| [`stock_movement_history`](../../backend/stock_circulation.py#L594) | 594 |
 
 ## backend/stock_intake.py
 

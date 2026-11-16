@@ -4,6 +4,30 @@
 > at `7f91f5d42feb3916cfab060abd5ca4b1558a92ba`, following merged and visually
 > accepted Batch 3.7/PR #388. This branch is not merged or visually accepted.
 
+## Unassigned Device Return Correction — 16 November 2026
+
+The owner approved this narrow completion in [PR #389](https://github.com/Caffoot/Caffoot-Lite/pull/389#issuecomment-6907931718)
+and [#352](https://github.com/Caffoot/Caffoot-Lite/issues/352#issuecomment-6907932153).
+The protected return operation now accepts exactly one `deviceId` alternative to
+`issueEntryId` or `deviceAssignmentId`. This alternative requires the Boolean
+`physicalReturnConfirmed: true`, both effective Edit permissions, independent
+features and the existing session/MFA/Origin/CSRF protections. It rejects active
+assignments, virtual Devices, any previous stock-entry history, stale versions,
+future dates, non-unit quantities and Ready/write-off dispositions. An identical
+operation retry is idempotent; another return cannot add a second held unit.
+
+The existing canonical stock link is reused, or one permanent link is created.
+The sole movement is an actual return into `awaiting_preparation`, with confirmed
+physical receipt, Device revision/identity, date, authenticated actor and audit.
+No original issue, holder, receipt, stock item or assignment is invented. Existing
+completed assignments, Device JSON, security and relationships remain untouched.
+Later preparation still requires the approved type-specific confirmations.
+Schema 17 and all stock-table definitions/guards are unchanged.
+
+**Backend checkpoint:** 73 focused tests passed; the new interface and refreshed
+captures remain pending. The first added empty-unit fixture used a non-UUID ID;
+it was corrected without changing the schema constraint. See [correction evidence](../development-handovers/evidence/unassigned-device-return/Report.md).
+
 ## Current Implementation
 
 Issue, partial/mixed return, preparation, held/issued write-off and protected

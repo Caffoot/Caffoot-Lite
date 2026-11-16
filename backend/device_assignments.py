@@ -115,9 +115,10 @@ def read_assignments(connection, actor_id, *, device_id=None, staff_id=None, dep
                 (result['current'][0]['id'] if result['current'] else None,)).fetchone()
             result.update(stockHistory=stock_movement_history(connection,actor_id,device_id=device_id),
                 returnSource=('stock:'+str(original_issue[0]) if original_issue else
-                              'device:'+str(result['current'][0]['id']) if result['current'] else None),
+                              'device:'+str(result['current'][0]['id']) if result['current'] else
+                              'unassigned-device:'+device_id if choice['canReturnUnassigned'] else None),
                 canReturn=can_access(connection,actor_id,'IT Assets',edit=True) and can_access(connection,actor_id,'Devices',edit=True)
-                          and bool(result['current']),
+                          and (bool(result['current']) or choice['canReturnUnassigned']),
                 canWriteOff=can_access(connection,actor_id,'IT Assets',edit=True) and can_access(connection,actor_id,'Devices',edit=True)
                             and choice['physical'] and not choice['states'].get('written_off',0))
         else:

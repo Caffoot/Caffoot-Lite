@@ -63,9 +63,13 @@ def publish_stock_movement(connection, actor, key, kind, entries, details, *, ev
         connection.execute('INSERT INTO it_asset_stock_entries('+','.join(columns)+') VALUES('+','.join('?' for _ in columns)+')',
                            [values[column] for column in columns])
     action = {'issued':'Issued', 'returned':'Returned', 'written_off':'Written Off', 'readiness_changed':'Prepared'}[kind]
+    audit_details = {'movementId': movement}
+    if details.get('physicalReturnConfirmed') is True:
+        audit_details.update(deviceId=details['deviceId'], returnedOn=event_date,
+                             physicalReturnConfirmed=True, returnOrigin='unassigned_device')
     record_actor_event(connection, actor, kind='IT Assets', action=action,
         label=str(details.get('stockItemId') or details.get('deviceId') or 'Equipment'),
-        reason=reason or action+' equipment', fields=['Stock Movement'], after={'movementId':movement})
+        reason=reason or action+' equipment', fields=['Stock Movement'], after=audit_details)
     for assignment, device_id in closures:
         ended = datetime.now(timezone.utc).isoformat().replace('+00:00','Z')
         record_actor_event(connection, actor, kind='IT Assets', action=action, label=device_id,
@@ -259,23 +263,48 @@ def require_stock_device_edit(connection, actor, device_id):
 
 def return_stock(connection, actor, token, payload):
     """Keep partial returns and every checked/damaged disposition in one transaction."""
-    fields={'operationId','issueEntryId','deviceAssignmentId','version','quantityReturned','readyQuantity',
-            'writeOffQuantity','returnedOn','checks','writeOffReason','note'}
-    required=fields-{'issueEntryId','deviceAssignmentId'}
+    fields={'operationId','issueEntryId','deviceAssignmentId','deviceId','physicalReturnConfirmed',
+            'version','quantityReturned','readyQuantity','writeOffQuantity','returnedOn','checks','writeOffReason','note'}
+    required=fields-{'issueEntryId','deviceAssignmentId','deviceId','physicalReturnConfirmed'}
     operation,digest=stock_operation(payload,fields,required)
-    if ('issueEntryId' in payload)==('deviceAssignmentId' in payload):
-        raise ValueError('Select one original outstanding issue')
+    direct_device = 'deviceId' in payload
+    if sum(field in payload for field in ('issueEntryId','deviceAssignmentId','deviceId')) != 1:
+        raise ValueError('Select one original issue, assignment or unassigned Device')
+    if direct_device:
+        if payload.get('physicalReturnConfirmed') is not True:
+            raise ValueError('Confirm that this Device has been physically returned to stock')
+    elif 'physicalReturnConfirmed' in payload:
+        raise ValueError('Physical-return provenance applies only to an unassigned Device')
     key='stock:return:'+str(actor)+':'+operation
     connection.execute('BEGIN IMMEDIATE')
     try:
         stock_write_access(connection,actor,token)
+        if direct_device and not can_access(connection,actor,'Devices',edit=True):
+            raise PermissionError('Devices Edit and IT Assets Edit are required')
         replay=stock_replay(connection,key,digest)
         if replay is not None:
             connection.commit()
             return replay
         closures=[]
         device_id=None
-        if 'deviceAssignmentId' in payload:
+        if direct_device:
+            device_id=payload['deviceId']
+            require_stock_device_edit(connection,actor,device_id)
+            source=canonical_device_choice(connection,device_id)
+            if payload['version']!=source['version']:
+                raise FileExistsError('Device or stock history changed. Reload before returning it.')
+            if not source['canReturnUnassigned']:
+                raise ValueError('Select an unassigned physical Device without existing stock history')
+            if source['stockUnitId'] is None:
+                import uuid
+                source['stockUnitId']=uuid.uuid4().hex
+                connection.execute('INSERT INTO it_asset_stock_units(id,device_id) VALUES(?,?)',
+                                   (source['stockUnitId'],device_id))
+            entry=dict(stock_unit_id=source['stockUnitId'],quantity=1,from_state=None)
+            snapshot=dict(name=source['name'],category=source['category'],deviceId=device_id,
+                          deviceRevision=source['revision'])
+            requirements=preparation_requirements(source['category'])
+        elif 'deviceAssignmentId' in payload:
             if not can_access(connection,actor,'Devices',edit=True):
                 raise PermissionError('Devices Edit and IT Assets Edit are required')
             source=legacy_device_issue(connection,payload['deviceAssignmentId'])
@@ -318,12 +347,16 @@ def return_stock(connection, actor, token, payload):
         returned=stock_quantity(payload['quantityReturned'],'Quantity Returned',1)
         ready=stock_quantity(payload['readyQuantity'],'Cleaned & Checked — Ready To Issue')
         damaged=stock_quantity(payload['writeOffQuantity'],'Damaged — Write Off')
-        if returned>source['outstanding'] or ready+damaged>returned:
+        if direct_device and (returned!=1 or ready!=0 or damaged!=0):
+            raise ValueError('An unassigned Device returns as one unit Awaiting Preparation')
+        if returned>(1 if direct_device else source['outstanding']) or ready+damaged>returned:
             raise ValueError('Return dispositions cannot exceed Returned or the outstanding issue quantity')
         if source.get('stockUnitId') and returned!=1:
             raise ValueError('An individual unit must return as its one permanent identity')
         returned_on=stock_event_date(payload['returnedOn'],'Date Returned')
-        if returned_on<source['issuedOn']:
+        if direct_device and returned_on>datetime.now(timezone.utc).date().isoformat():
+            raise ValueError('Date Returned cannot be in the future')
+        if not direct_device and returned_on<source['issuedOn']:
             raise ValueError('Date Returned cannot precede the original issue date')
         checks=preparation_checks(payload['checks'],requirements=requirements,ready=ready)
         reason=stock_text(payload['writeOffReason'],'Damaged / Write-Off Reason',2000,required=damaged>0)
@@ -338,6 +371,9 @@ def return_stock(connection, actor, token, payload):
             sourceIssueEntryId=source['id'] if 'issueEntryId' in payload else None,
             originalAssignmentId=closures[0][0] if closures else None,
             checks=checks,note=note,returnedQuantity=returned,readyQuantity=ready,writtenOffQuantity=damaged)
+        if direct_device:
+            details.update(physicalReturnConfirmed=True,returnOrigin='unassigned_device',
+                           deviceRevision=source['revision'])
         publish_stock_movement(connection,actor,key,'returned',[entry],details,event_date=returned_on,closures=closures)
         for amount,kind,state,suffix in ((ready,'readiness_changed','ready','ready'),(damaged,'written_off','written_off','writeoff')):
             if not amount:
@@ -438,7 +474,8 @@ def canonical_device_choice(connection, identity):
     latest=connection.execute('SELECT coalesce(max(movement_id),0) FROM it_asset_stock_entries WHERE stock_unit_id=?',
                              (unit[0] if unit else None,)).fetchone()[0]
     physical=not (record.get('isVirtual') or record.get('virtualHostId') or record.get('type') in ('Virtual Machine','Server - Virtual'))
-    return dict(deviceId=identity,name=name,category=record.get('type',''),physical=physical,
+    return dict(deviceId=identity,name=name,category=record.get('type',''),physical=physical,revision=revision,
+        canReturnUnassigned=physical and assignment is None and latest==0,
         stockUnitId=unit[0] if unit else None,states=states,deviceAssignmentId=assignment[0] if assignment else None,
         version=stock_digest([identity,revision,unit[0] if unit else None,latest,assignment[0] if assignment else None]))
 
@@ -588,4 +625,6 @@ def stock_movement_history(connection, actor, *, staff_id=None, department_id=No
             sourceIssueEntryId=source,recipientLabel=holder,name=original.get('name','Equipment'),
             stockItemId=item or unit_item,deviceId=device,
             checks=metadata.get('checks'),note=metadata.get('note',metadata.get('notes',''))))
+        if metadata.get('physicalReturnConfirmed') is True:
+            events[-1].update(physicalReturnConfirmed=True,returnOrigin='unassigned_device')
     return events
