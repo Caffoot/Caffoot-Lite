@@ -107,6 +107,8 @@ async function main(){
  await page.locator('#optional-feature-it-assets').check({force:true});assert.equal((await enabled).status(),200);
  await page.locator('[data-action="tab-it-assets"]').waitFor({state:'visible'});
  await page.locator('[data-action="tab-it-assets"]').click();
+ // The approved IT Assets Overview is the default; select the existing receipt workflow.
+ await stockTab('receive');
  await page.locator('#stock-receipt-form').waitFor();
  // All full-page stock workflows use the approved right-aligned Cancel / orange primary footer.
  for(const [tabName,formId,submitText] of [
