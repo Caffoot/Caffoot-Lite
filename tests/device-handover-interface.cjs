@@ -205,7 +205,7 @@ async function main(){
  await page.locator('[data-equipment-action="reassign-device"]').click();
  await page.locator('#stock-reissue-form[data-direct-handover]').waitFor();
  await page.keyboard.press('Escape');
- await page.locator('#modal-container.hidden').waitFor();
+ await page.locator('#modal-container.hidden').waitFor({state:'attached'});
  await page.getByRole('button',{name:'Close device details',exact:true}).click();
  await page.locator('#sidebar [data-action="tab-it-assets"]').click();
  await page.getByRole('tab',{name:'Reissue Existing Device',exact:true}).click();
