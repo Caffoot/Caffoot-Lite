@@ -33,3 +33,12 @@
 .stock-live #stock-panel #stock-receipt-form #stock-individual-fields{margin-top:20px}
 .stock-live #stock-panel #stock-return-form #stock-original-issue{margin:14px 0 18px;line-height:1.6}
 .stock-live #stock-panel #stock-return-form .stock-card-stack>.card>.preview-form-field:last-child{margin-top:18px}
+
+.stock-live #stock-correction-details{scroll-margin-top:24px}
+.stock-live #stock-correction-form .card>.preview-form-field{margin-top:18px}
+.stock-live .stock-correction-balances{min-width:0}
+.stock-live .stock-correction-balances th,.stock-live .stock-correction-balances td{padding:12px 8px}
+.stock-live .stock-correction-validation{font-size:12px;line-height:1.6;margin-top:18px;padding:12px;border:1px solid var(--line);border-radius:10px}
+.stock-live .stock-correction-validation[data-allowed="false"]{border-color:var(--orange)}
+.stock-live .stock-correction-validation[data-allowed="true"]{font-weight:650}
+@media(max-width:720px){.stock-live .stock-correction-balances{min-width:0;width:100%}.stock-live #stock-correction-form .staff-main-grid{grid-template-columns:minmax(0,1fr)}}

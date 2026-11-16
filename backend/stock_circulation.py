@@ -105,6 +105,8 @@ def stock_issue_records(connection, *, staff_id=None, department_id=None):
             outstanding=outstanding,staffId=staff,departmentId=department,recipientLabel=recipient,
             deviceAssignmentId=assignment,name=original.get('name','Equipment'),specification=original,
             issuedOn=issued,actor=actor,recordedAt=recorded,version=stock_digest([identity,outstanding,latest])))
+        corrected=connection.execute('SELECT corrected_quantity FROM it_asset_stock_movements WHERE corrects_entry_id=? ORDER BY id DESC LIMIT 1',(identity,)).fetchone()
+        result[-1]['effectiveQuantity']=corrected[0] if corrected else quantity
     return result
 
 
@@ -615,12 +617,13 @@ def stock_movement_history(connection, actor, *, staff_id=None, department_id=No
     events=[]
     for row in connection.execute('''SELECT m.id,m.kind,m.event_date,m.recorded_at,m.actor_label,m.reason,
         m.supplier_name,m.checks_json,e.id,e.quantity,e.from_state,e.to_state,e.staff_id,e.department_id,
-        COALESCE(e.recipient_label,a.recipient_label),e.source_issue_entry_id,e.snapshot_json,u.device_id,e.stock_item_id,u.stock_item_id
+        COALESCE(e.recipient_label,a.recipient_label),e.source_issue_entry_id,e.snapshot_json,u.device_id,e.stock_item_id,u.stock_item_id,
+        m.corrects_entry_id,m.previous_quantity,m.corrected_quantity,e.stock_unit_id
         FROM it_asset_stock_movements m JOIN it_asset_stock_entries e ON e.movement_id=m.id
         LEFT JOIN it_asset_stock_units u ON u.id=e.stock_unit_id
         LEFT JOIN device_assignments a ON a.id=e.device_assignment_id ORDER BY m.id DESC,e.id'''):
         (movement,kind,happened,recorded,actor_label,reason,supplier,details,entry,quantity,old,new,
-         staff,department,holder,source,snapshot,device,item,unit_item)=row
+         staff,department,holder,source,snapshot,device,item,unit_item,corrects,previous,corrected,unit)=row
         if device and not device_access or device_id is not None and device!=device_id:
             continue
         if (staff_id is not None or department_id is not None) and device:
@@ -644,6 +647,16 @@ def stock_movement_history(connection, actor, *, staff_id=None, department_id=No
             sourceIssueEntryId=source,recipientLabel=holder,name=original.get('name','Equipment'),
             stockItemId=item or unit_item,deviceId=device,
             checks=metadata.get('checks'),note=metadata.get('note',metadata.get('notes',''))))
+        event=events[-1]
+        latest=connection.execute('SELECT corrected_quantity FROM it_asset_stock_movements WHERE corrects_entry_id=? ORDER BY id DESC LIMIT 1',(entry,)).fetchone()
+        event.update(effectiveQuantity=latest[0] if latest else quantity,
+                     correctsEntryId=corrects,previousQuantity=previous,correctedQuantity=corrected,
+                     stockUnitId=unit)
+        linked_device=connection.execute('''SELECT 1 FROM device_equipment_associations
+            WHERE issue_entry_id=?''',(entry if kind=='issued' else source,)).fetchone()
+        event['canCorrect']=bool(kind in ('received','issued','returned','written_off')
+            and can_access(connection,actor,'IT Assets',edit=True)
+            and (not (device or linked_device) or can_access(connection,actor,'Devices',edit=True)))
         if metadata.get('directHandover') is True:
             events[-1].update(directHandover=True,fromState='issued')
         if metadata.get('physicalReturnConfirmed') is True:

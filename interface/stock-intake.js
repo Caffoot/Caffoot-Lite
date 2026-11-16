@@ -4,6 +4,7 @@
   let config=null,items=[],receipts=[],changes=[],tab='receive',detail=null,loaded=false,loading=false;
   let error='',receiptMode='new',pending=false,generation=0,detailRequest=0;
   let issues=[],deviceAssignments=[],registeredDevices=[],deviceChoices=[],movements=[],stockContext={},selectedRegisteredId=null,reissueDevices=[];
+  let correction=null,correctionRequest=0,correctionTimer;
   const safe=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   function canRead(){return !!config?.canRead();}
   function canEdit(){return !!config?.canEdit();}
@@ -98,6 +99,7 @@
     return `<div class="stock-card-stack"><h2>Stock Receipts</h2><div class="card">${stockTable(['Date / Actor','Stock Item','Supplier','Received','Ready','Awaiting','Checks / Notes'],receiptRows,'No Recorded Receipts')}</div><h2>Readiness Changes</h2><p class="sub">Later checks are separate movements. Original receipts are retained.</p><div class="card">${stockTable(['Date / Actor','Stock Item','Ready Before → After','Reason / Checks'],changed,'No Recorded Readiness Changes')}</div></div>`;
   }
   function clearStock(){
+    correction=null;correctionRequest++;clearTimeout(correctionTimer);
     generation++;detailRequest++;items=[];receipts=[];changes=[];issues=[];deviceAssignments=[];registeredDevices=[];deviceChoices=[];reissueDevices=[];movements=[];stockContext={};selectedRegisteredId=null;detail=null;loaded=false;loading=false;
   }
   async function stockRequest(path,payload){
@@ -232,6 +234,14 @@
   document.addEventListener('click',event=>{
     const button=event.target.closest('[data-stock-action]');if(!button||!config)return;
     const action=button.dataset.stockAction;event.preventDefault();
+    if(action==='correct-movement'){
+      if(!canEdit()||pending)return;
+      leaveStockCorrection(()=>{void openStockCorrection(Number(button.dataset.id)).catch(failure=>config.notify(failure.message,'error'));});return;
+    }
+    if(action==='cancel-correction'){leaveStockCorrection(()=>{correction=null;correctionRequest++;config.redraw();document.getElementById('stock-tab-movements')?.focus();});return;}
+    if(correction&&['tab','reload'].includes(action)){
+      leaveStockCorrection(()=>{correction=null;correctionRequest++;if(action==='reload')void refreshStock();else{tab=button.dataset.tab;config.redraw();document.getElementById('stock-tab-'+tab)?.focus();}});return;
+    }
     if(action==='cancel-handover'){if(!pending&&stockContext.handover){const deviceId=stockContext.handover.deviceId;config.cancelHandover(deviceId,()=>{stockContext={};});}return;}
     if(action==='cancel-stock'||action==='cancel-readiness'){
       if(pending)return;
@@ -272,6 +282,9 @@
     }
   });
   document.addEventListener('submit',event=>{
+    if(event.target.id==='stock-correction-form'){
+      event.preventDefault();void submitStockCorrection(event.target).catch(failure=>{const feedback=event.target.querySelector('[data-stock-feedback]');if(feedback?.isConnected)feedback.textContent=failure.message;config.notify(failure.message,'error');});return;
+    }
     const form=event.target;if(!form.matches('#stock-receipt-form,#stock-readiness-form,#stock-issue-form,#stock-return-form,#stock-writeoff-form,#stock-preparation-form,#stock-reissue-form'))return;
     event.preventDefault();
     void (form.matches('#stock-receipt-form,#stock-readiness-form')?submitStock(form):submitStockCirculation(form)).catch(failure=>{const feedback=form.querySelector('[data-stock-feedback]');if(feedback?.isConnected)feedback.textContent=failure.message;config.notify(failure.message,'error');});
@@ -283,12 +296,15 @@
     if(event.target.id==='stock-receipt-form'||event.target.id==='stock-issue-form')setTimeout(hydrateStock,0);
   });
   document.addEventListener('keydown',event=>{
+    if(event.key==='Escape'&&correction&&!document.getElementById('discard-dialog')&&!pending){
+      event.preventDefault();leaveStockCorrection(()=>{correction=null;correctionRequest++;config.redraw();document.getElementById('stock-tab-movements')?.focus();});return;
+    }
     const button=event.target.closest('[data-stock-action="tab"]');
     if(!button||!['ArrowLeft','ArrowRight','Home','End'].includes(event.key))return;
     event.preventDefault();event.stopImmediatePropagation();
     const buttons=[...button.parentElement.querySelectorAll('[data-stock-action="tab"]')];
     let index=buttons.indexOf(button);index=event.key==='Home'?0:event.key==='End'?buttons.length-1:(index+(event.key==='ArrowRight'?1:-1)+buttons.length)%buttons.length;
-    tab=buttons[index].dataset.tab;config.redraw();document.getElementById('stock-tab-'+tab)?.focus();
+    leaveStockCorrection(()=>{correction=null;correctionRequest++;tab=buttons[index].dataset.tab;config.redraw();document.getElementById('stock-tab-'+tab)?.focus();});
   });
     function stockStateLabel(state){return {ready:'Ready To Issue',awaiting_checks:'Awaiting Checks',awaiting_preparation:'Awaiting Preparation',issued:'Currently Issued',written_off:'Written Off',unrecorded:'Not Recorded As Stock'}[state]||'Not Physically Held';}
   function stockUnitState(unit){return ['written_off','issued','ready','awaiting_preparation','awaiting_checks'].find(state=>unit.balances[state]===1)||'';}
@@ -393,9 +409,92 @@
   }
   function renderStockMovements(){
     const labels={received:'Received',issued:'Issued',reassigned:'Reassigned',returned:'Returned',readiness_changed:'Readiness Changed',written_off:'Written Off',registered:'Registered',corrected:'Corrected'};
-    const rows=movements.map(event=>`<tr><td>${stockDate(event.date)}<div class="sub">${safe(event.actor)}</div></td><td>${safe(event.name)}</td><td>${labels[event.kind]||safe(event.kind)}</td><td>${event.quantity}</td><td>${safe(event.recipientLabel||'—')}</td><td>${safe(stockStateLabel(event.fromState))} → ${safe(stockStateLabel(event.toState))}</td><td>${safe(event.reason||event.note||'—')}<details><summary>Movement Details</summary><p>Recorded: ${safe(event.recordedAt)}</p>${event.sourceIssueEntryId?`<p>Original Issue: ${event.sourceIssueEntryId}</p>`:''}${event.physicalReturnConfirmed?'<p>Physical Return Confirmed. No recorded issue or current assignment was closed.</p>':''}${event.checks?`<p>${Object.entries(event.checks).filter(([name,value])=>typeof value==='boolean'&&!(name==='dataPreparationConfirmed'&&event.checks.dataCheckLabel==='')).map(([name,value])=>`${safe({itemsChecked:'Items Checked',conditionChecked:'Condition Checked',cleanedWorking:event.checks.workingCheckLabel||'Cleaned And Checked Working',dataPreparationConfirmed:event.checks.dataCheckLabel||'Data Wiped / Reset'}[name]||name)}: ${stockCheckLabel(value)}`).join('<br>')}</p>`:''}${event.supplier?'<p>Supplier: '+safe(event.supplier)+'</p>':''}</details></td></tr>`).join('');
-    return `<div class="stock-card-stack"><h2>Stock Movement History</h2><p class="sub">Original receipt, issue, return, preparation and write-off facts are retained.</p><div class="card">${stockTable(['Date / Actor','Equipment','Movement','Quantity','Original Holder','State Change','Reason / Note'],rows,'No Recorded Stock Movements')}</div></div>`;
+    const rows=movements.map(event=>`<tr data-movement-entry="${event.entryId}"><td>${stockDate(event.date)}<div class="sub">${safe(event.actor)}</div><div class="sub">Movement ${event.id} · Entry ${event.entryId}</div></td><td>${safe(event.name)}</td><td>${labels[event.kind]||safe(event.kind)}</td><td>${event.kind==='corrected'?`${event.previousQuantity} → ${event.correctedQuantity}<div class="sub">Original Entry ${event.correctsEntryId}</div>`:`${event.quantity}<div class="sub">Effective: ${event.effectiveQuantity}</div>`}</td><td>${safe(event.recipientLabel||'—')}</td><td>${safe(stockStateLabel(event.fromState))} → ${safe(stockStateLabel(event.toState))}</td><td>${safe(event.reason||event.note||'—')}<details><summary>Movement Details</summary><p>Recorded: ${safe(event.recordedAt)}</p>${event.sourceIssueEntryId?`<p>Original Issue: ${event.sourceIssueEntryId}</p>`:''}${event.physicalReturnConfirmed?'<p>Physical Return Confirmed. No recorded issue or current assignment was closed.</p>':''}${event.checks?`<p>${Object.entries(event.checks).filter(([name,value])=>typeof value==='boolean'&&!(name==='dataPreparationConfirmed'&&event.checks.dataCheckLabel==='')).map(([name,value])=>`${safe({itemsChecked:'Items Checked',conditionChecked:'Condition Checked',cleanedWorking:event.checks.workingCheckLabel||'Cleaned And Checked Working',dataPreparationConfirmed:event.checks.dataCheckLabel||'Data Wiped / Reset'}[name]||name)}: ${stockCheckLabel(value)}`).join('<br>')}</p>`:''}${event.supplier?'<p>Supplier: '+safe(event.supplier)+'</p>':''}</details></td><td>${canEdit()&&event.canCorrect?stockButton('Correct Movement','correct-movement',event.entryId):'<span class="sub">'+(canEdit()?'No Quantity Correction':'Read Only')+'</span>'}</td></tr>`).join('');
+    return `<div class="stock-card-stack">${correction&&canEdit()?renderStockCorrection():''}<h2>Stock Movement History</h2><p class="sub">Original quantities and effective quantities are shown separately. Corrections retain the original reference, reason, actor and date. Each entry in a multi-entry movement is selected separately.</p><div class="card">${stockTable(['Date / Actor / Reference','Equipment','Movement','Original / Effective Quantity','Original Holder','State Change','Reason / Note','Actions'],rows,'No Recorded Stock Movements')}</div></div>`;
   }
+  function renderStockCorrection(){
+    const selected=correction;
+    const details=[['Original Movement',`${selected.movementId} · Entry ${selected.entryId} · ${selected.kind.replace('_',' ')}`],['Equipment',selected.name],['Original Recorded Quantity',selected.originalQuantity],['Current Effective Quantity',selected.effectiveQuantity],['Recorded By',selected.actor],['Movement Date',selected.date],['Recorded At',selected.recordedAt],['Supplier / Source',selected.supplier||'Not Recorded'],['Original Recipient',selected.recipientLabel||'Not Applicable'],['Original Issue',selected.sourceIssueEntryId||'Not Applicable'],['Individual Unit / Device',selected.deviceId||selected.stockUnitId||'Quantity-Based Stock']];
+    const original=details.map(([label,value])=>`<div class="info-row"><label>${label}</label><b>${safe(value)}</b></div>`).join('');
+    const history=selected.history.map(row=>`<tr><td>${row.previousQuantity} → ${row.correctedQuantity}</td><td>${safe(row.reason)}</td><td>${safe(row.actor)}<div class="sub">${safe(row.recordedAt)}</div></td><td>${row.id}</td></tr>`).join('');
+    return `<section id="stock-correction-details" class="stock-card-stack"><h2 tabindex="-1">Correct Stock Movement</h2><form id="stock-correction-form" class="preview-aligned-form" data-stock-cancellable="true"><div class="staff-main-grid"><div class="stock-card-stack">${stockCard('Original Movement Details','The original transaction, supplier and all later records are retained.',original)}${stockCard('Correction Details','Enter the corrected total for this original entry, rather than the difference.',`<div class="staff-fields">${stockField('Corrected Quantity','correctedQuantity','number',selected.effectiveQuantity,'required min="1" max="9007199254740991" step="1"')}</div>${stockNote('Reason For Correction (Required)','correctionReason')}`)}<p class="formhint" data-stock-feedback role="alert"></p></div><aside class="staff-side-stack">${stockCard('Stock Impact Before Saving','Calculated by the server against the complete movement history.',`<div id="stock-correction-impact">${renderCorrectionImpact(selected.before,null)}</div><p id="stock-correction-validation" class="stock-correction-validation" role="status" aria-live="polite">Enter a changed quantity and a reason to check this correction.</p>`)}</aside></div><div class="stock-form-actions">${stockButton('Cancel','cancel-correction')}<button class="btn btn-primary" type="submit" disabled>Save Correction</button></div></form>${stockCard('Correction History','Every correction remains linked to the original entry.',stockTable(['Previous → Corrected','Reason','Actor / Date','Correction Reference'],history,'No Corrections Recorded'))}</section>`;
+  }
+  function renderCorrectionImpact(before,after){
+    const labels=[['Physically Held','physicallyHeld'],['Ready To Issue','readyToIssue'],['Awaiting Checks','awaitingChecks'],['Awaiting Preparation','awaitingPreparation'],['Currently Issued','currentlyIssued'],['Written Off','writtenOff']];
+    const rows=labels.map(([label,key])=>`<tr><th scope="row">${label}</th><td>${before.balances[key]}</td><td>${after?after.balances[key]:'—'}</td></tr>`).join('')+(before.outstanding!==null?`<tr><th scope="row">Original Issue Outstanding</th><td>${before.outstanding}</td><td>${after?after.outstanding:'—'}</td></tr>`:'');
+    return `<table class="small-table stock-correction-balances"><thead><tr><th scope="col">Balance</th><th scope="col">Before</th><th scope="col">After</th></tr></thead><tbody>${rows}</tbody></table>`;
+  }
+  function leaveStockCorrection(next){
+    if(pending)return;
+    const form=document.getElementById('stock-correction-form');
+    if(form)config.cancelStockForm(form,next);else next();
+  }
+  async function openStockCorrection(entryId){
+    const request=++correctionRequest;
+    const result=await stockRequest('corrections/'+entryId);
+    if(request!==correctionRequest||!canEdit())return;
+    correction=result;tab='movements';config.redraw();
+    document.querySelector('#stock-correction-details h2')?.focus();
+    document.getElementById('stock-correction-details')?.scrollIntoView({block:'start'});
+    document.getElementById('stock-correction-form').elements.correctionReason.required=true;
+  }
+  function stockCorrectionValues(form){
+    return {entryId:correction.entryId,version:correction.version,correctedQuantity:form.elements.correctedQuantity.value===''?null:Number(form.elements.correctedQuantity.value),reason:form.elements.correctionReason.value};
+  }
+  async function previewStockCorrection(form){
+    if(!correction||!form.isConnected||pending)return;
+    const body=stockCorrectionValues(form),key=JSON.stringify(body);
+    form.dataset.previewRequest=key;
+    try{
+      const result=await stockRequest('corrections/preview',body);
+      if(!form.isConnected||form.dataset.previewRequest!==key)return;
+      form.querySelector('#stock-correction-impact').innerHTML=renderCorrectionImpact(result.before,result.after);
+      const validation=form.querySelector('#stock-correction-validation');
+      validation.textContent=result.message;validation.dataset.allowed=String(result.allowed);
+      form.dataset.validatedPayload=result.allowed?key:'';
+      form.querySelector('[type="submit"]').disabled=!result.allowed;
+    }catch(failure){
+      if(!form.isConnected||form.dataset.previewRequest!==key)return;
+      form.querySelector('#stock-correction-validation').textContent=failure.message;
+      form.querySelector('#stock-correction-validation').dataset.allowed='false';
+    }
+  }
+  function scheduleStockCorrection(form){
+    clearTimeout(correctionTimer);
+    form.dataset.previewRequest='';form.dataset.validatedPayload='';
+    form.querySelector('[type="submit"]').disabled=true;
+    form.querySelector('#stock-correction-impact').innerHTML=renderCorrectionImpact(correction.before,null);
+    form.querySelector('#stock-correction-validation').textContent='Checking the proposed correction…';
+    form.querySelector('#stock-correction-validation').removeAttribute('data-allowed');
+    correctionTimer=setTimeout(()=>void previewStockCorrection(form),200);
+  }
+  async function submitStockCorrection(form){
+    if(pending||!canEdit()||!correction)return;
+    const body=stockCorrectionValues(form),key=JSON.stringify(body);
+    if(form.dataset.validatedPayload!==key){scheduleStockCorrection(form);return;}
+    if(form.dataset.operationPayload!==key){form.dataset.operationId=crypto.randomUUID();form.dataset.operationPayload=key;}
+    pending=true;form.dataset.saving='true';
+    const controls=[...form.elements].map(control=>[control,control.disabled]);controls.forEach(([control])=>control.disabled=true);
+    try{
+      await stockRequest('corrections',{operationId:form.dataset.operationId,...body});
+      const entry=correction.entryId;
+      correction=null;correctionRequest++;await refreshStock();
+      await openStockCorrection(entry);
+      config.notify('Correction saved. The original movement and subsequent history are retained.');
+    }finally{pending=false;delete form.dataset.saving;controls.forEach(([control,disabled])=>{if(control.isConnected)control.disabled=disabled;});}
+  }
+  document.addEventListener('input',event=>{const form=event.target.closest('#stock-correction-form');if(form&&correction)scheduleStockCorrection(form);});
+  document.addEventListener('click',event=>{
+    if(!correction||event.target.closest('[data-stock-action]')||event.target.closest('#discard-dialog'))return;
+    const navigation=event.target.closest('#sidebar [data-action],a[href]');
+    if(!navigation)return;
+    event.preventDefault();event.stopImmediatePropagation();
+    leaveStockCorrection(()=>{correction=null;correctionRequest++;navigation.click();});
+  },true);
+  window.addEventListener('beforeunload',event=>{
+    const form=document.getElementById('stock-correction-form');
+    if(form&&correction&&(form.elements.correctedQuantity.value!==String(correction.effectiveQuantity)||form.elements.correctionReason.value)){event.preventDefault();event.returnValue='';}
+  });
   function stockSelectedReturn(form){return stockReturnSources().find(source=>source.key===form.elements.returnSource.value);}
   function stockSelectedWriteOff(form){
     const selected=form.elements.writeOffTarget.value,split=selected.indexOf(':'),kind=selected.slice(0,split),id=selected.slice(split+1);
