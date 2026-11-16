@@ -287,8 +287,9 @@
     const deviceField=handover?stockField('Device','handoverDevice','text',handover.name,'readonly'):stockSelect('Ready Registered Device','reissueDevice',reissueDevices.length?reissueDevices.map(device=>[device.deviceId,device.name+' · '+device.category]):[['','No Ready Registered Devices']], 'required',stockContext.deviceId);
     const checks=handover?`<div class="divider"></div><h3>Preparation Checks</h3><label class="stock-check"><input type="checkbox" name="cleanedWorking" required>${safe(handover.preparation.workingCheckLabel)}</label>${handover.preparation.dataConfirmationRequired?'<label class="stock-check"><input type="checkbox" name="dataPreparationConfirmed" required>'+safe(handover.preparation.dataCheckLabel)+'</label>':''}<p class="formhint">Complete the applicable checks before confirming this Device Ready for its new holder.</p>`:'';
     const content=`<div class="staff-fields">${deviceField}
-      ${stockSelect(handover?'Recipient Type':'Assign To','recipientKind',[['staff','Staff Member'],['department','Department']], '',stockContext.recipientKind||'staff')}${stockField('Find A Recipient','recipientSearch','search','','maxlength="100"')}
-      ${stockSelect(handover?'New Recipient':'Staff Member Or Department','recipientId',[['','Select An Eligible Recipient']], 'required')}${stockField(handover?'Date Reassigned':'Date Issued','issuedOn','date',new Date().toLocaleDateString('en-CA'),'required')}</div>${checks}${stockNote(handover?'Reassignment Note (Optional)':'Issue Note (Optional)','issueNote')}`;
+      ${stockSelect(handover?'Recipient Type':'Assign To','recipientKind',[['staff','Staff Member'],['department','Department']], '',stockContext.recipientKind||'staff')}
+      ${handover?stockSelect('Find A Recipient','recipientId',[['','Select A Staff Member']], 'required'):stockField('Find A Recipient','recipientSearch','search','','maxlength="100"')+stockSelect('Staff Member Or Department','recipientId',[['','Select An Eligible Recipient']], 'required')}
+      ${stockField(handover?'Date Reassigned':'Date Issued','issuedOn','date',new Date().toLocaleDateString('en-CA'),'required')}</div>${checks}${stockNote(handover?'Reassignment Note (Optional)':'Issue Note (Optional)','issueNote')}`;
     return stockWorkflowForm('reissue',handover?'Reassignment Details':'Reissue Existing Device',handover?'The current holder stays recorded until this complete handover succeeds.':'Issue one genuinely held, prepared Device while preserving its identity and all previous assignments.',content,
       handover?'<p>This Device goes directly to its new holder. It is not being returned to the storeroom. Associated equipment must already be resolved.</p>':'<p>Only unassigned registered Devices recorded as Ready To Issue are eligible. A successful assignment reduces Physically Held and Ready To Issue by one. Device Status, configuration, network and rack details stay as recorded.</p>',handover?'Confirm Ready And Reassign':'Reissue Existing Device');
   }
@@ -377,8 +378,18 @@
     if(reissue){
       const handover=stockContext.handover;
       reissue.querySelector('[type="submit"]').disabled=handover?!reissue.elements.recipientId.value||!reissue.elements.cleanedWorking.checked||(handover.preparation.dataConfirmationRequired&&!reissue.elements.dataPreparationConfirmed.checked):!reissueDevices.some(device=>device.deviceId===reissue.elements.reissueDevice.value)||!reissue.elements.recipientId.value;
-      const key=reissue.elements.recipientKind.value+'|'+reissue.elements.recipientSearch.value;
-      if(reissue.dataset.recipientQuery!==key){reissue.dataset.recipientQuery=key;void loadStockRecipients(reissue,key);}
+      const kind=reissue.elements.recipientKind.value;
+      const key=handover?kind:kind+'|'+reissue.elements.recipientSearch.value;
+      if(reissue.dataset.recipientQuery!==key){
+        reissue.dataset.recipientQuery=key;
+        if(handover){
+          const recipient=reissue.elements.recipientId;
+          recipient.disabled=true;
+          recipient.innerHTML='<option value="">Loading '+(kind==='staff'?'Staff Members':'Departments')+'…</option>';
+          reissue.querySelector('[type="submit"]').disabled=true;
+          void loadHandoverRecipients(reissue,key);
+        }else void loadStockRecipients(reissue,key);
+      }
     }
     const issue=document.getElementById('stock-issue-form');
     if(issue){
@@ -439,6 +450,32 @@
     }
     const preparation=document.getElementById('stock-preparation-form');
     if(preparation&&preparation.dataset.registered!=='true'&&detail?.item.trackingMode==='individual')preparation.elements.prepareQuantity.value=String(preparation.querySelectorAll('[name="prepareUnitIds"]:checked').length);
+  }
+  async function loadHandoverRecipients(form,kind){
+    const recipient=form.elements.recipientId;
+    try{
+      // A single selection contains every eligible holder, not only the first 50.
+      const recipients=[];let offset=0;
+      while(true){
+        const result=await stockRequest('/api/equipment/recipients?kind='+encodeURIComponent(kind)+'&offset='+offset);
+        if(!form.isConnected||form.dataset.recipientQuery!==kind)return;
+        recipients.push(...result.recipients);
+        if(result.recipients.length<50)break;
+        offset+=result.recipients.length;
+      }
+      if(!form.isConnected||form.dataset.recipientQuery!==kind)return;
+      recipient.innerHTML='<option value="">Select A '+(kind==='staff'?'Staff Member':'Department')+'</option>'+
+        recipients.map(item=>`<option value="${safe(item.id)}">${safe(item.label)}</option>`).join('');
+      recipient.disabled=false;
+      recipient.dispatchEvent(new Event('device-dropdown-refresh'));
+      hydrateStockCirculation();
+    }catch(failure){
+      if(!form.isConnected||form.dataset.recipientQuery!==kind)return;
+      recipient.innerHTML='<option value="">Unable To Load Recipients</option>';
+      recipient.disabled=true;
+      form.querySelector('[data-stock-feedback]').textContent=failure.message;
+      hydrateStockCirculation();
+    }
   }
   async function loadStockRecipients(form,key){
     try{
@@ -510,7 +547,7 @@
     stockContext={handover:context};
     config.openModal(`<div class="equipment-dialog stock-live"><div class="assignment-modal-head"><h2>Reassign Device</h2>${stockButton('Cancel','cancel-handover')}</div><div class="assignment-modal-body">${renderDeviceReissue()}</div></div>`);
     document.getElementById('stock-reissue-form').dataset.directHandover='true';
-    hydrateStockCirculation();document.getElementById('stock-recipientSearch')?.focus();
+    hydrateStockCirculation();document.getElementById('stock-recipientKind')?.focus();
   }
 
   function configureStock(options){config=options;}
