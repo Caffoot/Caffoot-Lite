@@ -138,3 +138,31 @@ including two competing issues, both independent Edit requirements and private
 My Equipment. The real Chromium registration test also passed its added reissue
 route, physical decrement and current Staff assignment assertions. Optional
 hardware, final captures/documentation and complete final-head gates remain.
+
+## Optional Hardware Checkpoint
+
+Storage Type lives in `typeDetails.storageType` for physical Desktop, Laptop and
+Server; blank and historic/custom media remain selectable. Physical Servers have
+optional `bootStorage` and `zfsPools` with pool/VDEV identities. Ordinary boot drives
+need no ZFS record. A boot pool stores only its source and existing pool reference,
+without a second drive description. Newly changed details validate positive
+capacities/counts, unique named pools, constituent VDEVs and the accepted layout
+minimums. Unchanged historic details remain valid. Legacy RAID choices, Storage
+Size/Unit and drive count are independent and never recalculated.
+
+The existing Hardware tab receives these optional controls and Device Details
+shows the recorded descriptions using its existing rows. UPS/PDU additions are
+empty-model manufacturer suggestions only, including Ubiquiti in both lists;
+existing custom catalogue and seed-preference mechanisms remain authoritative.
+No data migration, stock schema, permission or Device Status change is needed.
+
+Actual focused result: **107 backend tests passed** across new storage,
+registration/reissue and existing catalogue/Device/address checks. A further
+registration rollback test passed after explicitly proving Device and managed
+IPAM persistence before the injected journal failure. The real Chromium storage
+journey passed ordinary non-ZFS boot storage, pool/VDEV save/edit, linked boot
+without duplicate drives, legacy field preservation, Laptop applicability and
+both manufacturer lists. Initial fictional-fixture placement was corrected to
+match the existing Device editor's normal saved shape before the passing run.
+The existing browser Actions workflow now also runs both new real-browser checks;
+all existing gates remain. Complete final-head verification is still pending.

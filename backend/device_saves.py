@@ -7,6 +7,7 @@ from datetime import datetime, timezone
 from .application_integrity import validate_live_application_state as validate_detached_application_state
 from .device_addresses import prepare_device_address, is_basic_address
 from .device_rack_fields import prepare_device_rack_fields
+from .device_storage import validate_device_storage
 from .inventory import reconstruct_inventory
 from .normalisation_validation import validate_normalisation_devices
 from .permissions import can_access, feature_enabled
@@ -132,6 +133,7 @@ def save_reserved_device(connection, account_id, device_id, revision, record, se
         previous = next(device for device in candidate["devices"] if device["id"] == device_id)
         record = prepare_device_rack_fields(connection, record, previous)
         record = prepare_device_address(connection, account_id, record, previous)
+        validate_device_storage(record, previous)
         changed = {key for key in set(previous) | set(record)
                    if previous.get(key) != record.get(key)}
         if changed.intersection({"primaryIp", "ipReserved"}) and (is_basic_address(previous) or is_basic_address(record)) and not can_access(connection, account_id, "Devices", edit=True):
@@ -258,6 +260,7 @@ def create_device_in_transaction(connection, account_id, record):
         raise PermissionError("Section edit permission was revoked")
     record = prepare_device_rack_fields(connection, record)
     record = prepare_device_address(connection, account_id, record)
+    validate_device_storage(record)
     if record.get("primaryIp") and not is_basic_address(record) and not can_access(connection, account_id, "IPAM", edit=True):
         raise PermissionError("IPAM edit permission required for managed address changes")
     if (record.get("rackId") or record.get("mountType") == "Rack Mounted") and not can_access(

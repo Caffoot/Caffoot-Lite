@@ -4683,7 +4683,7 @@ function openIpModal(ip) {
                     const display = typeof value === 'boolean' ? (value ? 'Yes' : 'No') : value;
                     return field(getDeviceDetailFieldLabel(key, device.type), display);
                 });
-            return rows.join('');
+            return rows.join('')+(device.type==='Server - Physical'&&!device.isVirtual?serverStorageDetailRows(details,field):'');
         }
         // Preserve the existing authenticated modal and focus/discard/permission controls.
         // The source overlay and container are shared by Device Details and Add/Edit.
@@ -4960,6 +4960,8 @@ function openIpModal(ip) {
             'Server - Physical': {'Dell':['PowerEdge'],'HPE':['ProLiant DL','ProLiant ML'],'Lenovo':['ThinkSystem'],'Supermicro':['SuperServer']},
             'Switch': {'Cisco':['Catalyst','Nexus'],'Aruba':['CX'],'HPE':['FlexNetwork'],'Ubiquiti':['UniFi Switch']},
             'Firewall': {'Fortinet':['FortiGate'],'Cisco':['Firepower'],'Sophos':['XGS'],'Palo Alto Networks':['PA Series']},
+            'UPS': {'APC (Schneider Electric)':[],'Eaton':[],'Vertiv':[],'CyberPower':[],'Riello UPS':[],'Socomec':[],'Ubiquiti':[]},
+            'PDU': {'APC (Schneider Electric)':[],'Eaton':[],'Vertiv':[],'CyberPower':[],'Raritan':[],'Server Technology':[],'ATEN':[],'Ubiquiti':[]},
             'NAS': {'Synology':['DiskStation','RackStation'],'QNAP':['TS Series']}
         };
         // User-managed hardware suggestions are stored with the offline inventory.
@@ -5164,7 +5166,7 @@ function openIpModal(ip) {
             if(!await nextSettingsBridge.save('installedSoftware')){const prior=JSON.parse(snapshot);Object.keys(appState).forEach(k=>delete appState[k]);Object.assign(appState,prior);showToast('Could not save the change.','error');return;}
             openConfiguredSoftwareCatalogueManager();
         }
-        const deviceDetailFieldLabels = {"portCount":"Number of ports","networkCard":"Network card","networkConnection":"Network connection method","printerColour":"Printer colour type","printerDesign":"Printer design type","windowsLicence":"Windows licence","os":"Operating system","processor":"Processor","graphics":"Graphics card","memory":"Memory size","memoryUnit":"Memory unit","storage":"Storage size","storageUnit":"Storage unit","raid":"RAID type","driveCount":"Number of hard drives","handsetCount":"Number of handsets","powerOutlets":"UPS power outlets","serialPort":"UPS serial port","usbPort":"UPS USB port","Swan":"Swan","MicrosoftOffice":"Microsoft Office","Planet":"Planet","SpindleSoftware":"Spindle Software","Preactor":"Preactor","RedLionApp":"Red Lion App","SalesBase":"Sales Base","HelpDesk":"Help Desk","ProductionITHelpDeskDashboards":"Production I T Help Desk Dashboards","PDA":"P D A","TMS":"T M S","PhoneBook":"Phone Book","EasyLabel":"Easy Label","SwanServer":"Swan Server","SQLServer":"S Q L Server","TMSServer":"T M S Server","printserver":"printserver","keriserver":"keriserver","ActiveDirectory":"Active Directory","AntivirusSoftware":"Antivirus Software","DNS":"D N S","DHCP":"D H C P","ExchangeServer":"Exchange Server","BackupSoftware":"Backup Software","PlanetDB":"Planet D B","SystemsDatabaseBackEndTables":"Systems Database Back End Tables","PDASystem":"P D A System"};
+        const deviceDetailFieldLabels = {"portCount":"Number of ports","networkCard":"Network card","networkConnection":"Network connection method","printerColour":"Printer colour type","printerDesign":"Printer design type","windowsLicence":"Windows licence","os":"Operating system","processor":"Processor","graphics":"Graphics card","memory":"Memory size","memoryUnit":"Memory unit","storage":"Storage size","storageUnit":"Storage unit","storageType":"Storage Type (Optional)","raid":"RAID type","driveCount":"Number of hard drives","handsetCount":"Number of handsets","powerOutlets":"UPS power outlets","serialPort":"UPS serial port","usbPort":"UPS USB port","Swan":"Swan","MicrosoftOffice":"Microsoft Office","Planet":"Planet","SpindleSoftware":"Spindle Software","Preactor":"Preactor","RedLionApp":"Red Lion App","SalesBase":"Sales Base","HelpDesk":"Help Desk","ProductionITHelpDeskDashboards":"Production I T Help Desk Dashboards","PDA":"P D A","TMS":"T M S","PhoneBook":"Phone Book","EasyLabel":"Easy Label","SwanServer":"Swan Server","SQLServer":"S Q L Server","TMSServer":"T M S Server","printserver":"printserver","keriserver":"keriserver","ActiveDirectory":"Active Directory","AntivirusSoftware":"Antivirus Software","DNS":"D N S","DHCP":"D H C P","ExchangeServer":"Exchange Server","BackupSoftware":"Backup Software","PlanetDB":"Planet D B","SystemsDatabaseBackEndTables":"Systems Database Back End Tables","PDASystem":"P D A System"};
         const deviceTypeDetailGroups = {
             'switch':'switch','router':'router','firewall':'network','print servers':'network',
             'printer':'printer','scanner':'printer',
@@ -5177,6 +5179,7 @@ function openIpModal(ip) {
             portCount:['4','8','12','16','24','48'],networkConnection:['Ethernet','Wi-Fi','Fibre','Other'],printerColour:['Colour','Monochrome'],
             printerDesign:['Laser','Inkjet','Thermal','Dot matrix','Other'],
             memoryUnit:['MB','GB','TB'],storageUnit:['GB','TB','PB'],
+            storageType:['HDD','SATA SSD','NVMe SSD','Other'],
             raid:['None','RAID 0','RAID 1','RAID 5','RAID 6','RAID 10','Other']
         };
         const booleanDeviceDetailFields = new Set(['Swan','MicrosoftOffice','Planet','SpindleSoftware','Preactor','RedLionApp','SalesBase','HelpDesk','ProductionITHelpDeskDashboards','PDA','TMS','PhoneBook','EasyLabel','SwanServer','SQLServer','TMSServer','printserver','keriserver','ActiveDirectory','AntivirusSoftware','DNS','DHCP','ExchangeServer','BackupSoftware','PlanetDB','SystemsDatabaseBackEndTables','PDASystem','serialPort','usbPort']);
@@ -5287,8 +5290,8 @@ function openIpModal(ip) {
         }
         function getDetailFieldsForDeviceType(type) {
             const group=deviceTypeDetailGroups[String(type||'').toLowerCase().trim()];
-            if(group==='computer')return [...deviceDetailFieldProfiles.computer.filter(k=>!legacySoftwareFieldKeys.includes(k)),...getSoftwareFieldsForDeviceType(type)];
-            if(group==='server')return [...deviceDetailFieldProfiles.server.filter(k=>!legacyServerServiceFieldKeys.includes(k)),...getAvailableServerServiceFieldKeys(),...getSoftwareFieldsForDeviceType(type)];
+            if(group==='computer')return [...(['Desktop','Laptop'].includes(type)?['storageType']:[]),...deviceDetailFieldProfiles.computer.filter(k=>!legacySoftwareFieldKeys.includes(k)),...getSoftwareFieldsForDeviceType(type)];
+            if(group==='server')return [...(type==='Server - Physical'?['storageType']:[]),...deviceDetailFieldProfiles.server.filter(k=>!legacyServerServiceFieldKeys.includes(k)),...getAvailableServerServiceFieldKeys(),...getSoftwareFieldsForDeviceType(type)];
             return [...(deviceDetailFieldProfiles[group] || []),...getSoftwareFieldsForDeviceType(type)];
         }
         // Keep persisted typeDetails keys unchanged while separating physical and software controls.
@@ -5560,6 +5563,78 @@ function openIpModal(ip) {
             }finally{if(button?.isConnected)button.disabled=false;}
         }
 
+        function serverStorageField(label,key,value='',choices=null,extra='') {
+            const id='server-storage-'+key;
+            const options=choices?[...new Set([...choices,...(value&&!choices.includes(String(value))?[String(value)]:[])])]:null;
+            return '<div class="device-review-field"><label for="'+escapeHtml(id)+'">'+label+'</label>'+(options?'<select id="'+escapeHtml(id)+'" data-server-storage-field="'+escapeHtml(key)+'" '+extra+'><option value="">Not Recorded</option>'+options.map(option=>'<option value="'+escapeHtml(option)+'" '+(String(value)===option?'selected':'')+'>'+escapeHtml(key==='boot-source'?({independent:'Independent Boot Drives (ZFS Not Required)',pool:'Use An Existing ZFS Pool'}[option]||option):key==='boot-poolId'?(deviceDetailFormValues.zfsPools||[]).find(pool=>pool.id===option)?.name||option:option)+'</option>').join('')+'</select>':'<input id="'+escapeHtml(id)+'" data-server-storage-field="'+escapeHtml(key)+'" value="'+escapeHtml(value)+'" '+extra+'>')+'</div>';
+        }
+        function renderServerStorageFields(values) {
+            const boot=values.bootStorage||null,pools=Array.isArray(values.zfsPools)?values.zfsPools:[];
+            const media=['HDD','SATA SSD','NVMe SSD','Other'];
+            const action=(label,operation,pool='',vdev='')=>'<button type="button" class="btn btn-outline" data-action="server-storage-action" data-operation="'+operation+'" data-pool="'+escapeHtml(pool)+'" data-vdev="'+escapeHtml(vdev)+'">'+label+'</button>';
+            let bootFields='';
+            if(boot){
+                bootFields=serverStorageField('Boot Storage Source','boot-source',boot.source,['independent','pool'],'data-storage-toggle');
+                if(boot.source==='pool'){
+                    bootFields='<div class="device-review-form-grid">'+bootFields+serverStorageField('Existing ZFS Boot Pool','boot-poolId',boot.poolId,pools.map(pool=>pool.id),'required')+'</div><p class="device-review-quiet">The existing pool and its VDEVs are recorded once. No independent boot drives are added.</p>';
+                }else bootFields='<div class="device-review-form-grid">'+bootFields+serverStorageField('Boot Drive Type','boot-driveType',boot.driveType,media,'required')+serverStorageField('Number Of Boot Drives','boot-driveCount',boot.driveCount,null,'type="number" min="1" step="1" required')+serverStorageField('Capacity Per Drive','boot-capacity',boot.capacity,null,'type="number" min="0.000001" step="any" required')+serverStorageField('Capacity Unit','boot-unit',boot.unit,['GB','TB'],'required')+serverStorageField('Boot Configuration','boot-configuration',boot.configuration,['Single','Mirror','Other'],'required')+serverStorageField('Boot Pool Name (Optional)','boot-poolName',boot.poolName||'',null,'maxlength="100"')+'</div>';
+            }
+            const poolFields=pools.map((pool,index)=>'<fieldset class="device-review-panel full"><legend>ZFS Pool '+(index+1)+'</legend>'+serverStorageField('Pool Name','pool-'+pool.id+'-name',pool.name,null,'required maxlength="100"')+action('Remove Pool','remove-pool',pool.id)+pool.vdevs.map((vdev,vindex)=>'<fieldset class="device-review-panel full"><legend>VDEV '+(vindex+1)+'</legend><div class="device-review-form-grid">'+serverStorageField('VDEV Layout','vdev-'+pool.id+'-'+vdev.id+'-layout',vdev.layout,['Single','Mirror','RAIDZ1','RAIDZ2','RAIDZ3'],'required')+serverStorageField('Number Of Drives','vdev-'+pool.id+'-'+vdev.id+'-driveCount',vdev.driveCount,null,'type="number" min="1" step="1" required')+serverStorageField('Capacity Per Drive','vdev-'+pool.id+'-'+vdev.id+'-capacity',vdev.capacity,null,'type="number" min="0.000001" step="any" required')+serverStorageField('Capacity Unit','vdev-'+pool.id+'-'+vdev.id+'-unit',vdev.unit,['GB','TB'],'required')+serverStorageField('Drive Type','vdev-'+pool.id+'-'+vdev.id+'-driveType',vdev.driveType,media,'required')+'</div>'+action('Remove VDEV','remove-vdev',pool.id,vdev.id)+'</fieldset>').join('')+action('Add VDEV','add-vdev',pool.id)+'</fieldset>').join('');
+            const root='<div id="server-storage-controls" class="device-review-field full"><h4>Boot Storage (Optional)</h4><label><input type="checkbox" data-server-boot-enabled '+(boot?'checked':'')+'> Record Boot Storage</label>'+bootFields+'<div class="divider"></div><h4>ZFS Pools (Optional)</h4><p class="device-review-quiet">Record named pools and their VDEVs for inventory documentation.</p>'+poolFields+action('Add Pool','add-pool')+'<p class="device-review-quiet">RAID Type, Number Of Hard Drives and Storage Size / Unit remain independently recorded. These details do not recalculate those fields.</p></div>';
+            return root;
+        }
+        function captureServerStorageValues() {
+            const root=document.getElementById('server-storage-controls');
+            if(!root||document.getElementById('dev-type')?.value!=='Server - Physical')return;
+            const values=deviceDetailFormValues;
+            const pools=Array.isArray(values.zfsPools)?values.zfsPools:[];
+            const enabled=root.querySelector('[data-server-boot-enabled]').checked;
+            if(!enabled)values.bootStorage=null;
+            else if(!values.bootStorage)values.bootStorage={source:'independent'};
+            for(const input of root.querySelectorAll('[data-server-storage-field]')){
+                const key=input.dataset.serverStorageField;
+                if(key.startsWith('boot-')){if(enabled)values.bootStorage[key.slice(5)]=input.value;continue;}
+                for(const pool of pools){
+                    if(key==='pool-'+pool.id+'-name')pool.name=input.value;
+                    for(const vdev of pool.vdevs){const prefix='vdev-'+pool.id+'-'+vdev.id+'-';if(key.startsWith(prefix))vdev[key.slice(prefix.length)]=input.value;}
+                }
+            }
+            if(values.bootStorage?.source==='pool')values.bootStorage={source:'pool',poolId:values.bootStorage.poolId||''};
+            if(values.bootStorage?.source==='independent')delete values.bootStorage.poolId;
+            if(pools.length||Object.hasOwn(values,'zfsPools'))values.zfsPools=pools;
+        }
+        function refreshServerStorageControls() {
+            captureDeviceDetailFieldValues();
+            const root=document.getElementById('server-storage-controls');
+            if(root)root.outerHTML=renderServerStorageFields(deviceDetailFormValues);
+            const boot=deviceDetailFormValues.bootStorage;
+            if(boot?.source==='pool'){
+                const select=document.querySelector('[data-server-storage-field="boot-poolId"]');
+                for(const pool of deviceDetailFormValues.zfsPools||[]){const option=Array.from(select.options).find(option=>option.value===pool.id);if(option)option.textContent=pool.name||'Unnamed Pool';}
+            }
+        }
+        function updateServerStorage(action,poolId='',vdevId='') {
+            captureDeviceDetailFieldValues();
+            const pools=deviceDetailFormValues.zfsPools||[];
+            const pool=pools.find(pool=>pool.id===poolId);
+            const vdev=()=>({id:crypto.randomUUID().replaceAll('-',''),layout:'',driveCount:'',capacity:'',unit:'',driveType:''});
+            if(action==='add-pool')pools.push({id:crypto.randomUUID().replaceAll('-',''),name:'',vdevs:[vdev()]});
+            if(action==='remove-pool')pools.splice(pools.findIndex(pool=>pool.id===poolId),1);
+            if(action==='add-vdev'&&pool)pool.vdevs.push(vdev());
+            if(action==='remove-vdev'&&pool)pool.vdevs=pool.vdevs.filter(vdev=>vdev.id!==vdevId);
+            deviceDetailFormValues.zfsPools=pools;
+            refreshServerStorageControls();
+        }
+        function serverStorageDetailRows(details,field) {
+            const pools=Array.isArray(details.zfsPools)?details.zfsPools:[],boot=details.bootStorage;
+            let rows='';
+            if(boot?.source==='pool')rows+=field('Boot Storage','Existing ZFS Pool: '+(pools.find(pool=>pool.id===boot.poolId)?.name||'Recorded Pool'));
+            else if(boot)rows+=field('Boot Storage',[boot.driveCount+' × '+boot.capacity+' '+boot.unit,boot.driveType,boot.configuration,boot.poolName].filter(Boolean).join(' · '));
+            for(const pool of pools)for(const [index,vdev] of pool.vdevs.entries())rows+=field('ZFS Pool '+pool.name+' — VDEV '+(index+1),[vdev.layout,vdev.driveCount+' × '+vdev.capacity+' '+vdev.unit,vdev.driveType].join(' · '));
+            return rows;
+        }
+        document.addEventListener('change',event=>{if(event.target.matches('[data-server-boot-enabled],[data-storage-toggle]'))refreshServerStorageControls();});
+
         function renderDeviceDetailFields(type, values={}, section='all') {
             const keys=getDetailFieldsForDeviceType(type).filter(key =>
                 key !== 'os' && key !== 'windowsLicence' && !(type === 'Server - Physical' && key === 'serverService_Hypervisor' && section === 'services') && (section === 'all' || (section === 'hardware' && !isSoftwareDetailField(key)) || (section === 'services' && getAvailableServerServiceFieldKeys().includes(key)) || (section === 'installed' && getAvailableSoftwareCatalogueEntries().some(x=>x.key===key)) || (section === 'software' && isSoftwareDetailField(key))));
@@ -5572,10 +5647,10 @@ function openIpModal(ip) {
                     const tile = section === 'services' || section === 'installed';
                     return tile ? renderInterfaceTemplate("devices/render-device-detail-fields-1",[escapeHtml(key),value===true?'checked':'',escapeHtml(label)]) : renderInterfaceTemplate("devices/render-device-detail-fields-2",[escapeHtml(key),value===true?'checked':'',escapeHtml(label)]);
                 }
-                const choices=deviceDetailFieldChoices[key];
+                const choices=['storageType','raid'].includes(key)?[...new Set([...deviceDetailFieldChoices[key],...(value?[String(value)]:[])])]:deviceDetailFieldChoices[key];
                 if(choices) return renderInterfaceTemplate("devices/render-device-detail-fields-3",[escapeHtml(key),escapeHtml(label),escapeHtml(key),escapeHtml(key),choices.map(opt=>`<option value="${escapeHtml(opt)}" ${value===opt?'selected':''}>${escapeHtml(opt)}</option>`).join('')]);
                 return renderInterfaceTemplate("devices/render-device-detail-fields-4",[escapeHtml(key),escapeHtml(label),escapeHtml(key),escapeHtml(key),numericDeviceDetailFields.has(key)?'number':'text',numericDeviceDetailFields.has(key)?'min="0" step="any"':'',escapeHtml(String(value))]);
-            }).join('')+'</div>';
+            }).join('')+'</div>'+((section==='all'||section==='hardware')&&type==='Server - Physical'?renderServerStorageFields(values):'');
         }
         // Offline, device-type-aware platform suggestions. Names are not version claims.
         const platformOptionsByDeviceGroup = Object.freeze({
@@ -6130,6 +6205,7 @@ function openIpModal(ip) {
         }
         function captureDeviceDetailFieldValues() {
             captureSoftwarePlatformFields();
+            captureServerStorageValues();
             document.querySelectorAll('[data-device-detail-field]').forEach(el=>{
                 deviceDetailFormValues[el.dataset.deviceDetailField]=el.type==='checkbox'?el.checked:el.value;
             });
@@ -8666,6 +8742,7 @@ function openIpModal(ip) {
                 case 'manufacturer-none': document.querySelectorAll('input[name="catalogue-manufacturer-device-type"]:not(:disabled)').forEach(x=>x.checked=false); break;
                 case 'save-catalogue-manufacturer': saveHardwareManufacturer(name); break;
                 case 'confirm-remove-catalogue-manufacturer': saveHardwareManufacturer(name,true); break;
+                case 'server-storage-action': updateServerStorage(target.dataset.operation,target.dataset.pool,target.dataset.vdev); break;
                 case 'open-device-modal': openDeviceModal(); break;
                 case 'edit-device': openDeviceModal(id); break;
                 case 'view-device': openDeviceDetailView(id); break;

@@ -68,9 +68,14 @@ class DeviceStockTests(unittest.TestCase):
         identity = self.source()
         payload = registration_payload(self.db, identity)
         self.db.execute('INSERT INTO inventory_subnets VALUES(?,?,0)', ('s', json.dumps(dict(id='s', name='Test', cidr='192.0.2.0/24', gateway='192.0.2.1'))))
+        self.db.execute("UPDATE organisation_features SET enabled=1 WHERE feature='ipam'")
         self.db.commit()
         payload['record']['primaryIp'] = '192.0.2.12'
-        with patch('backend.device_stock.append_stock_fact', side_effect=RuntimeError('Injected journal failure')):
+        def fail_after_persistence(*args, **kwargs):
+            self.assertEqual(self.db.execute('SELECT count(*) FROM inventory_devices').fetchone()[0], 1)
+            self.assertEqual(self.db.execute('SELECT count(*) FROM inventory_ip_allocations').fetchone()[0], 1)
+            raise RuntimeError('Injected journal failure')
+        with patch('backend.device_stock.append_stock_fact', side_effect=fail_after_persistence):
             self.unchanged(RuntimeError, lambda: self.register(payload))
 
     def test_stale_changed_and_identical_retries(self):
