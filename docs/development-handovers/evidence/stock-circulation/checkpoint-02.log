@@ -1,0 +1,74 @@
+test_issue_routes_use_existing_session_csrf_and_narrow_picker (test_stock_circulation.StockCirculationHttpTests.test_issue_routes_use_existing_session_csrf_and_narrow_picker) ... 127.0.0.1 - - [15/Nov/2026 20:25:15] "GET /api/it-assets/issues HTTP/1.1" 401 -
+127.0.0.1 - - [15/Nov/2026 20:25:15] "POST /api/it-assets/receive HTTP/1.1" 200 -
+127.0.0.1 - - [15/Nov/2026 20:25:15] "POST /api/it-assets/issue HTTP/1.1" 403 -
+127.0.0.1 - - [15/Nov/2026 20:25:15] "POST /api/it-assets/issue HTTP/1.1" 200 -
+127.0.0.1 - - [15/Nov/2026 20:25:15] "GET /api/it-assets/recipients?kind=staff HTTP/1.1" 200 -
+127.0.0.1 - - [15/Nov/2026 20:25:15] "GET /api/it-assets/issues HTTP/1.1" 200 -
+ok
+test_audit_failure_rolls_back_entries_and_header (test_stock_circulation.StockCirculationTests.test_audit_failure_rolls_back_entries_and_header) ... ok
+test_concurrent_technicians_cannot_double_issue_available_stock (test_stock_circulation.StockCirculationTests.test_concurrent_technicians_cannot_double_issue_available_stock) ... ok
+test_inactive_and_archived_recipients_are_rechecked (test_stock_circulation.StockCirculationTests.test_inactive_and_archived_recipients_are_rechecked) ... ok
+test_individual_issue_retains_selected_identity_and_optional_identifiers (test_stock_circulation.StockCirculationTests.test_individual_issue_retains_selected_identity_and_optional_identifiers) ... ok
+test_minimum_recipient_picker_does_not_grant_directory_or_devices_access (test_stock_circulation.StockCirculationTests.test_minimum_recipient_picker_does_not_grant_directory_or_devices_access) ... ok
+test_only_the_selected_ready_balance_can_be_issued (test_stock_circulation.StockCirculationTests.test_only_the_selected_ready_balance_can_be_issued) ... ok
+test_quantity_issues_keep_original_records_and_distinct_outstanding_references (test_stock_circulation.StockCirculationTests.test_quantity_issues_keep_original_records_and_distinct_outstanding_references) ... ok
+test_read_only_mfa_revocation_and_feature_off_deny_operations (test_stock_circulation.StockCirculationTests.test_read_only_mfa_revocation_and_feature_off_deny_operations) ... ok
+test_retries_are_idempotent_but_stale_or_changed_requests_fail (test_stock_circulation.StockCirculationTests.test_retries_are_idempotent_but_stale_or_changed_requests_fail) ... ok
+test_authentication_csrf_payload_and_unapproved_routes (test_stock_intake.StockIntakeHttpTests.test_authentication_csrf_payload_and_unapproved_routes) ... 127.0.0.1 - - [15/Nov/2026 20:25:16] "GET /api/it-assets/stock HTTP/1.1" 401 -
+127.0.0.1 - - [15/Nov/2026 20:25:16] "POST /api/it-assets/receive HTTP/1.1" 403 -
+127.0.0.1 - - [15/Nov/2026 20:25:16] "POST /api/it-assets/receive HTTP/1.1" 400 -
+127.0.0.1 - - [15/Nov/2026 20:25:16] "POST /api/it-assets/return HTTP/1.1" 404 -
+127.0.0.1 - - [15/Nov/2026 20:25:16] "POST /api/it-assets/write-off HTTP/1.1" 404 -
+127.0.0.1 - - [15/Nov/2026 20:25:16] "POST /api/it-assets/correct HTTP/1.1" 404 -
+127.0.0.1 - - [15/Nov/2026 20:25:16] "POST /api/it-assets/register HTTP/1.1" 404 -
+127.0.0.1 - - [15/Nov/2026 20:25:16] "POST /api/it-assets/specifications HTTP/1.1" 404 -
+ok
+test_protected_receipt_readiness_and_history_round_trip (test_stock_intake.StockIntakeHttpTests.test_protected_receipt_readiness_and_history_round_trip) ... 127.0.0.1 - - [15/Nov/2026 20:25:17] "GET /api/it-assets/stock HTTP/1.1" 403 -
+127.0.0.1 - - [15/Nov/2026 20:25:17] "POST /api/it-assets/receive HTTP/1.1" 200 -
+127.0.0.1 - - [15/Nov/2026 20:25:17] "POST /api/it-assets/readiness HTTP/1.1" 200 -
+127.0.0.1 - - [15/Nov/2026 20:25:17] "GET /api/it-assets/stock/484e71763f0d4326b89183ddd33e1c38 HTTP/1.1" 200 -
+ok
+test_accumulated_held_quantities_remain_exact_in_the_supported_number_range (test_stock_intake.StockIntakeTests.test_accumulated_held_quantities_remain_exact_in_the_supported_number_range) ... ok
+test_additional_deliveries_keep_separate_supplier_dates_and_quantities (test_stock_intake.StockIntakeTests.test_additional_deliveries_keep_separate_supplier_dates_and_quantities) ... ok
+test_concurrent_receipts_and_stale_readiness_keep_every_unit_and_history (test_stock_intake.StockIntakeTests.test_concurrent_receipts_and_stale_readiness_keep_every_unit_and_history) ... ok
+test_duplicate_configuration_is_rejected_and_different_specifications_are_distinct (test_stock_intake.StockIntakeTests.test_duplicate_configuration_is_rejected_and_different_specifications_are_distinct) ... ok
+test_failure_after_receipt_or_readiness_rolls_back_all_partial_records (test_stock_intake.StockIntakeTests.test_failure_after_receipt_or_readiness_rolls_back_all_partial_records) ... ok
+test_feature_disabled_history_does_not_leak_even_to_an_inventory_administrator (test_stock_intake.StockIntakeTests.test_feature_disabled_history_does_not_leak_even_to_an_inventory_administrator) ... ok
+test_individual_identity_optional_identifiers_and_selected_readiness (test_stock_intake.StockIntakeTests.test_individual_identity_optional_identifiers_and_selected_readiness) ... ok
+test_invalid_quantities_checks_specifications_and_identifiers_save_nothing (test_stock_intake.StockIntakeTests.test_invalid_quantities_checks_specifications_and_identifiers_save_nothing) ... ok
+test_minimum_is_optional_zero_is_distinct_and_no_movement_is_fabricated (test_stock_intake.StockIntakeTests.test_minimum_is_optional_zero_is_distinct_and_no_movement_is_fabricated) ... ok
+test_partial_checked_readiness_is_atomic_and_keeps_original_receipt (test_stock_intake.StockIntakeTests.test_partial_checked_readiness_is_atomic_and_keeps_original_receipt) ... ok
+test_read_only_missing_mfa_and_revoked_sessions_cannot_write (test_stock_intake.StockIntakeTests.test_read_only_missing_mfa_and_revoked_sessions_cannot_write) ... ok
+test_readiness_and_reasoned_reversal_preserve_held_and_receipts (test_stock_intake.StockIntakeTests.test_readiness_and_reasoned_reversal_preserve_held_and_receipts) ... ok
+test_receipt_is_held_unready_and_preserves_other_records (test_stock_intake.StockIntakeTests.test_receipt_is_held_unready_and_preserves_other_records) ... ok
+test_retries_are_idempotent_and_changed_payload_cannot_reuse_a_reference (test_stock_intake.StockIntakeTests.test_retries_are_idempotent_and_changed_payload_cannot_reuse_a_reference) ... ok
+test_stale_updates_unchecked_increases_and_negative_minimum_are_refused (test_stock_intake.StockIntakeTests.test_stale_updates_unchecked_increases_and_negative_minimum_are_refused) ... ok
+test_concurrent_closure_retains_one_fact_and_original_identity (test_assignment_closure.AssignmentClosureTests.test_concurrent_closure_retains_one_fact_and_original_identity) ... ok
+test_failure_rolls_back_the_column_guard_and_version_together (test_assignment_closure.AssignmentClosureTests.test_failure_rolls_back_the_column_guard_and_version_together) ... ok
+test_fresh_upgrade_and_restart_preserve_every_record_and_effective_policy (test_assignment_closure.AssignmentClosureTests.test_fresh_upgrade_and_restart_preserve_every_record_and_effective_policy) ... ok
+test_missing_audit_or_pending_fact_cannot_close_an_assignment (test_assignment_closure.AssignmentClosureTests.test_missing_audit_or_pending_fact_cannot_close_an_assignment) ... ok
+test_missing_or_invalid_header_rolls_back_closure_audit_and_stock (test_assignment_closure.AssignmentClosureTests.test_missing_or_invalid_header_rolls_back_closure_audit_and_stock) ... ok
+test_original_fields_and_replacement_are_independently_protected (test_assignment_closure.AssignmentClosureTests.test_original_fields_and_replacement_are_independently_protected) ... ok
+test_populated_stock_and_feature_choices_are_preserved (test_assignment_closure.AssignmentClosureTests.test_populated_stock_and_feature_choices_are_preserved) ... ok
+test_return_and_writeoff_close_once_and_preserve_original_assignment (test_assignment_closure.AssignmentClosureTests.test_return_and_writeoff_close_once_and_preserve_original_assignment) ... ok
+test_unexpected_existing_guards_are_not_adopted_or_silently_repaired (test_assignment_closure.AssignmentClosureTests.test_unexpected_existing_guards_are_not_adopted_or_silently_repaired) ... ok
+test_audit_failure_rolls_back_every_device_and_general_history (test_device_assignments.DeviceAssignmentTests.test_audit_failure_rolls_back_every_device_and_general_history) ... ok
+test_batch_failure_is_atomic_and_duplicates_fail (test_device_assignments.DeviceAssignmentTests.test_batch_failure_is_atomic_and_duplicates_fail) ... ok
+test_concurrent_allocations_have_one_winner (test_device_assignments.DeviceAssignmentTests.test_concurrent_allocations_have_one_winner) ... ok
+test_current_names_follow_recipient_rename_while_history_keeps_original (test_device_assignments.DeviceAssignmentTests.test_current_names_follow_recipient_rename_while_history_keeps_original) ... ok
+test_delete_and_inventory_reset_retain_assignment_history (test_device_assignments.DeviceAssignmentTests.test_delete_and_inventory_reset_retain_assignment_history) ... ok
+test_device_search_pages_count_only_eligible_matching_records (test_device_assignments.DeviceAssignmentTests.test_device_search_pages_count_only_eligible_matching_records) ... ok
+test_eligibility_and_lifecycle_preserve_outstanding (test_device_assignments.DeviceAssignmentTests.test_eligibility_and_lifecycle_preserve_outstanding) ... ok
+test_history_cannot_be_orphaned_or_rewritten (test_device_assignments.DeviceAssignmentTests.test_history_cannot_be_orphaned_or_rewritten) ... ok
+test_only_devices_edit_gets_restricted_recipients (test_device_assignments.DeviceAssignmentTests.test_only_devices_edit_gets_restricted_recipients) ... ok
+test_same_device_identity_history_and_actor (test_device_assignments.DeviceAssignmentTests.test_same_device_identity_history_and_actor) ... ok
+test_self_service_uses_current_link_membership_and_safe_fields (test_device_assignments.DeviceAssignmentTests.test_self_service_uses_current_link_membership_and_safe_fields) ... ok
+test_stale_reserved_retired_and_invalid_requests_are_blocked (test_device_assignments.DeviceAssignmentTests.test_stale_reserved_retired_and_invalid_requests_are_blocked) ... ok
+test_unreviewed_device_types_are_blocked_pending_eligibility_decision (test_device_assignments.DeviceAssignmentTests.test_unreviewed_device_types_are_blocked_pending_eligibility_decision) ... ok
+test_upgrade_from_14_changes_no_existing_data_and_is_idempotent (test_device_assignments.DeviceAssignmentTests.test_upgrade_from_14_changes_no_existing_data_and_is_idempotent) ... ok
+test_waiting_allocation_rechecks_session_and_permission (test_device_assignments.DeviceAssignmentTests.test_waiting_allocation_rechecks_session_and_permission) ... ok
+
+----------------------------------------------------------------------
+Ran 51 tests in 3.446s
+
+OK

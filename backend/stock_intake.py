@@ -104,6 +104,7 @@ def stock_item(connection, item_id):
                  "SELECT id,serial_number,asset_tag,device_id FROM it_asset_stock_units "
                  "WHERE stock_item_id=? ORDER BY id", (item_id,))}
     balances = {}
+    quantity_balances = {}
     latest = 0
     for _, unit_id, quantity, old, new, movement in connection.execute(
             "SELECT e.stock_item_id,e.stock_unit_id,e.quantity,e.from_state,e.to_state,e.movement_id "
@@ -114,6 +115,8 @@ def stock_item(connection, item_id):
         for state, delta in ((old, -quantity), (new, quantity)):
             if state is not None:
                 balances[state] = balances.get(state, 0) + delta
+                if unit_id is None:
+                    quantity_balances[state]=quantity_balances.get(state,0)+delta
                 if unit_id in units:
                     target = units[unit_id]["balances"]
                     target[state] = target.get(state, 0) + delta
@@ -122,6 +125,10 @@ def stock_item(connection, item_id):
                            ("awaiting_checks", "awaiting_preparation", "ready")),
         readyToIssue=balances.get("ready", 0),
         awaitingChecks=balances.get("awaiting_checks", 0) + balances.get("awaiting_preparation", 0))
+    result['stateBalances'] = {key: balances.get(state,0) for key,state in (
+        ('awaitingChecks','awaiting_checks'),('awaitingPreparation','awaiting_preparation'),
+        ('currentlyIssued','issued'),('writtenOff','written_off'))}
+    result['quantityStateBalances'] = quantity_balances
     for unit in units.values():
         unit["ready"] = unit["balances"].get("ready", 0) == 1
         unit["held"] = sum(unit["balances"].get(key, 0) for key in
@@ -169,6 +176,7 @@ def stock_history(connection, item_id=None):
             receipts.append(event)
         else:
             event.update(readyBefore=details.get("readyBefore"), readyAfter=details.get("readyAfter"))
+            event['preparation'] = isinstance(details.get('checks'),dict) and 'cleanedWorking' in details['checks']
             readiness.append(event)
     return dict(receipts=receipts, readinessChanges=readiness)
 
@@ -177,9 +185,13 @@ def read_stock(connection, account_id, item_id=None):
     stock_access(connection, account_id)
     if item_id is not None:
         return dict(item=stock_item(connection, item_id), **stock_history(connection, item_id))
-    return dict(items=[stock_item(connection, identity) for identity, in connection.execute(
+    result = dict(items=[stock_item(connection, identity) for identity, in connection.execute(
         "SELECT id FROM it_asset_stock_items ORDER BY name COLLATE NOCASE,id")],
         **stock_history(connection))
+    from backend.stock_circulation import read_stock_issues,stock_movement_history
+    result.update(read_stock_issues(connection,account_id))
+    result['movements']=stock_movement_history(connection,account_id)
+    return result
 
 
 def stock_operation(payload, allowed, required):
@@ -367,10 +379,15 @@ def update_stock_readiness(connection, actor, token, payload):
             if "readyUnitIds" in payload:
                 raise ValueError("Quantity stock does not accept individual unit selections")
             delta = ready-old_ready
+            if delta>item['stateBalances']['awaitingChecks']:
+                raise ValueError('Complete the returned-equipment preparation checks before marking this quantity ready')
             if delta:
+                returned=connection.execute('''SELECT 1 FROM it_asset_stock_entries e
+                    JOIN it_asset_stock_movements m ON m.id=e.movement_id
+                    WHERE e.stock_item_id=? AND m.kind='returned' LIMIT 1''',(item['id'],)).fetchone()
                 entries.append((item["id"], abs(delta),
                                 "awaiting_checks" if delta > 0 else "ready",
-                                "ready" if delta > 0 else "awaiting_checks"))
+                                "ready" if delta > 0 else "awaiting_preparation" if returned else "awaiting_checks"))
             increasing, decreasing = delta > 0, delta < 0
         else:
             selected = payload.get("readyUnitIds")
@@ -385,10 +402,15 @@ def update_stock_readiness(connection, actor, token, payload):
                     continue
                 if unit["deviceLinked"]:
                     raise ValueError("Managed Device stock actions are not available in this workflow")
+                if not unit['ready'] and unit['balances'].get('awaiting_preparation',0):
+                    raise ValueError('Complete the returned-equipment preparation checks for this unit')
+                returned=connection.execute('''SELECT 1 FROM it_asset_stock_entries e
+                    JOIN it_asset_stock_movements m ON m.id=e.movement_id
+                    WHERE e.stock_unit_id=? AND m.kind='returned' LIMIT 1''',(unit['id'],)).fetchone()
                 increasing |= unit["id"] in selected
                 decreasing |= unit["ready"]
                 entries.append((unit["id"], 1, "ready" if unit["ready"] else "awaiting_checks",
-                                "ready" if unit["id"] in selected else "awaiting_checks"))
+                                "ready" if unit["id"] in selected else "awaiting_preparation" if returned else "awaiting_checks"))
         if increasing and not all(checks.values()):
             raise ValueError("Confirm quantity/items and condition checks before increasing readiness")
         if decreasing and not reason:

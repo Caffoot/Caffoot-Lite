@@ -1,0 +1,2 @@
+PASS: explicit unassigned canonical Device return, provenance, preparation state, duplicate rejection and unchanged Devices-only operation.
+PASS: 0 genuine captures; no page errors or document overflow.

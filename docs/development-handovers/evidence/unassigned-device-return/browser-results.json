@@ -1,0 +1,34 @@
+{
+  "baseline": "f4ac367984b68f81eb9566d7d8d057b6a26bc5fb",
+  "source": "80b49fa3ae83ab93f137f432fa3aed52521842b5",
+  "screenshots": [
+    "device-details-unassigned-light-1440.png",
+    "device-details-unassigned-dark-1440.png",
+    "device-details-unassigned-light-390.png",
+    "device-details-unassigned-dark-390.png",
+    "return-unassigned-device-light-1440.png",
+    "return-unassigned-device-dark-1440.png",
+    "return-unassigned-device-light-390.png",
+    "return-unassigned-device-dark-390.png",
+    "device-details-return-recorded-light-1440.png",
+    "device-details-return-recorded-dark-1440.png",
+    "device-details-return-recorded-light-390.png",
+    "device-details-return-recorded-dark-390.png",
+    "physical-return-provenance-light-1440.png",
+    "physical-return-provenance-dark-1440.png",
+    "physical-return-provenance-light-390.png",
+    "physical-return-provenance-dark-390.png"
+  ],
+  "pageErrors": [],
+  "checks": [
+    "Existing Device Details Entry",
+    "Preselected Single Canonical Device",
+    "No Automatic Physical Confirmation",
+    "Explicit Record Return Provenance",
+    "Awaiting Preparation Only",
+    "Duplicate Rejection",
+    "Original Configuration And Security Retained",
+    "Immutable History Without Invented Holder",
+    "Device Only Feature Off Preserved"
+  ]
+}

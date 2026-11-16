@@ -1,6 +1,6 @@
 # Departments And Shared Equipment
 
-> **Draft v2.2 — Not Published / Not Production Guidance.** This describes Department features merged through Batch 3.5 at `2e6c50ba4777b7500258d2a1a28317764d806020` (schema 15). Batch 3.4 manual acceptance remains deferred. v2.1 remains the published release. These are feature instructions for an authorised test instance, not installation, upgrade or restore steps.
+> **Draft v2.2 — Not Published / Not Production Guidance.** Batches 3.1–3.7 are merged through PR #388 at `7f91f5d42feb3916cfab060abd5ca4b1558a92ba` (schema 16). Batch 3.8 is implemented for review on `feat/it-assets-issue-return-writeoff` (draft PR #389, schema 17); it is not merged or visually accepted. Batch 3.4 native acceptance remains deferred. Use the published v2.1 guides for production. These are not installation, upgrade or restore instructions.
 
 Departments are simple, flat groups, such as a fictional **Accounts** Department. Membership does not grant inventory, directory or account-administration rights.
 
@@ -36,8 +36,8 @@ It uses the existing application styling and remains unreleased.
 3. **Staff Members** lists currently linked records, including inactive Staff whose
    membership is retained. **View Staff Details** opens the existing authorised screen.
    Change membership through the Staff Add/Edit form.
-4. **Equipment** lists only Devices assigned directly to the Department, followed by
-   their recorded assignment history. Equipment personally assigned to Staff is excluded.
+4. **Equipment** lists only Devices and outstanding IT Assets assigned directly to the Department, followed by
+   their genuine recorded assignment/movement history. Independent section access applies. Equipment personally assigned to Staff is excluded.
    **View Device** opens the original Device record.
 5. **History** shows only Department changes supplied by the existing Audit Trail service
    and authorised Device assignments. An empty state describes what is available with
@@ -48,7 +48,6 @@ It uses the existing application styling and remains unreleased.
 On narrow screens, scroll the tab row or a wide table sideways to reach its other
 controls and columns. Arrow keys, Home and End also move between tabs.
 
-Devices feature-off removes equipment content without changing saved relationships.
-IT Asset assignments, returns, reassignment and stock workflows are unavailable.
+Devices and IT Assets feature-off hide their corresponding equipment without changing saved relationships. With IT Assets Edit, **Issue Equipment** preselects an active Department; **Return Equipment** records an actual outstanding stock return, including from archived Departments. Personal Staff equipment is excluded. See [Issue, Return And Write Off](IT-Assets-Issue-Return-and-Write-Off.md). Device registration/reissue and associated-equipment reassignment remain later work.
 
 [← Draft v2.2 Guides](README.md) · [Published v2.1 Guides](../README.md)

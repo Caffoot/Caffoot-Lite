@@ -6,8 +6,9 @@ the published inventory import format."""
 import sqlite3
 from backend.role_policy import evaluate_role_policy
 from backend.stock_schema import migrate_it_asset_stock, validate_it_asset_stock
+from backend.assignment_closure import migrate_assignment_closure, validate_assignment_closure
 
-SCHEMA_VERSION = 16
+SCHEMA_VERSION = 17
 
 DDL = """
 CREATE TABLE IF NOT EXISTS inventory_devices (
@@ -223,6 +224,12 @@ def initialise_database(connection: sqlite3.Connection) -> None:
                 connection.execute("INSERT INTO schema_migrations(version) VALUES(16)")
             else:
                 validate_it_asset_stock(connection)
+        if SCHEMA_VERSION >= 17:
+            if 17 not in versions:
+                migrate_assignment_closure(connection)
+                connection.execute("INSERT INTO schema_migrations(version) VALUES(17)")
+            else:
+                validate_assignment_closure(connection)
         connection.commit()
     except BaseException:
         connection.rollback()

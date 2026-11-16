@@ -1,0 +1,82 @@
+{
+  "device-details-unassigned-light-1440.png": {
+    "width": 1440,
+    "height": 1050,
+    "sha256": "f78a821aa37ce40694cd3f02fabcd3fb3801ce8019c5b95d215543215d824fb8"
+  },
+  "device-details-unassigned-dark-1440.png": {
+    "width": 1440,
+    "height": 1050,
+    "sha256": "94738b3f5adc32af0f1193b999e0932531bd3a16f7a2b1286abcd92881e78b03"
+  },
+  "device-details-unassigned-light-390.png": {
+    "width": 390,
+    "height": 844,
+    "sha256": "1ad6b16cd4a6e094b3b555e6198cd0eafca9c28aed8aac373f30d5f4294bff94"
+  },
+  "device-details-unassigned-dark-390.png": {
+    "width": 390,
+    "height": 844,
+    "sha256": "d4c7a6a54c68eaa1ece08320b3f84326a8c6e7db6882ca2dc4638fb79c209442"
+  },
+  "return-unassigned-device-light-1440.png": {
+    "width": 1440,
+    "height": 1179,
+    "sha256": "765cba4bbcbb9362ce702e027b23094b59a58868b8f76cd1c9f63b7e17205a6c"
+  },
+  "return-unassigned-device-dark-1440.png": {
+    "width": 1440,
+    "height": 1179,
+    "sha256": "cd476867ba4a04b85ab69f291e1ee9bec1bd0d40b3cf25ec7a6d0dd52fcd94b7"
+  },
+  "return-unassigned-device-light-390.png": {
+    "width": 390,
+    "height": 1936,
+    "sha256": "5c763f4f5d1cdeed8e350175e2a750d0e556115da49033c0f91c51dbcb0bf0af"
+  },
+  "return-unassigned-device-dark-390.png": {
+    "width": 390,
+    "height": 1936,
+    "sha256": "53979a75994ceb81a0f77917cdbf780c85dbeffb088db6c20def6844257bb440"
+  },
+  "device-details-return-recorded-light-1440.png": {
+    "width": 1440,
+    "height": 1050,
+    "sha256": "96bc4969fa6a44089b7c52ea6a4c387d27bc06767b5160c4831bbc09183b42d9"
+  },
+  "device-details-return-recorded-dark-1440.png": {
+    "width": 1440,
+    "height": 1050,
+    "sha256": "98ed73fc7a7ae83cb21d0e76e902ae49659680075d60f441e58612c242e39969"
+  },
+  "device-details-return-recorded-light-390.png": {
+    "width": 390,
+    "height": 844,
+    "sha256": "d63d09163b585742560401d88f5a60d9e343d69bbaebbfc5a99b11686da2ebdd"
+  },
+  "device-details-return-recorded-dark-390.png": {
+    "width": 390,
+    "height": 844,
+    "sha256": "2805d87be70d07d4d5e70df88713f6a2b4094effad9213b83eb8f1179b76698d"
+  },
+  "physical-return-provenance-light-1440.png": {
+    "width": 1440,
+    "height": 1050,
+    "sha256": "2750e7ef330c46848b45ab77c64c6732baf084447ac7083fd82167a96460e268"
+  },
+  "physical-return-provenance-dark-1440.png": {
+    "width": 1440,
+    "height": 1050,
+    "sha256": "553dfc70a7751cb1246c4ce2b784bd49788a15dfccb9747cd13fec1fa9fd922d"
+  },
+  "physical-return-provenance-light-390.png": {
+    "width": 390,
+    "height": 1248,
+    "sha256": "c5d0a60117b82d322f6f31d6162470ac4015cfe24f7dff4ddde6ea50bb844248"
+  },
+  "physical-return-provenance-dark-390.png": {
+    "width": 390,
+    "height": 1248,
+    "sha256": "4ed2b2beba9beef106e8dbada84ea997ab4be572f299e3a522fbdd84c650e50c"
+  }
+}

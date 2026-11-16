@@ -1,6 +1,6 @@
 # Staff Members
 
-> **Draft v2.2 — Not Published / Not Production Guidance.** This describes development merged through Batch 3.4 at `05b162aa10a74994c970d0b6dbf111dc59b47513` (schema 15). Batch 3.4 manual acceptance is deferred, not passed. v2.1 remains the published release. These are feature instructions for an authorised test instance, not installation, upgrade or restore steps.
+> **Draft v2.2 — Not Published / Not Production Guidance.** Batches 3.1–3.7 are merged through PR #388 at `7f91f5d42feb3916cfab060abd5ca4b1558a92ba` (schema 16). Batch 3.8 is implemented for review on `feat/it-assets-issue-return-writeoff` (draft PR #389, schema 17); it is not merged or visually accepted. Batch 3.4 native acceptance remains deferred. Use the published v2.1 guides for production. These are not installation, upgrade or restore instructions.
 
 A Staff Member is a directory record for a person. They do not need a Caffoot login to hold equipment. The similarly named **Staff Member** login role is a separate security setting.
 
@@ -26,6 +26,6 @@ The new ordinary login receives the baseline Staff Member role, without general 
 
 Use **Mark Inactive** or **Reactivate** on Staff Details, then confirm. Inactivation retains equipment and history; it does not return equipment or disable the person's login. Inactive people cannot receive new initial assignments. Account disabling is managed separately in Permissions.
 
-With independent Devices Read permission, Staff Details shows assigned Devices and history. With Devices Edit, an active person can receive eligible initial assignments through **Assign Equipment**. See [Device Assignments And My Equipment](Device-Assignments-and-My-Equipment.md). Returns and Service Desk are not implemented.
+With independent Devices Read permission, Staff Details shows assigned Devices and history. With Devices Edit, an active person can receive eligible initial assignments through **Assign Equipment**. See [Device Assignments And My Equipment](Device-Assignments-and-My-Equipment.md). With independent IT Assets access, the same view shows outstanding stock quantities and genuine movements. IT Assets Edit permits **Issue Equipment** for active Staff and **Return Equipment** for outstanding stock. See [Issue, Return And Write Off](IT-Assets-Issue-Return-and-Write-Off.md). Service Desk remains later work.
 
 [← Draft v2.2 Guides](README.md) · [Published v2.1 Guides](../README.md)

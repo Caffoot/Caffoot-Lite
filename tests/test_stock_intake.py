@@ -339,6 +339,6 @@ class StockIntakeHttpTests(unittest.TestCase):
                                        self.token, None)[0], 403)
             self.assertEqual(self.post("/api/it-assets/receive", {"operationId": "bad"},
                                        self.token, csrf_for_session(self.token))[0], 400)
-            for action in ("issue", "return", "write-off", "correct", "register", "specifications"):
+            for action in ("correct", "register", "specifications"):
                 self.assertEqual(self.post("/api/it-assets/"+action, {}, self.token,
                                            csrf_for_session(self.token))[0], 404)

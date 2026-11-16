@@ -15,6 +15,19 @@ Before changing Caffoot Lite, identify the existing behaviour that must remain i
 | [`app/` at the published v1.3.3 tag](https://github.com/Caffoot/Caffoot-Lite/tree/v1.3.3/app) | Original HTML application's historical source and tests, excluded from the current Docker source |
 | [Published v1.3.3 source and tests](https://github.com/Caffoot/Caffoot-Lite/tree/v1.3.3/app) | Authoritative published inventory compatibility baseline; check later fixes before using older audit findings |
 
+## Unreleased Stock Circulation Checks
+
+Batch 3.8 adds [assignment-closure tests](../../tests/test_assignment_closure.py),
+[circulation and privacy tests](../../tests/test_stock_circulation.py) and the real
+[HTTPS browser flow](../../tests/stock-circulation-interface.cjs). The latter captures
+52 fictional desktop/mobile light/dark views when `CAFFOOT_CIRCULATION_CAPTURE=1`.
+See [the version-pinned report](../development-handovers/evidence/stock-circulation/Report.md)
+for actual commands, passes, skips, source hashes and separate owner visual review.
+The [unassigned-Device return tests](../../tests/test_unassigned_device_returns.py) and
+[real browser flow](../../tests/unassigned-device-return-interface.cjs) cover the separately
+approved 16 November correction, with [16 affected-screen captures and evidence](../development-handovers/evidence/unassigned-device-return/Report.md).
+These tests do not replace deferred native acceptance or Stage 6 verification.
+
 ## Archived audit and migration evidence
 
 The 25 earlier audit, workflow, test-matrix and draft migration documents are accessible in the [pre-cleanup Git snapshot](https://github.com/Caffoot/Caffoot-Lite/tree/049262f196be494074f698a72f377153f202171b/docs/required-only). They document historical observations and test provenance from v1.3.0 through v1.3.3, including subsequent fixes. Use published [v1.3.3 source/tests](https://github.com/Caffoot/Caffoot-Lite/tree/v1.3.3/app), current [Caffoot Lite tests](../../tests/) and actual [GitHub Actions results](https://github.com/Caffoot/Caffoot-Lite/actions) to decide whether an old finding still applies. Proposed tests in the archive are not automatically executed or requirements.

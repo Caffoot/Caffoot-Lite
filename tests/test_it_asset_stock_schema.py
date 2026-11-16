@@ -104,6 +104,12 @@ class StockMigrationTests(unittest.TestCase):
         self.addCleanup(connection.close)
         return connection
 
+    def upgrade_stock_foundation(self, db):
+        # Keep this historical migration's exact preservation checks. The later
+        # assignment-closure migration has its own current-schema coverage.
+        with patch.object(schema, "SCHEMA_VERSION", 16):
+            schema.initialise_database(db)
+
     def test_every_existing_feature_choice_and_security_record_survives(self):
         for flags in range(8):
             with self.subTest(flags=flags):
@@ -124,7 +130,7 @@ class StockMigrationTests(unittest.TestCase):
                 before = {name: db.execute("SELECT * FROM " + name).fetchall() for name in tables}
                 guards = db.execute("SELECT name,sql FROM sqlite_master WHERE type='trigger'").fetchall()
                 features = dict(db.execute("SELECT * FROM organisation_features"))
-                schema.initialise_database(db)
+                self.upgrade_stock_foundation(db)
                 self.assertEqual(
                     {name: db.execute("SELECT * FROM " + name).fetchall() for name in tables}, before)
                 self.assertEqual(dict(db.execute("SELECT * FROM organisation_features")),
@@ -142,7 +148,7 @@ class StockMigrationTests(unittest.TestCase):
         db.execute("UPDATE organisation_features SET enabled=1 WHERE feature='it_assets'")
         db.commit()
         before = tuple(db.iterdump())
-        schema.initialise_database(db)
+        self.upgrade_stock_foundation(db)
         self.assertEqual(tuple(db.iterdump()), before)
 
     def test_last_trigger_and_migration_marker_failures_roll_back_everything(self):
@@ -156,7 +162,7 @@ class StockMigrationTests(unittest.TestCase):
                                   sqlite3.SQLITE_DENY if (operation, target) == (action, name)
                                   else sqlite3.SQLITE_OK)
                 with self.assertRaises(sqlite3.DatabaseError):
-                    schema.initialise_database(db)
+                    self.upgrade_stock_foundation(db)
                 db.set_authorizer(None)
                 self.assertEqual(tuple(db.iterdump()), before)
 
@@ -176,7 +182,7 @@ class StockMigrationTests(unittest.TestCase):
                 db.commit()
                 before = tuple(db.iterdump())
                 with self.assertRaises(RuntimeError):
-                    schema.initialise_database(db)
+                    self.upgrade_stock_foundation(db)
                 self.assertEqual(tuple(db.iterdump()), before)
 
     def test_completed_schema_rejects_missing_guards_and_unexpected_dependencies(self):
@@ -190,7 +196,7 @@ class StockMigrationTests(unittest.TestCase):
                 db.commit()
                 before = tuple(db.iterdump())
                 with self.assertRaises(RuntimeError):
-                    schema.initialise_database(db)
+                    self.upgrade_stock_foundation(db)
                 self.assertEqual(tuple(db.iterdump()), before)
 
     def test_existing_broken_relationships_are_not_silently_repaired(self):
@@ -201,7 +207,7 @@ class StockMigrationTests(unittest.TestCase):
         db.execute("PRAGMA foreign_keys=ON")
         before = tuple(db.iterdump())
         with self.assertRaisesRegex(RuntimeError, "relationships"):
-            schema.initialise_database(db)
+            self.upgrade_stock_foundation(db)
         self.assertEqual(tuple(db.iterdump()), before)
 
 

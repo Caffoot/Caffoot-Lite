@@ -6,8 +6,7 @@ Scope: named JavaScript declarations/assignments in the six application scripts,
 
 The account hydration/photo functions now have purpose-based callable bindings matching their function names: `hydrateAccount` and `removeAccountPhoto`. The immutable design manifest retains its historical integration-entry names; those metadata names are not the runtime's current function map. Pinned source paths, revisions and hashes are unchanged.
 
-**Recorded definitions: 901.** Checked against the source in this commit, including stock intake and readiness. This remains a definition map, not a call graph. See [coding conventions](06-Coding-and-Naming-Conventions.md) and the [code reference](07-Function-and-Code-Reference.md).
-
+**Recorded definitions: 945.** Checked against the source in this commit. This remains a definition map, not a call graph. See [coding conventions](06-Coding-and-Naming-Conventions.md) and the [code reference](07-Function-and-Code-Reference.md).
 
 ## interface/loader.js
 
@@ -588,24 +587,24 @@ The account hydration/photo functions now have purpose-based callable bindings m
 | [`departmentDate`](../../interface/staff-directory.js#L76) | 76 |
 | [`departmentTable`](../../interface/staff-directory.js#L80) | 80 |
 | [`departmentAssignmentRows`](../../interface/staff-directory.js#L83) | 83 |
-| [`renderDepartmentOverview`](../../interface/staff-directory.js#L86) | 86 |
-| [`renderDepartmentStaff`](../../interface/staff-directory.js#L96) | 96 |
-| [`renderDepartmentEquipment`](../../interface/staff-directory.js#L101) | 101 |
-| [`renderDepartmentHistory`](../../interface/staff-directory.js#L110) | 110 |
-| [`renderDepartmentDetails`](../../interface/staff-directory.js#L117) | 117 |
-| [`selectDepartmentTab`](../../interface/staff-directory.js#L124) | 124 |
-| [`loadDepartmentDetails`](../../interface/staff-directory.js#L130) | 130 |
-| [`request`](../../interface/staff-directory.js#L156) | 156 |
-| [`readAll`](../../interface/staff-directory.js#L163) | 163 |
-| [`refresh`](../../interface/staff-directory.js#L173) | 173 |
-| [`render`](../../interface/staff-directory.js#L191) | 191 |
-| [`enter`](../../interface/staff-directory.js#L204) | 204 |
-| [`redraw`](../../interface/staff-directory.js#L212) | 212 |
-| [`saveStaff`](../../interface/staff-directory.js#L213) | 213 |
-| [`openDepartmentDialog`](../../interface/staff-directory.js#L231) | 231 |
-| [`closeDepartmentDialog`](../../interface/staff-directory.js#L242) | 242 |
-| [`saveDepartment`](../../interface/staff-directory.js#L243) | 243 |
-| [`configure`](../../interface/staff-directory.js#L250) | 250 |
+| [`renderDepartmentOverview`](../../interface/staff-directory.js#L87) | 87 |
+| [`renderDepartmentStaff`](../../interface/staff-directory.js#L98) | 98 |
+| [`renderDepartmentEquipment`](../../interface/staff-directory.js#L103) | 103 |
+| [`renderDepartmentHistory`](../../interface/staff-directory.js#L112) | 112 |
+| [`renderDepartmentDetails`](../../interface/staff-directory.js#L121) | 121 |
+| [`selectDepartmentTab`](../../interface/staff-directory.js#L128) | 128 |
+| [`loadDepartmentDetails`](../../interface/staff-directory.js#L134) | 134 |
+| [`request`](../../interface/staff-directory.js#L160) | 160 |
+| [`readAll`](../../interface/staff-directory.js#L167) | 167 |
+| [`refresh`](../../interface/staff-directory.js#L177) | 177 |
+| [`render`](../../interface/staff-directory.js#L195) | 195 |
+| [`enter`](../../interface/staff-directory.js#L208) | 208 |
+| [`redraw`](../../interface/staff-directory.js#L216) | 216 |
+| [`saveStaff`](../../interface/staff-directory.js#L217) | 217 |
+| [`openDepartmentDialog`](../../interface/staff-directory.js#L235) | 235 |
+| [`closeDepartmentDialog`](../../interface/staff-directory.js#L246) | 246 |
+| [`saveDepartment`](../../interface/staff-directory.js#L247) | 247 |
+| [`configure`](../../interface/staff-directory.js#L254) | 254 |
 
 ## interface/equipment.js
 
@@ -616,52 +615,72 @@ The account hydration/photo functions now have purpose-based callable bindings m
 | [`button`](../../interface/equipment.js#L7) | 7 |
 | [`request`](../../interface/equipment.js#L8) | 8 |
 | [`assignmentHistory`](../../interface/equipment.js#L14) | 14 |
-| [`staffPlaceholder`](../../interface/equipment.js#L19) | 19 |
-| [`loadStaffEquipment`](../../interface/equipment.js#L23) | 23 |
-| [`loadDeviceEquipment`](../../interface/equipment.js#L32) | 32 |
-| [`renderMyEquipment`](../../interface/equipment.js#L44) | 44 |
-| [`loadMyEquipment`](../../interface/equipment.js#L47) | 47 |
-| [`list`](../../interface/equipment.js#L50) | 50 |
-| [`hydrate`](../../interface/equipment.js#L58) | 58 |
-| [`showAssignmentDialog`](../../interface/equipment.js#L62) | 62 |
-| [`searchRecipients`](../../interface/equipment.js#L73) | 73 |
-| [`searchDevices`](../../interface/equipment.js#L82) | 82 |
-| [`leaveAssignmentDialog`](../../interface/equipment.js#L90) | 90 |
-| [`saveAssignment`](../../interface/equipment.js#L96) | 96 |
-| [`caffootEquipment.configure`](../../interface/equipment.js#L142) | 142 |
+| [`assetMovementHistory`](../../interface/equipment.js#L19) | 19 |
+| [`staffPlaceholder`](../../interface/equipment.js#L24) | 24 |
+| [`loadStaffEquipment`](../../interface/equipment.js#L28) | 28 |
+| [`loadDeviceEquipment`](../../interface/equipment.js#L37) | 37 |
+| [`renderMyEquipment`](../../interface/equipment.js#L49) | 49 |
+| [`loadMyEquipment`](../../interface/equipment.js#L52) | 52 |
+| [`list`](../../interface/equipment.js#L55) | 55 |
+| [`hydrate`](../../interface/equipment.js#L63) | 63 |
+| [`showAssignmentDialog`](../../interface/equipment.js#L67) | 67 |
+| [`searchRecipients`](../../interface/equipment.js#L78) | 78 |
+| [`searchDevices`](../../interface/equipment.js#L87) | 87 |
+| [`leaveAssignmentDialog`](../../interface/equipment.js#L95) | 95 |
+| [`saveAssignment`](../../interface/equipment.js#L101) | 101 |
+| [`caffootEquipment.configure`](../../interface/equipment.js#L151) | 151 |
 
 ## interface/stock-intake.js
 
 | Function | Line |
 | --- | ---: |
-| [`safe`](../../interface/stock-intake.js#L6) | 6 |
-| [`canRead`](../../interface/stock-intake.js#L7) | 7 |
-| [`canEdit`](../../interface/stock-intake.js#L8) | 8 |
-| [`stockLabel`](../../interface/stock-intake.js#L9) | 9 |
-| [`stockNotice`](../../interface/stock-intake.js#L10) | 10 |
-| [`stockButton`](../../interface/stock-intake.js#L11) | 11 |
-| [`stockCard`](../../interface/stock-intake.js#L12) | 12 |
-| [`stockField`](../../interface/stock-intake.js#L13) | 13 |
-| [`stockSelect`](../../interface/stock-intake.js#L16) | 16 |
-| [`stockTable`](../../interface/stock-intake.js#L19) | 19 |
-| [`stockMetrics`](../../interface/stock-intake.js#L22) | 22 |
-| [`stockSpecText`](../../interface/stock-intake.js#L25) | 25 |
-| [`renderStockReceipt`](../../interface/stock-intake.js#L30) | 30 |
-| [`renderStockDetails`](../../interface/stock-intake.js#L65) | 65 |
-| [`renderStockInventory`](../../interface/stock-intake.js#L86) | 86 |
-| [`stockDate`](../../interface/stock-intake.js#L90) | 90 |
-| [`stockCheckLabel`](../../interface/stock-intake.js#L91) | 91 |
-| [`renderStockHistory`](../../interface/stock-intake.js#L92) | 92 |
-| [`clearStock`](../../interface/stock-intake.js#L97) | 97 |
-| [`stockRequest`](../../interface/stock-intake.js#L100) | 100 |
-| [`refreshStock`](../../interface/stock-intake.js#L109) | 109 |
-| [`enterStock`](../../interface/stock-intake.js#L120) | 120 |
-| [`renderStock`](../../interface/stock-intake.js#L125) | 125 |
-| [`receiptTracking`](../../interface/stock-intake.js#L134) | 134 |
-| [`hydrateStock`](../../interface/stock-intake.js#L137) | 137 |
-| [`openStockDetails`](../../interface/stock-intake.js#L177) | 177 |
-| [`submitStock`](../../interface/stock-intake.js#L185) | 185 |
-| [`configureStock`](../../interface/stock-intake.js#L260) | 260 |
+| [`safe`](../../interface/stock-intake.js#L7) | 7 |
+| [`canRead`](../../interface/stock-intake.js#L8) | 8 |
+| [`canEdit`](../../interface/stock-intake.js#L9) | 9 |
+| [`stockLabel`](../../interface/stock-intake.js#L10) | 10 |
+| [`stockNotice`](../../interface/stock-intake.js#L11) | 11 |
+| [`stockButton`](../../interface/stock-intake.js#L12) | 12 |
+| [`stockCard`](../../interface/stock-intake.js#L13) | 13 |
+| [`stockField`](../../interface/stock-intake.js#L14) | 14 |
+| [`stockSelect`](../../interface/stock-intake.js#L17) | 17 |
+| [`stockTable`](../../interface/stock-intake.js#L20) | 20 |
+| [`stockMetrics`](../../interface/stock-intake.js#L23) | 23 |
+| [`stockSpecText`](../../interface/stock-intake.js#L26) | 26 |
+| [`renderStockReceipt`](../../interface/stock-intake.js#L31) | 31 |
+| [`renderStockDetails`](../../interface/stock-intake.js#L66) | 66 |
+| [`renderStockInventory`](../../interface/stock-intake.js#L87) | 87 |
+| [`stockDate`](../../interface/stock-intake.js#L91) | 91 |
+| [`stockCheckLabel`](../../interface/stock-intake.js#L92) | 92 |
+| [`renderStockHistory`](../../interface/stock-intake.js#L93) | 93 |
+| [`clearStock`](../../interface/stock-intake.js#L98) | 98 |
+| [`stockRequest`](../../interface/stock-intake.js#L101) | 101 |
+| [`refreshStock`](../../interface/stock-intake.js#L110) | 110 |
+| [`enterStock`](../../interface/stock-intake.js#L121) | 121 |
+| [`renderStock`](../../interface/stock-intake.js#L126) | 126 |
+| [`receiptTracking`](../../interface/stock-intake.js#L136) | 136 |
+| [`hydrateStock`](../../interface/stock-intake.js#L139) | 139 |
+| [`openStockDetails`](../../interface/stock-intake.js#L180) | 180 |
+| [`submitStock`](../../interface/stock-intake.js#L188) | 188 |
+| [`stockStateLabel`](../../interface/stock-intake.js#L269) | 269 |
+| [`stockUnitState`](../../interface/stock-intake.js#L270) | 270 |
+| [`stockNote`](../../interface/stock-intake.js#L271) | 271 |
+| [`stockWorkflowForm`](../../interface/stock-intake.js#L272) | 272 |
+| [`stockIssueReady`](../../interface/stock-intake.js#L275) | 275 |
+| [`renderStockIssue`](../../interface/stock-intake.js#L276) | 276 |
+| [`stockReturnSources`](../../interface/stock-intake.js#L286) | 286 |
+| [`renderStockReturn`](../../interface/stock-intake.js#L293) | 293 |
+| [`renderStockWriteOff`](../../interface/stock-intake.js#L304) | 304 |
+| [`stockPreparationRequirement`](../../interface/stock-intake.js#L317) | 317 |
+| [`renderStockPreparation`](../../interface/stock-intake.js#L324) | 324 |
+| [`renderRegisteredStock`](../../interface/stock-intake.js#L336) | 336 |
+| [`renderStockMovements`](../../interface/stock-intake.js#L343) | 343 |
+| [`stockSelectedReturn`](../../interface/stock-intake.js#L348) | 348 |
+| [`stockSelectedWriteOff`](../../interface/stock-intake.js#L349) | 349 |
+| [`hydrateStockCirculation`](../../interface/stock-intake.js#L353) | 353 |
+| [`loadStockRecipients`](../../interface/stock-intake.js#L409) | 409 |
+| [`submitStockCirculation`](../../interface/stock-intake.js#L420) | 420 |
+| [`openStockWorkflow`](../../interface/stock-intake.js#L448) | 448 |
+| [`configureStock`](../../interface/stock-intake.js#L455) | 455 |
 
 ## backend/access_point_review.py
 
@@ -715,6 +734,15 @@ The account hydration/photo functions now have purpose-based callable bindings m
 | [`validate_detached_application_state`](../../backend/application_integrity.py#L15) | 15 |
 | [`validate_live_application_state`](../../backend/application_integrity.py#L118) | 118 |
 
+## backend/assignment_closure.py
+
+| Function | Line |
+| --- | ---: |
+| [`assignment_schema_objects`](../../backend/assignment_closure.py#L57) | 57 |
+| [`expected_assignment_schema`](../../backend/assignment_closure.py#L63) | 63 |
+| [`validate_assignment_closure`](../../backend/assignment_closure.py#L76) | 76 |
+| [`migrate_assignment_closure`](../../backend/assignment_closure.py#L84) | 84 |
+
 ## backend/audit_events.py
 
 | Function | Line |
@@ -761,11 +789,11 @@ The account hydration/photo functions now have purpose-based callable bindings m
 | --- | ---: |
 | [`require_assignment_access`](../../backend/device_assignments.py#L10) | 10 |
 | [`assignment_recipients`](../../backend/device_assignments.py#L15) | 15 |
-| [`device_assignment_dependency`](../../backend/device_assignments.py#L30) | 30 |
-| [`assignment_device_choices`](../../backend/device_assignments.py#L43) | 43 |
-| [`read_assignments`](../../backend/device_assignments.py#L66) | 66 |
-| [`assign_devices`](../../backend/device_assignments.py#L93) | 93 |
-| [`my_equipment`](../../backend/device_assignments.py#L145) | 145 |
+| [`device_assignment_dependency`](../../backend/device_assignments.py#L31) | 31 |
+| [`assignment_device_choices`](../../backend/device_assignments.py#L49) | 49 |
+| [`read_assignments`](../../backend/device_assignments.py#L72) | 72 |
+| [`assign_devices`](../../backend/device_assignments.py#L133) | 133 |
+| [`my_equipment`](../../backend/device_assignments.py#L185) | 185 |
 
 ## backend/device_catalogue.py
 
@@ -1073,44 +1101,34 @@ The account hydration/photo functions now have purpose-based callable bindings m
 
 | Function | Line |
 | --- | ---: |
-| [`initialise_database`](../../backend/schema.py#L57) | 57 |
-| [`migrate_staff_directory`](../../backend/schema.py#L232) | 232 |
-| [`migrate_role_permissions`](../../backend/schema.py#L297) | 297 |
-| [`verify_role_migration`](../../backend/schema.py#L382) | 382 |
-| [`migrate_configurable_builtin_roles`](../../backend/schema.py#L408) | 408 |
-| [`migrate_device_assignments`](../../backend/schema.py#L502) | 502 |
-
-## backend/stock_schema.py
-
-| Function | Line |
-| --- | ---: |
-| [`stock_schema_statements`](../../backend/stock_schema.py#L490) | 490 |
-| [`normalise_schema_statement`](../../backend/stock_schema.py#L502) | 502 |
-| [`validate_feature_table`](../../backend/stock_schema.py#L507) | 507 |
-| [`validate_it_asset_stock`](../../backend/stock_schema.py#L543) | 543 |
-| [`migrate_it_asset_stock`](../../backend/stock_schema.py#L567) | 567 |
+| [`initialise_database`](../../backend/schema.py#L58) | 58 |
+| [`migrate_staff_directory`](../../backend/schema.py#L239) | 239 |
+| [`migrate_role_permissions`](../../backend/schema.py#L304) | 304 |
+| [`verify_role_migration`](../../backend/schema.py#L389) | 389 |
+| [`migrate_configurable_builtin_roles`](../../backend/schema.py#L415) | 415 |
+| [`migrate_device_assignments`](../../backend/schema.py#L509) | 509 |
 
 ## backend/server.py
 
 | Function | Line |
 | --- | ---: |
-| [`validate_public_origin`](../../backend/server.py#L90) | 90 |
-| [`connect`](../../backend/server.py#L108) | 108 |
-| [`initialise_database`](../../backend/server.py#L116) | 116 |
-| [`Handler.end_headers`](../../backend/server.py#L122) | 122 |
-| [`Handler.do_GET`](../../backend/server.py#L129) | 129 |
-| [`Handler.do_POST`](../../backend/server.py#L490) | 490 |
-| [`Handler.handle_stock_request`](../../backend/server.py#L673) | 673 |
-| [`Handler.handle_equipment_request`](../../backend/server.py#L727) | 727 |
-| [`Handler.handle_directory_request`](../../backend/server.py#L794) | 794 |
-| [`Handler.handle_feature_settings`](../../backend/server.py#L869) | 869 |
-| [`Handler.handle_role_change`](../../backend/server.py#L912) | 912 |
-| [`Handler.handle_user_mutation`](../../backend/server.py#L954) | 954 |
-| [`Handler.handle_account_email`](../../backend/server.py#L1346) | 1346 |
-| [`Handler.handle_profile_photo`](../../backend/server.py#L1426) | 1426 |
-| [`Handler.handle_import`](../../backend/server.py#L1457) | 1457 |
-| [`Handler.respond`](../../backend/server.py#L1533) | 1533 |
-| [`main`](../../backend/server.py#L1546) | 1546 |
+| [`validate_public_origin`](../../backend/server.py#L92) | 92 |
+| [`connect`](../../backend/server.py#L110) | 110 |
+| [`initialise_database`](../../backend/server.py#L118) | 118 |
+| [`Handler.end_headers`](../../backend/server.py#L124) | 124 |
+| [`Handler.do_GET`](../../backend/server.py#L131) | 131 |
+| [`Handler.do_POST`](../../backend/server.py#L492) | 492 |
+| [`Handler.handle_stock_request`](../../backend/server.py#L675) | 675 |
+| [`Handler.handle_equipment_request`](../../backend/server.py#L745) | 745 |
+| [`Handler.handle_directory_request`](../../backend/server.py#L812) | 812 |
+| [`Handler.handle_feature_settings`](../../backend/server.py#L887) | 887 |
+| [`Handler.handle_role_change`](../../backend/server.py#L930) | 930 |
+| [`Handler.handle_user_mutation`](../../backend/server.py#L972) | 972 |
+| [`Handler.handle_account_email`](../../backend/server.py#L1364) | 1364 |
+| [`Handler.handle_profile_photo`](../../backend/server.py#L1444) | 1444 |
+| [`Handler.handle_import`](../../backend/server.py#L1475) | 1475 |
+| [`Handler.respond`](../../backend/server.py#L1551) | 1551 |
+| [`main`](../../backend/server.py#L1564) | 1564 |
 
 ## backend/sessions.py
 
@@ -1161,19 +1179,76 @@ The account hydration/photo functions now have purpose-based callable bindings m
 | [`_department_record`](../../backend/staff_directory.py#L44) | 44 |
 | [`read_staff_member`](../../backend/staff_directory.py#L51) | 51 |
 | [`department_has_associations`](../../backend/staff_directory.py#L62) | 62 |
-| [`read_department`](../../backend/staff_directory.py#L78) | 78 |
-| [`list_directory`](../../backend/staff_directory.py#L85) | 85 |
-| [`list_staff_department_choices`](../../backend/staff_directory.py#L99) | 99 |
-| [`_validate_staff`](../../backend/staff_directory.py#L112) | 112 |
-| [`_create_login`](../../backend/staff_directory.py#L129) | 129 |
-| [`save_staff_member`](../../backend/staff_directory.py#L144) | 144 |
-| [`save_department`](../../backend/staff_directory.py#L188) | 188 |
+| [`read_department`](../../backend/staff_directory.py#L81) | 81 |
+| [`list_directory`](../../backend/staff_directory.py#L88) | 88 |
+| [`list_staff_department_choices`](../../backend/staff_directory.py#L102) | 102 |
+| [`_validate_staff`](../../backend/staff_directory.py#L115) | 115 |
+| [`_create_login`](../../backend/staff_directory.py#L132) | 132 |
+| [`save_staff_member`](../../backend/staff_directory.py#L147) | 147 |
+| [`save_department`](../../backend/staff_directory.py#L191) | 191 |
 
 ## backend/staff_identity.py
 
 | Function | Line |
 | --- | ---: |
 | [`link_account_staff`](../../backend/staff_identity.py#L4) | 4 |
+
+## backend/stock_circulation.py
+
+| Function | Line |
+| --- | ---: |
+| [`stock_event_date`](../../backend/stock_circulation.py#L13) | 13 |
+| [`stock_recipients`](../../backend/stock_circulation.py#L25) | 25 |
+| [`stock_recipient`](../../backend/stock_circulation.py#L36) | 36 |
+| [`stock_movement_snapshot`](../../backend/stock_circulation.py#L50) | 50 |
+| [`publish_stock_movement`](../../backend/stock_circulation.py#L57) | 57 |
+| [`stock_issue_records`](../../backend/stock_circulation.py#L87) | 87 |
+| [`read_stock_issues`](../../backend/stock_circulation.py#L111) | 111 |
+| [`issue_stock`](../../backend/stock_circulation.py#L133) | 133 |
+| [`stock_unit_states`](../../backend/stock_circulation.py#L184) | 184 |
+| [`registered_stock_devices`](../../backend/stock_circulation.py#L195) | 195 |
+| [`legacy_device_issue`](../../backend/stock_circulation.py#L212) | 212 |
+| [`preparation_requirements`](../../backend/stock_circulation.py#L230) | 230 |
+| [`preparation_checks`](../../backend/stock_circulation.py#L247) | 247 |
+| [`require_stock_device_edit`](../../backend/stock_circulation.py#L255) | 255 |
+| [`return_stock`](../../backend/stock_circulation.py#L264) | 264 |
+| [`prepare_stock`](../../backend/stock_circulation.py#L393) | 393 |
+| [`stock_state_balance`](../../backend/stock_circulation.py#L455) | 455 |
+| [`canonical_device_choice`](../../backend/stock_circulation.py#L463) | 463 |
+| [`write_off_stock`](../../backend/stock_circulation.py#L483) | 483 |
+| [`stock_movement_history`](../../backend/stock_circulation.py#L594) | 594 |
+
+## backend/stock_intake.py
+
+| Function | Line |
+| --- | ---: |
+| [`stock_json`](../../backend/stock_intake.py#L19) | 19 |
+| [`stock_access`](../../backend/stock_intake.py#L24) | 24 |
+| [`stock_text`](../../backend/stock_intake.py#L30) | 30 |
+| [`stock_quantity`](../../backend/stock_intake.py#L43) | 43 |
+| [`stock_checks`](../../backend/stock_intake.py#L49) | 49 |
+| [`stock_specifications`](../../backend/stock_intake.py#L56) | 56 |
+| [`stock_configuration`](../../backend/stock_intake.py#L80) | 80 |
+| [`stock_digest`](../../backend/stock_intake.py#L85) | 85 |
+| [`stock_item`](../../backend/stock_intake.py#L89) | 89 |
+| [`stock_history`](../../backend/stock_intake.py#L149) | 149 |
+| [`read_stock`](../../backend/stock_intake.py#L184) | 184 |
+| [`stock_operation`](../../backend/stock_intake.py#L197) | 197 |
+| [`stock_replay`](../../backend/stock_intake.py#L206) | 206 |
+| [`append_stock_fact`](../../backend/stock_intake.py#L224) | 224 |
+| [`stock_write_access`](../../backend/stock_intake.py#L250) | 250 |
+| [`receive_stock`](../../backend/stock_intake.py#L256) | 256 |
+| [`update_stock_readiness`](../../backend/stock_intake.py#L348) | 348 |
+
+## backend/stock_schema.py
+
+| Function | Line |
+| --- | ---: |
+| [`stock_schema_statements`](../../backend/stock_schema.py#L490) | 490 |
+| [`normalise_schema_statement`](../../backend/stock_schema.py#L502) | 502 |
+| [`validate_feature_table`](../../backend/stock_schema.py#L507) | 507 |
+| [`validate_it_asset_stock`](../../backend/stock_schema.py#L543) | 543 |
+| [`migrate_it_asset_stock`](../../backend/stock_schema.py#L567) | 567 |
 
 ## backend/subnet_validation.py
 
@@ -1202,25 +1277,3 @@ The account hydration/photo functions now have purpose-based callable bindings m
 | --- | ---: |
 | [`build_private_acceptance`](../../scripts/build_private_acceptance.py#L12) | 12 |
 | [`build_private_acceptance.git`](../../scripts/build_private_acceptance.py#L13) | 13 |
-
-## backend/stock_intake.py
-
-| Function | Line |
-| --- | ---: |
-| [`stock_json`](../../backend/stock_intake.py#L19) | 19 |
-| [`stock_access`](../../backend/stock_intake.py#L24) | 24 |
-| [`stock_text`](../../backend/stock_intake.py#L30) | 30 |
-| [`stock_quantity`](../../backend/stock_intake.py#L43) | 43 |
-| [`stock_checks`](../../backend/stock_intake.py#L49) | 49 |
-| [`stock_specifications`](../../backend/stock_intake.py#L56) | 56 |
-| [`stock_configuration`](../../backend/stock_intake.py#L80) | 80 |
-| [`stock_digest`](../../backend/stock_intake.py#L85) | 85 |
-| [`stock_item`](../../backend/stock_intake.py#L89) | 89 |
-| [`stock_history`](../../backend/stock_intake.py#L142) | 142 |
-| [`read_stock`](../../backend/stock_intake.py#L176) | 176 |
-| [`stock_operation`](../../backend/stock_intake.py#L185) | 185 |
-| [`stock_replay`](../../backend/stock_intake.py#L194) | 194 |
-| [`append_stock_fact`](../../backend/stock_intake.py#L212) | 212 |
-| [`stock_write_access`](../../backend/stock_intake.py#L238) | 238 |
-| [`receive_stock`](../../backend/stock_intake.py#L244) | 244 |
-| [`update_stock_readiness`](../../backend/stock_intake.py#L336) | 336 |

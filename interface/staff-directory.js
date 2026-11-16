@@ -81,16 +81,18 @@ function renderDepartments() {
     return rows?`<div class="table-scroll"><table class="small-table"><thead><tr>${headings.map(label=>`<th scope="col">${label}</th>`).join('')}</tr></thead><tbody>${rows}</tbody></table></div>`:empty;
   }
   function departmentAssignmentRows(){
-    return (departmentDetails.assignments?.history||[]).map(item=>`<tr><td>${escapeHtml(departmentDate(item.assignedAt))}</td><td><strong>Device Assigned</strong><div class="sub">${escapeHtml(item.deviceName)} · Assigned To ${escapeHtml(item.recipientLabel)}</div></td><td>${escapeHtml(item.actorLabel||'Not Recorded')}</td></tr>`).join('');
+    const labels={issued:'Equipment Issued',returned:'Equipment Returned',readiness_changed:'Equipment Prepared',written_off:'Equipment Written Off'};
+    return (departmentDetails.assignments?.history||[]).flatMap(item=>[{date:item.assignedAt,title:'Device Assigned',name:item.deviceName,actor:item.actorLabel},...(item.endedAt?[{date:item.closure?.date||item.endedAt,title:item.closure?.kind==='returned'?'Device Returned':item.closure?.kind==='written_off'?'Device Written Off':'Device Assignment Ended',name:item.deviceName,actor:item.closure?.actor||''}]:[])]).concat((departmentDetails.assignments?.assetMovements||[]).map(item=>({date:item.date,title:labels[item.kind]||'Equipment Movement',name:item.name+' · Quantity: '+item.quantity,actor:item.actor}))).map(item=>`<tr><td>${escapeHtml(departmentDate(item.date))}</td><td><strong>${item.title}</strong><div class="sub">${escapeHtml(item.name)}</div></td><td>${escapeHtml(item.actor||'Not Recorded')}</td></tr>`).join('');
   }
   function renderDepartmentOverview(record){
     const people=departmentDetails.people,assignments=departmentDetails.assignments;
     const staffCount=people?String(people.length):'Not Available';
-    const deviceCount=assignments?String(assignments.current.length):'Not Available';
+    const deviceCount=assignments&&departmentDetails.deviceAccess?String(assignments.current.length):'Not Available';
+    const assetCount=assignments&&departmentDetails.assetAccess?(assignments.assetCurrent||[]).reduce((sum,item)=>sum+BigInt(item.outstanding),0n).toLocaleString('en-GB'):'Not Available';
     const status=record.archived?'Archived':'Active';
     const information=detailRow('Department Name',record.name)+detailRow('Status',status)+detailRow('Structure','Independent Department')+detailRow('New Membership',record.archived?'Unavailable':'Available');
-    const summary=detailRow('Staff Members',staffCount)+detailRow('Department-Owned Devices',deviceCount)+detailRow('IT Assets','Not Available')+detailRow('Permissions','Independent Section Rights');
-    const metrics=[['Staff Members',staffCount,people?'Currently linked Staff records.':'Staff Members information is not available.'],['Shared Devices',deviceCount,assignments?'Devices assigned to this Department.':'Device information is not available.'],['Department Status',status,'Membership does not grant additional permissions.']];
+    const summary=detailRow('Staff Members',staffCount)+detailRow('Department-Owned Devices',deviceCount)+detailRow('IT Assets',assetCount)+detailRow('Permissions','Independent Section Rights');
+    const metrics=[['Staff Members',staffCount,people?'Currently linked Staff records.':'Staff Members information is not available.'],['Shared Devices',deviceCount,assignments&&departmentDetails.deviceAccess?'Devices assigned to this Department.':'Device information is not available.'],['Department Status',status,'Membership does not grant additional permissions.']];
     return `<div class="two-col">${departmentCard('Department Information','Recorded Department details and status.',information)}${departmentCard('Department Summary','Each total requires access to its own section.',summary)}</div><div class="cards4 department-metrics">${metrics.map(([label,value,help])=>`<div class="card card-padded stat"><div class="stathead">${label}</div><div class="statnum">${value}</div><div class="statfoot">${help}</div></div>`).join('')}</div>`;
   }
   function renderDepartmentStaff(){
@@ -100,16 +102,18 @@ function renderDepartments() {
   }
   function renderDepartmentEquipment(){
     const data=departmentDetails.assignments;
-    if(!data)return departmentNotice('Department Equipment Not Available',departmentDetails.equipmentError||'Devices must be enabled and you need Devices access to view shared equipment.');
+    if(!data)return departmentNotice('Department Equipment Not Available',departmentDetails.equipmentError||'The relevant Devices or IT Assets access is required to view shared equipment.');
     const rows=data.current.map(item=>{
       const device=departmentDetails.devices.find(record=>record.id===item.deviceId);
       return `<tr><td><strong>${escapeHtml(item.deviceName)}</strong><div><button type="button" class="btn" data-equipment-action="view-device" data-id="${escapeHtml(item.deviceId)}">View Device</button></div></td><td>${escapeHtml(device?.type||'Not Recorded')}</td><td>${escapeHtml(item.recipientLabel)}</td><td>Current Holder<div class="sub">Assigned ${escapeHtml(departmentDate(item.assignedAt))}</div></td></tr>`;
-    }).join('');
-    return `<div class="section-heading"><div><h2>Department-Owned Equipment</h2><p>Shared Devices assigned to this Department. Personally assigned Staff equipment is not included.</p></div></div><div class="card">${departmentTable(['Device','Type','Assigned To','Assignment'],rows,departmentNotice('No Current Department-Owned Devices','No Devices are currently assigned to this Department.'))}</div><div class="department-history-card">${departmentCard('Assignment History','Recorded allocations on the original Device relationships.',departmentTable(['Date','Event','Recorded By'],departmentAssignmentRows(),departmentNotice('No Recorded Assignments','No Device assignment history is available for this Department.')))}</div><p class="formhint">IT Asset assignments are not available. Devices keep their existing identity and assignment history.</p>`;
+    }).join('')+(data.assetCurrent||[]).map(item=>`<tr><td><strong>${escapeHtml(item.name)}</strong></td><td>IT Asset · Quantity: ${item.outstanding}</td><td>${escapeHtml(item.recipientLabel)}</td><td>Current Holder<div class="sub">Issued ${escapeHtml(departmentDate(item.issuedOn))}</div>${data.canIssueStock?`<button type="button" class="btn" data-equipment-action="return-stock" data-id="${item.id}">Return Equipment</button>`:''}</td></tr>`).join('');
+    return `<div class="section-heading"><div><h2>Department-Owned Equipment</h2><p>Shared equipment assigned to this Department. Personally assigned Staff equipment is not included.</p></div>${data.canIssueStock&&!departmentDetails.record.archived?button('Issue Equipment','department-issue-stock',currentDepartmentId):''}</div><div class="card">${departmentTable([departmentDetails.assetAccess?'Equipment':'Device','Type','Assigned To','Assignment'],rows,departmentNotice(departmentDetails.assetAccess?'No Current Department-Owned Equipment':'No Current Department-Owned Devices',departmentDetails.assetAccess?'No equipment is currently assigned to this Department.':'No Devices are currently assigned to this Department.'))}</div><div class="department-history-card">${departmentCard('Assignment History','Recorded allocations on the original Device relationships.',departmentTable(['Date','Event','Recorded By'],departmentAssignmentRows(),departmentNotice('No Recorded Assignments','No Device assignment history is available for this Department.')))}</div><p class="formhint">${departmentDetails.assetAccess?'Original issue, return and write-off history is retained.':'IT Assets are not available with your current access. Devices retain their original identities.'}</p>`;
   }
   function renderDepartmentHistory(){
     const directoryRows=(departmentDetails.history||[]).flatMap(event=>(event.changes||[]).filter(change=>change.kind==='Department'&&change.label===currentDepartmentId).map(change=>({at:event.at,actor:event.actor,action:change.action,name:change.after?.name||change.before?.name||''})));
     const activity=directoryRows.map(item=>({...item,title:'Department '+item.action,description:item.name})).concat((departmentDetails.assignments?.history||[]).map(item=>({at:item.assignedAt,actor:item.actorLabel,title:'Device Assigned',description:item.deviceName+' · Assigned To '+item.recipientLabel})));
+    const assetLabels={issued:'Equipment Issued',returned:'Equipment Returned',readiness_changed:'Equipment Prepared',written_off:'Equipment Written Off'};
+    activity.push(...(departmentDetails.assignments?.assetMovements||[]).map(item=>({at:item.date,actor:item.actor,title:assetLabels[item.kind]||'Equipment Movement',description:item.name+' · Quantity: '+item.quantity})));
     activity.sort((a,b)=>(Date.parse(b.at)||0)-(Date.parse(a.at)||0));
     const rows=activity.map(item=>`<tr><td>${escapeHtml(departmentDate(item.at))}</td><td><strong>${escapeHtml(item.title)}</strong><div class="sub">${escapeHtml(item.description)}</div></td><td>${escapeHtml(item.actor||'Not Recorded')}</td></tr>`).join('');
     return `<div class="section-heading"><div><h2>Department History</h2><p>Department activity and Device assignments available with your current access.</p></div></div>${departmentCard('Recorded Activity','Saved Department changes and equipment assignment records.',departmentTable(['Date','Event','Recorded By'],rows,departmentNotice('No Recorded Activity Available','No Department changes or Device assignments are available with your current access.')))}${departmentDetails.historyError?'<p class="formhint" role="status">Department activity could not be loaded. Reopen Details to try again.</p>':''}`;
@@ -136,11 +140,11 @@ function renderDepartments() {
       const {department}=await request('/api/departments/'+encodeURIComponent(id));
       const [people,equipment,history]=await Promise.allSettled([
         canReadStaff()?readAll('/api/staff-members','staffMembers'):Promise.resolve(null),
-        config.canReadDevices()?Promise.all([request('/api/equipment/assignments?departmentId='+encodeURIComponent(id)),request('/api/inventory/devices')]):Promise.resolve(null),
+        (config.canReadDevices()||config.canReadAssets())?Promise.all([request('/api/equipment/assignments?departmentId='+encodeURIComponent(id)),config.canReadDevices()?request('/api/inventory/devices'):Promise.resolve({devices:[]})]):Promise.resolve(null),
         config.canReadHistory()?request('/api/inventory/history'):Promise.resolve(null)
       ]);
       if(requestId!==departmentRequest||id!==currentDepartmentId)return;
-      departmentDetails={record:department,
+      departmentDetails={record:department,deviceAccess:config.canReadDevices(),assetAccess:config.canReadAssets(),
         people:people.status==='fulfilled'&&people.value?people.value.filter(person=>person.departmentId===id):null,
         assignments:equipment.status==='fulfilled'&&equipment.value?equipment.value[0]:null,
         devices:equipment.status==='fulfilled'&&equipment.value?equipment.value[1].devices:[],
@@ -257,6 +261,7 @@ function renderDepartments() {
     if(!control.closest('#main-content'))return;
     event.preventDefault();event.stopImmediatePropagation();
     const action=control.dataset.staffAction,id=control.dataset.id;
+    if(action==='department-issue-stock'){window.caffootStockIntake.openWorkflow('issue',{recipientKind:'department',recipientId:id});return;}
     if(action==='department-back'){currentDepartmentId=null;departmentDetails=null;departmentRequest++;redraw();document.querySelector('[data-staff-action="department-details"]')?.focus();return;}
     if(action==='department-tab'){selectDepartmentTab(control.dataset.tab);return;}
     if(action==='department-details'&&canReadDepartments()){currentDepartmentId=id;departmentTab='overview';void loadDepartmentDetails(id);return;}

@@ -4,11 +4,14 @@
 > `774dee3ecaaf1d50ba94dbf55891aa4b79b853c5`, schema 16. The foundation introduced empty
 > stock tables and a default-off switch; it did not create stock for existing Devices.
 > [Batch 3.7 Stock Intake](IT-Assets-Stock-Intake.md) now uses that unchanged foundation
-> on a separate draft-review branch. This does not release v2.2.
+> following its accepted merge in PR #388 at `7f91f5d42feb3916cfab060abd5ca4b1558a92ba`.
+> [Batch 3.8 circulation](IT-Assets-Issue-Return-and-Write-Off.md) adds Schema 17
+> assignment closure on a separate draft-review branch, without changing the four
+> stock tables. This does not release v2.2.
 
 The sections below describe the Batch 3.6 foundation checkpoint and its safeguards.
 Statements about absent screens or writers refer to that checkpoint. The linked
-Batch 3.7 guide describes current receipt, inventory and readiness operations.
+Batch 3.7 guide describes receipt, inventory and readiness operations; the Batch 3.8 guide describes the additional workflows awaiting review.
 
 ## Schema 16
 

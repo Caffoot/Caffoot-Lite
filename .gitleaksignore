@@ -1,3 +1,7 @@
 # False positive: ordinary test-result prose, not a credential.
 # The historical report sentence "foreign/absent CSRF" triggered generic-api-key.
 079b542c34d69a58c065b9a631ae8ec36ff10b1b:docs/development-handovers/evidence/issue-329/Report.md:generic-api-key:20
+
+# False positive: the SHA-256 of backend/request_auth.py in the source manifest.
+# Verified against the committed file bytes; this is not an authentication key.
+80011c8c11c9d3c1fae5feb4ab3492f4fed54be3:docs/development-handovers/evidence/stock-circulation/Source-Checks.json:generic-api-key:27

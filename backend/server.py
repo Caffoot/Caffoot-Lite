@@ -20,6 +20,8 @@ from .settings_saves import save_inventory_setting
 from .inventory_projection import project_inventory_response
 from .feature_settings import read_feature_settings, save_feature_setting, unique_feature_fields
 from .stock_intake import stock_access, read_stock, receive_stock, update_stock_readiness
+from .stock_circulation import (issue_stock, read_stock_issues, stock_recipients,
+                              return_stock, prepare_stock, write_off_stock, stock_movement_history)
 from .smtp_settings import (config_path as smtp_config_path, public_settings as smtp_public_settings,
                             save_settings as save_smtp_settings, send_test_email)
 from .device_catalogue import change_device_catalogue
@@ -676,10 +678,11 @@ class Handler(BaseHTTPRequestHandler):
         parts = parsed.path.strip('/').split('/')
         route = parsed.path
         reading = self.command == 'GET'
-        valid = (route == '/api/it-assets/stock' and reading or
+        valid = (route in ('/api/it-assets/stock','/api/it-assets/issues','/api/it-assets/recipients','/api/it-assets/history') and reading or
                  len(parts) == 4 and parts[:3] == ['api', 'it-assets', 'stock'] and reading or
-                 route in ('/api/it-assets/receive', '/api/it-assets/readiness') and not reading)
-        if not valid or parsed.query or route.endswith('/'):
+                 route in ('/api/it-assets/receive', '/api/it-assets/readiness','/api/it-assets/issue',
+                           '/api/it-assets/return','/api/it-assets/preparation','/api/it-assets/write-off') and not reading)
+        if not valid or (parsed.query and route!='/api/it-assets/recipients') or route.endswith('/'):
             self.respond(404, {'error': 'not found'})
             return
         origin = self.headers.get('Origin')
@@ -701,7 +704,20 @@ class Handler(BaseHTTPRequestHandler):
                     return
                 stock_access(connection, actor, edit=not reading)
                 if reading:
-                    result = read_stock(connection, actor, parts[3] if len(parts) == 4 else None)
+                    if route=='/api/it-assets/issues':
+                        result=read_stock_issues(connection,actor)
+                    elif route=='/api/it-assets/history':
+                        result={'movements':stock_movement_history(connection,actor)}
+                    elif route=='/api/it-assets/recipients':
+                        parameters=parse_qs(parsed.query,keep_blank_values=True)
+                        if set(parameters)-{'query','kind','limit','recipientId'} or any(len(v)!=1 for v in parameters.values()):
+                            raise ValueError('Invalid recipient search')
+                        result={'recipients':stock_recipients(connection,actor,
+                            query=parameters.get('query',[''])[0],kind=parameters.get('kind',['staff'])[0],
+                            limit=int(parameters.get('limit',['50'])[0]),
+                            identity=parameters.get('recipientId',[None])[0])}
+                    else:
+                        result = read_stock(connection, actor, parts[3] if len(parts) == 4 else None)
                 else:
                     length = self.headers.get('Content-Length', '')
                     if not length.isdecimal() or not 0 < int(length) <= 65536:
@@ -710,7 +726,9 @@ class Handler(BaseHTTPRequestHandler):
                         self.respond(415, {'error': 'JSON required'})
                         return
                     payload = json.loads(self.rfile.read(int(length)), object_pairs_hook=unique_directory_fields)
-                    writer = receive_stock if route.endswith('/receive') else update_stock_readiness
+                    writer = {'/api/it-assets/receive':receive_stock,'/api/it-assets/readiness':update_stock_readiness,
+                              '/api/it-assets/issue':issue_stock,'/api/it-assets/return':return_stock,
+                              '/api/it-assets/preparation':prepare_stock,'/api/it-assets/write-off':write_off_stock}[route]
                     result = writer(connection, actor, read_session_cookie(cookie), payload)
             self.respond(200, result)
         except PermissionError:

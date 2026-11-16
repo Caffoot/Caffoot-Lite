@@ -102,7 +102,7 @@ async function main(){
  }
  await settings();
  assert.equal(await page.locator('[data-tab="it-assets"][data-action]').isVisible(),false);
- assert.match(await page.locator('[data-feature-card="it_assets"] .description').textContent(),/Receive equipment/);
+ assert.match(await page.locator('[data-feature-card="it_assets"] .description').textContent(),/Receive, issue and return equipment/);
  const enabled=page.waitForResponse(r=>r.url().endsWith('/api/settings/features')&&r.request().method()==='POST');
  await page.locator('#optional-feature-it-assets').check({force:true});assert.equal((await enabled).status(),200);
  await page.locator('[data-action="tab-it-assets"]').waitFor({state:'visible'});
