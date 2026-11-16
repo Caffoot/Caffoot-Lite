@@ -59,9 +59,9 @@
       <label class="stock-check"><input type="checkbox" name="itemsChecked">Received Quantity And Items Checked</label>
       <label class="stock-check"><input type="checkbox" name="conditionChecked">Condition Checked And Working</label>
       ${stockField('Checked &amp; Ready To Issue','readyQuantity','number','0','required min="0" max="1" step="1" disabled')}`;
-    return `<form id="stock-receipt-form" class="preview-aligned-form"><div class="staff-main-grid"><div class="stock-card-stack">${stockCard('Record Equipment Received','Create a stock item or retain the identity of an existing compatible item.',fields)}${stockCard('Receipt Details','Keep this delivery’s date and optional purchasing Supplier separately from Manufacturer.',receipt)}
-      <p class="formhint" data-stock-feedback role="alert"></p><div class="preview-details-actions"><button class="btn" type="reset">Reset</button><button class="btn primary" type="submit">Record Receipt</button></div></div>
-      <aside class="staff-side-stack">${stockCard('Receipt Summary','Calculated from this form before anything is saved.',`<div class="info-row"><label>New Physical Stock</label><b data-stock-summary="held">1</b></div><div class="info-row"><label>Ready To Issue</label><b data-stock-summary="ready">0</b></div><div class="info-row"><label>Awaiting Checks</label><b data-stock-summary="awaiting">1</b></div><p class="formhint">Receiving stock does not create managed Devices. Each delivery keeps its original date, Supplier, checks and actor.</p>`)}</aside></div></form>`;
+    return `<form id="stock-receipt-form" class="preview-aligned-form" data-stock-cancellable="true" data-receipt-mode="${receiptMode}"><div class="staff-main-grid"><div class="stock-card-stack">${stockCard('Record Equipment Received','Create a stock item or retain the identity of an existing compatible item.',fields)}${stockCard('Receipt Details','Keep this delivery’s date and optional purchasing Supplier separately from Manufacturer.',receipt)}
+      <p class="formhint" data-stock-feedback role="alert"></p></div>
+      <aside class="staff-side-stack">${stockCard('Receipt Summary','Calculated from this form before anything is saved.',`<div class="info-row"><label>New Physical Stock</label><b data-stock-summary="held">1</b></div><div class="info-row"><label>Ready To Issue</label><b data-stock-summary="ready">0</b></div><div class="info-row"><label>Awaiting Checks</label><b data-stock-summary="awaiting">1</b></div><p class="formhint">Receiving stock does not create managed Devices. Each delivery keeps its original date, Supplier, checks and actor.</p>`)}</aside></div><div class="stock-form-actions">${stockButton('Cancel','cancel-stock')}<button class="btn btn-primary" type="submit">Record Receipt</button></div></form>`;
   }
   function renderStockDetails(){
     if(!detail)return '';
@@ -71,7 +71,7 @@
       ['Shared Specifications',stockSpecText(item)||'Not Recorded']];
     const units=item.units.map(unit=>`<tr><td>${safe(unit.serialNumber||'Not Recorded')}</td><td>${safe(unit.assetTag||'Not Recorded')}</td><td>${stockStateLabel(stockUnitState(unit))}</td><td>${canEdit()&&unit.held&&!unit.deviceLinked&&!unit.balances.awaiting_preparation?`<label class="stock-check"><input type="checkbox" name="readyUnitIds" value="${unit.id}" ${unit.ready?'checked':''} aria-label="Ready: ${safe(unit.serialNumber||unit.assetTag||unit.id.slice(0,8))}">Ready</label>`:unit.ready?'Ready':'—'}</td></tr>`).join('');
     const registeredReady=individual?0:item.balances.readyToIssue-(item.quantityStateBalances.ready||0);
-    const edit=`<form id="stock-readiness-form" class="preview-aligned-form" data-id="${item.id}" data-version="${item.version}">${individual?stockTable(['Serial Number','Asset Tag','State','Confirmed Ready'],units,'No Individual Units Recorded'):''}
+    const edit=`<form id="stock-readiness-form" class="preview-aligned-form" data-stock-cancellable="true" data-id="${item.id}" data-version="${item.version}">${individual?stockTable(['Serial Number','Asset Tag','State','Confirmed Ready'],units,'No Individual Units Recorded'):''}
       <div class="staff-fields">${stockField('New Ready To Issue Total','readyQuantity','number',item.balances.readyToIssue,`required min="${registeredReady}" max="${individual?item.units.filter(unit=>!unit.deviceLinked&&(unit.ready||unit.balances.awaiting_checks===1)).length:item.balances.readyToIssue+(item.quantityStateBalances.awaiting_checks||0)}" step="1" ${individual?'readonly':''}`)}
       ${individual?'':stockField('Minimum Stock Level (Optional)','minimumStockLevel','number',item.minimumStockLevel??'','min="0" max="9007199254740991" step="1"')}</div>
       ${individual?'':'<p class="formhint">Leave blank if no minimum is configured. Zero is a configured minimum. Low Stock warnings are not available in this build.</p>'}
@@ -80,7 +80,7 @@
       <label class="stock-check"><input type="checkbox" name="conditionChecked">Condition Checked And Working</label></div>
       <div class="preview-form-field"><label for="stock-reason">Reason / Note <span id="stock-reason-required">(Optional)</span></label><textarea class="input" id="stock-reason" name="reason" maxlength="2000"></textarea></div>
       <p class="formhint" id="stock-readiness-summary"></p><p class="formhint" data-stock-feedback role="alert"></p>
-      <div class="preview-details-actions">${stockButton('Cancel','cancel-readiness')}<button class="btn primary" type="submit">Save Readiness Change</button></div></form>`;
+      <div class="stock-form-actions">${stockButton('Cancel','cancel-readiness')}<button class="btn btn-primary" type="submit">Save Readiness Change</button></div></form>`;
     return `<section id="stock-item-details" class="stock-card-stack"><div class="section-heading"><div><h2 tabindex="-1">${safe(stockLabel(item))}</h2><p>Stock Item Details</p></div>${stockButton('Close Details','close-details')}</div>${stockMetrics(item.balances)}
       ${canEdit()&&config.canEditDevices()&&item.trackingMode==='quantity'&&['Desktop','Laptop','Server - Physical'].includes(item.category)&&(item.quantityStateBalances.ready||0)>0?'<div class="preview-details-actions">'+stockButton('Brand New — Get From Stock','register-device',item.id)+'</div>':''}
       ${stockCard('Current Stock Details','Manufacturer and Model remain separate from purchasing Supplier provenance.',information.map(([label,value])=>`<div class="info-row"><label>${label}</label><b>${safe(value)}</b></div>`).join(''))}
@@ -233,6 +233,18 @@
     const button=event.target.closest('[data-stock-action]');if(!button||!config)return;
     const action=button.dataset.stockAction;event.preventDefault();
     if(action==='cancel-handover'){if(!pending&&stockContext.handover){const deviceId=stockContext.handover.deviceId;config.cancelHandover(deviceId,()=>{stockContext={};});}return;}
+    if(action==='cancel-stock'||action==='cancel-readiness'){
+      if(pending)return;
+      const form=button.closest('form');
+      if(!form)return;
+      const association=stockContext.association;
+      config.cancelStockForm(form,()=>{
+        stockContext={};detail=null;selectedRegisteredId=null;error='';receiptMode='new';tab='inventory';
+        if(association)config.viewAssociations(association.deviceId);
+        else {config.redraw();document.getElementById('stock-tab-inventory')?.focus();}
+      });
+      return;
+    }
     if(action==='tab'){if(stockContext.association&&button.dataset.tab!=='issue')stockContext={};tab=button.dataset.tab;error='';config.redraw();document.getElementById('stock-tab-'+tab)?.focus();return;}
     if(action==='reload'){void refreshStock();return;}
     if(action==='reissue-device'){if(canEdit()&&config.canEditDevices())openStockWorkflow('reissue',{deviceId:button.dataset.id});return;}
@@ -248,6 +260,7 @@
     if(action==='mode-new'||action==='mode-existing'){
       receiptMode=action==='mode-new'?'new':'existing';
       const form=button.closest('form');
+      form.dataset.receiptMode=receiptMode;
       for(const [id,hidden] of [['stock-new-fields',receiptMode!=='new'],['stock-existing-fields',receiptMode!=='existing']]){
         form.querySelector('#'+id).hidden=hidden;form.querySelector('#'+id).disabled=hidden;
       }
@@ -282,11 +295,11 @@
   function stockNote(label,name){return `<div class="preview-form-field"><label for="stock-${name}">${label}</label><textarea class="input" id="stock-${name}" name="${name}" maxlength="2000"></textarea></div>`;}
   function stockWorkflowForm(id,title,description,content,summary,action,confirmation=''){
     const handover=id==='reissue'&&!!stockContext.handover;
-    const submit=`<button class="btn ${handover?'btn-primary':'primary'}" type="submit"${confirmation?' aria-describedby="stock-physical-return-confirmation"':''}>${action}</button>`;
+    const submit=`<button class="btn btn-primary" type="submit"${confirmation?' aria-describedby="stock-physical-return-confirmation"':''}>${action}</button>`;
     const actions=handover
       ?`<div class="assignment-modal-actions">${stockButton('Cancel','cancel-handover')}${submit}</div>`
-      :`<div class="preview-details-actions"><button class="btn" type="reset">Reset</button>${submit}</div>`;
-    return `<form id="stock-${id}-form" class="preview-aligned-form"${handover?' data-direct-handover="true"':''}><div class="staff-main-grid"><div class="stock-card-stack">${stockCard(title,description,content)}<p class="formhint" data-stock-feedback role="alert"></p>${confirmation?`<p class="formhint" id="stock-physical-return-confirmation">${confirmation}</p>`:''}${handover?'':actions}</div><aside class="staff-side-stack">${stockCard('Selected Equipment','Only the selected equipment and its genuine quantities are used.',summary)}</aside></div>${handover?actions:''}</form>`;
+      :`<div class="stock-form-actions">${stockButton('Cancel','cancel-stock')}${submit}</div>`;
+    return `<form id="stock-${id}-form" class="preview-aligned-form"${handover?' data-direct-handover="true"':' data-stock-cancellable="true"'}><div class="staff-main-grid"><div class="stock-card-stack">${stockCard(title,description,content)}<p class="formhint" data-stock-feedback role="alert"></p>${confirmation?`<p class="formhint" id="stock-physical-return-confirmation">${confirmation}</p>`:''}</div><aside class="staff-side-stack">${stockCard('Selected Equipment','Only the selected equipment and its genuine quantities are used.',summary)}</aside></div>${actions}</form>`;
   }
   function stockIssueReady(item){return !item?0:item.trackingMode==='quantity'?(item.quantityStateBalances.ready||0):item.units.filter(unit=>unit.ready&&!unit.deviceLinked).length;}
   function renderDeviceReissue(){
@@ -365,10 +378,10 @@
     if(!available||!canEdit()||registered&&!config.canEditDevices())return '';
     const requirements=stockPreparationRequirement(item,registered),individual=registered||item.trackingMode==='individual';
     const picks=!registered&&individual?units.map(unit=>`<label class="stock-check"><input type="checkbox" name="prepareUnitIds" value="${safe(unit.id)}">${safe(unit.serialNumber||unit.assetTag||'Individual Unit '+unit.id.slice(0,8))}</label>`).join(''):'';
-    const form=`<form id="stock-preparation-form" class="preview-aligned-form" data-id="${safe(registered?item.stockUnitId:item.id)}" data-registered="${registered}" data-version="${safe(item.version)}" data-available="${available}">
+    const form=`<form id="stock-preparation-form" class="preview-aligned-form" data-stock-cancellable="true" data-id="${safe(registered?item.stockUnitId:item.id)}" data-registered="${registered}" data-version="${safe(item.version)}" data-available="${available}">
       <p class="formhint">${available} Awaiting Preparation. Confirm only the equipment actually checked.</p>${picks}<div class="staff-fields">${stockField('Quantity Newly Checked &amp; Ready','prepareQuantity','number',registered?'1':individual?'0':'1',`required min="1" max="${available}" step="1" ${individual?'readonly':''}`)}${stockField('Date Checked','checkedOn','date',new Date().toLocaleDateString('en-CA'),'required')}</div>
       <label class="stock-check"><input type="checkbox" name="cleanedWorking" required>${safe(requirements.workingCheckLabel)}</label>${requirements.dataConfirmationRequired?'<label class="stock-check"><input type="checkbox" name="dataPreparationConfirmed" required>'+safe(requirements.dataCheckLabel)+'</label>':''}
-      ${item.category==='Printer'?'<p class="formhint">A factory reset is not required for every Printer. Confirm applicable data clearing before Ready.</p>':''}${stockNote('Preparation Note (Optional)','preparationNote')}<p class="formhint" data-stock-feedback role="alert"></p><div class="preview-details-actions"><button class="btn primary" type="submit">Mark Ready To Issue</button></div></form>`;
+      ${item.category==='Printer'?'<p class="formhint">A factory reset is not required for every Printer. Confirm applicable data clearing before Ready.</p>':''}${stockNote('Preparation Note (Optional)','preparationNote')}<p class="formhint" data-stock-feedback role="alert"></p><div class="stock-form-actions">${stockButton('Cancel','cancel-stock')}<button class="btn btn-primary" type="submit">Mark Ready To Issue</button></div></form>`;
     return stockCard('Prepare Returned Equipment','Preparation preserves the physical total and original return history.',form);
   }
   function renderRegisteredStock(){
@@ -565,7 +578,11 @@
     hydrateStockCirculation();document.getElementById('stock-recipientKind')?.focus();
   }
 
+  function hydrateStockPage(){
+    hydrateStock();
+    document.querySelectorAll('#stock-panel form[data-stock-cancellable="true"]').forEach(form=>config.rememberStockForm(form));
+  }
   function dismissHandover(){if(stockContext.handover)stockContext={};}
   function configureStock(options){config=options;}
-  window.caffootStockIntake={configure:configureStock,enter:enterStock,render:renderStock,hydrate:hydrateStock,refresh:refreshStock,clear:clearStock,openWorkflow:openStockWorkflow,openHandover:openDirectHandover,dismissHandover};
+  window.caffootStockIntake={configure:configureStock,enter:enterStock,render:renderStock,hydrate:hydrateStockPage,refresh:refreshStock,clear:clearStock,openWorkflow:openStockWorkflow,openHandover:openDirectHandover,dismissHandover};
 })();
