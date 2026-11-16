@@ -82,3 +82,22 @@ Commit and push each coherent checkpoint. Full final-head backend, browser,
 Docker, documentation and existing Actions gates remain required before acceptance.
 Native Pi/Safari, private legacy export and Stage 6 full-volume restore remain
 deferred. No testing is claimed by this preflight-only checkpoint.
+
+## Registration Backend Checkpoint
+
+The normal Device creation body now has a transaction-requiring, non-committing
+helper; direct creation keeps its transaction-owning wrapper. Protected
+`GET /api/it-assets/device-sources` and `POST /api/it-assets/register-device` reuse
+stock request parsing, effective permissions, session/MFA, Origin and CSRF checks.
+Registration rechecks the source/version/Ready balance and unique canonical name,
+ID and optional supplied serial under the lock. The existing journal publishes
+the matching two-entry transfer. Identical actor-scoped retries return the saved
+result; changed requests cannot reuse a reference. Schema 16/17 are unchanged.
+
+Actual focused run: **152 tests passed** using
+`PYTHONPATH=tests:. python -m unittest test_device_stock test_reserved_device_saves test_optional_device_addresses test_stock_intake test_stock_circulation test_it_asset_stock_schema -q`.
+This covers rollback after Device/IPAM persistence, accounting, competing writes,
+retry/stale selection, physical compatibility, optional serial, feature/session
+gates, existing direct creation, stock circulation and schema protections.
+An initial new-test import/fixture error was corrected before this passing run.
+Interface, reissue, hardware, screenshots and final checks remain pending.
