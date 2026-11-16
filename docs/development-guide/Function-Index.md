@@ -6,7 +6,7 @@ Scope: named JavaScript declarations/assignments in the six application scripts,
 
 The account hydration/photo functions now have purpose-based callable bindings matching their function names: `hydrateAccount` and `removeAccountPhoto`. The immutable design manifest retains its historical integration-entry names; those metadata names are not the runtime's current function map. Pinned source paths, revisions and hashes are unchanged.
 
-**Recorded definitions: 973.** Checked against the source in this commit. This remains a definition map, not a call graph. See [coding conventions](06-Coding-and-Naming-Conventions.md) and the [code reference](07-Function-and-Code-Reference.md).
+**Recorded definitions: 974.** Checked against the source in this commit. This remains a definition map, not a call graph. See [coding conventions](06-Coding-and-Naming-Conventions.md) and the [code reference](07-Function-and-Code-Reference.md).
 
 ## interface/loader.js
 
@@ -1132,15 +1132,15 @@ The account hydration/photo functions now have purpose-based callable bindings m
 | [`Handler.do_POST`](../../backend/server.py#L495) | 495 |
 | [`Handler.handle_stock_request`](../../backend/server.py#L678) | 678 |
 | [`Handler.handle_equipment_request`](../../backend/server.py#L754) | 754 |
-| [`Handler.handle_directory_request`](../../backend/server.py#L825) | 825 |
-| [`Handler.handle_feature_settings`](../../backend/server.py#L900) | 900 |
-| [`Handler.handle_role_change`](../../backend/server.py#L943) | 943 |
-| [`Handler.handle_user_mutation`](../../backend/server.py#L985) | 985 |
-| [`Handler.handle_account_email`](../../backend/server.py#L1377) | 1377 |
-| [`Handler.handle_profile_photo`](../../backend/server.py#L1457) | 1457 |
-| [`Handler.handle_import`](../../backend/server.py#L1488) | 1488 |
-| [`Handler.respond`](../../backend/server.py#L1564) | 1564 |
-| [`main`](../../backend/server.py#L1577) | 1577 |
+| [`Handler.handle_directory_request`](../../backend/server.py#L831) | 831 |
+| [`Handler.handle_feature_settings`](../../backend/server.py#L906) | 906 |
+| [`Handler.handle_role_change`](../../backend/server.py#L949) | 949 |
+| [`Handler.handle_user_mutation`](../../backend/server.py#L991) | 991 |
+| [`Handler.handle_account_email`](../../backend/server.py#L1383) | 1383 |
+| [`Handler.handle_profile_photo`](../../backend/server.py#L1463) | 1463 |
+| [`Handler.handle_import`](../../backend/server.py#L1494) | 1494 |
+| [`Handler.respond`](../../backend/server.py#L1570) | 1570 |
+| [`main`](../../backend/server.py#L1583) | 1583 |
 
 ## backend/sessions.py
 
@@ -1317,8 +1317,9 @@ The account hydration/photo functions now have purpose-based callable bindings m
 
 | Function | Line |
 | --- | ---: |
-| [`equipment_association_schema`](../../backend/equipment_associations.py#L56) | 56 |
-| [`validate_equipment_associations`](../../backend/equipment_associations.py#L63) | 63 |
-| [`migrate_equipment_associations`](../../backend/equipment_associations.py#L75) | 75 |
-| [`read_equipment_associations`](../../backend/equipment_associations.py#L86) | 86 |
+| [`equipment_association_schema`](../../backend/equipment_associations.py#L59) | 59 |
+| [`validate_equipment_associations`](../../backend/equipment_associations.py#L66) | 66 |
+| [`migrate_equipment_associations`](../../backend/equipment_associations.py#L78) | 78 |
+| [`read_equipment_associations`](../../backend/equipment_associations.py#L89) | 89 |
+| [`add_associated_equipment`](../../backend/equipment_associations.py#L111) | 111 |
 

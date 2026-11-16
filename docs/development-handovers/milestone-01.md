@@ -1,5 +1,19 @@
 # Milestone 01 Development Handover — v2.2 Target
 
+> **Latest checkpoint, 16 November 2026 — Batch 3.10 B complete:** the same
+> `feat/associated-equipment-handovers` branch and [draft PR #391](https://github.com/Caffoot/Caffoot-Lite/pull/391)
+> now provide atomic issue-and-associate and exact-recipient existing-issue
+> association. Stock issue, links and the final audit share one transaction;
+> existing issues are never issued or deducted again. Schema 18 is unchanged.
+> **131 focused tests passed**, including 28 new helper/writer/HTTP tests covering
+> versions, eligibility, live rights/features/sessions, CSRF/MFA, rollback and
+> concurrent writes/retries. Python compilation and diff checks passed; the
+> Function Index has 974 definitions. See [the API contract and continuation](../development-guide/Associated-Equipment.md).
+> No B product blocker remains. C–E remain unstarted: existing screens, Assigned
+> To and accepted screenshots are untouched. No full local suite/browser/Docker
+> rerun, merge, release, deployment or production change is claimed. New-head
+> Actions are separate from Checkpoint A's independently verified green runs.
+
 > **Batch 3.10 B preparation, 16 November 2026:** continuing from verified
 > `51bd7a775e769888880729676973e25fd133ab8a` and its green Checkpoint A Actions.
 > The ordinary stock issue writer now delegates to a transaction-aware helper;

@@ -1,8 +1,9 @@
-# Associated Equipment — Foundation
+# Associated Equipment — Backend Operations
 
 Checkpoint A of Batch 3.10 adds explicit accessory relationships and protected
-history reads. Add Equipment, the Device Details tab and reassignment safeguards
-are still pending. This is development work for v2.2, not a published feature.
+history reads. Checkpoint B adds atomic issue-and-associate and existing-issue
+association writes. The Device Details tab and reassignment safeguards remain
+pending. This is development work for v2.2, not a published feature.
 
 ## Approved Scope And Source Preflight
 
@@ -53,12 +54,12 @@ or reads. Fresh installations keep IT Assets off.
 Each permanent link references the workstation's canonical `device_assignments`
 row and the accessory's original `it_asset_stock_entries` issue line. It stores
 the association time and technician snapshot, plus a unique operation key and
-request hash for the later protected writer. It does not copy a stock item, unit,
+request hash for the protected writer. It does not copy a stock item, unit,
 quantity, recipient or issue date. Those remain on the original issue and ledger.
 An original issue line has at most one workstation association, preventing the
 same issued quantity being counted against multiple workstations. Separate issue
-lines remain independently traceable. No user-facing quantity-selection policy
-is introduced by this read-only checkpoint.
+lines remain independently traceable. Checkpoint B retains this Schema 18
+contract unchanged; there is no new schema migration or issue-line splitting.
 
 The insert guard accepts only an open assignment with an active Staff Member or
 non-archived Department and an outstanding, published accessory issue to that
@@ -90,9 +91,66 @@ technician, specification snapshot and version).
 `history` retains every explicit link, including outstanding issues on closed
 assignments. The later reassignment guard must examine **all outstanding linked
 issues**, including historical assignments, rather than relying on `current`.
-There is no Add Equipment write endpoint yet. No operation key/hash, Device
-notes, passwords, network details or unrelated directory contacts are returned.
+No operation key/hash, Device notes, passwords, network details or unrelated
+directory contacts are returned.
 Existing Assigned To and employee-safe My Equipment responses are unchanged.
+
+## Atomic Write API
+
+Both routes use the existing equipment HTTP handler, verified session cookie,
+same-origin/CSRF checks, JSON-only body and request-size limit. The writer checks
+the live session, effective **Devices Edit** and **IT Assets Edit** permissions
+and both independent feature switches again inside `BEGIN IMMEDIATE`, which
+prevents another writer from changing the facts during validation and saving.
+
+| Route | Required selection fields beyond the common fields | Behaviour |
+| --- | --- | --- |
+| `POST /api/equipment/issue-and-associate` | `stockItemId`, `version`, `quantity`, `issuedOn`, `note`; `stockUnitIds` required only for individual tracking | Issue the selected Ready item/units and associate every original issue line in the same transaction |
+| `POST /api/equipment/associations` | `issueEntryId`, `version` | Link an outstanding original accessory issue without creating any issue or changing the stock ledger |
+
+Common required fields are `operationId`, `deviceId`, `deviceRevision` and
+`deviceAssignmentId`. The operation reference follows the existing stock
+contract: 16–80 letters, digits or hyphens. Device revision and assignment ID
+must be whole integers, with revision zero or greater and assignment ID positive.
+Unknown fields, including caller-supplied recipients, are rejected. POST routes
+accept no query parameters. The existing Assigned To read supplies the Device
+revision/current assignment, while the selected stock item or original issue
+supplies its opaque `version`.
+
+Before a new save, the Device revision and open assignment must still match,
+and no active Device editing reservation may exist. The exact current Staff or
+Department recipient is derived from that assignment and revalidated as active
+or non-archived. Department membership does not substitute for the actual holder.
+The stock issue helper applies the existing per-item Ready/unregistered balance,
+whole-quantity, individually selected unit, date, snapshot and ledger checks.
+The existing-issue route verifies the issue version, outstanding quantity and
+exact recipient, and rejects registered Device issues and duplicate links.
+Partial-return issues can be linked with a fresh version; their original quantity
+and outstanding balance remain distinct and authoritative.
+
+The response contains `deviceId`, `deviceAssignmentId`, `associationIds`,
+`issueEntryIds` and `movementId` (null for an existing-issue association). Individual
+units produce separate canonical issue lines and links. All issue movements,
+links and the final attributed association audit commit together, or all roll
+back, including a failure partway through several individual links. The stock
+helper never commits on its own. The ordinary Issue Equipment endpoint retains
+its existing result and transaction boundary.
+
+The operation reference is scoped to the actor and the request comparison includes
+the route. An identical completed retry returns the stored result without changing
+stock, links or history; different values or a different route conflict. Live
+session, permission and feature checks still apply to retries. A completed retry
+returns its original result even if equipment has since been returned; this is
+confirmation of the earlier save, not a new issue or current-stock projection.
+The final audit uses the existing confirmation/replay mechanism, and includes
+the Device ID so existing history filtering hides it when either inventory area
+is unavailable. New writes leave Device properties, IPAM, racks, locations,
+assignment history and employee-safe responses unchanged.
+
+Invalid values return 400; denied requests return 403; a missing original issue
+returns 404; stale versions, active editing reservations, duplicate links and
+conflicting operation references return 409. Successful writes return 200 with
+`Cache-Control: no-store`.
 
 ## Checkpoint A Verification
 
@@ -113,26 +171,44 @@ Actions and genuine changed-screen evidence belong to final acceptance; existing
 accepted screenshots remain intact. Raspberry Pi/native Safari, private legacy
 data and the previously deferred native/restore acceptance remain unverified.
 
+## Checkpoint B Verification
+
+Continued from `51bd7a775e769888880729676973e25fd133ab8a`, following
+[the independent Checkpoint A correction and green Actions](https://github.com/Caffoot/Caffoot-Lite/pull/391#issuecomment-6912747653).
+The transaction-helper preparation was separately tested and pushed as
+`417da41620921d42b0b8e71ff318b19ea837220e` (65 focused tests passed).
+
+The completed B source passed **131 focused tests**, including **28 new**
+transaction-helper/writer/HTTP tests:
+
+```sh
+PYTHONPATH=tests:. python -m unittest test_associated_equipment_writes test_associated_equipment_writes_http test_equipment_associations test_equipment_associations_http test_stock_circulation test_stock_intake test_device_stock test_device_assignments_http test_history_permissions test_feature_settings -q
+```
+
+Coverage includes both routes, quantity and individual identity, actual Staff/
+Department recipients, inactive/archived holders, selected availability, stale
+stock/issue/Device/assignment references, reservations, strict payloads, duplicate
+prevention, live permissions/features/sessions, MFA, CSRF, same-origin checks,
+idempotent and conflicting retries, partial/full returns and write-off, history
+privacy, failure after audit persistence, failure on a second individual link,
+and simultaneous writers/identical retries on separate database connections.
+The existing issue, intake, registration and assignment HTTP regressions passed.
+Python compilation and diff checks passed; the updated Function Index has 974
+definitions. No full local suite, browser run, new screenshot, Docker run or
+release was performed. Newly triggered Actions are separate from these local
+results; previous green Checkpoint A Actions are not evidence for the new head.
+
 ## Continuation
 
-**Checkpoint B preparation:** the transaction-aware issue helper is implemented.
-65 focused stock/registration/intake/helper tests passed, including caller-owned
-rollback and replay; the two helper tests also passed after the test import was
-tidied. The ordinary issue endpoint retains its original result, permissions,
-idempotency and commit boundary. No new association write route is exposed yet.
+Checkpoint B is complete, with no unresolved B product decision. Screens and
+accepted visual evidence are untouched. Continue only when the next checkpoint
+is authorised:
 
-1. **Checkpoint B:** expose no write route until issue and association can share
-   one write transaction. Revalidate the current assignment, exact recipient,
-   feature/Edit rights, session, Device edit reservation and selected stock/issue
-   version under the lock. Implement issue-and-associate and existing-issue
-   association with idempotent replay, rollback and concurrent-writer coverage.
-   The latter must create no second issue or stock decrement. Review how the
-   existing per-item and individual-unit selectors supply original issue lines.
-2. **Checkpoint C:** add the separate Associated Equipment tab using the current
+1. **Checkpoint C:** add the separate Associated Equipment tab using the current
    v2.1 Device Details layout and existing stock controls. Preserve Assigned To,
    navigation, responsiveness, scrolling and feature-off privacy; run targeted
    Chromium checks before pushing.
-3. **Checkpoint D:** all outstanding linked accessories must follow the existing
+2. **Checkpoint D:** all outstanding linked accessories must follow the existing
    actual Return Equipment checks/dispositions before a holder change. Workstation
    checks and explicit Ready confirmation are mandatory even for direct transfer.
    Existing assignment closure requires a physical stock fact; it cannot be
@@ -140,7 +216,7 @@ idempotency and commit boundary. No new association write route is exposed yet.
    missing-return/write-off handling and transaction/UI sequencing remain subject
    to the approval boundary above. Push completed safe work before requesting
    any required owner decision. Do not invent a preparation screen or receipt.
-4. **Checkpoint E:** finish draft user instructions, genuine changed-screen
+3. **Checkpoint E:** finish draft user instructions, genuine changed-screen
    desktop/mobile light/dark captures and applicable final-head GitHub Actions.
    Preserve all accepted earlier screenshots and deferred native acceptance.
 
