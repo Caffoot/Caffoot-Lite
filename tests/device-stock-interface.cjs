@@ -112,6 +112,12 @@ async function main(){
  await page.locator('[data-action="tab-it-assets"]').click();
  await page.locator('[data-stock-action="tab"][data-tab="inventory"]').click();
  await page.locator('[data-stock-action="details"][data-id="'+receipt.stockItemId+'"]').last().click();
+ const readiness=page.locator('#stock-readiness-form [name="readyQuantity"]');
+ assert.equal(await readiness.getAttribute('min'),'1','Registered Ready Device is the quantity-readiness floor');
+ await readiness.fill('0');
+ assert.equal(await readiness.evaluate(control=>control.validity.rangeUnderflow),true);
+ assert.match(await page.locator('#stock-readiness-summary').textContent(),/Registered Ready Devices cannot be changed here/);
+ await readiness.fill('10');
  await captureChangedScreen('stock-registration-action','#stock-item-details');
  await page.locator('[data-stock-action="register-device"]').click();
  await page.locator('#device-stock-feedback').filter({hasText:'From Stock:'}).waitFor();

@@ -63,6 +63,23 @@ class DeviceStockTests(unittest.TestCase):
         self.assertEqual(json.loads(raw)['serialNumber'], '')
         audit = self.db.execute('SELECT record_json FROM inventory_change_history ORDER BY id DESC LIMIT 1').fetchone()[0]
         self.assertEqual(json.loads(audit)['actorId'], 1)
+        # The quantity readiness form must never move a registered Ready Device.
+        from backend.stock_intake import update_stock_readiness
+        adjustment = dict(operationId=uuid.uuid4().hex, stockItemId=identity,
+                          version=item['version'], readyQuantity=0,
+                          minimumStockLevel=None,
+                          checks=dict(itemsChecked=False, conditionChecked=False),
+                          reason='Recheck only the anonymous stock')
+        self.unchanged(ValueError, lambda: update_stock_readiness(
+            self.db, 1, self.token, adjustment))
+        self.assertEqual(stock_item(self.db, identity)['balances']['readyToIssue'], 10)
+        adjustment.update(operationId=uuid.uuid4().hex, readyQuantity=1)
+        update_stock_readiness(self.db, 1, self.token, adjustment)
+        item = stock_item(self.db, identity)
+        self.assertEqual(item['quantityStateBalances']['ready'], 0)
+        self.assertEqual(item['units'][0]['balances']['ready'], 1)
+        self.assertEqual(item['balances']['readyToIssue'], 1)
+        self.assertEqual(item['balances']['physicallyHeld'], 10)
 
     def test_failed_journal_rolls_back_device_ipam_unit_and_audit(self):
         identity = self.source()

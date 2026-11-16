@@ -70,8 +70,9 @@
       ['Manufacturer',item.manufacturer||'Not Recorded'],['Model / Description',item.model],
       ['Shared Specifications',stockSpecText(item)||'Not Recorded']];
     const units=item.units.map(unit=>`<tr><td>${safe(unit.serialNumber||'Not Recorded')}</td><td>${safe(unit.assetTag||'Not Recorded')}</td><td>${stockStateLabel(stockUnitState(unit))}</td><td>${canEdit()&&unit.held&&!unit.deviceLinked&&!unit.balances.awaiting_preparation?`<label class="stock-check"><input type="checkbox" name="readyUnitIds" value="${unit.id}" ${unit.ready?'checked':''} aria-label="Ready: ${safe(unit.serialNumber||unit.assetTag||unit.id.slice(0,8))}">Ready</label>`:unit.ready?'Ready':'—'}</td></tr>`).join('');
+    const registeredReady=individual?0:item.balances.readyToIssue-(item.quantityStateBalances.ready||0);
     const edit=`<form id="stock-readiness-form" class="preview-aligned-form" data-id="${item.id}" data-version="${item.version}">${individual?stockTable(['Serial Number','Asset Tag','State','Confirmed Ready'],units,'No Individual Units Recorded'):''}
-      <div class="staff-fields">${stockField('New Ready To Issue Total','readyQuantity','number',item.balances.readyToIssue,`required min="0" max="${individual?item.units.filter(unit=>!unit.deviceLinked&&(unit.ready||unit.balances.awaiting_checks===1)).length:item.balances.readyToIssue+(item.quantityStateBalances.awaiting_checks||0)}" step="1" ${individual?'readonly':''}`)}
+      <div class="staff-fields">${stockField('New Ready To Issue Total','readyQuantity','number',item.balances.readyToIssue,`required min="${registeredReady}" max="${individual?item.units.filter(unit=>!unit.deviceLinked&&(unit.ready||unit.balances.awaiting_checks===1)).length:item.balances.readyToIssue+(item.quantityStateBalances.awaiting_checks||0)}" step="1" ${individual?'readonly':''}`)}
       ${individual?'':stockField('Minimum Stock Level (Optional)','minimumStockLevel','number',item.minimumStockLevel??'','min="0" max="9007199254740991" step="1"')}</div>
       ${individual?'':'<p class="formhint">Leave blank if no minimum is configured. Zero is a configured minimum. Low Stock warnings are not available in this build.</p>'}
       <div id="stock-readiness-checks" hidden><p class="formhint">Confirm the checks for the additional units becoming ready.</p>
@@ -166,8 +167,11 @@
       const selected=[...readiness.querySelectorAll('[name="readyUnitIds"]:checked')].map(input=>input.value);
       if(individual)readiness.elements.readyQuantity.value=String(selected.length);
       const ready=Number(readiness.elements.readyQuantity.value),before=item.balances.readyToIssue;
-      if(!Number.isSafeInteger(ready)||ready<0||ready>item.balances.physicallyHeld){
-        readiness.querySelector('#stock-readiness-summary').textContent='Enter a whole-number ready total between zero and Physically Held.';
+      const registeredReady=individual?0:before-(item.quantityStateBalances.ready||0);
+      if(!Number.isSafeInteger(ready)||ready<registeredReady||ready>item.balances.physicallyHeld){
+        readiness.querySelector('#stock-readiness-summary').textContent=registeredReady
+          ? `Enter a whole-number Ready total from ${registeredReady} to ${item.balances.physicallyHeld}. Registered Ready Devices cannot be changed here.`
+          : 'Enter a whole-number ready total between zero and Physically Held.';
         return;
       }
       const increasing=individual?item.units.some(unit=>!unit.ready&&selected.includes(unit.id)):ready>before;

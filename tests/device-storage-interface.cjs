@@ -92,6 +92,12 @@ async function main(){
  assert.equal(await page.locator('[data-device-detail-field="raid"]').inputValue(),'Legacy RAID Choice');
  await page.locator('[data-device-detail-field="storageType"]').selectOption('NVMe SSD');
  await page.locator('[data-server-boot-enabled]').check();
+ const bootTick=await page.locator('[data-server-boot-enabled]').boundingBox();
+ const bootLabel=await page.locator('.server-storage-boot-toggle').boundingBox();
+ assert.ok(bootTick&&bootLabel&&bootTick.width>=14&&bootTick.width<=22&&bootTick.height>=14&&bootTick.height<=22,
+   'Record Boot Storage remains a compact checkbox');
+ assert.ok(Math.abs(bootTick.y+bootTick.height/2-(bootLabel.y+bootLabel.height/2))<5,
+   'Record Boot Storage checkbox is inline with its label');
  await page.locator('[data-server-storage-field="boot-driveType"]').selectOption('SATA SSD');
  await page.locator('[data-server-storage-field="boot-driveCount"]').fill('2');
  await page.locator('[data-server-storage-field="boot-capacity"]').fill('500');
