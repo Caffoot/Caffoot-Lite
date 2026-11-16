@@ -265,7 +265,10 @@
   });
   document.addEventListener('input',event=>{if(event.target.closest('#stock-receipt-form,#stock-readiness-form,#stock-issue-form,#stock-return-form,#stock-writeoff-form,#stock-preparation-form,#stock-reissue-form'))hydrateStock();});
   document.addEventListener('change',event=>{if(event.target.closest('#stock-receipt-form,#stock-readiness-form,#stock-issue-form,#stock-return-form,#stock-writeoff-form,#stock-preparation-form,#stock-reissue-form'))hydrateStock();});
-  document.addEventListener('reset',event=>{if(event.target.id==='stock-receipt-form'){event.target.dataset.operationId='';setTimeout(hydrateStock,0);}});
+  document.addEventListener('reset',event=>{
+    if(event.target.id==='stock-receipt-form')event.target.dataset.operationId='';
+    if(event.target.id==='stock-receipt-form'||event.target.id==='stock-issue-form')setTimeout(hydrateStock,0);
+  });
   document.addEventListener('keydown',event=>{
     const button=event.target.closest('[data-stock-action="tab"]');
     if(!button||!['ArrowLeft','ArrowRight','Home','End'].includes(event.key))return;
@@ -298,13 +301,20 @@
     return stockWorkflowForm('reissue',handover?'Reassignment Details':'Reissue Existing Device',handover?'The current holder stays recorded until this complete handover succeeds.':'Issue one genuinely held, prepared Device while preserving its identity and all previous assignments.',content,
       handover?'<p>This Device goes directly to its new holder. It is not being returned to the storeroom. Associated equipment must already be resolved.</p>':'<p>Only unassigned registered Devices recorded as Ready To Issue are eligible. A successful assignment reduces Physically Held and Ready To Issue by one. Device Status, configuration, network and rack details stay as recorded.</p>',handover?'Confirm Ready And Reassign':'Reissue Existing Device');
   }
+  function stockExistingIssueLabel(issue){
+    const specification=issue.specification||{};
+    const identity=[specification.serialNumber?'Serial '+specification.serialNumber:'',
+      specification.assetTag?'Asset '+specification.assetTag:''].filter(Boolean).join(' · ');
+    return issue.name+' · '+(identity?identity+' · ':'')+'Issue #'+issue.id+
+      ' · '+issue.outstanding+' Outstanding · Issued '+issue.issuedOn;
+  }
   function renderStockIssue(){
     if(!canEdit())return stockNotice('Read Only','IT Assets Edit is required to issue equipment.');
     if(stockContext.association&&!config.canEditDevices())return stockNotice('Read Only','Devices Edit and IT Assets Edit are required to add equipment.');
     const association=stockContext.association;
     const choices=items.map(item=>[item.id,stockLabel(item)+' · '+stockIssueReady(item)+' Ready']);
     const recipient=association?`<p class="formhint">Issued To: <strong>${safe(association.recipientLabel)}</strong>. Equipment is linked to this Device only when you save.</p>`:`${stockSelect('Assign To','recipientKind',[['staff','Staff Member'],['department','Department']], '',stockContext.recipientKind||'staff')}${stockField('Find A Recipient','recipientSearch','search','','maxlength="100"')}${stockSelect('Staff Member Or Department','recipientId',[['','Select An Eligible Recipient']], 'required')}`;
-    const methods=association?`${stockSelect('Add Equipment From','associationMethod',[['new','Issue And Associate'],['existing','Associate Already Issued Equipment']])}${recipient}<fieldset id="stock-association-existing" hidden disabled>${stockSelect('Already Issued Equipment','existingIssue',(stockContext.existingIssues||[]).map(issue=>[issue.id,issue.name+' · '+issue.outstanding+' Outstanding · Issued '+issue.issuedOn]).concat((stockContext.existingIssues||[]).length?[]:[['','No Eligible Issued Equipment']]),'required')}<p class="formhint">The entire outstanding original issue is linked. Stock is not issued or deducted again.</p></fieldset>`:'';
+    const methods=association?`${stockSelect('Add Equipment From','associationMethod',[['new','Issue And Associate'],['existing','Associate Already Issued Equipment']])}${recipient}<fieldset id="stock-association-existing" hidden disabled>${stockSelect('Already Issued Equipment','existingIssue',(stockContext.existingIssues||[]).map(issue=>[issue.id,stockExistingIssueLabel(issue)]).concat((stockContext.existingIssues||[]).length?[]:[['','No Eligible Issued Equipment']]),'required')}<p class="formhint">The entire outstanding original issue is linked. Stock is not issued or deducted again.</p></fieldset>`:'';
     const content=`${methods}<fieldset id="stock-association-new"><div class="staff-fields">${stockSelect('Ready Equipment','issueItem',choices.length?choices:[['','No Stock Items']], 'required',stockContext.stockItemId)}${stockField('Quantity To Issue','issueQuantity','number','1','required min="1" step="1"')}
       ${association?'':recipient}${stockField('Date Issued','issuedOn','date',new Date().toLocaleDateString('en-CA'),'required')}</div>
       <div id="stock-issue-unit-choices"></div>${stockNote('Issue Note (Optional)','issueNote')}</fieldset><p class="formhint" id="stock-issue-validation" role="status"></p>`;
@@ -410,7 +420,7 @@
       issue.querySelector('#stock-issue-availability').textContent=(item?stockLabel(item):'No Equipment Selected')+' · '+ready+' Ready To Issue For This Item';
       issue.querySelector('#stock-issue-validation').textContent=valid?'':`Enter a whole quantity from 1 to ${ready}. Awaiting or already issued equipment is unavailable.`;
       issue.querySelector('[type="submit"]').disabled=existing?!issue.elements.existingIssue.value:!valid||(!stockContext.association&&!issue.elements.recipientId.value);
-      if(existing){const original=(stockContext.existingIssues||[]).find(item=>String(item.id)===issue.elements.existingIssue.value);issue.querySelector('#stock-issue-availability').textContent=original?original.name+' · '+original.outstanding+' Outstanding · No Stock Deduction':'No Eligible Issued Equipment';issue.querySelector('#stock-issue-validation').textContent=original?'':'Select eligible equipment already issued to this exact holder.';}
+      if(existing){const original=(stockContext.existingIssues||[]).find(item=>String(item.id)===issue.elements.existingIssue.value);issue.querySelector('#stock-issue-availability').textContent=original?stockExistingIssueLabel(original)+' · No Stock Deduction'':'No Eligible Issued Equipment';issue.querySelector('#stock-issue-validation').textContent=original?'':'Select eligible equipment already issued to this exact holder.';}
       if(!stockContext.association){const searchKey=issue.elements.recipientKind.value+'|'+issue.elements.recipientSearch.value;
         if(issue.dataset.recipientQuery!==searchKey){issue.dataset.recipientQuery=searchKey;void loadStockRecipients(issue,searchKey);}}
     }
@@ -555,6 +565,7 @@
     hydrateStockCirculation();document.getElementById('stock-recipientKind')?.focus();
   }
 
+  function dismissHandover(){if(stockContext.handover)stockContext={};}
   function configureStock(options){config=options;}
-  window.caffootStockIntake={configure:configureStock,enter:enterStock,render:renderStock,hydrate:hydrateStock,refresh:refreshStock,clear:clearStock,openWorkflow:openStockWorkflow,openHandover:openDirectHandover};
+  window.caffootStockIntake={configure:configureStock,enter:enterStock,render:renderStock,hydrate:hydrateStock,refresh:refreshStock,clear:clearStock,openWorkflow:openStockWorkflow,openHandover:openDirectHandover,dismissHandover};
 })();
