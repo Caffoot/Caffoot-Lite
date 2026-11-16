@@ -101,6 +101,14 @@ Review permissions and MFA enforcement on the **server**, not merely by hiding i
 
 For a short, practical security-fix and release sequence, use the [owner checklist](docs/development-guide/Security-Fixes-and-Releases.md). Report sensitive findings through [SECURITY.md](SECURITY.md), never a public issue. Product-owner approval is required separately for code changes, merging, release publication and security-advisory disclosure.
 
+## Focused Development Checks And Final Regression
+
+Keep verification proportionate while a change is in development. Run focused checks for changed features, including the relevant permissions, security and data-safety safeguards, then push a useful checkpoint. Avoid repeating unrelated full suites after each small edit. Evidence-only changes need direct evidence review, not a fresh application-wide local test run.
+
+Draft pull requests defer the repository's complete backend, Docker Compose and multi-browser regression jobs. When the change and its required screenshots are ready for owner review, use **Ready For Review** to start those existing full checks. A further code change requires rechecking the revised head before merge. These three full suites do not run automatically again on a push to the `milestone-1` integration branch; that avoids duplicate work after an approved PR merge. Use PRs for all integration changes. If an exceptional direct change to `milestone-1` is authorised, manually run the full backend, Docker and browser checks. Before merging, confirm the final PR checks cover the current base and head, repeating affected checks if the base has changed materially. Manual and release acceptance checks remain available. Do not describe skipped or outstanding checks as passed.
+
+Coding assistants should not spend their session continuously monitoring GitHub Actions. Report the pushed commit and focused test results and leave CI status checks to the reviewer. Preserve the existing secret-scanning, release-documentation and protected-branch requirements.
+
 ## Before Opening A Pull Request
 
 1. Link the relevant issue, follow the product owner's agreed direction, and explain the actual change in plain British English.

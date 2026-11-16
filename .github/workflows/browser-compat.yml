@@ -2,7 +2,7 @@ name: Caffoot Lite browser compatibility
 
 on:
   push:
-    branches: [main, feat/approved-html-full-interface, feat/approved-modular-html-282, milestone-1]
+    branches: [main, feat/approved-html-full-interface, feat/approved-modular-html-282]
     paths:
       - "interface/**"
       - "tests/browser-compat.cjs"
@@ -33,6 +33,7 @@ on:
       - "setup.html"
       - ".github/workflows/browser-compat.yml"
   pull_request:
+    types: [opened, reopened, synchronize, ready_for_review]
     paths:
       - "interface/**"
       - "tests/browser-compat.cjs"
@@ -70,6 +71,7 @@ permissions:
 
 jobs:
   browser-compat:
+    if: github.event_name != 'pull_request' || github.event.pull_request.draft == false
     runs-on: ubuntu-24.04
     timeout-minutes: 25
     steps:
@@ -337,6 +339,7 @@ jobs:
           if-no-files-found: ignore
           retention-days: 14
   native-select-engines:
+    if: github.event_name != 'pull_request' || github.event.pull_request.draft == false
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     strategy:
