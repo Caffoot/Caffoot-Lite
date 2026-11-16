@@ -1,9 +1,8 @@
 """Focused reporting, mixed-stock privacy and role-upgrade acceptance checks."""
-from datetime import date, timedelta
+from datetime import date
 import json
 import sqlite3
 import unittest
-from unittest.mock import patch
 
 from backend import schema
 from backend.role_policy import evaluate_role_policy
@@ -13,7 +12,7 @@ from backend.stock_circulation import write_off_stock
 from backend.stock_corrections import save_stock_correction
 from backend.device_stock import register_stock_device
 from test_device_stock import registration_payload
-from test_stock_intake import readiness_payload, receipt_payload
+from test_stock_intake import readiness_payload
 import test_stock_circulation as circulation_fixture
 from test_stock_circulation import writeoff_payload, return_payload
 from test_stock_corrections import correction_payload
@@ -110,6 +109,22 @@ class StockReportingTests(unittest.TestCase):
         self.db.commit()
         with self.assertRaises(PermissionError):
             self.report()
+
+    def test_direct_handover_does_not_add_physical_issues_or_double_count_custody(self):
+        from test_device_handovers import DeviceHandoverTests, handover_payload
+        from backend.device_handovers import reassign_device
+        fixture = DeviceHandoverTests()
+        fixture.setUp()
+        self.addCleanup(fixture.doCleanups)
+        _, identity = fixture.stock_device()
+        before = read_stock_report(fixture.db, 1)
+        reassign_device(fixture.db, 1, fixture.token,
+            handover_payload(fixture.db, identity, recipientKind='department', recipientId='department'))
+        after = read_stock_report(fixture.db, 1)
+        self.assertEqual(after['totals'], before['totals'])
+        self.assertEqual(after['movements'], before['movements'])
+        self.assertEqual(after['recentActivity'][0]['kind'], 'reassigned')
+
 
 
 class StockRoleUpgradeTests(unittest.TestCase):

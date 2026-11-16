@@ -63,6 +63,7 @@ class BuiltinRoleMigrationTests(unittest.TestCase):
         expected = {(account, section): level for account, section, level in before["account_permission_overrides"]}
         for account, policy in policies.items():
             if policy.active and not policy.is_admin:
+                expected[account, "IT Assets"] = "deny"
                 for section in SECTIONS:
                     level = policy.permissions.get(section)
                     if level != "edit" and (account, section) not in expected:
@@ -193,7 +194,7 @@ class BuiltinRoleAdministrationTests(unittest.TestCase):
     def test_fresh_defaults_and_new_accounts_remain_staff_only(self):
         self.assertEqual(self.db.execute("SELECT role_key,name,enabled,is_builtin FROM roles ORDER BY id").fetchall(),
                          [("staff_member", "Staff Member", 1, 1), ("it_staff", "IT Staff", 1, 1)])
-        self.assertEqual(dict(self.db.execute("SELECT section,level FROM role_grants WHERE role_id=?", (self.role,))), dict.fromkeys(SECTIONS, "edit"))
+        self.assertEqual(dict(self.db.execute("SELECT section,level FROM role_grants WHERE role_id=?", (self.role,))), dict.fromkeys((*SECTIONS, "IT Assets"), "edit"))
         self.assertFalse(self.db.execute("SELECT 1 FROM account_roles WHERE role_id=?", (self.role,)).fetchone())
         self.assertEqual(evaluate_role_policy(self.db, self.tim).permissions, {})
         self.assertFalse(evaluate_role_policy(self.db, self.tim).requires_mfa)

@@ -46,14 +46,15 @@ def read_stock_report(connection, actor, *, days=30, category=None, today=None):
                and counts['readyToIssue'] < item['minimumStockLevel'])
         catalogue.append(dict(id=identity, name=item['name'], category=item['category'],
                               counts=counts, lowStock=low, minimum=item['minimumStockLevel']))
-        if devices:
+        if devices and (category is None or item['category'] == category):
             classification['unregistered'] += sum(item['quantityStateBalances'].get(key, 0) for key in HELD_STATES)
             for unit in item['units']:
                 classification['registered' if unit['deviceLinked'] else 'individual'] += int(unit['held'])
-    for device in registered_stock_devices(connection):
+    registered = registered_stock_devices(connection)
+    for device in registered:
         if not device['stockItemId']:
             add_counts(device['category'], stock_report_counts(device['states']))
-            if devices:
+            if devices and (category is None or device['category'] == category):
                 classification['registered'] += sum(device['states'].get(key, 0) for key in HELD_STATES)
     # Older assignments have no stock issue entry. Count each only once.
     for identity, in connection.execute('''SELECT a.id FROM device_assignments a
@@ -68,7 +69,8 @@ def read_stock_report(connection, actor, *, days=30, category=None, today=None):
         json_extract(e.snapshot_json,'$.category'),coalesce((SELECT c.corrected_quantity
         FROM it_asset_stock_movements c WHERE c.corrects_entry_id=e.id ORDER BY c.id DESC LIMIT 1),e.quantity)
         FROM it_asset_stock_entries e JOIN it_asset_stock_movements m ON m.id=e.movement_id
-        WHERE m.kind IN ('received','issued','returned','written_off')'''):
+        WHERE m.kind IN ('received','issued','returned','written_off')
+        AND coalesce(json_extract(m.checks_json,'$.directHandover'),0)!=1'''):
         if start.isoformat() <= happened <= today.isoformat():
             facts.append((kind, happened, item_category or 'Other', quantity))
     categories = sorted(set(groups) | {row[2] for row in facts})
@@ -88,21 +90,13 @@ def read_stock_report(connection, actor, *, days=30, category=None, today=None):
         counts = {kind: str(sum(row[3] for row in facts if row[0] == kind and begin.isoformat() <= row[1] <= end.isoformat()))
                   for kind in MOVEMENT_KINDS}
         buckets.append(dict(start=begin.isoformat(), end=end.isoformat(), counts=counts))
+    chosen_items = {item['id'] for item in chosen}
+    chosen_devices = {device['deviceId'] for device in registered if device['category'] == category}
     recent = stock_movement_history(connection, actor)
     recent = [row for row in recent if start.isoformat() <= row['date'] <= today.isoformat()
-              and (category is None or row.get('stockItemId') in {item['id'] for item in chosen}
-                   or row.get('deviceId') in {device['deviceId'] for device in registered_stock_devices(connection)
-                                             if device['category'] == category})]
+              and (category is None or row.get('stockItemId') in chosen_items
+                   or row.get('deviceId') in chosen_devices)]
     recent.sort(key=lambda row: (row['date'], row['id'], row['entryId']), reverse=True)
-    if devices and category is not None:
-        classification = dict(unregistered=0, registered=0, individual=0)
-        for identity, in connection.execute('SELECT id FROM it_asset_stock_items WHERE category=?', (category,)):
-            item = stock_item(connection, identity)
-            classification['unregistered'] += sum(item['quantityStateBalances'].get(key, 0) for key in HELD_STATES)
-            for unit in item['units']:
-                classification['registered' if unit['deviceLinked'] else 'individual'] += int(unit['held'])
-        classification['registered'] += sum(sum(device['states'].get(key, 0) for key in HELD_STATES)
-            for device in registered_stock_devices(connection) if not device['stockItemId'] and device['category'] == category)
     return dict(days=days, start=start.isoformat(), end=today.isoformat(), category=category,
         categories=categories, totals={key: str(value) for key, value in totals.items()},
         distribution=[dict(category=name, **{key: str(value) for key, value in counts.items()}) for name, counts in selected.items()],

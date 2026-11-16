@@ -1,11 +1,11 @@
 /* Stock screens use the existing application cards, tables, forms and access rules. */
 'use strict';
 (function(){
-  let config=null,items=[],receipts=[],changes=[],tab='receive',detail=null,loaded=false,loading=false;
+  let config=null,items=[],receipts=[],changes=[],tab='overview',detail=null,loaded=false,loading=false;
   let error='',receiptMode='new',pending=false,generation=0,detailRequest=0;
   let issues=[],deviceAssignments=[],registeredDevices=[],deviceChoices=[],movements=[],stockContext={},selectedRegisteredId=null,reissueDevices=[];
   let correction=null,correctionRequest=0,correctionTimer,returnCorrection=null;
-  let issueDraft=null;
+  let issueDraft=null,report=null,reportDays=30,reportCategory='',inventoryFilter=null,movementFilter=null;
   const safe=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   function canRead(){return !!config?.canRead();}
   function canEdit(){return !!config?.canEdit();}
@@ -89,9 +89,103 @@
       ${stockCard(canEdit()?'Update Ready To Issue Quantity':'Read Only','Receipt checks preserve Physically Held. Returned equipment uses the preparation checks below.',canEdit()?edit:individual?stockTable(['Serial Number','Asset Tag','State','Ready'],units,'No Individual Units Recorded'):`<p class="sub">Minimum Stock Level: ${item.minimumStockLevel??'Not Configured'}</p>`)}${renderStockPreparation(item)}</section>`;
   }
   function renderStockInventory(){
-    const rows=items.map(item=>`<tr><td>${stockButton(safe(stockLabel(item)),'details',item.id)}<div class="sub">${safe(item.category)}${stockSpecText(item)?' · '+safe(stockSpecText(item)):''}</div></td><td>${item.trackingMode==='individual'?'Individual':'Quantity-Based'}</td><td>${item.balances.physicallyHeld}</td><td>${item.balances.readyToIssue}</td><td>${item.stateBalances.awaitingChecks}</td><td>${item.stateBalances.awaitingPreparation}</td><td>${item.stateBalances.currentlyIssued}</td><td>${item.stateBalances.writtenOff}</td><td>${stockButton(canEdit()?'View / Update':'View Details','details',item.id)}${canEdit()?stockButton('Issue Equipment','issue-item',item.id)+stockButton('Write Off','writeoff-item',item.id):''}</td></tr>`).join('');
-    return `<div class="stock-card-stack"><div class="card stock-inventory-table">${stockTable(['Stock Item','Tracking','Physically Held','Ready','Awaiting Checks','Awaiting Preparation','Currently Issued','Written Off','Actions'],rows,'No Stock Received')}</div>${renderStockDetails()}${renderRegisteredStock()}</div>`;
+    const rows=items.filter(stockInventoryMatches).map(item=>`<tr><td>${stockButton(safe(stockLabel(item)),'details',item.id)}<div class="sub">${safe(item.category)}${item.trackingMode==='quantity'&&item.minimumStockLevel!==null&&item.balances.readyToIssue<item.minimumStockLevel?' · Low Stock':''}${stockSpecText(item)?' · '+safe(stockSpecText(item)):''}</div></td><td>${item.trackingMode==='individual'?'Individual':'Quantity-Based'}</td><td>${item.balances.physicallyHeld}</td><td>${item.balances.readyToIssue}</td><td>${item.stateBalances.awaitingChecks}</td><td>${item.stateBalances.awaitingPreparation}</td><td>${item.stateBalances.currentlyIssued}</td><td>${item.stateBalances.writtenOff}</td><td>${stockButton(canEdit()?'View / Update':'View Details','details',item.id)}${canEdit()?stockButton('Issue Equipment','issue-item',item.id)+stockButton('Write Off','writeoff-item',item.id):''}</td></tr>`).join('');
+    return `<div class="stock-card-stack">${inventoryFilter?`<div class="section-heading"><p class="sub">Dashboard selection: ${safe(inventoryFilter.category||'All Categories')} · ${safe(inventoryFilter.status)}. Item totals include their registered units; Device rows show those same units, not additional stock.</p>${stockButton('Clear Dashboard Filters','clear-report-filters')}</div>`:''}${inventoryFilter?.status==='issued'?renderStockAssignments():`<div class="card stock-inventory-table">${stockTable(['Stock Item','Tracking','Physically Held','Ready','Awaiting Checks','Awaiting Preparation','Currently Issued','Written Off','Actions'],rows,'No Stock Received')}</div>${renderStockDetails()}${renderRegisteredStock()}`}</div>`;
   }
+  function stockReportNumber(value){return BigInt(value||0).toLocaleString('en-GB');}
+  function stockReportMetric(label,key,description,status){
+    const actionable=report.canDrillAggregates||key==='itemsBelowMinimum';
+    const content=`<span class="stathead">${label}</span><span class="statnum">${stockReportNumber(report.totals[key])}</span><span class="statfoot">${description}</span>`;
+    return actionable?`<button type="button" class="card card-padded stat stock-report-metric" data-stock-action="report-drill" data-status="${status}">${content}</button>`:`<div class="card card-padded stat stock-report-metric">${content}</div>`;
+  }
+  function stockReportTable(title,headings,rows){
+    return `<details class="stock-chart-table"><summary>${title} — Data Table</summary>${stockTable(headings,rows,'No Data For This Selection')}</details>`;
+  }
+  function stockReportBar(value,total,colour){
+    const width=BigInt(total||0)>0n?Number(BigInt(value||0)*10000n/BigInt(total))/100:0;
+    return `<span class="stock-report-bar ${colour}" style="width:${width}%"></span>`;
+  }
+  function renderStockOverview(){
+    if(!report)return stockNotice('Loading Overview','Retrieving complete stock figures…');
+    const counts=report.totals,held=BigInt(counts.physicallyHeld),ready=BigInt(counts.readyToIssue);
+    const categoryControl=stockSelect('Equipment Category','report-category', [['','All Categories'],...report.categories.map(name=>[name,name])], '',reportCategory);
+    const periodControl=stockSelect('Reporting Period','report-days', [['30','Last 30 Days'],['90','Last 90 Days']], '',String(reportDays));
+    const controls=`<div class="card card-padded stock-report-controls">${categoryControl}${periodControl}<div class="sub">${stockDate(report.start)} – ${stockDate(report.end)}<br>Reporting dates affect movements and Written Off. Other figures show current stock.</div></div>`;
+    const metrics=`<div class="stock-report-metrics">${stockReportMetric('Physically Held','physicallyHeld','Ready stock plus stock awaiting checks or preparation.','held')}${stockReportMetric('Ready To Issue','readyToIssue','Checked, available equipment.','ready')}${stockReportMetric('Awaiting Checks / Preparation','awaitingChecks','Held but unavailable to issue.','awaiting')}${stockReportMetric('Currently Issued','currentlyIssued','Equipment currently with a recipient.','issued')}${stockReportMetric('Written Off','writtenOff',`During the last ${reportDays} days; excluded from held stock.`,'written_off')}${stockReportMetric('Stock Categories','categories','Categories represented in current stock records.','all')}${stockReportMetric('Items Below Minimum','itemsBelowMinimum','Quantity items with Ready To Issue strictly below their own minimum.','low')}</div>`;
+    const max=report.distribution.reduce((top,row)=>{const size=BigInt(row.physicallyHeld)+BigInt(row.currentlyIssued);return size>top?size:top;},1n);
+    const distribution=report.distribution.map(row=>{
+      const content=`<span>${safe(row.category)}</span><span class="stock-report-track" aria-hidden="true">${stockReportBar(row.physicallyHeld,max,'stock-report-held')}${stockReportBar(row.currentlyIssued,max,'stock-report-issued')}</span><span>${stockReportNumber(row.physicallyHeld)} / ${stockReportNumber(row.currentlyIssued)}</span>`;
+      return report.canDrillAggregates?`<button type="button" class="stock-distribution-row" data-stock-action="report-drill" data-category="${safe(row.category)}" data-status="all" aria-label="${safe(row.category)}: ${row.physicallyHeld} held, ${row.currentlyIssued} issued. View Stock">${content}</button>`:`<div class="stock-distribution-row">${content}</div>`;
+    }).join('');
+    const distributionTable=stockReportTable('Equipment Distribution',['Category','Physically Held','Currently Issued'],report.distribution.map(row=>`<tr><th scope="row">${safe(row.category)}</th><td>${stockReportNumber(row.physicallyHeld)}</td><td>${stockReportNumber(row.currentlyIssued)}</td></tr>`).join(''));
+    const equipment=stockCard('Equipment Distribution','Physically held / currently issued by category.',(distribution||'<p class="sub">No stock categories recorded.</p>')+distributionTable);
+    const pct=held?Number(ready*10000n/held)/100:0;
+    const readiness=`<div class="stock-readiness"><div class="stock-readiness-donut" style="--ready-share:${pct}%" role="img" aria-label="${counts.readyToIssue} ready and ${counts.awaitingChecks} awaiting checks or preparation"><span>${stockReportNumber(counts.physicallyHeld)}<small>Physically Held</small></span></div><div><p><b>${stockReportNumber(counts.readyToIssue)}</b> Ready To Issue</p><p><b>${stockReportNumber(counts.awaitingChecks)}</b> Awaiting Checks / Preparation</p>${held?'':'<p class="sub">No equipment is physically held.</p>'}</div></div>`;
+    const readinessTable=stockReportTable('Stock Readiness',['State','Units'],`<tr><th scope="row">Ready To Issue</th><td>${stockReportNumber(counts.readyToIssue)}</td></tr><tr><th scope="row">Awaiting Checks / Preparation</th><td>${stockReportNumber(counts.awaitingChecks)}</td></tr>`);
+    let classification=stockCard('Held Stock Classification','Individual Device classification needs Devices Read.','<p class="sub">Complete stock totals above include registered Devices. Individual Device records and their separate breakdown are restricted.</p>');
+    if(report.classification){
+      classification=stockCard('Held Stock Classification','Each physical unit is counted once.',Object.entries({unregistered:'Unregistered Quantity Stock',registered:'Registered Canonical Devices',individual:'Individually Tracked IT Assets'}).map(([key,label])=>`<button type="button" class="stock-classification-row" data-stock-action="report-drill" data-status="${key}"><span>${label}</span><b>${stockReportNumber(report.classification[key])}</b></button>`).join(''));
+    }
+    const kinds={received:'Received',issued:'Issued',returned:'Returned',written_off:'Written Off'};
+    const movementMax=report.movements.reduce((top,bucket)=>Object.values(bucket.counts).reduce((value,count)=>BigInt(count)>value?BigInt(count):value,top),1n);
+    const movementChart=`<div class="stock-movement-chart" role="img" aria-label="Stock movements from ${report.start} to ${report.end}; exact values in the following data table">${report.movements.map(bucket=>`<div class="stock-movement-column"><div class="stock-movement-bars">${Object.entries(bucket.counts).map(([kind,count])=>`<span class="stock-movement-bar stock-report-${kind}" style="height:${Number(BigInt(count)*10000n/movementMax)/100}%" title="${safe(kinds[kind])}: ${count}"></span>`).join('')}</div><span>${bucket.start.slice(8,10)}/${bucket.start.slice(5,7)}</span></div>`).join('')}</div><p class="sub stock-report-legend">${Object.entries(kinds).map(([key,label])=>`<span><i class="stock-report-${key}" aria-hidden="true"></i>${label}</span>`).join('')}</p>`;
+    const movementRows=report.movements.map(bucket=>`<tr><th scope="row">${stockDate(bucket.start)} – ${stockDate(bucket.end)}</th>${Object.values(bucket.counts).map(count=>`<td>${stockReportNumber(count)}</td>`).join('')}</tr>`).join('');
+    const movementTable=stockReportTable('Stock Movements',['Dates',...Object.values(kinds)],movementRows);
+    const movementsCard=stockCard('Stock Movements',`Last ${reportDays} days. Effective corrected quantities use the original business date.`,movementChart+movementTable+(report.canDrillAggregates?stockButton('View Movement History','report-drill').replace('data-id=""','data-status="movements"'):''));
+    const warnings=report.items.filter(row=>row.lowStock).map(row=>`<div class="stock-attention-row"><div><b>${safe(row.name)} · Low Stock</b><p class="sub">${stockReportNumber(row.counts.readyToIssue)} ready · Minimum ${stockReportNumber(row.minimum)}</p></div>${stockButton(canEdit()?'View / Update':'View Details','details',row.id)}</div>`).join('');
+    const awaiting=BigInt(counts.awaitingChecks)>0n?`<div class="stock-attention-row"><div><b>Awaiting Checks / Preparation</b><p class="sub">${stockReportNumber(counts.awaitingChecks)} held units are unavailable to issue.</p></div>${report.canDrillAggregates?'<button class="btn" type="button" data-stock-action="report-drill" data-status="awaiting">View Stock</button>':''}</div>`:'';
+    const attention=stockCard('Attention Required','Minimum Stock Levels apply independently to quantity-based items.',awaiting+warnings||'<p class="sub">No items below minimum or awaiting checks in this selection.</p>');
+    const activityRows=report.recentActivity.map(event=>`<tr><td>${stockDate(event.date)}</td><td>${safe(event.name)}</td><td>${safe(({readiness_changed:'Readiness Changed',registered:'Registered',corrected:'Corrected',reassigned:'Reassigned',...kinds})[event.kind]||event.kind)}</td><td>${event.kind==='corrected'?`${event.previousQuantity} → ${event.correctedQuantity}`:stockReportNumber(event.effectiveQuantity)}</td><td><button type="button" class="btn" data-stock-action="report-movement" data-id="${event.entryId}">View Movement</button></td></tr>`).join('');
+    const activity=stockCard('Recent Activity','Latest authorised activity by business date within this reporting period.',stockTable(['Date','Equipment','Movement','Effective Quantity','Details'],activityRows,'No Authorised Activity In This Period'));
+    return `<div id="stock-overview" class="stock-card-stack">${controls}${metrics}${!report.canDrillAggregates?'<p class="sub">Figures show complete organisation-wide stock. Device details require Devices Read; aggregate cards are informational. Stock-item warnings open authorised stock details.</p>':''}<div class="stock-report-grid"><div class="stock-card-stack">${equipment}</div>${stockCard('Stock Readiness','Ready and awaiting equipment make up Physically Held.',readiness+readinessTable)}${classification}${attention}</div>${movementsCard}${activity}</div>`;
+  }
+  function stockInventoryMatches(item){
+    if(!inventoryFilter)return true;
+    const category=inventoryFilter.category;
+    if(category&&item.category!==category)return false;
+    const status=inventoryFilter.status,counts=item.balances;
+    if(status==='low')return item.trackingMode==='quantity'&&item.minimumStockLevel!==null&&counts.readyToIssue<item.minimumStockLevel;
+    if(status==='registered')return false;
+    if(status==='unregistered')return item.trackingMode==='quantity'&&Object.entries(item.quantityStateBalances).some(([key,value])=>['ready','awaiting_checks','awaiting_preparation'].includes(key)&&value>0);
+    if(status==='individual')return item.trackingMode==='individual'&&item.units.some(unit=>unit.held&&!unit.deviceLinked);
+    return !['held','ready','awaiting'].includes(status)||counts[{held:'physicallyHeld',ready:'readyToIssue',awaiting:'awaitingChecks'}[status]]>0;
+  }
+  function stockRegisteredMatches(device){
+    if(!inventoryFilter)return true;
+    if(inventoryFilter.category&&device.category!==inventoryFilter.category)return false;
+    const status=inventoryFilter.status;
+    if(['low','unregistered','individual'].includes(status))return false;
+    if(status==='held'||status==='registered')return ['ready','awaiting_checks','awaiting_preparation'].some(key=>device.states[key]>0);
+    if(status==='ready')return device.states.ready>0;
+    if(status==='awaiting')return (device.states.awaiting_checks||0)+(device.states.awaiting_preparation||0)>0;
+    return true;
+  }
+  function renderStockAssignments(){
+    const category=inventoryFilter?.category;
+    const rows=[...issues.filter(issue=>issue.outstanding>0&&(!category||issue.specification.category===category)),...deviceAssignments.filter(issue=>!category||issue.category===category)];
+    return stockCard('Currently Issued','Outstanding assignments, each counted once.',stockTable(['Equipment','Recipient','Outstanding','Issued On'],rows.map(issue=>`<tr><td>${safe(issue.name)}</td><td>${safe(issue.recipientLabel)}</td><td>${issue.outstanding}</td><td>${stockDate(issue.issuedOn)}</td></tr>`).join(''),'No Outstanding Assignments'));
+  }
+  function stockMovementMatches(event){
+    if(!movementFilter)return true;
+    if(movementFilter.entryId)return event.entryId===movementFilter.entryId;
+    if(event.date<movementFilter.start||event.date>movementFilter.end)return false;
+    if(movementFilter.kind&&event.kind!==movementFilter.kind)return false;
+    if(movementFilter.category){
+      const item=items.find(item=>item.id===event.stockItemId),device=registeredDevices.find(device=>device.deviceId===event.deviceId);
+      if((item?.category||device?.category)!==movementFilter.category)return false;
+    }
+    return true;
+  }
+  function drillStockReport(button){
+    const status=button.dataset.status||'all',category=button.dataset.category??reportCategory;
+    if(!report||(!report.canDrillAggregates&&status!=='low'))return;
+    detail=null;selectedRegisteredId=null;stockContext={};
+    if(status==='written_off'||status==='movements'){
+      tab='movements';movementFilter={kind:status==='written_off'?'written_off':null,category,start:report.start,end:report.end};
+    }else{tab='inventory';inventoryFilter={status,category};}
+    config.redraw();document.getElementById('stock-tab-'+tab)?.focus();
+  }
+
   function stockDate(value){return /^\d{4}-\d{2}-\d{2}$/.test(value)?`<time datetime="${value}">${value.slice(8,10)}/${value.slice(5,7)}/${value.slice(0,4)}</time>`:safe(value);}
   function stockCheckLabel(value){return value===true?'Confirmed':value===false?'Not Confirmed':'Not Recorded';}
   function renderStockHistory(){
@@ -100,7 +194,7 @@
     return `<div class="stock-card-stack"><h2>Stock Receipts</h2><div class="card">${stockTable(['Date / Actor','Stock Item','Supplier','Received','Ready','Awaiting','Checks / Notes'],receiptRows,'No Recorded Receipts')}</div><h2>Readiness Changes</h2><p class="sub">Later checks are separate movements. Original receipts are retained.</p><div class="card">${stockTable(['Date / Actor','Stock Item','Ready Before → After','Reason / Checks'],changed,'No Recorded Readiness Changes')}</div></div>`;
   }
   function clearStock(){
-    issueDraft=null;
+    issueDraft=null;report=null;inventoryFilter=null;movementFilter=null;
     correction=null;returnCorrection=null;correctionRequest++;clearTimeout(correctionTimer);
     generation++;detailRequest++;items=[];receipts=[];changes=[];issues=[];deviceAssignments=[];registeredDevices=[];deviceChoices=[];reissueDevices=[];movements=[];stockContext={};selectedRegisteredId=null;detail=null;loaded=false;loading=false;
   }
@@ -117,9 +211,9 @@
     if(!canRead()){clearStock();return;}
     const request=++generation;loading=true;
     try{
-      const result=await stockRequest('stock');
+      const [result,reportResult]=await Promise.all([stockRequest('stock'),stockRequest('report?days='+reportDays+(reportCategory?'&category='+encodeURIComponent(reportCategory):''))]);
       if(request!==generation||!canRead())return;
-      reissueDevices=result.reissueDevices||[];items=result.items;receipts=result.receipts;changes=result.readinessChanges;issues=result.issues||[];deviceAssignments=result.deviceAssignments||[];registeredDevices=result.registeredDevices||[];deviceChoices=result.deviceChoices||[];movements=result.movements||[];loaded=true;error='';
+      report=reportResult;reissueDevices=result.reissueDevices||[];items=result.items;receipts=result.receipts;changes=result.readinessChanges;issues=result.issues||[];deviceAssignments=result.deviceAssignments||[];registeredDevices=result.registeredDevices||[];deviceChoices=result.deviceChoices||[];movements=result.movements||[];loaded=true;error='';
       if(returnCorrection){returnCorrection.refreshRequired=false;returnCorrection.form.querySelector('[data-stock-feedback]').textContent='';}
       if(detail)detail=await stockRequest('stock/'+detail.item.id);
     }catch(failure){if(request===generation)error=failure.message;}
@@ -127,19 +221,19 @@
   }
   function enterStock(){
     if(!canRead()){clearStock();return;}
-    if(!canEdit()&&['receive','issue','return','writeoff'].includes(tab))tab='inventory';
+    if(!canEdit()&&['receive','issue','return','writeoff'].includes(tab))tab='overview';
     if(!loaded&&!loading)void refreshStock();
   }
   function renderStock(){
     if(tab!=='issue'||stockContext.association||!canEdit())issueDraft=null;
     if(!canRead())return stockNotice('IT Assets Not Available','The feature and IT Assets Read access are required.');
-    const title={receive:'Receive Stock',inventory:'Stock Inventory',history:'Receipt History',issue:stockContext.association?'Add Equipment':'Issue Equipment',return:'Return Equipment',writeoff:'Write Off',reissue:'Reissue Existing Device',movements:'Movement History'}[tab];
+    const title={overview:'Overview',receive:'Receive Stock',inventory:'Stock Inventory',history:'Receipt History',issue:stockContext.association?'Add Equipment':'Issue Equipment',return:'Return Equipment',writeoff:'Write Off',reissue:'Reissue Existing Device',movements:'Movement History'}[tab];
     const total=items.reduce((sum,item)=>{for(const key of Object.keys(sum))sum[key]+=BigInt(item.balances[key]);return sum;},{physicallyHeld:0n,readyToIssue:0n,awaitingChecks:0n});
     for(const device of registeredDevices.filter(device=>!device.stockItemId)){total.physicallyHeld+=BigInt(['ready','awaiting_checks','awaiting_preparation'].reduce((sum,key)=>sum+(device.states[key]||0),0));total.readyToIssue+=BigInt(device.states.ready||0);total.awaitingChecks+=BigInt((device.states.awaiting_checks||0)+(device.states.awaiting_preparation||0));}
-    const tabs=[...(canEdit()?[['receive','Receive Stock']]:[]),['inventory','Stock Inventory'],...(canEdit()&&config.canEditDevices()?[["reissue","Reissue Existing Device"]]:[]),['history','Receipt History'],...(canEdit()?[['issue',stockContext.association?'Add Equipment':'Issue Equipment'],['return','Return Equipment'],['writeoff','Write Off']]:[]),['movements','Movement History']];
+    const tabs=[['overview','Overview'],...(canEdit()?[['receive','Receive Stock']]:[]),['inventory','Stock Inventory'],...(canEdit()&&config.canEditDevices()?[["reissue","Reissue Existing Device"]]:[]),['history','Receipt History'],...(canEdit()?[['issue',stockContext.association?'Add Equipment':'Issue Equipment'],['return','Return Equipment'],['writeoff','Write Off']]:[]),['movements','Movement History']];
     return `<div class="users-live stock-live"><div class="section-page-header"><div class="eyebrow">IT Assets</div><div class="header"><div><h1>${title}</h1><p>Receive, issue and return equipment, record checks and retain its history.</p></div></div></div>
       <nav class="tabs" role="tablist" aria-label="IT Assets">${tabs.map(([key,label])=>`<button class="tab${tab===key?' active':''}" type="button" id="stock-tab-${key}" role="tab" aria-selected="${tab===key}" aria-controls="stock-panel" tabindex="${tab===key?'0':'-1'}" data-stock-action="tab" data-tab="${key}">${label}</button>`).join('')}</nav>
-      <section class="stock-panel" id="stock-panel" role="tabpanel" aria-labelledby="stock-tab-${tab}">${error?stockNotice('Stock Could Not Be Loaded',error)+stockButton('Reload Stock','reload'):''}${!loaded?stockNotice('Loading Stock','Retrieving permitted stock records…'):stockMetrics(total)+(tab==='receive'?renderStockReceipt():tab==='inventory'?renderStockInventory():tab==='history'?renderStockHistory():tab==='reissue'?renderDeviceReissue():tab==='issue'?renderStockIssue():tab==='return'?renderStockReturn():tab==='writeoff'?renderStockWriteOff():renderStockMovements())}</section></div>`;
+      <section class="stock-panel" id="stock-panel" role="tabpanel" aria-labelledby="stock-tab-${tab}">${error?stockNotice('Stock Could Not Be Loaded',error)+stockButton('Reload Stock','reload'):''}${!loaded?stockNotice('Loading Stock','Retrieving permitted stock records…'):(tab==='overview'?renderStockOverview():stockMetrics(total)+(tab==='receive'?renderStockReceipt():tab==='inventory'?renderStockInventory():tab==='history'?renderStockHistory():tab==='reissue'?renderDeviceReissue():tab==='issue'?renderStockIssue():tab==='return'?renderStockReturn():tab==='writeoff'?renderStockWriteOff():renderStockMovements()))}</section></div>`;
   }
   function receiptTracking(form){
     return receiptMode==='new'?form.elements.trackingMode.value:items.find(item=>item.id===form.elements.existing.value)?.trackingMode||'quantity';
@@ -238,6 +332,11 @@
   document.addEventListener('click',event=>{
     const button=event.target.closest('[data-stock-action]');if(!button||!config)return;
     const action=button.dataset.stockAction;event.preventDefault();
+    if(action==='report-drill'){drillStockReport(button);return;}
+    if(action==='report-movement'){
+      tab='movements';movementFilter={entryId:Number(button.dataset.id)};config.redraw();document.getElementById('stock-tab-movements')?.focus();return;
+    }
+    if(action==='clear-report-filters'){inventoryFilter=null;movementFilter=null;config.redraw();return;}
     if(action==='edit-issue'){
       if(!pending)editStockIssue(button.closest('form'));
       return;
@@ -280,7 +379,7 @@
     if(action==='registered-details'){selectedRegisteredId=button.dataset.id;detail=null;tab='inventory';config.redraw();return;}
     if(action==='close-registered'){selectedRegisteredId=null;config.redraw();return;}
     if(action==='view-device'){config.viewDevice(button.dataset.id);return;}
-    if(action==='details'||action==='cancel-readiness'){void openStockDetails(button.dataset.id||detail?.item.id).catch(failure=>{error=failure.message;config.redraw();});return;}
+    if(action==='details'||action==='cancel-readiness'){if(tab==='overview'){inventoryFilter=null;tab='inventory';}void openStockDetails(button.dataset.id||detail?.item.id).catch(failure=>{error=failure.message;config.redraw();});return;}
     if(action==='close-details'){detail=null;config.redraw();return;}
     if(action==='mode-new'||action==='mode-existing'){
       receiptMode=action==='mode-new'?'new':'existing';
@@ -305,7 +404,12 @@
     void (form.matches('#stock-receipt-form,#stock-readiness-form')?submitStock(form):submitStockCirculation(form,event.submitter?.matches('#stock-issue-confirmation [type="submit"]')===true)).catch(failure=>{const feedback=form.querySelector('[data-stock-feedback]');if(feedback?.isConnected)feedback.textContent=failure.message;config.notify(failure.message,'error');});
   });
   document.addEventListener('input',event=>{if(event.target.closest('#stock-receipt-form,#stock-readiness-form,#stock-issue-form,#stock-return-form,#stock-writeoff-form,#stock-preparation-form,#stock-reissue-form'))hydrateStock();});
-  document.addEventListener('change',event=>{if(event.target.closest('#stock-receipt-form,#stock-readiness-form,#stock-issue-form,#stock-return-form,#stock-writeoff-form,#stock-preparation-form,#stock-reissue-form'))hydrateStock();});
+  document.addEventListener('change',event=>{
+    if(event.target.id==='stock-report-days'||event.target.id==='stock-report-category'){
+      reportDays=Number(document.getElementById('stock-report-days').value);reportCategory=document.getElementById('stock-report-category').value;
+      void refreshStock();return;
+    }
+    if(event.target.closest('#stock-receipt-form,#stock-readiness-form,#stock-issue-form,#stock-return-form,#stock-writeoff-form,#stock-preparation-form,#stock-reissue-form'))hydrateStock();});
   document.addEventListener('reset',event=>{
     if(event.target.id==='stock-receipt-form')event.target.dataset.operationId='';
     if(event.target.id==='stock-receipt-form'||event.target.id==='stock-issue-form')setTimeout(hydrateStock,0);
@@ -446,7 +550,7 @@
     return stockCard('Prepare Returned Equipment','Preparation preserves the physical total and original return history.',form);
   }
   function renderRegisteredStock(){
-    const rows=registeredDevices.map(device=>`<tr><td>${stockButton(safe(device.name),'registered-details',device.stockUnitId)}<div class="sub">${safe(device.category)}</div></td><td>${['ready','awaiting_checks','awaiting_preparation'].reduce((sum,key)=>sum+(device.states[key]||0),0)}</td><td>${device.states.ready||0}</td><td>${device.states.awaiting_preparation||0}</td><td>${device.states.issued||0}</td><td>${device.states.written_off||0}</td><td>${stockButton('View / Update','registered-details',device.stockUnitId)}</td></tr>`).join('');
+    const rows=registeredDevices.filter(stockRegisteredMatches).map(device=>`<tr><td>${stockButton(safe(device.name),'registered-details',device.stockUnitId)}<div class="sub">${safe(device.category)}</div></td><td>${['ready','awaiting_checks','awaiting_preparation'].reduce((sum,key)=>sum+(device.states[key]||0),0)}</td><td>${device.states.ready||0}</td><td>${device.states.awaiting_preparation||0}</td><td>${device.states.issued||0}</td><td>${device.states.written_off||0}</td><td>${stockButton('View / Update','registered-details',device.stockUnitId)}</td></tr>`).join('');
     const device=registeredDevices.find(record=>record.stockUnitId===selectedRegisteredId);
     const detail=device?stockCard(safe(device.name),'The same canonical Device and its genuine stock history.',
       `<div class="info-row"><label>Equipment Type</label><b>${safe(device.category)}</b></div><div class="info-row"><label>Serial Number</label><b>${safe(device.serialNumber||'Not Recorded')}</b></div><div class="info-row"><label>Asset Tag</label><b>${safe(device.assetTag||'Not Recorded')}</b></div><div class="preview-details-actions">${stockButton('View Device','view-device',device.deviceId)}${canEdit()&&config.canEditDevices()&&reissueDevices.some(item=>item.deviceId===device.deviceId)?stockButton('Reissue Existing Device','reissue-device',device.deviceId):''}${canEdit()&&config.canEditDevices()&&!device.states.written_off?stockButton('Write Off','writeoff-device',device.deviceId):''}${stockButton('Close Details','close-registered')}</div>`)+renderStockPreparation(device,true):'';
@@ -454,8 +558,8 @@
   }
   function renderStockMovements(){
     const labels={received:'Received',issued:'Issued',reassigned:'Reassigned',returned:'Returned',readiness_changed:'Readiness Changed',written_off:'Written Off',registered:'Registered',corrected:'Corrected'};
-    const rows=movements.map(event=>`<tr data-movement-entry="${event.entryId}"><td>${stockDate(event.date)}<div class="sub">${safe(event.actor)}</div><div class="sub">Movement ${event.id} · Entry ${event.entryId}</div></td><td>${safe(event.name)}</td><td>${labels[event.kind]||safe(event.kind)}</td><td>${event.kind==='corrected'?`${event.previousQuantity} → ${event.correctedQuantity}<div class="sub">Original Entry ${event.correctsEntryId}</div>`:`${event.quantity}<div class="sub">Effective: ${event.effectiveQuantity}</div>`}</td><td>${safe(event.recipientLabel||'—')}</td><td>${safe(stockStateLabel(event.fromState))} → ${safe(stockStateLabel(event.toState))}</td><td>${safe(event.reason||event.note||'—')}<details><summary>Movement Details</summary><p>Recorded: ${safe(event.recordedAt)}</p>${event.sourceIssueEntryId?`<p>Original Issue: ${event.sourceIssueEntryId}</p>`:''}${event.physicalReturnConfirmed?'<p>Physical Return Confirmed. No recorded issue or current assignment was closed.</p>':''}${event.checks?`<p>${Object.entries(event.checks).filter(([name,value])=>typeof value==='boolean'&&!(name==='dataPreparationConfirmed'&&event.checks.dataCheckLabel==='')).map(([name,value])=>`${safe({itemsChecked:'Items Checked',conditionChecked:'Condition Checked',cleanedWorking:event.checks.workingCheckLabel||'Cleaned And Checked Working',dataPreparationConfirmed:event.checks.dataCheckLabel||'Data Wiped / Reset'}[name]||name)}: ${stockCheckLabel(value)}`).join('<br>')}</p>`:''}${event.supplier?'<p>Supplier: '+safe(event.supplier)+'</p>':''}</details></td><td>${canEdit()&&event.canCorrect?stockButton('Correct Movement','correct-movement',event.entryId):'<span class="sub">'+(canEdit()?'No Quantity Correction':'Read Only')+'</span>'}</td></tr>`).join('');
-    return `<div class="stock-card-stack">${correction&&canEdit()?renderStockCorrection():''}<h2>Stock Movement History</h2><p class="sub">Original quantities and effective quantities are shown separately. Corrections retain the original reference, reason, actor and date. Each entry in a multi-entry movement is selected separately.</p><div class="card stock-movement-table">${stockTable(['Date / Actor / Reference','Equipment','Movement','Original / Effective Quantity','Original Holder','State Change','Reason / Note','Actions'],rows,'No Recorded Stock Movements')}</div></div>`;
+    const rows=movements.filter(stockMovementMatches).map(event=>`<tr data-movement-entry="${event.entryId}"><td>${stockDate(event.date)}<div class="sub">${safe(event.actor)}</div><div class="sub">Movement ${event.id} · Entry ${event.entryId}</div></td><td>${safe(event.name)}</td><td>${labels[event.kind]||safe(event.kind)}</td><td>${event.kind==='corrected'?`${event.previousQuantity} → ${event.correctedQuantity}<div class="sub">Original Entry ${event.correctsEntryId}</div>`:`${event.quantity}<div class="sub">Effective: ${event.effectiveQuantity}</div>`}</td><td>${safe(event.recipientLabel||'—')}</td><td>${safe(stockStateLabel(event.fromState))} → ${safe(stockStateLabel(event.toState))}</td><td>${safe(event.reason||event.note||'—')}<details><summary>Movement Details</summary><p>Recorded: ${safe(event.recordedAt)}</p>${event.sourceIssueEntryId?`<p>Original Issue: ${event.sourceIssueEntryId}</p>`:''}${event.physicalReturnConfirmed?'<p>Physical Return Confirmed. No recorded issue or current assignment was closed.</p>':''}${event.checks?`<p>${Object.entries(event.checks).filter(([name,value])=>typeof value==='boolean'&&!(name==='dataPreparationConfirmed'&&event.checks.dataCheckLabel==='')).map(([name,value])=>`${safe({itemsChecked:'Items Checked',conditionChecked:'Condition Checked',cleanedWorking:event.checks.workingCheckLabel||'Cleaned And Checked Working',dataPreparationConfirmed:event.checks.dataCheckLabel||'Data Wiped / Reset'}[name]||name)}: ${stockCheckLabel(value)}`).join('<br>')}</p>`:''}${event.supplier?'<p>Supplier: '+safe(event.supplier)+'</p>':''}</details></td><td>${canEdit()&&event.canCorrect?stockButton('Correct Movement','correct-movement',event.entryId):'<span class="sub">'+(canEdit()?'No Quantity Correction':'Read Only')+'</span>'}</td></tr>`).join('');
+    return `<div class="stock-card-stack">${correction&&canEdit()?renderStockCorrection():''}${movementFilter?`<div class="section-heading"><p class="sub">Dashboard movement selection${movementFilter.entryId?' · Entry '+movementFilter.entryId:' · '+movementFilter.start+' – '+movementFilter.end+(movementFilter.kind?' · Written Off':'')}.</p>${stockButton('Clear Dashboard Filters','clear-report-filters')}</div>`:''}<h2>Stock Movement History</h2><p class="sub">Original quantities and effective quantities are shown separately. Corrections retain the original reference, reason, actor and date. Each entry in a multi-entry movement is selected separately.</p><div class="card stock-movement-table">${stockTable(['Date / Actor / Reference','Equipment','Movement','Original / Effective Quantity','Original Holder','State Change','Reason / Note','Actions'],rows,'No Recorded Stock Movements')}</div></div>`;
   }
   function renderStockCorrection(){
     const selected=correction;
