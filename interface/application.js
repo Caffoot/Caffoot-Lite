@@ -4068,7 +4068,10 @@ function openIpModal(ip) {
             const container = document.getElementById('modal-container');
             container.classList.add('hidden');
             container.classList.remove('flex');
-            if (dismissedHandover) window.caffootStockIntake?.dismissHandover();
+            if (dismissedHandover) {
+                window.caffootStockIntake?.dismissHandover?.();
+                document.getElementById('modal-content').replaceChildren();
+            }
             if (nextDeviceModalClosed) nextDeviceModalClosed();
             if (nextImportModalClosed) nextImportModalClosed();
             if (modalReturnFocus && modalReturnFocus.isConnected) modalReturnFocus.focus();
