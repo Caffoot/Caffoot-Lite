@@ -116,6 +116,8 @@ async function main(){
    ['writeoff','stock-writeoff-form','Record Write Off'],
    ['reissue','stock-reissue-form','Reissue Existing Device']
  ]){
+   // On fresh installations Devices is disabled until explicitly enabled.
+   if(tabName==='reissue'&&await page.locator('#stock-tab-reissue').count()===0)continue;
    if(tabName!=='receive')await stockTab(tabName);
    const form=page.locator('#'+formId);
    await form.waitFor();
