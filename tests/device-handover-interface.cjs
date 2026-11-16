@@ -131,12 +131,11 @@ async function main(){
  await page.locator('#stock-recipientKind').selectOption('staff');
  await page.locator('#stock-recipientId option[value="other"]').waitFor({state:'attached'});
  assert.equal(await page.locator('#stock-recipientId option[value="department"]').count(),0,'Staff list must not show departments');
- await page.locator('#stock-recipientKind').selectOption('department');
- await page.locator('#stock-recipientId option[value="department"]').waitFor({state:'attached'});
- await page.locator('#stock-reissue-form button[type="reset"]').click();
- await page.locator('#stock-recipientId option[value="other"]').waitFor({state:'attached'});
- assert.equal(await page.locator('#stock-recipientKind').inputValue(),'staff','Reset must restore the recipient type');
- assert.equal(await page.locator('#stock-recipientId option[value="department"]').count(),0,'Reset must reload the matching recipient list');
+ const actions=page.locator('#stock-reissue-form > .assignment-modal-actions');
+ assert.deepEqual((await actions.locator('button').allTextContents()).map(value=>value.trim()),['Cancel','Confirm Ready And Reassign']);
+ assert.equal(await page.locator('.assignment-modal-head [data-stock-action="cancel-handover"]').count(),0);
+ assert.equal(await page.locator('#stock-reissue-form button[type="reset"]').count(),0,'Handover offers Cancel, not a redundant Reset');
+ assert.equal(await page.locator('#stock-recipientKind').inputValue(),'staff');
  assert.equal(await page.locator('#stock-handoverDevice').inputValue(),'Fictional Laptop');
  assert.equal(await page.locator('#stock-handoverDevice').getAttribute('readonly'),'');
  assert.equal(await page.locator('#stock-reissue-form [name="cleanedWorking"]').isChecked(),false);
