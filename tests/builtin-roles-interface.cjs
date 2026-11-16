@@ -64,7 +64,7 @@ module.exports=async({page,context,catalogue,confirmedAction,confirm,screenshot,
  assert.deepEqual(data.users.find(user=>user.id===accounts.tim).permissions,{});
  assert.ok(data.users.find(user=>user.id===accounts.tim).accessDetails.roles.some(item=>item.id===role.id&&!item.enabled));
  await editor();await page.locator('#role-definition-form [name="enabled"]').check();
- for(const section of ['Devices','IPAM','Racks','IT Assets'])await page.locator('#role-grant-'+section).selectOption('');
+ for(const section of ['Devices','IPAM','Racks','IT Assets'])await page.locator('#role-definition-form select[name="'+section+'"]').selectOption('');
  await page.locator('[form="role-definition-form"]').click();await page.locator('[data-role-command="confirm"]').waitFor();await confirm(page);
  assert.equal((await catalogue(context)).users.find(user=>user.id===accounts.tim).accessDetails.mfaMandatory,true);
  for(const action of [{type:'role.delete',roleId:role.id},{type:'role.update',roleId:role.id,name:'Renamed',enabled:true,grants:{}}]){
