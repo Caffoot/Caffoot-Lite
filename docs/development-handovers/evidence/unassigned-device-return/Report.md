@@ -38,3 +38,27 @@ its ID was corrected. No application constraint was weakened.
 This checkpoint does not claim interface, browser, Docker or full-suite completion.
 Those checks and changed-screen captures follow the interface integration. No merge,
 release, deployment, native hardware or changes to main have occurred.
+
+## Interface Checkpoint
+
+The existing Device Details Return Equipment action now opens the same form with
+an eligible unassigned Device preselected and fixed to one. A visible declaration
+above Record Return makes submission the affirmative physical-possession confirmation.
+Opening the form sends no confirmation. The new path records Awaiting Preparation
+only; existing assigned/quantity return controls are retained. Movement Details
+shows genuine confirmation provenance, with no invented holder or issue.
+
+```sh
+NODE_PATH=/workspace/.caffoot-tools/node_modules CAFFOOT_CHROMIUM_PATH=/usr/bin/chromium CAFFOOT_UNASSIGNED_RETURN_OUTPUT=/workspace/work/unassigned-return-browser node tests/unassigned-device-return-interface.cjs
+NODE_PATH=/workspace/.caffoot-tools/node_modules CAFFOOT_CHROMIUM_PATH=/usr/bin/chromium CAFFOOT_CIRCULATION_OUTPUT=/workspace/work/unassigned-return-circulation-regression node tests/stock-circulation-interface.cjs
+```
+
+Both real HTTPS/SQLite browser flows **passed**, without screenshots in these focused
+runs. The first new browser harness mistook retained hidden modal content for an
+open Device Details view; the harness now reopens through the real visible controls.
+No application safeguard was changed to satisfy it. All 73 focused backend tests
+also passed after integration. The new test is included in the existing browser CI,
+with captures enabled and 14-day artifact retention.
+
+Full final verification, committed-source genuine captures and changed-screen owner
+acceptance remain pending. Existing approved images are retained unchanged.

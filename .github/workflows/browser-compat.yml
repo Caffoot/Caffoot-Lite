@@ -9,6 +9,7 @@ on:
       - "tests/department-details-interface.cjs"
       - "tests/stock-intake-interface.cjs"
       - "tests/stock-circulation-interface.cjs"
+      - "tests/unassigned-device-return-interface.cjs"
       - "tests/pi-acceptance-corrections.cjs"
       - "tests/users-roles-interface.cjs"
       - "tests/device-editor-approved.cjs"
@@ -34,6 +35,7 @@ on:
       - "tests/department-details-interface.cjs"
       - "tests/stock-intake-interface.cjs"
       - "tests/stock-circulation-interface.cjs"
+      - "tests/unassigned-device-return-interface.cjs"
       - "tests/pi-acceptance-corrections.cjs"
       - "tests/users-roles-interface.cjs"
       - "tests/device-editor-approved.cjs"
@@ -130,6 +132,20 @@ jobs:
         with:
           name: stock-circulation-chromium-${{ github.sha }}
           path: ${{ runner.temp }}/stock-circulation-evidence
+          if-no-files-found: ignore
+          retention-days: 14
+      - name: Check explicitly confirmed returns of unassigned physical Devices
+        env:
+          NODE_PATH: ${{ runner.temp }}/caffoot-browser-tests/node_modules
+          CAFFOOT_UNASSIGNED_RETURN_OUTPUT: ${{ runner.temp }}/unassigned-device-return-evidence
+          CAFFOOT_UNASSIGNED_RETURN_CAPTURE: "1"
+        run: node tests/unassigned-device-return-interface.cjs
+      - name: Save unassigned Device return evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: unassigned-device-return-chromium-${{ github.sha }}
+          path: ${{ runner.temp }}/unassigned-device-return-evidence
           if-no-files-found: ignore
           retention-days: 14
       - name: Check Department Details navigation, privacy and visual states

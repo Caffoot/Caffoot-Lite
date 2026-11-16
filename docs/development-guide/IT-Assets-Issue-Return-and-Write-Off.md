@@ -24,9 +24,30 @@ completed assignments, Device JSON, security and relationships remain untouched.
 Later preparation still requires the approved type-specific confirmations.
 Schema 17 and all stock-table definitions/guards are unchanged.
 
-**Backend checkpoint:** 73 focused tests passed; the new interface and refreshed
-captures remain pending. The first added empty-unit fixture used a non-UUID ID;
+**Backend checkpoint:** 73 focused tests passed. The integrated interface now also
+passes the focused new browser flow and the existing complete circulation flow.
+Final full-suite/CI verification and committed-source captures remain pending. The first added empty-unit fixture used a non-UUID ID;
 it was corrected without changing the schema constraint. See [correction evidence](../development-handovers/evidence/unassigned-device-return/Report.md).
+
+### Existing Interface Integration
+
+Device Details reuses its existing Return Equipment action, gated by the protected
+assignment read. An `unassigned-device:<id>` context opens the same stock form with
+one preselected canonical Device; it does not introduce a general Device picker.
+The context forces a fresh protected stock read. Missing/stale eligibility cannot
+fall back to another issue. Quantity is fixed at one and Ready/write-off/check
+controls are disabled for this path. Original assigned/quantity forms retain their
+existing controls and calculation.
+
+A visible declaration immediately above Record Return, also associated with the
+button for accessibility, states that submission confirms physical possession.
+Only that explicit form submission sends `physicalReturnConfirmed: true`; opening
+the form sends no confirmation or stock mutation. The permanent journal and audit
+retain the confirmation. Movement Details displays it under the existing independent
+Read gates. Original records and all Schema 17 definitions remain unchanged.
+
+The following sections retain the earlier reviewed Batch 3.8 source/capture
+checkpoint. Current correction results are in the separate report linked above.
 
 ## Current Implementation
 

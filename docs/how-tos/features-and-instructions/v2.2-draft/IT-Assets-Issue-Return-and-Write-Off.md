@@ -41,6 +41,34 @@ In the original **Device Details → Assigned To** tab, choose **Return Equipmen
 
 The same canonical Device remains in Devices. Its original assignment closes permanently, with a dated return and responsible technician. Return does not change its IP address, Rack, Location, operational status or specifications. Merely becoming unassigned, imported or retired does not place a Device in stock. There is no separate Place In Stock workflow.
 
+### Return A Currently Unassigned Device
+
+This correction was separately approved on 16 November and awaits review of its
+changed screens. Open the original **Device Details → Assigned To** tab and choose
+**Return Equipment**. Both Devices Edit and IT Assets Edit are required, with their
+features enabled. The Device must be physical, currently unassigned and have no
+previous stock movements. Existing issued/assigned equipment keeps its original
+return route; held, prepared or written-off equipment cannot be returned again.
+
+The existing form shows **Device Being Returned**, preselected and fixed to this
+Device, with **Quantity Returned** fixed at one. It does not invent an original
+issue date or holder. Enter the actual **Date Returned** and any optional note.
+The Ready, write-off and preparation-check controls are unavailable for this first
+return: it records **Awaiting Preparation** only. Complete checks later in Stock Inventory.
+
+Immediately above **Record Return**, the form states: “Recording this return confirms
+that this Device has been physically returned to stock.” Choose **Record Return**
+only after actually receiving that Device. Submitting that action is your affirmative
+physical-return confirmation; merely opening the form records nothing. The permanent
+return/audit records retain the original Device identity, return date and signed-in
+technician, without creating a fictitious assignment or receipt.
+
+An imported, directly created, unassigned or Retired Device does not become stock
+by itself. The same explicit action is required for an actual physical return.
+Operational Status, IP, Rack, Location and existing history remain unchanged.
+Disabling IT Assets retains the existing Devices-only controls and denies stock
+returns without changing saved stock or Device records.
+
 ## Prepare Returned Equipment
 
 In **Stock Inventory**, choose the item's **View / Update**, then **Prepare Returned Equipment**. For a returned managed Device, use **View / Update** under **Registered Devices In Stock History**.

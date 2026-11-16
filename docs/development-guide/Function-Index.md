@@ -668,19 +668,19 @@ The account hydration/photo functions now have purpose-based callable bindings m
 | [`stockIssueReady`](../../interface/stock-intake.js#L275) | 275 |
 | [`renderStockIssue`](../../interface/stock-intake.js#L276) | 276 |
 | [`stockReturnSources`](../../interface/stock-intake.js#L286) | 286 |
-| [`renderStockReturn`](../../interface/stock-intake.js#L287) | 287 |
-| [`renderStockWriteOff`](../../interface/stock-intake.js#L298) | 298 |
-| [`stockPreparationRequirement`](../../interface/stock-intake.js#L311) | 311 |
-| [`renderStockPreparation`](../../interface/stock-intake.js#L318) | 318 |
-| [`renderRegisteredStock`](../../interface/stock-intake.js#L330) | 330 |
-| [`renderStockMovements`](../../interface/stock-intake.js#L337) | 337 |
-| [`stockSelectedReturn`](../../interface/stock-intake.js#L342) | 342 |
-| [`stockSelectedWriteOff`](../../interface/stock-intake.js#L343) | 343 |
-| [`hydrateStockCirculation`](../../interface/stock-intake.js#L347) | 347 |
-| [`loadStockRecipients`](../../interface/stock-intake.js#L402) | 402 |
-| [`submitStockCirculation`](../../interface/stock-intake.js#L413) | 413 |
-| [`openStockWorkflow`](../../interface/stock-intake.js#L440) | 440 |
-| [`configureStock`](../../interface/stock-intake.js#L446) | 446 |
+| [`renderStockReturn`](../../interface/stock-intake.js#L293) | 293 |
+| [`renderStockWriteOff`](../../interface/stock-intake.js#L304) | 304 |
+| [`stockPreparationRequirement`](../../interface/stock-intake.js#L317) | 317 |
+| [`renderStockPreparation`](../../interface/stock-intake.js#L324) | 324 |
+| [`renderRegisteredStock`](../../interface/stock-intake.js#L336) | 336 |
+| [`renderStockMovements`](../../interface/stock-intake.js#L343) | 343 |
+| [`stockSelectedReturn`](../../interface/stock-intake.js#L348) | 348 |
+| [`stockSelectedWriteOff`](../../interface/stock-intake.js#L349) | 349 |
+| [`hydrateStockCirculation`](../../interface/stock-intake.js#L353) | 353 |
+| [`loadStockRecipients`](../../interface/stock-intake.js#L409) | 409 |
+| [`submitStockCirculation`](../../interface/stock-intake.js#L420) | 420 |
+| [`openStockWorkflow`](../../interface/stock-intake.js#L448) | 448 |
+| [`configureStock`](../../interface/stock-intake.js#L455) | 455 |
 
 ## backend/access_point_review.py
 
