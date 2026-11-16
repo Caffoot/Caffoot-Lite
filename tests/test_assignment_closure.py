@@ -55,7 +55,10 @@ class AssignmentClosureTests(unittest.TestCase):
         self.assignment = allocation_fixture(self.db)
 
     def upgrade(self):
-        schema.initialise_database(self.db)
+        # Preserve this historical closure migration's exact schema/stock checks.
+        # The later handover migration has its own populated-upgrade coverage.
+        with patch.object(schema,'SCHEMA_VERSION',18):
+            schema.initialise_database(self.db)
 
     def rows(self):
         return {name: self.db.execute('SELECT * FROM "'+name+'" ORDER BY rowid').fetchall()
@@ -67,7 +70,7 @@ class AssignmentClosureTests(unittest.TestCase):
         stock = self.db.execute("SELECT name,sql FROM sqlite_master WHERE name GLOB 'it_asset_*' ORDER BY name").fetchall()
         self.upgrade()
         after = self.rows()
-        self.assertEqual(after.pop('schema_migrations')[-1][0], schema.SCHEMA_VERSION)
+        self.assertEqual(after.pop('schema_migrations')[-1][0], 18)
         self.assertEqual(after.pop('device_equipment_associations'), [])
         before.pop('schema_migrations')
         self.assertTrue(all(row[-1] is None for row in after['device_assignments']))

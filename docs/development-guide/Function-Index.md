@@ -6,7 +6,7 @@ Scope: named JavaScript declarations/assignments in the six application scripts,
 
 The account hydration/photo functions now have purpose-based callable bindings matching their function names: `hydrateAccount` and `removeAccountPhoto`. The immutable design manifest retains its historical integration-entry names; those metadata names are not the runtime's current function map. Pinned source paths, revisions and hashes are unchanged.
 
-**Recorded definitions: 978.** Checked against the source in this commit. This remains a definition map, not a call graph. See [coding conventions](06-Coding-and-Naming-Conventions.md) and the [code reference](07-Function-and-Code-Reference.md).
+**Recorded definitions: 983.** Checked against the source in this commit. This remains a definition map, not a call graph. See [coding conventions](06-Coding-and-Naming-Conventions.md) and the [code reference](07-Function-and-Code-Reference.md).
 
 ## interface/loader.js
 
@@ -754,8 +754,8 @@ The account hydration/photo functions now have purpose-based callable bindings m
 | --- | ---: |
 | [`assignment_schema_objects`](../../backend/assignment_closure.py#L57) | 57 |
 | [`expected_assignment_schema`](../../backend/assignment_closure.py#L63) | 63 |
-| [`validate_assignment_closure`](../../backend/assignment_closure.py#L76) | 76 |
-| [`migrate_assignment_closure`](../../backend/assignment_closure.py#L84) | 84 |
+| [`validate_assignment_closure`](../../backend/assignment_closure.py#L84) | 84 |
+| [`migrate_assignment_closure`](../../backend/assignment_closure.py#L94) | 94 |
 
 ## backend/audit_events.py
 
@@ -1116,12 +1116,12 @@ The account hydration/photo functions now have purpose-based callable bindings m
 
 | Function | Line |
 | --- | ---: |
-| [`initialise_database`](../../backend/schema.py#L59) | 59 |
-| [`migrate_staff_directory`](../../backend/schema.py#L246) | 246 |
-| [`migrate_role_permissions`](../../backend/schema.py#L311) | 311 |
-| [`verify_role_migration`](../../backend/schema.py#L396) | 396 |
-| [`migrate_configurable_builtin_roles`](../../backend/schema.py#L422) | 422 |
-| [`migrate_device_assignments`](../../backend/schema.py#L516) | 516 |
+| [`initialise_database`](../../backend/schema.py#L60) | 60 |
+| [`migrate_staff_directory`](../../backend/schema.py#L253) | 253 |
+| [`migrate_role_permissions`](../../backend/schema.py#L318) | 318 |
+| [`verify_role_migration`](../../backend/schema.py#L403) | 403 |
+| [`migrate_configurable_builtin_roles`](../../backend/schema.py#L429) | 429 |
+| [`migrate_device_assignments`](../../backend/schema.py#L523) | 523 |
 
 ## backend/server.py
 
@@ -1264,7 +1264,7 @@ The account hydration/photo functions now have purpose-based callable bindings m
 | [`normalise_schema_statement`](../../backend/stock_schema.py#L502) | 502 |
 | [`validate_feature_table`](../../backend/stock_schema.py#L507) | 507 |
 | [`validate_it_asset_stock`](../../backend/stock_schema.py#L543) | 543 |
-| [`migrate_it_asset_stock`](../../backend/stock_schema.py#L567) | 567 |
+| [`migrate_it_asset_stock`](../../backend/stock_schema.py#L573) | 573 |
 
 ## backend/subnet_validation.py
 
@@ -1325,4 +1325,14 @@ The account hydration/photo functions now have purpose-based callable bindings m
 | [`read_equipment_associations`](../../backend/equipment_associations.py#L89) | 89 |
 | [`add_associated_equipment`](../../backend/equipment_associations.py#L130) | 130 |
 | [`has_outstanding_associated_equipment`](../../backend/equipment_associations.py#L208) | 208 |
+
+## backend/handover_schema.py
+
+| Function | Line |
+| --- | ---: |
+| [`handover_assignment_statements`](../../backend/handover_schema.py#L119) | 119 |
+| [`handover_stock_guard`](../../backend/handover_schema.py#L130) | 130 |
+| [`handover_schema_objects`](../../backend/handover_schema.py#L142) | 142 |
+| [`validate_device_handovers`](../../backend/handover_schema.py#L147) | 147 |
+| [`migrate_device_handovers`](../../backend/handover_schema.py#L160) | 160 |
 

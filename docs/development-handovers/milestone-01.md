@@ -1,5 +1,13 @@
 # Milestone 01 Development Handover — v2.2 Target
 
+> **Direct-handover approval and migration preparation, 16 November 2026:** the
+> owner approved [the exact placement/sequence](../development-guide/Direct-Handover-Decision.md)
+> and a narrow separate migration. Schema 19 adds canonical audit/successor links
+> and checked custody transfer without a receipt; the original physical closure
+> conditions remain intact. **58 focused migration/closure/stock/reissue tests
+> passed.** No direct-handover API or controls are exposed by this preparatory
+> checkpoint. D's writer/UI and E acceptance are next; no merge or release.
+
 > **Latest checkpoint, 16 November 2026 — safe partial D:** missing issued
 > quantity write-off uses the existing form and ledger, with no invented return
 > or held/Ready increase. Genuine reissue is blocked by any outstanding explicit

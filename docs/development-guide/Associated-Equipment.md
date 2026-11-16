@@ -1,5 +1,19 @@
 # Associated Equipment — Backend Operations
 
+**Direct-handover implementation resumed after explicit owner approval of
+[the saved sequence](Direct-Handover-Decision.md).** Schema 19 adds nullable
+handover-audit and successor-assignment references to the same canonical
+assignment table. Its guarded non-return closure is separate from the original
+physical return/write-off path. The stock guard permits only an audited pair of
+custody entries for the same registered Device, preserving held/Ready balances.
+No stock tables, Device identities, assignments, feature choices or grants are
+created by upgrade; Schema 18 association definitions are unchanged.
+
+Migration preparation passed **58 focused tests**, including populated upgrade,
+restart, rollback, tamper rejection, rejected unaudited stock and unchanged
+physical-return behaviour. The direct writer/UI and E acceptance remain in
+progress; earlier dated checkpoints below retain their original status.
+
 Checkpoint A of Batch 3.10 adds explicit accessory relationships and protected
 history reads. Checkpoint B adds atomic issue-and-associate and existing-issue
 association writes. Checkpoint C integrates the separate tab and both routes

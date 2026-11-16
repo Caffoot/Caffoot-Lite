@@ -1,8 +1,15 @@
-# Direct Workstation Handover — Owner Decision Required
+# Direct Workstation Handover — Approved Sequence
 
-Checkpoint C and the approved missing-quantity/accessory-resolution part of D are
-implemented. Direct handover is **not implemented**, and E's final acceptance is
-blocked until D can be completed. This proposal does not claim approval.
+**Owner approval, 16 November 2026:** the owner explicitly approved this document's
+placement and sequence, including Reassign Device within Assigned To, the reused
+reissue/preparation controls and Confirm Ready And Reassign. A narrowly scoped,
+audited, separately migrated assignment closure is authorised. Devices-only
+operation and optional-feature protections must remain intact. No merge, release
+or deployment is authorised. The proposal below is retained as the approved
+source map; implementation and acceptance are reported separately.
+
+**Implementation checkpoint:** Schema 19's additive closure foundation is tested;
+the direct writer/interface and E acceptance are still in progress.
 
 ## The Exact Source Constraint
 
@@ -26,10 +33,9 @@ current task likewise requires stopping for a necessary new user-visible decisio
 and the decision would change approved behaviour, ask the product owner before
 proceeding.”
 
-## Proposed Placement And Sequence
+## Approved Placement And Sequence
 
-Approve or amend this one source-faithful extension; no new preparation screen
-is proposed:
+The owner approved this one source-faithful extension; no new preparation screen:
 
 | Step | Existing Interface And Proposed Addition |
 | --- | --- |
@@ -59,6 +65,5 @@ Then capture the changed direct-handover form in desktop/mobile light/dark,
 complete D, push, and perform E's final-head acceptance. No merge, release or
 deployment is authorised by approving the interface sequence.
 
-**Decision requested:** approve the placement and sequence above, including
-**Confirm Ready And Reassign** on the reused existing form, or identify the
-specific control/placement to change before implementation.
+The former placement/sequence approval blocker is resolved. Any further departure
+from these controls or rules still requires a new owner decision.

@@ -27,6 +27,10 @@ def insert_association(connection, assignment, issue, **overrides):
 
 class EquipmentAssociationMigrationTests(unittest.TestCase):
     def setUp(self):
+        # Test the association upgrade independently of later assignment changes.
+        version = patch.object(schema,'SCHEMA_VERSION',18)
+        version.start()
+        self.addCleanup(version.stop)
         self.db = database(version=17)
         self.addCleanup(self.db.close)
         seed_people(self.db)

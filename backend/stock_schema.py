@@ -540,7 +540,7 @@ def validate_feature_table(connection, *, upgraded):
     return dict(choices)
 
 
-def validate_it_asset_stock(connection):
+def validate_it_asset_stock(connection, *, handovers=None):
     """Check a completed upgrade without resetting choices or changing records."""
     validate_feature_table(connection, upgraded=True)
     expected = {}
@@ -549,6 +549,12 @@ def validate_it_asset_stock(connection):
         if match is None:
             raise RuntimeError("Unknown stock schema instruction")
         expected[match[1]] = normalise_schema_statement(statement)
+    if handovers is None:
+        handovers = connection.execute('SELECT 1 FROM schema_migrations WHERE version=19').fetchone() is not None
+    if handovers:
+        from backend.handover_schema import handover_stock_guard, HANDOVER_STOCK_SQL
+        expected['it_asset_movements_insert_guard'] = normalise_schema_statement(handover_stock_guard())
+        expected['device_handover_stock_guard'] = normalise_schema_statement(next(stock_schema_statements(HANDOVER_STOCK_SQL)))
     actual = {name: normalise_schema_statement(definition) for name, definition
               in connection.execute(
                   "SELECT name,sql FROM sqlite_master WHERE sql IS NOT NULL AND "
