@@ -62,7 +62,7 @@ class StaffSectionPermissionTests(unittest.TestCase):
         self.assertFalse(details['sections']['IT Assets']['featureEnabled'])
         self.assertEqual(self.db.execute('SELECT count(*) FROM roles').fetchone(), (2,))
         self.assertEqual(self.db.execute("SELECT g.* FROM role_grants g JOIN roles r ON r.id=g.role_id WHERE r.role_key='staff_member'").fetchall(), [])
-        self.assertEqual(self.db.execute("SELECT section,level FROM role_grants ORDER BY section").fetchall(), [('Devices', 'edit'), ('IPAM', 'edit'), ('Racks', 'edit')])
+        self.assertEqual(self.db.execute("SELECT section,level FROM role_grants ORDER BY section").fetchall(), [('Devices', 'edit'), ('IPAM', 'edit'), ('IT Assets', 'edit'), ('Racks', 'edit')])
 
     def test_highest_enabled_grant_and_every_individual_override(self):
         self.enrol()

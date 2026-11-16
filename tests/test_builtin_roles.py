@@ -204,8 +204,8 @@ class BuiltinRoleAdministrationTests(unittest.TestCase):
         self.assign(self.tim)
         for section in ("Devices", "Racks"):
             self.change({"type": "override.set", "userId": self.dave, "section": section, "level": "read"})
-        self.assertEqual(evaluate_role_policy(self.db, self.dave).permissions, {"Devices": "read", "IPAM": "edit", "Racks": "read"})
-        self.assertEqual(evaluate_role_policy(self.db, self.tim).permissions, dict.fromkeys(SECTIONS, "edit"))
+        self.assertEqual(evaluate_role_policy(self.db, self.dave).permissions, {"Devices": "read", "IPAM": "edit", "Racks": "read", "IT Assets": "edit"})
+        self.assertEqual(evaluate_role_policy(self.db, self.tim).permissions, dict.fromkeys((*SECTIONS, "IT Assets"), "edit"))
         for enabled in (False, True):
             self.change({"type": "role.update", "roleId": self.role, "name": "IT Staff", "enabled": enabled, "grants": {"IPAM": "read"}})
             self.assertEqual(evaluate_role_policy(self.db, self.tim).permissions, {"IPAM": "read"} if enabled else {})
@@ -235,7 +235,7 @@ class BuiltinRoleAdministrationTests(unittest.TestCase):
         self.assertFalse(self.db.execute("SELECT 1 FROM account_sessions WHERE account_id=?", (self.tim,)).fetchone())
         self.assertTrue(login_session(self.db, "tim", "password", mfa_code=code_at(secret, 59), now=59))
 
-    def test_upgrade_staff_only_requires_mfa_even_with_three_preserved_denials(self):
+    def test_upgrade_staff_only_requires_mfa_even_with_four_preserved_denials(self):
         # Recreate the accepted schema-11 starting point with real credentials.
         self.db.close()
         self.db = sqlite3.connect(":memory:")
@@ -255,7 +255,7 @@ class BuiltinRoleAdministrationTests(unittest.TestCase):
         self.assertIsNone(session_account(self.db, token, now=60))
         with self.assertRaises(MFAEnrolmentRequired):
             login_session(self.db, "old-staff", "password", report_enrolment=True, now=60)
-        self.assertEqual(dict(self.db.execute("SELECT section,level FROM account_permission_overrides WHERE account_id=?", (staff,))), dict.fromkeys(SECTIONS, "deny"))
+        self.assertEqual(dict(self.db.execute("SELECT section,level FROM account_permission_overrides WHERE account_id=?", (staff,))), dict.fromkeys((*SECTIONS, "IT Assets"), "deny"))
         _, pending = start_required_mfa_enrolment(self.db, "old-staff", "password")
         confirm_required_mfa_enrolment(self.db, "old-staff", "password", code_at(pending, 59), timestamp=59)
         self.assertFalse(self.db.execute("SELECT 1 FROM account_sessions WHERE account_id=?", (staff,)).fetchone())
