@@ -1,0 +1,35 @@
+{
+  "checks": [
+    "Legacy Storage Type",
+    "Conventional RAID Preserved",
+    "Ordinary Boot Storage Without ZFS",
+    "Pool VDEV Persistence",
+    "Existing Boot Pool Link Without Duplicate Drives",
+    "Laptop Applicability",
+    "UPS/PDU Ubiquiti Suggestions"
+  ],
+  "pageErrors": [],
+  "screenshots": [
+    "server-independent-boot-desktop-light.png",
+    "server-independent-boot-desktop-dark.png",
+    "server-independent-boot-mobile-light.png",
+    "server-independent-boot-mobile-dark.png",
+    "server-zfs-boot-pool-desktop-light.png",
+    "server-zfs-boot-pool-desktop-dark.png",
+    "server-zfs-boot-pool-mobile-light.png",
+    "server-zfs-boot-pool-mobile-dark.png",
+    "server-zfs-vdev-desktop-light.png",
+    "server-zfs-vdev-desktop-dark.png",
+    "server-zfs-vdev-mobile-light.png",
+    "server-zfs-vdev-mobile-dark.png",
+    "server-storage-details-desktop-light.png",
+    "server-storage-details-desktop-dark.png",
+    "server-storage-details-mobile-light.png",
+    "server-storage-details-mobile-dark.png",
+    "laptop-storage-type-desktop-light.png",
+    "laptop-storage-type-desktop-dark.png",
+    "laptop-storage-type-mobile-light.png",
+    "laptop-storage-type-mobile-dark.png"
+  ],
+  "source": "3f5297480cadafbf257cacdd2a6ead44bfd6bfe7"
+}

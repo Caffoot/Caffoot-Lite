@@ -7,7 +7,7 @@
 > [transaction/source mapping](Device-Stock-Registration-and-Reissue.md),
 > [draft instructions](../how-tos/features-and-instructions/v2.2-draft/Device-Stock-Registration-and-Reissue.md)
 > and [actual verification/gallery](../development-handovers/evidence/device-stock-registration/Report.md).
-> Final review remains in progress; no owner visual approval, merge, release or
+> Local verification and changed-screen evidence are recorded; final-head Actions are linked in PR #390; no owner visual approval, merge, release or
 > deployment is claimed. Earlier dated checkpoints below retain their original status.
 
 

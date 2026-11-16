@@ -9,7 +9,7 @@
 > [source mapping and checkpoints](../development-guide/Device-Stock-Registration-and-Reissue.md),
 > [draft user guide](../how-tos/features-and-instructions/v2.2-draft/Device-Stock-Registration-and-Reissue.md)
 > and [verification/gallery](evidence/device-stock-registration/Report.md).
-> Final verification is being recorded. No Batch 3.9 visual acceptance, merge,
+> Local final-source verification passed: 835 backend tests (831 passed, four documented skips), complete Chromium compatibility, both new browser flows, Docker lifecycle and documentation checks; 36 changed-screen captures are recorded. Final-head Actions remain separately recorded in PR #390. No Batch 3.9 visual acceptance, merge,
 > release, deployment or production change is claimed. The older dated notes below
 > preserve their original checkpoint statuses.
 

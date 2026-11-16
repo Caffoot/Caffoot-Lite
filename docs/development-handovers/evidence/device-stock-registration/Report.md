@@ -16,6 +16,8 @@ One feature branch: `feat/it-assets-device-registration-reissue`.
 | Existing Add Device integration | `5af850b` | Real Chromium stock/Device entry routes, prefill, save accounting and cancellation passed |
 | Separate reissue | `970fcc0` | 94 affected backend tests passed; expanded ten-test reissue suite and actual Chromium reissue passed |
 | Optional hardware/manufacturers | `3a9d323` | 107 focused backend tests and real Chromium storage/catalogue journey passed |
+| Draft guidance/source preparation | `2f56ce6` | Draft guide, feature/privacy and custom-preference checks; complete local verification started |
+| Inline compatibility safeguard | `3f52974` | Actual browser validation and final 36 changed-screen captures passed |
 
 The [technical mapping](../../../development-guide/Device-Stock-Registration-and-Reissue.md)
 records the exact write boundaries and API routes. Device creation, managed IPAM
@@ -39,18 +41,81 @@ only, including Ubiquiti, using the existing custom/hidden-preference mechanism.
 
 ## Final Verification
 
-Final source, complete local backend/browser/Docker/documentation results, final
-Actions and screenshot hashes are being recorded in the following evidence
-checkpoint. The results above describe only the completed development checkpoints.
+Runtime/capture source: **`3f5297480cadafbf257cacdd2a6ead44bfd6bfe7`**.
+The complete local backend, compatibility and Docker checks began at
+`2f56ce610598f10ea6f8cf3b8fb81b806465eb08`; the only later runtime change is the
+inline unavailable-type message, covered by the final focused browser flow.
+The backend and schema source did not change between those checkpoints.
+The final evidence commit adds documentation, captures and a capture-only Details tab selection; runtime bytes are unchanged. Final-head Actions
+results are recorded in [PR #390 checks](https://github.com/Caffoot/Caffoot-Lite/pull/390/checks)
+and its final verification comment; do not substitute an earlier run for that HEAD.
 
-Native Raspberry Pi/Safari, private legacy-export and Stage 6 full-volume restore
-acceptance remain deferred under the existing plan. No website, release, production
-`main` or other excluded batch is changed.
+| Check Actually Run | Result |
+| --- | --- |
+| `python -m unittest discover -s tests -v` | **835 run: 831 passed, four skipped**, 233.805 seconds |
+| `CAFFOOT_CHROMIUM_PATH=/usr/bin/chromium node tests/browser-compat.cjs` | Passed the complete existing compatibility script, including approved editor, IPAM/Racks, permissions, MFA, reservations, Clean Start and one-way import checks |
+| Final `tests/device-stock-interface.cjs` | Passed real HTTPS/SQLite registration from both entry points, common-only prefill, blank individual fields, quantity transfer, cancellation, reissue/current Staff assignment, unavailable-type inline validation and feature-off concealment; **16 captures**, zero page errors |
+| Final `tests/device-storage-interface.cjs` | Passed normal Boot Storage without ZFS, Pool/VDEV save/edit and single Boot Pool reference, Details display, preserved legacy RAID/capacity, applicable Laptop controls, UPS/PDU suggestions and saved custom/hidden preference preservation; **20 captures**, zero page errors |
+| Opt-in `test_compose_lifecycle.py` with `CAFFOOT_DOCKER_SMOKE=1` | **One passed**, 121.307 seconds; configurable HTTPS port and retained TLS/database/security state through restart/recreate |
+| Repository release-documentation workflow command | Passed, including byte-identical published guide compatibility copies |
+| Changed Markdown local links, Python compilation, changed JavaScript syntax and `git diff --check` | Passed |
+
+The first local Docker build failed because Alpine did not trust this environment's
+proxy certificate. The successful lifecycle run used the repository's existing
+`CAFFOOT_BUILD_CA=/etc/ssl/certs/ca-certificates.crt` option, passed through the
+existing build secret. TLS verification stayed enabled; no Dockerfile/Compose
+change, public image, release or deployment was needed. Temporary test containers
+and their volume were removed by the lifecycle test.
+
+The four complete-backend skips were the opt-in Docker test (run successfully
+separately above), **two private genuine v1.3.3-export tests** without the private
+fixture, and the Stage 6 opt-in complete-volume upgrade/restore rehearsal. Native
+Raspberry Pi/Safari acceptance also remains deferred. Automated WebKit checks do
+not establish native Safari acceptance. Initial new harness import/fixture and
+navigation-selector errors were corrected before the reported passing runs.
+
+## Implemented Scope
+
+| Approved Area | Implementation |
+| --- | --- |
+| Brand New / Get From Stock | Existing Add Device form and authorised Stock Item Details action; protected compatible quantity Ready selection and common prefill |
+| Atomic identity/accounting | Normal Device writer inside caller-owned transaction; exactly one canonical Device/unit/registered movement, original receipt item retained, held total unchanged |
+| Reissue | Separate protected transaction, genuine held/Ready eligibility, new immutable assignment/issue, original Device/configuration/history unchanged |
+| Permissions/privacy | Independent Devices and IT Assets Edit; live session/MFA, write-lock checks, restricted recipient picker, feature-off concealment and safe employee relationships |
+| Storage Type | Optional applicable physical Add/Edit control and Details persistence, blank/custom historic values retained |
+| Physical Server storage | Optional ordinary boot, named Pools/VDEVs, accepted layouts and one existing Boot Pool reference; independent legacy RAID/capacity/drive count |
+| UPS/PDU manufacturers | Complete approved suggestions including Ubiquiti; no models, Supplier changes or historic rewrites |
+| Documentation/evidence | Draft step-by-step guide, active indexes/handover, source Function Index and genuine changed-screen gallery |
+
+No migration is required. Protected Schema 16 stock definitions, Schema 17 closure
+and original Device Details HTML are unchanged. No Associated Equipment, corrections,
+dashboards/Low Stock, Supplier directory, Service Desk, stocktakes, retirement,
+backup/release or website feature is introduced.
 
 ## Changed-Screen Gallery
 
-Genuine fictional desktop/mobile light/dark captures are being added for the
-changed stock selection, reissue and optional hardware controls. Earlier accepted
-screenshots remain unchanged. This gallery does not establish owner visual approval.
+**36 genuine screenshots**, fictional data, desktop **1440 × 1050** and mobile
+**390 × 1050**, light and dark. Screenshots include the real page/modal scrolling
+position; taller full-page PNGs can include the underlying page behind the fixed
+modal. The capture helpers verify the actual selected theme and page overflow.
+The [stock results](stock/browser-results.json), [storage results](storage/browser-results.json)
+and [SHA-256/source manifest](capture-manifest.json) pin the captures to the runtime
+source above. Earlier accepted screenshots are unchanged. This is review evidence,
+not owner visual approval.
+
+| Changed View | Desktop Light | Desktop Dark | Mobile Light | Mobile Dark |
+| --- | --- | --- | --- | --- |
+| Get From Stock In Existing General Tab | [View](stock/get-from-stock-desktop-light.png) | [View](stock/get-from-stock-desktop-dark.png) | [View](stock/get-from-stock-mobile-light.png) | [View](stock/get-from-stock-mobile-dark.png) |
+| Desktop Shared Storage Type | [View](stock/desktop-storage-type-desktop-light.png) | [View](stock/desktop-storage-type-desktop-dark.png) | [View](stock/desktop-storage-type-mobile-light.png) | [View](stock/desktop-storage-type-mobile-dark.png) |
+| Stock Item Registration Action | [View](stock/stock-registration-action-desktop-light.png) | [View](stock/stock-registration-action-desktop-dark.png) | [View](stock/stock-registration-action-mobile-light.png) | [View](stock/stock-registration-action-mobile-dark.png) |
+| Reissue Existing Device | [View](stock/reissue-existing-device-desktop-light.png) | [View](stock/reissue-existing-device-desktop-dark.png) | [View](stock/reissue-existing-device-mobile-light.png) | [View](stock/reissue-existing-device-mobile-dark.png) |
+| Ordinary Server Boot Storage | [View](storage/server-independent-boot-desktop-light.png) | [View](storage/server-independent-boot-desktop-dark.png) | [View](storage/server-independent-boot-mobile-light.png) | [View](storage/server-independent-boot-mobile-dark.png) |
+| Existing ZFS Boot Pool Link | [View](storage/server-zfs-boot-pool-desktop-light.png) | [View](storage/server-zfs-boot-pool-desktop-dark.png) | [View](storage/server-zfs-boot-pool-mobile-light.png) | [View](storage/server-zfs-boot-pool-mobile-dark.png) |
+| ZFS Pool And VDEV Controls | [View](storage/server-zfs-vdev-desktop-light.png) | [View](storage/server-zfs-vdev-desktop-dark.png) | [View](storage/server-zfs-vdev-mobile-light.png) | [View](storage/server-zfs-vdev-mobile-dark.png) |
+| Server Storage Details | [View](storage/server-storage-details-desktop-light.png) | [View](storage/server-storage-details-desktop-dark.png) | [View](storage/server-storage-details-mobile-light.png) | [View](storage/server-storage-details-mobile-dark.png) |
+| Laptop Storage Type Without Server Controls | [View](storage/laptop-storage-type-desktop-light.png) | [View](storage/laptop-storage-type-desktop-dark.png) | [View](storage/laptop-storage-type-mobile-light.png) | [View](storage/laptop-storage-type-mobile-dark.png) |
 
 See the [draft step-by-step user guide](../../../how-tos/features-and-instructions/v2.2-draft/Device-Stock-Registration-and-Reissue.md).
+Owner visual acceptance and separate merge approval remain outstanding. Native
+Pi/Safari, private genuine-export and Stage 6 restore acceptance stay deferred.
+v2.1 remains published; `main` and the website are outside this batch.

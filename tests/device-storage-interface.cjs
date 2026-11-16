@@ -118,7 +118,9 @@ async function main(){
  assert.equal(device.typeDetails.storage,'12');assert.equal(device.typeDetails.raid,'Legacy RAID Choice');
  await page.evaluate(()=>openDeviceDetailView('fictional-server'));
  assert.match(await page.locator('.device-details-dialog').textContent(),/Fictional Boot Pool/);
- await captureChangedScreen('server-storage-details','.device-details-dialog');
+ await page.locator('#device-details-tab-hardware').click();
+ await page.getByText('Existing ZFS Pool: Fictional Boot Pool',{exact:true}).waitFor({state:'visible'});
+ await captureChangedScreen('server-storage-details','text=Existing ZFS Pool: Fictional Boot Pool');
  await page.evaluate(()=>closeModal(true));
  await open(null);await page.locator('#dev-type').selectOption('Laptop');await page.locator('#device-form-tab-hardware').click();
  assert.equal(await page.locator('[data-device-detail-field="storageType"]').count(),1);assert.equal(await page.locator('#server-storage-controls').count(),0);await captureChangedScreen('laptop-storage-type','[data-device-detail-field="storageType"]');await close();

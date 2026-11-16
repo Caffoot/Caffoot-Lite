@@ -1,0 +1,31 @@
+{
+  "checks": [
+    "Existing Add Device Form",
+    "Shared Prefill Only",
+    "Atomic Accounting",
+    "Stock Entry Point",
+    "Cancellation Has No Writes",
+    "Separate Reissue Route",
+    "Canonical Staff Assignment"
+  ],
+  "pageErrors": [],
+  "screenshots": [
+    "get-from-stock-desktop-light.png",
+    "get-from-stock-desktop-dark.png",
+    "get-from-stock-mobile-light.png",
+    "get-from-stock-mobile-dark.png",
+    "desktop-storage-type-desktop-light.png",
+    "desktop-storage-type-desktop-dark.png",
+    "desktop-storage-type-mobile-light.png",
+    "desktop-storage-type-mobile-dark.png",
+    "stock-registration-action-desktop-light.png",
+    "stock-registration-action-desktop-dark.png",
+    "stock-registration-action-mobile-light.png",
+    "stock-registration-action-mobile-dark.png",
+    "reissue-existing-device-desktop-light.png",
+    "reissue-existing-device-desktop-dark.png",
+    "reissue-existing-device-mobile-light.png",
+    "reissue-existing-device-mobile-dark.png"
+  ],
+  "source": "3f5297480cadafbf257cacdd2a6ead44bfd6bfe7"
+}

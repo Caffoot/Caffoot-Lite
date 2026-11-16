@@ -1,0 +1,201 @@
+{
+  "runtimeSource": "3f5297480cadafbf257cacdd2a6ead44bfd6bfe7",
+  "baseline": "7f11598b50bbb1fbd11893a2ad34bc152ff12ed1",
+  "screenshots": [
+    {
+      "path": "stock/desktop-storage-type-desktop-dark.png",
+      "bytes": 128089,
+      "sha256": "699139c3dc33c7fb73967322332b515010aea21763359dac0aa7969206a0f4f2"
+    },
+    {
+      "path": "stock/desktop-storage-type-desktop-light.png",
+      "bytes": 127796,
+      "sha256": "65320d7f13037fb254b556ae849c02e0ab7c60f42fbf3f7057968d1179d0f343"
+    },
+    {
+      "path": "stock/desktop-storage-type-mobile-dark.png",
+      "bytes": 70975,
+      "sha256": "38dd799e8df0240fe5af849b68936f5a3b2347775899a028264168b9ea1a9db2"
+    },
+    {
+      "path": "stock/desktop-storage-type-mobile-light.png",
+      "bytes": 71287,
+      "sha256": "9d50bf04ef63cf21ad7ef553d29efb0040953951c50c16e9cdc4bc17d046d582"
+    },
+    {
+      "path": "stock/get-from-stock-desktop-dark.png",
+      "bytes": 139917,
+      "sha256": "afc46221ac1254241ad80afe7122e6dd493507099433aad484da49d961c0185b"
+    },
+    {
+      "path": "stock/get-from-stock-desktop-light.png",
+      "bytes": 138730,
+      "sha256": "cadf7875007a83dfb1e0b2b1f1130c2832759b1ed3ea92a8bbf2b43df9473fc4"
+    },
+    {
+      "path": "stock/get-from-stock-mobile-dark.png",
+      "bytes": 84964,
+      "sha256": "c42fc62539c05a326e188c360fb44c9f12120602c63e81d22bdd09ee9ab85de5"
+    },
+    {
+      "path": "stock/get-from-stock-mobile-light.png",
+      "bytes": 84546,
+      "sha256": "e3c69804b22f1289582c8a063d826fc049c74050a351901b6970583e10020820"
+    },
+    {
+      "path": "stock/reissue-existing-device-desktop-dark.png",
+      "bytes": 127253,
+      "sha256": "09e8060eb9dd4ab042ce073f141682f5c7f012f9b18ab9d76fb9e3c3dbea9427"
+    },
+    {
+      "path": "stock/reissue-existing-device-desktop-light.png",
+      "bytes": 125402,
+      "sha256": "3828bf6f3f6caa28d368233839ac2dea74134cf00faefef7d25bce672dd44c07"
+    },
+    {
+      "path": "stock/reissue-existing-device-mobile-dark.png",
+      "bytes": 99382,
+      "sha256": "6d28e6e10e346adb842416cf2e999d47b83e11b43c9027db166fcf6ada1290c7"
+    },
+    {
+      "path": "stock/reissue-existing-device-mobile-light.png",
+      "bytes": 97485,
+      "sha256": "b1f3d5cba04887632b2aa485b90fa82e0e101888e2ab6289e0e96c8c5a60a517"
+    },
+    {
+      "path": "stock/stock-registration-action-desktop-dark.png",
+      "bytes": 198089,
+      "sha256": "96de08695b3ad806cffe4f10024580035c32c3683e001abf766f8994e9712c59"
+    },
+    {
+      "path": "stock/stock-registration-action-desktop-light.png",
+      "bytes": 196030,
+      "sha256": "45d3f06788f3bd683271075b3854f14c28c4ff4403d4f400a9e967a0d0f660ef"
+    },
+    {
+      "path": "stock/stock-registration-action-mobile-dark.png",
+      "bytes": 149352,
+      "sha256": "2eea0bd19394ac4fed96d14f697294bed1808b3917c8bd5a3bac44b3de8ff9ce"
+    },
+    {
+      "path": "stock/stock-registration-action-mobile-light.png",
+      "bytes": 146672,
+      "sha256": "a19e2681ee866807143b36af5ad8194b976f79e71190b44091b7f15bd39dba59"
+    },
+    {
+      "path": "storage/laptop-storage-type-desktop-dark.png",
+      "bytes": 130131,
+      "sha256": "1b2715e0a9618160b605cc8844e01823bcd828fde25f61d561b5985d6fe851ce"
+    },
+    {
+      "path": "storage/laptop-storage-type-desktop-light.png",
+      "bytes": 130665,
+      "sha256": "21dd9166315d505f7f162845b8775a315ff1a146204b73dee9b0c1ba3385b95d"
+    },
+    {
+      "path": "storage/laptop-storage-type-mobile-dark.png",
+      "bytes": 78716,
+      "sha256": "5c7fddd713cafac4063a88e4f8b85622a38edf854be6809fd4d2bb1b6f32605a"
+    },
+    {
+      "path": "storage/laptop-storage-type-mobile-light.png",
+      "bytes": 80929,
+      "sha256": "a401a414dec50d68c3dcfd73a50204722693918610f2974310e9da393aac8c48"
+    },
+    {
+      "path": "storage/server-independent-boot-desktop-dark.png",
+      "bytes": 126503,
+      "sha256": "c18051ef08f386209d30ea9761c7021b804e97bd5ad93f50b79d5a3b4679042f"
+    },
+    {
+      "path": "storage/server-independent-boot-desktop-light.png",
+      "bytes": 125843,
+      "sha256": "43d434604100a89cd68214b3a9c53b6244494416ba96b0d764742bddaa287bfb"
+    },
+    {
+      "path": "storage/server-independent-boot-mobile-dark.png",
+      "bytes": 74467,
+      "sha256": "165ea40d308f4b38d8f02c83dd04fb60705fa08f3ddcaa51b1365f69f286db97"
+    },
+    {
+      "path": "storage/server-independent-boot-mobile-light.png",
+      "bytes": 74974,
+      "sha256": "07ee941d934930431c611c705521c7a0e21b9455263df5e127cf697cecb231f3"
+    },
+    {
+      "path": "storage/server-storage-details-desktop-dark.png",
+      "bytes": 131307,
+      "sha256": "d822a10f097027d22b7a6604ac874c9de2cec5467ccc6a9fe542de20b49476bd"
+    },
+    {
+      "path": "storage/server-storage-details-desktop-light.png",
+      "bytes": 131006,
+      "sha256": "fcf1fe26512595a5d042e1e1d64a43b4cc4ae5f62027672bace864f9a57e1334"
+    },
+    {
+      "path": "storage/server-storage-details-mobile-dark.png",
+      "bytes": 74970,
+      "sha256": "e1c1c3f4fd2fdf1f13353457724800c09a01d36d67267c943c44435f57f14d16"
+    },
+    {
+      "path": "storage/server-storage-details-mobile-light.png",
+      "bytes": 75213,
+      "sha256": "738cad6e2c1ffe87ec6e460bc57704ae4d233855054c4753eaa0714778359ec5"
+    },
+    {
+      "path": "storage/server-zfs-boot-pool-desktop-dark.png",
+      "bytes": 124025,
+      "sha256": "5affe3e9f1298f5dd1a2c0dc255ae56d3693ee24cdb96f85e21bd9d2e9e0fd08"
+    },
+    {
+      "path": "storage/server-zfs-boot-pool-desktop-light.png",
+      "bytes": 124804,
+      "sha256": "9ddb00d991a14d9bc5a076d1b706b7622c3b5b31caabecd9764b6ff079211d3f"
+    },
+    {
+      "path": "storage/server-zfs-boot-pool-mobile-dark.png",
+      "bytes": 77629,
+      "sha256": "75c1f7df41e33db3284233c31c462d218e91b3ad77afe476bc48b4450881babe"
+    },
+    {
+      "path": "storage/server-zfs-boot-pool-mobile-light.png",
+      "bytes": 78218,
+      "sha256": "5c94845ecaaba75a45bf6a40d03cf77cbab85611f6bb293c91e2897b58f895be"
+    },
+    {
+      "path": "storage/server-zfs-vdev-desktop-dark.png",
+      "bytes": 117342,
+      "sha256": "04a5a41c401b5c90ce8639b787fd35bde54995fdb9392304b840dd5c96642fe2"
+    },
+    {
+      "path": "storage/server-zfs-vdev-desktop-light.png",
+      "bytes": 118247,
+      "sha256": "83b01e535a783f2dcd1e034c3155e446a74cacb2ad55e44d403764e14f31d06b"
+    },
+    {
+      "path": "storage/server-zfs-vdev-mobile-dark.png",
+      "bytes": 72113,
+      "sha256": "1151eab8440698d62f2fbabdf769e2feb777ae93b98b98263e70337c170330ef"
+    },
+    {
+      "path": "storage/server-zfs-vdev-mobile-light.png",
+      "bytes": 72916,
+      "sha256": "f1f957a776fc213f242e724843dc64b8bb6385ec7dc1eba97bc686a99a09afaa"
+    }
+  ],
+  "runtimeFiles": {
+    "backend/device_saves.py": "6c43505fb05dc49500894f119df399c6b039815656810a09cefa3e31f0c2abd2",
+    "backend/device_stock.py": "dacf5b526df7e3893129644098971d1c1b5cf764d7316274f46df411b98cf7c7",
+    "backend/device_storage.py": "c2810b1ae55cad10dbb1f90b7a9c99fc7a6e062288d35785fabff1429aa3df34",
+    "backend/device_assignments.py": "0265906fe63d34809da9ce7083fdf660ceeaee09206e7c1d1b8f8415e3ad4cd0",
+    "backend/stock_circulation.py": "c791ba2038e33851c7b0a130b48ac35d23debc0d21b5ef6f07abd4d2d9ddd67c",
+    "backend/stock_intake.py": "988fb4937bd6bbd4e4149998185994a3b875500e9d7504b0728632a27b24c676",
+    "backend/stock_schema.py": "4ce79fe3536a1f73e8924fdcfabd6effff68033c13e6ea4a6c5030dee9d2a954",
+    "backend/assignment_closure.py": "030693fd1bd167e486bb8982030368b3f7a36264c2231ce06d61fdcd9109559b",
+    "backend/server.py": "5644cd171aff84164005d480eabf7c7aa6f93f127ef7c901fc13aa92723d3156",
+    "interface/application.js": "ff86c16194f2c5f70314cf63a89db6d9d4c9b33728170c78a175aff3890d7c94",
+    "interface/equipment.js": "7037ee56bb03a6640e6156fa23c46de98fe1b28f3136fa39ac2a2ef8455b26df",
+    "interface/stock-intake.js": "b44763085734e44f56a17b13d3e573b4da0b7f8320ca30214b6d7dc955f245c6",
+    "interface/screens/device-details.html": "6ca67123707f632821d7a8c332cb4cfe29c61d8f5a95d012f983f82f06d15863"
+  }
+}
