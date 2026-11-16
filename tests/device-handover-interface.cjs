@@ -133,6 +133,8 @@ async function main(){
  assert.equal(await page.locator('#stock-recipientId option[value="department"]').count(),0,'Staff list must not show departments');
  const actions=page.locator('#stock-reissue-form > .assignment-modal-actions');
  assert.deepEqual((await actions.locator('button').allTextContents()).map(value=>value.trim()),['Cancel','Confirm Ready And Reassign']);
+ const confirmAction=actions.locator('button[type="submit"]');
+ assert.equal(await confirmAction.getAttribute('class'),'btn btn-primary','Handover confirmation must use the standard Caffoot orange action style');
  assert.equal(await page.locator('.assignment-modal-head [data-stock-action="cancel-handover"]').count(),0);
  assert.equal(await page.locator('#stock-reissue-form button[type="reset"]').count(),0,'Handover offers Cancel, not a redundant Reset');
  assert.equal(await page.locator('#stock-recipientKind').inputValue(),'staff');
