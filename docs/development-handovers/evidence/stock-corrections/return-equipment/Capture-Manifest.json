@@ -108,6 +108,45 @@
       "sha256": "f2e8aa8b7c4892df3a15d654f1c19a97659c5ac42d7c3f1c182b3b76fd86672d",
       "width": 390,
       "height": 2000
+    },
+    {
+      "file": "return-correction-impact-full-page-light-1440.png",
+      "sha256": "9654b1b089b5375c42e8b693a5cebeabd32c760413889aeb7e7779f66e8b2483",
+      "width": 1440,
+      "height": 2952,
+      "captureSourceCommit": "17627504c7bbd55b9685f75c0241e9be35d1c4fe",
+      "capturedAt": "2026-11-16T17:50:48.594Z",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "theme": "light",
+      "scope": "Full Application Page",
+      "sourceHashes": {
+        "backend/stock_corrections.py": "42d1c4e520218ca4af7ed6cc129de88461222fa222b62e03f6a0ee0b154cbdf2",
+        "backend/server.py": "8a0b6e36adaad885c8ec26add3e878e8a26ca388aee1073f143f99a55dc105e6",
+        "backend/stock_circulation.py": "57d61a334c16cb7e3a7977e546708300e0208c03589ea374ac86f982d6f5ab8b",
+        "interface/stock-intake.js": "72a31a6d251a0bc83e9f07f63d03cc68724c2d07e4f8bd29c2d45f25a060d62e",
+        "interface/application.js": "a36b4298f31951c91274ecad2cc60571b0ae10dac65073a4a706ca06259ddef3",
+        "interface/styles/stock.css": "54ba81f9a7dce75135bf4a60eccca5f6af94700dba899d6338566546549e3af6"
+      },
+      "originalIssueEntryId": 3,
+      "originalQuantity": 8,
+      "currentEffectiveQuantity": 8,
+      "proposedQuantity": 7,
+      "reason": "Allocation record confirms seven issued.",
+      "impact": "Balance\tBefore\tAfter\nPhysically Held\t15\t16\nReady To Issue\t5\t6\nAwaiting Checks\t10\t10\nAwaiting Preparation\t1\t1\nCurrently Issued\t3\t2\nWritten Off\t1\t1\nOriginal Issue Outstanding\t3\t2",
+      "pageErrors": [],
+      "checks": [
+        "Authenticated Real HTTPS Application",
+        "Original Issue Opened From Return Equipment",
+        "Application Header And Sidebar",
+        "IT Assets Tabs",
+        "Matching Correction State And Calculated Balances",
+        "Complete Correction Form And Bottom Actions",
+        "Desktop Light Theme",
+        "No Horizontal Page Overflow"
+      ]
     }
   ],
   "authenticApplication": true,

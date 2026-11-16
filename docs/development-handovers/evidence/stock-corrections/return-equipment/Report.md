@@ -64,7 +64,7 @@ Stage 6 upgrade/restore check is presented as passed.
 
 ## Genuine Screenshot Gallery
 
-All sixteen captures use the actual authenticated HTTPS application with fictional
+The original sixteen captures use the actual authenticated HTTPS application with fictional
 SQLite fixtures. Desktop is 1440 × 1050; mobile is a responsive 390 × 844 viewport.
 Complete page/form captures include the bottom actions. The test simulates temporary
 503 responses only for failure handling; the gallery shows real server-loaded
@@ -74,7 +74,7 @@ return quantity to show that Record Return stays disabled.
 | State | Desktop Light | Desktop Dark | Mobile Light | Mobile Dark |
 | --- | --- | --- | --- | --- |
 | Original Issue And Correct Movement Action | [View](return-original-issue-light-1440.png) | [View](return-original-issue-dark-1440.png) | [View](return-original-issue-light-390.png) | [View](return-original-issue-dark-390.png) |
-| Existing Correction Form And Calculated Impact | [View](return-correction-impact-light-1440.png) | [View](return-correction-impact-dark-1440.png) | [View](return-correction-impact-light-390.png) | [View](return-correction-impact-dark-390.png) |
+| Existing Correction Form And Calculated Impact | [Full Page](return-correction-impact-full-page-light-1440.png) · [Form Detail](return-correction-impact-light-1440.png) | [View](return-correction-impact-dark-1440.png) | [View](return-correction-impact-light-390.png) | [View](return-correction-impact-dark-390.png) |
 | Return With Refreshed Outstanding Quantity | [View](return-refreshed-quantity-light-1440.png) | [View](return-refreshed-quantity-dark-1440.png) | [View](return-refreshed-quantity-light-390.png) | [View](return-refreshed-quantity-dark-390.png) |
 | Original Issue No Longer Eligible | [View](return-original-ineligible-light-1440.png) | [View](return-original-ineligible-dark-1440.png) | [View](return-original-ineligible-light-390.png) | [View](return-original-ineligible-dark-390.png) |
 
@@ -82,6 +82,25 @@ Agent inspection checked existing card/field spacing, both themes, mobile stacki
 the adjacent correction action, retained information, clear invalid-selection text,
 absence of page overflow and the correction form's original bottom-right actions.
 This supplements the original owner approval; final owner review remains separate.
+
+### Full-Page Desktop Light Capture
+
+The additional [full application screenshot](return-correction-impact-full-page-light-1440.png)
+shows the Caffoot Lite header, sidebar, IT Assets tabs, complete Correct Stock
+Movement form, bottom Cancel and Save Correction buttons, and Movement History.
+It is a genuine full-page capture from the authenticated HTTPS application at
+`17627504c7bbd55b9685f75c0241e9be35d1c4fe`, using fictional SQLite fixtures and a
+1440 × 1050 light-mode viewport; the resulting image is 1440 × 2952.
+
+The capture matches the original form-detail state: original/effective issue
+quantity 8, proposed quantity 7, reason “Allocation record confirms seven issued.”,
+Physically Held 15 → 16, Ready To Issue 5 → 6 and outstanding quantity 3 → 2.
+Focused browser assertions and visual inspection passed for the application frame,
+matching state, complete bottom actions, light theme, no page errors and no
+horizontal page overflow. Its source and screenshot hashes are recorded in the
+[capture manifest](Capture-Manifest.json). This evidence-only follow-up adds the
+PNG and updates this report and manifest; application code, behaviour, CSS, tests
+and all existing screenshots remain unchanged.
 
 ## Source Provenance And Exact Modified Files
 
@@ -109,7 +128,7 @@ Batch 3.11 diff against `milestone-1`:
 | `docs/how-tos/features-and-instructions/v2.2-draft/IT-Assets-Correct-Movement.md` | Return entry point and safe return after correction |
 | `docs/how-tos/features-and-instructions/v2.2-draft/IT-Assets-Issue-Return-and-Write-Off.md` | Link from Return Equipment instructions |
 | `docs/development-handovers/evidence/stock-corrections/Report.md` | Original evidence preserved with a link to this supplement |
-| This directory | This report, sixteen gallery PNGs, raw browser results, capture manifest and ten verification logs |
+| This directory | This report, seventeen gallery PNGs, raw browser results, capture manifest and ten verification logs |
 
 ## Final-Head Actions And Remaining Review
 
