@@ -26,6 +26,26 @@ correction with your name and explanation.
    quantities, reason, actor, recorded time and reference. Live stock and
    outstanding assignment quantities reflect the correction.
 
+## Correct An Issue While Returning Equipment
+
+In **Return Equipment**, select the original issue and choose **Correct Movement**
+beside its issue information. This opens the same correction form described above.
+Your entered return date, quantities, checks, reason and note are retained.
+
+After **Save Correction**, Return Equipment reloads the current quantities and
+versions from the server. Review the retained details before **Record Return**;
+an entered quantity above the refreshed outstanding balance must be corrected.
+If the original issue is no longer eligible, the form explains why and requires
+you to select eligible equipment. It does not select a different issue for you.
+If stock cannot be refreshed, use **Reload Stock** before recording the return.
+
+**Cancel** and **Escape** return to your entered return details, with confirmation
+before discarding changed correction fields. Leaving both forms also protects
+unsaved return details. A blocked or failed correction keeps your entered details.
+The action is available only for original stock issues you are allowed to correct.
+
+## Quantity And Access Safeguards
+
 The quantity must be a changed positive whole number. A receipt cannot be reduced
 below equipment already checked or used, an issue cannot fall below its later
 returns or write-offs, and a return cannot fall below later preparation or

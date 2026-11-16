@@ -201,6 +201,37 @@ class StockCorrectionTests(unittest.TestCase):
         self.assertEqual((record['quantity'], record['effectiveQuantity'], record['outstanding']), (8, 7, 2))
         self.assertEqual(stock_item(self.db, identity)['stateBalances']['currentlyIssued'], 2)
 
+    def test_return_after_correction_requires_refreshed_version_and_outstanding_quantity(self):
+        identity = self.receipt()
+        self.issue(identity, quantity=8)
+        entry = self.entry('issued')
+        self.return_equipment(return_payload(self.outstanding(), quantityReturned=5))
+        original_issue = self.outstanding()
+        self.correct(entry, 7)
+        refreshed_issue = self.outstanding()
+        self.assertNotEqual(original_issue['version'], refreshed_issue['version'])
+        self.unchanged(FileExistsError, lambda: self.return_equipment(
+            return_payload(original_issue, quantityReturned=3)))
+        self.unchanged(ValueError, lambda: self.return_equipment(
+            return_payload(refreshed_issue, quantityReturned=3)))
+        self.return_equipment(return_payload(refreshed_issue, quantityReturned=2))
+        record = read_stock_issues(self.db, 1)['issues'][0]
+        self.assertEqual((record['id'], record['quantity'], record['effectiveQuantity'], record['outstanding']),
+                         (entry, 8, 7, 0))
+
+    def test_correction_can_resolve_all_remaining_outstanding_equipment(self):
+        identity = self.receipt()
+        self.issue(identity, quantity=8)
+        entry = self.entry('issued')
+        self.return_equipment(return_payload(self.outstanding(), quantityReturned=5))
+        original_issue = self.outstanding()
+        self.correct(entry, 5)
+        record = read_stock_issues(self.db, 1)['issues'][0]
+        self.assertEqual((record['id'], record['quantity'], record['effectiveQuantity'], record['outstanding']),
+                         (entry, 8, 5, 0))
+        self.unchanged(ValueError, lambda: self.return_equipment(
+            return_payload(original_issue, quantityReturned=1)))
+
     def test_issue_cannot_consume_stock_that_arrived_after_the_issue(self):
         identity = self.receipt(5)
         self.issue(identity, quantity=4)

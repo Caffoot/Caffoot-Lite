@@ -1,5 +1,17 @@
 # Milestone 01 Development Handover — v2.2 Target
 
+> **Batch 3.11 final review correction — 16 November 2026:** PR #392 now connects
+> Return Equipment to the existing Correct Movement form. It retains entered
+> return details, reloads authoritative quantities/versions after correction and
+> requires a fresh selection when eligibility changes. The previously approved
+> Batch 3.11 screenshots are preserved; new journey evidence is recorded in the
+> [integration report](evidence/stock-corrections/Report.md#return-equipment-integration).
+> PR #392 remains draft for independent code review and final owner approval.
+> **Outstanding approved Stage 3 correction:** final Issue Equipment confirmation
+> showing equipment identity, quantity and recipient, with Back before saving,
+> must follow in a separate focused PR after Batch 3.11. It is not completed here.
+> [Owner decision](https://github.com/Caffoot/Caffoot-Lite/issues/352#issuecomment-6913521817).
+
 > **Batch 3.11, 16 November 2026:** Correct Movement is implemented on
 > `feat/correct-stock-movement`, [draft PR #392](https://github.com/Caffoot/Caffoot-Lite/pull/392),
 > from verified `53b04328c4f895bfc1f72f0416c43a519b2e8b42` after accepted PR #391.

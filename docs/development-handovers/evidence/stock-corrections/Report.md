@@ -133,3 +133,21 @@ all 28 PNGs under `docs/development-handovers/evidence/stock-corrections/`.
   activity. Reload and re-preview are required.
 - No main-branch change, merge, deployment, release, archive-preview modification,
   dashboard implementation or Batch 3.12 work is included.
+
+## Return Equipment Integration
+
+The [16 November owner decision](https://github.com/Caffoot/Caffoot-Lite/issues/352#issuecomment-6913521817)
+is now implemented in this draft PR: Return Equipment opens the same correction
+form for its selected original issue and retains entered return details. A saved
+correction reloads authoritative quantities and versions before a return can be
+submitted. Failed refreshes block submission; changed eligibility requires an
+explicit valid selection. The existing approved screenshots above are preserved.
+
+Development checkpoint: 29 focused backend/HTTP/database/security tests passed,
+and the extended real browser journey passed with 16 new desktop/mobile light/dark
+captures. Final regression checks, supplementary evidence and final-head Actions
+are still being completed; this checkpoint is not final acceptance.
+
+**Outstanding approved Stage 3 correction:** the final Issue Equipment confirmation
+must show equipment identity, quantity and recipient, with a way back to edit
+before saving. It remains unimplemented for a separate focused PR after Batch 3.11.

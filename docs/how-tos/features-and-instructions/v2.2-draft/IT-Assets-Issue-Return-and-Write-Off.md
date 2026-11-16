@@ -35,6 +35,12 @@ For example, return five mice from an eight-unit issue. Confirm three cleaned an
 
 Individual units keep their permanent identities. Equipment can return from an inactive Staff Member or archived Department; their status does not erase the original issue.
 
+If the recorded original issue quantity is wrong, choose **Correct Movement**
+beside the selected issue information. The [existing correction workflow](IT-Assets-Correct-Movement.md#correct-an-issue-while-returning-equipment)
+retains your return entries and reloads current quantities and versions after
+saving. Review them before recording the return. If that issue is no longer
+eligible, select eligible equipment; the form will explain the change.
+
 ### Return A Managed Device
 
 In the original **Device Details → Assigned To** tab, choose **Return Equipment** with both required Edit permissions. Confirm the actual returned Device. Normally leave Ready and Written Off at zero so it enters **Awaiting Preparation** until checked.

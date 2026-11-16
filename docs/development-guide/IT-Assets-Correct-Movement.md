@@ -23,6 +23,35 @@ Device Details/Forms Batch 04 and the shared inventory table conventions.
 The shared application permission filter recognises the new form only with IT
 Assets Edit. Theme redraws retain draft fields and their original unsaved baseline.
 
+## Correct An Original Issue From Return Equipment
+
+The [16 November decision](https://github.com/Caffoot/Caffoot-Lite/issues/352#issuecomment-6913521817)
+adds **Correct Movement** beside the selected original issue in Return Equipment.
+The action uses the existing correction context, form, preview and save routes.
+It is offered only for a recorded stock issue which the server marks correctable;
+unassigned physical returns and legacy assignments without an issue entry have no
+original stock quantity to correct. Device-linked permissions remain independent.
+
+The browser retains the actual Return Equipment form, including its initial
+unsaved-change snapshot, while correction is open and during theme redraws.
+Cancel and Escape restore it; leaving both forms protects each set of unsaved
+changes. Failed context requests, blocked previews and rejected saves retain
+entered information. Successful correction reloads the server stock projection
+before a return can be submitted. A failed reload blocks both return submission
+and correction reopening until **Reload Stock** succeeds.
+
+The selected original issue remains selected when eligible, with its latest
+outstanding quantity and server version. Entered quantities are preserved for
+review rather than silently reduced. If the original issue becomes ineligible,
+the selection is cleared with an explanation; another eligible issue must be
+explicitly selected. The existing atomic return writer still checks its version,
+outstanding quantity and applicable checks on every submission.
+
+**Outstanding approved work, outside PR #392:** the same owner decision requires
+a final Issue Equipment confirmation showing equipment identity, quantity and
+recipient, with a way back to edit before saving. Complete this in a separate
+focused PR after Batch 3.11. It is not implemented or marked complete here.
+
 ## Permanent Journal Contract
 
 **No migration or schema change. Schema 19 remains current.** The existing

@@ -3974,6 +3974,10 @@ function openIpModal(ip) {
                 .filter(field => !['button','submit','reset','hidden'].includes(field.type))
                 .map(field => [field.id || field.name || '', field.type, field.type === 'checkbox' || field.type === 'radio' ? field.checked : field.value]));
         }
+        function stockFormHasChanges(form) {
+            const initial=modalFormSnapshots.get(form);
+            return initial!==undefined&&(modalFormSnapshot(form)+'|'+(form.dataset.receiptMode||''))!==initial;
+        }
         function rememberModalForm() {
             const form = document.querySelector('#modal-content #stock-reissue-form[data-direct-handover="true"], #modal-content form[data-device-form="true"], #modal-content form[data-ipam-subnet-creation], #modal-content form[data-form-action="subnet"], #modal-content form[data-form-action="rack"], #modal-content form[data-form-action="ip"], #modal-content form[data-form-action="assign"], #modal-content form[data-form-action="bulk-ip"], #modal-content form[data-form-action="manufacturer"], #modal-content form[data-form-action="model"], #modal-content form[data-form-action="software"], #modal-content form[data-form-action="server-service"]');
             if (form) modalFormSnapshots.set(form, modalFormSnapshot(form));
@@ -11144,12 +11148,11 @@ void (async () => {
         }
       },
       cancelStockForm:(form,onDiscard)=>{
-        if(!form||!form.isConnected)return;
-        const initial=modalFormSnapshots.get(form);
-        const changed=initial!==undefined&&(modalFormSnapshot(form)+'|'+(form.dataset.receiptMode||''))!==initial;
-        if(changed)confirmDiscardDeviceFormChanges(onDiscard,true);
+        if(!form)return;
+        if(stockFormHasChanges(form))confirmDiscardDeviceFormChanges(onDiscard,true);
         else onDiscard();
       },
+      hasStockFormChanges:stockFormHasChanges,
       registerDevice:id=>{closeModal(true);switchTab('devices');openDeviceModal();void loadDeviceStockSources(id);},
       redraw:()=>{if(currentTab==='it-assets')renderContent();},notify:(message,type)=>showToast(message,type)});
     await loadAccountProfile();
