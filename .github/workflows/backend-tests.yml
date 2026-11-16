@@ -11,6 +11,7 @@ on:
       - "setup.html"
       - ".github/workflows/backend-tests.yml"
   pull_request:
+    types: [opened, reopened, synchronize, ready_for_review]
     paths:
       - "interface/**"
       - "backend/**"
@@ -23,6 +24,7 @@ on:
 
 jobs:
   backend-tests:
+    if: github.event_name != 'pull_request' || github.event.pull_request.draft == false
     runs-on: ubuntu-latest
     defaults:
       run:
