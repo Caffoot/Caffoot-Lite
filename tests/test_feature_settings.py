@@ -64,7 +64,8 @@ class FeatureSettingsTests(unittest.TestCase):
         self.assertEqual(after.pop('departments'), [])
         self.assertEqual(len(after.pop('staff_members')), 1)
         for table in ('it_asset_stock_items', 'it_asset_stock_units',
-                      'it_asset_stock_movements', 'it_asset_stock_entries'):
+                      'it_asset_stock_movements', 'it_asset_stock_entries',
+                      'device_equipment_associations'):
             self.assertEqual(after.pop(table), [])
         self.assertEqual(after, before)
         self.assertEqual(self.choices()['devices'], 1)
