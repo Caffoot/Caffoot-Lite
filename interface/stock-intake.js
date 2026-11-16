@@ -420,7 +420,7 @@
       issue.querySelector('#stock-issue-availability').textContent=(item?stockLabel(item):'No Equipment Selected')+' · '+ready+' Ready To Issue For This Item';
       issue.querySelector('#stock-issue-validation').textContent=valid?'':`Enter a whole quantity from 1 to ${ready}. Awaiting or already issued equipment is unavailable.`;
       issue.querySelector('[type="submit"]').disabled=existing?!issue.elements.existingIssue.value:!valid||(!stockContext.association&&!issue.elements.recipientId.value);
-      if(existing){const original=(stockContext.existingIssues||[]).find(item=>String(item.id)===issue.elements.existingIssue.value);issue.querySelector('#stock-issue-availability').textContent=original?stockExistingIssueLabel(original)+' · No Stock Deduction'':'No Eligible Issued Equipment';issue.querySelector('#stock-issue-validation').textContent=original?'':'Select eligible equipment already issued to this exact holder.';}
+      if(existing){const original=(stockContext.existingIssues||[]).find(item=>String(item.id)===issue.elements.existingIssue.value);issue.querySelector('#stock-issue-availability').textContent=original?stockExistingIssueLabel(original)+' · No Stock Deduction':'No Eligible Issued Equipment';issue.querySelector('#stock-issue-validation').textContent=original?'':'Select eligible equipment already issued to this exact holder.';}
       if(!stockContext.association){const searchKey=issue.elements.recipientKind.value+'|'+issue.elements.recipientSearch.value;
         if(issue.dataset.recipientQuery!==searchKey){issue.dataset.recipientQuery=searchKey;void loadStockRecipients(issue,searchKey);}}
     }
