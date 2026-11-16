@@ -34,7 +34,37 @@ can be reissued from physical stock, even if its earlier assignment has closed.
 Read-only users cannot add or return equipment. The tab and its records are
 unavailable when either required feature or Read permission is missing.
 
-Direct workstation handover remains an incomplete part of Batch 3.10, awaiting
-review of confirmation placement. Do not bypass checks or move accessories
-automatically to a new holder. Genuine physical return, preparation and reissue
-remain the existing workflow.
+## Reassign A Workstation Directly
+
+1. Resolve **all** explicitly associated outstanding equipment first, including
+   equipment linked during a former assignment. Record actual returns through
+   Return Equipment; record genuinely missing quantities through Write Off.
+   Accessories do not follow the workstation to its next holder.
+2. Open **Device Details → Assigned To → Reassign Device** for a currently
+   assigned physical Device. The selected Device is fixed on the existing form.
+3. Choose a different active Staff Member or non-archived Department, the actual
+   **Date Reassigned** and an optional note. The date cannot predate its current
+   issue or be in the future.
+4. Physically check and prepare the workstation. Tick **Checked Working** and,
+   where applicable, **Data Wiped / Reset** only after completing that work.
+   These checks start unchecked. Choose **Confirm Ready And Reassign** as the
+   final explicit confirmation that the workstation is Ready for its new holder.
+5. Check the new current holder and dated **Reassigned** entry in Assignment
+   History. The same Device and all former assignments remain recorded.
+
+Cancel or a failed save keeps the old holder. Refresh stale selections before
+retrying. Real accessory returns/write-offs recorded earlier remain in history
+even if the later workstation handover fails. A hidden or unavailable action
+can mean required equipment work or editing permission is missing; switching off
+IT Assets never bypasses outstanding accessory resolution.
+
+Direct reassignment needs Devices Edit and remains available for Devices without
+stock history when IT Assets is off. A Device with stock history additionally
+needs IT Assets enabled and IT Assets Edit. Read-only users cannot reassign.
+The handover does not record a storeroom receipt or add Physically Held/Ready
+stock. For a registered issued Device, Movement History shows **Reassigned**,
+Issued → Issued. Its canonical identity, status, location, racks and network
+details remain as recorded. Genuine physical return → preparation → Reissue
+Existing Device remains the separate workflow for equipment actually held.
+
+[Final review screenshots and checks](../../../development-handovers/evidence/associated-equipment-final/Report.md)

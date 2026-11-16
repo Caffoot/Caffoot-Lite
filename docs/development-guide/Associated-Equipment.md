@@ -321,6 +321,8 @@ are E's next step; native/private-data acceptance remains deferred.
 
 ## Remaining Acceptance
 
-Checkpoint E records the final draft instructions, genuine changed-screen
-gallery and applicable final-head GitHub Actions. Keep PR #391 draft; no merge,
+Checkpoint E adds [final draft instructions](../how-tos/features-and-instructions/v2.2-draft/Associated-Equipment.md),
+[36 genuine source-matched captures and acceptance evidence](../development-handovers/evidence/associated-equipment-final/Report.md),
+the direct journey in CI and 64 adjacent passing regressions. Final-head Actions
+are reported in PR #391. Keep PR #391 draft; no merge,
 release, deployment, unrelated batch or production change is authorised.

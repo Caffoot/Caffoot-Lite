@@ -1,5 +1,18 @@
 # Milestone 01 Development Handover — v2.2 Target
 
+> **Batch 3.10 E review evidence, 16 November 2026:** D is pushed at
+> `b83e061211b2a4784f8db7198228241da0942940`; E changes docs/tests/CI only.
+> [36 genuine desktop/mobile light/dark captures](evidence/associated-equipment-final/Report.md)
+> match that runtime, preserving earlier evidence. **146 D tests, 64 adjacent
+> regressions and both final Chromium journeys passed.** The existing browser
+> Actions workflow includes direct handover and evidence upload. Updated draft
+> user instructions explain exact resolution/preparation/confirmation and rights.
+> The 988-definition index is current. Final-head Actions and exact E SHA are
+> recorded in [draft PR #391](https://github.com/Caffoot/Caffoot-Lite/pull/391).
+> No further product decision is open; owner review/native/private-data/Stage 6
+> acceptance remains. No merge, release or deployment.
+
+
 > **Batch 3.10 D complete, 16 November 2026:** the approved Reassign Device
 > action is in Assigned To and reuses the existing form/preparation controls.
 > Confirm Ready And Reassign commits the old/new canonical assignments,

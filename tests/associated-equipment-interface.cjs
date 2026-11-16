@@ -47,6 +47,7 @@ async function main(){
  page.on('pageerror',failure=>errors.push(String(failure)));
  async function captureChangedScreen(name,selector){
   if(process.env.CAFFOOT_ASSOCIATION_CAPTURE!=='1')return;
+  await page.waitForFunction(()=>!document.getElementById('toast')||getComputedStyle(document.getElementById('toast')).opacity==='0');
   for(const width of [1440,390])for(const theme of ['light','dark']){
    await page.setViewportSize({width,height:1050});
    await page.evaluate(theme=>{localStorage.setItem('caffoot_theme_preference',theme);caffootApplyTheme();},theme);

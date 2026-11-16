@@ -14,7 +14,7 @@ journey. Final-head Actions and the permanent changed-screen gallery belong to E
 
 ## The Exact Source Constraint
 
-`assignment_closure.py:retain_device_assignment_update` permits closing an
+Before this approved extension, `retain_device_assignment_update` permitted closing an
 assignment only against a new, audited physical return or write-off fact. The
 existing **Reissue Existing Device** form offers only genuinely held, prepared
 Ready registered Devices. **Return Equipment** records a real physical receipt;
@@ -29,7 +29,7 @@ The [direct preparation approval](https://github.com/Caffoot/Caffoot-Lite/issues
 expressly leaves exact confirmation placement and sequencing for review. The
 [missing-quantity approval](https://github.com/Caffoot/Caffoot-Lite/issues/352#issuecomment-6913302245)
 settles accessory resolution but retains that direct-handover boundary. The
-current task likewise requires stopping for a necessary new user-visible decision.
+original task likewise required stopping for a necessary new user-visible decision.
 [AGENTS.md](../../AGENTS.md) rule 2 says: “If a material requirement is unclear
 and the decision would change approved behaviour, ask the product owner before
 proceeding.”
@@ -58,9 +58,9 @@ Schema 19 implements a narrowly migrated, audited non-return closure path while 
 the existing canonical assignment table, immutable history and Schema 18 links.
 For an already stock-linked issued Device, its stock ledger must also change
 holder consistently without any held/Ready balance increase. A Device without
-stock provenance must remain outside stock. This needs focused migration,
-concurrency, rollback, stale-check and permission/feature-off tests; the original
-physical-return and write-off guards must remain intact.
+stock provenance remains outside stock. Focused migration, concurrency,
+rollback, stale-check and permission/feature-off tests passed; the original
+physical-return and write-off guards remain intact.
 
 The approved controls now use `device_handovers.reassign_device`. Devices-only
 work creates no stock; registered custody uses one audited pair of issued-state
