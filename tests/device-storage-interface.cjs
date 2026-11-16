@@ -91,6 +91,9 @@ async function main(){
  assert.equal(await page.locator('[data-device-detail-field="storageType"]').inputValue(),'Legacy Storage Medium');
  assert.equal(await page.locator('[data-device-detail-field="raid"]').inputValue(),'Legacy RAID Choice');
  await page.locator('[data-device-detail-field="storageType"]').selectOption('NVMe SSD');
+ const initialBootTick=await page.locator('[data-server-boot-enabled]').boundingBox();
+ assert.ok(initialBootTick&&initialBootTick.width>=14&&initialBootTick.width<=22&&initialBootTick.height>=14&&initialBootTick.height<=22,
+   'Record Boot Storage starts compact before the first toggle');
  await page.locator('[data-server-boot-enabled]').check();
  const bootTick=await page.locator('[data-server-boot-enabled]').boundingBox();
  const bootLabel=await page.locator('.server-storage-boot-toggle').boundingBox();

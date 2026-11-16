@@ -6776,7 +6776,7 @@ function openIpModal(ip) {
                 }
             }, true);
             // Field labels use the pinned form's typography rather than legacy utility classes.
-            form.querySelectorAll('.device-review-field label').forEach(label=>{label.className='';});
+            form.querySelectorAll('.device-review-field label:not(.server-storage-boot-toggle)').forEach(label=>{label.className='';});
             form.querySelector('label[for="dev-mount-type"] .required-mark')?.remove();
             activate(active);
             // Use the approved dialog's fixed header/footer and scrolling body.
