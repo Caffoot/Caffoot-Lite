@@ -67,7 +67,8 @@ class AssignmentClosureTests(unittest.TestCase):
         stock = self.db.execute("SELECT name,sql FROM sqlite_master WHERE name GLOB 'it_asset_*' ORDER BY name").fetchall()
         self.upgrade()
         after = self.rows()
-        self.assertEqual(after.pop('schema_migrations')[-1][0], 17)
+        self.assertEqual(after.pop('schema_migrations')[-1][0], schema.SCHEMA_VERSION)
+        self.assertEqual(after.pop('device_equipment_associations'), [])
         before.pop('schema_migrations')
         self.assertTrue(all(row[-1] is None for row in after['device_assignments']))
         after['device_assignments'] = [row[:-1] for row in after['device_assignments']]

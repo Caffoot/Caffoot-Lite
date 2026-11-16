@@ -62,6 +62,7 @@ class StaffDirectoryMigrationTests(unittest.TestCase):
         schema.initialise_database(self.db)
         after = self.snapshot()
         self.assertEqual(after.pop('device_assignments'), [])
+        self.assertEqual(after.pop('device_equipment_associations'), [])
         self.assertEqual(after.pop('departments'), [])
         staff = after.pop('staff_members')
         for table in ('it_asset_stock_items', 'it_asset_stock_units',

@@ -58,6 +58,7 @@ from .tls import ensure_certificate
 from .deployment_settings import validate_published_port
 from .device_assignments import (assignment_recipients, assignment_device_choices,
     read_assignments, assign_devices, my_equipment)
+from .equipment_associations import read_equipment_associations
 from .staff_directory import (require_directory_access, list_directory,
                                read_staff_member, read_department,
                                save_staff_member, save_department, unique_directory_fields,
@@ -788,6 +789,10 @@ class Handler(BaseHTTPRequestHandler):
                         if key in parameters:
                             parameters[key] = int(parameters[key])
                     result = {'devices': assignment_device_choices(connection, actor, **parameters)}
+                elif self.command == 'GET' and parsed.path == '/api/equipment/associations':
+                    if set(parameters) != {'deviceId'}:
+                        raise ValueError('One Device is required')
+                    result = read_equipment_associations(connection, actor, parameters['deviceId'])
                 elif self.command == 'GET' and parsed.path == '/api/equipment/assignments':
                     names = {'deviceId': 'device_id', 'staffId': 'staff_id', 'departmentId': 'department_id'}
                     if len(parameters) != 1 or set(parameters) - names.keys():

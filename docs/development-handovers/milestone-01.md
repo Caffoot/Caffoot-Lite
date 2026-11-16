@@ -1,5 +1,21 @@
 # Milestone 01 Development Handover — v2.2 Target
 
+> **Latest checkpoint, 16 November 2026 — Batch 3.10 A:** started from verified
+> `milestone-1` commit `6276225e5d527c83f2ffaf36812ab7c7c5a5269f` after PR #390
+> merged. The `feat/associated-equipment-handovers` branch adds Schema 18's empty,
+> permanent explicit association table and a history API requiring both Devices
+> and IT Assets Read access. Stock and assignment guards, quantities, Assigned To,
+> My Equipment and all screens are unchanged. See [the source preflight, data/API
+> contract and precise continuation](../development-guide/Associated-Equipment.md).
+> Add Equipment (B), the new tab (C), preparation/reassignment (D) and final
+> documentation/screenshots/Actions (E) remain incomplete. The direct handover
+> sequence still needs source-faithful review before changing accepted closure
+> behaviour. Earlier accepted evidence is preserved; no merge or release is claimed.
+> Verification: **123 focused backend/HTTP/migration tests passed**, including
+> 16 new association tests; Python compilation and diff checks passed. The
+> Function Index has 972 definitions. No new browser/Docker collection or
+> screenshot capture was run for this backend-only checkpoint.
+
 > **Latest checkpoint, 16 November 2026:** Batch 3.8/PR #389 is merged at
 > `7f11598b50bbb1fbd11893a2ad34bc152ff12ed1`. Batch 3.9 is implemented on
 > `feat/it-assets-device-registration-reissue` in [draft PR #390](https://github.com/Caffoot/Caffoot-Lite/pull/390):

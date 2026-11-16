@@ -20,6 +20,7 @@ For the full source-pinned list of named declarations, owning bridge methods and
 | --- | --- | --- |
 | [`backend/server.py`](../../backend/server.py) | `Handler.do_GET`, `Handler.do_POST`, `Handler.handle_import`, `main` | HTTPS entry point and request routing |
 | [`backend/schema.py`](../../backend/schema.py) | `SCHEMA_VERSION`, `initialise_database` | SQLite definitions and migrations |
+| [`backend/equipment_associations.py`](../../backend/equipment_associations.py) | `migrate_equipment_associations`, `validate_equipment_associations`, `read_equipment_associations` | Schema 18 explicit accessory links and history requiring both Devices and IT Assets Read access; see [Associated Equipment](Associated-Equipment.md) |
 | [`backend/assignment_closure.py`](../../backend/assignment_closure.py) | `migrate_assignment_closure`, `validate_assignment_closure` | Schema 17 one-way closure linked to a permanent stock fact and audit; see [Stock Circulation](IT-Assets-Issue-Return-and-Write-Off.md) |
 | [`backend/stock_circulation.py`](../../backend/stock_circulation.py) | `issue_stock`, `return_stock`, `prepare_stock`, `write_off_stock` | Atomic circulation, original issue references, canonical Device history and permission-safe projections; see [Stock Circulation](IT-Assets-Issue-Return-and-Write-Off.md) |
 | [`backend/stock_intake.py`](../../backend/stock_intake.py) | `receive_stock`, `update_stock_readiness`, `read_stock` | Protected, atomic receipt/readiness records and stock/history projections; see [Stock Intake](IT-Assets-Stock-Intake.md) |
