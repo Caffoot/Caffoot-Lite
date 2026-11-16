@@ -6,7 +6,9 @@ from backend.audit_events import record_actor_event
 from backend.device_saves import create_device_in_transaction
 from backend.permissions import can_access
 from backend.stock_intake import (COMPUTER_TYPES, append_stock_fact, stock_item,
-    stock_operation, stock_replay, stock_write_access)
+    stock_operation, stock_replay, stock_write_access, stock_text, stock_json)
+from backend.stock_circulation import (canonical_device_choice, require_stock_device_edit,
+    stock_recipient, stock_event_date, publish_stock_movement)
 
 
 def require_device_stock_access(connection, actor):
@@ -91,6 +93,69 @@ def register_stock_device(connection, actor, token, payload):
         record_actor_event(connection, actor, kind='IT Assets', action='Registered',
             label=record['id'], reason='Registered Device from Ready stock',
             fields=['Stock Movement'], after=dict(stockItemId=item['id'], deviceId=record['id'], movementId=movement))
+        connection.commit()
+        return result
+    except BaseException:
+        connection.rollback()
+        raise
+
+
+def device_ready_for_reissue(choice):
+    """Only a genuine held Ready unit can leave stock through a new assignment."""
+    states = choice['states']
+    return (choice['physical'] and choice['stockUnitId'] is not None
+            and choice['deviceAssignmentId'] is None and states.get('ready', 0) == 1
+            and sum(states.get(state, 0) for state in
+                    ('ready', 'awaiting_checks', 'awaiting_preparation')) == 1
+            and not states.get('issued', 0) and not states.get('written_off', 0))
+
+
+def reissue_device_choices(connection, actor):
+    require_device_stock_access(connection, actor)
+    return {'devices': [choice for identity, in connection.execute(
+        'SELECT id FROM inventory_devices ORDER BY name,id')
+        if device_ready_for_reissue(choice := canonical_device_choice(connection, identity))]}
+
+
+def reissue_stock_device(connection, actor, token, payload):
+    """Keep the original Device and commit its new assignment and physical issue together."""
+    fields = {'operationId', 'deviceId', 'version', 'recipientKind', 'recipientId', 'issuedOn', 'note'}
+    operation, digest = stock_operation(payload, fields, fields)
+    key = 'stock:reissue:' + str(actor) + ':' + operation
+    connection.execute('BEGIN IMMEDIATE')
+    try:
+        stock_write_access(connection, actor, token)
+        require_device_stock_access(connection, actor)
+        replay = stock_replay(connection, key, digest)
+        if replay is not None:
+            connection.commit()
+            return replay
+        device_id = payload['deviceId']
+        require_stock_device_edit(connection, actor, device_id)
+        choice = canonical_device_choice(connection, device_id)
+        if payload['version'] != choice['version']:
+            raise FileExistsError('Device or stock history changed. Reload before reissuing it.')
+        if not device_ready_for_reissue(choice):
+            raise ValueError('Choose an unassigned physical Device recorded as held and Ready To Issue')
+        recipient = stock_recipient(connection, payload['recipientKind'], payload['recipientId'])
+        issued = stock_event_date(payload['issuedOn'], 'Date Issued')
+        note = stock_text(payload['note'], 'Issue Note', 2000)
+        actor_label = connection.execute('SELECT username FROM accounts WHERE id=?', (actor,)).fetchone()[0]
+        assignment = connection.execute('''INSERT INTO device_assignments
+            (device_id,staff_id,department_id,recipient_label,assigned_at,actor_id,actor_label)
+            VALUES(?,?,?,?,?,?,?)''', (device_id, recipient['staff_id'], recipient['department_id'],
+                recipient['recipient_label'], issued, actor, actor_label)).lastrowid
+        record_actor_event(connection, actor, kind='Device', action='Assigned', label=device_id,
+            reason='Reissued equipment', fields=['Assignment'],
+            after=dict(recipientKind=payload['recipientKind'], recipientId=payload['recipientId'], assignedAt=issued))
+        entry = dict(stock_unit_id=choice['stockUnitId'], quantity=1, from_state='ready',
+            to_state='issued', device_assignment_id=assignment, **recipient,
+            snapshot_json=stock_json(dict(name=choice['name'], category=choice['category'],
+                                         deviceId=device_id, deviceRevision=choice['revision'])))
+        movement = connection.execute('SELECT coalesce(max(id),0)+1 FROM it_asset_stock_movements').fetchone()[0]
+        result = dict(deviceId=device_id, assignmentId=assignment, movementId=movement)
+        publish_stock_movement(connection, actor, key, 'issued', [entry],
+            dict(operationHash=digest, result=result, deviceId=device_id, note=note), event_date=issued)
         connection.commit()
         return result
     except BaseException:

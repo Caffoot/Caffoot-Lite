@@ -100,9 +100,22 @@ async function main(){
  assert.equal((await item()).quantityStateBalances.ready,9);
  await page.locator('.device-review-close').click();
  assert.equal((await item()).quantityStateBalances.ready,9);
+ await page.reload();
+ await page.locator('[data-action="tab-it-assets"]').click();
+ await page.locator('[data-stock-action="tab"][data-tab="reissue"]').click();
+ await page.locator('#stock-reissue-form').waitFor();
+ await page.locator('#stock-recipientId option[value="retained-person"]').waitFor({state:'attached'});
+ await page.locator('#stock-recipientId').selectOption('retained-person');
+ const reissued=page.waitForResponse(r=>r.url().endsWith('/api/it-assets/reissue-device')&&r.request().method()==='POST');
+ await page.locator('#stock-reissue-form [type="submit"]').click();
+ const reissueResponse=await reissued;assert.equal(reissueResponse.status(),200,await reissueResponse.text());
+ assert.equal((await item()).balances.physicallyHeld,9);
+ assert.equal((await item()).balances.readyToIssue,9);
+ const assignment=await (await owner.request.get(address+'/api/equipment/assignments?staffId=retained-person')).json();
+ assert.ok(assignment.current.some(entry=>entry.deviceName==='Fictional Stock Computer'));
  assert.deepEqual(errors,[]);
- fs.writeFileSync(path.join(output,'browser-results.json'),JSON.stringify({checks:['Existing Add Device Form','Shared Prefill Only','Atomic Accounting','Stock Entry Point','Cancellation Has No Writes'],pageErrors:errors},null,2));
- console.log('PASS: existing Add Device and stock entry routes, shared prefill, atomic registration and cancellation.');
+ fs.writeFileSync(path.join(output,'browser-results.json'),JSON.stringify({checks:['Existing Add Device Form','Shared Prefill Only','Atomic Accounting','Stock Entry Point','Cancellation Has No Writes','Separate Reissue Route','Canonical Staff Assignment'],pageErrors:errors},null,2));
+ console.log('PASS: existing Add Device and stock entry routes, shared prefill, atomic registration, cancellation and canonical reissue.');
 }
 main().catch(async failure=>{
  fs.writeFileSync(path.join(output,'failure.txt'),String(failure)+'\n'+(fs.existsSync(path.join(temporary,'server.log'))?fs.readFileSync(path.join(temporary,'server.log'),'utf8'):''));

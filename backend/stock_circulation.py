@@ -110,6 +110,7 @@ def stock_issue_records(connection, *, staff_id=None, department_id=None):
 
 def read_stock_issues(connection, actor):
     stock_access(connection,actor)
+    from backend.device_stock import reissue_device_choices
     devices=can_access(connection,actor,'Devices')
     issues=stock_issue_records(connection)
     if not devices:
@@ -127,7 +128,9 @@ def read_stock_issues(connection, actor):
                 choices.append(choice)
     return dict(issues=issues,deviceAssignments=assignments,
                 registeredDevices=registered_stock_devices(connection) if devices else [],
-                deviceChoices=choices)
+                deviceChoices=choices,
+                reissueDevices=reissue_device_choices(connection,actor)['devices']
+                    if can_access(connection,actor,'Devices',edit=True) and can_access(connection,actor,'IT Assets',edit=True) else [])
 
 
 def issue_stock(connection, actor, token, payload):

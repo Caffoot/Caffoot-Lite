@@ -118,3 +118,23 @@ quantity before save/cancel, and the 10 → 9 unregistered / 10 held save result
 No page errors. Initial harness selectors were corrected for the existing fixed
 footer and hidden-on-close modal before the passing run. Both changed JavaScript
 files passed `node --check`. Reissue, hardware, captures and final gates remain.
+
+## Separate Reissue Checkpoint
+
+The protected `reissue-devices` read and `reissue-device` write require both
+independent Edit rights. Eligibility comes from the genuine Ready unit journal,
+never operational Status or absence of assignment alone. A new assignment and
+immutable issue movement commit together, with operation replay, revision/history
+version, live recipient, session and Device edit-reservation checks. Initial
+allocation and Schema 17 closure guards are unchanged. Device configuration is
+not written. Staff/Department and employee views reuse the canonical relationship.
+
+The existing IT Assets tabs, registered Device actions and Device Assigned To
+area open Reissue Existing Device using established stock form and restricted
+recipient picker patterns. Read-only or single-section editors receive no choices.
+Actual focused run: **94 tests passed** across registration/reissue, assignments,
+circulation, returns and closure. The extended ten-test reissue suite then passed,
+including two competing issues, both independent Edit requirements and private
+My Equipment. The real Chromium registration test also passed its added reissue
+route, physical decrement and current Staff assignment assertions. Optional
+hardware, final captures/documentation and complete final-head gates remain.
