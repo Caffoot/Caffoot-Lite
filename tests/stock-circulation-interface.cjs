@@ -89,7 +89,19 @@ async function main(){
  await captures('device-return',ownerPage,laptopReturn);await laptopReturn();await save(ownerPage,'stock-return-form','return');
  const laptop=(await stock()).registeredDevices.find(device=>device.deviceId==='circulation-laptop');assert.equal(laptop.states.awaiting_preparation,1);assert.equal(laptop.states.ready||0,0);
  async function laptopPreparation(){await tab(ownerPage,'inventory');await ownerPage.locator('[data-stock-action="registered-details"][data-id="'+laptop.stockUnitId+'"]').last().click();await ownerPage.locator('#stock-preparation-form').waitFor();await ownerPage.locator('#stock-preparation-form [name="cleanedWorking"]').check();}
- await captures('device-preparation',ownerPage,laptopPreparation);await laptopPreparation();assert.equal(await ownerPage.locator('#stock-preparation-form').evaluate(form=>form.checkValidity()),false);await ownerPage.locator('#stock-preparation-form [name="dataPreparationConfirmed"]').check();await save(ownerPage,'stock-preparation-form','preparation');
+ await captures('device-preparation',ownerPage,laptopPreparation);await laptopPreparation();
+ const prepareActions=ownerPage.locator('#stock-preparation-form .stock-form-actions');
+ assert.deepEqual((await prepareActions.locator('button').allTextContents()).map(value=>value.trim()),['Cancel','Mark Ready To Issue']);
+ assert.equal(await prepareActions.locator('[type="submit"]').getAttribute('class'),'btn btn-primary');
+ assert.equal(await prepareActions.evaluate(node=>getComputedStyle(node).justifyContent),'flex-end');
+ await prepareActions.locator('[data-stock-action="cancel-stock"]').click();
+ await ownerPage.locator('#discard-dialog').waitFor();
+ await ownerPage.locator('#discard-dialog [data-action="keep-editing"]').click();
+ assert.equal(await ownerPage.locator('#stock-preparation-form [name="cleanedWorking"]').isChecked(),true);
+ await prepareActions.locator('[data-stock-action="cancel-stock"]').click();
+ await ownerPage.locator('#discard-dialog [data-action="discard-device-form-changes"]').click();
+ assert.equal(await ownerPage.locator('#stock-preparation-form').count(),0,'Cancelling preparation returns to Stock Inventory');
+ await laptopPreparation();assert.equal(await ownerPage.locator('#stock-preparation-form').evaluate(form=>form.checkValidity()),false);await ownerPage.locator('#stock-preparation-form [name="dataPreparationConfirmed"]').check();await save(ownerPage,'stock-preparation-form','preparation');
  assert.equal((await stock()).registeredDevices.find(device=>device.deviceId==='circulation-laptop').states.ready,1);
  async function laptopWriteOff(){await tab(ownerPage,'writeoff');await ownerPage.locator('#stock-writeOffTarget').selectOption('device:circulation-laptop');await ownerPage.locator('#stock-writeOffReason').fill('Damaged after inspection');}
  await captures('held-device-writeoff',ownerPage,laptopWriteOff);await laptopWriteOff();await save(ownerPage,'stock-writeoff-form','write-off');
