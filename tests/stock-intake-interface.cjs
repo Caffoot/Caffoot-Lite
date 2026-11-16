@@ -119,7 +119,7 @@ async function main(){
    if(tabName!=='receive')await stockTab(tabName);
    const form=page.locator('#'+formId);
    await form.waitFor();
-   const footer=form.locator('> .stock-form-actions');
+   const footer=form.locator(':scope > .stock-form-actions');
    assert.deepEqual((await footer.locator('button').allTextContents()).map(value=>value.trim()),['Cancel',submitText]);
    assert.equal(await footer.locator('[type="submit"]').getAttribute('class'),'btn btn-primary');
    assert.equal(await footer.evaluate(node=>getComputedStyle(node).justifyContent),'flex-end');
