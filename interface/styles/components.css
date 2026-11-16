@@ -481,3 +481,5 @@ html.dark #main-content .users-live button.btn.primary[data-role-command="create
 .equipment-dialog #stock-reissue-form[data-direct-handover="true"] .stock-check input{flex:none}
 .equipment-dialog #stock-reissue-form[data-direct-handover="true"] .preview-details-actions{display:flex;align-items:center;flex-wrap:wrap;gap:16px;margin-top:22px}
 .equipment-dialog #stock-reissue-form[data-direct-handover="true"] .preview-details-actions .btn{min-height:42px;padding:10px 18px}
+.equipment-dialog #stock-reissue-form[data-direct-handover="true"] > .assignment-modal-actions{display:flex;justify-content:flex-end;align-items:center;gap:16px;flex-wrap:wrap;margin-top:22px;padding:18px 0 0;border-top:1px solid var(--line)}
+.equipment-dialog #stock-reissue-form[data-direct-handover="true"] > .assignment-modal-actions .btn{min-height:42px;padding:10px 18px}
