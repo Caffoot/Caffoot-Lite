@@ -1,5 +1,30 @@
 # Milestone 01 Development Handover — v2.2 Target
 
+> **Batch 3.11 final review correction — 16 November 2026:** PR #392 now connects
+> Return Equipment to the existing Correct Movement form. It retains entered
+> return details, reloads authoritative quantities/versions after correction and
+> requires a fresh selection when eligibility changes. The previously approved
+> Batch 3.11 screenshots are preserved; new journey evidence is recorded in the
+> [integration report](evidence/stock-corrections/Report.md#return-equipment-integration).
+> PR #392 remains draft for independent code review and final owner approval.
+> **Outstanding approved Stage 3 correction:** final Issue Equipment confirmation
+> showing equipment identity, quantity and recipient, with Back before saving,
+> must follow in a separate focused PR after Batch 3.11. It is not completed here.
+> [Owner decision](https://github.com/Caffoot/Caffoot-Lite/issues/352#issuecomment-6913521817).
+
+> **Batch 3.11, 16 November 2026:** Correct Movement is implemented on
+> `feat/correct-stock-movement`, [draft PR #392](https://github.com/Caffoot/Caffoot-Lite/pull/392),
+> from verified `53b04328c4f895bfc1f72f0416c43a519b2e8b42` after accepted PR #391.
+> It reuses the reserved correction journal with no migration (schema 19).
+> [The technical contract](../development-guide/IT-Assets-Correct-Movement.md),
+> [draft instructions](../how-tos/features-and-instructions/v2.2-draft/IT-Assets-Correct-Movement.md)
+> and [evidence report](evidence/stock-corrections/Report.md) describe the final
+> behaviour, actual verification and review gates. Original movements, Supplier
+> provenance, canonical identities and later chronological records remain permanent.
+> Owner visual acceptance and explicit merge approval remain outstanding.
+> No merge, release, deployment or Batch 3.12 work is authorised. Older checkpoints
+> below retain their dated verification scope.
+
 > **Batch 3.10 E review evidence, 16 November 2026:** D is pushed at
 > `b83e061211b2a4784f8db7198228241da0942940`; E changes docs/tests/CI only.
 > [36 genuine desktop/mobile light/dark captures](evidence/associated-equipment-final/Report.md)

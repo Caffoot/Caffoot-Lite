@@ -1,5 +1,23 @@
 # Published and development versions
 
+> **Batch 3.11 final review correction — 16 November 2026:** [PR #392](https://github.com/Caffoot/Caffoot-Lite/pull/392)
+> adds the approved Return Equipment → Correct Movement → refreshed Return
+> Equipment journey. [Integration evidence](../development-handovers/evidence/stock-corrections/Report.md#return-equipment-integration)
+> supplements the preserved, owner-approved screenshots. Independent review and
+> final owner approval remain. The separate approved Issue Equipment confirmation
+> is outstanding for a focused PR after Batch 3.11; it is not implemented here.
+
+> **Current Batch 3.11 checkpoint — 16 November 2026:** Batch 3.10 / PR #391
+> is merged and accepted at verified `53b04328c4f895bfc1f72f0416c43a519b2e8b42`.
+> Correct Movement is implemented on `feat/correct-stock-movement`,
+> [draft PR #392](https://github.com/Caffoot/Caffoot-Lite/pull/392), using schema 19
+> without a migration. See [the correction contract](IT-Assets-Correct-Movement.md),
+> [draft instructions](../how-tos/features-and-instructions/v2.2-draft/IT-Assets-Correct-Movement.md)
+> and [verification evidence](../development-handovers/evidence/stock-corrections/Report.md).
+> Owner visual review and explicit merge approval remain. No release, deployment
+> or Batch 3.12 work is included. Earlier dated checkpoints below are historical.
+
+
 > **Latest development checkpoint — 16 November 2026:** Batches 3.8/3.9 are
 > merged through PR #390 at `6276225e5d527c83f2ffaf36812ab7c7c5a5269f`.
 > Batch 3.10 associations and prepared canonical reassignment are implemented

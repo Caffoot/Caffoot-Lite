@@ -1,0 +1,3 @@
+PASS: correction preview, immutable save, history, partial issues, stale forms, Cancel/Escape, permissions and feature gates.
+PASS: Return Equipment targets its original issue, retains drafts, refreshes versions, blocks failed refreshes and invalid quantities, requires fresh eligible selection, protects navigation and permits stock-only editors.
+PASS: 16 genuine application captures; no page errors or checked page overflow.

@@ -20,6 +20,7 @@ from .settings_saves import save_inventory_setting
 from .inventory_projection import project_inventory_response
 from .feature_settings import read_feature_settings, save_feature_setting, unique_feature_fields
 from .stock_intake import stock_access, read_stock, receive_stock, update_stock_readiness
+from .stock_corrections import stock_correction_context, preview_stock_correction, save_stock_correction
 from .device_stock import (device_stock_sources, register_stock_device,
                            reissue_device_choices, reissue_stock_device)
 from .stock_circulation import (issue_stock, read_stock_issues, stock_recipients,
@@ -684,8 +685,10 @@ class Handler(BaseHTTPRequestHandler):
         reading = self.command == 'GET'
         valid = (route in ('/api/it-assets/stock','/api/it-assets/issues','/api/it-assets/recipients','/api/it-assets/history','/api/it-assets/device-sources','/api/it-assets/reissue-devices') and reading or
                  len(parts) == 4 and parts[:3] == ['api', 'it-assets', 'stock'] and reading or
+                 len(parts) == 4 and parts[:3] == ['api', 'it-assets', 'corrections'] and parts[3].isdecimal() and reading or
                  route in ('/api/it-assets/receive', '/api/it-assets/readiness','/api/it-assets/issue',
-                           '/api/it-assets/return','/api/it-assets/preparation','/api/it-assets/write-off','/api/it-assets/register-device','/api/it-assets/reissue-device') and not reading)
+                           '/api/it-assets/return','/api/it-assets/preparation','/api/it-assets/write-off','/api/it-assets/register-device','/api/it-assets/reissue-device',
+                           '/api/it-assets/corrections/preview','/api/it-assets/corrections') and not reading)
         if not valid or (parsed.query and route!='/api/it-assets/recipients') or route.endswith('/'):
             self.respond(404, {'error': 'not found'})
             return
@@ -708,7 +711,9 @@ class Handler(BaseHTTPRequestHandler):
                     return
                 stock_access(connection, actor, edit=not reading)
                 if reading:
-                    if route=='/api/it-assets/reissue-devices':
+                    if parts[:3] == ['api', 'it-assets', 'corrections']:
+                        result=stock_correction_context(connection,actor,int(parts[3]))
+                    elif route=='/api/it-assets/reissue-devices':
                         result=reissue_device_choices(connection,actor)
                     elif route=='/api/it-assets/device-sources':
                         result=device_stock_sources(connection,actor)
@@ -735,6 +740,8 @@ class Handler(BaseHTTPRequestHandler):
                         return
                     payload = json.loads(self.rfile.read(int(length)), object_pairs_hook=unique_directory_fields)
                     writer = {'/api/it-assets/reissue-device':reissue_stock_device,
+                              '/api/it-assets/corrections/preview':preview_stock_correction,
+                              '/api/it-assets/corrections':save_stock_correction,
                               '/api/it-assets/register-device':register_stock_device,
                               '/api/it-assets/receive':receive_stock,'/api/it-assets/readiness':update_stock_readiness,
                               '/api/it-assets/issue':issue_stock,'/api/it-assets/return':return_stock,

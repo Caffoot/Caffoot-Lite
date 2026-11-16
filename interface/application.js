@@ -3974,6 +3974,10 @@ function openIpModal(ip) {
                 .filter(field => !['button','submit','reset','hidden'].includes(field.type))
                 .map(field => [field.id || field.name || '', field.type, field.type === 'checkbox' || field.type === 'radio' ? field.checked : field.value]));
         }
+        function stockFormHasChanges(form) {
+            const initial=modalFormSnapshots.get(form);
+            return initial!==undefined&&(modalFormSnapshot(form)+'|'+(form.dataset.receiptMode||''))!==initial;
+        }
         function rememberModalForm() {
             const form = document.querySelector('#modal-content #stock-reissue-form[data-direct-handover="true"], #modal-content form[data-device-form="true"], #modal-content form[data-ipam-subnet-creation], #modal-content form[data-form-action="subnet"], #modal-content form[data-form-action="rack"], #modal-content form[data-form-action="ip"], #modal-content form[data-form-action="assign"], #modal-content form[data-form-action="bulk-ip"], #modal-content form[data-form-action="manufacturer"], #modal-content form[data-form-action="model"], #modal-content form[data-form-action="software"], #modal-content form[data-form-action="server-service"]');
             if (form) modalFormSnapshots.set(form, modalFormSnapshot(form));
@@ -9232,7 +9236,7 @@ void (async () => {
           (sessionIsAdmin && (button.closest('#next-user-create-form,#next-user-profile-form,#smtp-settings-form,#smtp-test-form') || button.form?.matches('#role-definition-form'))) ||
           (editPermissions['Staff Members'] && button.form?.matches('#staff-record-form')) ||
           (editPermissions.Departments && button.form?.matches('#staff-department-form')) ||
-          (editPermissions['IT Assets'] && button.form?.matches('#stock-receipt-form,#stock-readiness-form,#stock-issue-form,#stock-return-form,#stock-writeoff-form,#stock-preparation-form,#stock-reissue-form')) ||
+          (editPermissions['IT Assets'] && button.form?.matches('#stock-receipt-form,#stock-readiness-form,#stock-issue-form,#stock-return-form,#stock-writeoff-form,#stock-preparation-form,#stock-reissue-form,#stock-correction-form')) ||
           (editPermissions.Devices && button.form?.matches('form[data-device-form="true"],#equipment-assignment-form,#stock-reissue-form[data-direct-handover]')) ||
           (editPermissions.IPAM && button.closest('form[data-form-action="ip"],form[data-form-action="bulk-ip"],form[data-form-action="subnet"],form[data-ipam-subnet-creation]')) ||
           (editPermissions.Devices && editPermissions.Racks && button.closest('#rack-shelf-removal-form')) ||
@@ -11074,7 +11078,7 @@ void (async () => {
         !(editPermissions.Racks && element.closest('form[data-form-action="rack"],form[data-form-action="assign"],#rack-accessory-form')) &&
         !(editPermissions['Staff Members'] && element.form?.matches('#staff-record-form')) &&
         !(editPermissions.Departments && element.form?.matches('#staff-department-form')) &&
-        !(editPermissions['IT Assets'] && element.form?.matches('#stock-receipt-form,#stock-readiness-form,#stock-issue-form,#stock-return-form,#stock-writeoff-form,#stock-preparation-form,#stock-reissue-form')))) {
+        !(editPermissions['IT Assets'] && element.form?.matches('#stock-receipt-form,#stock-readiness-form,#stock-issue-form,#stock-return-form,#stock-writeoff-form,#stock-preparation-form,#stock-reissue-form,#stock-correction-form')))) {
       event.preventDefault();
       event.stopImmediatePropagation();
       showToast(!sessionIsAdmin ? 'Edit permission is required for this action.' : 'This inventory operation is not yet connected to SQLite.', 'error');
@@ -11085,7 +11089,7 @@ void (async () => {
     if (event.target.matches('#next-account-password-form,#next-account-mfa-start,#next-account-mfa-confirm,#account-mfa-removal-form,#personal-details-form,#next-user-profile-form,#smtp-settings-form,#smtp-test-form,#account-email-verification-form') ||
         (editPermissions['Staff Members'] && event.target.matches('#staff-record-form')) ||
         (editPermissions.Departments && event.target.matches('#staff-department-form')) ||
-        (editPermissions['IT Assets'] && event.target.matches('#stock-receipt-form,#stock-readiness-form,#stock-issue-form,#stock-return-form,#stock-writeoff-form,#stock-preparation-form,#stock-reissue-form')) ||
+        (editPermissions['IT Assets'] && event.target.matches('#stock-receipt-form,#stock-readiness-form,#stock-issue-form,#stock-return-form,#stock-writeoff-form,#stock-preparation-form,#stock-reissue-form,#stock-correction-form')) ||
         (editPermissions.Devices && event.target.matches('form[data-device-form="true"],#equipment-assignment-form,#stock-reissue-form[data-direct-handover]')) ||
         (editPermissions.IPAM && event.target.matches('form[data-form-action="ip"],form[data-form-action="bulk-ip"],form[data-form-action="subnet"],form[data-ipam-subnet-creation]')) ||
         (editPermissions.Racks && event.target.matches('form[data-form-action="rack"],form[data-form-action="assign"],#rack-accessory-form')) ||
@@ -11136,16 +11140,19 @@ void (async () => {
       viewAssociations:id=>{closeModal(true);switchTab('devices');openDeviceDetailView(id);selectDeviceDetailsTab('associated');},
       openModal:html=>openModal(html),viewAssigned:id=>{closeModal(true);switchTab('devices');openDeviceDetailView(id);selectDeviceDetailsTab('assigned');},
       cancelHandover:(id,onDiscard)=>closeModal(false,()=>{onDiscard();switchTab('devices');openDeviceDetailView(id);selectDeviceDetailsTab('assigned');}),
-      rememberStockForm:form=>{
-        if(!modalFormSnapshots.has(form))modalFormSnapshots.set(form,modalFormSnapshot(form)+'|'+(form.dataset.receiptMode||''));
+      rememberStockForm:(form,initialValues=null)=>{
+        if(!modalFormSnapshots.has(form)){
+          const snapshot=JSON.parse(modalFormSnapshot(form));
+          if(initialValues)for(const field of snapshot)if(Object.hasOwn(initialValues,field[0]))field[2]=initialValues[field[0]];
+          modalFormSnapshots.set(form,JSON.stringify(snapshot)+'|'+(form.dataset.receiptMode||''));
+        }
       },
       cancelStockForm:(form,onDiscard)=>{
-        if(!form||!form.isConnected)return;
-        const initial=modalFormSnapshots.get(form);
-        const changed=initial!==undefined&&(modalFormSnapshot(form)+'|'+(form.dataset.receiptMode||''))!==initial;
-        if(changed)confirmDiscardDeviceFormChanges(onDiscard,true);
+        if(!form)return;
+        if(stockFormHasChanges(form))confirmDiscardDeviceFormChanges(onDiscard,true);
         else onDiscard();
       },
+      hasStockFormChanges:stockFormHasChanges,
       registerDevice:id=>{closeModal(true);switchTab('devices');openDeviceModal();void loadDeviceStockSources(id);},
       redraw:()=>{if(currentTab==='it-assets')renderContent();},notify:(message,type)=>showToast(message,type)});
     await loadAccountProfile();

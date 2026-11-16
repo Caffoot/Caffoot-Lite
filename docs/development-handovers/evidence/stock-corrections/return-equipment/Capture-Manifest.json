@@ -1,0 +1,163 @@
+{
+  "reviewedStartingHead": "c1bc8aec0f739667d2b5a8a1c60a881acb23f5f5",
+  "runtimeCommit": "62165e42b3043f9ec23eb217ab5d76899ff52d64",
+  "capturedCheckoutHead": "5eef60290db9446d0e400066b65165180403fd47",
+  "provenance": "The successful capture included the pending refresh-message correction. All six recorded runtime hashes match runtimeCommit exactly; the capture checkout head alone is not its runtime provenance.",
+  "sourceHashes": {
+    "backend/stock_corrections.py": "42d1c4e520218ca4af7ed6cc129de88461222fa222b62e03f6a0ee0b154cbdf2",
+    "backend/server.py": "8a0b6e36adaad885c8ec26add3e878e8a26ca388aee1073f143f99a55dc105e6",
+    "backend/stock_circulation.py": "57d61a334c16cb7e3a7977e546708300e0208c03589ea374ac86f982d6f5ab8b",
+    "interface/stock-intake.js": "72a31a6d251a0bc83e9f07f63d03cc68724c2d07e4f8bd29c2d45f25a060d62e",
+    "interface/application.js": "a36b4298f31951c91274ecad2cc60571b0ae10dac65073a4a706ca06259ddef3",
+    "interface/styles/stock.css": "54ba81f9a7dce75135bf4a60eccca5f6af94700dba899d6338566546549e3af6"
+  },
+  "testRunnerSha256": "b73878388adee0f760d6cfa3d9697e27b96d27047e8137ef3b0f07db296ef59d",
+  "screenshots": [
+    {
+      "file": "return-original-issue-light-1440.png",
+      "sha256": "f802df46909f0a884d39f3215bdc95551f7d37f5ac29bcd98aff5f2d4d4cd1f8",
+      "width": 1440,
+      "height": 1234
+    },
+    {
+      "file": "return-original-issue-dark-1440.png",
+      "sha256": "1beab02c0718bd9a81b5cfafa329e0166e28d1f4dc7e5aaedc5e6cb5e297a435",
+      "width": 1440,
+      "height": 1234
+    },
+    {
+      "file": "return-original-issue-light-390.png",
+      "sha256": "6b33dc5bae8cebf46df1d9e5cbb5d77ca73b7e9497d6e1481c19eae6b85b8056",
+      "width": 390,
+      "height": 2047
+    },
+    {
+      "file": "return-original-issue-dark-390.png",
+      "sha256": "a42c209f57c32b9db2d3397510f437b8c5797a1784a91c4a1c3e7d3b57465f52",
+      "width": 390,
+      "height": 2047
+    },
+    {
+      "file": "return-correction-impact-light-1440.png",
+      "sha256": "fc33d1137daa803044aa794753cf022ad4360c5ffe0f6524bee366d71121d7ca",
+      "width": 1139,
+      "height": 1393
+    },
+    {
+      "file": "return-correction-impact-dark-1440.png",
+      "sha256": "b5abd883d54132b65cf664121208348b6a123001038613be8ae507bcb7dfea41",
+      "width": 1139,
+      "height": 1393
+    },
+    {
+      "file": "return-correction-impact-light-390.png",
+      "sha256": "e5a618551db6735dae44193448a86daebe5392870aac6e1f26ca3048573332f5",
+      "width": 293,
+      "height": 2096
+    },
+    {
+      "file": "return-correction-impact-dark-390.png",
+      "sha256": "9b2844abff039017b22b6f73a8d49b068c44a31bbb64632e5679813dda503ae6",
+      "width": 293,
+      "height": 2096
+    },
+    {
+      "file": "return-refreshed-quantity-light-1440.png",
+      "sha256": "9f6d98f61c309e5b808a1615a7383fe81c22298c0474a1c8db7c67380180bb26",
+      "width": 1440,
+      "height": 1257
+    },
+    {
+      "file": "return-refreshed-quantity-dark-1440.png",
+      "sha256": "bd608b5c35d5b204988e2888012abf5fd25e3f828926ba8759e488b042b35fc9",
+      "width": 1440,
+      "height": 1257
+    },
+    {
+      "file": "return-refreshed-quantity-light-390.png",
+      "sha256": "8c0e904a782dc003a34dae436f793388b9f2d137d7e8c2413b417ee57099584e",
+      "width": 390,
+      "height": 2102
+    },
+    {
+      "file": "return-refreshed-quantity-dark-390.png",
+      "sha256": "eac15f341779757e0369678d4fbd1721a5d5b2a4d92f15de17bfe428a35d9120",
+      "width": 390,
+      "height": 2102
+    },
+    {
+      "file": "return-original-ineligible-light-1440.png",
+      "sha256": "79035e46dd140ae967a62a38f8a82442a0c090693a324b0a46f60e276adcdd87",
+      "width": 1440,
+      "height": 1230
+    },
+    {
+      "file": "return-original-ineligible-dark-1440.png",
+      "sha256": "d04b6f6198d7f6500cab3b836f19428b1662a7bdfa2dbeade283067c8c795394",
+      "width": 1440,
+      "height": 1230
+    },
+    {
+      "file": "return-original-ineligible-light-390.png",
+      "sha256": "f0adfba22874207401ab16bb74b3d1a500acffd8310ac44bb8fb1a50e882298d",
+      "width": 390,
+      "height": 2000
+    },
+    {
+      "file": "return-original-ineligible-dark-390.png",
+      "sha256": "f2e8aa8b7c4892df3a15d654f1c19a97659c5ac42d7c3f1c182b3b76fd86672d",
+      "width": 390,
+      "height": 2000
+    },
+    {
+      "file": "return-correction-impact-full-page-light-1440.png",
+      "sha256": "9654b1b089b5375c42e8b693a5cebeabd32c760413889aeb7e7779f66e8b2483",
+      "width": 1440,
+      "height": 2952,
+      "captureSourceCommit": "17627504c7bbd55b9685f75c0241e9be35d1c4fe",
+      "capturedAt": "2026-11-16T17:50:48.594Z",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "theme": "light",
+      "scope": "Full Application Page",
+      "sourceHashes": {
+        "backend/stock_corrections.py": "42d1c4e520218ca4af7ed6cc129de88461222fa222b62e03f6a0ee0b154cbdf2",
+        "backend/server.py": "8a0b6e36adaad885c8ec26add3e878e8a26ca388aee1073f143f99a55dc105e6",
+        "backend/stock_circulation.py": "57d61a334c16cb7e3a7977e546708300e0208c03589ea374ac86f982d6f5ab8b",
+        "interface/stock-intake.js": "72a31a6d251a0bc83e9f07f63d03cc68724c2d07e4f8bd29c2d45f25a060d62e",
+        "interface/application.js": "a36b4298f31951c91274ecad2cc60571b0ae10dac65073a4a706ca06259ddef3",
+        "interface/styles/stock.css": "54ba81f9a7dce75135bf4a60eccca5f6af94700dba899d6338566546549e3af6"
+      },
+      "originalIssueEntryId": 3,
+      "originalQuantity": 8,
+      "currentEffectiveQuantity": 8,
+      "proposedQuantity": 7,
+      "reason": "Allocation record confirms seven issued.",
+      "impact": "Balance\tBefore\tAfter\nPhysically Held\t15\t16\nReady To Issue\t5\t6\nAwaiting Checks\t10\t10\nAwaiting Preparation\t1\t1\nCurrently Issued\t3\t2\nWritten Off\t1\t1\nOriginal Issue Outstanding\t3\t2",
+      "pageErrors": [],
+      "checks": [
+        "Authenticated Real HTTPS Application",
+        "Original Issue Opened From Return Equipment",
+        "Application Header And Sidebar",
+        "IT Assets Tabs",
+        "Matching Correction State And Calculated Balances",
+        "Complete Correction Form And Bottom Actions",
+        "Desktop Light Theme",
+        "No Horizontal Page Overflow"
+      ]
+    }
+  ],
+  "authenticApplication": true,
+  "desktopViewport": {
+    "width": 1440,
+    "height": 1050
+  },
+  "mobileViewport": {
+    "width": 390,
+    "height": 844
+  },
+  "fixtures": "Fictional records in isolated SQLite; authenticated real HTTPS server and Chromium. The tests inject 503 responses only to verify failure handling; gallery captures show real server-loaded states.",
+  "preservedApprovedCaptures": 28
+}
