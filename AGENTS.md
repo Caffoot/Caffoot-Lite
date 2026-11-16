@@ -15,6 +15,14 @@ These rules apply to all AI-assisted development in this repository. Read them b
 9. **Stop at a genuine blocker.** If the approved approach cannot work, explain exactly what prevents it and the minimum proposed change; obtain explicit owner approval *before* deviating. Do not disguise a workaround as equivalent.
 10. **Respect the delivery boundary.** Do not modify `main`, merge PRs, publish images or releases, or change unrelated branches/issues unless explicitly authorised. A finished task is the agreed outcome, not a large diff, high test count or long-running investigation.
 
+## Efficient development and final verification
+
+- **Do not spend coding time watching CI.** Implement the approved change, run only relevant focused tests, commit and push the checkpoint, report the PR link and test results, then stop. Do not poll GitHub Actions, repeatedly call `gh run view`, wait for workflows to finish or repeatedly rerun passing suites. Independent reviewers monitor CI outside the coding session.
+- **Draft PRs are for development.** The complete backend, Docker Compose and multi-browser regression workflows are deferred while a PR is a draft. Run the necessary focused checks locally to establish that each changed behaviour, permission and data safeguard works. Record anything not tested. Do not treat a skipped full check as a pass.
+- **Ready For Review is the final CI checkpoint.** After the implementation, essential documentation and required screenshots are complete, mark the PR Ready For Review to trigger the full existing checks. A subsequent change to application code requires the new head to pass its required checks before merge. Keep full suites enabled for integration-branch pushes, manual checks and publication.
+- **Evidence-only follow-ups are narrow.** Review only the new evidence and affected files; do not regenerate unrelated screenshots or repeat broad local testing. Record any check affected by the changed PR head.
+- **Never weaken acceptance to save credits.** Permissions, persistence, security, release and compatibility requirements still apply. If a focused check cannot establish safe behaviour, run the necessary wider check and explain why. The owner alone approves scope, merges and releases.
+
 ## Current release and next work
 
 - **Published baseline:** [Caffoot Lite v2.1](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v2.1), released on 8 November 2026. The accepted modular interface is already on `main`.
