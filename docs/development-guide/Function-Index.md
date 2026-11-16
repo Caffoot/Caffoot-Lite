@@ -616,19 +616,19 @@ The account hydration/photo functions now have purpose-based callable bindings m
 | [`request`](../../interface/equipment.js#L8) | 8 |
 | [`assignmentHistory`](../../interface/equipment.js#L14) | 14 |
 | [`assetMovementHistory`](../../interface/equipment.js#L19) | 19 |
-| [`staffPlaceholder`](../../interface/equipment.js#L23) | 23 |
-| [`loadStaffEquipment`](../../interface/equipment.js#L27) | 27 |
-| [`loadDeviceEquipment`](../../interface/equipment.js#L36) | 36 |
-| [`renderMyEquipment`](../../interface/equipment.js#L48) | 48 |
-| [`loadMyEquipment`](../../interface/equipment.js#L51) | 51 |
-| [`list`](../../interface/equipment.js#L54) | 54 |
-| [`hydrate`](../../interface/equipment.js#L62) | 62 |
-| [`showAssignmentDialog`](../../interface/equipment.js#L66) | 66 |
-| [`searchRecipients`](../../interface/equipment.js#L77) | 77 |
-| [`searchDevices`](../../interface/equipment.js#L86) | 86 |
-| [`leaveAssignmentDialog`](../../interface/equipment.js#L94) | 94 |
-| [`saveAssignment`](../../interface/equipment.js#L100) | 100 |
-| [`caffootEquipment.configure`](../../interface/equipment.js#L150) | 150 |
+| [`staffPlaceholder`](../../interface/equipment.js#L24) | 24 |
+| [`loadStaffEquipment`](../../interface/equipment.js#L28) | 28 |
+| [`loadDeviceEquipment`](../../interface/equipment.js#L37) | 37 |
+| [`renderMyEquipment`](../../interface/equipment.js#L49) | 49 |
+| [`loadMyEquipment`](../../interface/equipment.js#L52) | 52 |
+| [`list`](../../interface/equipment.js#L55) | 55 |
+| [`hydrate`](../../interface/equipment.js#L63) | 63 |
+| [`showAssignmentDialog`](../../interface/equipment.js#L67) | 67 |
+| [`searchRecipients`](../../interface/equipment.js#L78) | 78 |
+| [`searchDevices`](../../interface/equipment.js#L87) | 87 |
+| [`leaveAssignmentDialog`](../../interface/equipment.js#L95) | 95 |
+| [`saveAssignment`](../../interface/equipment.js#L101) | 101 |
+| [`caffootEquipment.configure`](../../interface/equipment.js#L151) | 151 |
 
 ## interface/stock-intake.js
 

@@ -44,7 +44,7 @@ async function main(){
   await page.setViewportSize({width,height});await page.evaluate(theme=>caffootSetTheme(theme),theme);await setup();
   await page.waitForFunction(()=>!document.getElementById('toast')||Number(getComputedStyle(document.getElementById('toast')).opacity)===0);
   await page.evaluate(()=>scrollTo(0,0));assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),'Horizontal document overflow');
-  const filename=name+'-'+theme+'-'+width+'.png';await page.screenshot({path:path.join(output,filename),fullPage:true});screens.push(filename);
+  const filename=name+'-'+theme+'-'+width+'.png';await page.screenshot({path:path.join(output,filename),fullPage:!name.startsWith('device-details-')});screens.push(filename);
  }await page.setViewportSize({width:1440,height:1050});await page.evaluate(()=>caffootSetTheme('light'));await setup();}
  await page.goto(address+'/inventory');
  const unassignedDetails=()=>deviceDetails(page,serverId);
@@ -75,7 +75,7 @@ async function main(){
  assert.equal(snapshot(),original,'Actual Device, network, Rack, account, role and assignment records must remain identical');
  assert.equal((await post('/api/it-assets/return',{...submitted,operationId:crypto.randomUUID()})).status(),409);
  async function returnedDetails(){await deviceDetails(page,serverId);await page.locator('#device-details-panel-assigned').getByText('Equipment Returned',{exact:false}).waitFor();}
- await returnedDetails();assert.equal(await page.locator('[data-equipment-action="return-device-stock"]').count(),0);await captures('device-details-return-recorded',returnedDetails);
+ await returnedDetails();await page.locator('#device-details-panel-assigned .small-table th').filter({hasText:'Recorded By'}).waitFor();assert.equal(await page.locator('[data-equipment-action="return-device-stock"]').count(),0);await captures('device-details-return-recorded',returnedDetails);
  async function movementHistory(){const close=page.locator('.device-review-footer [data-action="close-modal"]');if(await close.isVisible())await close.click();await page.locator('#sidebar [data-tab="it-assets"]').click();await page.locator('[data-stock-action="tab"][data-tab="movements"]').click();await page.locator('#main-content summary').filter({hasText:'Movement Details'}).first().click();}
  await movementHistory();assert.match(await page.locator('#main-content').innerText(),/Physical Return Confirmed/);await captures('physical-return-provenance',movementHistory);
  const devicesOnly=await browser.newContext({ignoreHTTPSErrors:true,locale:'en-GB'});const restricted=await login(devicesOnly,'return-devices-only','Fictional-Return-Password-2026!');

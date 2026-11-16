@@ -62,3 +62,20 @@ with captures enabled and 14-day artifact retention.
 
 Full final verification, committed-source genuine captures and changed-screen owner
 acceptance remain pending. Existing approved images are retained unchanged.
+
+## Visual Review Follow-up
+
+The first genuine captures exposed an unstyled movement-history row in Device
+Details. Only the new confirmed-return case now reuses the existing Device Details
+`small-table` and horizontal-scroll presentation. Staff views and earlier Device
+history variants retain their original rendering; no stylesheet or screen fragment
+changed. Device Details captures use the actual viewport, while the Return form
+and Movement History use full-page captures. The focused new browser flow passed
+again: [log](browser-visual.log). Final images are refreshed after this checkpoint.
+
+The full local backend suite at `aa1f526e7cc7e430b2e5126caef4bee8cafd8691` ran
+**803 tests: 799 passed, four skipped**, 140.934 s: [log](backend-final.log).
+The skips are opt-in Docker (checked by final CI), two unavailable private genuine
+v1.3.3 exports, and the separate Stage 6 complete-volume restore rehearsal.
+This visual follow-up changes no backend source. Final CI covers the delivered
+revision; no skipped test is presented as passing.
