@@ -121,6 +121,16 @@ async function main(){
  const stockBefore=stockSnapshot(),inventoryBefore=inventorySnapshot();
  await page.locator('[data-equipment-action="reassign-device"]').click();
  await page.locator('#stock-reissue-form[data-direct-handover]').waitFor();
+ assert.equal((await page.locator('label[for="stock-recipientKind"]').textContent()).trim(),'Recipient Type');
+ assert.equal((await page.locator('label[for="stock-recipientId"]').textContent()).trim(),'Find A Recipient');
+ assert.equal(await page.locator('#stock-recipientSearch').count(),0,'Direct handover must show only its two dropdowns');
+ assert.equal(await page.locator('#stock-reissue-form').getByText('New Recipient',{exact:true}).count(),0);
+ await page.locator('#stock-recipientKind').selectOption('department');
+ await page.locator('#stock-recipientId option[value="department"]').waitFor({state:'attached'});
+ assert.equal(await page.locator('#stock-recipientId option[value="other"]').count(),0,'Department list must not show staff');
+ await page.locator('#stock-recipientKind').selectOption('staff');
+ await page.locator('#stock-recipientId option[value="other"]').waitFor({state:'attached'});
+ assert.equal(await page.locator('#stock-recipientId option[value="department"]').count(),0,'Staff list must not show departments');
  assert.equal(await page.locator('#stock-handoverDevice').inputValue(),'Fictional Laptop');
  assert.equal(await page.locator('#stock-handoverDevice').getAttribute('readonly'),'');
  assert.equal(await page.locator('#stock-reissue-form [name="cleanedWorking"]').isChecked(),false);
