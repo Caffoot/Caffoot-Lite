@@ -133,6 +133,13 @@ async function main(){
  assert.equal((await item()).balances.readyToIssue,9);
  const assignment=await (await owner.request.get(address+'/api/equipment/assignments?staffId=retained-person')).json();
  assert.ok(assignment.current.some(entry=>entry.deviceName==='Fictional Stock Computer'));
+ await page.reload();await page.locator('#sidebar [data-action="tab-devices"]').click();
+ await page.locator('[data-action="open-device-modal"]').first().click();await page.locator('#device-get-from-stock').click();
+ await page.locator('#device-stock-source option[value="'+receipt.stockItemId+'"]').waitFor({state:'attached'});
+ await page.locator('#dev-type option[value="Desktop"]').evaluate(option=>option.remove());
+ await page.locator('#device-stock-source').selectOption(receipt.stockItemId);
+ assert.match(await page.locator('#device-stock-feedback').textContent(),/Device Type is unavailable/);
+ assert.equal((await item()).balances.physicallyHeld,9);
  await post('/api/settings/features',{feature:'it_assets',enabled:false,confirmDisable:true});
  await page.reload();await page.locator('#sidebar [data-action="tab-devices"]').click();
  await page.locator('[data-action="open-device-modal"]').first().click();

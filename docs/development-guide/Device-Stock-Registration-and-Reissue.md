@@ -185,3 +185,9 @@ hidden Ubiquiti preferences. Capture helpers verify the actual theme and retain
 only changed-screen evidence. The Function Index has 968 source-mapped definitions.
 Complete final-source backend/browser/Docker/documentation and Actions results are
 recorded in the [evidence report](../development-handovers/evidence/device-stock-registration/Report.md).
+
+A final compatibility check also covers a stock batch whose Device Type has been
+removed from the current editor catalogue. Selection now reports the incompatibility
+inline, with no Device/stock mutation or browser error. The complete real-browser
+registration/reissue flow passed with that additional check. This is a validation
+message within the existing control, not another registration form or route.

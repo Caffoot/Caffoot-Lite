@@ -9579,7 +9579,7 @@ void (async () => {
         const source=result.sources.find(source=>source.id===select.value);
         if(!source)return;
         const type=document.getElementById('dev-type');
-        if(!Array.from(type.options).some(option=>option.value===source.prefill.type))throw Error('This Device Type is unavailable in the existing editor.');
+        if(!Array.from(type.options).some(option=>option.value===source.prefill.type)){feedback.textContent='This Device Type is unavailable in the existing editor. Select a compatible stock item or restore the Device Type before continuing.';select.value='';return;}
         document.getElementById('dev-deployment').value='physical';
         type.value=source.prefill.type;
         type.dispatchEvent(new Event('change',{bubbles:true}));
