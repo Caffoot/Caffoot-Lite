@@ -265,12 +265,7 @@
   });
   document.addEventListener('input',event=>{if(event.target.closest('#stock-receipt-form,#stock-readiness-form,#stock-issue-form,#stock-return-form,#stock-writeoff-form,#stock-preparation-form,#stock-reissue-form'))hydrateStock();});
   document.addEventListener('change',event=>{if(event.target.closest('#stock-receipt-form,#stock-readiness-form,#stock-issue-form,#stock-return-form,#stock-writeoff-form,#stock-preparation-form,#stock-reissue-form'))hydrateStock();});
-  document.addEventListener('reset',event=>{
-    if(event.target.id==='stock-receipt-form'){event.target.dataset.operationId='';setTimeout(hydrateStock,0);}
-    if(event.target.id==='stock-reissue-form'&&event.target.dataset.directHandover==='true'){
-      event.target.dataset.recipientQuery='';setTimeout(hydrateStock,0);
-    }
-  });
+  document.addEventListener('reset',event=>{if(event.target.id==='stock-receipt-form'){event.target.dataset.operationId='';setTimeout(hydrateStock,0);}});
   document.addEventListener('keydown',event=>{
     const button=event.target.closest('[data-stock-action="tab"]');
     if(!button||!['ArrowLeft','ArrowRight','Home','End'].includes(event.key))return;
@@ -283,7 +278,12 @@
   function stockUnitState(unit){return ['written_off','issued','ready','awaiting_preparation','awaiting_checks'].find(state=>unit.balances[state]===1)||'';}
   function stockNote(label,name){return `<div class="preview-form-field"><label for="stock-${name}">${label}</label><textarea class="input" id="stock-${name}" name="${name}" maxlength="2000"></textarea></div>`;}
   function stockWorkflowForm(id,title,description,content,summary,action,confirmation=''){
-    return `<form id="stock-${id}-form" class="preview-aligned-form"><div class="staff-main-grid"><div class="stock-card-stack">${stockCard(title,description,content)}<p class="formhint" data-stock-feedback role="alert"></p>${confirmation?`<p class="formhint" id="stock-physical-return-confirmation">${confirmation}</p>`:''}<div class="preview-details-actions"><button class="btn" type="reset">Reset</button><button class="btn primary" type="submit"${confirmation?' aria-describedby="stock-physical-return-confirmation"':''}>${action}</button></div></div><aside class="staff-side-stack">${stockCard('Selected Equipment','Only the selected equipment and its genuine quantities are used.',summary)}</aside></div></form>`;
+    const handover=id==='reissue'&&!!stockContext.handover;
+    const submit=`<button class="btn primary" type="submit"${confirmation?' aria-describedby="stock-physical-return-confirmation"':''}>${action}</button>`;
+    const actions=handover
+      ?`<div class="assignment-modal-actions">${stockButton('Cancel','cancel-handover')}${submit}</div>`
+      :`<div class="preview-details-actions"><button class="btn" type="reset">Reset</button>${submit}</div>`;
+    return `<form id="stock-${id}-form" class="preview-aligned-form"><div class="staff-main-grid"><div class="stock-card-stack">${stockCard(title,description,content)}<p class="formhint" data-stock-feedback role="alert"></p>${confirmation?`<p class="formhint" id="stock-physical-return-confirmation">${confirmation}</p>`:''}${handover?'':actions}</div><aside class="staff-side-stack">${stockCard('Selected Equipment','Only the selected equipment and its genuine quantities are used.',summary)}</aside></div>${handover?actions:''}</form>`;
   }
   function stockIssueReady(item){return !item?0:item.trackingMode==='quantity'?(item.quantityStateBalances.ready||0):item.units.filter(unit=>unit.ready&&!unit.deviceLinked).length;}
   function renderDeviceReissue(){
@@ -550,7 +550,7 @@
   function openDirectHandover(context){
     if(!config.canEditDevices()||!context)return;
     stockContext={handover:context};
-    config.openModal(`<div class="equipment-dialog stock-live"><div class="assignment-modal-head"><h2>Reassign Device</h2>${stockButton('Cancel','cancel-handover')}</div><div class="assignment-modal-body">${renderDeviceReissue()}</div></div>`);
+    config.openModal(`<div class="equipment-dialog stock-live"><div class="assignment-modal-head"><h2>Reassign Device</h2></div><div class="assignment-modal-body">${renderDeviceReissue()}</div></div>`);
     document.getElementById('stock-reissue-form').dataset.directHandover='true';
     hydrateStockCirculation();document.getElementById('stock-recipientKind')?.focus();
   }
