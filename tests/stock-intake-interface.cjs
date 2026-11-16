@@ -108,6 +108,36 @@ async function main(){
  await page.locator('[data-action="tab-it-assets"]').waitFor({state:'visible'});
  await page.locator('[data-action="tab-it-assets"]').click();
  await page.locator('#stock-receipt-form').waitFor();
+ // All full-page stock workflows use the approved right-aligned Cancel / orange primary footer.
+ for(const [tabName,formId,submitText] of [
+   ['receive','stock-receipt-form','Record Receipt'],
+   ['issue','stock-issue-form','Issue Equipment'],
+   ['return','stock-return-form','Record Return'],
+   ['writeoff','stock-writeoff-form','Record Write Off'],
+   ['reissue','stock-reissue-form','Reissue Existing Device']
+ ]){
+   if(tabName!=='receive')await stockTab(tabName);
+   const form=page.locator('#'+formId);
+   await form.waitFor();
+   const footer=form.locator('> .stock-form-actions');
+   assert.deepEqual((await footer.locator('button').allTextContents()).map(value=>value.trim()),['Cancel',submitText]);
+   assert.equal(await footer.locator('[type="submit"]').getAttribute('class'),'btn btn-primary');
+   assert.equal(await footer.evaluate(node=>getComputedStyle(node).justifyContent),'flex-end');
+   assert.equal(await form.locator('button[type="reset"]').count(),0);
+   await footer.locator('[data-stock-action="cancel-stock"]').click();
+   assert.equal(await page.locator('#discard-dialog').count(),0,'Unchanged '+tabName+' cancels immediately');
+   assert.equal(await page.locator('#stock-tab-inventory').getAttribute('aria-selected'),'true');
+ }
+ await stockTab('receive');
+ await page.locator('#stock-supplier').fill('Discard this unsaved delivery');
+ await page.locator('#stock-receipt-form [data-stock-action="cancel-stock"]').click();
+ await page.locator('#discard-dialog').waitFor();
+ await page.locator('#discard-dialog [data-action="keep-editing"]').click();
+ assert.equal(await page.locator('#stock-supplier').inputValue(),'Discard this unsaved delivery');
+ await page.locator('#stock-receipt-form [data-stock-action="cancel-stock"]').click();
+ await page.locator('#discard-dialog [data-action="discard-device-form-changes"]').click();
+ assert.equal(await page.locator('#stock-tab-inventory').getAttribute('aria-selected'),'true');
+ await stockTab('receive');
  await newComputer(16,10,'Fictional Supplier A');
  await page.locator('#stock-receivedOn').fill('2026-11-13');
  await page.locator('#stock-notes').fill('First fictional delivery');
