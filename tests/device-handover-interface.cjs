@@ -131,6 +131,12 @@ async function main(){
  await page.locator('#stock-recipientKind').selectOption('staff');
  await page.locator('#stock-recipientId option[value="other"]').waitFor({state:'attached'});
  assert.equal(await page.locator('#stock-recipientId option[value="department"]').count(),0,'Staff list must not show departments');
+ await page.locator('#stock-recipientKind').selectOption('department');
+ await page.locator('#stock-recipientId option[value="department"]').waitFor({state:'attached'});
+ await page.locator('#stock-reissue-form button[type="reset"]').click();
+ await page.locator('#stock-recipientId option[value="other"]').waitFor({state:'attached'});
+ assert.equal(await page.locator('#stock-recipientKind').inputValue(),'staff','Reset must restore the recipient type');
+ assert.equal(await page.locator('#stock-recipientId option[value="department"]').count(),0,'Reset must reload the matching recipient list');
  assert.equal(await page.locator('#stock-handoverDevice').inputValue(),'Fictional Laptop');
  assert.equal(await page.locator('#stock-handoverDevice').getAttribute('readonly'),'');
  assert.equal(await page.locator('#stock-reissue-form [name="cleanedWorking"]').isChecked(),false);
