@@ -1,5 +1,20 @@
 # Milestone 01 Development Handover — v2.2 Target
 
+> **Batch 3.10 D complete, 16 November 2026:** the approved Reassign Device
+> action is in Assigned To and reuses the existing form/preparation controls.
+> Confirm Ready And Reassign commits the old/new canonical assignments,
+> preparation evidence and registered custody together. Failure preserves the
+> old holder. Devices-only operation remains independent; registered stock needs
+> both Edit gates. Schema 19 adds audited/successor references without weakening
+> physical-return safeguards or changing Schema 18. No fictional receipt,
+> held/Ready increase or Device property change occurs. **146 focused tests and
+> both association/direct Chromium journeys passed**, including 20 genuine
+> direct-handover captures. See [the contract and verification](../development-guide/Associated-Equipment.md#direct-handover-checkpoint-d).
+> E's permanent gallery, final instructions and final-head Actions follow this
+> pushed D checkpoint. Earlier dated notes retain their historical scope;
+> the placement decision below is resolved. No merge/release/deployment.
+
+
 > **Direct-handover approval and migration preparation, 16 November 2026:** the
 > owner approved [the exact placement/sequence](../development-guide/Direct-Handover-Decision.md)
 > and a narrow separate migration. Schema 19 adds canonical audit/successor links

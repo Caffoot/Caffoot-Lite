@@ -8,8 +8,9 @@ operation and optional-feature protections must remain intact. No merge, release
 or deployment is authorised. The proposal below is retained as the approved
 source map; implementation and acceptance are reported separately.
 
-**Implementation checkpoint:** Schema 19's additive closure foundation is tested;
-the direct writer/interface and E acceptance are still in progress.
+**Implementation checkpoint:** D is complete. Schema 19's additive closure,
+atomic writer and approved controls passed 146 focused tests and a real Chromium
+journey. Final-head Actions and the permanent changed-screen gallery belong to E.
 
 ## The Exact Source Constraint
 
@@ -51,9 +52,9 @@ Accessories never follow automatically. The direct workstation does not enter
 Physically Held or Ready stock; no stock receipt is recorded. Existing genuine
 storeroom return → preparation → reissue remains available and unchanged.
 
-## Technical Work After The Decision
+## Implemented Technical Contract
 
-Implement a narrowly migrated, audited non-return closure path while preserving
+Schema 19 implements a narrowly migrated, audited non-return closure path while preserving
 the existing canonical assignment table, immutable history and Schema 18 links.
 For an already stock-linked issued Device, its stock ledger must also change
 holder consistently without any held/Ready balance increase. A Device without
@@ -61,9 +62,15 @@ stock provenance must remain outside stock. This needs focused migration,
 concurrency, rollback, stale-check and permission/feature-off tests; the original
 physical-return and write-off guards must remain intact.
 
-Then capture the changed direct-handover form in desktop/mobile light/dark,
-complete D, push, and perform E's final-head acceptance. No merge, release or
-deployment is authorised by approving the interface sequence.
+The approved controls now use `device_handovers.reassign_device`. Devices-only
+work creates no stock; registered custody uses one audited pair of issued-state
+entries, with no receipt or held/Ready increase. Both canonical holder records,
+preparation evidence and any stock custody commit together. The original
+physical-return path remains separately guarded. See [the API and checks](Associated-Equipment.md#direct-handover-checkpoint-d).
+
+Desktop/mobile light/dark captures were exercised in Chromium; E records the
+permanent gallery and final-head acceptance. No merge, release or deployment is
+authorised by approving the interface sequence.
 
 The former placement/sequence approval blocker is resolved. Any further departure
 from these controls or rules still requires a new owner decision.

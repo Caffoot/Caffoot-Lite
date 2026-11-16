@@ -626,6 +626,10 @@ def stock_movement_history(connection, actor, *, staff_id=None, department_id=No
         if (staff_id is not None or department_id is not None) and device:
             continue
         metadata=json.loads(details)
+        if metadata.get('directHandover') is True:
+            if new!='issued':
+                continue
+            kind='reassigned'
         original_source=metadata.get('sourceIssueEntryId')
         if source is None and type(original_source) is int:
             source=original_source
@@ -640,6 +644,8 @@ def stock_movement_history(connection, actor, *, staff_id=None, department_id=No
             sourceIssueEntryId=source,recipientLabel=holder,name=original.get('name','Equipment'),
             stockItemId=item or unit_item,deviceId=device,
             checks=metadata.get('checks'),note=metadata.get('note',metadata.get('notes',''))))
+        if metadata.get('directHandover') is True:
+            events[-1].update(directHandover=True,fromState='issued')
         if metadata.get('physicalReturnConfirmed') is True:
             events[-1].update(physicalReturnConfirmed=True,returnOrigin='unassigned_device')
     return events

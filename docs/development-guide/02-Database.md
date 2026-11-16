@@ -8,6 +8,16 @@ The code keeps Devices, IPAM and Racks records in separate tables, along with ac
 
 ## Source and schema version
 
+**Batch 3.10 Checkpoint D:** Schema 19 adds nullable `handover_event_id` and
+`successor_assignment_id` references to the canonical `device_assignments` table.
+The audited direct closure is separate from the existing physical-return guard.
+Referenced preparation audits and assignment links are immutable. Registered
+custody uses a guarded pair of existing stock entries, without held/Ready stock
+or a receipt; Devices-only handovers create no stock. The upgrade preserves
+Schema 18, existing records, grants and feature choices, and rejects altered
+definitions transactionally. See [the approved sequence](Direct-Handover-Decision.md)
+and [the writer contract](Associated-Equipment.md#direct-handover-checkpoint-d).
+
 **Batch 3.10 Checkpoint A:** Schema 18 adds one empty, permanent explicit
 `device_equipment_associations` table and protected history reads. Stock and
 assignment schemas remain unchanged. No existing recipient match creates an

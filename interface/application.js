@@ -4048,7 +4048,7 @@ function openIpModal(ip) {
             });
         }
         function closeModal(force = false, onClosed = null) {
-            if(document.getElementById('subnet-batch-preview')?.dataset.saving==='true'||document.getElementById('equipment-assignment-form')?.dataset.saving==='true')return;
+            if(document.getElementById('subnet-batch-preview')?.dataset.saving==='true'||document.getElementById('equipment-assignment-form')?.dataset.saving==='true'||document.querySelector('#stock-reissue-form[data-direct-handover]')?.dataset.saving==='true')return;
             if(rackShelfReturnContext){returnFromRackShelfCreation();return;}
             if (deviceOptionsReturnContent) {
                 captureInstalledSoftwareSelections();
@@ -9217,7 +9217,7 @@ void (async () => {
           (editPermissions['Staff Members'] && button.form?.matches('#staff-record-form')) ||
           (editPermissions.Departments && button.form?.matches('#staff-department-form')) ||
           (editPermissions['IT Assets'] && button.form?.matches('#stock-receipt-form,#stock-readiness-form,#stock-issue-form,#stock-return-form,#stock-writeoff-form,#stock-preparation-form,#stock-reissue-form')) ||
-          (editPermissions.Devices && button.form?.matches('form[data-device-form="true"],#equipment-assignment-form')) ||
+          (editPermissions.Devices && button.form?.matches('form[data-device-form="true"],#equipment-assignment-form,#stock-reissue-form[data-direct-handover]')) ||
           (editPermissions.IPAM && button.closest('form[data-form-action="ip"],form[data-form-action="bulk-ip"],form[data-form-action="subnet"],form[data-ipam-subnet-creation]')) ||
           (editPermissions.Devices && editPermissions.Racks && button.closest('#rack-shelf-removal-form')) ||
           (editPermissions.Racks && button.closest('form[data-form-action="rack"],form[data-form-action="assign"],#rack-accessory-form'))
@@ -11053,7 +11053,7 @@ void (async () => {
     if (isBlockedAction(action, element) || (element.matches('button') && element.type==='submit' && element.form &&
         !element.form.matches('form[data-device-form="true"],#role-definition-form,#next-user-create-form,#next-user-profile-form,#next-account-password-form,#next-account-mfa-start,#next-account-mfa-confirm,#account-mfa-removal-form,#personal-details-form,#smtp-settings-form,#smtp-test-form,#account-email-verification-form') &&
         !(editPermissions.IPAM && element.closest('form[data-form-action="ip"],form[data-form-action="bulk-ip"],form[data-form-action="subnet"],form[data-ipam-subnet-creation]')) &&
-        !(editPermissions.Devices && element.form?.matches('#equipment-assignment-form')) &&
+        !(editPermissions.Devices && element.form?.matches('#equipment-assignment-form,#stock-reissue-form[data-direct-handover]')) &&
         !(editPermissions.Devices && editPermissions.Racks && element.closest('#rack-shelf-removal-form')) &&
         !(editPermissions.Racks && element.closest('form[data-form-action="rack"],form[data-form-action="assign"],#rack-accessory-form')) &&
         !(editPermissions['Staff Members'] && element.form?.matches('#staff-record-form')) &&
@@ -11070,7 +11070,7 @@ void (async () => {
         (editPermissions['Staff Members'] && event.target.matches('#staff-record-form')) ||
         (editPermissions.Departments && event.target.matches('#staff-department-form')) ||
         (editPermissions['IT Assets'] && event.target.matches('#stock-receipt-form,#stock-readiness-form,#stock-issue-form,#stock-return-form,#stock-writeoff-form,#stock-preparation-form,#stock-reissue-form')) ||
-        (editPermissions.Devices && event.target.matches('form[data-device-form="true"],#equipment-assignment-form')) ||
+        (editPermissions.Devices && event.target.matches('form[data-device-form="true"],#equipment-assignment-form,#stock-reissue-form[data-direct-handover]')) ||
         (editPermissions.IPAM && event.target.matches('form[data-form-action="ip"],form[data-form-action="bulk-ip"],form[data-form-action="subnet"],form[data-ipam-subnet-creation]')) ||
         (editPermissions.Racks && event.target.matches('form[data-form-action="rack"],form[data-form-action="assign"],#rack-accessory-form')) ||
         (editPermissions.Devices && editPermissions.Racks && event.target.matches('#rack-shelf-removal-form')) ||
@@ -11118,6 +11118,7 @@ void (async () => {
       canEdit:()=>!!editPermissions['IT Assets'],canEditDevices:()=>!!editPermissions.Devices,refreshAccess:refreshStockAccess,
       navigate:()=>{closeModal(true);switchTab('it-assets');},viewDevice:id=>openDeviceDetailView(id),
       viewAssociations:id=>{closeModal(true);switchTab('devices');openDeviceDetailView(id);selectDeviceDetailsTab('associated');},
+      openModal:html=>openModal(html),viewAssigned:id=>{closeModal(true);switchTab('devices');openDeviceDetailView(id);selectDeviceDetailsTab('assigned');},
       registerDevice:id=>{closeModal(true);switchTab('devices');openDeviceModal();void loadDeviceStockSources(id);},
       redraw:()=>{if(currentTab==='it-assets')renderContent();},notify:(message,type)=>showToast(message,type)});
     await loadAccountProfile();

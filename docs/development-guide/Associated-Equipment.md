@@ -1,24 +1,16 @@
 # Associated Equipment — Backend Operations
 
-**Direct-handover implementation resumed after explicit owner approval of
-[the saved sequence](Direct-Handover-Decision.md).** Schema 19 adds nullable
-handover-audit and successor-assignment references to the same canonical
-assignment table. Its guarded non-return closure is separate from the original
-physical return/write-off path. The stock guard permits only an audited pair of
-custody entries for the same registered Device, preserving held/Ready balances.
-No stock tables, Device identities, assignments, feature choices or grants are
-created by upgrade; Schema 18 association definitions are unchanged.
+**Checkpoints A–D are complete for review on draft PR #391.** Schema 18
+provides explicit associations; Schema 19 adds audited direct assignment closure
+and successor links on the same canonical assignment table. Its separate
+physical-return path keeps the original safeguards. Registered custody transfers
+use the existing ledger without a receipt or held/Ready increase; Devices-only
+handovers create no stock. No Device status, location, rack or IPAM changes occur.
 
-Migration preparation passed **58 focused tests**, including populated upgrade,
-restart, rollback, tamper rejection, rejected unaudited stock and unchanged
-physical-return behaviour. The direct writer/UI and E acceptance remain in
-progress; earlier dated checkpoints below retain their original status.
-
-Checkpoint A of Batch 3.10 adds explicit accessory relationships and protected
-history reads. Checkpoint B adds atomic issue-and-associate and existing-issue
-association writes. Checkpoint C integrates the separate tab and both routes
-within the existing Device Details and stock form controls. Full reassignment
-remains pending. This is development work for v2.2, not a published feature.
+The owner approved [the exact direct sequence](Direct-Handover-Decision.md).
+The final documentation, permanent gallery and final-head Actions are Checkpoint
+E; earlier dated verification below retains its original scope. This is draft
+v2.2 development, not a published feature or production upgrade guide.
 
 ## Approved Scope And Source Preflight
 
@@ -213,7 +205,7 @@ definitions. No full local suite, browser run, new screenshot, Docker run or
 release was performed. Newly triggered Actions are separate from these local
 results; previous green Checkpoint A Actions are not evidence for the new head.
 
-## Continuation
+## Earlier C And Partial D Checkpoints
 
 **Safe partial D checkpoint:** the [missing-equipment approval](https://github.com/Caffoot/Caffoot-Lite/issues/352#issuecomment-6913302245)
 is implemented through existing Write Off controls. A positive whole missing
@@ -237,7 +229,7 @@ are unchanged; existing ledger transitions support the approved quantity extensi
 The new journey is added to the existing Chromium Actions workflow, with its
 normal read-only evidence upload. The Function Index has 978 definitions.
 
-**Direct handover is blocked on confirmation placement and sequence**, not on
+**At the partial D checkpoint, direct handover was blocked on confirmation placement and sequence**, not on
 the already settled requirement to prepare equipment or resolve accessories.
 The existing closure guard requires a physical return/write-off, while the
 existing preparation/reissue form offers held stock only. The precise proposed
@@ -262,17 +254,73 @@ The Function Index contains 977 definitions; JavaScript/Python syntax and diff
 checks passed. [Draft user instructions](../how-tos/features-and-instructions/v2.2-draft/Associated-Equipment.md)
 cover implemented behaviour. Existing accepted screenshots remain intact.
 
-1. **Checkpoint D:** all outstanding linked accessories must follow the existing
-   actual Return Equipment checks/dispositions before a holder change. Workstation
-   checks and explicit Ready confirmation are mandatory even for direct transfer.
-   Existing assignment closure requires a physical stock fact; it cannot be
-   reused unchanged to represent direct transfer. Exact preparation confirmation,
-   missing-return/write-off handling and transaction/UI sequencing remain subject
-   to the approval boundary above. Push completed safe work before requesting
-   any required owner decision. Do not invent a preparation screen or receipt.
-2. **Checkpoint E:** finish draft user instructions, genuine changed-screen
-   desktop/mobile light/dark captures and applicable final-head GitHub Actions.
-   Preserve all accepted earlier screenshots and deferred native acceptance.
+## Direct Handover Checkpoint D
 
-Keep the PR draft. No merge, release, deployment, unrelated batch or production
-change is authorised. Push each safe checkpoint before starting the next.
+The owner-approved **Reassign Device** action is in Device Details → Assigned To.
+It reuses the Reissue Existing Device form, fixes the canonical Device and adds
+the existing applicable preparation controls with unchecked defaults. **Confirm
+Ready And Reassign** explicitly confirms preparation and saves. Cancel keeps the
+old holder. Outstanding accessories hide the action and block the writer even
+when their details are hidden by permissions or feature choices.
+
+`POST /api/equipment/reassign` uses the existing session, JSON, same-origin and
+CSRF equipment handler. Required fields are `operationId`, `deviceId`, `version`,
+`recipientKind`, `recipientId`, `handedOverOn`, `checks`, `readyConfirmed` and
+`note`; unknown fields/query parameters are rejected. `handoverContext` on the
+existing assignment read supplies the opaque version and applicable checks to
+eligible editors only. It never reveals stock identities or choices.
+
+Inside `BEGIN IMMEDIATE`, the writer rechecks the verified live session, Devices
+Edit, feature choice, Device reservation, version, physical Device/current
+assignment, all explicit outstanding accessory issues and the new eligible
+recipient. Any published stock provenance additionally requires live IT Assets
+Edit; Devices-only operation remains available with IT Assets off. A backdated
+handover cannot predate the original issue; future dates, the same recipient,
+unchecked working/applicable data preparation and missing explicit Ready
+confirmation fail. The outgoing Staff Member may be inactive; the new recipient
+must be active/non-archived.
+
+The existing Device audit records the actor, date, old/new canonical assignments,
+recipient, checks, Ready confirmation and optional note. It contains no hidden
+stock details. Schema 19 closes the old row only against that immutable audit and
+an eligible successor, with deferred references verified before commit. A Device
+without stock history creates no stock facts. For a registered issued Device,
+two narrowly guarded existing-ledger entries discharge the old issue and issue
+the same unit to the new canonical assignment, retaining an issued balance of
+one. Movement history presents one **Reassigned** event, Issued → Issued. There
+is no physical receipt, preparation-to-Ready stock movement or duplicate Device.
+Actual later returns still use the original physical closure safeguards.
+
+Everything commits together or rolls back, including late audit, stock-header
+and successor failures. Identical completed retries return the original result;
+conflicting requests fail. Live access still applies to retries. Separate writer
+connections serialize through the existing lock; stale concurrent requests
+cannot replace the successful holder. Accessory returns/write-offs already
+recorded before starting the handover remain true historical facts if it fails.
+
+### D Verification
+
+The Schema 19 foundation was separately pushed at
+`0fe2408fe46a73e60aa614bad95e265d5812d1be` after **58 focused tests**.
+The complete D runtime passed **146 focused tests**:
+
+```sh
+PYTHONPATH=tests:. python -m unittest test_device_handovers test_device_handovers_http test_device_handover_schema test_associated_equipment_writes test_associated_equipment_writes_http test_equipment_associations test_equipment_associations_http test_stock_circulation test_device_reissue test_assignment_closure test_feature_settings test_staff_directory_migration -q
+```
+
+This includes 24 new migration/writer/HTTP tests, Devices-only and registered
+handover, repeated transfers, actual later return, hidden/historical accessories,
+partial return/missing disposition, live permissions/session/MFA/features, CSRF,
+origin, eligibility, stale versions, reservations, strict requests, replay,
+parallel writers and late-failure rollback. The real HTTPS/SQLite Chromium
+handover journey passed with **20 desktop/mobile light/dark captures**; the
+existing association/missing-quantity journey also passed. JavaScript syntax,
+Python compilation and diff checks passed. No complete local backend suite or
+compatibility collection was repeated. Permanent evidence and final-head Actions
+are E's next step; native/private-data acceptance remains deferred.
+
+## Remaining Acceptance
+
+Checkpoint E records the final draft instructions, genuine changed-screen
+gallery and applicable final-head GitHub Actions. Keep PR #391 draft; no merge,
+release, deployment, unrelated batch or production change is authorised.

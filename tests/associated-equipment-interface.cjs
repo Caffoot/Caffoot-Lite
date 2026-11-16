@@ -70,7 +70,7 @@ async function main(){
  }
  await page.goto(address+'/inventory');await openDevice();
  await page.locator('#device-details-tab-assigned').click();
- const assignedBefore=await page.locator('#device-details-panel-assigned').innerHTML();
+ const assignedBefore=await page.locator('#device-details-panel-assigned').evaluate(host=>{const copy=host.cloneNode(true);copy.querySelector('[data-equipment-action="reassign-device"]')?.remove();return copy.innerHTML;});
  await page.locator('#device-details-tab-associated').click();
  await page.getByText('No currently associated equipment.',{exact:true}).waitFor();
  assert.ok((await page.locator('#device-details-panel-associated').textContent()).includes('Historic Keyboard'));
@@ -102,7 +102,8 @@ async function main(){
  assert.equal(associated.current.length,2);assert.equal(associated.history.length,3);
  await captureChangedScreen('associated-equipment','#device-details-panel-associated');
  await page.locator('#device-details-tab-assigned').click();
- assert.equal(await page.locator('#device-details-panel-assigned').innerHTML(),assignedBefore,'Assigned To remains unchanged');
+ assert.equal(await page.locator('#device-details-panel-assigned').evaluate(host=>{const copy=host.cloneNode(true);copy.querySelector('[data-equipment-action="reassign-device"]')?.remove();return copy.innerHTML;}),assignedBefore,'Other Assigned To controls and history remain unchanged');
+ assert.equal(await page.locator('[data-equipment-action="reassign-device"]').count(),0,'Outstanding accessories block reassignment');
  const reader=await browser.newContext({ignoreHTTPSErrors:true,viewport:{width:390,height:1050}});
  await reader.addCookies([{name:identity.cookieName,value:'a'.repeat(64),url:address,httpOnly:true,secure:true,sameSite:'Strict'}]);
  const readerPage=await reader.newPage();await readerPage.goto(address+'/inventory');

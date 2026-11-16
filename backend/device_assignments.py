@@ -93,18 +93,28 @@ def read_assignments(connection, actor_id, *, device_id=None, staff_id=None, dep
         WHERE a.{column}=? ORDER BY a.id DESC''', (value,))
     records = [(dict(zip(('id', 'deviceId', 'deviceName', 'staffId', 'departmentId', 'recipientLabel', 'assignedAt', 'actorId', 'actorLabel', 'endedAt'), row[:10])), row[10]) for row in rows] if device_access else []
     history = [record for record, label in records]
+    if device_access:
+        for record in history:
+            handover = connection.execute('''SELECT h.record_json FROM device_assignments a
+                JOIN inventory_change_history h ON h.id=a.handover_event_id WHERE a.id=?''', (record['id'],)).fetchone()
+            if handover:
+                event=json.loads(handover[0]); details=event['changes'][0]['after']
+                record['closure']=dict(kind='reassigned',date=details['handedOverOn'],actor=event['actor'],
+                                       readyConfirmed=details['readyConfirmed'],checks=details['checks'])
     if device_access and asset_access:
         for record in history:
             closure=connection.execute('''SELECT m.kind,m.event_date,m.actor_label
                 FROM device_assignments a JOIN it_asset_stock_movements m ON m.id=a.closure_movement_id
                 WHERE a.id=?''',(record['id'],)).fetchone()
-            if closure:
+            if closure and 'closure' not in record:
                 record['closure']=dict(kind=closure[0],date=closure[1],actor=closure[2])
     result = {'current': [{**record, 'recipientLabel': label} for record, label in records if record['endedAt'] is None], 'history': history,
               'canAssign': can_access(connection, actor_id, 'Devices', edit=True)}
     if device_id is not None:
         raw, revision = connection.execute('SELECT record_json,revision FROM inventory_devices WHERE id=?', (device_id,)).fetchone()
         result.update(dependency=device_assignment_dependency(connection, device_id, json.loads(raw)), revision=revision)
+        from backend.device_handovers import device_handover_context
+        result['handoverContext']=device_handover_context(connection,actor_id,device_id)
     if asset_access:
         from backend.stock_circulation import stock_issue_records,stock_movement_history,canonical_device_choice
         if device_id is not None:
