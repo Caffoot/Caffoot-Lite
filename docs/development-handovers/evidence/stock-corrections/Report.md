@@ -2,8 +2,10 @@
 
 **Draft PR:** [#392](https://github.com/Caffoot/Caffoot-Lite/pull/392), targeting `milestone-1`.
 **Verified starting remote HEAD:** `53b04328c4f895bfc1f72f0416c43a519b2e8b42`.
-**Captured runtime:** `0e72633c6820b9225b26f4e451f474ca901397fe`.
-The final evidence commit follows that runtime without changing application code.
+**Original captured runtime:** `0e72633c6820b9225b26f4e451f474ca901397fe`.
+The original evidence commit follows that runtime without changing application code.
+The later [Return Equipment integration](#return-equipment-integration) has separate
+runtime provenance and additional captures; the original gallery is preserved.
 [Runtime hashes and browser results](browser-results.json) identify all six changed
 runtime files; [screenshot hashes](screenshot-hashes.json) identify the original PNGs.
 
@@ -143,10 +145,11 @@ correction reloads authoritative quantities and versions before a return can be
 submitted. Failed refreshes block submission; changed eligibility requires an
 explicit valid selection. The existing approved screenshots above are preserved.
 
-Development checkpoint: 29 focused backend/HTTP/database/security tests passed,
-and the extended real browser journey passed with 16 new desktop/mobile light/dark
-captures. Final regression checks, supplementary evidence and final-head Actions
-are still being completed; this checkpoint is not final acceptance.
+See the [supplementary report and 16-capture gallery](return-equipment/Report.md)
+for exact changes, actual regression results, runtime hashes and review limits.
+The runtime is `62165e42b3043f9ec23eb217ab5d76899ff52d64`; all six captured runtime
+hashes match that commit. Final-head Actions links and conclusions are maintained
+in the [draft PR description](https://github.com/Caffoot/Caffoot-Lite/pull/392).
 
 **Outstanding approved Stage 3 correction:** the final Issue Equipment confirmation
 must show equipment identity, quantity and recipient, with a way back to edit

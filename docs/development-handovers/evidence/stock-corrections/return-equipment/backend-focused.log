@@ -1,0 +1,74 @@
+test_cross_site_duplicate_json_and_invalid_body_cannot_write (test_stock_corrections.StockCorrectionHttpTests.test_cross_site_duplicate_json_and_invalid_body_cannot_write) ... 127.0.0.1 - - [16/Nov/2026 17:03:16] "POST /api/it-assets/receive HTTP/1.1" 200 -
+127.0.0.1 - - [16/Nov/2026 17:03:16] "POST /api/it-assets/corrections HTTP/1.1" 403 -
+127.0.0.1 - - [16/Nov/2026 17:03:16] "POST /api/it-assets/corrections HTTP/1.1" 403 -
+127.0.0.1 - - [16/Nov/2026 17:03:16] "POST /api/it-assets/corrections HTTP/1.1" 415 -
+127.0.0.1 - - [16/Nov/2026 17:03:16] "POST /api/it-assets/corrections HTTP/1.1" 400 -
+127.0.0.1 - - [16/Nov/2026 17:03:16] "POST /api/it-assets/corrections HTTP/1.1" 400 -
+127.0.0.1 - - [16/Nov/2026 17:03:16] "POST /api/it-assets/corrections HTTP/1.1" 400 -
+ok
+test_disabled_feature_denies_context_preview_and_write (test_stock_corrections.StockCorrectionHttpTests.test_disabled_feature_denies_context_preview_and_write) ... 127.0.0.1 - - [16/Nov/2026 17:03:17] "POST /api/it-assets/receive HTTP/1.1" 200 -
+127.0.0.1 - - [16/Nov/2026 17:03:17] "GET /api/it-assets/corrections/1 HTTP/1.1" 403 -
+127.0.0.1 - - [16/Nov/2026 17:03:17] "POST /api/it-assets/corrections HTTP/1.1" 403 -
+127.0.0.1 - - [16/Nov/2026 17:03:17] "POST /api/it-assets/corrections/preview HTTP/1.1" 403 -
+ok
+test_missing_authentication_origin_csrf_and_strict_payloads (test_stock_corrections.StockCorrectionHttpTests.test_missing_authentication_origin_csrf_and_strict_payloads) ... 127.0.0.1 - - [16/Nov/2026 17:03:17] "POST /api/it-assets/receive HTTP/1.1" 200 -
+127.0.0.1 - - [16/Nov/2026 17:03:17] "GET /api/it-assets/corrections/1 HTTP/1.1" 401 -
+127.0.0.1 - - [16/Nov/2026 17:03:17] "POST /api/it-assets/corrections HTTP/1.1" 403 -
+127.0.0.1 - - [16/Nov/2026 17:03:17] "POST /api/it-assets/corrections HTTP/1.1" 403 -
+127.0.0.1 - - [16/Nov/2026 17:03:17] "POST /api/it-assets/corrections HTTP/1.1" 403 -
+127.0.0.1 - - [16/Nov/2026 17:03:17] "POST /api/it-assets/corrections HTTP/1.1" 400 -
+127.0.0.1 - - [16/Nov/2026 17:03:17] "POST /api/it-assets/corrections/preview HTTP/1.1" 403 -
+127.0.0.1 - - [16/Nov/2026 17:03:17] "POST /api/it-assets/corrections/preview HTTP/1.1" 403 -
+127.0.0.1 - - [16/Nov/2026 17:03:17] "POST /api/it-assets/corrections/preview HTTP/1.1" 403 -
+127.0.0.1 - - [16/Nov/2026 17:03:17] "POST /api/it-assets/corrections/preview HTTP/1.1" 400 -
+127.0.0.1 - - [16/Nov/2026 17:03:17] "POST /api/it-assets/corrections HTTP/1.1" 403 -
+ok
+test_no_access_read_and_edit_are_enforced_on_each_route (test_stock_corrections.StockCorrectionHttpTests.test_no_access_read_and_edit_are_enforced_on_each_route) ... 127.0.0.1 - - [16/Nov/2026 17:03:18] "POST /api/it-assets/receive HTTP/1.1" 200 -
+127.0.0.1 - - [16/Nov/2026 17:03:18] "GET /api/it-assets/history HTTP/1.1" 403 -
+127.0.0.1 - - [16/Nov/2026 17:03:18] "GET /api/it-assets/corrections/1 HTTP/1.1" 403 -
+127.0.0.1 - - [16/Nov/2026 17:03:18] "POST /api/it-assets/corrections/preview HTTP/1.1" 403 -
+127.0.0.1 - - [16/Nov/2026 17:03:18] "POST /api/it-assets/corrections HTTP/1.1" 403 -
+127.0.0.1 - - [16/Nov/2026 17:03:18] "GET /api/it-assets/history HTTP/1.1" 200 -
+127.0.0.1 - - [16/Nov/2026 17:03:18] "GET /api/it-assets/corrections/1 HTTP/1.1" 403 -
+127.0.0.1 - - [16/Nov/2026 17:03:18] "POST /api/it-assets/corrections/preview HTTP/1.1" 403 -
+127.0.0.1 - - [16/Nov/2026 17:03:18] "POST /api/it-assets/corrections HTTP/1.1" 403 -
+127.0.0.1 - - [16/Nov/2026 17:03:18] "GET /api/it-assets/history HTTP/1.1" 200 -
+127.0.0.1 - - [16/Nov/2026 17:03:18] "GET /api/it-assets/corrections/1 HTTP/1.1" 200 -
+127.0.0.1 - - [16/Nov/2026 17:03:18] "POST /api/it-assets/corrections/preview HTTP/1.1" 200 -
+127.0.0.1 - - [16/Nov/2026 17:03:18] "POST /api/it-assets/corrections HTTP/1.1" 200 -
+ok
+test_protected_context_preview_save_and_idempotent_retry (test_stock_corrections.StockCorrectionHttpTests.test_protected_context_preview_save_and_idempotent_retry) ... 127.0.0.1 - - [16/Nov/2026 17:03:19] "POST /api/it-assets/receive HTTP/1.1" 200 -
+127.0.0.1 - - [16/Nov/2026 17:03:19] "GET /api/it-assets/corrections/1 HTTP/1.1" 200 -
+127.0.0.1 - - [16/Nov/2026 17:03:19] "POST /api/it-assets/corrections/preview HTTP/1.1" 200 -
+127.0.0.1 - - [16/Nov/2026 17:03:19] "POST /api/it-assets/corrections HTTP/1.1" 200 -
+127.0.0.1 - - [16/Nov/2026 17:03:19] "POST /api/it-assets/corrections HTTP/1.1" 200 -
+ok
+test_associated_equipment_requires_devices_edit_and_cannot_reopen_after_handover (test_stock_corrections.StockCorrectionTests.test_associated_equipment_requires_devices_edit_and_cannot_reopen_after_handover) ... ok
+test_audit_failure_rolls_back_correction_and_compensation (test_stock_corrections.StockCorrectionTests.test_audit_failure_rolls_back_correction_and_compensation) ... ok
+test_concurrent_corrections_accept_one_version_once (test_stock_corrections.StockCorrectionTests.test_concurrent_corrections_accept_one_version_once) ... ok
+test_correction_can_resolve_all_remaining_outstanding_equipment (test_stock_corrections.StockCorrectionTests.test_correction_can_resolve_all_remaining_outstanding_equipment) ... ok
+test_database_independently_rejects_a_compensation_that_breaks_later_readiness (test_stock_corrections.StockCorrectionTests.test_database_independently_rejects_a_compensation_that_breaks_later_readiness) ... ok
+test_individual_identity_and_canonical_device_quantities_cannot_be_fabricated (test_stock_corrections.StockCorrectionTests.test_individual_identity_and_canonical_device_quantities_cannot_be_fabricated) ... ok
+test_invalid_quantities_reasons_and_no_change_never_write (test_stock_corrections.StockCorrectionTests.test_invalid_quantities_reasons_and_no_change_never_write) ... ok
+test_issue_cannot_consume_stock_that_arrived_after_the_issue (test_stock_corrections.StockCorrectionTests.test_issue_cannot_consume_stock_that_arrived_after_the_issue) ... ok
+test_issue_corrections_keep_partial_returns_and_original_assignment_balances (test_stock_corrections.StockCorrectionTests.test_issue_corrections_keep_partial_returns_and_original_assignment_balances) ... ok
+test_issued_writeoff_correction_restores_only_real_outstanding_quantity (test_stock_corrections.StockCorrectionTests.test_issued_writeoff_correction_restores_only_real_outstanding_quantity) ... ok
+test_later_preparation_reversals_are_replayed_in_publication_order (test_stock_corrections.StockCorrectionTests.test_later_preparation_reversals_are_replayed_in_publication_order) ... ok
+test_multi_entry_individual_issue_is_selected_by_entry_and_keeps_every_identity (test_stock_corrections.StockCorrectionTests.test_multi_entry_individual_issue_is_selected_by_entry_and_keeps_every_identity) ... ok
+test_original_and_correction_records_are_database_immutable (test_stock_corrections.StockCorrectionTests.test_original_and_correction_records_are_database_immutable) ... ok
+test_read_edit_feature_mfa_and_session_safeguards (test_stock_corrections.StockCorrectionTests.test_read_edit_feature_mfa_and_session_safeguards) ... ok
+test_receipt_cannot_remove_later_checked_or_registered_stock (test_stock_corrections.StockCorrectionTests.test_receipt_cannot_remove_later_checked_or_registered_stock) ... ok
+test_receipt_preview_is_read_only_and_save_preserves_every_original_fact (test_stock_corrections.StockCorrectionTests.test_receipt_preview_is_read_only_and_save_preserves_every_original_fact) ... ok
+test_registered_direct_handover_entries_cannot_create_extra_units (test_stock_corrections.StockCorrectionTests.test_registered_direct_handover_entries_cannot_create_extra_units) ... ok
+test_registered_stock_receipt_correction_keeps_device_identity_and_held_count (test_stock_corrections.StockCorrectionTests.test_registered_stock_receipt_correction_keeps_device_identity_and_held_count) ... ok
+test_repeated_corrections_always_link_the_original_and_previous_effective_value (test_stock_corrections.StockCorrectionTests.test_repeated_corrections_always_link_the_original_and_previous_effective_value) ... ok
+test_return_after_correction_requires_refreshed_version_and_outstanding_quantity (test_stock_corrections.StockCorrectionTests.test_return_after_correction_requires_refreshed_version_and_outstanding_quantity) ... ok
+test_return_decrease_and_issue_increase_recalculate_real_balances (test_stock_corrections.StockCorrectionTests.test_return_decrease_and_issue_increase_recalculate_real_balances) ... ok
+test_return_increase_and_decrease_preserve_each_later_disposition (test_stock_corrections.StockCorrectionTests.test_return_increase_and_decrease_preserve_each_later_disposition) ... ok
+test_stale_form_and_changed_idempotency_payload_are_rejected (test_stock_corrections.StockCorrectionTests.test_stale_form_and_changed_idempotency_payload_are_rejected) ... ok
+test_writeoff_reversal_changes_held_stock_without_a_fabricated_return (test_stock_corrections.StockCorrectionTests.test_writeoff_reversal_changes_held_stock_without_a_fabricated_return) ... ok
+
+----------------------------------------------------------------------
+Ran 29 tests in 5.007s
+
+OK

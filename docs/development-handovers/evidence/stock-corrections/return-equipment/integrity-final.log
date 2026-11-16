@@ -1,0 +1,5 @@
+PASS: 1237 relative documentation targets and anchors checked.
+PASS: all new and changed named declarations have accurate Function Index references (1011 recorded definitions).
+PASS: all 28 owner-approved Batch 3.11 screenshots are byte-identical.
+PASS: correction, return and security backend contracts, stock CSS and pinned design manifest are unchanged.
+PASS: source changes since reviewed head are limited to two interface scripts and two focused test files; guides/index/evidence are documented separately.
