@@ -191,6 +191,8 @@ async function main(){
  await stockTab('receive');await page.locator('[data-stock-action="mode-new"]').click();
  await page.locator('#stock-category').selectOption('Monitor');
  await page.locator('#stock-trackingMode').selectOption('individual');
+ const individualGap=await page.locator('#stock-receipt-form').evaluate(form=>form.querySelector('#stock-individual-fields').getBoundingClientRect().top-form.querySelector('#stock-new-fields').getBoundingClientRect().bottom);
+ assert.ok(individualGap>=18,'Individual Equipment heading needs the same subsection spacing: '+individualGap);
  assert.equal(await page.locator('#stock-computer-fields').isVisible(),false);
  assert.equal(await page.locator('#stock-quantity').inputValue(),'1');
  await page.locator('#stock-manufacturer').fill('Fictional Displays');await page.locator('#stock-model').fill('Screen 27');
