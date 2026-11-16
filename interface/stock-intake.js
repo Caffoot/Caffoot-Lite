@@ -265,7 +265,12 @@
   });
   document.addEventListener('input',event=>{if(event.target.closest('#stock-receipt-form,#stock-readiness-form,#stock-issue-form,#stock-return-form,#stock-writeoff-form,#stock-preparation-form,#stock-reissue-form'))hydrateStock();});
   document.addEventListener('change',event=>{if(event.target.closest('#stock-receipt-form,#stock-readiness-form,#stock-issue-form,#stock-return-form,#stock-writeoff-form,#stock-preparation-form,#stock-reissue-form'))hydrateStock();});
-  document.addEventListener('reset',event=>{if(event.target.id==='stock-receipt-form'){event.target.dataset.operationId='';setTimeout(hydrateStock,0);}});
+  document.addEventListener('reset',event=>{
+    if(event.target.id==='stock-receipt-form'){event.target.dataset.operationId='';setTimeout(hydrateStock,0);}
+    if(event.target.id==='stock-reissue-form'&&event.target.dataset.directHandover==='true'){
+      event.target.dataset.recipientQuery='';setTimeout(hydrateStock,0);
+    }
+  });
   document.addEventListener('keydown',event=>{
     const button=event.target.closest('[data-stock-action="tab"]');
     if(!button||!['ArrowLeft','ArrowRight','Home','End'].includes(event.key))return;
