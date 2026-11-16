@@ -3979,7 +3979,7 @@ function openIpModal(ip) {
             if (form) modalFormSnapshots.set(form, modalFormSnapshot(form));
         }
         let pendingDeviceFormDiscardCallback=null;
-        function confirmDiscardDeviceFormChanges(onDiscard){
+        function confirmDiscardDeviceFormChanges(onDiscard, pageLevel=false){
             if(document.getElementById('discard-dialog'))return false;
             pendingDeviceFormDiscardCallback=onDiscard;
             const overlay=document.createElement('div');
@@ -3988,11 +3988,22 @@ function openIpModal(ip) {
             overlay.setAttribute('aria-modal','true');
             overlay.setAttribute('aria-labelledby','device-form-discard-title');
             overlay.setAttribute('aria-describedby','discard-description');
-            overlay.className='absolute inset-0 z-50 flex items-center justify-center bg-slate-950/65 p-4 rounded-2xl';
+            overlay.className=(pageLevel?'fixed':'absolute')+' inset-0 z-50 flex items-center justify-center bg-slate-950/65 p-4 rounded-2xl';
             overlay.innerHTML=renderInterfaceTemplate("device-details/confirm-discard-device-form-changes-1",[]);
-            const content=document.getElementById('modal-content');
-            if(getComputedStyle(content).position==='static')content.style.position='relative';
+            const content=pageLevel?document.body:document.getElementById('modal-content');
+            if(!pageLevel&&getComputedStyle(content).position==='static')content.style.position='relative';
             overlay._returnFocus=document.activeElement;
+            if(pageLevel)overlay.addEventListener('keydown',event=>{
+                if(event.key==='Escape'){
+                    event.preventDefault();event.stopPropagation();keepEditingDeviceForm();
+                }else if(event.key==='Tab'){
+                    const buttons=[...overlay.querySelectorAll('button:not([disabled])')];
+                    const index=buttons.indexOf(document.activeElement);
+                    if(buttons.length&&((event.shiftKey&&index===0)||(!event.shiftKey&&index===buttons.length-1))){
+                        event.preventDefault();buttons[event.shiftKey?buttons.length-1:0].focus();
+                    }
+                }
+            });
             content.appendChild(overlay);
             overlay.querySelector('[data-action="keep-editing"]').focus();
             return false;
@@ -11125,6 +11136,16 @@ void (async () => {
       viewAssociations:id=>{closeModal(true);switchTab('devices');openDeviceDetailView(id);selectDeviceDetailsTab('associated');},
       openModal:html=>openModal(html),viewAssigned:id=>{closeModal(true);switchTab('devices');openDeviceDetailView(id);selectDeviceDetailsTab('assigned');},
       cancelHandover:(id,onDiscard)=>closeModal(false,()=>{onDiscard();switchTab('devices');openDeviceDetailView(id);selectDeviceDetailsTab('assigned');}),
+      rememberStockForm:form=>{
+        if(!modalFormSnapshots.has(form))modalFormSnapshots.set(form,modalFormSnapshot(form)+'|'+(form.dataset.receiptMode||''));
+      },
+      cancelStockForm:(form,onDiscard)=>{
+        if(!form||!form.isConnected)return;
+        const initial=modalFormSnapshots.get(form);
+        const changed=initial!==undefined&&(modalFormSnapshot(form)+'|'+(form.dataset.receiptMode||''))!==initial;
+        if(changed)confirmDiscardDeviceFormChanges(onDiscard,true);
+        else onDiscard();
+      },
       registerDevice:id=>{closeModal(true);switchTab('devices');openDeviceModal();void loadDeviceStockSources(id);},
       redraw:()=>{if(currentTab==='it-assets')renderContent();},notify:(message,type)=>showToast(message,type)});
     await loadAccountProfile();
