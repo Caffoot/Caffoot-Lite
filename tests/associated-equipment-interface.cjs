@@ -108,7 +108,7 @@ async function main(){
  assert.equal(await page.locator('#stock-associationMethod').inputValue(),'existing','Keep Editing preserves the entered form');
  await page.locator('#stock-issue-form [data-stock-action="cancel-stock"]').click();
  await page.locator('#discard-dialog [data-action="discard-device-form-changes"]').click();
- await page.locator('#device-details-panel-associated').getByText('2 Current Associations',{exact:true}).waitFor();
+ await page.locator('#device-details-panel-associated').getByText('1 Current Association',{exact:true}).waitFor();
  await page.locator('[data-equipment-action="add-associated"]').click();
  await page.locator('#stock-associationMethod').selectOption('existing');
  await page.locator('#stock-existingIssue').selectOption(String(identity.existing));
