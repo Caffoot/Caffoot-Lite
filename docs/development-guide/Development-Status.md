@@ -1,13 +1,28 @@
 # Published and development versions
 
-> **Batch 3.11 final review correction — 16 November 2026:** [PR #392](https://github.com/Caffoot/Caffoot-Lite/pull/392)
+**Current integration status — 16 November 2026:** Stage 3 Batches 3.10 and
+3.11 are approved and merged. PR #391 completed at
+`53b04328c4f895bfc1f72f0416c43a519b2e8b42`; PR #392 completed at the verified
+current `milestone-1` HEAD `505ec1a60daccdfed4c2c36c9379a29ea6f5367d`.
+Schema 19 remains current. The final outstanding Stage 3 usability correction
+before Batch 3.12 is the [Issue Equipment confirmation](../development-handovers/evidence/issue-equipment-confirmation/Report.md),
+implemented on `feat/issue-equipment-confirmation` for independent review and
+explicit owner approval. Batch 3.12 has not started. No v2.2 release or deployment
+is included; Batch 3.4 native/manual and Stage 6 acceptance remain deferred.
+
+## Historical Pre-Merge Checkpoints
+
+The dated notes below preserve their original scope. Their pending-review and
+pending-merge statements are superseded by the current integration status above.
+
+> **Historical Batch 3.11 final review correction — 16 November 2026:** [PR #392](https://github.com/Caffoot/Caffoot-Lite/pull/392)
 > adds the approved Return Equipment → Correct Movement → refreshed Return
 > Equipment journey. [Integration evidence](../development-handovers/evidence/stock-corrections/Report.md#return-equipment-integration)
 > supplements the preserved, owner-approved screenshots. Independent review and
 > final owner approval remain. The separate approved Issue Equipment confirmation
 > is outstanding for a focused PR after Batch 3.11; it is not implemented here.
 
-> **Current Batch 3.11 checkpoint — 16 November 2026:** Batch 3.10 / PR #391
+> **Historical Batch 3.11 checkpoint — 16 November 2026:** Batch 3.10 / PR #391
 > is merged and accepted at verified `53b04328c4f895bfc1f72f0416c43a519b2e8b42`.
 > Correct Movement is implemented on `feat/correct-stock-movement`,
 > [draft PR #392](https://github.com/Caffoot/Caffoot-Lite/pull/392), using schema 19
@@ -18,7 +33,7 @@
 > or Batch 3.12 work is included. Earlier dated checkpoints below are historical.
 
 
-> **Latest development checkpoint — 16 November 2026:** Batches 3.8/3.9 are
+> **Historical development checkpoint — 16 November 2026:** Batches 3.8/3.9 are
 > merged through PR #390 at `6276225e5d527c83f2ffaf36812ab7c7c5a5269f`.
 > Batch 3.10 associations and prepared canonical reassignment are implemented
 > on [draft PR #391](https://github.com/Caffoot/Caffoot-Lite/pull/391), schema 19.
@@ -33,7 +48,7 @@
 
 Caffoot Lite **v2.1 is the published release**. Its tagged source is [c3237114108cad9f7d4e57657b6aed5e0091a5ef](https://github.com/Caffoot/Caffoot-Lite/tree/v2.1); it uses schema 10. The [published user guides](../how-tos/features-and-instructions/README.md) and [installation instructions](../../INSTALLATION.md) describe that release.
 
-## Repository source is not a released image
+## Historical Repository Checkpoints — Not Released Images
 
 The table below records the **15 November 2026 pre-synchronisation checkpoints**. Subsequently, approved public-documentation corrections were merged into `main` via PR #384 at `3d66c3ee6fd9d9c51ecbdd5822bc1c4fe98b8e7b` and synchronised to `milestone-1` via PR #385 at `47c2ebe3d9249199c0c42dc71fd571b9f6411641`. Those documentation merges did **not** publish v2.2 or change the milestone's schema-15 application behaviour. The draft v2.2 guides are [here](../how-tos/features-and-instructions/v2.2-draft/README.md).
 

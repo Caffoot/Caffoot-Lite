@@ -1,0 +1,23 @@
+{
+  "checks": [
+    "Invalid quantities blocked; confirmation makes no writes; Back To Edit and theme changes preserve all values",
+    "Rapid duplicate submits and theme redraw while saving record exactly one issue",
+    "Selected individual identities, serial/asset tags, anonymous identity and actual Department name match saved units",
+    "Invalid submitted quantity is rejected by the server despite a valid confirmation",
+    "Rejected save retains entered values, reports failure and allows an edited retry",
+    "Concurrent stock change is rejected by the existing version check without changing stock or losing values",
+    "Lost response retries reuse the existing operation identifier and do not issue twice",
+    "Read-only/no stock access, missing CSRF and feature-off requests remain forbidden"
+  ],
+  "screenshots": [
+    "quantity-confirmation-light-1440.png",
+    "quantity-confirmation-dark-1440.png",
+    "quantity-confirmation-light-390.png",
+    "quantity-confirmation-dark-390.png",
+    "individual-confirmation-light-1440.png",
+    "individual-confirmation-dark-1440.png",
+    "individual-confirmation-light-390.png",
+    "individual-confirmation-dark-390.png"
+  ],
+  "pageErrors": []
+}

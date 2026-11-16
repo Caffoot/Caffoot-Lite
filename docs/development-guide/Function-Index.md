@@ -6,7 +6,7 @@ Scope: named JavaScript declarations/assignments in the six application scripts,
 
 The account hydration/photo functions now have purpose-based callable bindings matching their function names: `hydrateAccount` and `removeAccountPhoto`. The immutable design manifest retains its historical integration-entry names; those metadata names are not the runtime's current function map. Pinned source paths, revisions and hashes are unchanged.
 
-**Recorded definitions: 1011.** Checked against the source in this commit. This remains a definition map, not a call graph. See [coding conventions](06-Coding-and-Naming-Conventions.md) and the [code reference](07-Function-and-Code-Reference.md).
+**Recorded definitions: 1013.** Checked against the source in this commit. This remains a definition map, not a call graph. See [coding conventions](06-Coding-and-Naming-Conventions.md) and the [code reference](07-Function-and-Code-Reference.md).
 
 ## interface/loader.js
 
@@ -648,70 +648,72 @@ The account hydration/photo functions now have purpose-based callable bindings m
 
 | Function | Line |
 | --- | ---: |
-| [`safe`](../../interface/stock-intake.js#L8) | 8 |
-| [`canRead`](../../interface/stock-intake.js#L9) | 9 |
-| [`canEdit`](../../interface/stock-intake.js#L10) | 10 |
-| [`stockLabel`](../../interface/stock-intake.js#L11) | 11 |
-| [`stockNotice`](../../interface/stock-intake.js#L12) | 12 |
-| [`stockButton`](../../interface/stock-intake.js#L13) | 13 |
-| [`stockCard`](../../interface/stock-intake.js#L14) | 14 |
-| [`stockField`](../../interface/stock-intake.js#L15) | 15 |
-| [`stockSelect`](../../interface/stock-intake.js#L18) | 18 |
-| [`stockTable`](../../interface/stock-intake.js#L21) | 21 |
-| [`stockMetrics`](../../interface/stock-intake.js#L24) | 24 |
-| [`stockSpecText`](../../interface/stock-intake.js#L27) | 27 |
-| [`renderStockReceipt`](../../interface/stock-intake.js#L32) | 32 |
-| [`renderStockDetails`](../../interface/stock-intake.js#L67) | 67 |
-| [`renderStockInventory`](../../interface/stock-intake.js#L90) | 90 |
-| [`stockDate`](../../interface/stock-intake.js#L94) | 94 |
-| [`stockCheckLabel`](../../interface/stock-intake.js#L95) | 95 |
-| [`renderStockHistory`](../../interface/stock-intake.js#L96) | 96 |
-| [`clearStock`](../../interface/stock-intake.js#L101) | 101 |
-| [`stockRequest`](../../interface/stock-intake.js#L105) | 105 |
-| [`refreshStock`](../../interface/stock-intake.js#L114) | 114 |
-| [`enterStock`](../../interface/stock-intake.js#L126) | 126 |
-| [`renderStock`](../../interface/stock-intake.js#L131) | 131 |
-| [`receiptTracking`](../../interface/stock-intake.js#L141) | 141 |
-| [`hydrateStock`](../../interface/stock-intake.js#L144) | 144 |
-| [`openStockDetails`](../../interface/stock-intake.js#L188) | 188 |
-| [`submitStock`](../../interface/stock-intake.js#L196) | 196 |
-| [`stockStateLabel`](../../interface/stock-intake.js#L318) | 318 |
-| [`stockUnitState`](../../interface/stock-intake.js#L319) | 319 |
-| [`stockNote`](../../interface/stock-intake.js#L320) | 320 |
-| [`stockWorkflowForm`](../../interface/stock-intake.js#L321) | 321 |
-| [`stockIssueReady`](../../interface/stock-intake.js#L329) | 329 |
-| [`renderDeviceReissue`](../../interface/stock-intake.js#L330) | 330 |
-| [`stockExistingIssueLabel`](../../interface/stock-intake.js#L342) | 342 |
-| [`renderStockIssue`](../../interface/stock-intake.js#L349) | 349 |
-| [`stockReturnSources`](../../interface/stock-intake.js#L362) | 362 |
-| [`renderStockReturn`](../../interface/stock-intake.js#L369) | 369 |
-| [`renderStockWriteOff`](../../interface/stock-intake.js#L380) | 380 |
-| [`stockPreparationRequirement`](../../interface/stock-intake.js#L393) | 393 |
-| [`renderStockPreparation`](../../interface/stock-intake.js#L400) | 400 |
-| [`renderRegisteredStock`](../../interface/stock-intake.js#L412) | 412 |
-| [`renderStockMovements`](../../interface/stock-intake.js#L419) | 419 |
-| [`renderStockCorrection`](../../interface/stock-intake.js#L424) | 424 |
-| [`renderCorrectionImpact`](../../interface/stock-intake.js#L433) | 433 |
-| [`stockReturnCorrectionEntry`](../../interface/stock-intake.js#L438) | 438 |
-| [`restoreStockReturn`](../../interface/stock-intake.js#L441) | 441 |
-| [`closeStockCorrection`](../../interface/stock-intake.js#L453) | 453 |
-| [`leaveStockCorrection`](../../interface/stock-intake.js#L459) | 459 |
-| [`openStockCorrection`](../../interface/stock-intake.js#L468) | 468 |
-| [`stockCorrectionValues`](../../interface/stock-intake.js#L478) | 478 |
-| [`previewStockCorrection`](../../interface/stock-intake.js#L481) | 481 |
-| [`scheduleStockCorrection`](../../interface/stock-intake.js#L501) | 501 |
-| [`submitStockCorrection`](../../interface/stock-intake.js#L511) | 511 |
-| [`stockSelectedReturn`](../../interface/stock-intake.js#L554) | 554 |
-| [`stockSelectedWriteOff`](../../interface/stock-intake.js#L555) | 555 |
-| [`hydrateStockCirculation`](../../interface/stock-intake.js#L559) | 559 |
-| [`loadHandoverRecipients`](../../interface/stock-intake.js#L638) | 638 |
-| [`loadStockRecipients`](../../interface/stock-intake.js#L664) | 664 |
-| [`submitStockCirculation`](../../interface/stock-intake.js#L675) | 675 |
-| [`openStockWorkflow`](../../interface/stock-intake.js#L724) | 724 |
-| [`openDirectHandover`](../../interface/stock-intake.js#L730) | 730 |
-| [`hydrateStockPage`](../../interface/stock-intake.js#L738) | 738 |
-| [`dismissHandover`](../../interface/stock-intake.js#L755) | 755 |
-| [`configureStock`](../../interface/stock-intake.js#L756) | 756 |
+| [`safe`](../../interface/stock-intake.js#L9) | 9 |
+| [`canRead`](../../interface/stock-intake.js#L10) | 10 |
+| [`canEdit`](../../interface/stock-intake.js#L11) | 11 |
+| [`stockLabel`](../../interface/stock-intake.js#L12) | 12 |
+| [`stockNotice`](../../interface/stock-intake.js#L13) | 13 |
+| [`stockButton`](../../interface/stock-intake.js#L14) | 14 |
+| [`stockCard`](../../interface/stock-intake.js#L15) | 15 |
+| [`stockField`](../../interface/stock-intake.js#L16) | 16 |
+| [`stockSelect`](../../interface/stock-intake.js#L19) | 19 |
+| [`stockTable`](../../interface/stock-intake.js#L22) | 22 |
+| [`stockMetrics`](../../interface/stock-intake.js#L25) | 25 |
+| [`stockSpecText`](../../interface/stock-intake.js#L28) | 28 |
+| [`renderStockReceipt`](../../interface/stock-intake.js#L33) | 33 |
+| [`renderStockDetails`](../../interface/stock-intake.js#L68) | 68 |
+| [`renderStockInventory`](../../interface/stock-intake.js#L91) | 91 |
+| [`stockDate`](../../interface/stock-intake.js#L95) | 95 |
+| [`stockCheckLabel`](../../interface/stock-intake.js#L96) | 96 |
+| [`renderStockHistory`](../../interface/stock-intake.js#L97) | 97 |
+| [`clearStock`](../../interface/stock-intake.js#L102) | 102 |
+| [`stockRequest`](../../interface/stock-intake.js#L107) | 107 |
+| [`refreshStock`](../../interface/stock-intake.js#L116) | 116 |
+| [`enterStock`](../../interface/stock-intake.js#L128) | 128 |
+| [`renderStock`](../../interface/stock-intake.js#L133) | 133 |
+| [`receiptTracking`](../../interface/stock-intake.js#L144) | 144 |
+| [`hydrateStock`](../../interface/stock-intake.js#L147) | 147 |
+| [`openStockDetails`](../../interface/stock-intake.js#L191) | 191 |
+| [`submitStock`](../../interface/stock-intake.js#L199) | 199 |
+| [`stockStateLabel`](../../interface/stock-intake.js#L325) | 325 |
+| [`stockUnitState`](../../interface/stock-intake.js#L326) | 326 |
+| [`stockNote`](../../interface/stock-intake.js#L327) | 327 |
+| [`stockWorkflowForm`](../../interface/stock-intake.js#L328) | 328 |
+| [`stockIssueReady`](../../interface/stock-intake.js#L336) | 336 |
+| [`renderDeviceReissue`](../../interface/stock-intake.js#L337) | 337 |
+| [`stockExistingIssueLabel`](../../interface/stock-intake.js#L349) | 349 |
+| [`renderStockIssue`](../../interface/stock-intake.js#L356) | 356 |
+| [`editStockIssue`](../../interface/stock-intake.js#L370) | 370 |
+| [`showStockIssueConfirmation`](../../interface/stock-intake.js#L376) | 376 |
+| [`stockReturnSources`](../../interface/stock-intake.js#L398) | 398 |
+| [`renderStockReturn`](../../interface/stock-intake.js#L405) | 405 |
+| [`renderStockWriteOff`](../../interface/stock-intake.js#L416) | 416 |
+| [`stockPreparationRequirement`](../../interface/stock-intake.js#L429) | 429 |
+| [`renderStockPreparation`](../../interface/stock-intake.js#L436) | 436 |
+| [`renderRegisteredStock`](../../interface/stock-intake.js#L448) | 448 |
+| [`renderStockMovements`](../../interface/stock-intake.js#L455) | 455 |
+| [`renderStockCorrection`](../../interface/stock-intake.js#L460) | 460 |
+| [`renderCorrectionImpact`](../../interface/stock-intake.js#L469) | 469 |
+| [`stockReturnCorrectionEntry`](../../interface/stock-intake.js#L474) | 474 |
+| [`restoreStockReturn`](../../interface/stock-intake.js#L477) | 477 |
+| [`closeStockCorrection`](../../interface/stock-intake.js#L489) | 489 |
+| [`leaveStockCorrection`](../../interface/stock-intake.js#L495) | 495 |
+| [`openStockCorrection`](../../interface/stock-intake.js#L504) | 504 |
+| [`stockCorrectionValues`](../../interface/stock-intake.js#L514) | 514 |
+| [`previewStockCorrection`](../../interface/stock-intake.js#L517) | 517 |
+| [`scheduleStockCorrection`](../../interface/stock-intake.js#L537) | 537 |
+| [`submitStockCorrection`](../../interface/stock-intake.js#L547) | 547 |
+| [`stockSelectedReturn`](../../interface/stock-intake.js#L590) | 590 |
+| [`stockSelectedWriteOff`](../../interface/stock-intake.js#L591) | 591 |
+| [`hydrateStockCirculation`](../../interface/stock-intake.js#L595) | 595 |
+| [`loadHandoverRecipients`](../../interface/stock-intake.js#L674) | 674 |
+| [`loadStockRecipients`](../../interface/stock-intake.js#L700) | 700 |
+| [`submitStockCirculation`](../../interface/stock-intake.js#L711) | 711 |
+| [`openStockWorkflow`](../../interface/stock-intake.js#L777) | 777 |
+| [`openDirectHandover`](../../interface/stock-intake.js#L784) | 784 |
+| [`hydrateStockPage`](../../interface/stock-intake.js#L792) | 792 |
+| [`dismissHandover`](../../interface/stock-intake.js#L811) | 811 |
+| [`configureStock`](../../interface/stock-intake.js#L812) | 812 |
 
 ## backend/access_point_review.py
 

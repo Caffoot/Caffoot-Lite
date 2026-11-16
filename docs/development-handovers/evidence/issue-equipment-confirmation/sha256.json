@@ -1,0 +1,14 @@
+{
+  "interface/stock-intake.js": "66c41b8a55dc633f901eb7c2cb925f645d471ab6e56f4c5c42a5a1fc44c77fba",
+  "interface/styles/stock.css": "67bd0850a3fbed5dc8112afa3b4a02c8cd13a9435250b021cc5e04b903326ddc",
+  "tests/stock-circulation-interface.cjs": "c3921151b07cc1caf32e5097007e2bf591f5af77abad128687b3bd6c5277cb49",
+  "tests/stock-issue-confirmation.cjs": "320a6a6e9fdeab229dc4b6e3c18f7aac122baaa46522d4fe140c99b9c01f3fe7",
+  "docs/development-handovers/evidence/issue-equipment-confirmation/individual-confirmation-dark-1440.png": "238baa9d39c7aa808176af29cbd66a010534441da739c15c0ab6e958e01ed513",
+  "docs/development-handovers/evidence/issue-equipment-confirmation/individual-confirmation-dark-390.png": "84eb212373d50ca6d4258630d269d505d3baf1dc520a89bf4c0f3a1cb218fad3",
+  "docs/development-handovers/evidence/issue-equipment-confirmation/individual-confirmation-light-1440.png": "4ab75e2ed94410b267eab8631822a51458c6921d3eea55aeea220b7362ce07d0",
+  "docs/development-handovers/evidence/issue-equipment-confirmation/individual-confirmation-light-390.png": "fee28090ae22d542b4fe116263fc712d61c293e3229887e6fe664c2b6b5f0abc",
+  "docs/development-handovers/evidence/issue-equipment-confirmation/quantity-confirmation-dark-1440.png": "fc59a678ada724ed6159535d12399061946fb98dfdba3d412bb2e19583351bdc",
+  "docs/development-handovers/evidence/issue-equipment-confirmation/quantity-confirmation-dark-390.png": "88c7c5fd9ca8abc5a29380840c221257c58a921f6cefb1bca0d4157378857d77",
+  "docs/development-handovers/evidence/issue-equipment-confirmation/quantity-confirmation-light-1440.png": "c3f85b25d1e5d2ca05a38c24ab45d1b8a437eac73eaec1b35d93eb2eb3d5925d",
+  "docs/development-handovers/evidence/issue-equipment-confirmation/quantity-confirmation-light-390.png": "bc8a72cae7e3c490cadf85d630c405ce00877f4ba636e8b6bc385bd2a2859533"
+}

@@ -1,5 +1,20 @@
 # Milestone 01 Development Handover — v2.2 Target
 
+**Current status — 16 November 2026:** Batches 3.10 / PR #391 and 3.11 /
+PR #392 are approved and merged. The verified `milestone-1` integration HEAD is
+`505ec1a60daccdfed4c2c36c9379a29ea6f5367d`, schema 19. The final outstanding
+Stage 3 usability correction before Batch 3.12 is implemented separately on
+`feat/issue-equipment-confirmation`: ordinary Issue Equipment now reviews the
+actual equipment, selected units, quantity and recipient before its existing save.
+Back To Edit, failure retention and duplicate protection use the existing form.
+[Focused results and eight genuine screenshots](evidence/issue-equipment-confirmation/Report.md)
+record verification; independent review and explicit owner approval remain.
+Batch 3.12 has not started. No merge, release or deployment of this correction
+is authorised. Deferred native/manual and Stage 6 acceptance remain deferred.
+
+The dated records below are historical checkpoints; their earlier pending-merge
+statements do not describe the current integration branch.
+
 > **Batch 3.11 final review correction — 16 November 2026:** PR #392 now connects
 > Return Equipment to the existing Correct Movement form. It retains entered
 > return details, reloads authoritative quantities/versions after correction and
