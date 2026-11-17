@@ -60,11 +60,11 @@ def visible_subnet_batch_reason(event):
 def visible_change_history(connection, account_id):
     """Keep essential administrator events visible when inventory is disabled.
 
-    Administrators receive complete events when every inventory section is
-    readable. Otherwise, return only approved fields from readable sections
-    and essential Account, Role and Security changes for verified admins.
-    Unknown categories, extra details and omitted counts may describe hidden
-    inventory, so do not include them in a restricted response.
+    Administrators with Devices, IPAM and Racks access retain complete events
+    unless an event includes IT Assets changes they cannot read. Other events
+    return only approved fields from readable sections and essential Account,
+    Role and Security changes for verified admins. Unknown categories, extra
+    details and omitted counts stay out of these restricted responses.
     """
     sections = {section: can_access(connection, account_id, section)
                 for section in ("Devices", "IPAM", "Racks", "IT Assets")}
@@ -75,13 +75,16 @@ def visible_change_history(connection, account_id):
     is_admin = row == (1, 1, 1)
     if not is_admin and not any(sections.values()):
         return []
-    complete_history = is_admin and all(sections.values())
+    complete_history = is_admin and all(sections[section] for section in ("Devices", "IPAM", "Racks"))
 
     history = []
     for (raw,) in connection.execute(
             "SELECT record_json FROM inventory_change_history ORDER BY id"):
         event = json.loads(raw)
-        if complete_history:
+        stock_changes = (isinstance(event, dict) and isinstance(event.get('changes'), list)
+                         and any(isinstance(change, dict) and change.get('kind') == 'IT Assets'
+                                 for change in event['changes']))
+        if complete_history and (sections['IT Assets'] or not stock_changes):
             history.append(event)
             continue
         if not isinstance(event, dict) or not isinstance(event.get("changes"), list):

@@ -879,8 +879,10 @@ The account hydration/photo functions now have purpose-based callable bindings m
 
 `visible_change_history` supplies both inventory state and history responses.
 Verified administrators retain essential Account, Role and Security summaries
-when optional inventory features are off; complete history requires every
-inventory section to be readable. See [the access and redaction rules](04-Authentication-and-Permissions.md#administrator-audit-history).
+when optional inventory features are off. With Devices, IPAM and Racks readable,
+events without IT Assets changes retain their complete representation even if
+IT Assets is disabled; events containing disabled IT Assets changes are filtered.
+See [the access and redaction rules](04-Authentication-and-Permissions.md#administrator-audit-history).
 The function declarations and indexed line locations are unchanged.
 
 ## backend/http_security.py

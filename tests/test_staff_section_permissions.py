@@ -179,7 +179,6 @@ class StaffSectionPermissionTests(unittest.TestCase):
         self.assertFalse(can_replace_inventory(self.db, 2))
 
     def test_inventory_history_keeps_complete_admin_access_and_directory_privacy(self):
-        self.db.execute("UPDATE organisation_features SET enabled=1 WHERE feature='it_assets'")
         event = '{"reason":"Private security event","changes":[{"kind":"Account","label":"owner","fields":["Roles"]}]}'
         self.db.execute('INSERT INTO inventory_change_history(record_json) VALUES(?)', (event,))
         self.db.commit()

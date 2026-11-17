@@ -145,6 +145,29 @@ class HistoryPermissionProjectionTests(unittest.TestCase):
         self.allowed = {"Devices": True, "IPAM": True, "Racks": True, "IT Assets": True}
         self.assertEqual(visible_change_history(self.db, 1), events)
 
+    def test_admin_retains_exact_non_stock_history_with_it_assets_disabled(self):
+        self.allowed = {"Devices": True, "IPAM": True, "Racks": True, "IT Assets": False}
+        events = [{"at": "2026-11-02T12:00:00Z", "reason": "Established historical reason",
+                   "actor": "owner", "actorId": 1, "outcome": "Succeeded", "omitted": 7,
+                   "confirmationId": "historical-reference", "legacyDetail": {"retained": True},
+                   "changes": [{"kind": kind, "action": "Updated", "label": "label-" + kind,
+                                "fields": ["Status"], "before": {"Status": "Old"},
+                                "after": {"Status": "New"}}]}
+                  for kind in ("Account", "Role", "Security", "Device", "IPAM", "Rack", "Unknown legacy")]
+        self.db.executemany("INSERT INTO inventory_change_history(record_json) VALUES(?)",
+                            [(json.dumps(event),) for event in events])
+        self.add("IT Assets")
+        self.add("Account", "IT Assets", reason="Hidden stock details", omitted=12)
+        stored = self.db.execute("SELECT * FROM inventory_change_history ORDER BY id").fetchall()
+        result = visible_change_history(self.db, 1)
+        self.assertEqual(result[:-1], events)
+        self.assertEqual(result[-1], {
+            "at": "2026-11-02T12:00:00Z", "omitted": 0,
+            "changes": [{"kind": "Account", "action": "Updated", "label": "label-Account", "fields": []}],
+        })
+        self.assertEqual(self.db.execute(
+            "SELECT * FROM inventory_change_history ORDER BY id").fetchall(), stored)
+
     def test_admin_essential_events_survive_every_inventory_feature_combination(self):
         inventory_kinds = {"Devices": ("Device", "Device types", "Locations", "Settings"),
                            "IPAM": ("IPAM", "Subnet", "VLAN"), "Racks": ("Rack",),
@@ -160,8 +183,9 @@ class HistoryPermissionProjectionTests(unittest.TestCase):
                 result = visible_change_history(self.db, 1)
                 expected = kinds[:3] + [kind for section, group in inventory_kinds.items()
                                         if self.allowed[section] for kind in group]
-                if all(flags):
+                if all(flags[:3]):
                     expected.append("Unknown legacy")
+                if all(flags):
                     self.assertEqual(result, events)
                 self.assertEqual([event["changes"][0]["kind"] for event in result], expected)
                 self.assertEqual(self.db.execute(

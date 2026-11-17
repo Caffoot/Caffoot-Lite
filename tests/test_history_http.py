@@ -136,8 +136,13 @@ class HistoryHttpPermissionTests(unittest.TestCase):
                     self.assertEqual([change["kind"] for change in history[-1]["changes"]],
                                      [*essential, *(kind for feature, kind in inventory.items()
                                                     if feature not in disabled)])
-                    self.assertTrue(all(event["omitted"] == 0 for event in history))
-                    self.assertNotIn("PRIVATE", json.dumps(history))
+                    if disabled == {"it_assets"}:
+                        self.assertEqual(history[:-1], [json.loads(row[1]) for row in stored[:-1]])
+                    else:
+                        self.assertTrue(all(event["omitted"] == 0 for event in history))
+                        self.assertNotIn("PRIVATE", json.dumps(history))
+                    self.assertEqual(history[-1]["omitted"], 0)
+                    self.assertNotIn("PRIVATE", json.dumps(history[-1]))
                     self.assertNotIn("Unknown legacy", json.dumps(history))
                     for feature, kind in inventory.items():
                         if feature in disabled:

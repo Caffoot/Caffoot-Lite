@@ -58,12 +58,14 @@ read essential **Account, Role and Security** events through both
 optional inventory features are off. Settings and Users remain available under
 the existing [approved essential-access contract](https://github.com/Caffoot/Caffoot-Lite/issues/238#issuecomment-6821230015).
 
-When Devices, IPAM, Racks and IT Assets are all readable, administrators receive
-the complete existing history representation. Otherwise, responses contain only
-approved summary fields for visible inventory changes and essential administrator
-events. Hidden categories, unknown categories, extra historical properties,
-before/after details, free-form reasons and unattributable omitted counts are
-excluded. Existing IT Assets/Device association redaction still applies. Ordinary
+When Devices, IPAM and Racks are readable, administrators receive the complete
+existing representation for events containing no IT Assets changes, even when
+IT Assets is disabled. Events containing IT Assets changes retain their complete
+representation only when that section is also readable. Other events use the
+restricted projection: approved summary fields for visible inventory changes and
+essential administrator events, excluding hidden/unknown categories, extra
+historical properties, before/after details, free-form reasons and unattributable
+omitted counts. Existing IT Assets/Device association redaction still applies. Ordinary
 users' inventory Read or Edit permissions never grant Account, Role or Security
 history access. Stored events and their order remain unchanged.
 
