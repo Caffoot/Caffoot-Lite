@@ -52,7 +52,7 @@ async function main(){
  const originalFacts=python('import sqlite3,sys,json;db=sqlite3.connect(sys.argv[1]);print(json.dumps({t:db.execute("SELECT * FROM "+t+" ORDER BY 1").fetchall() for t in ["it_asset_stock_movements","it_asset_stock_entries"]},sort_keys=True))',[database]);
  const errors=[],screens=[];
  page=await owner.newPage();page.on('pageerror',failure=>errors.push(String(failure)));
- await page.goto(address+'/inventory#it-assets');await page.locator('#stock-receipt-form').waitFor();
+ await page.goto(address+'/inventory#it-assets');await page.locator('#stock-tab-movements').waitFor();
  async function movementTab(target=page){await target.locator('[data-stock-action="tab"][data-tab="movements"]').click();await target.locator('[data-movement-entry="'+original.entryId+'"]').waitFor();}
  async function select(entry=original.entryId){await page.locator('[data-stock-action="correct-movement"][data-id="'+entry+'"]').click();await page.locator('#stock-correction-form').waitFor();}
  async function propose(quantity,reason='Delivery note confirms the corrected quantity.'){
@@ -197,7 +197,7 @@ async function main(){
  const becomingIneligible=await issueMore(3),otherEligible=await issueMore(1);
  const partialIssue=(await stock()).issues.find(row=>row.id===becomingIneligible);
  await post(owner,session,'/api/it-assets/return',{operationId:crypto.randomUUID(),issueEntryId:partialIssue.id,version:partialIssue.version,quantityReturned:2,readyQuantity:0,writeOffQuantity:0,returnedOn:'2026-11-16',checks:{cleanedWorking:false,dataPreparationConfirmed:false},writeOffReason:'',note:'Two actually returned'});
- await page.reload();await page.locator('#stock-receipt-form').waitFor();await page.locator('#stock-tab-return').click();await returnForm.waitFor();
+ await page.reload();await page.locator('#stock-tab-return').waitFor();await page.locator('#stock-tab-return').click();await returnForm.waitFor();
  await returnForm.locator('[name="returnSource"]').selectOption('stock:'+becomingIneligible);
  await returnForm.locator('[name="quantityReturned"]').fill('3');
  await returnForm.locator('[name="returnNote"]').fill('Keep this note when eligibility changes.');
@@ -225,7 +225,7 @@ async function main(){
  await captureState('read-only-history',readerPage);
  const employeeContext=await browser.newContext({ignoreHTTPSErrors:true});await login(employeeContext,'circulation-employee','Fictional-Account-Password-2026!');assert.equal((await employeeContext.request.get(address+'/api/it-assets/history')).status(),403);assert.equal((await employeeContext.request.get(address+'/api/it-assets/corrections/'+originalIssue.entryId)).status(),403);
  const technician=await browser.newContext({ignoreHTTPSErrors:true});await login(technician,'circulation-technician','Fictional-Account-Password-2026!');
- const technicianPage=await technician.newPage();technicianPage.on('pageerror',failure=>errors.push(String(failure)));await technicianPage.goto(address+'/inventory#it-assets');await technicianPage.locator('#stock-receipt-form').waitFor();await technicianPage.locator('#stock-tab-return').click();
+ const technicianPage=await technician.newPage();technicianPage.on('pageerror',failure=>errors.push(String(failure)));await technicianPage.goto(address+'/inventory#it-assets');await technicianPage.locator('#stock-tab-return').waitFor();await technicianPage.locator('#stock-tab-return').click();
  await technicianPage.locator('#stock-returnSource').selectOption('stock:'+otherEligible);await technicianPage.locator('[data-stock-action="correct-return-movement"]').click();await technicianPage.locator('#stock-correction-form').waitFor();
  assert.match(await technicianPage.locator('#stock-correction-details').innerText(),new RegExp('Entry '+otherEligible+'\\b'));
  await post(owner,session,'/api/settings/features',{feature:'it_assets',enabled:false,confirmDisable:true});assert.equal((await owner.request.get(address+'/api/it-assets/corrections/'+original.entryId)).status(),403);
