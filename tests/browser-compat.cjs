@@ -2106,7 +2106,14 @@ async function run(){
   await page.locator('#main-content [data-action="users-open-editor"][data-user-id="'+editorId+'"]').click();
   await page.locator('#main-content .users-management-modal').waitFor();
   await page.locator('#next-user-profile-form input[name="displayName"]').fill('Taylor Updated');
-  await page.locator('#next-user-profile-form button[type="submit"]').click();
+  // Finish the profile write before creating a state-bound permissions preview.
+  // A concurrent profile audit entry must correctly invalidate an earlier proof.
+  const [profileResponse]=await Promise.all([
+    page.waitForResponse(response=>response.url().endsWith('/api/users/profile') &&
+      response.request().method()==='POST'),
+    page.locator('#next-user-profile-form button[type="submit"]').click()
+  ]);
+  assert.equal(profileResponse.status(),200,'User profile must save before permission preview');
   await page.waitForFunction(async id=>{
     const r=await fetch('/api/users',{cache:'no-store'});
     return r.ok && (await r.json()).users.find(u=>u.id===id)?.profile.displayName==='Taylor Updated';
