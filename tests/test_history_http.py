@@ -28,7 +28,7 @@ class HistoryHttpPermissionTests(unittest.TestCase):
         with sqlite3.connect(self.path) as db:
             db.execute("PRAGMA foreign_keys=ON")
             initialise_database(db)
-            # Complete administrator history requires every inventory feature.
+            # Enable IT Assets as well to exercise complete administrator history.
             db.execute("UPDATE organisation_features SET enabled=1 WHERE feature='it_assets'")
             enable_inventory_features(db)
             admin, secret = bootstrap_first_admin(db, "owner", "password")
