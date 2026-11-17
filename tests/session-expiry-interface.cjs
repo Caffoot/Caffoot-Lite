@@ -167,7 +167,7 @@ async function run() {
     'import sqlite3,sys',
     'from backend.accounts import verify_password',
     'with sqlite3.connect(sys.argv[1]) as db:',
-    ' stored=db.execute("SELECT password_hash FROM accounts WHERE username=\\'owner\\'").fetchone()[0]',
+    ' stored=db.execute("SELECT password_hash FROM accounts WHERE username=?", ("owner",)).fetchone()[0]',
     ' print("unchanged" if verify_password(sys.argv[2],stored) else "changed")',
   ].join('\n'), [db, password]), 'unchanged');
   await signIn();
