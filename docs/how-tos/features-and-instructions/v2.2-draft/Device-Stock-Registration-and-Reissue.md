@@ -101,7 +101,7 @@ Outstanding accessories are not silently transferred to the new holder. Resolve 
 
 ## Return And Prepare The Same Device
 
-Record an actual return using **Return Equipment**, keeping the original Device identity. If an eligible previously deployed physical Device has no outstanding recorded assignment, use its authorised **Device Details → Return Equipment** action and explicit physical-return confirmation. That route does not invent an earlier issue or holder and enters Awaiting Preparation.
+Record an actual return using **Return Equipment**, keeping the original Device identity. If an eligible previously deployed physical Device has no outstanding recorded assignment, use its authorised **Device Details → Assigned To → Return Equipment** action and explicit physical-return confirmation. That route does not invent an earlier issue or holder and enters Awaiting Preparation.
 
 To prepare a returned registered Device:
 
@@ -115,8 +115,8 @@ To prepare a returned registered Device:
 | Equipment | Required Preparation Confirmation |
 | --- | --- |
 | Desktop, Laptop, physical Server | Checked Working and Data Wiped / Reset |
-| Printer | Cleaned & Checked Working; stored documents, credentials and user data cleared where applicable. A factory reset is not mandatory for every printer |
-| Monitor, Keyboard, Mouse, Docking Station | Cleaned & Checked Working |
+| Printer | Cleaned And Checked Working; stored documents, credentials and user data cleared where applicable. A factory reset is not mandatory for every printer |
+| Monitor, Keyboard, Mouse, Docking Station | Cleaned And Checked Working |
 | Other physical equipment | Working/condition checks and applicable preparation, including data clearing where needed |
 
 Preparation preserves Physically Held and the original return. If checks are outstanding, leave the machine Awaiting Preparation. If damaged beyond reuse, use the appropriate **Write Off** procedure rather than marking it ready. **Cancel** leaves the saved preparation state unchanged. Full return, partial-return and damaged-equipment procedures are in [Issue, Return And Write Off](IT-Assets-Issue-Return-and-Write-Off.md).
@@ -128,7 +128,8 @@ from Storage Size/Unit. Suggested media are HDD, SATA SSD, NVMe SSD and Other.
 Blank means unrecorded; recorded custom/legacy values remain selectable.
 
 **Physical Server → Hardware:** select **Record Boot Storage** to document ordinary
-boot drives without requiring ZFS. Choose Independent Boot Drives, then record
+boot drives without requiring ZFS. Under **Boot Storage Source**, choose
+**Independent Boot Drives (ZFS Not Required)**, then record
 Boot Drive Type, Number Of Boot Drives, Capacity Per Drive/Unit and Boot Configuration
 (Single, Mirror or Other). Boot Pool Name is optional. A mirror needs at least two drives.
 

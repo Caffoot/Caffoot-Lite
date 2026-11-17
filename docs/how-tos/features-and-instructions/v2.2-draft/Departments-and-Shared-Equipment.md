@@ -1,53 +1,163 @@
 # Departments And Shared Equipment
 
-> **Draft v2.2 — Not Published / Not Production Guidance.** Batches 3.1–3.7 are merged through PR #388 at `7f91f5d42feb3916cfab060abd5ca4b1558a92ba` (schema 16). Batch 3.8 is implemented for review on `feat/it-assets-issue-return-writeoff` (draft PR #389, schema 17); it is not merged or visually accepted. Batch 3.4 native acceptance remains deferred. Use the published v2.1 guides for production. These are not installation, upgrade or restore instructions.
+> **Draft v2.2 — Unreleased.** This guide describes the implementation on `milestone-1` at `753b3266893987addb11406ef8303adb03c3c112`. It is for development review, not production installation, upgrade or restore. Use the [published v2.1 guides](../README.md) for the released application. Native/manual and release acceptance remain separate.
 
-Departments are simple, flat groups, such as a fictional **Accounts** Department. Membership does not grant inventory, directory or account-administration rights.
+Departments group Staff Members and provide a holder for equipment used collectively, such as an Accounts printer. They are simple independent groups, without subdepartments or management trees. Membership is optional and grants no application permissions.
 
-## Manage Departments
+An item assigned to a Department stays assigned once to that Department. It is not copied to every member or made each person's individual responsibility. Personally assigned equipment is a separate relationship, even when its holder belongs to the same Department.
 
-1. Open **Staff → Departments**. Departments Read permits viewing; Departments Edit permits management.
-2. Choose **+ Add Department**, enter a unique **Department Name**, then **Save Department**.
-3. Use **Manage** to rename an existing Department, **Archive** it or **Reactivate** it. Confirm status changes when prompted.
-4. **Delete Department** is offered only when the server confirms there are no current or historical associations. Confirming deletion is permanent; otherwise archive the Department.
+## Before You Start
 
-Archiving retains Staff membership, assignments and history. Archived Departments cannot receive new Staff memberships or initial equipment assignments. An existing archived membership can remain during an unrelated Staff edit. Reactivation permits new associations again.
+| Task | Required access |
+| --- | --- |
+| View Departments and Department Details | Departments Read. |
+| Add, rename, archive, reactivate or delete an unused Department | Departments Edit. |
+| View Staff membership in Department Details | Independent Staff Members Read. |
+| Change someone's membership | Staff Members Edit, through the existing Staff Add/Edit form. |
+| View shared Devices or IT Assets | Read access to the corresponding enabled equipment section. |
+| Initially assign an eligible existing Device | Devices Edit, with Devices enabled. |
+| Issue or return IT Assets stock | IT Assets Edit, with IT Assets enabled. Canonical Device stock work also requires Devices Edit and Devices enabled. |
 
-To change a person's membership, use their Staff Add/Edit form with Staff Members Edit. Authorised Staff users can see limited linked Department labels and eligible choices without receiving general Departments access.
+Staff Members and Departments are core sections and do not depend on the IT Assets switch. Account administration remains separate in **Staff → Permissions**; Departments Edit does not grant it. See [Roles, Section Permissions And MFA](Roles-Section-Permissions-and-MFA.md) and [Optional Features](Optional-Features-and-Link-To-IPAM.md) if controls are unavailable.
 
-## Shared Equipment
+## Add A Department
 
-With Devices Edit, open an eligible unassigned Device's **Assigned To** tab, choose **Assign Device**, then select **Department** as the recipient type and find an active Department. Confirm the assignment. See [the full assignment instructions](Device-Assignments-and-My-Equipment.md).
+1. Expand **Staff** in the sidebar and choose **Departments**.
+2. Review existing names first. Avoid a near-duplicate caused by a spelling difference.
+3. Choose **+ Add Department**.
+4. Enter a unique **Department Name**, for example fictional **Accounts**, using no more than 120 characters.
+5. Choose **Save Department**. The Department appears as **Active**, with **Available For New Membership**.
+6. If the save is rejected, read the message, correct the name or conflict and save again. Empty and duplicate names are not accepted.
 
-For example, a Printer assigned to Accounts remains owned by that Department. It is not copied to each employee or assigned personally to them. Its Device **Assigned To** tab shows the Department holder and dated history to authorised Devices readers.
+**Cancel**, **Close ×** or Escape closes the editor without saving the name. Creating a Department does not add members, assign equipment or grant anyone access.
 
-A linked employee in Accounts sees the Printer under **My Equipment → Shared with My Department**, without gaining general inventory access. Their personal equipment remains separate. Changing membership changes shared visibility on the next request without moving the Printer.
+## Rename A Department
+
+1. Choose **Manage** beside the Department, or open **View Details → Manage Department**.
+2. Change **Department Name** and choose **Save Department**.
+3. Check the saved name in the directory and Details view.
+
+The Department retains its identity and existing links. Current holder displays use its current name; original assignment history retains the label recorded at the time. Cancelling the editor leaves the saved name unchanged.
+
+## Add, Change Or Remove Staff Membership
+
+1. Open **Staff → Staff Members** and find the correct person.
+2. Choose **Edit**, or **View Details → Edit Staff Member**.
+3. Under **Department**, select the intended active Department. Select **No Department** to remove current membership.
+4. Choose **Save Staff Member**, then verify the saved membership.
+5. With Staff Members Read and Departments Read, open the Department's **View Details → Staff Members** to check its current members.
+
+An authorised Staff editor receives the limited Department names needed for this form without gaining the general Departments section. Departments Read alone does not permit Staff membership changes.
+
+Moving someone from Accounts to Sales changes their Department-shared equipment visibility on the next My Equipment request. It does not move the Accounts printer, transfer their laptop or alter either Department's equipment assignments. Use the relevant equipment workflow to change an actual holder.
 
 ## Department Details — Unreleased v2.2
 
-The owner approved the functional preview on 15 November. The screen was merged into
-`milestone-1` through PR #386 at `2e6c50ba4777b7500258d2a1a28317764d806020`.
-It uses the existing application styling and remains unreleased.
+1. Open **Staff → Departments → View Details** beside the group.
+2. Start with **Overview** to confirm its name and status.
+3. Choose the relevant tab below. On narrow screens, scroll the tab row or wide tables sideways. Arrow keys, Home and End also move between tabs.
+4. Use **View Staff Details** or **View Device**, where offered, to open the original permitted record.
+5. Choose **Back To Departments** to return to the directory. Viewing tabs saves no changes.
 
-1. Open **Staff → Departments** and choose **View Details** beside a Department.
-2. **Overview** shows the recorded name, status and membership availability. Staff and
-   shared-Device counts appear only when the corresponding data is available with your
-   independent access. **Not Available** is not a zero count.
-3. **Staff Members** lists currently linked records, including inactive Staff whose
-   membership is retained. **View Staff Details** opens the existing authorised screen.
-   Change membership through the Staff Add/Edit form.
-4. **Equipment** lists only Devices and outstanding IT Assets assigned directly to the Department, followed by
-   their genuine recorded assignment/movement history. Independent section access applies. Equipment personally assigned to Staff is excluded.
-   **View Device** opens the original Device record.
-5. **History** shows only Department changes supplied by the existing Audit Trail service
-   and authorised Device assignments. An empty state describes what is available with
-   your current access; it does not mean the Department has never changed.
-6. **Manage Department** uses the same rename/archive/reactivate/delete controls as the
-   directory. **Back To Departments** returns to the list.
+| Tab | What it shows |
+| --- | --- |
+| Overview | Name, status, independent structure and New Membership availability. Staff, Department-Owned Devices and IT Assets summaries require independent access. **Not Available** is not a zero count. |
+| Staff Members | Current members, including inactive Staff whose membership is retained. Change membership through the Staff form. |
+| Equipment | Devices and outstanding IT Assets assigned directly to the Department, followed by genuine recorded equipment history. Personally assigned Staff equipment is excluded. |
+| History | Available recorded Department changes and authorised equipment activity, with dates and responsible accounts. Visibility depends on access to the existing history/equipment services. An empty state does not prove no changes have occurred. |
 
-On narrow screens, scroll the tab row or a wide table sideways to reach its other
-controls and columns. Arrow keys, Home and End also move between tabs.
+The IT Assets summary counts outstanding issued quantities; it is not stock physically held by IT. Equipment dates and history remain on their original records, rather than being copied into a separate Department inventory.
 
-Devices and IT Assets feature-off hide their corresponding equipment without changing saved relationships. With IT Assets Edit, **Issue Equipment** preselects an active Department; **Return Equipment** records an actual outstanding stock return, including from archived Departments. Personal Staff equipment is excluded. See [Issue, Return And Write Off](IT-Assets-Issue-Return-and-Write-Off.md). Device registration/reissue and associated-equipment reassignment remain later work.
+If a panel could not load, reopen Details to retry. Check your access before interpreting a missing count or panel. Devices and IT Assets follow their own switches: disabling one hides its information without removing relationships or preventing authorised use of the other.
+
+![Department Details Equipment tab showing a fictional Department's outstanding dock quantity and genuine issue and return history](../../../development-handovers/evidence/stock-circulation/screenshots/department-equipment-light-1440.png)
+
+*Approved Batch 3.8 application capture with fictional data. The dock remains assigned to the Department once; the history records its original issue and partial return. Personally assigned Staff equipment is excluded from this view.*
+
+## Assign Shared Equipment
+
+### An Existing Device With No Equipment History
+
+Use initial allocation for an eligible existing Desktop, Laptop or Printer that has never been assigned or recorded in equipment stock.
+
+1. Open the original Device Details view and select **Assigned To**.
+2. Choose **Assign Device**, where the Device is eligible and you have Devices Edit.
+3. Set **Assign To** to **Department**.
+4. Search under **Find A Recipient** and select the correct active Department under **Recipient**.
+5. Choose **Confirm Assignment** and check the holder and **Assignment History**.
+6. With Departments Read, open Department Details → **Equipment** to see the same saved relationship.
+
+The Device must be Active, physical and free of previous assignment or equipment-stock history. A recorded stock Device requires [registration/reissue](Device-Stock-Registration-and-Reissue.md); a current holder change may require [direct handover](Associated-Equipment.md#reassign-a-workstation-directly). Follow [Device Assignments And My Equipment](Device-Assignments-and-My-Equipment.md) for full eligibility and rejection behaviour. Initial allocation does not create stock or mark equipment Ready.
+
+### IT Assets Stock
+
+1. Open an active Department's **Department Details → Equipment**.
+2. Choose **Issue Equipment** with IT Assets Edit. The Department is preselected.
+3. Follow [Issue Equipment](IT-Assets-Issue-Return-and-Write-Off.md) to select genuine Ready stock, enter quantities and review the confirmation.
+4. After saving, check the outstanding quantity on Equipment and the original stock movement in IT Assets.
+
+For a registered Device, use its specific registration/reissue route with both equipment permissions. **Return Equipment** beside outstanding Department stock records actual physical returns, including from archived Departments. A missing item is not a physical return; follow the appropriate Write Off procedure.
+
+### Example: Shared Printer And Personal Laptop
+
+This example is fictional. **Accounts** holds printer **AC-PRN-01** and two issued adapters. **Priya Shah**, a member of Accounts, personally holds laptop **AC-LAP-07**.
+
+- Accounts → Equipment shows the printer and two outstanding adapters. It excludes Priya's laptop.
+- Priya's My Equipment → **Assigned to Me** shows the laptop.
+- **Shared with My Department** shows the Department printer and adapters, subject to their feature switches. Priya does not become their individual holder.
+- If Priya moves to Sales, the Accounts shared items disappear from Priya's next personal request. The printer and adapters remain assigned to Accounts; the laptop remains assigned to Priya.
+
+Membership changes create no stock receipt, stock issue or duplicate Device.
+
+## Archive A Department
+
+Archive a Department that should no longer receive new members or equipment, while preserving its existing relationships.
+
+1. Open **Manage** in the directory, or **Manage Department** from Details.
+2. Choose **Archive**.
+3. Read and confirm the prompt explaining that existing associations are preserved. Cancelling the prompt leaves status unchanged.
+4. Check **Archived** in the directory and Details. New membership and new equipment assignments are unavailable.
+5. Review existing members and equipment with the necessary access. Change membership or resolve outstanding equipment through its normal workflow.
+
+Archive changes status after its own confirmation; it does not save a changed Department Name typed into the editor. Save any rename separately.
+
+Archiving keeps Staff membership, equipment holders, movement dates and history. It does not move members, return stock, close assignments, disable accounts or change permissions. Existing archived membership can remain during an unrelated Staff edit. Shared equipment stays linked to the archived Department; archive does not manufacture personal assignments for its members.
+
+## Reactivate Or Delete An Unused Department
+
+To reactivate, open **Manage** or **Manage Department**, choose **Reactivate** and confirm. The Department becomes eligible for new memberships and assignments again. History stays intact; previous equipment is not automatically reissued.
+
+Permanent deletion is more restricted:
+
+1. Open the Department editor and look for **Delete Department**. It is offered only when the server reports no current or historical associations.
+2. Confirm that this is an unused record intended for removal.
+3. Choose **Delete Department** and accept the permanent-deletion prompt. Cancel the prompt to retain it.
+4. If deletion is rejected because an association exists or was added meanwhile, archive instead. Do not delete Staff or equipment to force deletion.
+
+Moving all current Staff out of a Department does not necessarily make it deletable: historical memberships and equipment relationships are protected too. A deleted record cannot be restored with Reactivate, which applies only to retained archived records.
+
+## Troubleshooting And Safeguards
+
+| Problem | Guidance |
+| --- | --- |
+| A Department is absent from a picker | Check whether it is archived. Reactivation requires Departments Edit; a new spelling is not a repair for the original relationship. |
+| Details shows Not Available | Check rights to the particular Staff, Devices, IT Assets or history source. It is not evidence of an empty Department. |
+| A member's laptop is absent from Department Equipment | Personally assigned equipment is excluded. Review Staff Details or the original Device. |
+| A rename has not rewritten old assignment text | Historical labels preserve the recorded name; current holder displays use the current name. |
+| Archive has not disabled logins | Membership, Department status and account access are separate. Use authorised account administration. |
+| Equipment remains after archive | Existing assignments are preserved. Record actual returns, write-offs or eligible handovers to change custody. |
+| A connection interruption obscures the save result | Reopen the Department and inspect the saved state before retrying. |
+
+The server rechecks permissions, status and associations at save time. A button in an older open screen does not guarantee the action is still eligible. Unsafe deletion or assignment is rejected without removing existing relationships.
+
+## Related Guides And Screenshot Provenance
+
+- [Staff Members](Staff-Members.md)
+- [Device Assignments And My Equipment](Device-Assignments-and-My-Equipment.md)
+- [Issue, Return And Write Off](IT-Assets-Issue-Return-and-Write-Off.md)
+- [Device Stock Registration And Reissue](Device-Stock-Registration-and-Reissue.md)
+- [Associated Equipment](Associated-Equipment.md)
+
+The reused image belongs to the [owner-approved Batch 3.8 application captures](https://github.com/Caffoot/Caffoot-Lite/pull/389#issuecomment-6908629303). The [Department Details evidence](../../../development-handovers/evidence/department-details/Report.md) preserves earlier application captures and their original limitations. Functional previews are not substituted as approved screenshots.
 
 [← Draft v2.2 Guides](README.md) · [Published v2.1 Guides](../README.md)
