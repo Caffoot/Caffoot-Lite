@@ -613,11 +613,11 @@ The account hydration/photo functions now have purpose-based callable bindings m
 | [`redraw`](../../interface/staff-directory.js#L233) | 233 |
 | [`showStaffConflict`](../../interface/staff-directory.js#L234) | 234 |
 | [`refreshStaffRecord`](../../interface/staff-directory.js#L242) | 242 |
-| [`saveStaff`](../../interface/staff-directory.js#L257) | 257 |
-| [`openDepartmentDialog`](../../interface/staff-directory.js#L276) | 276 |
-| [`closeDepartmentDialog`](../../interface/staff-directory.js#L287) | 287 |
-| [`saveDepartment`](../../interface/staff-directory.js#L288) | 288 |
-| [`configure`](../../interface/staff-directory.js#L295) | 295 |
+| [`saveStaff`](../../interface/staff-directory.js#L258) | 258 |
+| [`openDepartmentDialog`](../../interface/staff-directory.js#L277) | 277 |
+| [`closeDepartmentDialog`](../../interface/staff-directory.js#L288) | 288 |
+| [`saveDepartment`](../../interface/staff-directory.js#L289) | 289 |
+| [`configure`](../../interface/staff-directory.js#L296) | 296 |
 
 ## interface/equipment.js
 

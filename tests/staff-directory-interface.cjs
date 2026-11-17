@@ -84,6 +84,11 @@ async function test(){
  assert.equal(person.departmentId,dept.id);
  assert.equal(person.accountId,null);
  const session=await (await context.request.get(address+'/api/session')).json();
+ const headers={Origin:address,'X-CSRF-Token':session.csrf_token};
+ const archivedResponse=await context.request.post(address+'/api/departments',{headers,data:{name:'Former Team'}});
+ assert.equal(archivedResponse.status(),200);
+ const archivedDepartment=(await archivedResponse.json()).department;
+ assert.equal((await context.request.post(address+'/api/departments/'+archivedDepartment.id,{headers,data:{archived:true}})).status(),200);
  const staffPath='/api/staff-members/'+person.id;
  async function saveCurrentStaff(data){
   const current=(await (await context.request.get(address+staffPath)).json()).staffMember;
@@ -123,6 +128,8 @@ async function test(){
  await otherEditor.screenshot({path:path.join(output,'staff-conflict-light-desktop.png'),fullPage:true});
  await otherEditor.setViewportSize({width:390,height:844});
  await otherEditor.evaluate(()=>caffootSetTheme('dark'));
+ assert.equal(await otherEditor.locator('#staff-record-form').getAttribute('data-revision'),initialRevision);
+ assert.equal(await otherEditor.locator('#preview-location').inputValue(),'Unsaved location');
  await otherEditor.screenshot({path:path.join(output,'staff-conflict-dark-mobile.png'),fullPage:true});
  otherEditor.once('dialog',dialog=>dialog.dismiss());
  await otherEditor.locator('[data-staff-action="staff-refresh"]').click();
@@ -142,6 +149,7 @@ async function test(){
  assert.equal(await otherEditor.locator('#preview-location').inputValue(),'');
  assert.equal(await otherEditor.locator('#staff-create-login').isChecked(),false);
  assert.notEqual(await otherEditor.locator('#staff-record-form').getAttribute('data-revision'),initialRevision);
+ assert.match(await otherEditor.evaluate(()=>window.caffootStaffDirectory.render('departments')),/Former Team/);
  await otherEditor.locator('#preview-departmentId').selectOption(dept.id);
  await otherEditor.locator('#preview-location').fill('Reviewed location');
  await otherEditor.locator('#staff-record-form [type="submit"]').click();

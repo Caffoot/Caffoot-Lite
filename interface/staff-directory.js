@@ -244,11 +244,12 @@ function renderDepartments() {
     if(form&&!confirm('Refresh this Staff Member? This will replace your unsaved details, including any login fields, with the current saved values.'))return;
     const [result,choices]=await Promise.all([
       request('/api/staff-members/'+encodeURIComponent(id)),
-      request('/api/staff-members/department-choices')
+      canReadDepartments()?readAll('/api/departments','departments').then(departments=>({departments})):request('/api/staff-members/department-choices')
     ]);
     if(currentStaffId!==id||(form&&!form.isConnected))return;
     staff=staff.map(record=>record.id===id?result.staffMember:record);
     departments=choices.departments;
+    if(canReadDepartments())managedDepartments=departments;
     createLoginIntent=false;
     form?.remove();
     redraw();

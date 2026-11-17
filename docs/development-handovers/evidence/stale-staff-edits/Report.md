@@ -18,6 +18,11 @@ remains defined by [#232](https://github.com/Caffoot/Caffoot-Lite/issues/232) an
   successful refresh/save. Both Reactivate and Mark Inactive reject stale revisions
   and succeed after refreshing. Existing creation, optional login, navigation and
   read-only Staff privacy checks also pass.
+- `CAFFOOT_CHROMIUM_PATH=/usr/bin/chromium node tests/department-details-interface.cjs`:
+  **passed**, 28 actual application captures and no browser script errors.
+- `CAFFOOT_CHROMIUM_PATH=/usr/bin/chromium node tests/device-assignments-interface.cjs`:
+  **passed**, including Staff status placement/confirmation/reactivation, unchanged
+  assignments/login, restricted personal/shared equipment and light/dark mobile views.
 - Python compilation, changed JavaScript syntax and `git diff --check`: **passed**.
 - Function Index regenerated for the three affected runtime files; declaration
   locations and definition count reviewed.
@@ -41,8 +46,11 @@ conflict. Captures were inspected in light desktop and dark mobile presentation.
 
 ## Remaining Verification
 
-The two directly affected Department and Device assignment browser fixtures now
-submit the Staff revision; their compatibility runs remain pending at this checkpoint.
+The directly affected Department and Device assignment browser fixtures submit
+the Staff revision. Final Staff browser verification also checks that theme changes
+keep the original revision and that refreshing retains unused archived Departments
+for authorised Department readers.
+
 Full backend, multi-browser and Docker workflows are deferred while the PR is draft,
 as required by `AGENTS.md`. Native/manual acceptance and independent code/visual
 review remain outstanding. No merge, deployment, release or Stage 1–3 sign-off is claimed.

@@ -15,6 +15,10 @@ The real HTTPS/SQLite Chromium Staff flow passed, including stale form and both
 quick status conflicts, preserved login entries, theme redraws, cancelled/failed
 refresh, successful refreshed saves and unchanged card/action positions.
 See [captures and remaining review](evidence/stale-staff-edits/Report.md).
+Department Details and Device assignment Chromium flows also passed. Final Staff
+verification covers the full permitted Department list after refresh, including
+unused archived Departments. Full backend, multi-browser and Docker workflows
+remain deferred for the draft PR; independent and native/manual review is outstanding.
 This correction does not sign off Stages 1–3 or authorise merge, deployment or release.
 
 **Administrator audit-history correction — 17 November 2026:** Finding 2 is
