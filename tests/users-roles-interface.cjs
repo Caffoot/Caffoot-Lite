@@ -179,7 +179,9 @@ async function confirm(page){
   await signIn.locator('#enrolment:not([hidden])').waitFor();
   const secret=(await signIn.locator('#secret').textContent()).trim();assert.ok(secret.length>=16);
   assert.equal((await workerContext.request.get(address+'/api/session')).status(),401);
-  assert.equal((await workerContext.request.get(address+'/inventory')).status(),401);
+  const unauthenticatedInventory=await workerContext.request.get(address+'/inventory',{maxRedirects:0});
+  assert.equal(unauthenticatedInventory.status(),303);
+  assert.equal(unauthenticatedInventory.headers().location,'/setup#sign-in-required');
   await screenshot(signIn,'required-enrolment-390');await signIn.setViewportSize({width:1440,height:950});await screenshot(signIn,'required-enrolment-1440');await signIn.setViewportSize({width:390,height:844});await audit(signIn,'required-enrolment','#enrolment');await signIn.locator('#code').fill(code(secret));await signIn.locator('#submit').click();
   await signIn.getByText('MFA enrolled. Sign in again with your password and authenticator code.').waitFor();
   assert.equal(await signIn.locator('#secret').textContent(),'');assert.equal(await signIn.locator('#password').inputValue(),'');assert.equal(await signIn.locator('#code').inputValue(),'');
@@ -219,7 +221,11 @@ async function confirm(page){
   const accountSession=await (await staffContext.request.get(address+'/api/session')).json();assert.equal(accountSession.mfa_removal_eligible,true);
   for(const resource of ['/inventory','/inventory?rack-print=same-tab','/api/inventory/state','/api/users','/api/settings/email'])assert.equal((await staffContext.request.get(address+resource)).status(),403,resource);
   const anonymous=await browser.newContext({ignoreHTTPSErrors:true});
-  for(const resource of ['/account','/interface/application.js','/api/account/profile'])assert.equal((await anonymous.request.get(address+resource)).status(),401,resource);await anonymous.close();
+  const unauthenticatedAccount=await anonymous.request.get(address+'/account',{maxRedirects:0});
+  assert.equal(unauthenticatedAccount.status(),303);
+  assert.equal(unauthenticatedAccount.headers().location,'/setup#sign-in-required');
+  for(const resource of ['/interface/application.js','/api/account/profile'])assert.equal((await anonymous.request.get(address+resource)).status(),401,resource);
+  await anonymous.close();
   assert.equal((await staffContext.request.post(address+'/api/users/profile',{headers:{Origin:address,'X-CSRF-Token':accountSession.csrf_token},data:{userId:1,profile:{firstName:'Forbidden'}}})).status(),403);
   await staff.evaluate(()=>switchTab('devices'));assert.equal(await staff.locator('.account-screen').count(),1);
   await staff.locator('.account-screen .subnav [data-section="security"]').click();

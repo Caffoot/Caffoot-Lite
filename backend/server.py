@@ -210,7 +210,16 @@ class Handler(BaseHTTPRequestHandler):
             with connect() as connection:
                 account_id = authenticated_account(connection, self.headers.get("Cookie"))
                 if account_id is None:
-                    self.respond(401, {"error": "unauthorised"})
+                    # Only protected browser documents navigate to the existing
+                    # sign-in screen. API clients retain their JSON 401/403.
+                    destination = ("/setup#session-ended" if self.headers.get("Cookie")
+                                   else "/setup#sign-in-required")
+                    self.send_response(303)
+                    self.send_header("Location", destination)
+                    self.send_header("Content-Length", "0")
+                    self.send_header("Cache-Control", "no-store")
+                    self.send_header("X-Content-Type-Options", "nosniff")
+                    self.end_headers()
                     return
                 if self.path != "/account" and not evaluate_role_policy(connection, account_id).is_admin and not any(can_access(connection, account_id, section)
                            for section in ("Devices", "IPAM", "Racks", "Staff Members", "Departments", "IT Assets")):

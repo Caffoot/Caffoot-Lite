@@ -6,6 +6,7 @@ on:
     paths:
       - "interface/**"
       - "tests/browser-compat.cjs"
+      - "tests/session-expiry-interface.cjs"
       - "tests/department-details-interface.cjs"
       - "tests/stock-intake-interface.cjs"
       - "tests/stock-circulation-interface.cjs"
@@ -38,6 +39,7 @@ on:
     paths:
       - "interface/**"
       - "tests/browser-compat.cjs"
+      - "tests/session-expiry-interface.cjs"
       - "tests/department-details-interface.cjs"
       - "tests/stock-intake-interface.cjs"
       - "tests/stock-circulation-interface.cjs"
@@ -255,6 +257,19 @@ jobs:
         with:
           name: users-roles-${{ github.sha }}
           path: ${{ runner.temp }}/users-roles-evidence
+          if-no-files-found: ignore
+          retention-days: 14
+      - name: Check session-expiry sign-in navigation and capture approved views
+        env:
+          NODE_PATH: ${{ runner.temp }}/caffoot-browser-tests/node_modules
+          CAFFOOT_SESSION_OUTPUT: ${{ runner.temp }}/session-expiry-evidence
+        run: node tests/session-expiry-interface.cjs
+      - name: Save session-expiry sign-in screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: session-expiry-sign-in-${{ github.sha }}
+          path: ${{ runner.temp }}/session-expiry-evidence
           if-no-files-found: ignore
           retention-days: 14
       - name: Exercise approved first-run MFA and inventory UI
