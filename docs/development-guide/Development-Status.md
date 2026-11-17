@@ -1,14 +1,16 @@
 # Published and development versions
 
-**Current integration status — 16 November 2026:** Stage 3 Batches 3.10 and
-3.11 are approved and merged. PR #391 completed at
-`53b04328c4f895bfc1f72f0416c43a519b2e8b42`; PR #392 completed at the verified
-current `milestone-1` HEAD `505ec1a60daccdfed4c2c36c9379a29ea6f5367d`.
-Schema 19 remains current. The final outstanding Stage 3 usability correction
-before Batch 3.12 is the [Issue Equipment confirmation](../development-handovers/evidence/issue-equipment-confirmation/Report.md),
-implemented on `feat/issue-equipment-confirmation` for independent review and
-explicit owner approval. Batch 3.12 has not started. No v2.2 release or deployment
-is included; Batch 3.4 native/manual and Stage 6 acceptance remain deferred.
+**Current Batch 3.12 review status — 16 November 2026:** The verified integration
+base is `6222d8a87e4a02dd4e69f070e11777d2ec82b591`, after the Issue Equipment
+confirmation. The IT Assets dashboard is implemented on `feat/it-assets-dashboard`.
+Its reporting checkpoint is `ebff8ea`; code, tests and four screenshots were preserved
+in `27e1d31`. Schema 20 updates the built-in IT Staff default without widening existing
+accounts' access. See the [dashboard contract](IT-Assets-Dashboard.md) and
+[verification evidence and limitations](../development-handovers/evidence/stock-dashboard/Report.md).
+The earlier eight reporting tests and focused browser check passed. Completion of
+the later combined reporting/role check is unconfirmed. Independent code review,
+final focused verification and owner visual acceptance remain outstanding. No merge,
+v2.2 release or deployment is included. Native/manual and Stage 6 acceptance remains deferred.
 
 ## Historical Pre-Merge Checkpoints
 

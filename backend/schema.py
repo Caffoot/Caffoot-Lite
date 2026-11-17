@@ -10,7 +10,7 @@ from backend.assignment_closure import migrate_assignment_closure, validate_assi
 from backend.equipment_associations import migrate_equipment_associations, validate_equipment_associations
 from backend.handover_schema import migrate_device_handovers, validate_device_handovers
 
-SCHEMA_VERSION = 19
+SCHEMA_VERSION = 20
 
 DDL = """
 CREATE TABLE IF NOT EXISTS inventory_devices (
@@ -244,6 +244,9 @@ def initialise_database(connection: sqlite3.Connection) -> None:
                 connection.execute("INSERT INTO schema_migrations(version) VALUES(19)")
             else:
                 validate_device_handovers(connection)
+        if SCHEMA_VERSION >= 20 and 20 not in versions:
+            migrate_it_staff_stock_default(connection)
+            connection.execute("INSERT INTO schema_migrations(version) VALUES(20)")
         connection.commit()
     except BaseException:
         connection.rollback()
@@ -518,6 +521,34 @@ def migrate_configurable_builtin_roles(connection):
             after_level = "edit" if after.is_admin else after.permissions.get(section)
             if before_level != after_level:
                 raise RuntimeError("Built-in role upgrade changed section access")
+
+
+def migrate_it_staff_stock_default(connection):
+    """Add the new role default without granting historical accounts more access.
+
+    Preserve configured levels even for disabled accounts and accounts awaiting
+    MFA. The numbered migration records when this compatibility change ran.
+    Individual choices already present are never replaced.
+    """
+    from backend.role_policy import SECTIONS
+    accounts = [row[0] for row in connection.execute('SELECT id FROM accounts')]
+    previous = {account: evaluate_role_policy(connection, account) for account in accounts}
+    role = connection.execute("SELECT id FROM roles WHERE role_key='it_staff' AND is_builtin=1").fetchone()
+    if role is None:
+        raise RuntimeError('Built-in IT Staff role is missing')
+    connection.execute("INSERT OR REPLACE INTO role_grants VALUES(?,'IT Assets','edit')", (role[0],))
+    for account, policy in previous.items():
+        current = evaluate_role_policy(connection, account)
+        before = policy.permissions.get('IT Assets')
+        if not policy.is_admin and current.permissions.get('IT Assets') != before:
+            connection.execute("INSERT INTO account_permission_overrides VALUES(?,'IT Assets',?)",
+                               (account, before or 'deny'))
+        after = evaluate_role_policy(connection, account)
+        if any(policy.allows(section, edit=edit) != after.allows(section, edit=edit)
+               for section in SECTIONS for edit in (False, True)):
+            raise RuntimeError('IT Staff default upgrade changed existing access')
+        if not policy.is_admin and policy.permissions != after.permissions:
+            raise RuntimeError('IT Staff default upgrade changed configured access')
 
 
 def migrate_device_assignments(connection):

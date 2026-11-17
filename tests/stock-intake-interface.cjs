@@ -107,6 +107,8 @@ async function main(){
  await page.locator('#optional-feature-it-assets').check({force:true});assert.equal((await enabled).status(),200);
  await page.locator('[data-action="tab-it-assets"]').waitFor({state:'visible'});
  await page.locator('[data-action="tab-it-assets"]').click();
+ // The approved IT Assets Overview is the default; select the existing receipt workflow.
+ await stockTab('receive');
  await page.locator('#stock-receipt-form').waitFor();
  // All full-page stock workflows use the approved right-aligned Cancel / orange primary footer.
  for(const [tabName,formId,submitText] of [
@@ -240,6 +242,8 @@ async function main(){
  const readerSession=await login(reader,'stock-reader','Fictional-Stock-Password-2026!');
  const readerPage=await reader.newPage();await readerPage.goto(address+'/inventory#it-assets');
  await readerPage.locator('#stock-tab-inventory').waitFor();
+ // Overview is the approved landing tab, including for read-only stock users.
+ await readerPage.locator('[data-stock-action="tab"][data-tab="inventory"]').click();
  await readerPage.locator('[data-stock-action="details"][data-id="'+computer+'"]').last().click();
  await readerPage.locator('#stock-item-details').waitFor();
  assert.equal(await readerPage.locator('#stock-readiness-form').count(),0);
@@ -251,6 +255,8 @@ async function main(){
  const editor=await browser.newContext({ignoreHTTPSErrors:true});
  const editorSession=await login(editor,'stock-editor','Fictional-Stock-Password-2026!');
  const editorPage=await editor.newPage();await editorPage.goto(address+'/inventory#it-assets');
+ // Explicitly enter Receive Stock rather than assuming the former default tab.
+ await editorPage.locator('[data-stock-action="tab"][data-tab="receive"]').click();
  await editorPage.locator('#stock-receipt-form').waitFor();
  const latest=await current(computer),extra={operationId:require('node:crypto').randomUUID(),stockItemId:computer,
   configurationKey:latest.item.configurationKey,quantity:1,receivedOn:'2026-11-15',supplier:'Fictional Supplier D',

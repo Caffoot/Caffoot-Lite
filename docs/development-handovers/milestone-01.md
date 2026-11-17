@@ -1,16 +1,18 @@
 # Milestone 01 Development Handover — v2.2 Target
 
-**Current status — 16 November 2026:** Batches 3.10 / PR #391 and 3.11 /
-PR #392 are approved and merged. The verified `milestone-1` integration HEAD is
-`505ec1a60daccdfed4c2c36c9379a29ea6f5367d`, schema 19. The final outstanding
-Stage 3 usability correction before Batch 3.12 is implemented separately on
-`feat/issue-equipment-confirmation`: ordinary Issue Equipment now reviews the
-actual equipment, selected units, quantity and recipient before its existing save.
-Back To Edit, failure retention and duplicate protection use the existing form.
-[Focused results and eight genuine screenshots](evidence/issue-equipment-confirmation/Report.md)
-record verification; independent review and explicit owner approval remain.
-Batch 3.12 has not started. No merge, release or deployment of this correction
-is authorised. Deferred native/manual and Stage 6 acceptance remain deferred.
+**Current Batch 3.12 review checkpoint — 16 November 2026:** IT Assets Overview is
+implemented on `feat/it-assets-dashboard`, from verified base
+`6222d8a87e4a02dd4e69f070e11777d2ec82b591`. The reporting/permission checkpoint
+was pushed as `ebff8ea`; the dashboard, tests and four captures were preserved
+as `27e1d31`. Schema 20 adds the owner-approved IT Staff default while preserving
+existing access. Complete aggregates and protected Device drill-downs follow the
+latest #396 decision. See the [technical contract](../development-guide/IT-Assets-Dashboard.md),
+[draft instructions](../how-tos/features-and-instructions/v2.2-draft/IT-Assets-Dashboard.md)
+and [confirmed checks, screenshots and outstanding verification](evidence/stock-dashboard/Report.md).
+The final combined reporting/role test result was not retained across the usage-limit
+interruption. No checks were repeated when preserving the work. Independent review,
+final focused verification and owner visual acceptance remain outstanding. No merge,
+release or deployment is authorised; deferred native/manual and Stage 6 work remains deferred.
 
 The dated records below are historical checkpoints; their earlier pending-merge
 statements do not describe the current integration branch.

@@ -1,5 +1,7 @@
 # 02 — SQLite database
 
+> **Batch 3.12 review branch:** Schema 20 updates the built-in IT Staff default and preserves existing account levels through compatibility overrides. No stock tables or journal entries are migrated. See [dashboard and upgrade contract](IT-Assets-Dashboard.md). Earlier dated checkpoints below retain their historical scope.
+
 ## In simple terms
 
 SQLite is a database stored in a file rather than a separate database server. Caffoot Lite opens that file when handling requests. The data survives container replacement **only if the `/data` mount is preserved**.

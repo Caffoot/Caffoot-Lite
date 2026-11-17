@@ -18,7 +18,7 @@ module.exports=async function verifyIssueConfirmation({page,owner,session,techni
  const units=(await stock()).items.find(item=>item.id===individualItem).units;
  const anonymous=units.find(unit=>!unit.serialNumber&&!unit.assetTag);
  const before=await stock();
- await page.reload();await page.locator('#stock-receipt-form').waitFor();
+ await page.reload();await page.locator('#stock-tab-issue').waitFor();
  const form=page.locator('#stock-issue-form'),confirmation=page.locator('#stock-issue-confirmation');
  const back=()=>page.getByRole('button',{name:'Back To Edit',exact:true}).click();
  async function review(){await page.getByRole('button',{name:'Issue Equipment',exact:true}).click();await confirmation.waitFor();}
@@ -96,7 +96,7 @@ module.exports=async function verifyIssueConfirmation({page,owner,session,techni
  checks.push('Concurrent stock change is rejected by the existing version check without changing stock or losing values');
 
  // Simulate a lost response after the server commits, then retry the same operation.
- await page.reload();await page.locator('#stock-receipt-form').waitFor();await issueForm(page,quantityItem,'staff','confirmation-recipient',1);await review();
+ await page.reload();await page.locator('#stock-tab-issue').waitFor();await issueForm(page,quantityItem,'staff','confirmation-recipient',1);await review();
  let committedPayload;
  await page.route(endpoint,async route=>{committedPayload=route.request().postDataJSON();const committed=await route.fetch();assert.equal(committed.status(),200);await route.abort('failed');});
  const lost=page.waitForEvent('requestfailed',request=>request.url()===endpoint);await page.getByRole('button',{name:'Confirm Issue',exact:true}).click();await lost;
@@ -114,5 +114,5 @@ module.exports=async function verifyIssueConfirmation({page,owner,session,techni
  assert.deepEqual(errors,[]);page.off('request',count);
  fs.writeFileSync(path.join(output,'issue-confirmation-results.json'),JSON.stringify({checks,screenshots:screens,pageErrors:errors},null,2)+'\n');
  console.log('PASS: '+checks.length+' focused Issue Equipment confirmation regression groups; '+screens.length+' genuine screenshots; no page errors.');
- await page.reload();await page.locator('#stock-receipt-form').waitFor();
+ await page.reload();await page.locator('#stock-tab-issue').waitFor();
 };

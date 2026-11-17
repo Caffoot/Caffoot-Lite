@@ -629,6 +629,8 @@ def stock_movement_history(connection, actor, *, staff_id=None, department_id=No
         if (staff_id is not None or department_id is not None) and device:
             continue
         metadata=json.loads(details)
+        if not device_access and (kind == 'registered' or metadata.get('deviceId')):
+            continue
         if metadata.get('directHandover') is True:
             if new!='issued':
                 continue

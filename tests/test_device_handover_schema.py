@@ -27,7 +27,9 @@ class DeviceHandoverSchemaTests(unittest.TestCase):
         tables=[name for name, in self.db.execute("SELECT name FROM sqlite_master WHERE type='table'")]
         before={name:self.db.execute('SELECT * FROM '+name).fetchall() for name in tables}
         policy=evaluate_role_policy(self.db,2)
-        schema.initialise_database(self.db)
+        # Keep this handover acceptance at its original schema-19 boundary.
+        with patch.object(schema, 'SCHEMA_VERSION',19):
+            schema.initialise_database(self.db)
         self.assertEqual(self.db.execute('SELECT max(version) FROM schema_migrations').fetchone(),(19,))
         for table,records in before.items():
             if table=='schema_migrations':continue
@@ -37,7 +39,9 @@ class DeviceHandoverSchemaTests(unittest.TestCase):
                 after=[row[:-2] for row in after]
             self.assertEqual(after,records,table)
         self.assertEqual(evaluate_role_policy(self.db,2),policy)
-        snapshot=tuple(self.db.iterdump());schema.initialise_database(self.db)
+        snapshot=tuple(self.db.iterdump())
+        with patch.object(schema, 'SCHEMA_VERSION',19):
+            schema.initialise_database(self.db)
         self.assertEqual(tuple(self.db.iterdump()),snapshot)
         self.assertEqual(self.db.execute('PRAGMA foreign_key_check').fetchall(),[])
         with database(version=19) as fresh:

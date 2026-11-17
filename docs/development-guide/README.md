@@ -1,5 +1,7 @@
 # Caffoot Lite — Development Guide
 
+> **Batch 3.12 review branch:** [IT Assets Dashboard](IT-Assets-Dashboard.md) is implemented with schema 20, complete stock aggregates and protected Device details. See [evidence and outstanding verification](../development-handovers/evidence/stock-dashboard/Report.md). This supersedes older pending-dashboard checkpoints below; owner visual approval and final focused verification remain outstanding.
+
 > **Current Batch 3.11 checkpoint — 16 November 2026:** Batch 3.10 / PR #391
 > is merged and accepted at verified `53b04328c4f895bfc1f72f0416c43a519b2e8b42`.
 > Correct Movement is implemented on `feat/correct-stock-movement`,

@@ -26,6 +26,10 @@ class StaffDirectoryMigrationTests(unittest.TestCase):
         self.db = sqlite3.connect(self.path)
         self.db.execute('PRAGMA foreign_keys=ON')
         self.addCleanup(self.db.close)
+        # Isolate original Stage 3 directory migrations from later schema-20 grants.
+        previous_version = patch.object(schema, 'SCHEMA_VERSION', 19)
+        previous_version.start()
+        self.addCleanup(previous_version.stop)
         with patch.object(schema, 'SCHEMA_VERSION', 13):
             schema.initialise_database(self.db)
         for account, username, admin, active, confirmed in (

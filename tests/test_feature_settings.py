@@ -58,7 +58,9 @@ class FeatureSettingsTests(unittest.TestCase):
         self.db.execute("INSERT INTO account_permission_overrides VALUES(1,'Devices','deny')")
         self.db.commit()
         before = self.snapshot()
-        schema.initialise_database(self.db)
+        # This test checks the original feature upgrade, before the role-default migration.
+        with patch.object(schema, 'SCHEMA_VERSION', 19):
+            schema.initialise_database(self.db)
         after = self.snapshot()
         self.assertEqual(after.pop('device_assignments'), [])
         self.assertEqual(after.pop('departments'), [])
