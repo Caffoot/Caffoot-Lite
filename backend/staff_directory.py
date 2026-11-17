@@ -24,8 +24,9 @@ def _staff_revision(connection, record):
     history_id = connection.execute("""
         SELECT h.id FROM inventory_change_history h
         WHERE EXISTS (SELECT 1 FROM json_each(h.record_json,'$.changes') c
-            WHERE json_extract(c.value,'$.kind')='Staff Member'
-              AND json_extract(c.value,'$.label')=?)
+            WHERE CASE WHEN c.type='object' THEN
+                json_extract(c.value,'$.kind')='Staff Member'
+                AND json_extract(c.value,'$.label')=? END)
         ORDER BY h.id DESC LIMIT 1
     """, (record['id'],)).fetchone()
     values = [record['id'], *[record[name] for name in STAFF_FIELDS],

@@ -7,7 +7,30 @@ describes the revision and explicit refresh behaviour. Approved Staff functional
 remains defined by [#232](https://github.com/Caffoot/Caffoot-Lite/issues/232) and
 [#368](https://github.com/Caffoot/Caffoot-Lite/issues/368).
 
-## Checks Run
+## Historical Audit Compatibility Correction — 17 November 2026
+
+Review of checkpoint `adffb8dd9d3a400b2870aa8eafbb7f4abc090f0c` found that
+non-object historical change values could break Staff revision lookup. The new
+service and HTTP regressions reproduced the malformed-JSON error before correction.
+`_staff_revision` now uses a SQLite `CASE` to extract Staff fields only from object
+entries. Plain or JSON-looking strings, numbers, nulls, booleans, arrays and invalid
+object shapes are ignored; valid Staff objects still contribute their original
+history ID. Normal revision inputs and changed-then-reverted detection are preserved.
+
+`PYTHONPATH=tests python3 -m unittest test_staff_directory test_staff_directory_http test_history_permissions`:
+**57 passed**, including the three new regressions. They verify Staff list/read/save,
+unchanged revisions for unrelated history, valid mixed Staff history, stale-save
+rollback without login creation, current-revision saves, permissions and unchanged
+stored historical entries. Python compilation, affected Function Index locations
+and `git diff --check` also passed.
+
+This correction changes the Staff revision query only. It adds no schema migration,
+history rewrite or interface change. Broader suites, browser captures and Docker
+checks were not repeated for this focused correction.
+
+## Initial Checkpoint Checks
+
+The following results and captures belong to the earlier `adffb8d` checkpoint.
 
 - `PYTHONPATH=tests python3 -m unittest test_staff_directory test_staff_directory_http test_staff_directory_migration test_staff_section_permissions test_device_assignments test_device_assignments_http test_department_details_http`: **80 passed**.
 - `CAFFOOT_CHROMIUM_PATH=/usr/bin/chromium node tests/staff-directory-interface.cjs`:

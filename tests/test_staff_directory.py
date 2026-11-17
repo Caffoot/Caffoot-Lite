@@ -122,6 +122,53 @@ class StaffDirectoryTests(unittest.TestCase):
             save_staff_member(self.db, 1, self.tokens[1],
                 dict(location='Old form', revision=original['revision']), staff_id=original['id'])
 
+    def test_staff_operations_ignore_unrelated_historical_change_values(self):
+        original = self.staff()
+        entries = ('Historical text', '', '{invalid', 12, 1.5, None, True, False, [],
+            ['nested'], {}, {'kind': ['Staff Member'], 'label': original['id']},
+            {'kind': 'Staff Member', 'label': {}}, {'kind': 'Device', 'label': original['id']},
+            {'kind': 'Staff Member', 'label': 'another-person'},
+            json.dumps({'kind': 'Staff Member', 'label': original['id']}))
+        for index, entry in enumerate(entries):
+            with self.subTest(entry=entry):
+                current = read_staff_member(self.db, 2, original['id'])
+                self.db.execute('INSERT INTO inventory_change_history(record_json) VALUES(?)',
+                    (json.dumps({'changes': [entry]}),))
+                self.db.commit()
+                history = self.db.execute('SELECT * FROM inventory_change_history ORDER BY id').fetchall()
+                self.assertEqual(read_staff_member(self.db, 2, original['id']), current)
+                self.assertEqual(list_directory(self.db, 2, 'Staff Members'), [current])
+                self.assertNotIn('accountId', current)
+                updated = save_staff_member(self.db, 2, self.tokens[2],
+                    dict(location='Workshop ' + str(index), revision=current['revision']), staff_id=original['id'])
+                self.assertEqual(updated['location'], 'Workshop ' + str(index))
+                self.assertNotEqual(updated['revision'], current['revision'])
+                self.assertEqual(self.db.execute('SELECT * FROM inventory_change_history ORDER BY id').fetchall()[:-1], history)
+
+    def test_valid_staff_history_among_other_values_still_invalidates_old_forms(self):
+        original = self.staff()
+        event = json.dumps({'changes': ['Historical text', 12, None, {},
+            {'kind': 'Staff Member', 'label': original['id'], 'action': 'Updated'}]})
+        history_id = self.db.execute('INSERT INTO inventory_change_history(record_json) VALUES(?) RETURNING id',
+            (event,)).fetchone()[0]
+        self.db.commit()
+        current = read_staff_member(self.db, 2, original['id'])
+        self.assertNotEqual(current['revision'], original['revision'])
+        inactive = save_staff_member(self.db, 2, self.tokens[2],
+            dict(active=False, revision=current['revision']), staff_id=original['id'])
+        restored = save_staff_member(self.db, 2, self.tokens[2],
+            dict(active=True, revision=inactive['revision']), staff_id=original['id'])
+        self.assertEqual(restored['active'], original['active'])
+        self.assertNotEqual(restored['revision'], current['revision'])
+        before = self.snapshot()
+        for revision in (original['revision'], current['revision'], inactive['revision']):
+            with self.subTest(revision=revision), self.assertRaises(StaleStaffEdit):
+                save_staff_member(self.db, 1, self.tokens[1], dict(active=False, revision=revision,
+                    login=dict(username='stale-login', password='test-password')), staff_id=original['id'])
+        self.assertEqual(self.snapshot(), before)
+        self.assertEqual(self.db.execute('SELECT record_json FROM inventory_change_history WHERE id=?',
+            (history_id,)).fetchone()[0], event)
+
     def test_unrelated_staff_department_and_account_changes_do_not_invalidate_revision(self):
         department = self.department()
         original = self.staff(dict(firstName='A', lastName='B', departmentId=department['id'],

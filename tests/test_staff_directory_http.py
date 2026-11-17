@@ -321,3 +321,36 @@ class StaffDirectoryHttpTests(unittest.TestCase):
         self.assertEqual(self.request(path)[1]['staffMember']['location'], '')
         self.assertEqual(self.request(method='POST',
             payload=dict(firstName='A', lastName='B', revision=revision))[0], 400)
+
+    def test_historical_change_values_preserve_staff_reads_saves_and_conflicts(self):
+        path = '/api/staff-members/person'
+        original = self.request(path, actor=2)[1]['staffMember']
+        event = json.dumps({'changes': ['Historical text', '{invalid', 12, 1.5, None, True,
+            {'kind': 'Device', 'label': 'unrelated'}, {'kind': ['Staff Member']}]})
+        with sqlite3.connect(self.path) as db:
+            db.execute('INSERT INTO inventory_change_history(record_json) VALUES(?)', (event,))
+        for actor in (2, 3):
+            status, response, _ = self.request(path, actor=actor)
+            self.assertEqual(status, 200, response)
+            self.assertEqual(response['staffMember'], original)
+            status, response, _ = self.request(actor=actor)
+            self.assertEqual(status, 200, response)
+            self.assertEqual(response['staffMembers'], [original])
+        status, response, _ = self.request(path, method='POST', actor=2,
+            payload=dict(location='Updated', revision=original['revision']))
+        self.assertEqual(status, 200, response)
+        updated = response['staffMember']
+        self.assertEqual(updated['location'], 'Updated')
+        with sqlite3.connect(self.path) as db:
+            before = list(db.iterdump())
+        status, response, _ = self.request(path, method='POST', actor=2,
+            payload=dict(active=False, revision=original['revision']))
+        self.assertEqual(status, 409, response)
+        self.assertEqual(response['code'], 'stale_staff_edit')
+        with sqlite3.connect(self.path) as db:
+            self.assertEqual(list(db.iterdump()), before)
+            self.assertEqual(db.execute('SELECT record_json FROM inventory_change_history ORDER BY id LIMIT 1').fetchone()[0], event)
+        status, response, _ = self.request(path, method='POST', actor=2,
+            payload=dict(active=False, revision=updated['revision']))
+        self.assertEqual(status, 200, response)
+        self.assertFalse(response['staffMember']['active'])

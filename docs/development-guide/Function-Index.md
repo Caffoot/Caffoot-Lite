@@ -1228,20 +1228,20 @@ The function declarations and indexed line locations are unchanged.
 | Function | Line |
 | --- | ---: |
 | [`_staff_revision`](../../backend/staff_directory.py#L21) | 21 |
-| [`unique_directory_fields`](../../backend/staff_directory.py#L36) | 36 |
-| [`require_directory_access`](../../backend/staff_directory.py#L46) | 46 |
-| [`_text`](../../backend/staff_directory.py#L52) | 52 |
-| [`_staff_record`](../../backend/staff_directory.py#L59) | 59 |
-| [`_department_record`](../../backend/staff_directory.py#L66) | 66 |
-| [`read_staff_member`](../../backend/staff_directory.py#L73) | 73 |
-| [`department_has_associations`](../../backend/staff_directory.py#L85) | 85 |
-| [`read_department`](../../backend/staff_directory.py#L104) | 104 |
-| [`list_directory`](../../backend/staff_directory.py#L111) | 111 |
-| [`list_staff_department_choices`](../../backend/staff_directory.py#L125) | 125 |
-| [`_validate_staff`](../../backend/staff_directory.py#L138) | 138 |
-| [`_create_login`](../../backend/staff_directory.py#L163) | 163 |
-| [`save_staff_member`](../../backend/staff_directory.py#L178) | 178 |
-| [`save_department`](../../backend/staff_directory.py#L224) | 224 |
+| [`unique_directory_fields`](../../backend/staff_directory.py#L37) | 37 |
+| [`require_directory_access`](../../backend/staff_directory.py#L47) | 47 |
+| [`_text`](../../backend/staff_directory.py#L53) | 53 |
+| [`_staff_record`](../../backend/staff_directory.py#L60) | 60 |
+| [`_department_record`](../../backend/staff_directory.py#L67) | 67 |
+| [`read_staff_member`](../../backend/staff_directory.py#L74) | 74 |
+| [`department_has_associations`](../../backend/staff_directory.py#L86) | 86 |
+| [`read_department`](../../backend/staff_directory.py#L105) | 105 |
+| [`list_directory`](../../backend/staff_directory.py#L112) | 112 |
+| [`list_staff_department_choices`](../../backend/staff_directory.py#L126) | 126 |
+| [`_validate_staff`](../../backend/staff_directory.py#L139) | 139 |
+| [`_create_login`](../../backend/staff_directory.py#L164) | 164 |
+| [`save_staff_member`](../../backend/staff_directory.py#L179) | 179 |
+| [`save_department`](../../backend/staff_directory.py#L225) | 225 |
 
 ## backend/staff_identity.py
 
