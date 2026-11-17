@@ -37,7 +37,7 @@ async function main(){
  const other=(await save('/api/departments',{name:'Facilities'})).department;
  const people=[];
  for(const [firstName,lastName,jobTitle] of [['Morgan','Reed','Accounts Assistant'],['Alex','Taylor','Finance Officer'],['Jamie','Ellis','Accounts Manager']])people.push((await save('/api/staff-members',{firstName,lastName,jobTitle,departmentId:department.id})).staffMember);
- await save('/api/staff-members/'+people[2].id,{active:false});
+ await save('/api/staff-members/'+people[2].id,{active:false,revision:people[2].revision});
  for(const [id,name,type] of [['shared-printer','Accounts Printer','Printer'],['personal-laptop','Personal Laptop','Laptop'],['other-printer','Facilities Printer','Printer']]){
   await save('/api/devices/create',{record:{id,name,type,status:'Active',primaryIp:'',typeDetails:{},mountType:'Desktop'}});
  }

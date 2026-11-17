@@ -15,6 +15,7 @@ from backend.schema import initialise_database
 from backend.sessions import _digest
 from backend.staff_directory import (
     save_staff_member, save_department, read_staff_member, read_department, list_directory,
+    STAFF_FIELDS, StaleStaffEdit,
 )
 
 
@@ -38,7 +39,10 @@ class StaffDirectoryTests(unittest.TestCase):
         self.db.commit()
 
     def staff(self, payload=None, **kwargs):
-        return save_staff_member(self.db, 1, self.tokens[1], payload or dict(firstName='Alex', lastName='Example'), **kwargs)
+        payload = dict(payload) if payload is not None else dict(firstName='Alex', lastName='Example')
+        if kwargs.get('staff_id') and not kwargs.get('login_only') and 'revision' not in payload:
+            payload['revision'] = read_staff_member(self.db, 1, kwargs['staff_id'])['revision']
+        return save_staff_member(self.db, 1, self.tokens[1], payload, **kwargs)
 
     def department(self, payload=None, **kwargs):
         return save_department(self.db, 1, self.tokens[1], payload or {'name': 'Production'}, **kwargs)
@@ -60,6 +64,179 @@ class StaffDirectoryTests(unittest.TestCase):
         self.assertEqual(self.db.execute('SELECT count(*) FROM accounts').fetchone(), (3,))
         self.staff({'departmentId': None}, staff_id=staff['id'])
         self.assertIsNone(read_staff_member(self.db, 1, staff['id'])['departmentId'])
+
+    def test_stale_forms_protect_every_staff_field_and_optional_login(self):
+        department = self.department()
+        changes = dict(firstName='New', lastName='Surname', email='new@example.test',
+            jobTitle='Engineer', telephone='+44 123', location='Workshop',
+            departmentId=department['id'], active=False)
+        for field, value in changes.items():
+            with self.subTest(field=field):
+                original = self.staff()
+                editor = read_staff_member(self.db, 2, original['id'])
+                self.assertEqual(original['revision'], editor['revision'])
+                self.assertNotIn('accountId', editor)
+                updated = save_staff_member(self.db, 2, self.tokens[2],
+                    {field: value, 'revision': editor['revision']}, staff_id=original['id'])
+                before = self.snapshot()
+                stale_payload = {name: original[name] for name in (*STAFF_FIELDS, 'departmentId', 'active')}
+                stale_payload.update(revision=original['revision'],
+                    login=dict(username='stale-login', password='test-password'))
+                with patch('backend.staff_directory._create_login') as login, patch('backend.staff_directory.record_actor_event') as audit:
+                    with self.assertRaisesRegex(StaleStaffEdit, 'changed elsewhere'):
+                        save_staff_member(self.db, 1, self.tokens[1], stale_payload, staff_id=original['id'])
+                    login.assert_not_called()
+                    audit.assert_not_called()
+                self.assertEqual(before, self.snapshot())
+                self.assertNotEqual(original['revision'], updated['revision'])
+                current = read_staff_member(self.db, 1, original['id'])
+                refreshed = save_staff_member(self.db, 1, self.tokens[1],
+                    dict(location='Deliberately refreshed', revision=current['revision']), staff_id=original['id'])
+                self.assertEqual(refreshed['location'], 'Deliberately refreshed')
+                if field != 'location':
+                    self.assertEqual(refreshed[field], value)
+
+    def test_quick_status_rejects_changes_to_other_fields_and_status(self):
+        for change in ({'jobTitle': 'Changed'}, {'active': False}):
+            with self.subTest(change=change):
+                original = self.staff()
+                self.staff(change, staff_id=original['id'])
+                before = self.snapshot()
+                with self.assertRaises(StaleStaffEdit):
+                    save_staff_member(self.db, 2, self.tokens[2],
+                        dict(active=False, revision=original['revision']), staff_id=original['id'])
+                self.assertEqual(before, self.snapshot())
+
+    def test_revision_rejects_reverted_values_and_another_staff_record(self):
+        original = self.staff()
+        other = self.staff()
+        with self.assertRaises(StaleStaffEdit):
+            save_staff_member(self.db, 1, self.tokens[1],
+                dict(active=False, revision=other['revision']), staff_id=original['id'])
+        self.staff({'active': False}, staff_id=original['id'])
+        self.staff({'active': True}, staff_id=original['id'])
+        current = read_staff_member(self.db, 1, original['id'])
+        self.assertEqual(current['active'], original['active'])
+        self.assertNotEqual(current['revision'], original['revision'])
+        with self.assertRaises(StaleStaffEdit):
+            save_staff_member(self.db, 1, self.tokens[1],
+                dict(location='Old form', revision=original['revision']), staff_id=original['id'])
+
+    def test_staff_operations_ignore_unrelated_historical_change_values(self):
+        original = self.staff()
+        entries = ('Historical text', '', '{invalid', 12, 1.5, None, True, False, [],
+            ['nested'], {}, {'kind': ['Staff Member'], 'label': original['id']},
+            {'kind': 'Staff Member', 'label': {}}, {'kind': 'Device', 'label': original['id']},
+            {'kind': 'Staff Member', 'label': 'another-person'},
+            json.dumps({'kind': 'Staff Member', 'label': original['id']}))
+        for index, entry in enumerate(entries):
+            with self.subTest(entry=entry):
+                current = read_staff_member(self.db, 2, original['id'])
+                self.db.execute('INSERT INTO inventory_change_history(record_json) VALUES(?)',
+                    (json.dumps({'changes': [entry]}),))
+                self.db.commit()
+                history = self.db.execute('SELECT * FROM inventory_change_history ORDER BY id').fetchall()
+                self.assertEqual(read_staff_member(self.db, 2, original['id']), current)
+                self.assertEqual(list_directory(self.db, 2, 'Staff Members'), [current])
+                self.assertNotIn('accountId', current)
+                updated = save_staff_member(self.db, 2, self.tokens[2],
+                    dict(location='Workshop ' + str(index), revision=current['revision']), staff_id=original['id'])
+                self.assertEqual(updated['location'], 'Workshop ' + str(index))
+                self.assertNotEqual(updated['revision'], current['revision'])
+                self.assertEqual(self.db.execute('SELECT * FROM inventory_change_history ORDER BY id').fetchall()[:-1], history)
+
+    def test_valid_staff_history_among_other_values_still_invalidates_old_forms(self):
+        original = self.staff()
+        event = json.dumps({'changes': ['Historical text', 12, None, {},
+            {'kind': 'Staff Member', 'label': original['id'], 'action': 'Updated'}]})
+        history_id = self.db.execute('INSERT INTO inventory_change_history(record_json) VALUES(?) RETURNING id',
+            (event,)).fetchone()[0]
+        self.db.commit()
+        current = read_staff_member(self.db, 2, original['id'])
+        self.assertNotEqual(current['revision'], original['revision'])
+        inactive = save_staff_member(self.db, 2, self.tokens[2],
+            dict(active=False, revision=current['revision']), staff_id=original['id'])
+        restored = save_staff_member(self.db, 2, self.tokens[2],
+            dict(active=True, revision=inactive['revision']), staff_id=original['id'])
+        self.assertEqual(restored['active'], original['active'])
+        self.assertNotEqual(restored['revision'], current['revision'])
+        before = self.snapshot()
+        for revision in (original['revision'], current['revision'], inactive['revision']):
+            with self.subTest(revision=revision), self.assertRaises(StaleStaffEdit):
+                save_staff_member(self.db, 1, self.tokens[1], dict(active=False, revision=revision,
+                    login=dict(username='stale-login', password='test-password')), staff_id=original['id'])
+        self.assertEqual(self.snapshot(), before)
+        self.assertEqual(self.db.execute('SELECT record_json FROM inventory_change_history WHERE id=?',
+            (history_id,)).fetchone()[0], event)
+
+    def test_unrelated_staff_department_and_account_changes_do_not_invalidate_revision(self):
+        department = self.department()
+        original = self.staff(dict(firstName='A', lastName='B', departmentId=department['id'],
+            login=dict(username='linked', password='test-password')))
+        self.staff()
+        self.department(dict(name='Renamed', archived=True), department_id=department['id'])
+        save_profile(self.db, 1, dict(firstName='Account', lastName='', displayName='', email=''), original['accountId'])
+        self.assertEqual(read_staff_member(self.db, 2, original['id'])['revision'], original['revision'])
+        result = save_staff_member(self.db, 2, self.tokens[2],
+            dict(jobTitle='Updated', revision=original['revision']), staff_id=original['id'])
+        self.assertEqual(result['departmentId'], department['id'])
+        self.assertNotIn('accountId', result)
+
+    def test_missing_and_malformed_revisions_never_write(self):
+        original = self.staff()
+        for revision in (None, '', True, 1, [], {}, 'x' * 64, 'A' * 64, 'a' * 63, 'a' * 65):
+            payload = {'active': False}
+            if revision is not None:
+                payload['revision'] = revision
+            before = self.snapshot()
+            with self.subTest(revision=revision), self.assertRaises(ValueError):
+                save_staff_member(self.db, 1, self.tokens[1], payload, staff_id=original['id'])
+            self.assertEqual(before, self.snapshot())
+        with self.assertRaises(ValueError):
+            self.staff(dict(firstName='A', lastName='B', revision=original['revision']))
+
+    def test_competing_connections_allow_only_one_save_from_the_same_revision(self):
+        original = self.staff()
+        barrier = threading.Barrier(2)
+        def save(actor):
+            with sqlite3.connect(self.path, timeout=10) as db:
+                db.execute('PRAGMA foreign_keys=ON')
+                record = read_staff_member(db, actor, original['id'])
+                barrier.wait(timeout=10)
+                try:
+                    result = save_staff_member(db, actor, self.tokens[actor],
+                        dict(location='Editor ' + str(actor), revision=record['revision']), staff_id=original['id'])
+                    return result['location']
+                except StaleStaffEdit:
+                    return 'conflict'
+        with concurrent.futures.ThreadPoolExecutor(max_workers=2) as pool:
+            results = list(pool.map(save, (1, 2)))
+        self.assertEqual(results.count('conflict'), 1)
+        winner = next(result for result in results if result != 'conflict')
+        self.assertEqual(read_staff_member(self.db, 1, original['id'])['location'], winner)
+        self.assertEqual(self.db.execute('SELECT count(*) FROM inventory_change_history').fetchone(), (2,))
+
+    def test_waiting_edit_compares_current_values_after_acquiring_write_lock(self):
+        original = self.staff()
+        attempted = threading.Event()
+        with sqlite3.connect(self.path) as writer:
+            writer.execute('BEGIN IMMEDIATE')
+            writer.execute('UPDATE staff_members SET location=? WHERE id=?', ('Newer location', original['id']))
+            def waiting_save():
+                with sqlite3.connect(self.path, timeout=10) as db:
+                    db.set_trace_callback(lambda sql: attempted.set() if sql == 'BEGIN IMMEDIATE' else None)
+                    with self.assertRaises(StaleStaffEdit):
+                        save_staff_member(db, 2, self.tokens[2],
+                            dict(active=False, revision=original['revision']), staff_id=original['id'])
+            with concurrent.futures.ThreadPoolExecutor(max_workers=1) as pool:
+                future = pool.submit(waiting_save)
+                self.assertTrue(attempted.wait(5))
+                writer.commit()
+                future.result(timeout=10)
+        current = read_staff_member(self.db, 1, original['id'])
+        self.assertEqual(current['location'], 'Newer location')
+        self.assertTrue(current['active'])
+        self.assertEqual(self.db.execute('SELECT count(*) FROM inventory_change_history').fetchone(), (1,))
 
     def test_staff_search_by_department_with_staff_read_only(self):
         department = self.department()
@@ -125,7 +302,7 @@ class StaffDirectoryTests(unittest.TestCase):
                 self.staff({field: value}, staff_id=staff['id'])
             self.assertEqual(before, self.snapshot())
         with self.assertRaises(LookupError):
-            self.staff({'active': False}, staff_id='missing')
+            save_staff_member(self.db, 1, self.tokens[1], dict(active=False, revision=staff['revision']), staff_id='missing')
         with self.assertRaises(LookupError):
             self.staff(dict(firstName='A', lastName='B', departmentId='missing'))
 

@@ -50,11 +50,41 @@ unsupported content types 415, denied writes 403 and unauthenticated reads 401.
 Duplicate identities/names, already-linked Staff and unsafe Department associations
 return a generic 409 without database or account details. Saved replies return 200.
 
-Staff responses include only approved directory fields and stable ID. Only verified
+Staff responses include approved directory fields, stable ID and a saved `revision`. Only verified
 administrators also receive the nullable `accountId`; usernames, security fields,
 roles, MFA and account-profile details are never joined into Staff responses.
 Staff membership contains the Department ID, without exposing another section's
 list or account administration. Contact details are excluded from new audit events.
+
+## Preventing Stale Staff Edits
+
+Every Staff list, detail and successful save response includes `revision`, a string
+of 64 lower-case hexadecimal characters. Keep the revision with the values originally
+opened for editing and send it in `POST /api/staff-members/{id}`, including quick
+Active/Inactive changes and combined Staff/login saves. Omitted profile fields still
+retain their saved values. Creation does not accept a revision; the administrator-only
+`/{id}/login` route retains its existing two-field contract and duplicate-link checks.
+
+After `BEGIN IMMEDIATE` and the existing session/permission rechecks, the server
+compares the submitted revision against the saved record before writing Staff, login
+or audit data. A missing or malformed revision returns 400. A stale revision returns
+409 with `code: "stale_staff_edit"` and: “This Staff Member was changed elsewhere.
+Refresh the current details before editing again.” A rejected save changes no tables
+and produces no successful audit event.
+
+The revision hashes the Staff ID, all eight editable directory fields and the last
+existing Staff audit event ID for that record. This catches profile, Department and
+status changes, including a value changed back since a form was opened. It uses no
+new column or schema migration. Linked-account identifiers and security data are
+excluded; unrelated Staff records, account security and Department renaming do not
+invalidate a Staff form. The revision is a comparison value, never an access grant.
+
+The existing form keeps all entered values on conflict, including optional login
+fields. **Refresh Current Details** asks before replacing unsaved entries, then loads
+the current saved Staff values and Department choices. Cancelling or a failed refresh
+keeps the form intact. Quick status conflicts offer the same refresh route on Staff
+Details. Original layouts, controls and button placements are retained; the refresh
+button appears only with conflict feedback.
 
 ## Batch 3.3 Directory Presentation Extensions — Merged
 

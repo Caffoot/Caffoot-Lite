@@ -33,9 +33,13 @@ function renderStaffDetails() {
   return header('Staff Details',displayName(record),button('Back To Staff Members','staff-back')+(canEditStaff()?button('Edit Staff Member','staff-edit',record.id,true):''))+`<section class="section active"><div class="section-heading"><div><h2>${escapeHtml(displayName(record))}</h2><p>${escapeHtml(departmentName(record.departmentId))}</p></div>${badge(record.active?'Active':'Inactive',record.active?'green':'red')}</div><div class="two-col"><div class="card cardpad"><h3 class="cardtitle">Personal Details</h3>${detailRow('First Name',record.firstName)}${detailRow('Surname',record.lastName)}${detailRow('Email Address',record.email)}${detailRow('Telephone',record.telephone)}</div><div class="card cardpad"><h3 class="cardtitle">Organisation</h3>${detailRow('Department',departmentName(record.departmentId))}${detailRow('Job Title',record.jobTitle)}${detailRow('Location',record.location)}<p class="formhint">Staff status is independent of account status. Inactivation does not return equipment or disable a login.</p></div></div>${isAdministrator()?`<div class="card cardpad" style="margin-top:17px"><h3 class="cardtitle">Caffoot Login</h3><p class="sub">${record.accountId?'Linked Account: '+escapeHtml(users.find(item=>item.id===record.accountId)?.username||'Account Recorded'):'This Staff Member has no Caffoot login.'} Staff and account profiles are managed separately.</p><div class="preview-details-actions">${button(record.accountId?'Manage Login In Permissions':'Create Login',record.accountId?'manage-login':'staff-create-login',record.id)}</div></div>`:''}<div class="preview-details-actions">${canEditStaff()?button(record.active?'Mark Inactive':'Reactivate','staff-status',record.id):''}</div>${window.caffootEquipment.staffPlaceholder(record)}</section>`;
 }
 function field(label, name, value='', type='text', required=false, help='', markRequired=required) {return `<div class="field preview-form-field"><label for="preview-${name}">${label}${markRequired?' *':''}</label><input class="input" id="preview-${name}" name="${name}" type="${type}" value="${escapeHtml(value)}" ${required?'required':''} ${type==='password'?'autocomplete="new-password"':''}>${help?'<small class="field-help">'+help+'</small>':''}</div>`;}
-function renderStaffForm(record, createLogin=false) {
+function renderStaffForm(record, createLogin=false, draft=null) {
   const editing=!!record;
   record=record||{firstName:'',lastName:'',email:'',departmentId:null,jobTitle:'',telephone:'',location:'',active:true,accountId:null};
+  if(draft){
+    record={...record,...draft.values,departmentId:draft.values.departmentId||null,active:draft.values.active==='true',revision:draft.revision};
+    createLogin=draft.createLogin;
+  }
   const options=departments.filter(item=>!item.archived||item.id===record.departmentId).map(item=>`<option value="${item.id}" ${item.id===record.departmentId?'selected':''}>${escapeHtml(item.name)}${item.archived?' · Archived · Existing Membership':''}</option>`).join('');
   const cardHeading=(title,description,symbol,colour='')=>`<div class="card-head"><span class="iconwrap ${colour}">${icon(symbol)}</span><div><h3>${title}</h3><p class="sub">${description}</p></div></div><div class="divider"></div>`;
   const personal=`<div class="card card-padded staff-details-card">${cardHeading('Personal Details','Basic information about the person, whether or not they sign in.','users')}<div class="staff-fields">
@@ -52,14 +56,14 @@ function renderStaffForm(record, createLogin=false) {
   else if(record.accountId)loginContent=`<div class="linked-account">${badge('Linked Account','green')}<strong>${escapeHtml(users.find(item=>item.id===record.accountId)?.username||'Account Recorded')}</strong><p>Staff and login records remain separate. Manage account access through Permissions.</p></div>${button('Manage Login In Permissions','manage-login',record.id)}`;
   else loginContent=`<label class="switch-row-staff" for="staff-create-login"><span><strong>Create Caffoot Login</strong><small>Enable this if the person needs to sign in to Caffoot Lite.</small></span><span class="switch-control"><input type="checkbox" id="staff-create-login" ${createLogin?'checked':''} aria-controls="staff-login-fields"><span class="switch-slider" aria-hidden="true"></span></span></label>
     <div class="staff-account-fields" id="staff-login-fields" ${createLogin?'':'hidden'}><div class="divider"></div>
-    ${field('Username','username','','text',createLogin,'A unique username used to sign in.',true)}
-    ${field('Initial Password','password','','password',createLogin,'Share the password using a secure channel.',true)}
-    ${field('Confirm Initial Password','confirmPassword','','password',createLogin,'',true)}
+    ${field('Username','username',draft?.values.username||'','text',createLogin,'A unique username used to sign in.',true)}
+    ${field('Initial Password','password',draft?.values.password||'','password',createLogin,'Share the password using a secure channel.',true)}
+    ${field('Confirm Initial Password','confirmPassword',draft?.values.confirmPassword||'','password',createLogin,'',true)}
     <div class="staff-role-note"><span class="role-name">Staff Member</span><strong>Default Role</strong><p>The baseline role is assigned to every new ordinary login. It does not grant general Devices, IT Assets, IPAM or Network Racks access.</p><p>Additional roles and individual permissions remain managed through the existing Permissions controls.</p></div>
     <div class="staff-mfa-hint"><strong>MFA And Security</strong><p>Existing password, MFA and account safeguards still apply. Any enabled additional role requires MFA.</p></div></div>`;
   const login=`<div class="card card-padded staff-login-card">${cardHeading('Caffoot Login','Optional account access, managed using the existing permissions system.','shield','orange')}${loginContent}</div>`;
   const guidance='<div class="card card-padded staff-security-summary"><h3>Equipment And Ticket Access</h3><p class="sub">A Staff record can hold equipment assignments without a login. A linked login later provides only the personal access allowed by the baseline Staff Member role.</p><div class="divider"></div><div class="staff-quickpoints"><div><span class="point-dot"></span><span>Assigned equipment stays linked to this Staff Member.</span></div><div><span class="point-dot"></span><span>Service Desk self-service arrives in the planned future stage.</span></div><div><span class="point-dot"></span><span>No automatic IT inventory permission or department-based grant.</span></div></div><p class="formhint" style="margin-top:14px">Initial Device assignments are available. Returns and Service Desk are not yet available.</p></div>';
-  return header(editing?'Edit Staff Member':'Add Staff Member','A Staff profile does not require a Caffoot login.',button('Back To Staff Members','staff-back'))+`<section class="section active staff-mode-view"><form id="staff-record-form" class="preview-aligned-form" data-id="${record.id||''}" autocomplete="off"><div class="staff-main-grid">${personal}<div class="staff-side-stack">${login}${guidance}</div></div><div class="staff-actions"><p>Staff details and Caffoot login security are saved separately unless you explicitly choose to create a login together.</p><div class="staff-action-buttons">${button('Cancel','staff-back')}<button class="btn primary" type="submit">Save Staff Member</button></div></div><p class="formhint" id="preview-form-feedback" role="status"></p></form></section>`;
+  return header(editing?'Edit Staff Member':'Add Staff Member','A Staff profile does not require a Caffoot login.',button('Back To Staff Members','staff-back'))+`<section class="section active staff-mode-view"><form id="staff-record-form" class="preview-aligned-form" data-id="${record.id||''}" data-revision="${escapeHtml(record.revision||'')}" autocomplete="off"><div class="staff-main-grid">${personal}<div class="staff-side-stack">${login}${guidance}</div></div><div class="staff-actions"><p>Staff details and Caffoot login security are saved separately unless you explicitly choose to create a login together.</p><div class="staff-action-buttons">${button('Cancel','staff-back')}<button class="btn primary" type="submit">Save Staff Member</button></div></div>${draft?.feedback||'<p class="formhint" id="preview-form-feedback" role="status"></p>'}</form></section>`;
 }
 
 function renderDepartments() {
@@ -161,7 +165,11 @@ function renderDepartments() {
     const headers=data===undefined?{}:{'Content-Type':'application/json','X-CSRF-Token':config.csrf};
     const response=await fetch(path,{method:data===undefined?'GET':'POST',cache:'no-store',headers,...(data===undefined?{}:{body:JSON.stringify(data)})});
     const payload=await response.json();
-    if(!response.ok)throw Error(payload.error||'Unable to complete the Staff operation.');
+    if(!response.ok){
+      const error=Error(payload.error||'Unable to complete the Staff operation.');
+      error.code=payload.code;
+      throw error;
+    }
     return payload;
   }
   async function readAll(path,key){
@@ -201,7 +209,16 @@ function renderDepartments() {
     if(!canReadStaff())return '<p role="status">Staff Members access is required.</p>';
     const record=staff.find(item=>item.id===currentStaffId);
     if(mode==='details'&&record)return renderStaffDetails();
-    if(mode==='form'&&(record||!currentStaffId))return renderStaffForm(record,createLoginIntent);
+    if(mode==='form'&&(record||!currentStaffId)){
+      // A theme redraw must keep the current entries and their original saved revision.
+      const form=document.querySelector('#staff-record-form');
+      const draft=form&&form.dataset.id===(currentStaffId||'')?{
+        values:Object.fromEntries(new FormData(form)),revision:form.dataset.revision,
+        createLogin:!!form.querySelector('#staff-create-login')?.checked,
+        feedback:form.querySelector('#preview-form-feedback')?.outerHTML
+      }:null;
+      return renderStaffForm(record,createLoginIntent,draft);
+    }
     mode='list';currentStaffId=null;
     return renderStaffDirectory();
   }
@@ -214,6 +231,30 @@ function renderDepartments() {
     if(!loaded)void refresh();
   }
   function redraw(){config?.redraw();}
+  function showStaffConflict(error,feedback,id){
+    if(!feedback)return;
+    feedback.textContent=error.message;
+    if(error.code==='stale_staff_edit'){
+      feedback.append(document.createTextNode(feedback.closest('#staff-record-form')?' Your unsaved details have been kept. ':' '));
+      feedback.insertAdjacentHTML('beforeend',button('Refresh Current Details','staff-refresh',id));
+    }
+  }
+  async function refreshStaffRecord(id){
+    const form=document.querySelector('#staff-record-form');
+    if(form&&!confirm('Refresh this Staff Member? This will replace your unsaved details, including any login fields, with the current saved values.'))return;
+    const [result,choices]=await Promise.all([
+      request('/api/staff-members/'+encodeURIComponent(id)),
+      canReadDepartments()?readAll('/api/departments','departments').then(departments=>({departments})):request('/api/staff-members/department-choices')
+    ]);
+    if(currentStaffId!==id||(form&&!form.isConnected))return;
+    staff=staff.map(record=>record.id===id?result.staffMember:record);
+    departments=choices.departments;
+    if(canReadDepartments())managedDepartments=departments;
+    createLoginIntent=false;
+    form?.remove();
+    redraw();
+    config.notify('Current Staff details loaded. Review them before saving.');
+  }
   async function saveStaff(form){
     const formData=new FormData(form),payload={};
     for(const key of ['firstName','lastName','email','jobTitle','telephone','location'])payload[key]=String(formData.get(key)||'').trim();
@@ -227,6 +268,7 @@ function renderDepartments() {
       payload.login={username,password};
     }
     const id=form.dataset.id;
+    if(id)payload.revision=form.dataset.revision;
     const result=await request('/api/staff-members'+(id?'/'+encodeURIComponent(id):''),payload);
     currentStaffId=result.staffMember.id;mode='details';createLoginIntent=false;
     if(payload.login && isAdministrator())await config.reloadAccounts();
@@ -267,6 +309,10 @@ function renderDepartments() {
     if(action==='department-details'&&canReadDepartments()){currentDepartmentId=id;departmentTab='overview';void loadDepartmentDetails(id);return;}
     if(action==='staff-back'){mode='list';currentStaffId=null;createLoginIntent=false;redraw();return;}
     if(action==='staff-add'&&canEditStaff()){mode='form';currentStaffId=null;createLoginIntent=false;redraw();return;}
+    if(action==='staff-refresh'&&canEditStaff()){
+      control.disabled=true;
+      void refreshStaffRecord(id).catch(error=>config.notify(error.message,'error')).finally(()=>{if(control.isConnected)control.disabled=false;});return;
+    }
     const record=staff.find(item=>item.id===id);
     if(action==='staff-details'&&record&&canReadStaff()){
       mode='details';currentStaffId=id;
@@ -280,7 +326,15 @@ function renderDepartments() {
     if(action==='staff-status'&&record&&canEditStaff()){
       const next=!record.active;
       if(!confirm((next?'Reactivate':'Mark Inactive')+' '+displayName(record)+'? Equipment and login state will not change.'))return;
-      void request('/api/staff-members/'+encodeURIComponent(id),{active:next}).then(async()=>{await refresh();config.notify('Staff status saved.');}).catch(e=>config.notify(e.message,'error'));return;
+      void request('/api/staff-members/'+encodeURIComponent(id),{active:next,revision:record.revision}).then(async()=>{await refresh();config.notify('Staff status saved.');}).catch(error=>{
+        if(error.code==='stale_staff_edit'&&control.isConnected){
+          const feedback=document.createElement('p');feedback.className='formhint';feedback.setAttribute('role','status');
+          control.parentElement.querySelector('[role="status"]')?.remove();
+          control.parentElement.append(feedback);
+          showStaffConflict(error,feedback,id);
+        }
+        config.notify(error.message,'error');
+      });return;
     }
     if(action==='department-add'&&canEditDepartments()){openDepartmentDialog();return;}
     const department=managedDepartments.find(item=>item.id===id);
@@ -302,7 +356,7 @@ function renderDepartments() {
     const button=form.querySelector('button[type="submit"]'),feedback=form.querySelector('[role="status"]');
     if(button)button.disabled=true;
     void (form.id==='staff-record-form'?saveStaff(form):saveDepartment(form)).catch(error=>{
-      if(feedback)feedback.textContent=error.message;
+      showStaffConflict(error,feedback,form.dataset.id);
       config.notify(error.message,'error');
     }).finally(()=>{if(button?.isConnected)button.disabled=false;});
   },true);

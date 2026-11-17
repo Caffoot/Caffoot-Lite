@@ -72,6 +72,10 @@ The Issue #309 tab icons use `renderSectionTabIcon`. `revealSectionTab` scrolls 
 ## Accounts and editing
 
 `staff_directory.py` provides protected Staff/Department reads and saves.
+`_staff_revision` identifies saved Staff values and their last Staff audit event;
+`save_staff_member` rejects stale revisions inside its existing write transaction.
+`showStaffConflict` keeps form entries visible and `refreshStaffRecord` loads current
+values only after the user agrees to replace unsaved entries.
 `permissions.create_user_in_transaction` shares the existing account writer with
 combined Staff/login creation. `staff_identity.link_account_staff` runs within
 Users, setup and combined transactions without committing. See

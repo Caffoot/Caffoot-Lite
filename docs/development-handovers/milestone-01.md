@@ -1,5 +1,37 @@
 # Milestone 01 Development Handover — v2.2 Target
 
+**Stale Staff edits — 17 November 2026:** Finding 3 is implemented on
+`fix/stale-staff-edits`, from verified `milestone-1` revision
+`cb5ae4d904ba281a7ac1be2da3e2dfaa5d463b88`. Staff saves and quick status changes
+now require the revision supplied with the originally displayed values. The server
+checks it inside the existing `BEGIN IMMEDIATE` transaction after session and
+permission rechecks. Conflicts return a clear 409 before any Staff, login or audit
+write. No schema migration is needed. The existing form retains unsaved entries;
+its conflict-only refresh control asks before replacing them with current values.
+See the [Staff API contract](../development-guide/Staff-Directory-APIs.md#preventing-stale-staff-edits).
+**Initial checkpoint verification: 80 focused backend tests passed**, covering Staff service/HTTP,
+migration, section permissions, Device assignment service/HTTP and Department HTTP.
+The real HTTPS/SQLite Chromium Staff flow passed, including stale form and both
+quick status conflicts, preserved login entries, theme redraws, cancelled/failed
+refresh, successful refreshed saves and unchanged card/action positions.
+See [captures and remaining review](evidence/stale-staff-edits/Report.md).
+Department Details and Device assignment Chromium flows also passed. Final Staff
+verification covers the full permitted Department list after refresh, including
+unused archived Departments. Full backend, multi-browser and Docker workflows
+remain deferred for the draft PR; independent and native/manual review is outstanding.
+This correction does not sign off Stages 1–3 or authorise merge, deployment or release.
+
+**Staff historical audit compatibility review correction — 17 November 2026:**
+`_staff_revision` now ignores non-object historical changes before extracting JSON
+fields. Valid Staff history and changed-then-reverted detection retain their existing
+revision calculation. Three new service/HTTP regressions reproduced the failure
+before correction; **57 affected Staff service, Staff HTTP and history-permission
+tests passed** afterwards. Stored history, permissions and stale-save rollback remain
+covered. Compilation, Function Index links and diff checks passed. The interface and
+schema are unchanged; earlier browser evidence was not regenerated. PR #402 remains
+draft; wider checks and independent review remain outstanding. See the existing
+[verification report](evidence/stale-staff-edits/Report.md#historical-audit-compatibility-correction--17-november-2026).
+
 **Administrator audit-history correction — 17 November 2026:** Finding 2 is
 implemented on `fix/administrator-essential-audit-history`, from verified
 `milestone-1` revision `3ff192748e9d6e4f8eaea2c3b93b6d96082ae6aa`.

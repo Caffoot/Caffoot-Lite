@@ -6,7 +6,7 @@ Scope: named JavaScript declarations/assignments in the six application scripts,
 
 The account hydration/photo functions now have purpose-based callable bindings matching their function names: `hydrateAccount` and `removeAccountPhoto`. The immutable design manifest retains its historical integration-entry names; those metadata names are not the runtime's current function map. Pinned source paths, revisions and hashes are unchanged.
 
-**Recorded definitions: 1028.** Checked against the source in this commit. This remains a definition map, not a call graph. See [coding conventions](06-Coding-and-Naming-Conventions.md) and the [code reference](07-Function-and-Code-Reference.md).
+**Recorded definitions: 1031.** Checked against the source in this commit. This remains a definition map, not a call graph. See [coding conventions](06-Coding-and-Naming-Conventions.md) and the [code reference](07-Function-and-Code-Reference.md).
 
 ## interface/loader.js
 
@@ -591,31 +591,33 @@ The account hydration/photo functions now have purpose-based callable bindings m
 | [`renderStaffDetails`](../../interface/staff-directory.js#L31) | 31 |
 | [`field`](../../interface/staff-directory.js#L35) | 35 |
 | [`renderStaffForm`](../../interface/staff-directory.js#L36) | 36 |
-| [`cardHeading`](../../interface/staff-directory.js#L40) | 40 |
-| [`renderDepartments`](../../interface/staff-directory.js#L65) | 65 |
-| [`departmentCard`](../../interface/staff-directory.js#L70) | 70 |
-| [`departmentNotice`](../../interface/staff-directory.js#L73) | 73 |
-| [`departmentDate`](../../interface/staff-directory.js#L76) | 76 |
-| [`departmentTable`](../../interface/staff-directory.js#L80) | 80 |
-| [`departmentAssignmentRows`](../../interface/staff-directory.js#L83) | 83 |
-| [`renderDepartmentOverview`](../../interface/staff-directory.js#L87) | 87 |
-| [`renderDepartmentStaff`](../../interface/staff-directory.js#L98) | 98 |
-| [`renderDepartmentEquipment`](../../interface/staff-directory.js#L103) | 103 |
-| [`renderDepartmentHistory`](../../interface/staff-directory.js#L112) | 112 |
-| [`renderDepartmentDetails`](../../interface/staff-directory.js#L121) | 121 |
-| [`selectDepartmentTab`](../../interface/staff-directory.js#L128) | 128 |
-| [`loadDepartmentDetails`](../../interface/staff-directory.js#L134) | 134 |
-| [`request`](../../interface/staff-directory.js#L160) | 160 |
-| [`readAll`](../../interface/staff-directory.js#L167) | 167 |
-| [`refresh`](../../interface/staff-directory.js#L177) | 177 |
-| [`render`](../../interface/staff-directory.js#L195) | 195 |
-| [`enter`](../../interface/staff-directory.js#L208) | 208 |
-| [`redraw`](../../interface/staff-directory.js#L216) | 216 |
-| [`saveStaff`](../../interface/staff-directory.js#L217) | 217 |
-| [`openDepartmentDialog`](../../interface/staff-directory.js#L235) | 235 |
-| [`closeDepartmentDialog`](../../interface/staff-directory.js#L246) | 246 |
-| [`saveDepartment`](../../interface/staff-directory.js#L247) | 247 |
-| [`configure`](../../interface/staff-directory.js#L254) | 254 |
+| [`cardHeading`](../../interface/staff-directory.js#L44) | 44 |
+| [`renderDepartments`](../../interface/staff-directory.js#L69) | 69 |
+| [`departmentCard`](../../interface/staff-directory.js#L74) | 74 |
+| [`departmentNotice`](../../interface/staff-directory.js#L77) | 77 |
+| [`departmentDate`](../../interface/staff-directory.js#L80) | 80 |
+| [`departmentTable`](../../interface/staff-directory.js#L84) | 84 |
+| [`departmentAssignmentRows`](../../interface/staff-directory.js#L87) | 87 |
+| [`renderDepartmentOverview`](../../interface/staff-directory.js#L91) | 91 |
+| [`renderDepartmentStaff`](../../interface/staff-directory.js#L102) | 102 |
+| [`renderDepartmentEquipment`](../../interface/staff-directory.js#L107) | 107 |
+| [`renderDepartmentHistory`](../../interface/staff-directory.js#L116) | 116 |
+| [`renderDepartmentDetails`](../../interface/staff-directory.js#L125) | 125 |
+| [`selectDepartmentTab`](../../interface/staff-directory.js#L132) | 132 |
+| [`loadDepartmentDetails`](../../interface/staff-directory.js#L138) | 138 |
+| [`request`](../../interface/staff-directory.js#L164) | 164 |
+| [`readAll`](../../interface/staff-directory.js#L175) | 175 |
+| [`refresh`](../../interface/staff-directory.js#L185) | 185 |
+| [`render`](../../interface/staff-directory.js#L203) | 203 |
+| [`enter`](../../interface/staff-directory.js#L225) | 225 |
+| [`redraw`](../../interface/staff-directory.js#L233) | 233 |
+| [`showStaffConflict`](../../interface/staff-directory.js#L234) | 234 |
+| [`refreshStaffRecord`](../../interface/staff-directory.js#L242) | 242 |
+| [`saveStaff`](../../interface/staff-directory.js#L258) | 258 |
+| [`openDepartmentDialog`](../../interface/staff-directory.js#L277) | 277 |
+| [`closeDepartmentDialog`](../../interface/staff-directory.js#L288) | 288 |
+| [`saveDepartment`](../../interface/staff-directory.js#L289) | 289 |
+| [`configure`](../../interface/staff-directory.js#L296) | 296 |
 
 ## interface/equipment.js
 
@@ -1174,14 +1176,14 @@ The function declarations and indexed line locations are unchanged.
 | [`Handler.handle_stock_request`](../../backend/server.py#L681) | 681 |
 | [`Handler.handle_equipment_request`](../../backend/server.py#L770) | 770 |
 | [`Handler.handle_directory_request`](../../backend/server.py#L851) | 851 |
-| [`Handler.handle_feature_settings`](../../backend/server.py#L926) | 926 |
-| [`Handler.handle_role_change`](../../backend/server.py#L969) | 969 |
-| [`Handler.handle_user_mutation`](../../backend/server.py#L1011) | 1011 |
-| [`Handler.handle_account_email`](../../backend/server.py#L1403) | 1403 |
-| [`Handler.handle_profile_photo`](../../backend/server.py#L1483) | 1483 |
-| [`Handler.handle_import`](../../backend/server.py#L1514) | 1514 |
-| [`Handler.respond`](../../backend/server.py#L1590) | 1590 |
-| [`main`](../../backend/server.py#L1603) | 1603 |
+| [`Handler.handle_feature_settings`](../../backend/server.py#L928) | 928 |
+| [`Handler.handle_role_change`](../../backend/server.py#L971) | 971 |
+| [`Handler.handle_user_mutation`](../../backend/server.py#L1013) | 1013 |
+| [`Handler.handle_account_email`](../../backend/server.py#L1405) | 1405 |
+| [`Handler.handle_profile_photo`](../../backend/server.py#L1485) | 1485 |
+| [`Handler.handle_import`](../../backend/server.py#L1516) | 1516 |
+| [`Handler.respond`](../../backend/server.py#L1592) | 1592 |
+| [`main`](../../backend/server.py#L1605) | 1605 |
 
 ## backend/sessions.py
 
@@ -1225,20 +1227,21 @@ The function declarations and indexed line locations are unchanged.
 
 | Function | Line |
 | --- | ---: |
-| [`unique_directory_fields`](../../backend/staff_directory.py#L14) | 14 |
-| [`require_directory_access`](../../backend/staff_directory.py#L24) | 24 |
-| [`_text`](../../backend/staff_directory.py#L30) | 30 |
-| [`_staff_record`](../../backend/staff_directory.py#L37) | 37 |
-| [`_department_record`](../../backend/staff_directory.py#L44) | 44 |
-| [`read_staff_member`](../../backend/staff_directory.py#L51) | 51 |
-| [`department_has_associations`](../../backend/staff_directory.py#L62) | 62 |
-| [`read_department`](../../backend/staff_directory.py#L81) | 81 |
-| [`list_directory`](../../backend/staff_directory.py#L88) | 88 |
-| [`list_staff_department_choices`](../../backend/staff_directory.py#L102) | 102 |
-| [`_validate_staff`](../../backend/staff_directory.py#L115) | 115 |
-| [`_create_login`](../../backend/staff_directory.py#L132) | 132 |
-| [`save_staff_member`](../../backend/staff_directory.py#L147) | 147 |
-| [`save_department`](../../backend/staff_directory.py#L191) | 191 |
+| [`_staff_revision`](../../backend/staff_directory.py#L21) | 21 |
+| [`unique_directory_fields`](../../backend/staff_directory.py#L37) | 37 |
+| [`require_directory_access`](../../backend/staff_directory.py#L47) | 47 |
+| [`_text`](../../backend/staff_directory.py#L53) | 53 |
+| [`_staff_record`](../../backend/staff_directory.py#L60) | 60 |
+| [`_department_record`](../../backend/staff_directory.py#L67) | 67 |
+| [`read_staff_member`](../../backend/staff_directory.py#L74) | 74 |
+| [`department_has_associations`](../../backend/staff_directory.py#L86) | 86 |
+| [`read_department`](../../backend/staff_directory.py#L105) | 105 |
+| [`list_directory`](../../backend/staff_directory.py#L112) | 112 |
+| [`list_staff_department_choices`](../../backend/staff_directory.py#L126) | 126 |
+| [`_validate_staff`](../../backend/staff_directory.py#L139) | 139 |
+| [`_create_login`](../../backend/staff_directory.py#L164) | 164 |
+| [`save_staff_member`](../../backend/staff_directory.py#L179) | 179 |
+| [`save_department`](../../backend/staff_directory.py#L225) | 225 |
 
 ## backend/staff_identity.py
 
