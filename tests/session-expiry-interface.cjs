@@ -79,7 +79,9 @@ async function run() {
     assert.equal(response.status(), 303, route);
     assert.equal(response.headers()['location'], '/setup#sign-in-required');
     await page.goto(address + route);
-    await page.locator('#message').getByText('Please sign in to continue using Caffoot Lite.').waitFor();
+    await page.locator('#message').waitFor({state: 'visible'});
+    assert.equal(await page.locator('#message').textContent(),
+      'Please sign in to continue using Caffoot Lite.');
     assert.equal(new URL(page.url()).pathname, '/setup');
   }
   const missing = await context.request.get(address + '/api/session');
