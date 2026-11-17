@@ -33,6 +33,30 @@ removal retains its attribution snapshot and clears only the existing Staff
 login link. The general Device audit records recipient IDs rather than names
 or contact information.
 
+## Protecting Device Type And Identity
+
+An ordinary Device edit retains the current Device Type and physical/virtual
+identity whenever the Device has any recorded assignment (including ended
+assignments) or a linked stock unit. `device_saves._validate_device_identity_change`
+checks those persisted relationships inside the existing write transaction,
+including related Device changes submitted with a host edit. IT Assets visibility
+and permissions do not remove this protection. Associated equipment remains linked
+through the original assignment; stock balances, movements and history remain intact.
+
+An incompatible ordinary Device edit returns HTTP 400 with a fixed explanation
+containing no hidden equipment details. IPAM-only and Racks-only edits retain their
+existing HTTP 403 field-permission safeguards before the identity check. Rejection leaves the Device, revisions, edit reservations,
+IPAM, assignments, stock and audit records unchanged. Names, hardware details,
+notes, locations and other permitted fields retain their established validation.
+Devices without these relationships can still receive legitimate type/identity
+corrections. The separate Device Type Manager keeps its existing rename/delete
+workflow, including propagation of the managed label to affected Devices; it does
+not rewrite the original stock or assignment history. No schema or interface change
+is required. This correction follows the canonical identity contracts in
+[#232](https://github.com/Caffoot/Caffoot-Lite/issues/232),
+[#352](https://github.com/Caffoot/Caffoot-Lite/issues/352) and
+[#368](https://github.com/Caffoot/Caffoot-Lite/issues/368).
+
 ## API
 
 All responses are authenticated and non-cacheable. Mutation requires the

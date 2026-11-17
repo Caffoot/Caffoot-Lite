@@ -327,6 +327,104 @@ class ReservedDeviceSaveTests(unittest.TestCase):
         self.assertNotEqual(self.snapshot(), before)
 
 
+class DeviceIdentitySaveTests(unittest.TestCase):
+    tearDown = ReservedDeviceSaveTests.tearDown
+
+    def setUp(self):
+        ReservedDeviceSaveTests.setUp(self)
+        self.original = dict(self.original, type="Desktop", isVirtual=False)
+        self.db.execute("UPDATE inventory_devices SET record_json=? WHERE id='d1'",
+                        (json.dumps(self.original),))
+        self.db.execute("INSERT INTO staff_members(id,first_name,last_name) VALUES('person','Alex','Example')")
+        self.db.commit()
+
+    def assign(self, *, department=False):
+        self.db.execute("INSERT INTO departments(id,name) VALUES('department','Production')")
+        self.db.execute("""INSERT INTO device_assignments
+            (device_id,staff_id,department_id,recipient_label,assigned_at,actor_id,actor_label)
+            VALUES('d1',?,?,'Original Holder','2026-11-15',1,'owner')""",
+            (None if department else 'person', 'department' if department else None))
+        self.db.commit()
+
+    def save(self, record):
+        return save_reserved_device(self.db, 1, "d1", 0, record)
+
+    def test_assigned_type_and_each_virtual_indicator_are_protected_with_assets_on_or_off(self):
+        self.assign()
+        for enabled in (1, 0):
+            self.db.execute("UPDATE organisation_features SET enabled=? WHERE feature='it_assets'", (enabled,))
+            self.db.commit()
+            for changes in ({"type": "Switch"}, {"type": "Laptop"}, {"type": "Printer"},
+                            {"type": "Virtual Machine"}, {"type": "Server - Virtual"},
+                            {"type": None}, {"isVirtual": True}, {"virtualHostId": "d2"}):
+                with self.subTest(enabled=enabled, changes=changes):
+                    before = tuple(self.db.iterdump())
+                    with self.assertRaisesRegex(ValueError, "type or physical/virtual identity"):
+                        self.save(dict(self.original, name="Rejected", primaryIp="10.0.0.12", **changes))
+                    self.assertEqual(tuple(self.db.iterdump()), before)
+            missing_type = dict(self.original)
+            del missing_type["type"]
+            before = tuple(self.db.iterdump())
+            with self.assertRaisesRegex(ValueError, "type or physical/virtual identity"):
+                self.save(missing_type)
+            self.assertEqual(tuple(self.db.iterdump()), before)
+
+    def test_department_assignment_and_canonical_id_cannot_be_replaced(self):
+        self.assign(department=True)
+        before = tuple(self.db.iterdump())
+        for record, message in ((dict(self.original, type="Switch"), "type or physical/virtual identity"),
+                                (dict(self.original, id="replacement"), "Invalid device update")):
+            with self.assertRaisesRegex(ValueError, message):
+                self.save(record)
+            self.assertEqual(tuple(self.db.iterdump()), before)
+
+    def test_assigned_device_keeps_ordinary_editable_fields(self):
+        self.assign()
+        assignments = self.db.execute("SELECT * FROM device_assignments").fetchall()
+        updated = dict(self.original, name="Renamed", notes="Updated note", location="Office",
+                       manufacturer="Example", model="Corrected", serialNumber="Corrected Serial",
+                       typeDetails={"ram": "16", "processor": "Updated CPU"})
+        # Optional false/empty virtual fields do not change physical identity.
+        del updated["isVirtual"]
+        updated["virtualHostId"] = ""
+        self.assertEqual(self.save(updated), 1)
+        self.assertEqual(json.loads(self.db.execute(
+            "SELECT record_json FROM inventory_devices WHERE id='d1'").fetchone()[0]), updated)
+        self.assertEqual(self.db.execute("SELECT * FROM device_assignments").fetchall(), assignments)
+
+    def test_unlinked_device_type_and_virtual_corrections_remain_permitted(self):
+        corrected = dict(self.original, type="Laptop")
+        self.assertEqual(self.save(corrected), 1)
+        self.db.execute("INSERT INTO device_edit_reservations VALUES('d1',1,?,1)",
+                        (int(time.time()) + 300,))
+        self.db.commit()
+        virtual = dict(corrected, type="Server - Virtual", isVirtual=True)
+        self.assertEqual(save_reserved_device(self.db, 1, "d1", 1, virtual), 2)
+        self.assertEqual(json.loads(self.db.execute(
+            "SELECT record_json FROM inventory_devices WHERE id='d1'").fetchone()[0]), virtual)
+
+    def test_related_guest_request_cannot_change_protected_physical_identity(self):
+        # Retained records can include old hosting values. A host save must use
+        # the same protection when it also submits a change to a related Device.
+        self.assign()
+        guest = dict(self.original, virtualHostId="d2")
+        self.db.execute("UPDATE inventory_devices SET record_json=? WHERE id='d1'", (json.dumps(guest),))
+        self.db.execute("INSERT INTO device_edit_reservations VALUES('d2',1,?,0)",
+                        (int(time.time()) + 300,))
+        self.db.commit()
+        host = json.loads(self.db.execute("SELECT record_json FROM inventory_devices WHERE id='d2'").fetchone()[0])
+        before = tuple(self.db.iterdump())
+        for operation in (save_reserved_device, delete_reserved_device):
+            with self.subTest(operation=operation.__name__):
+                arguments = (self.db, 1, "d2", 0)
+                if operation is save_reserved_device:
+                    arguments += (dict(host, name="Rejected host"),)
+                with self.assertRaisesRegex(ValueError, "type or physical/virtual identity"):
+                    operation(*arguments, related_devices=[{
+                        "deviceId": "d1", "revision": 0, "record": dict(guest, virtualHostId="")}])
+                self.assertEqual(tuple(self.db.iterdump()), before)
+
+
 if __name__ == "__main__":
     unittest.main()
 

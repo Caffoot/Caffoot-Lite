@@ -10,7 +10,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import urlsplit, parse_qs
 
-from .device_saves import create_device, delete_reserved_device, save_reserved_device
+from .device_saves import DeviceIdentityConflict, create_device, delete_reserved_device, save_reserved_device
 from .ipam_linking import link_device_to_ipam, unique_link_fields
 from .ipam_saves import change_independent_allocation, change_bulk_allocations
 from .collection_saves import (change_inventory_record, remove_linked_rack_shelf,
@@ -1381,7 +1381,8 @@ class Handler(BaseHTTPRequestHandler):
             return
         except (ValueError, TypeError, sqlite3.IntegrityError) as exc:
             message = str(exc)
-            if self.path != "/api/devices/ipam/link" and self.path.startswith(("/api/devices/", "/api/ipam/", "/api/inventory/")):
+            # This fixed identity message contains no hidden record details.
+            if not isinstance(exc, DeviceIdentityConflict) and self.path != "/api/devices/ipam/link" and self.path.startswith(("/api/devices/", "/api/ipam/", "/api/inventory/")):
                 with connect() as connection:
                     actor = authenticated_account(connection, self.headers.get("Cookie"))
                     if not all(can_access(connection, actor, section)

@@ -1,5 +1,22 @@
 # Milestone 01 Development Handover — v2.2 Target
 
+**Device Type and identity protection — 17 November 2026:** Finding 4 is implemented
+on `fix/finding-4-device-identity`, from verified `milestone-1` revision
+`a9bc3412b2fc43075b429e87c8cde9febd57e1b1`. Ordinary reserved Device saves now
+check all persisted assignments and stock-unit links inside the existing write
+transaction before changing type or physical/virtual identity, including related
+guest edits. Protection remains active with IT Assets off. Rejected API requests
+return a fixed explanation without hidden record details and leave database and
+edit state unchanged. Ordinary field edits, unlinked Device corrections and the
+Device Type Manager rename/delete workflow are preserved. See the
+[identity contract](../development-guide/Device-Assignments.md#protecting-device-type-and-identity).
+**151 focused tests passed** across reserved saves, stock registration/history,
+assignment service/HTTP, catalogue operations, reissue, prepared handovers and
+associated-equipment writes. Compilation, affected Function Index links,
+documentation consistency and diff checks passed. Full suites, browser, Docker
+and native/manual acceptance remain deferred for this draft;
+no schema migration, interface change, merge, deployment or release is included.
+
 **Stale Staff edits — 17 November 2026:** Finding 3 is implemented on
 `fix/stale-staff-edits`, from verified `milestone-1` revision
 `cb5ae4d904ba281a7ac1be2da3e2dfaa5d463b88`. Staff saves and quick status changes

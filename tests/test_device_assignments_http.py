@@ -61,6 +61,63 @@ class DeviceAssignmentHttpTests(unittest.TestCase):
         self.assertEqual(self.request('/api/equipment/recipients?offset=0&offset=1', actor=2)[0], 400)
         self.assertEqual(self.request('/api/equipment/recipients?offset=0', actor=3)[0], 403)
 
+    def test_direct_device_save_cannot_replace_assigned_type_or_identity(self):
+        with sqlite3.connect(self.path) as db:
+            record = json.loads(db.execute("SELECT record_json FROM inventory_devices WHERE id='device'").fetchone()[0])
+            record['primaryIp'] = ''
+            db.execute("UPDATE inventory_devices SET record_json=? WHERE id='device'", (json.dumps(record),))
+            db.execute("UPDATE organisation_features SET enabled=0 WHERE feature='it_assets'")
+        self.assertEqual(self.request('/api/equipment/assignments', method='POST', payload=self.payload)[0], 200)
+        status, reservation, _ = self.request('/api/devices/edit/start', method='POST', payload={'deviceId': 'device'})
+        self.assertEqual(status, 200, reservation)
+        payload = dict(deviceId='device', revision=reservation['revision'], record=record)
+        with sqlite3.connect(self.path) as db:
+            before = tuple(db.iterdump())
+        for changes in (dict(type='Switch'), dict(type='Printer'), dict(type='Server - Virtual'),
+                        dict(isVirtual=True), dict(virtualHostId='forged-host'), dict(id='replacement')):
+            for section in ('Devices', 'IPAM', 'Racks'):
+                with self.subTest(changes=changes, section=section):
+                    status, result, _ = self.request('/api/devices/edit/save', method='POST',
+                        payload=dict(payload, section=section, record=dict(record, name='Rejected', **changes)))
+                    if section == 'Devices' or 'id' in changes:
+                        self.assertEqual(status, 400, result)
+                        if section == 'Devices' and 'id' not in changes:
+                            self.assertIn('type or physical/virtual identity', result['error'])
+                    else:
+                        self.assertEqual(status, 403, result)
+                        self.assertEqual(result, {'error': 'forbidden'})
+                    with sqlite3.connect(self.path) as db:
+                        self.assertEqual(tuple(db.iterdump()), before)
+        # A scoped editor must not learn whether this Device has protected history.
+        for section in ('IPAM', 'Racks'):
+            status, response, _ = self.request('/api/devices/edit/save', method='POST',
+                payload=dict(payload, section=section, record=dict(record, type='Switch')))
+            self.assertEqual(status, 403, response)
+            self.assertEqual(response, {'error': 'forbidden'})
+        status, result, _ = self.request('/api/inventory/record/save', method='POST', payload={
+            'collection': 'devices', 'id': 'device', 'record': dict(record, type='Switch')})
+        self.assertEqual(status, 403, result)
+        with sqlite3.connect(self.path) as db:
+            self.assertEqual(tuple(db.iterdump()), before)
+        status, result, _ = self.request('/api/devices/edit/save', method='POST',
+            payload=dict(payload, record=dict(record, name='Renamed', notes='Updated')))
+        self.assertEqual(status, 200, result)
+        with sqlite3.connect(self.path) as db:
+            saved = json.loads(db.execute("SELECT record_json FROM inventory_devices WHERE id='device'").fetchone()[0])
+            self.assertEqual((saved['id'], saved['type'], saved['name']), ('device', 'Laptop', 'Renamed'))
+        status, reservation, _ = self.request('/api/devices/edit/start', method='POST', actor=2,
+            payload={'deviceId': 'device'})
+        self.assertEqual(status, 200, reservation)
+        with sqlite3.connect(self.path) as db:
+            before = tuple(db.iterdump())
+        status, result, _ = self.request('/api/devices/edit/save', method='POST', actor=2,
+            payload=dict(deviceId='device', revision=reservation['revision'], record=dict(saved, type='Switch')))
+        self.assertEqual(status, 400, result)
+        self.assertEqual(result['error'], 'This edit cannot change the Device type or physical/virtual identity. '
+                         'Other permitted fields can still be edited.')
+        with sqlite3.connect(self.path) as db:
+            self.assertEqual(tuple(db.iterdump()), before)
+
     def test_strict_request_shape_and_unimplemented_actions(self):
         self.assertEqual(self.request('/api/equipment/assignments', method='POST', raw=b'{"devices":[],"devices":[]}')[0], 400)
         self.assertEqual(self.request('/api/equipment/return', method='POST', payload={})[0], 404)

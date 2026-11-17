@@ -14,6 +14,10 @@ from .permissions import can_access, feature_enabled
 from .rack_validation import find_rack_import_conflicts
 
 
+class DeviceIdentityConflict(ValueError):
+    """A normal edit cannot replace the identity of recorded equipment."""
+
+
 _RACK_PLACEMENT_FIELDS = frozenset((
     "rackId", "face", "rackUStart", "rackUEnd", "rackUHeight", "mountType",
     "rackShelfAccessoryId",
@@ -44,6 +48,26 @@ def _check_primary_ip_claim(allocations, new_ip, device_id, old_ip=""):
         )
 
 
+def _validate_device_identity_change(connection, previous, record):
+    """Keep recorded equipment attached to the same type and physical identity."""
+    if (previous.get("type") == record.get("type")
+            and bool(previous.get("isVirtual")) == bool(record.get("isVirtual"))
+            and bool(previous.get("virtualHostId")) == bool(record.get("virtualHostId"))):
+        return
+    device_id = previous["id"]
+    # Past assignments also retain associated equipment. Hidden stock remains
+    # linked to this Device even when the IT Assets feature is switched off.
+    if (connection.execute(
+            "SELECT 1 FROM device_assignments WHERE device_id=? LIMIT 1", (device_id,)
+        ).fetchone() or connection.execute(
+            "SELECT 1 FROM it_asset_stock_units WHERE device_id=? LIMIT 1", (device_id,)
+        ).fetchone()):
+        raise DeviceIdentityConflict(
+            "This edit cannot change the Device type or physical/virtual identity. "
+            "Other permitted fields can still be edited."
+        )
+
+
 def _prepare_related_guests(connection, candidate, host_id, related_devices, account_id):
     """Validate the published host/guest choices within the host transaction."""
     if related_devices is None:
@@ -70,6 +94,7 @@ def _prepare_related_guests(connection, candidate, host_id, related_devices, acc
                    if previous.get(key) != record.get(key)}
         if not changed or not changed.issubset(_GUEST_FIELDS):
             raise ValueError("Unsupported related device change")
+        _validate_device_identity_change(connection, previous, record)
         row = connection.execute(
             "SELECT revision FROM inventory_devices WHERE id=?", (guest_id,)
         ).fetchone()
@@ -156,6 +181,7 @@ def save_reserved_device(connection, account_id, device_id, revision, record, se
             if (rack_placement_changed and
                     not can_access(connection, account_id, "Racks", edit=True)):
                 raise PermissionError("Racks edit permission required for rack placement changes")
+        _validate_device_identity_change(connection, previous, record)
         candidate["devices"] = [record if device["id"] == device_id else device
                                 for device in candidate["devices"]]
         if related_devices and not can_access(connection, account_id, "Devices", edit=True):

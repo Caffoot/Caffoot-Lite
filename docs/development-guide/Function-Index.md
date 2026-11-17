@@ -6,7 +6,7 @@ Scope: named JavaScript declarations/assignments in the six application scripts,
 
 The account hydration/photo functions now have purpose-based callable bindings matching their function names: `hydrateAccount` and `removeAccountPhoto`. The immutable design manifest retains its historical integration-entry names; those metadata names are not the runtime's current function map. Pinned source paths, revisions and hashes are unchanged.
 
-**Recorded definitions: 1031.** Checked against the source in this commit. This remains a definition map, not a call graph. See [coding conventions](06-Coding-and-Naming-Conventions.md) and the [code reference](07-Function-and-Code-Reference.md).
+**Recorded definitions: 1032.** Checked against the source in this commit. This remains a definition map, not a call graph. See [coding conventions](06-Coding-and-Naming-Conventions.md) and the [code reference](07-Function-and-Code-Reference.md).
 
 ## interface/loader.js
 
@@ -856,13 +856,14 @@ The account hydration/photo functions now have purpose-based callable bindings m
 
 | Function | Line |
 | --- | ---: |
-| [`_check_primary_ip_claim`](../../backend/device_saves.py#L28) | 28 |
-| [`_prepare_related_guests`](../../backend/device_saves.py#L47) | 47 |
-| [`_persist_related_guests`](../../backend/device_saves.py#L91) | 91 |
-| [`save_reserved_device`](../../backend/device_saves.py#L104) | 104 |
-| [`create_device_in_transaction`](../../backend/device_saves.py#L245) | 245 |
-| [`create_device`](../../backend/device_saves.py#L322) | 322 |
-| [`delete_reserved_device`](../../backend/device_saves.py#L334) | 334 |
+| [`_check_primary_ip_claim`](../../backend/device_saves.py#L32) | 32 |
+| [`_validate_device_identity_change`](../../backend/device_saves.py#L51) | 51 |
+| [`_prepare_related_guests`](../../backend/device_saves.py#L71) | 71 |
+| [`_persist_related_guests`](../../backend/device_saves.py#L116) | 116 |
+| [`save_reserved_device`](../../backend/device_saves.py#L129) | 129 |
+| [`create_device_in_transaction`](../../backend/device_saves.py#L271) | 271 |
+| [`create_device`](../../backend/device_saves.py#L348) | 348 |
+| [`delete_reserved_device`](../../backend/device_saves.py#L360) | 360 |
 
 ## backend/feature_settings.py
 
@@ -1179,11 +1180,11 @@ The function declarations and indexed line locations are unchanged.
 | [`Handler.handle_feature_settings`](../../backend/server.py#L928) | 928 |
 | [`Handler.handle_role_change`](../../backend/server.py#L971) | 971 |
 | [`Handler.handle_user_mutation`](../../backend/server.py#L1013) | 1013 |
-| [`Handler.handle_account_email`](../../backend/server.py#L1405) | 1405 |
-| [`Handler.handle_profile_photo`](../../backend/server.py#L1485) | 1485 |
-| [`Handler.handle_import`](../../backend/server.py#L1516) | 1516 |
-| [`Handler.respond`](../../backend/server.py#L1592) | 1592 |
-| [`main`](../../backend/server.py#L1605) | 1605 |
+| [`Handler.handle_account_email`](../../backend/server.py#L1406) | 1406 |
+| [`Handler.handle_profile_photo`](../../backend/server.py#L1486) | 1486 |
+| [`Handler.handle_import`](../../backend/server.py#L1517) | 1517 |
+| [`Handler.respond`](../../backend/server.py#L1593) | 1593 |
+| [`main`](../../backend/server.py#L1606) | 1606 |
 
 ## backend/sessions.py
 

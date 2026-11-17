@@ -196,6 +196,13 @@ Staff link and current Department on the server and returns employee-safe fields
 eligibility check, so other Device types cannot hide eligible search results.
 See [Device Assignments](Device-Assignments.md) for API and workflow boundaries.
 
+`device_saves.py:_validate_device_identity_change` protects the current type and
+physical/virtual identity during ordinary reserved saves, using all persisted
+assignments and stock-unit links even when IT Assets is disabled. The same check
+covers related guest edits. `DeviceIdentityConflict` supplies a fixed, safe HTTP
+400 explanation without exposing hidden records. The separate managed catalogue
+rename/delete workflow retains its existing behaviour.
+
 `interface/equipment.js` supplies `staffPlaceholder`/`loadStaffEquipment`,
 `loadDeviceEquipment`, `renderMyEquipment`/`loadMyEquipment` and the shared
 `showAssignmentDialog`/`saveAssignment` operation. The existing application
