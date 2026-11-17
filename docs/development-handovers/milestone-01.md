@@ -1,5 +1,19 @@
 # Milestone 01 Development Handover — v2.2 Target
 
+**Issue #400 expired-session sign-in correction — 17 November 2026:** A
+focused implementation is prepared separately from the four completed P2
+audit findings. Protected browser documents redirect to the existing sign-in
+screen; an already-open application verifies invalid session status before
+navigating after a failed API request, preserving legitimate permission denial
+and JSON API errors. The existing sign-in feedback shows the approved
+session-ended notice without redesigning the page. See the
+[Issue #400 evidence and acceptance record](evidence/session-expiry-sign-in/Report.md).
+Focused HTTP and real Chromium browser regressions are added; browser
+screenshots are to be captured in four desktop/mobile light/dark states.
+**Checks, independent review and owner visual approval are pending.**
+Nothing is merged, released or deployed by this checkpoint.
+
+
 **Stage 1–3 Finding 1 delivery decision — 17 November 2026:** The owner
 authorised a focused, ordinary public PR targeting `milestone-1` for the
 password-change concurrency correction, with review and regression verification
