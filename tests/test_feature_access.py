@@ -31,6 +31,10 @@ class FeatureAccessHttpTests(unittest.TestCase):
         with sqlite3.connect(self.path) as db:
             stage_inventory(db,state)
             db.execute('INSERT INTO inventory_change_history(record_json) VALUES(?)',(json.dumps(dict(reason='PRIVATE_LEGACY_REASON',changes=[dict(kind=kind,label=label,action='Created',fields=[]) for kind,label in [('Device','PRIVATE_DEVICE'),('IPAM','PRIVATE_SUBNET'),('Rack','PRIVATE_RACK')]])),))
+            for kind in ('Account', 'Role', 'Security'):
+                db.execute('INSERT INTO inventory_change_history(record_json) VALUES(?)',
+                           (json.dumps(dict(changes=[dict(kind=kind, label='essential-' + kind,
+                                                          action='Updated', fields=[])])),))
         return state
 
     def features(self, enabled):
@@ -67,13 +71,22 @@ class FeatureAccessHttpTests(unittest.TestCase):
                 self.assertEqual(status,200)
                 self.assertEqual('PRIVATE_CATALOGUE' in json.dumps(settings),'devices' in enabled)
                 status,history=self.get('/api/inventory/history')
-                self.assertEqual(status,200 if enabled else 403)
+                self.assertEqual(status,200)
+                self.assertEqual(history['changeHistory'],result['changeHistory'])
+                self.assertEqual([event['changes'][0]['kind'] for event in history['changeHistory']
+                                  if event['changes'][0]['label'].startswith('essential-')],
+                                 ['Account', 'Role', 'Security'])
                 if len(enabled)<3:self.assertNotIn('PRIVATE_LEGACY_REASON',json.dumps(history))
 
     def test_all_off_admin_essentials_and_account_access(self):
         self.seed();self.features([])
-        for endpoint in ('/inventory','/account','/api/users','/api/settings/features','/api/account/profile','/api/session'):
+        for endpoint in ('/inventory','/account','/api/users','/api/settings/features','/api/account/profile','/api/session','/api/inventory/settings','/api/inventory/state','/api/inventory/history'):
             self.assertEqual(self.request(endpoint,COOKIE_NAME+'='+self.token)[0],200,endpoint)
+        for endpoint in ('/api/inventory/state', '/api/inventory/history'):
+            history = self.get(endpoint)[1]['changeHistory']
+            self.assertNotIn('PRIVATE', json.dumps(history))
+            self.assertEqual([event['changes'][0]['kind'] for event in history],
+                             ['Account', 'Role', 'Security'])
         status,session=self.get('/api/session')
         self.assertTrue(session['can_enter_inventory'])
         for endpoint in ('/api/inventory/devices','/api/inventory/ipam','/api/inventory/racks'):
@@ -97,7 +110,7 @@ class FeatureAccessHttpTests(unittest.TestCase):
             token=login_session(db,'staff','password')
         self.features([])
         self.assertEqual(self.request('/account',COOKIE_NAME+'='+token)[0],200)
-        for endpoint in ('/inventory','/api/users','/api/settings/features','/api/inventory/state'):
+        for endpoint in ('/inventory','/api/users','/api/settings/features','/api/inventory/state','/api/inventory/history'):
             self.assertEqual(self.request(endpoint,COOKIE_NAME+'='+token)[0],403,endpoint)
 
     def test_grants_overrides_mfa_status_and_future_features_fail_closed(self):

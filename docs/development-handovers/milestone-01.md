@@ -1,5 +1,27 @@
 # Milestone 01 Development Handover — v2.2 Target
 
+**Administrator audit-history correction — 17 November 2026:** Finding 2 is
+implemented on `fix/administrator-essential-audit-history`, from verified
+`milestone-1` revision `3ff192748e9d6e4f8eaea2c3b93b6d96082ae6aa`.
+Active, authenticated administrators with confirmed MFA retain Account, Role and
+Security summaries through both inventory state and history APIs when optional
+features are off. With Devices, IPAM and Racks readable, events without IT Assets
+changes retain their complete original representation even when IT Assets is
+disabled. Events containing disabled IT Assets changes use the restricted
+projection. Restricted responses keep hidden/unknown inventory and extra
+historical payloads out. Existing association redaction and non-administrator
+rights remain in place. The review correction restores the original per-event
+rule and the directory-privacy test's original feature settings, and adds exact
+historical-representation coverage with IT Assets disabled on both API paths.
+**Review-correction verification: 34 tests passed** in `test_history_permissions`,
+`test_history_http` and `test_feature_access`; **four existing targeted history/
+association regressions passed** in the stock intake, circulation, associated
+equipment and Staff section permission tests. The new exact-history regression
+failed before the correction and passed afterwards. Syntax, Function Index
+locations and diff checks passed. See [the access rules](../development-guide/04-Authentication-and-Permissions.md#administrator-audit-history).
+Draft review remains outstanding; no broad audit, full suite, browser, Docker,
+private-data or Stage 6 verification was repeated. No merge or release sign-off.
+
 **Current Batch 3.12 review checkpoint — 16 November 2026:** IT Assets Overview is
 implemented on `feat/it-assets-dashboard`, from verified base
 `6222d8a87e4a02dd4e69f070e11777d2ec82b591`. The reporting/permission checkpoint

@@ -58,23 +58,24 @@ def visible_subnet_batch_reason(event):
 
 
 def visible_change_history(connection, account_id):
-    """Return only changes whose section the active account may currently read.
+    """Keep essential administrator events visible when inventory is disabled.
 
-    Administrators retain the existing complete representation. Other users
-    receive only approved event fields, and no ambiguous/unknown categories.
-    The original `omitted` total cannot be assigned to a visible section, so
-    it is not disclosed to partially privileged users.
+    Administrators with Devices, IPAM and Racks access retain complete events
+    unless an event includes IT Assets changes they cannot read. Other events
+    return only approved fields from readable sections and essential Account,
+    Role and Security changes for verified admins. Unknown categories, extra
+    details and omitted counts stay out of these restricted responses.
     """
     sections = {section: can_access(connection, account_id, section)
                 for section in ("Devices", "IPAM", "Racks", "IT Assets")}
-    if not any(sections.values()):
-        return []
-
     row = connection.execute(
         "SELECT active,is_admin,mfa_confirmed FROM accounts WHERE id=?",
         (account_id,),
     ).fetchone()
-    is_admin = row == (1, 1, 1) and all(sections[section] for section in ("Devices", "IPAM", "Racks"))
+    is_admin = row == (1, 1, 1)
+    if not is_admin and not any(sections.values()):
+        return []
+    complete_history = is_admin and all(sections[section] for section in ("Devices", "IPAM", "Racks"))
 
     history = []
     for (raw,) in connection.execute(
@@ -83,7 +84,7 @@ def visible_change_history(connection, account_id):
         stock_changes = (isinstance(event, dict) and isinstance(event.get('changes'), list)
                          and any(isinstance(change, dict) and change.get('kind') == 'IT Assets'
                                  for change in event['changes']))
-        if is_admin and (sections['IT Assets'] or not stock_changes):
+        if complete_history and (sections['IT Assets'] or not stock_changes):
             history.append(event)
             continue
         if not isinstance(event, dict) or not isinstance(event.get("changes"), list):
@@ -94,7 +95,8 @@ def visible_change_history(connection, account_id):
                 continue
             kind = change.get("kind")
             section = _KIND_SECTIONS.get(kind) if isinstance(kind, str) else None
-            if section is not None and sections[section]:
+            if ((section is not None and sections[section]) or
+                    (is_admin and kind in ("Account", "Role", "Security"))):
                 if kind=='IT Assets' and not sections['Devices']:
                     after=change.get('after') if isinstance(change.get('after'),dict) else {}
                     movement=after.get('movementId',after.get('closureMovementId'))

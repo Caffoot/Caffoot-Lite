@@ -446,7 +446,7 @@ class Handler(BaseHTTPRequestHandler):
                 if account_id is None:
                     self.respond(401, {"error": "unauthorised"})
                     return
-                if not any(can_access(connection, account_id, section)
+                if not evaluate_role_policy(connection, account_id).is_admin and not any(can_access(connection, account_id, section)
                            for section in ("Devices", "IPAM", "Racks")):
                     self.respond(403, {"error": "forbidden"})
                     return
