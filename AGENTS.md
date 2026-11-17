@@ -15,6 +15,15 @@ These rules apply to all AI-assisted development in this repository. Read them b
 9. **Stop at a genuine blocker.** If the approved approach cannot work, explain exactly what prevents it and the minimum proposed change; obtain explicit owner approval *before* deviating. Do not disguise a workaround as equivalent.
 10. **Respect the delivery boundary.** Do not modify `main`, merge PRs, publish images or releases, or change unrelated branches/issues unless explicitly authorised. A finished task is the agreed outcome, not a large diff, high test count or long-running investigation.
 
+## Stop-and-simplify trigger
+
+If the product owner **or the assistant** says "this is too complicated", "this is getting silly", or words to that effect, **stop repeating the current procedure**. Treat the comment as an instruction to investigate the simplest safe, supported route to the agreed outcome, not as permission to drop security or acceptance checks.
+
+- State what has already been completed and preserved, what is actually blocked, and why. Do not restart finished work or repeat failed approaches without new evidence.
+- Check the available tools, access permissions, repository settings and alternative supported workflows before requesting further manual steps. Prefer direct access and the fewest straightforward owner actions.
+- Explain the viable options, their security and delivery trade-offs, and recommend the least complicated one that preserves the approved requirements. Distinguish genuine restrictions from optional process.
+- If the agreed approach must change, **obtain explicit owner approval before changing the route, scope, security boundary or release plan**. Document the chosen route, failed approach and exact next step in the relevant handover so the same obstacle is not revisited.
+
 ## Efficient development and final verification
 
 - **Do not spend coding time watching CI.** Implement the approved change, run only relevant focused tests, commit and push the checkpoint, report the PR link and test results, then stop. Do not poll GitHub Actions, repeatedly call `gh run view`, wait for workflows to finish or repeatedly rerun passing suites. Independent reviewers monitor CI outside the coding session.
