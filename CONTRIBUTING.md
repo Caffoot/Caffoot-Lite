@@ -91,6 +91,24 @@ Do not leave documentation for a later release or for another contributor. For e
 - New source lines do not each need an entry in a function index. Every meaningful new or changed function should be indexed; document components and behaviour at the appropriate level.
 - Remove outdated user-facing development terminology in the part of the application being changed.
 
+### Mandatory Long-Form User And Administrator Guides
+
+**Our standard for all current and future feature instructions is the comprehensive, beginner-friendly approach used in the [Stage 1–3 draft v2.2 guides](docs/how-tos/features-and-instructions/v2.2-draft/README.md).** Write and update the relevant instructions **alongside every new or materially changed feature**, rather than postponing them until release. This applies equally to maintainers, external contributors and AI-assisted drafts, and to published v2.1 guides whenever they are reviewed and improved.
+
+Each applicable guide should give readers what they need to complete the task without guessing:
+
+1. **Purpose and starting point:** what the feature does, when to use it, prerequisites, available settings and optional-feature switches, and the effective permissions required.
+2. **Exact on-screen guidance:** where to go in Caffoot Lite, existing menu and tab names, buttons, form fields, options, validation rules and relevant status meanings, using the actual accepted application rather than a speculative redesign.
+3. **Complete numbered procedures:** each user action in sequence, the expected outcome, and what Save, Cancel, confirmation, rejection or a stale/conflicting change does. Include connected end-to-end tasks across sections where relevant.
+4. **Practical examples:** realistic, clearly fictional people, equipment and values; explain stock arithmetic, assignment/return state changes or access restrictions when those details help readers understand the result.
+5. **Safety and recovery:** what the user may see or change, permissions and personal-data boundaries, important safeguards, common errors, troubleshooting and links to the next related task.
+6. **Authentic illustrations:** relevant screenshots captured from the **actually implemented and correct-version application**, following the approved design, with informative captions and accessible alternative text. Record their source and approval. Do not present old UI, a mock-up, an HTML preview or a generated picture as an approved current application screenshot; disclose missing or older captures and obtain the necessary owner publication approval before using them as current evidence.
+7. **Version and release accuracy:** distinguish published v2.1 from unreleased v2.2, use truthful navigation and available features, and never invent successful tests, production upgrade steps, released images or future capabilities. Preserve existing installation guidance and dated historical decisions.
+
+Installation, backup/restore, security, recovery, troubleshooting and developer reference material must be equally **clear, complete and accurate for their intended reader**, with the appropriate detail, evidence and warnings. This does **not** require padding short GitHub updates into lengthy manuals, rewriting audit history or duplicating the same instructions across several guides. Link related maintained documents instead.
+
+**Review gate:** For each feature PR, link the updated guide, check the procedures against actual source and approved screens, verify current image provenance and links, and list any genuinely deferred screenshots or manual checks. Do not mark unfinished documentation or owner visual approval as completed. A complete guide cannot substitute for required software testing, version acceptance or separate merge/release approval.
+
 ## Protect Existing Installations
 
 Preserve user data, permissions, existing features and self-hosted installation compatibility unless an explicitly approved specification changes them. Renaming an **internal identifier** is different from renaming an API payload key, exported record field, database column, user-visible file format or other established contract. External contract changes require separate compatibility review, migration planning and approval.
