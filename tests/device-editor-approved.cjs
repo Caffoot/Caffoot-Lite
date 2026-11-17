@@ -104,7 +104,7 @@ module.exports=async function verifyDeviceEditor({page,reference,sourceBase,cont
  // Reuse the existing Device editor CI artifact rather than adding a new workflow.
  if(process.env.CAFFOOT_EDITOR_FULL_CAPTURES==='1'){
   await load();
-  await page.locator('#sidebar [data-action="tab-dashboard"]').click();
+  await page.evaluate(()=>switchTab('dashboard'));
   await page.locator('#main-content [data-dashboard-tab="insights"]').click();
   const distribution=page.locator('#dashboard-panel-insights .card.db-card').filter({hasText:'Hardware Distribution'});
   await distribution.waitFor({state:'visible'});
@@ -113,7 +113,7 @@ module.exports=async function verifyDeviceEditor({page,reference,sourceBase,cont
    await page.evaluate(theme=>document.documentElement.classList.toggle('dark',theme==='dark'),theme);
    await distribution.screenshot({path:path.join(evidence,`issue-397-hardware-distribution-${width}-${theme}.png`)});
   }
-  await page.locator('#sidebar [data-action="tab-devices"]').click();
+  await page.evaluate(()=>switchTab('devices'));
   await page.evaluate(()=>openDeviceDetailView(appState.devices.find(device=>device.name==='App-VM-01').id));
   const allocated=page.locator('#device-details-panel-overview .device-review-panel').filter({hasText:'Allocated virtual hardware'});
   await allocated.waitFor({state:'visible'});
