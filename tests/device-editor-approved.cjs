@@ -100,6 +100,32 @@ module.exports=async function verifyDeviceEditor({page,reference,sourceBase,cont
  check('Keyboard tab navigation skips the hidden VM Hardware tab and selects/focuses the destination');
  fs.writeFileSync(path.join(evidence,'functional.json'),JSON.stringify({checks,errors},null,2));
  }
+ // Capture the two corrected read-only displays with real fictional SQLite data.
+ // Reuse the existing Device editor CI artifact rather than adding a new workflow.
+ if(process.env.CAFFOOT_EDITOR_FULL_CAPTURES==='1'){
+  await load();
+  await page.locator('#sidebar [data-action="tab-dashboard"]').click();
+  await page.locator('#main-content [data-dashboard-tab="insights"]').click();
+  const distribution=page.locator('#dashboard-panel-insights .card.db-card').filter({hasText:'Hardware Distribution'});
+  await distribution.waitFor({state:'visible'});
+  for(const [width,height] of [[1440,950],[390,844]])for(const theme of ['light','dark']){
+   await page.setViewportSize({width,height});
+   await page.evaluate(theme=>document.documentElement.classList.toggle('dark',theme==='dark'),theme);
+   await distribution.screenshot({path:path.join(evidence,`issue-397-hardware-distribution-${width}-${theme}.png`)});
+  }
+  await page.locator('#sidebar [data-action="tab-devices"]').click();
+  await page.evaluate(()=>openDeviceDetailView(appState.devices.find(device=>device.name==='App-VM-01').id));
+  const allocated=page.locator('#device-details-panel-overview .device-review-panel').filter({hasText:'Allocated virtual hardware'});
+  await allocated.waitFor({state:'visible'});
+  assert.deepEqual(await allocated.locator('.device-details-field dd').allTextContents(),['6','8','100','2'],
+   'Device Details evidence must show persisted virtual hardware allocations');
+  for(const [width,height] of [[1440,950],[390,844]])for(const theme of ['light','dark']){
+   await page.setViewportSize({width,height});
+   await page.evaluate(theme=>document.documentElement.classList.toggle('dark',theme==='dark'),theme);
+   await allocated.screenshot({path:path.join(evidence,`issue-397-vm-device-details-${width}-${theme}.png`)});
+  }
+  await close();
+ }
  if(process.env.CAFFOOT_EDITOR_FUNCTIONAL_ONLY==='1')return;
  // Compare complete scroll sequences, keeping the source untouched. Owner amendments and real controls are recorded separately.
  if(process.env.CAFFOOT_EDITOR_TEXT_ONLY!=='1')for(const [width,height]of [[1440,950],[1366,600],[390,844],[320,568]])for(const theme of ['light','dark'])for(const mode of ['add','edit','duplicate'])for(const kind of ['physical','virtual']){
