@@ -81,6 +81,16 @@ function display(){
  if(await showSession())return;
  const r=await fetch('/api/setup/status');if(!r.ok)throw Error('Unable to check setup');
  const status=await r.json();mode=status.setupRequired?'setup':status.enrollmentPending?'resume':'login';display();
+ if(mode==='login' && window.location.hash==='#session-ended'){
+  const heading=document.createElement('strong');
+  heading.textContent='Your Session Has Ended';
+  $('message').replaceChildren(heading,document.createElement('br'),
+   document.createTextNode('Your session has ended. Please sign in again to continue using Caffoot Lite.'));
+  history.replaceState(null,'','/setup');
+ }else if(mode==='login' && window.location.hash==='#sign-in-required'){
+  $('message').textContent='Please sign in to continue using Caffoot Lite.';
+  history.replaceState(null,'','/setup');
+ }
  if(window.location.hash==='#mfa-removed'){
   $('message').style.color='#166534';$('message').textContent='MFA removed. All sessions have ended. Sign in again.';
   history.replaceState(null,'','/setup');
