@@ -76,7 +76,7 @@
     const edit=`<form id="stock-readiness-form" class="preview-aligned-form" data-stock-cancellable="true" data-id="${item.id}" data-version="${item.version}">${individual?stockTable(['Serial Number','Asset Tag','State','Confirmed Ready'],units,'No Individual Units Recorded'):''}
       <div class="staff-fields">${stockField('New Ready To Issue Total','readyQuantity','number',item.balances.readyToIssue,`required min="${registeredReady}" max="${individual?item.units.filter(unit=>!unit.deviceLinked&&(unit.ready||unit.balances.awaiting_checks===1)).length:item.balances.readyToIssue+(item.quantityStateBalances.awaiting_checks||0)}" step="1" ${individual?'readonly':''}`)}
       ${individual?'':stockField('Minimum Stock Level (Optional)','minimumStockLevel','number',item.minimumStockLevel??'','min="0" max="9007199254740991" step="1"')}</div>
-      ${individual?'':'<p class="formhint">Leave blank if no minimum is configured. Zero is a configured minimum. Low Stock warnings are not available in this build.</p>'}
+      ${individual?'':'<p class="formhint">Leave blank if no minimum is configured. Zero is a configured minimum. Low Stock warnings appear when Ready To Issue for this item falls below its configured minimum.</p>'}
       <div id="stock-readiness-checks" hidden><p class="formhint">Confirm the checks for the additional units becoming ready.</p>
       <label class="stock-check"><input type="checkbox" name="itemsChecked">Quantity And Correct Items Verified</label>
       <label class="stock-check"><input type="checkbox" name="conditionChecked">Condition Checked And Working</label></div>
