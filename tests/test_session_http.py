@@ -202,7 +202,7 @@ class SessionHttpTests(unittest.TestCase):
             db.commit()
             token = login_session(db, "staff-account", "password", mfa_code=code_at(secret, time.time()))
         cookie = COOKIE_NAME + "=" + token
-        self.assertEqual(self.request("/account")[0], 401)
+        self.assertEqual(self.request("/account")[0], 303)
         self.assertEqual(self.request("/account", cookie)[0], 200)
         self.assertTrue(json.loads(self.request("/api/session", cookie)[1])["mfa_removal_eligible"])
         self.assertFalse(json.loads(self.request("/api/session", COOKIE_NAME + "=" + self.token)[1])["mfa_removal_eligible"])
@@ -227,10 +227,50 @@ class SessionHttpTests(unittest.TestCase):
         self.assertEqual(self.request("/account", cookie)[0], 200)
         self.assertEqual(self.request("/inventory", cookie)[0], 403)
 
+    def test_unauthed_document_navigation_uses_existing_sign_in_without_api_redirects(self):
+        """Protected HTML documents navigate; API errors and unknown routes do not."""
+        def get(path, cookie=None):
+            connection = http.client.HTTPConnection("127.0.0.1", self.server.server_port)
+            headers = {} if cookie is None else {"Cookie": cookie}
+            try:
+                connection.request("GET", path, headers=headers)
+                response = connection.getresponse()
+                return response.status, response.getheader("Location"), (
+                    response.getheader("Cache-Control"), response.read()
+                )
+            finally:
+                connection.close()
+
+        for path in ("/inventory", "/account", "/inventory?rack-print=same-tab"):
+            with self.subTest(path=path):
+                status, destination, (cache, body) = get(path)
+                self.assertEqual((status, destination, cache, body),
+                                 (303, "/setup#sign-in-required", "no-store", b""))
+                # Presence of an expired/invalid cookie signals the ended-session notice.
+                status, destination, _ = get(path, COOKIE_NAME + "=" + ("ab" * 32))
+                self.assertEqual((status, destination), (303, "/setup#session-ended"))
+
+        cookie = COOKIE_NAME + "=" + self.token
+        self.assertEqual(get("/inventory", cookie)[0], 200)
+        self.assertEqual(get("/account", cookie)[0], 200)
+        self.assertEqual(get("/inventory?rack-print=same-tab", cookie)[0], 200)
+
+        # An expired session must take the same protected-document route.
+        with sqlite3.connect(self.path) as db:
+            db.execute("UPDATE account_sessions SET expires_at=0")
+            db.commit()
+        for path in ("/inventory", "/account", "/inventory?rack-print=same-tab"):
+            self.assertEqual(get(path, cookie)[:2], (303, "/setup#session-ended"))
+        self.assertEqual(get("/api/session", cookie)[0], 401)
+        self.assertEqual(get("/api/inventory/state", cookie)[0], 401)
+        self.assertEqual(get("/no-such-page", cookie)[0], 404)
+        self.assertEqual(get("/inventory?unknown=1", cookie)[0], 404)
+        self.assertEqual(get("/setup")[0], 200)
+
     def test_inventory_requires_authenticated_inventory_access(self):
         status, body, cache = self.request("/inventory")
-        self.assertEqual(status, 401)
-        self.assertIn(b"unauthorised", body)
+        self.assertEqual(status, 303)
+        self.assertEqual(body, b"")
         self.assertEqual(cache, "no-store")
 
     def post(self, path, data, token=None, csrf=None):
@@ -601,7 +641,7 @@ class SessionHttpTests(unittest.TestCase):
         baseline = self.request("/inventory", cookie)
         for _ in range(2):
             self.assertEqual(self.request("/inventory?rack-print=same-tab", cookie), baseline)
-        self.assertEqual(self.request("/inventory?rack-print=same-tab")[0], 401)
+        self.assertEqual(self.request("/inventory?rack-print=same-tab")[0], 303)
         with sqlite3.connect(self.path) as db:
             create_user(db, 1, "print-no-access", "password")
             token = login_session(db, "print-no-access", "password")
