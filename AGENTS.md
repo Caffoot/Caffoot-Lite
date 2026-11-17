@@ -32,6 +32,19 @@ If the product owner **or the assistant** says "this is too complicated", "this 
 - **Evidence-only follow-ups are narrow.** Review only the new evidence and affected files; do not regenerate unrelated screenshots or repeat broad local testing. Record any check affected by the changed PR head.
 - **Never weaken acceptance to save credits.** Permissions, persistence, security, release and compatibility requirements still apply. If a focused check cannot establish safe behaviour, run the necessary wider check and explain why. The owner alone approves scope, merges and releases.
 
+## Mandatory Documentation Quality Standard
+
+**Every new or materially changed feature must have comprehensive, accurate user and administrator instructions written alongside the implementation.** This applies to existing and future Caffoot Lite versions, including the approved Stage 1–3 draft guides and forthcoming Stage 4–6 features. Do not leave the guide until the end of a milestone or treat a brief feature summary as sufficient.
+
+- Write approachable, thorough **British English** for someone using Caffoot Lite for the first time; explain necessary terminology and the purpose of each task. Use the established long-form [v2.2 draft guides](docs/how-tos/features-and-instructions/v2.2-draft/README.md) as the quality reference, without mechanically copying irrelevant sections or padding text.
+- For every applicable workflow, document its **prerequisites, relevant permissions and feature switches; exact navigation, buttons and fields; numbered instructions; states and expected results; realistic fictional examples; what happens on Save, Cancel or rejection; common problems and troubleshooting; privacy/security boundaries; and links to related tasks**. Cover complete journeys across related features where needed.
+- Use **genuine screenshots of the actual, implemented application for the correct version**, matching approved interface designs and current controls, with helpful captions and accessible alternative text. Verify provenance and obtain required owner visual/publication approval. If suitable current evidence is not yet available, record the gap explicitly; never invent a screenshot, use an unapproved HTML preview as proof or imply an outdated image is current.
+- Maintain **version-specific truth**: published v2.1 guidance must describe the published release; unreleased v2.2 instructions must remain clearly marked draft. Do not publish unverified install, upgrade, backup, restore or release claims. Preserve dated decisions and historical evidence instead of rewriting history.
+- Apply the same commitment to **clear, complete and task-appropriate explanations** in installation, administration, recovery, security, troubleshooting and developer reference documentation. A short issue update, PR summary or historical checkpoint need not become a long guide; detail must match what a reader needs to do safely and confidently.
+- Review the affected guide and its links, wording, permissions and screenshot evidence as part of the feature PR; record incomplete documentation or deferred visual acceptance honestly. **Documentation approval does not waive functional tests or independent product-owner merge/release approval.**
+
+The [contributor guide](CONTRIBUTING.md#documentation-is-part-of-the-change) applies this requirement to all maintainers, contributors and AI-assisted work.
+
 ## Current release and next work
 
 - **Published baseline:** [Caffoot Lite v2.1](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v2.1), released on 8 November 2026. The accepted modular interface is already on `main`.
