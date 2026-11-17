@@ -1,5 +1,18 @@
 # Milestone 01 Development Handover — v2.2 Target
 
+## Current Integration And Documentation — 17 November 2026
+
+Verified `milestone-1` HEAD: **`753b3266893987addb11406ef8303adb03c3c112`**, matching the supplied starting checkpoint; schema 20. Stage 1 and Stage 2 are accepted. Stage 3 Batches 3.1–3.12 are merged, including circulation, registration/reissue, associations/direct handovers, corrections and IT Assets Overview/Low Stock reporting. Issue Equipment confirmation is merged via PR #393; dashboard via #398; subsequent focused corrections through #406 are also integrated. [Development Status](../development-guide/Development-Status.md) records exact merge checkpoints. Earlier statements that these features are awaiting implementation or merge describe historical branches only.
+
+**Documentation-only continuation:** expand the existing twelve draft guide/index files in `docs/how-tos/features-and-instructions/v2.2-draft/`, correct current entry points and preserve the eight published/legacy v2.1 guide pairs, installation guidance, approved screenshots and historical evidence. The [documentation review record](../development-guide/Stage-1-3-Documentation-Review.md) records source coverage, screenshot provenance, checks and remaining acceptance items. No new application behaviour or security investigation is part of this work.
+
+**Acceptance remains bounded:** Batch 3.4 manual/native acceptance, broader native Safari/private-installation evidence, private legacy-data checks and Stage 6 compatibility/full upgrade/restore verification are deferred. No completed Stage 1–3 manual acceptance, v2.2 publication, deployment or production upgrade procedure is claimed. Stages 4–6 remain separate. Leave the documentation in one draft PR targeting `milestone-1` for independent review and explicit product-owner merge approval.
+
+## Historical Development Checkpoints
+
+All records below retain their original dated branch, verification and acceptance scope. Their earlier pending-work/pending-merge statements are superseded by the current integration summary above. Do not treat historical test results or private-fork decisions as new verification or authorisation.
+
+
 **Issue #400 expired-session sign-in correction — 17 November 2026:** A
 focused implementation is prepared separately from the four completed P2
 audit findings. Protected browser documents redirect to the existing sign-in
@@ -107,7 +120,7 @@ locations and diff checks passed. See [the access rules](../development-guide/04
 Draft review remains outstanding; no broad audit, full suite, browser, Docker,
 private-data or Stage 6 verification was repeated. No merge or release sign-off.
 
-**Current Batch 3.12 review checkpoint — 16 November 2026:** IT Assets Overview is
+**Historical Batch 3.12 review checkpoint — 16 November 2026:** IT Assets Overview is
 implemented on `feat/it-assets-dashboard`, from verified base
 `6222d8a87e4a02dd4e69f070e11777d2ec82b591`. The reporting/permission checkpoint
 was pushed as `ebff8ea`; the dashboard, tests and four captures were preserved

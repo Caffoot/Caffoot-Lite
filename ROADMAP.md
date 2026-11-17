@@ -18,17 +18,18 @@ Caffoot Lite v2.1 was published on **8 November 2026**. The current release incl
 
 ## In development — v2.2, not published
 
-**Milestone 01 — Everyday IT Management** targets v2.2. Stage 1 roles/IT Staff is accepted via PR #358. Stage 2 optional Devices/IPAM/Racks is accepted; Stage 3 Batches 3.1–3.4 add core Staff Members and Departments, initial Device assignments and My Equipment on the separate `milestone-1` branch. **Batch 3.4 manual acceptance is deferred, not passed.** See [exact checkpoints](docs/development-guide/Development-Status.md) and [tracker #351](https://github.com/Caffoot/Caffoot-Lite/issues/351).
+**Milestone 01 — Everyday IT Management** targets v2.2. Stage 1 roles/IT Staff and Stage 2 optional Devices/IPAM/Racks are accepted. Stage 3 Batches 3.1–3.12 are merged on the separate `milestone-1` branch at `753b3266893987addb11406ef8303adb03c3c112` (schema 20), verified on 17 November 2026. This includes:
 
-Approved milestone direction still awaiting dependent implementation includes:
+- Core Staff Members and Departments, linked accounts, individual/shared Device assignments and My Equipment.
+- Independently optional IT Assets: receipts, Stock Inventory, checks/readiness, issue, partial returns and write-offs.
+- Canonical Device registration/reissue, explicit Associated Equipment, checked direct handovers and attributed movement corrections.
+- IT Assets Overview, stock reporting and per-item Minimum Stock Level warnings.
 
-- Independently optional IT Assets, quantity stock and later assignment/return workflows ([#352](https://github.com/Caffoot/Caffoot-Lite/issues/352), [#292](https://github.com/Caffoot/Caffoot-Lite/issues/292)).
-- Suppliers in Stage 4 and linked Service Desk work in Stage 5 ([#349](https://github.com/Caffoot/Caffoot-Lite/issues/349), [#233](https://github.com/Caffoot/Caffoot-Lite/issues/233)).
-- Stage 6 integrated compatibility, complete-volume upgrade/restore and final acceptance.
+See [exact checkpoints and boundaries](docs/development-guide/Development-Status.md), [tracker #351](https://github.com/Caffoot/Caffoot-Lite/issues/351) and the [draft Stage 1–3 guides](docs/how-tos/features-and-instructions/v2.2-draft/README.md). **Batch 3.4 manual/native acceptance remains deferred, not passed.** Merged development is not completed milestone or release acceptance.
 
-**v2.2 is not publicly installable.** No release date is promised. The [six planning milestones](docs/product-direction/PROPOSED-MILESTONES.md) organise later work without approving every proposal. Their dated original structure remains historical context, not an alternative to later issue decisions.
+Later milestone work includes Suppliers in Stage 4, linked Service Desk work in Stage 5 and Stage 6 integrated compatibility, complete-volume upgrade/restore and final acceptance. These remain separate from the implemented Stage 1–3 workflows.
 
-The separate [draft v2.2 user guides](docs/how-tos/features-and-instructions/v2.2-draft/README.md) describe implemented milestone features through Batch 3.4. They are not published instructions, an approved upgrade procedure or evidence of completed manual acceptance.
+**v2.2 remains unreleased.** No release date is promised. The draft guides describe the verified development build; they are not published installation or upgrade instructions. The [six planning milestones](docs/product-direction/PROPOSED-MILESTONES.md) organise later work without approving every proposal. Their dated original structure remains historical context; later issue decisions control current scope.
 
 ## Ideas under consideration — not yet scheduled
 
@@ -57,4 +58,4 @@ Please [report security vulnerabilities privately](SECURITY.md), not in public i
 
 ---
 
-*Updated: 15 November 2026. Published v2.1, unreleased implementation, approved pending work and unscheduled proposals are distinguished above.*
+*Updated: 17 November 2026. Published v2.1, unreleased implementation, approved pending work and unscheduled proposals are distinguished above.*

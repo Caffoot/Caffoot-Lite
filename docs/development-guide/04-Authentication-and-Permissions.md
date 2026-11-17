@@ -1,6 +1,6 @@
 # 04 — Authentication, MFA and permissions
 
-**Version boundary:** Published v2.1 is the tagged schema-10 release. `main` includes accepted but unreleased Stage 1/schema 12; this `milestone-1` development branch is schema 15 through merged Stage 3 Batch 3.4. Batch 3.4 manual/native acceptance remains deferred, not passed. See [Development Status](Development-Status.md) for source checkpoints; documentation synchronisation does not release v2.2.
+**Version boundary:** Published v2.1 is the tagged schema-10 release. Stage 1/schema 12 is accepted but unreleased; the verified `milestone-1` development source is `753b3266893987addb11406ef8303adb03c3c112`, schema 20, through merged Stage 3 Batch 3.12 and subsequent corrections. Batch 3.4 manual/native and Stage 6 acceptance remain deferred. See [Development Status](Development-Status.md); documentation synchronisation does not release v2.2.
 
 ## In simple terms
 
@@ -48,7 +48,7 @@ Administrator role lifecycle, membership and individual override requests now us
 
 ## My account, Users and Settings
 
-The published v2.1 interface presents **Users** only to administrators and keeps system **Settings & Data** administrator-only. **My Account** contains personal security, appearance and Help/About controls. The sign-in page also provides existing password and MFA self-service for accounts without inventory access. The interface is preserved on `milestone-1`; the shared policy blocks wider inventory access pending MFA, and Batch 02 supplies the backend enrolment/removal routes. Their sign-in/My Account presentation and Users integration must be completed before deployment. See the [route contract and security rules](Role-Permissions.md#existing-account-mfa-operations).
+The published v2.1 interface presents **Users** only to administrators and keeps system **Settings & Data** administrator-only. **My Account** contains personal security, appearance and Help/About controls. In the unreleased development build, Users & Permissions, sign-in enrolment and My Account MFA controls are implemented. The shared policy blocks wider access until mandatory enrolment is complete. See the [route contract and security rules](Role-Permissions.md#existing-account-mfa-operations) and [draft user procedures](../how-tos/features-and-instructions/v2.2-draft/Roles-Section-Permissions-and-MFA.md) for the implemented version.
 
 ## Administrator audit history
 

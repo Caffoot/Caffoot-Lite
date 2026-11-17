@@ -1,6 +1,8 @@
 # Optional Features — Development Foundation
 
-This is unpublished v2.2 development under [issue #238](https://github.com/Caffoot/Caffoot-Lite/issues/238#issuecomment-6821230015). Stage 2 and the later design correction are accepted; their dated evidence is retained. Stage 3 Batches 3.1–3.7 are merged on `milestone-1` at `7f91f5d42feb3916cfab060abd5ca4b1558a92ba` (schema 16, PR #388). Batch 3.7 stock intake is visually accepted. Batch 3.8 issue, return, preparation and write-off are implemented for review on `feat/it-assets-issue-return-writeoff` (draft PR #389), including the narrow Schema 17 assignment-closure migration. Batch 3.8 is not merged, visually accepted or released. Batch 3.4 manual/native acceptance remains deferred. Device stock registration/reissue, associations, corrections, dashboards/warnings and Stages 4–6 remain pending. [Stock Circulation](IT-Assets-Issue-Return-and-Write-Off.md) updates only the existing IT Assets card description to match implemented workflows: “Receive, issue and return equipment, record checks and write off unusable items.” The card remains in Additional Features with the same styling, controls and disable confirmation. See the [draft Optional Features guide](../how-tos/features-and-instructions/v2.2-draft/Optional-Features-and-Link-To-IPAM.md). No public v2.2 installation or deployment is authorised.
+This is unpublished v2.2 development under [issue #238](https://github.com/Caffoot/Caffoot-Lite/issues/238#issuecomment-6821230015). At the verified `milestone-1` integration HEAD `753b3266893987addb11406ef8303adb03c3c112` (17 November 2026, schema 20), Stage 2 and Stage 3 Batches 3.1–3.12 are merged. The implementation includes Staff/Departments, assignments, stock intake and readiness, issue/return/write-off, Device registration/reissue, Associated Equipment, Correct Movement and dashboard/Minimum Stock Level reporting. Dated development reports retain their original review checkpoints; use [Development Status](Development-Status.md) for current integration and acceptance boundaries. Batch 3.4 manual/native acceptance and wider Stage 6 verification remain deferred; Stages 4–6 are not completed. No published v2.2 installation, release or deployment is established by these merges.
+
+[Stock Circulation](IT-Assets-Issue-Return-and-Write-Off.md) updates the existing IT Assets card description to match implemented workflows: “Receive, issue and return equipment, record checks and write off unusable items.” The card remains in Additional Features with the same styling, controls and disable confirmation. See the expanded [draft Optional Features guide](../how-tos/features-and-instructions/v2.2-draft/Optional-Features-and-Link-To-IPAM.md) for administrator procedures, independent section use, basic IPv4, explicit linking, Rack preservation and troubleshooting.
 
 ## Storage And Upgrade
 
@@ -12,7 +14,7 @@ Inventory imports and Clean Start replace inventory settings, but never this tab
 
 ## Administrator API
 
-`GET /api/settings/features` returns `{"features":{"devices":false,"ipam":false,"racks":false,"suppliers":false,"equipment_lifecycle":false,"it_assets":false}}` on a fresh Schema 16 or 17 database. It requires a live session for an active administrator with confirmed MFA. Responses use the existing no-store policy. Cross-site requests and any supplied foreign Origin are rejected; ordinary same-origin browser GET requests need no Origin header.
+`GET /api/settings/features` returns `{"features":{"devices":false,"ipam":false,"racks":false,"suppliers":false,"equipment_lifecycle":false,"it_assets":false}}` on a fresh database, including the current schema 20 implementation. It requires a live session for an active administrator with confirmed MFA. Responses use the existing no-store policy. Cross-site requests and any supplied foreign Origin are rejected; ordinary same-origin browser GET requests need no Origin header.
 
 `POST /api/settings/features` uses the same identity, plus the existing configured Origin, session cookie and `X-CSRF-Token` checks. Send JSON of at most 4096 bytes:
 
@@ -96,5 +98,8 @@ sidebar, default state and footer are not copied into the application.
 The [visual mapping, before/after/source captures and focused results](../development-handovers/evidence/optional-features-design-correction/Report.md)
 record the correction and retained differences.
 
-This correction is awaiting product-owner visual approval; it does not authorise
-release or deployment.
+The linked report preserves its original pre-acceptance review checkpoint.
+Subsequent [owner-reported Stage 2 native Raspberry Pi/Safari acceptance](https://github.com/Caffoot/Caffoot-Lite/issues/351#issuecomment-6875770728)
+records the focused correction retests and retained Rack/Shelf relationships.
+That evidence does not establish acceptance of later Stage 3 workflows, full
+upgrade/restore verification or a v2.2 release or deployment.

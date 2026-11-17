@@ -1,16 +1,10 @@
 # Shared Roles And Account Permissions
 
-## Current Development — Staff And Department Permissions
+## Current Development — Section Permissions
 
-Batch 3.1 extends the existing section list with Staff Members, Departments and
-IT Assets. It creates no grants or roles, retains default-deny and MFA, and keeps
-the inventory importer explicitly dependent on Devices/IPAM/Racks Edit only.
-Staff/Departments are core; effective IT Assets access remains off pending its
-separate feature batch. See [Staff Directory Foundation](Staff-Directory-Foundation.md).
-Stage 1 was accepted and merged via PR #358; Stage 2 is accepted and Batches
-3.1–3.4 are merged through PR #382 at `05b162aa10a74994c970d0b6dbf111dc59b47513`
-(schema 15). Batch 3.4 manual acceptance is deferred, not passed. See the
-[draft v2.2 permissions guide](../how-tos/features-and-instructions/v2.2-draft/Roles-Section-Permissions-and-MFA.md).
+Stage 1 and Stage 2 are accepted; Stage 3 Batches 3.1–3.12 are merged on `milestone-1` at `753b3266893987addb11406ef8303adb03c3c112` (schema 20). Staff Members and Departments are core, with separate permissions. IT Assets is independently optional and defaults off; its switch and effective section access are now implemented. Schema 20 extends the IT Staff default to IT Assets Edit while preserving existing accounts' configured access. See [Development Status](Development-Status.md), [Staff Directory Foundation](Staff-Directory-Foundation.md) and the [draft v2.2 permissions guide](../how-tos/features-and-instructions/v2.2-draft/Roles-Section-Permissions-and-MFA.md).
+
+The inventory importer remains dependent on Devices/IPAM/Racks Edit; it does not import Staff or stock. Default-deny and MFA remain in force. Batch 3.4 manual/native and Stage 6 acceptance remain deferred; this is not a published v2.2 release.
 
 ### Historical Stage 1 Checkpoint
 
@@ -60,7 +54,7 @@ first-admin and new ordinary-account creation continue to assign Staff Member on
 
 Preserved overrides remain authoritative after future role edits. Selecting
 **Inherit** intentionally removes an override and resumes role-derived access.
-See the [Dave and Tim example](../how-tos/features-and-instructions/Users-Permissions-and-MFA.md#it-staff-and-individual-permissions).
+See the [draft v2.2 role and override examples](../how-tos/features-and-instructions/v2.2-draft/Roles-Section-Permissions-and-MFA.md).
 
 ## Database Upgrade
 

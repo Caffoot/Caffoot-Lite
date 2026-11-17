@@ -1,24 +1,57 @@
-# Draft v2.2 User Guides
+# Draft v2.2 User And Administrator Guides
 
-> **Batch 3.12 review branch:** [IT Assets Overview](IT-Assets-Dashboard.md) describes the implemented dashboard and permission boundary. See [verification evidence](../../../development-handovers/evidence/stock-dashboard/Report.md); visual approval and final focused verification remain outstanding. This supersedes older pending-dashboard notes below.
+> **Draft v2.2 — Unreleased.** These guides describe `milestone-1` at `753b3266893987addb11406ef8303adb03c3c112` (schema 20), verified on 17 November 2026. Use the [published v2.1 guides](../README.md) for the current release. These drafts are not installation, upgrade or restore instructions.
 
-> **Draft v2.2 — Not Yet Published / Not Production Guidance.** Batches 3.1–3.10 are merged on `milestone-1` through accepted PR #391 at `53b04328c4f895bfc1f72f0416c43a519b2e8b42` (schema 19). Batch 3.11 Correct Movement is implemented for review in [draft PR #392](https://github.com/Caffoot/Caffoot-Lite/pull/392); its merge and owner visual acceptance are pending. Batch 3.4 native acceptance remains deferred. Use published v2.1 guides for production; these are not installation, upgrade or restore instructions.
+Caffoot Lite brings accounts, Staff Members, Departments, Devices and optional IT Assets together so your team can record who holds equipment, what is physically in stock and what is ready to issue. These guides explain the implemented Stage 1–3 workflows for ordinary users, IT technicians and administrators. Examples use fictional people, organisations and equipment.
 
-These guides cover implemented milestone features and clearly labelled work on the separate Batch 3.11 review branch. They use fictional examples and do not announce a release or authorise deployment. Keep using the [published v2.1 guides](../README.md) for the published application.
+Start with the task you need to complete. Each feature guide explains its permissions, controls, numbered procedures, examples and recovery steps. A missing section may mean the feature is switched off or your account lacks permission; ask an administrator to check before creating duplicate records.
 
-| Guide | What You Can Do In The Development Build |
+## Accounts And Access
+
+| Task | Guide |
 | --- | --- |
-| [Staff Members](Staff-Members.md) | Maintain profiles, optional logins and independent Staff status |
-| [Departments And Shared Equipment](Departments-and-Shared-Equipment.md) | Manage flat Departments and understand shared ownership |
-| [Roles, Section Permissions And MFA](Roles-Section-Permissions-and-MFA.md) | Understand independent section access, roles and account safeguards |
-| [Device Assignments And My Equipment](Device-Assignments-and-My-Equipment.md) | Allocate eligible existing Devices and view personal or Department-shared equipment |
-| [IT Assets: Receive Stock And Stock Inventory](IT-Assets-Stock-Intake.md) | Receive deliveries, retain Supplier provenance and update checked readiness |
-| [IT Assets: Issue, Return And Write Off](IT-Assets-Issue-Return-and-Write-Off.md) | Issue stock, record partial returns, prepare returned equipment and preserve write-off history |
-| [Register Computers From Stock And Reissue Devices](Device-Stock-Registration-and-Reissue.md) | Use the existing Add Device editor with checked stock, reissue the same prepared Device and document optional physical storage |
-| [Associated Equipment](Associated-Equipment.md) | Link accessories explicitly, resolve actual returns/missing quantities and prepare a canonical Device for direct reassignment |
-| [Correct Stock Movement](IT-Assets-Correct-Movement.md) | Preview, validate and record attributed quantity corrections while preserving original history |
-| [Optional Features, Basic IPv4 And Link To IPAM](Optional-Features-and-Link-To-IPAM.md) | Control optional sections and deliberately link a basic address |
+| Understand Staff Member, IT Staff, shared roles and individual overrides | [Roles, Section Permissions And MFA](Roles-Section-Permissions-and-MFA.md) |
+| Add/manage accounts, enrol MFA or understand a session ending | [Roles, Section Permissions And MFA](Roles-Section-Permissions-and-MFA.md) |
+| Enable sections, preserve Rack information or record/link basic IPv4 addresses | [Optional Features, Basic IPv4 And Link To IPAM](Optional-Features-and-Link-To-IPAM.md) |
 
-Department Details and the IT Assets foundation merged via PRs #386 and #387. Batch 3.7/PR #388 adds accepted receipt, inventory, history and readiness operations. IT Assets remains independently optional and disabled by default. Batches 3.8/3.9 circulation and registration/reissue are merged through PR #390. Accepted Batch 3.10/PR #391 adds associations and prepared reassignment; [its evidence](../../../development-handovers/evidence/associated-equipment-final/Report.md) records its captures and checks. Batch 3.11 corrections are in draft PR #392. Dashboards/warnings, Suppliers and Service Desk remain later work. No completed-milestone upgrade/restore verification is claimed.
+An application account is the identity used to sign in. A Staff Member is a person in your organisation; that person may have a linked account or no login at all. Roles determine section access, while an organisation's Optional Features switches determine whether optional functions are available. A role does not switch a feature on.
 
-See the [active milestone handover](../../../development-handovers/milestone-01.md) and [documentation scope #366](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-6891608596) for status, evidence and remaining review gates.
+## People And Equipment
+
+| Task | Guide |
+| --- | --- |
+| Add or update Staff, link a login or manage Staff status safely | [Staff Members](Staff-Members.md) |
+| Maintain Departments, archive them or manage shared equipment | [Departments And Shared Equipment](Departments-and-Shared-Equipment.md) |
+| Assign an existing Device or view personal/Department equipment | [Device Assignments And My Equipment](Device-Assignments-and-My-Equipment.md) |
+
+Staff Members and Departments are core functions, with independent section permissions. You do not need to populate them to use Caffoot Lite's infrastructure inventory. **My Equipment** gives linked Staff an appropriately restricted view of their equipment; it does not grant access to IT inventory or another person's private details.
+
+## Stock And Technician Workflows
+
+| Task | Guide |
+| --- | --- |
+| Configure IT Assets, receive deliveries and inspect Stock Inventory/readiness | [Receive Stock And Stock Inventory](IT-Assets-Stock-Intake.md) |
+| Issue equipment, record partial/damaged returns, prepare it or write it off | [Issue, Return And Write Off](IT-Assets-Issue-Return-and-Write-Off.md) |
+| Register a computer from stock or reissue an existing registered Device | [Device Stock Registration And Reissue](Device-Stock-Registration-and-Reissue.md) |
+| Explicitly associate accessories, resolve missing items or hand a Device to a new holder | [Associated Equipment And Direct Handovers](Associated-Equipment.md) |
+| Correct an incorrectly recorded quantity without erasing its history | [Correct Movement](IT-Assets-Correct-Movement.md) |
+| Read stock balances, movement reporting and Minimum Stock Level warnings | [IT Assets Overview And Reporting](IT-Assets-Dashboard.md) |
+
+IT Assets is independently optional and is **off by default** on fresh installations. Its availability and your permission to read or edit it are separate checks. Device operations retain their own Devices permissions.
+
+Before changing stock, keep these distinctions in mind:
+
+- A **Device** is the canonical record for a managed piece of equipment. Keep that identity through return, reissue and handover rather than creating a replacement record.
+- **Physically Held** describes equipment actually in your stockholding. Registering one stock unit as a Device changes its classification without reducing that total. Physically issuing it reduces held stock.
+- **Readiness** records preparation/checking for issue. Being unassigned, operationally active or physically present does not by itself mean equipment is Ready.
+- **Assignment History** records successive holders. **Movement History** records stock events. Correcting a movement retains the original event and an attributed correction.
+
+For a new delivery, follow Receive Stock → check/readiness → Issue Equipment, using Device registration first where needed. For equipment already with a holder, inspect the current assignment and associated accessories before choosing Return Equipment or the checked direct-handover route. Use Correct Movement for a recording mistake; do not invent a receipt or return to conceal it.
+
+## Publication And Acceptance
+
+Stage 1 and Stage 2 are accepted. Stage 3 Batches 3.1–3.12 and subsequent focused corrections are merged on the development branch. This does not establish completed milestone or release acceptance. Batch 3.4 manual/native acceptance, broader native Safari/private-installation evidence and Stage 6 compatibility/full upgrade/restore acceptance remain deferred. Suppliers, Service Desk and the later milestone stages remain separate work.
+
+Images used here are genuine application captures with an identified approval source and captions describing their scope. Functional HTML previews are retained as development references, never presented as application screenshots. Missing or outdated images and remaining wording discrepancies are listed in the [documentation review record](../../../development-guide/Stage-1-3-Documentation-Review.md).
+
+For implementation checkpoints and dated evidence, see [Development Status](../../../development-guide/Development-Status.md), the [active milestone handover](../../../development-handovers/milestone-01.md), [documentation plan #366](https://github.com/Caffoot/Caffoot-Lite/issues/366), [master tracker #351](https://github.com/Caffoot/Caffoot-Lite/issues/351) and [Stage 3 decisions #368](https://github.com/Caffoot/Caffoot-Lite/issues/368).

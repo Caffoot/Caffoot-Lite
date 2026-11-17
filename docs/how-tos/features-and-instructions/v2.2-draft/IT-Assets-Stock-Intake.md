@@ -1,104 +1,156 @@
 # IT Assets: Receive Stock And Stock Inventory
 
-> **Draft v2.2 — Not Published / Not Production Guidance.** Batches 3.1–3.7 are merged through PR #388 at `7f91f5d42feb3916cfab060abd5ca4b1558a92ba` (schema 16). Batch 3.8 is implemented for review on `feat/it-assets-issue-return-writeoff` (draft PR #389, schema 17); it is not merged or visually accepted. Batch 3.4 native acceptance remains deferred. Use the published v2.1 guides for production. These are not installation, upgrade or restore instructions.
+> **Draft v2.2 — Not Yet Published.** This guide describes the implementation on `milestone-1` at `753b3266893987addb11406ef8303adb03c3c112`. It is for review of unreleased functionality. Use the [published v2.1 guides](../README.md) for current production instructions. Native/manual and release acceptance remain separate; these are not installation, upgrade or restore instructions.
+
+## What Stock Intake Records
+
+Use **Receive Stock** when equipment actually arrives in your organisation's possession. A receipt records what arrived, how many units arrived, when they arrived, the purchasing Supplier if known, and the checks completed. **Stock Inventory** then shows what is physically held, what is ready to issue and what still needs attention.
+
+Receiving ten computers does not create ten managed Devices or assign them to employees. A stock item describes equipment with the same common specification; a canonical Device is the permanent record for one managed machine. To create that individual record from computer stock, use [Brand New — Get From Stock](Device-Stock-Registration-and-Reissue.md). To give equipment to someone, use [Issue Equipment or Reissue Existing Device](IT-Assets-Issue-Return-and-Write-Off.md).
 
 ## Before You Start
 
-An administrator enables **IT Assets** in **Settings & Data → Optional Features →
-Additional Features**. It starts disabled. Enabling the feature does not grant access:
-**IT Assets Read** allows viewing stock and its history; **IT Assets Edit** also allows
-receipts and readiness updates. Existing role, override and MFA rules still apply.
-These permissions do not grant access to Devices, Staff Members or Departments.
+You need an account with effective **IT Assets Edit** permission to receive stock or change readiness. **IT Assets Read** allows viewing permitted stock and history. These rights do not grant Devices, Staff Members, Departments, account administration or permission management access. Role assignments, individual overrides, MFA and current sign-in requirements still apply.
 
-Choose **IT → IT Assets**. The original intake tabs are **Receive Stock**,
-**Stock Inventory** and **Receipt History**. Batch 3.8 adds **Issue Equipment**,
-**Return Equipment**, **Write Off** and **Movement History**; see [circulation](IT-Assets-Issue-Return-and-Write-Off.md). A user with Read access can view inventory and history,
-but cannot submit the receipt or readiness forms. Disabling IT Assets hides the
-section and prevents stock access, while retaining all stock and history.
+An administrator enables the feature as follows:
 
-## Receive A New Item
+1. Open **Settings & Data → Optional Features**.
+2. Under **Additional Features**, find **IT Assets**. It starts disabled.
+3. Turn on **Enable Feature** and wait for the saved confirmation. The switch saves the change immediately; there is no separate Save button.
+4. Grant the relevant role or individual the required IT Assets permission through **Staff → Permissions**, following the [roles and access guide](Roles-Section-Permissions-and-MFA.md).
+5. Open **IT → IT Assets**. Its **Overview** is the reporting entry point; choose **Receive Stock**, **Stock Inventory** or **Receipt History** for the procedures below.
 
-1. Open **Receive Stock**, then select **New Stock Entry**.
-2. Choose **Equipment Type** and **Tracking Method**. Enter **Model / Description**
-   and, if known, **Manufacturer**. Desktop, Laptop and Physical Server entries
-   also offer shared Processor, Memory Size, Storage Capacity and Storage Type fields.
-   Enter specifications common to this item; a different configuration needs a separate entry.
-3. For quantity-based stock, enter **Quantity Received**. Individually tracked
-   equipment is received one unit at a time, with optional **Serial Number** and
-   **Asset Tag**. Each unit has a distinct identity even when both are blank.
-4. Enter **Date Received**, optional **Supplier** and **Receipt Notes**. Supplier
-   means the purchasing source; it is separate from Manufacturer and needs no Supplier directory.
-5. Confirm the receipt and condition checks that you have actually completed.
-   Leave **Checked & Ready To Issue** at zero until the required checks are complete.
-   With both checks confirmed, enter the checked quantity: some or all of the delivery.
-6. Review **Receipt Summary**, then choose **Record Receipt**. The summary describes
-   the form before saving; it is not saved stock until the receipt succeeds.
+Enabling the feature makes it available to authorised accounts; it does not give every account access. Devices, IPAM and Network Racks have independent switches and permissions. Ordinary stock receipts do not require those sections. Creating or reissuing a managed Device requires the additional access explained in the [registration guide](Device-Stock-Registration-and-Reissue.md).
 
-All received equipment becomes **Physically Held** immediately. Equipment not
-explicitly confirmed ready remains **Awaiting Checks**. This does not create managed
-Devices or assign equipment to anyone. A saved receipt retains its original date,
-Supplier, quantity, checks and responsible account.
+Disabling IT Assets hides its functions and blocks stock access while retaining saved equipment, balances, permissions and history. Cancelling the disable confirmation keeps it enabled. Re-enabling restores permitted access to the existing records; do not re-enter old receipts to make them appear again.
 
-## Receive Another Delivery
+## Decide How To Describe And Track The Equipment
 
-Choose **Receive More Of An Existing Item**, then select the compatible stock item.
-Its shared specifications remain unchanged. Enter this delivery's quantity, date,
-Supplier, checks and any notes, then record it. Each delivery has its own history;
-it does not replace an earlier receipt. For another individually tracked unit,
-select the same catalogue item and record that unit's optional serial number/tag.
+Choose the tracking method before recording the first receipt. Category alone does not decide it: monitors, for example, may be tracked individually or by quantity. Once movements exist, do not expect to switch methods or convert existing history.
 
-Choose a new stock entry when the equipment has different shared specifications.
-An identical new entry is refused so that you can select the existing item instead.
+| Field Or Choice | How To Use It |
+| --- | --- |
+| **Equipment Type** | Choose **Desktop**, **Laptop**, **Physical Server**, **Monitor**, **Keyboard**, **Mouse**, **Docking Station** or **Other / Not Listed**, as appropriate |
+| **Quantity-Based Stock** | Keep one stock item and quantities for interchangeable units with the same recorded specification. This is also the source used to register new Desktop, Laptop and Physical Server Devices |
+| **Individually Tracked** | Keep a distinct identity for each physical unit. Receive one unit at a time, with its own optional Serial Number and Asset Tag |
+| **Manufacturer (Optional)** | The maker of the equipment. Leave it blank if unknown |
+| **Model / Description** | Identify the model or describe the equipment clearly enough for another technician to select the right item |
+| **Shared Computer Specifications** | For Desktop, Laptop and Physical Server stock, record common Processor, Memory Size and Unit, Storage Capacity and Unit, and Storage Type where known |
+| **Supplier (Optional)** | The purchasing or delivery source for this particular receipt. It is separate from Manufacturer and does not require the future Suppliers directory |
 
-## View Stock And Update Readiness
+Use separate stock items for materially different recorded specifications. Five fictional Aster desktop computers with 8 GB memory and five with 16 GB memory need separate entries. Different delivery dates or Suppliers alone do not require duplicate items: record another receipt against the matching existing item.
 
-**Stock Inventory** shows quantities actually recorded:
+Shared fields must describe every unit represented by the item. Do not put an employee name, unique computer name, serial number, IP address or rack position into a shared specification. Unknown optional values can remain blank. When entering a capacity, use a positive number with its correct unit; do not enter zero as a substitute for unknown.
 
-- **Physically Held:** equipment on hand, including equipment awaiting checks.
-- **Ready:** equipment explicitly checked and confirmed Ready To Issue.
-- **Awaiting Checks:** received equipment still awaiting receipt checks.
-- **Awaiting Preparation:** returned equipment awaiting its applicable checks.
-- **Currently Issued:** the outstanding quantity with its original recipient.
-- **Written Off:** equipment permanently removed from usable stock.
+## Record The First Receipt
 
-Returned stock uses **Prepare Returned Equipment**, not the receipt-readiness form.
-Registered Devices appear separately under their original identities. Neither
-issued nor written-off quantities count as Physically Held.
+![Accepted Receive Stock screen showing a new Desktop stock entry, shared specifications, receipt details and checks](../../../development-handovers/evidence/stock-intake/screenshots/stock-receive-new-light-1440.png)
 
-Choose **View / Update** beside an item. Read-only users see **View Details** instead.
-The details show its specifications, quantities and individual identities where applicable.
+*Genuine application capture accepted with [PR #388](https://github.com/Caffoot/Caffoot-Lite/pull/388#issuecomment-6899646571), using fictional data. The current application also has Overview and circulation tabs, and the unsaved-form action is now Cancel rather than the pictured Reset. Receipt fields and checks remain as shown.*
 
-To confirm more quantity-based equipment ready, enter the **New Ready To Issue Total**
-and complete both checks. For individually tracked equipment, select the actual
-units confirmed ready. The total follows your selections. Choose **Save Readiness Change**.
+Have the actual equipment, delivery information and any completed checks available before submitting the form.
 
-To move equipment from Ready back to Awaiting Checks, reduce the total or clear the
-relevant individual selections and enter a reason. A reason is required for every
-reduction. The change records the account, time, quantities and reason. It does not
-add another receipt or alter the Physically Held total. If another person changes
-the stock first, reload the item and review the new values before trying again.
+1. Open **IT → IT Assets → Receive Stock**.
+2. Select **New Stock Entry**.
+3. Choose **Equipment Type** and **Tracking Method**. Enter **Model / Description** and, if known, **Manufacturer (Optional)**.
+4. For computer stock, enter the applicable **Shared Computer Specifications**. Verify memory and storage units carefully: 512 GB and 512 TB describe very different equipment.
+5. For **Quantity-Based Stock**, enter the whole **Quantity Received**. For **Individually Tracked**, the quantity is fixed at one; enter a real **Serial Number (Optional)** and **Asset Tag (Optional)** if available. Each unit keeps a separate internal identity even when both are blank.
+6. Check **Date Received** and enter the optional Supplier and **Receipt Notes (Optional)**. Use the actual delivery date; do not replace it with the date of a later readiness check.
+7. Under **Receipt & Condition Checks**, confirm **Received Quantity And Items Checked** and **Condition Checked And Working** only for checks actually completed.
+8. With both checks confirmed, enter the number genuinely **Checked & Ready To Issue**. This can be zero, part of the delivery or the full delivery, but cannot exceed Quantity Received. If checks are outstanding, leave the ready quantity at zero. Genuinely brand-new computers do not require a data wipe as a receipt check.
+9. Review **Receipt Summary**: **New Physical Stock**, **Ready To Issue** and **Awaiting Checks** must describe the actual delivery. These are proposed figures until saved.
+10. Choose **Record Receipt**. On success, the application reports that the stock receipt was recorded and opens **Receipt History**. Check the new entry before recording another delivery.
 
-For quantity stock, **Minimum Stock Level** is optional. Blank means no threshold;
-zero is a configured threshold. Saving only the minimum records an attributed
-setting change without creating a stock movement. Low Stock warnings and dashboards
-are not available in this batch.
+A successful receipt adds every received unit to Physically Held. Only explicitly confirmed units become Ready To Issue; the remainder stays Awaiting Checks. Saving retains the original delivery information and responsible account. It does not create a Device, allocate networking, assign a recipient or change another Device's operational Status.
 
-**Cancel** discards the readiness form; it does not reverse a saved receipt.
-Manufacturer, Model and shared specifications are read-only here. There is no
-movement or specification correction editor in this batch.
+**Cancel** abandons the unsaved form and returns to Stock Inventory after any unsaved-change confirmation. It cannot reverse a saved receipt. If validation rejects the form, read the message and correct the relevant value; the receipt is saved as a complete operation or not saved at all. If the outcome is uncertain after a connection interruption, inspect Receipt History before starting a new receipt for the same delivery.
 
-## Read The History
+## Receive More Of An Existing Item
 
-**Receipt History** retains each delivery's original date, quantity, Supplier,
-checks, notes, specifications and account. Open **Receipt Checks**
-where shown to see the recorded individual identifiers. Readiness changes appear
-separately, with their genuine dates, quantities, checks and reasons.
+1. Open **Receive Stock → Receive More Of An Existing Item**.
+2. Select **Existing Stock Item**. Read its displayed specification and confirm it matches the equipment that arrived.
+3. Enter this delivery's Quantity Received, Date Received, optional Supplier and Receipt Notes. For an individually tracked item, record the new unit separately with its actual identifiers.
+4. Confirm the checks completed for this delivery and its Checked & Ready To Issue quantity.
+5. Review Receipt Summary and choose **Record Receipt**.
+6. In Receipt History, verify that this is a separate delivery with its own date, quantity, Supplier and account.
 
-[Issue, Return, preparation and Write Off](IT-Assets-Issue-Return-and-Write-Off.md)
-are implemented for Batch 3.8 review. Device registration/reissue, associated equipment,
-corrections, dashboards, Low Stock warnings, Supplier Management and Stocktakes remain later work.
-This guide does not provide installation, upgrade, backup or restore instructions.
+The existing item's common specifications remain unchanged. Earlier receipts, registered Devices and assignments keep their own identity and history. An identical **New Stock Entry** is rejected with a message directing you to **Receive More Of An Existing Item**. A genuinely different specification needs a new item instead.
 
-See [Optional Features](Optional-Features-and-Link-To-IPAM.md),
-[roles and MFA](Roles-Section-Permissions-and-MFA.md) and the
-[implementation evidence](../../../development-handovers/evidence/stock-intake/Report.md).
+## Understand Stock Inventory
+
+Open **Stock Inventory** to compare recorded balances. **View / Update** opens an item's details for an editor; read-only users see **View Details**. The stock-item name also opens details. Use **Close Details** when finished.
+
+| Column Or State | Meaning |
+| --- | --- |
+| **Physically Held** | Equipment recorded as on hand: Ready plus equipment Awaiting Checks or Awaiting Preparation |
+| **Ready** | The item's Ready To Issue total: equipment explicitly checked and available for an authorised issue |
+| **Awaiting Checks** | Received equipment still waiting for receipt/condition checks |
+| **Awaiting Preparation** | Returned equipment waiting for the applicable cleaning, working and data-preparation checks |
+| **Currently Issued** | Outstanding equipment with its recorded recipient; it is outside held stock |
+| **Written Off** | Equipment removed from usable stock while its history remains; it is outside held and ready stock |
+
+**Registered Devices In Stock History** shows individual managed machines and their genuine stock states. A Device registered from an item is already included in that item's totals. The Device row explains the same unit; do not add it to the item's count again. Existing, imported, unassigned or directly created Devices do not become held stock merely because they exist in the Devices inventory.
+
+## Complete Receipt Checks Later
+
+The readiness form is for receipt checks on stock that has not yet passed them. Returned equipment uses **Prepare Returned Equipment**, described in the [return and preparation guide](IT-Assets-Issue-Return-and-Write-Off.md).
+
+1. Open **Stock Inventory** and choose **View / Update** for the correct item.
+2. Check the current held, ready and awaiting quantities, including any separately identified registered Devices.
+3. For quantity stock, enter **New Ready To Issue Total** as the resulting total, including equipment already ready. For individually tracked equipment, select the actual units under **Confirmed Ready**; the total follows those selections.
+4. When increasing readiness, confirm **Quantity And Correct Items Verified** and **Condition Checked And Working** for the additional units checked.
+5. Add **Reason / Note** where useful. Read the proposed after-saving summary.
+6. Choose **Save Readiness Change**, then verify the new total.
+
+For example, fictional Aster Services receives ten identical keyboards and checks four on arrival. Stock shows ten held, four ready and six awaiting checks. After checking three more, enter **7**, not **3**, as New Ready To Issue Total. Held stays ten; ready becomes seven and awaiting checks becomes three. The later checks have their own attributed readiness record; the original receipt is preserved.
+
+The quantity form cannot change the registered Ready portion of a computer item's balance. Use the relevant individual Device workflow for registered machines. It also cannot bypass preparation requirements for returned units. A rejected change leaves the previous saved readiness intact; **Cancel** discards unsaved edits.
+
+## Move Ready Stock Back For Rechecking
+
+If equipment previously marked ready needs checking again:
+
+1. Open its **View / Update** details.
+2. Reduce New Ready To Issue Total, or clear the relevant individual Ready selections.
+3. Enter a meaningful **Reason / Note**, for example “Two keyboards require further key testing”. A reduction requires a reason.
+4. Check the summary and select **Save Readiness Change**.
+
+The held total does not change. Equipment that has not been returned moves back to Awaiting Checks; equipment with a recorded return follows the applicable preparation state. This records a dated readiness change, not a delivery, physical return or Write Off. If equipment has actually been issued or permanently disposed of, use the corresponding movement workflow instead.
+
+## Set A Minimum Stock Level
+
+Minimums apply separately to **Quantity-Based Stock** items.
+
+1. Open the item through **Stock Inventory → View / Update**.
+2. Enter a whole, non-negative **Minimum Stock Level (Optional)**. Leave it blank for no threshold. Zero is a configured minimum.
+3. Leave readiness unchanged if only changing the threshold, then choose **Save Readiness Change**.
+4. Compare the item's Ready total with its minimum. **Low Stock** appears only when Ready To Issue is strictly below the minimum. Equality does not trigger it.
+5. Use **Overview → Items Below Minimum** to inspect affected items; see the [dashboard guide](IT-Assets-Dashboard.md).
+
+For a minimum of five, five ready is sufficient and four ready produces a warning. Ten physically held with only four ready still produces that warning: awaiting equipment is not available. A threshold-only save records an attributed setting change without inventing a stock movement. There is no compulsory global minimum, automatic purchase or email alert.
+
+The current readiness form still contains an older hint saying that Low Stock warnings are unavailable. The implemented inventory and Overview show them. This wording discrepancy is recorded for review; do not use it to infer that awaiting equipment counts as available.
+
+## Check History And Resolve Mistakes
+
+**Receipt History → Stock Receipts** retains each delivery's date, quantity, Supplier, common specifications, checks and account. Expand **Receipt Checks** for its check confirmations, Receipt Notes, recorded time and individual identifiers where applicable. **Readiness Changes** lists later changes separately, including quantities, checks and reasons.
+
+Use [Movement History and Correct Movement](IT-Assets-Correct-Movement.md) to investigate or correct an eligible mistaken movement. Corrections preserve the original entry and require their own explanation and validation. Do not record a fictitious receipt, return or issue merely to force a displayed balance. Manufacturer, Model and shared specifications are read-only in the readiness form; it is not a general catalogue editor.
+
+| Problem | What To Check |
+| --- | --- |
+| IT Assets is missing | Ask an administrator to check its independent feature switch and your effective Read/Edit rights |
+| Ready quantity is unavailable | Both receipt checks must be confirmed, and the ready count must be a whole number within the delivery quantity |
+| No computer stock appears in Get From Stock | Only compatible quantity-based computer stock with an unregistered Ready balance is eligible |
+| Readiness cannot be increased | Check whether the equipment is returned, already registered, issued or written off; returned equipment needs preparation |
+| Stock changed before saving | Reload the item, review the latest balances and repeat only the intended change |
+| An earlier receipt appears wrong | Check its original facts in history, then use the eligible correction workflow rather than entering another delivery |
+| A read-only account cannot record a receipt | Read access intentionally permits viewing; request the appropriate authorised Edit grant |
+
+Keep notes factual and relevant to equipment handling. Supplier names, serials, asset tags and staff-related movement information may be sensitive; avoid passwords or unrelated personal information. The server checks permission and stock state again when saving, so an open form does not preserve rights that have since been removed.
+
+## Related Guidance And Screenshots
+
+Continue with [Device registration and reissue](Device-Stock-Registration-and-Reissue.md), [Issue, Return and Write Off](IT-Assets-Issue-Return-and-Write-Off.md), [Associated Equipment](Associated-Equipment.md), [dashboard reporting](IT-Assets-Dashboard.md), [Optional Features](Optional-Features-and-Link-To-IPAM.md) and [roles and MFA](Roles-Section-Permissions-and-MFA.md).
+
+The [stock-intake evidence](../../../development-handovers/evidence/stock-intake/Report.md) preserves genuine application captures and source checks. The accepted receipt capture above is reused with its differences stated. A refreshed capture showing the complete current tab set, Cancel action and minimum-stock presentation remains a documentation acceptance item. Functional HTML previews are not application screenshots.
