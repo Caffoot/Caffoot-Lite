@@ -1786,6 +1786,9 @@ async function run(){
     'VMs must retain their physical-host selector');
   await page.locator('#dev-vm-purpose').selectOption('Server - Virtual');
   await page.locator('#dev-virtual-host').selectOption(hypervisor.id);
+  for(const [key,value] of Object.entries({vmVcpu:'2',vmRamGb:'8',vmDiskGb:'500',vmNicCount:'1'})){
+    await page.locator('#dev-'+key).fill(value);
+  }
   assert.ok(await page.locator('#device-form-tab-hardware').isHidden(),
     'VMs must not offer the physical Hardware tab');
   assert.ok(await page.locator('#device-form-mounting-options').isHidden(),
@@ -1799,11 +1802,30 @@ async function run(){
   const vmState=await persisted(page,s=>s.devices.some(d=>d.name==='browser-vm' &&
     d.virtualHostId===hypervisor.id),'Hosted virtual machine');
   const vm=vmState.devices.find(d=>d.name==='browser-vm');
+  for(const [key,value] of Object.entries({vmVcpu:'2',vmRamGb:'8',vmDiskGb:'500',vmNicCount:'1'})){
+    assert.equal(String(vm.typeDetails[key]),value,'The virtual hardware allocation must be saved under typeDetails.');
+  }
   assert.equal(vm.virtualPlatform,'Proxmox VE');
   assert.equal(vm.location,hypervisor.location);
   assert.equal(vm.mountType,'Not Applicable');
   assert.ok(!vm.rackId,'Physical rack placement must be owned by the hypervisor');
   console.log('Physical hypervisor selection and VM inheritance passed');
+
+  // Hardware Distribution uses the same public category names as the Devices page.
+  await page.locator('#sidebar [data-action="tab-dashboard"]').click();
+  await page.locator('#main-content [data-dashboard-tab="insights"]').click();
+  const hardwareDistribution=page.locator('#dashboard-panel-insights .card.db-card')
+    .filter({hasText:'Hardware Distribution'});
+  const categories=await hardwareDistribution.locator('.db-progress-title').evaluateAll(rows=>
+    rows.map(row=>({label:row.querySelector('span')?.textContent.trim(),count:Number(row.querySelector('strong')?.textContent.trim())})));
+  for(const [internal,label] of [['Server - Physical','Server'],['Server - Virtual','Virtual Machine']]){
+    assert.ok(!categories.some(row=>row.label===internal),'Dashboard must not show internal category names.');
+    const row=categories.find(row=>row.label===label);
+    assert.ok(row,'Dashboard must show '+label+' in Hardware Distribution.');
+    assert.equal(row.count,vmState.devices.filter(device=>device.type===internal).length,
+      'Changing the displayed name must not change the recorded count.');
+  }
+  await page.locator('#sidebar [data-action="tab-devices"]').click();
 
   // Approved Batch 04 Device Details: real device information and actions.
   await page.waitForFunction(()=>document.querySelector('#modal-container')?.classList.contains('hidden'));
@@ -1938,6 +1960,12 @@ async function run(){
     'VM Device Details must not expose physical hardware');
   assert.ok(await deviceReview.getByRole('heading',{name:'Allocated virtual hardware'}).isVisible(),
     'Approved Device Details must show VM-owned virtual hardware');
+  const virtualHardwareCard=deviceReview.locator('#device-details-panel-overview .device-review-panel')
+    .filter({hasText:'Allocated virtual hardware'});
+  assert.deepEqual(await virtualHardwareCard.locator('.device-details-field').evaluateAll(rows=>
+    rows.map(row=>[row.querySelector('dt')?.textContent.trim(),row.querySelector('dd')?.textContent.trim()])),
+    [['vCPUs','2'],['Allocated RAM (GB)','8'],['Virtual disk (GB)','500'],['Virtual network adapters','1']],
+    'Device Details must show the same saved VM allocations as the editor.');
   const relatedHost=deviceReview.locator('#device-details-panel-overview > .device-review-panel.full')
     .filter({hasText:'Physical Host'});
   assert.ok(await relatedHost.isVisible(),
@@ -2078,7 +2106,14 @@ async function run(){
   await page.locator('#main-content [data-action="users-open-editor"][data-user-id="'+editorId+'"]').click();
   await page.locator('#main-content .users-management-modal').waitFor();
   await page.locator('#next-user-profile-form input[name="displayName"]').fill('Taylor Updated');
-  await page.locator('#next-user-profile-form button[type="submit"]').click();
+  // Finish the profile write before creating a state-bound permissions preview.
+  // A concurrent profile audit entry must correctly invalidate an earlier proof.
+  const [profileResponse]=await Promise.all([
+    page.waitForResponse(response=>response.url().endsWith('/api/users/profile') &&
+      response.request().method()==='POST'),
+    page.locator('#next-user-profile-form button[type="submit"]').click()
+  ]);
+  assert.equal(profileResponse.status(),200,'User profile must save before permission preview');
   await page.waitForFunction(async id=>{
     const r=await fetch('/api/users',{cache:'no-store'});
     return r.ok && (await r.json()).users.find(u=>u.id===id)?.profile.displayName==='Taylor Updated';

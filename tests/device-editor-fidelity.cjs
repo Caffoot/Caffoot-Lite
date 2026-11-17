@@ -127,6 +127,15 @@ module.exports=async({page,reference,sourceBase,context,out,fixtureDirectory})=>
  await page.locator('#device-form-tab-notes').click();await page.locator('#dev-notes').fill('Fictional incomplete guest edit');await page.locator('#modal-content button[type="submit"]').click();
  await page.waitForFunction(async id=>{const s=await(await fetch('/api/inventory/state')).json();return s.devices.find(d=>d.id===id)?.notes==='Fictional incomplete guest edit';},legacy.id);await page.locator('#device-editor-form').waitFor({state:'hidden'});
  const retained=(await state()).devices.find(d=>d.id===legacy.id);assert.equal(retained.virtualHostId,'fictional-missing-hypervisor');assert.equal(retained.virtualPlatform,'Legacy platform');assert.equal(retained.typeDetails.historicalFixtureValue,'retained');
+ // Unknown allocations on older VM records remain blank without rewriting saved data.
+ await page.evaluate(id=>openDeviceDetailView(id),legacy.id);
+ const legacyHardwareCard=page.locator('#device-details-panel-overview .device-review-panel').filter({hasText:'Allocated virtual hardware'});
+ await legacyHardwareCard.waitFor({state:'visible'});
+ assert.deepEqual(await legacyHardwareCard.locator('.device-details-field dd').allTextContents(),['—','—','—','—'],
+   'Missing legacy VM allocations must stay unknown in read-only details.');
+ assert.deepEqual((await state()).devices.find(d=>d.id===legacy.id),retained,
+   'Opening Device Details must not modify legacy allocations.');
+ await page.evaluate(()=>closeModal(true));
  assert.deepEqual(errors,[]);fs.writeFileSync(path.join(out,'device-editor-matrix.json'),JSON.stringify(matrix,null,2));fs.writeFileSync(path.join(out,'device-workflows.json'),JSON.stringify({comparisons:matrix.length,host:host.name,vmCreateEditDuplicateReload:true,unflaggedDuplicateRemainsIneligible:true,legacyPlatformShown:true,legacyIncompleteGuestPreserved:true,explicitHostEligibility:true,scriptErrors:errors},null,2));
  console.log('Device editor fidelity:',matrix.length,'comparisons; physical Proxmox host and VM create/edit/duplicate/reload passed.');
 };
