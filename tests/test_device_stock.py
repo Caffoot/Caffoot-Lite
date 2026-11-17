@@ -9,7 +9,7 @@ import unittest
 from unittest.mock import patch
 import uuid
 
-from backend.device_saves import create_device, create_device_in_transaction
+from backend.device_saves import create_device, create_device_in_transaction, save_reserved_device
 from backend.device_stock import device_stock_sources, register_stock_device
 from backend.stock_intake import stock_item
 from backend.request_auth import csrf_for_session
@@ -206,6 +206,95 @@ class DeviceStockTests(unittest.TestCase):
                 self.assertEqual(db.execute('SELECT count(*) FROM inventory_devices').fetchone()[0], 1)
                 self.assertEqual(stock_item(db, identity)['balances']['physicallyHeld'], 1)
 
+    def assert_registered_identity_protected(self, device, item):
+        raw, revision = self.db.execute(
+            'SELECT record_json,revision FROM inventory_devices WHERE id=?', (device,)).fetchone()
+        record = json.loads(raw)
+        self.assertEqual(record['id'], device)
+        self.assertEqual(record['type'], 'Desktop')
+        self.db.execute('INSERT INTO device_edit_reservations VALUES(?,1,9999999999,?)', (device, revision))
+        self.db.commit()
+        balances = stock_item(self.db, item)['balances']
+        for enabled in (1, 0):
+            self.db.execute("UPDATE organisation_features SET enabled=? WHERE feature='it_assets'", (enabled,))
+            self.db.commit()
+            for changes in (dict(type='Laptop'), dict(type='Server - Virtual'),
+                            dict(isVirtual=True), dict(virtualHostId='forged-host')):
+                before = tuple(self.db.iterdump())
+                with self.subTest(enabled=enabled, changes=changes):
+                    with self.assertRaisesRegex(ValueError, 'type or physical/virtual identity'):
+                        save_reserved_device(self.db, 1, device, revision, dict(record, name='Rejected', **changes))
+                    self.assertEqual(tuple(self.db.iterdump()), before)
+                    self.assertEqual(stock_item(self.db, item)['balances'], balances)
+        self.db.execute("UPDATE organisation_features SET enabled=1 WHERE feature='it_assets'")
+        self.db.execute('DELETE FROM device_edit_reservations WHERE device_id=?', (device,))
+        self.db.commit()
+
+    def test_type_identity_and_history_survive_registration_issue_return_reissue_and_writeoff(self):
+        from backend.device_stock import reissue_stock_device
+        from backend.stock_circulation import (read_stock_issues, return_stock, prepare_stock,
+            registered_stock_devices, write_off_stock, canonical_device_choice)
+        from backend.equipment_associations import add_associated_equipment
+        from test_device_reissue import reissue_payload
+        from test_associated_equipment_writes import combined_issue_payload
+
+        item = self.source()
+        result = self.register(registration_payload(self.db, item))
+        device = result['deviceId']
+        self.assert_registered_identity_protected(device, item)  # No assignment yet.
+        reissue_stock_device(self.db, 1, self.token, reissue_payload(self.db, device))
+        accessory = self.receipt(category='Monitor')
+        add_associated_equipment(self.db, 1, self.token,
+            combined_issue_payload(self.db, accessory, device), issue_new=True)
+        self.assert_registered_identity_protected(device, item)
+        issue = next(row for row in read_stock_issues(self.db, 1)['issues'] if row['deviceAssignmentId'])
+        return_stock(self.db, 1, self.token, circulation_fixture.return_payload(issue))
+        self.assert_registered_identity_protected(device, item)  # Only ended assignments remain.
+        returned = next(row for row in registered_stock_devices(self.db) if row['deviceId'] == device)
+        prepare_stock(self.db, 1, self.token, dict(operationId=uuid.uuid4().hex,
+            stockUnitId=returned['stockUnitId'], version=returned['version'], quantity=1,
+            checkedOn='2026-11-17', checks=dict(cleanedWorking=True, dataPreparationConfirmed=True), note=''))
+        # The accessory has its own explicit return before the Device is reissued.
+        accessory_issue = next(row for row in read_stock_issues(self.db, 1)['issues'] if not row['deviceAssignmentId'])
+        return_stock(self.db, 1, self.token, circulation_fixture.return_payload(accessory_issue))
+        reissue_stock_device(self.db, 1, self.token, reissue_payload(
+            self.db, device, recipientKind='department', recipientId='department', issuedOn='2026-11-17'))
+        self.assert_registered_identity_protected(device, item)
+        choice = canonical_device_choice(self.db, device)
+        write_off_stock(self.db, 1, self.token, dict(operationId=uuid.uuid4().hex,
+            deviceId=device, version=choice['version'], quantity=1, fromState='issued',
+            writtenOffOn='2026-11-17', reason='Beyond repair', note=''))
+        self.assert_registered_identity_protected(device, item)
+        self.assertEqual(self.db.execute('SELECT count(*) FROM inventory_devices').fetchone()[0], 1)
+        self.assertEqual(self.db.execute('SELECT count(*) FROM device_assignments WHERE device_id=?', (device,)).fetchone()[0], 2)
+
+    def test_catalogue_rename_delete_preserve_registered_links_and_recorded_history(self):
+        from backend.device_catalogue import change_device_catalogue
+        from backend.device_stock import reissue_stock_device
+        from test_device_reissue import reissue_payload
+        item = self.source()
+        result = self.register(registration_payload(self.db, item))
+        device = result['deviceId']
+        reissue_stock_device(self.db, 1, self.token, reissue_payload(self.db, device))
+        original = {table: self.db.execute('SELECT * FROM ' + table).fetchall() for table in
+                    ('device_assignments', 'it_asset_stock_items', 'it_asset_stock_units',
+                     'it_asset_stock_entries', 'it_asset_stock_movements')}
+        history = self.db.execute('SELECT * FROM inventory_change_history').fetchall()
+        for operation, old, new, expected in (('rename', 'Desktop', 'Workstation', 'Workstation'),
+                                               ('delete', 'Workstation', '', 'Unknown')):
+            self.assertEqual(change_device_catalogue(self.db, 1, 'type', operation, old, new, [device]), 1)
+            self.assertEqual(json.loads(self.db.execute(
+                'SELECT record_json FROM inventory_devices WHERE id=?', (device,)).fetchone()[0])['type'], expected)
+            for table, records in original.items():
+                self.assertEqual(self.db.execute('SELECT * FROM ' + table).fetchall(), records)
+            self.assertEqual(self.db.execute('SELECT * FROM inventory_change_history ORDER BY id LIMIT ?',
+                                            (len(history),)).fetchall(), history)
+        raw, revision = self.db.execute('SELECT record_json,revision FROM inventory_devices WHERE id=?', (device,)).fetchone()
+        self.db.execute('INSERT INTO device_edit_reservations VALUES(?,1,9999999999,?)', (device, revision))
+        self.db.commit()
+        # Ordinary edits use the current managed label after catalogue changes.
+        self.assertEqual(save_reserved_device(self.db, 1, device, revision, dict(json.loads(raw), notes='Updated')), revision + 1)
+
 
 class DeviceStockHttpTests(unittest.TestCase):
     setUp = feature_http.FeatureSettingsHttpTests.setUp
@@ -230,3 +319,35 @@ class DeviceStockHttpTests(unittest.TestCase):
             status, result = self.post('/api/it-assets/register-device', payload, self.token, csrf_for_session(self.token))
             self.assertEqual(status, 200, result)
             self.assertEqual(result['deviceId'], payload['record']['id'])
+
+    def test_direct_api_preserves_unassigned_registered_identity_with_assets_disabled(self):
+        from backend.stock_intake import receive_stock
+        from test_stock_intake import receipt_payload
+        with sqlite3.connect(self.path) as db:
+            db.execute("UPDATE organisation_features SET enabled=1 WHERE feature IN ('it_assets','devices')")
+            db.commit()
+            receipt = receipt_payload()
+            receipt.update(readyQuantity=10, item=dict(category='Desktop', trackingMode='quantity',
+                manufacturer='Fictional', model='PC', sharedSpecifications={}),
+                checks=dict(itemsChecked=True, conditionChecked=True))
+            item = receive_stock(db, 1, self.token, receipt)['stockItemId']
+            registration = registration_payload(db, item)
+            register_stock_device(db, 1, self.token, registration)
+            db.execute("UPDATE organisation_features SET enabled=0 WHERE feature='it_assets'")
+        device = registration['record']['id']
+        csrf = csrf_for_session(self.token)
+        with patch('backend.server.PUBLIC_ORIGIN', 'https://caffoot.example'):
+            status, reservation = self.post('/api/devices/edit/start', {'deviceId': device}, self.token, csrf)
+            self.assertEqual(status, 200, reservation)
+            with sqlite3.connect(self.path) as db:
+                before = tuple(db.iterdump())
+                balances = stock_item(db, item)['balances']
+            for changes in (dict(type='Laptop'), dict(isVirtual=True), dict(virtualHostId='forged-host')):
+                status, result = self.post('/api/devices/edit/save', dict(deviceId=device,
+                    revision=reservation['revision'], record=dict(registration['record'], **changes)), self.token, csrf)
+                self.assertEqual(status, 400, result)
+                self.assertEqual(result['error'], 'This edit cannot change the Device type or physical/virtual identity. '
+                                 'Other permitted fields can still be edited.')
+                with sqlite3.connect(self.path) as db:
+                    self.assertEqual(tuple(db.iterdump()), before)
+                    self.assertEqual(stock_item(db, item)['balances'], balances)
