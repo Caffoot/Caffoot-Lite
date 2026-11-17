@@ -1,30 +1,6 @@
 # Caffoot Lite — Development Guide
 
-> **Batch 3.12 review branch:** [IT Assets Dashboard](IT-Assets-Dashboard.md) is implemented with schema 20, complete stock aggregates and protected Device details. See [evidence and outstanding verification](../development-handovers/evidence/stock-dashboard/Report.md). This supersedes older pending-dashboard checkpoints below; owner visual approval and final focused verification remain outstanding.
-
-> **Current Batch 3.11 checkpoint — 16 November 2026:** Batch 3.10 / PR #391
-> is merged and accepted at verified `53b04328c4f895bfc1f72f0416c43a519b2e8b42`.
-> Correct Movement is implemented on `feat/correct-stock-movement`,
-> [draft PR #392](https://github.com/Caffoot/Caffoot-Lite/pull/392), using schema 19
-> without a migration. See [the correction contract](IT-Assets-Correct-Movement.md),
-> [draft instructions](../how-tos/features-and-instructions/v2.2-draft/IT-Assets-Correct-Movement.md)
-> and [verification evidence](../development-handovers/evidence/stock-corrections/Report.md).
-> Owner visual review and explicit merge approval remain. No release, deployment
-> or Batch 3.12 work is included. Earlier dated checkpoints below are historical.
-
-
-> **Latest development checkpoint — 16 November 2026:** Batches 3.8/3.9 are
-> merged through PR #390 at `6276225e5d527c83f2ffaf36812ab7c7c5a5269f`.
-> Batch 3.10 associations and prepared canonical reassignment are implemented
-> on [draft PR #391](https://github.com/Caffoot/Caffoot-Lite/pull/391), schema 19.
-> The [contract](Associated-Equipment.md), [approved direct sequence](Direct-Handover-Decision.md),
-> [draft instructions](../how-tos/features-and-instructions/v2.2-draft/Associated-Equipment.md)
-> and [36-capture final review report](../development-handovers/evidence/associated-equipment-final/Report.md)
-> record the actual implementation and verification. Final-head Actions are
-> reported in PR #391. Owner visual acceptance, merge and release are not claimed;
-> native/private-data/Stage 6 acceptance remains deferred. Earlier dated source
-> checkpoints below retain their historical scope.
-
+> **Current integration — 17 November 2026:** Stage 1 and Stage 2 are accepted; Stage 3 Batches 3.1–3.12 and subsequent focused corrections are merged on `milestone-1` at `753b3266893987addb11406ef8303adb03c3c112` (schema 20). v2.2 remains unreleased. Use [Development Status](Development-Status.md) for verified merges and acceptance limits, and the [Stage 1–3 draft guides](../how-tos/features-and-instructions/v2.2-draft/README.md) for user procedures. Detailed earlier review checkpoints are preserved in Development Status and the active handover.
 
 Welcome. This guide explains **how Caffoot Lite actually works**, from the everyday user experience through to the Python backend, SQLite database and tests. It is written for the product owner, new contributors and maintainers.
 
@@ -32,7 +8,7 @@ Welcome. This guide explains **how Caffoot Lite actually works**, from the every
 
 ## In simple terms
 
-**Current development target: v2.2 (Milestone 01).** Stage 1 and Stage 2 are accepted. Stage 3 Batches 3.1–3.7 are merged on `milestone-1` at `7f91f5d42feb3916cfab060abd5ca4b1558a92ba` (schema 16, PR #388). Batch 3.7 stock intake is visually accepted. Batch 3.8 issue, return, preparation and write-off are implemented for review on `feat/it-assets-issue-return-writeoff` (draft PR #389), including the narrow Schema 17 assignment-closure migration. Batch 3.8 is not merged, visually accepted or released. Batch 3.4 manual/native acceptance remains deferred. Device stock registration/reissue, associations, corrections, dashboards/warnings and Stages 4–6 remain pending. See [Development Status](Development-Status.md), [IT Assets Foundation](IT-Assets-Foundation.md), [Stock Intake](IT-Assets-Stock-Intake.md), [Issue, Return And Write Off](IT-Assets-Issue-Return-and-Write-Off.md) and the [active handover](../development-handovers/milestone-01.md). [Draft v2.2 user guides](../how-tos/features-and-instructions/v2.2-draft/README.md) describe implemented development features, not published installation or upgrade procedures. PR #383 remains separate and untouched.
+**Current development target: v2.2 (Milestone 01).** Implemented Stage 3 workflows include Staff/Departments, assignments and My Equipment, IT Assets stock/circulation, Device registration/reissue, Associated Equipment, direct handovers, corrections and stock reporting. See [Development Status](Development-Status.md), the [active handover](../development-handovers/milestone-01.md) and the [documentation review record](Stage-1-3-Documentation-Review.md). Batch 3.4 manual/native and Stage 6 compatibility/upgrade/restore acceptance remain deferred. Suppliers and Service Desk remain later work. Draft user guides describe the development build, not published installation or upgrade procedures.
 
 Caffoot Lite helps small IT teams document their devices, IP addresses, network racks and changes. The earlier HTML release saves its inventory in one browser. The Docker application keeps a **shared inventory** in a central SQLite database so authorised users see the same information.
 

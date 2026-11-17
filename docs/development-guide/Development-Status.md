@@ -1,6 +1,34 @@
-# Published and development versions
+# Published And Development Versions
 
-**Current Batch 3.12 review status — 16 November 2026:** The verified integration
+## Current Integration — 17 November 2026
+
+Caffoot Lite **v2.1 remains the published release**, at tagged source `c3237114108cad9f7d4e57657b6aed5e0091a5ef` (schema 10). Use the [published user guides](../how-tos/features-and-instructions/README.md) and [installation instructions](../../INSTALLATION.md) for that release.
+
+The verified `milestone-1` HEAD is **`753b3266893987addb11406ef8303adb03c3c112`**, schema 20. Stage 1 and Stage 2 are accepted; **Stage 3 Batches 3.1–3.12 are merged**. Its implemented workflows are described in the [draft v2.2 user guides](../how-tos/features-and-instructions/v2.2-draft/README.md). This verification records source and merge state, not a new application test run or completed milestone acceptance.
+
+| Integrated Work | Verified Merge Checkpoint |
+| --- | --- |
+| Staff/Departments and initial Device assignments/My Equipment, Batches 3.1–3.4 | PR #382, `05b162aa10a74994c970d0b6dbf111dc59b47513` |
+| Department Details, IT Assets foundation and stock intake, Batches 3.5–3.7 | PRs #386–#388, `7f91f5d42feb3916cfab060abd5ca4b1558a92ba` |
+| Issue, return, preparation and write-off, Batch 3.8 | PR #389, `7f11598b50bbb1fbd11893a2ad34bc152ff12ed1` |
+| Device registration/reissue, Batch 3.9 | PR #390, `6276225e5d527c83f2ffaf36812ab7c7c5a5269f` |
+| Associated Equipment and direct handovers, Batch 3.10 | PR #391, `53b04328c4f895bfc1f72f0416c43a519b2e8b42` |
+| Correct Movement, Batch 3.11 | PR #392, `505ec1a60daccdfed4c2c36c9379a29ea6f5367d` |
+| Issue Equipment confirmation | PR #393, `6222d8a87e4a02dd4e69f070e11777d2ec82b591` |
+| Overview, reporting and Low Stock warnings, Batch 3.12/schema 20 | PR #398, `558286c2430ebee40246180d9f09aefdbb46f6b9` |
+| Subsequent display/account/Staff/identity/session corrections | PRs #399, #401–#403, #405–#406, through `753b3266893987addb11406ef8303adb03c3c112` |
+
+Staff Members and Departments are core and independently permissioned. IT Assets is independently optional and defaults off on fresh installations. Schema 20 adds IT Assets Edit to the built-in IT Staff role default while preserving existing accounts' configured access with compatibility overrides; it does not automatically add new ordinary accounts to IT Staff.
+
+**Still deferred:** Batch 3.4 manual/native acceptance, broader native Safari/private-installation evidence, private legacy-data checks and completed-milestone compatibility/full upgrade/restore acceptance. Earlier individual owner tests retain their actual scope. Stages 4–6 and release approval remain separate. No v2.2 image, production upgrade procedure, merge to `main`, release or deployment is authorised here.
+
+The [documentation review record](Stage-1-3-Documentation-Review.md) lists sources, screenshot approvals, wording discrepancies and remaining documentation acceptance. The [active handover](../development-handovers/milestone-01.md) preserves implementation evidence.
+
+## Historical Checkpoints — Superseded Status, Preserved Evidence
+
+All notes below describe their dated source/branch at the time of writing. Their pending-implementation, pending-merge and earlier schema statements are historical; the current integration table above takes precedence. Earlier test results are not results for the current HEAD.
+
+**Historical Batch 3.12 review status — 16 November 2026:** The verified integration
 base is `6222d8a87e4a02dd4e69f070e11777d2ec82b591`, after the Issue Equipment
 confirmation. The IT Assets dashboard is implemented on `feat/it-assets-dashboard`.
 Its reporting checkpoint is `ebff8ea`; code, tests and four screenshots were preserved

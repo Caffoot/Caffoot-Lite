@@ -1,16 +1,10 @@
 # Shared Roles And Account Permissions
 
-## Current Development — Staff And Department Permissions
+## Current Development — Section Permissions
 
-Batch 3.1 extends the existing section list with Staff Members, Departments and
-IT Assets. It creates no grants or roles, retains default-deny and MFA, and keeps
-the inventory importer explicitly dependent on Devices/IPAM/Racks Edit only.
-Staff/Departments are core; effective IT Assets access remains off pending its
-separate feature batch. See [Staff Directory Foundation](Staff-Directory-Foundation.md).
-Stage 1 was accepted and merged via PR #358; Stage 2 is accepted and Batches
-3.1–3.4 are merged through PR #382 at `05b162aa10a74994c970d0b6dbf111dc59b47513`
-(schema 15). Batch 3.4 manual acceptance is deferred, not passed. See the
-[draft v2.2 permissions guide](../how-tos/features-and-instructions/v2.2-draft/Roles-Section-Permissions-and-MFA.md).
+Stage 1 and Stage 2 are accepted; Stage 3 Batches 3.1–3.12 are merged on `milestone-1` at `753b3266893987addb11406ef8303adb03c3c112` (schema 20). Staff Members and Departments are core, with separate permissions. IT Assets is independently optional and defaults off; its switch and effective section access are now implemented. Schema 20 extends the IT Staff default to IT Assets Edit while preserving existing accounts' configured access. See [Development Status](Development-Status.md), [Staff Directory Foundation](Staff-Directory-Foundation.md) and the [draft v2.2 permissions guide](../how-tos/features-and-instructions/v2.2-draft/Roles-Section-Permissions-and-MFA.md).
+
+The inventory importer remains dependent on Devices/IPAM/Racks Edit; it does not import Staff or stock. Default-deny and MFA remain in force. Batch 3.4 manual/native and Stage 6 acceptance remain deferred; this is not a published v2.2 release.
 
 ### Historical Stage 1 Checkpoint
 
@@ -25,7 +19,7 @@ merge decision. PR #358 remains draft and unmerged.
 
 ## Configurable Built-In Roles — Schema 12
 
-IT Staff is a protected built-in identity, initially enabled with Devices,
+At schema 12, IT Staff was introduced as a protected built-in identity, enabled with Devices,
 IPAM and Network Racks **Edit**. Administrators can review/confirm grant changes,
 disable/re-enable it and assign/remove memberships through the existing controls.
 Its key and name cannot change and it cannot be deleted. Administrator remains
@@ -60,7 +54,24 @@ first-admin and new ordinary-account creation continue to assign Staff Member on
 
 Preserved overrides remain authoritative after future role edits. Selecting
 **Inherit** intentionally removes an override and resumes role-derived access.
-See the [Dave and Tim example](../how-tos/features-and-instructions/Users-Permissions-and-MFA.md#it-staff-and-individual-permissions).
+See the [draft v2.2 role and override examples](../how-tos/features-and-instructions/v2.2-draft/Roles-Section-Permissions-and-MFA.md).
+
+### Current IT Staff Defaults — Schema 20
+
+The later [owner-approved IT Assets default](https://github.com/Caffoot/Caffoot-Lite/issues/396)
+extends IT Staff to Devices, IPAM, Racks and IT Assets **Edit**. Staff Members and
+Departments remain separate grants. Administrators can configure the role through
+the implemented Manage Roles controls; its protected identity and the independent
+Administrator status are unchanged.
+
+`migrate_it_staff_stock_default` adds IT Assets Edit while retaining every existing
+ordinary account's earlier configured IT Assets level through the established
+individual overrides where needed. It preserves existing overrides and verifies
+that configured permissions and effective section access have not changed,
+including for disabled accounts and accounts awaiting MFA. The numbered migration
+runs once. Fresh IT Staff remains enabled and unassigned, and new ordinary accounts
+continue to receive Staff Member only. The independent IT Assets feature switch
+still defaults off; a role grant cannot enable it.
 
 ## Database Upgrade
 
@@ -83,7 +94,7 @@ Protected Administrator remains a separate account flag. It retains its existing
 
 MFA is required by any enabled additional role (even one with no grants), any effective wider Read **or** Edit grant, or independent Administrator status. Once enrolled voluntarily, an account must continue supplying authenticator codes even if its permissions are removed. Configured permissions are available to administrator account inspection while access remains blocked pending enrolment. Sign-in, live sessions, recovery and section access all use the same policy.
 
-The existing interface files remain unchanged. The former direct `POST /api/users/permission` is retired with HTTP 410. The retained Python `set_permission` adapter also requires a live session and the matching preview proof: permission changes now require the preview and confirmation protocol below. The intermediate branch must not be deployed before Batch 04 connects the approved controls. Independent administrator promotion still requires confirmed MFA; role grants and individual Read/Edit may be configured before enrolment, with access blocked by the shared policy until enrolment completes.
+The approved role, membership and override controls are integrated into **Staff → Permissions**, and the required-enrolment and eligible-removal flows are integrated into sign-in and My Account. The former direct `POST /api/users/permission` is retired with HTTP 410. The retained Python `set_permission` adapter also requires a live session and the matching preview proof: permission changes use the preview and confirmation protocol below. Independent administrator promotion still requires confirmed MFA; role grants and individual Read/Edit may be configured before enrolment, with access blocked by the shared policy until enrolment completes. Integration does not establish production deployment or release acceptance; see [Development Status](Development-Status.md).
 
 ## Existing-Account MFA Operations
 
@@ -107,7 +118,7 @@ First-administrator setup, existing voluntary enrolment and promotion's already-
 
 Use only disposable, fictional databases for development checks. Before a future authorised deployment, take a consistent private backup of the **entire `/data` directory**, including SQLite, SMTP configuration, the email-proof secret and TLS/private files, and retain the matching v2.1 application image. Rehearse restoration on an isolated copy. A v1.3.3 JSON inventory export cannot restore accounts or these private files.
 
-Rolling back requires restoring that entire matching v2.1 directory and application image together. Never run the v2.1 application against a schema-11 database. See [Database](02-Database.md) and [Account Recovery](Account-Recovery.md).
+Rolling back requires restoring that entire matching v2.1 directory and application image together. Never run the v2.1 application against a database upgraded for v2.2 (schema 11 or later). See [Database](02-Database.md) and [Account Recovery](Account-Recovery.md).
 
 The [isolated upgrade and restore rehearsal](Upgrade-And-Restore-Rehearsal.md)
 describes the two-image check, exact comparison method and owner preflight.
@@ -115,7 +126,7 @@ Its fictional data cannot establish that another installation has a usable backu
 
 ## Administrator Role Operations
 
-[Batch 03](https://github.com/Caffoot/Caffoot-Lite/issues/351#issuecomment-6790155451) adds administrator-only `POST /api/users/roles/preview` and `POST /api/users/roles/confirm`. Both require the configured Origin, JSON (at most 4 KiB), a live MFA-confirmed administrator session and its CSRF header. `GET /api/users` retains existing fields and adds the role catalogue and per-account `accessDetails` for the later approved interface integration.
+[Batch 03](https://github.com/Caffoot/Caffoot-Lite/issues/351#issuecomment-6790155451) introduced administrator-only `POST /api/users/roles/preview` and `POST /api/users/roles/confirm`. Both require the configured Origin, JSON (at most 4 KiB), a live MFA-confirmed administrator session and its CSRF header. `GET /api/users` retains existing fields and supplies the role catalogue and per-account `accessDetails` used by the implemented interface.
 
 Preview accepts exactly `{"action": action}`. Confirmation accepts exactly `{"action": action, "proof": proof}`. The action fields are:
 
@@ -135,7 +146,7 @@ Confirmation repeats authorisation under `BEGIN IMMEDIATE`, recomputes consequen
 
 Successful confirmation atomically saves the change, attributable history and affected session/email-proof revocation. Membership assignment/removal always revokes the target's sessions. Other role/override changes revoke sessions only where effective rights or MFA requirements change. A rename or a grant hidden by an override does not force a sign-out. Unrelated accounts retain sessions. Existing enrolled MFA is never erased by role changes. Role deletion preserves its definition in history.
 
-After commit, `notifications` reports SMTP configuration, active verified-account eligibility, distinct recipient count, queue admissions, coalesced notices and unsuccessful queue admissions. It includes existing Settings → Email/SMTP/address-verification guidance for Batch 04. Eligible administrator recipients share the existing generic notice. Missing SMTP, ineligible recipients, queue failure and mail exceptions cannot undo access changes. Queue admission never establishes delivery; no delivery log or retry service is added.
+After commit, `notifications` reports SMTP configuration, active verified-account eligibility, distinct recipient count, queue admissions, coalesced notices and unsuccessful queue admissions. The implemented confirmation feedback displays these results with existing Settings → Email/SMTP/address-verification guidance. Eligible administrator recipients share the existing generic notice. Missing SMTP, ineligible recipients, queue failure and mail exceptions cannot undo access changes. Queue admission never establishes delivery; no delivery log or retry service is added.
 
 
 ## Users And My Account Interface
@@ -161,7 +172,9 @@ Mandatory existing-account enrolment reuses the sign-in QR/manual-key and six-di
 
 ### Staff-Only My Account Entry
 
-The [specific owner approval](https://github.com/Caffoot/Caffoot-Lite/issues/351#issuecomment-6794069354) permits authenticated `/account` to serve the same approved My Account interface. Sign-in sends accounts without inventory access there; inventory-eligible users retain their existing destination and navigation. Staff-only startup fetches the signed-in account's profile/session and static packaged interface resources, not inventory state. The client hides unavailable inventory navigation and refuses other workspaces, while the server independently retains all inventory, administrator and other-user API checks. `/inventory` still requires inventory access. Static templates/code contain no saved inventory or other accounts' information and require authentication, except existing public sign-in resources.
+The [specific owner approval](https://github.com/Caffoot/Caffoot-Lite/issues/351#issuecomment-6794069354) permits authenticated `/account` to serve the approved My Account interface. Sign-in sends an ordinary account without any permitted section to this personal workspace. `/inventory` permits an authenticated Administrator or an account with effective Read access to at least one of Devices, IPAM, Racks, Staff Members, Departments or IT Assets, including applicable feature gates. Staff Members or Departments access therefore permits the relevant directory workspace without Devices, IPAM or Racks access; IT Assets-only access permits its stock workspace. The application chooses an available destination and hides or refuses unavailable sections, while every protected server endpoint retains its own permission checks.
+
+Startup loads the signed-in account's profile/session and static packaged interface resources. It loads inventory state only with infrastructure inventory access, and directory records only with the corresponding Staff Members or Departments rights. Personal-only accounts retain My Account and eligible My Equipment without general inventory or directory access. Static templates/code contain no saved inventory or other accounts' information and require authentication, except existing public sign-in resources.
 
 The session's `mfa_removal_eligible` flag is computed by the shared server policy. Only eligible enrolled users see Remove MFA inside the existing My Account Security tab. Its form requires the current password and six-digit code. The backend independently rechecks current eligibility under the existing transaction, revokes all sessions on success and requires a fresh sign-in. Removing or disabling a role does not automatically remove MFA. Own profile, photo, appearance, password and voluntary MFA controls remain available.
 

@@ -1,73 +1,111 @@
 # Correct Stock Movement
 
-> **Draft v2.2 — Unreleased, For Review.** This describes Batch 3.11 in
-> [draft PR #392](https://github.com/Caffoot/Caffoot-Lite/pull/392), not the published
-> v2.1 application. Merge and release require separate approval.
+> **Draft v2.2 — Unreleased.** These instructions describe the implementation on `milestone-1` at `753b3266893987addb11406ef8303adb03c3c112`. v2.1 remains the published release.
 
-Use Correct Movement when a receipt, issue, return or write-off quantity was
-recorded incorrectly. It keeps the original transaction and adds a dated
-correction with your name and explanation.
+Use **Correct Movement** when a receipt, issue, return or write-off quantity was recorded incorrectly. For example, a technician might have entered 20 keyboards received when the delivery actually contained ten. The correction keeps the original transaction and adds a dated record containing the correct total, your name and an explanation.
+
+This changes a recorded quantity, not what physically happened. Use [Return Equipment](IT-Assets-Issue-Return-and-Write-Off.md#return-equipment) for an actual return and **Write Off** for genuinely missing or unusable equipment. Correct Movement does not provide a physical stocktake, edit Device identity or silently adjust later transactions to make a desired total fit.
+
+![Correct Stock Movement form showing original receipt details, corrected quantity and required reason beside a calculated Before and After stock-impact table, with Cancel and Save Correction actions at the bottom.](../../../development-handovers/evidence/stock-corrections/complete-correction-form-light-1440.png)
+
+*Genuine approved application form with fictional data, illustrating a receipt correction from 20 to 18. The original record and preview remain visible together. The [Return Equipment integration report](../../../development-handovers/evidence/stock-corrections/return-equipment/Report.md) records preservation of the 28 owner-approved original screenshots; this is one of that original set.*
+
+## Before You Start
+
+- **IT Assets** must be enabled and you need effective **IT Assets Edit**. The feature switch does not grant editing permission.
+- A correction involving registered Devices or their explicitly associated equipment also needs enabled **Devices** and **Devices Edit**. Existing Device edit reservations still apply.
+- Identify the original movement and individual entry. A movement can contain several equipment entries; each entry is considered separately.
+- Establish the correct quantity from reliable evidence, such as the original delivery paperwork or an issue record. Review later activity before changing an earlier figure.
+- Prepare a clear factual reason. Do not put passwords or unnecessary personal information in permanent history.
+
+Read-only users can view permitted original records and correction history but cannot preview or save a correction. A disabled feature or **No Access** prevents access to its records. See [Roles And Permissions](Roles-Section-Permissions-and-MFA.md) if the action is unavailable.
+
+## Find The Right Original Entry
 
 1. Open **IT → IT Assets → Movement History**.
-2. Find the original **Received**, **Issued**, **Returned** or **Written Off**
-   entry and choose **Correct Movement**. Scroll the history table horizontally
-   on smaller screens to reach Actions. A movement containing several equipment
-   entries shows a separate entry reference for each selection.
-3. Review **Original Movement Details**, including its original recorded and
-   current effective quantities, actor, dates, Supplier and recipient where recorded.
-   Earlier corrections appear in **Correction History**.
-4. Enter the **Corrected Quantity** as the correct total for that entry. Enter
-   a **Reason For Correction** explaining the evidence for the change.
-5. Review **Stock Impact Before Saving**. Compare Before and After values for
-   held, ready, awaiting checks/preparation, issued and written-off equipment,
-   plus the original issue's outstanding quantity where applicable.
-6. Choose the orange **Save Correction** action at the bottom when validation
-   says **Ready To Save**. The form then shows the saved correction's before/after
-   quantities, reason, actor, recorded time and reference. Live stock and
-   outstanding assignment quantities reflect the correction.
+2. Locate the original **Received**, **Issued**, **Returned** or **Written Off** entry. Check the equipment, **Original Holder**, date, actor and movement/entry references. Do not rely on a model name alone when several items share it.
+3. Read **Original / Effective Quantity**. The original quantity is the immutable first record; the effective quantity is the total currently used after any earlier correction.
+4. Expand **Movement Details** if you need the recorded time, original issue reference, Supplier or preparation evidence.
+5. Choose **Correct Movement** for the intended original entry. On narrow screens, scroll horizontally to reach **Actions**.
+
+**Readiness Changed**, **Registered**, **Reassigned** and **Corrected** entries do not provide this quantity-correction operation. Follow the relevant workflow instead. An original individual-unit movement may be visible in the workflow, but validation prevents a quantity change from creating, removing or replacing that permanent identity.
+
+## Preview And Save A Correction
+
+1. Review **Original Movement Details**. Confirm **Original Recorded Quantity**, **Current Effective Quantity**, equipment, dates, **Recorded By**, **Supplier / Source** and original recipient where recorded.
+2. Read **Correction History** to understand any earlier correction. A further correction is another attributed record, not removal of the earlier one.
+3. Enter **Corrected Quantity** as the correct total for this entry, not the amount to add or subtract. To change 20 to ten, enter `10`; do not enter `-10`.
+4. Enter **Reason For Correction (Required)**. Explain both the mistake and its evidence, for example “Delivery note HV-104 confirms ten keyboards; twenty was entered in error”.
+5. Wait for **Stock Impact Before Saving** to calculate. Compare every relevant **Before** and **After** balance: **Physically Held**, **Ready To Issue**, **Awaiting Checks**, **Awaiting Preparation**, **Currently Issued**, **Written Off** and, where shown, **Original Issue Outstanding**.
+6. Read the validation result. **Ready To Save** means the requested total and reason pass the current checks. **Correction Blocked** explains why the operation cannot be saved. The preview itself records no correction and changes no stock.
+7. When the preview is correct and the action is enabled, choose the orange **Save Correction** button at the bottom of the form.
+8. Check the saved result: before/after quantities, reason, actor, recorded time and correction reference. Review the updated effective quantity and relevant stock/outstanding balance.
+
+A successful save appends the correction and updates calculated balances together. The original transaction, its Supplier provenance, original holder and later chronological records remain. The correction does not change a movement's equipment, event date, recipient, specifications or preparation checks.
+
+## Worked Example: Correct A Receipt Before It Is Used
+
+All data is fictional. Harbour View Library received ten keyboards, but the technician recorded 20 with zero Ready. No later movements exist.
+
+1. Morgan opens the original **Received** entry, checks the delivery note and chooses **Correct Movement**.
+2. Morgan enters **Corrected Quantity** `10` and a factual reason referencing the delivery note.
+3. The preview shows:
+
+| Balance | Before | After |
+| --- | ---: | ---: |
+| Physically Held | 20 | 10 |
+| Ready To Issue | 0 | 0 |
+| Awaiting Checks | 20 | 10 |
+| Currently Issued | 0 | 0 |
+| Written Off | 0 | 0 |
+
+4. Morgan saves the correction, then checks the original quantity still reads 20 and the effective quantity is ten. The ten real keyboards still need their normal receipt checks before issue.
+
+If 12 keyboards had already been checked or issued from that receipt, reducing it to ten could make the intervening history impossible. A current apparent surplus from a later delivery does not repair that earlier inconsistency. The correction is blocked rather than rewriting the later checks, issues or assignments.
 
 ## Correct An Issue While Returning Equipment
 
-In **Return Equipment**, select the original issue and choose **Correct Movement**
-beside its issue information. This opens the same correction form described above.
-Your entered return date, quantities, checks, reason and note are retained.
+Use this entry point if an issue-recording mistake becomes apparent when equipment comes back. It opens the same correction form, with the same safeguards.
 
-After **Save Correction**, Return Equipment reloads the current quantities and
-versions from the server. Review the retained details before **Record Return**;
-an entered quantity above the refreshed outstanding balance must be corrected.
-If the original issue is no longer eligible, the form explains why and requires
-you to select eligible equipment. It does not select a different issue for you.
-If stock cannot be refreshed, use **Reload Stock** before recording the return.
+1. In **Return Equipment**, select the original issue and check its recorded and outstanding quantities.
+2. Choose **Correct Movement** beside the original issue information. The action appears only for an original stock issue you are allowed to correct.
+3. Complete the review, reason and preview steps above. Your entered return date, quantities, checks, damage reason and note are retained while the correction form is open.
+4. Choose **Save Correction** only if the corrected issue total is supported by the evidence and the preview permits it.
+5. Back in **Return Equipment**, review the refreshed authoritative quantities and retained return fields. The form reloads current quantities and versions rather than saving a return against the old balance.
+6. Amend retained return quantities if necessary, then choose **Record Return** as a separate action for the equipment physically received.
 
-**Cancel** and **Escape** return to your entered return details, with confirmation
-before discarding changed correction fields. Leaving both forms also protects
-unsaved return details. A blocked or failed correction keeps your entered details.
-The action is available only for original stock issues you are allowed to correct.
+For example, four keyboards were physically issued to fictional Alex, but five were recorded. With no conflicting dependent history, correct the issue total to four, then record the actual return of four. Saving the correction does not record the return: Alex's outstanding balance remains four until **Record Return** succeeds.
 
-## Quantity And Access Safeguards
+If the corrected issue is no longer eligible, the form explains the change and requires an eligible selection; it does not quietly choose a different issue. If refresh fails, use **Reload Stock** before attempting the return. A retained entered quantity above the refreshed outstanding balance must be corrected.
 
-The quantity must be a changed positive whole number. A receipt cannot be reduced
-below equipment already checked or used, an issue cannot fall below its later
-returns or write-offs, and a return cannot fall below later preparation or
-write-offs. Even if today's total appears sufficient, earlier dependent movements
-must remain possible. Individually tracked equipment retains its one permanent
-identity; a quantity correction cannot create, remove or replace it.
+**Cancel** and **Escape** return to your entered return details, with confirmation before discarding changed correction fields. Leaving both forms also protects unsaved return details. A blocked or failed correction retains the entered details for review. A saved correction remains saved even if you later cancel the return.
 
-**Correction Blocked** explains why a change cannot be saved. Correcting a quantity
-does not change later transactions to make them fit. If another technician changes
-stock or assignment history while the form is open, cancel, reload Movement History
-and review a fresh preview before trying again.
+## Why A Correction May Be Blocked
 
-**Cancel** or **Escape** leaves the form safely. When fields have changed, choose
-**Keep Editing** to retain them or confirm discarding the unsaved changes. Changing
-theme preserves your draft. Leaving the page also protects unsaved correction fields.
+The corrected total must be a changed positive whole number. Zero, negative amounts, decimals and the existing effective total cannot be saved as a quantity correction.
 
-IT Assets must be enabled and you need effective **IT Assets Edit**. Corrections
-involving registered Devices or their explicit accessory assignments also require
-**Devices Edit** and Devices enabled. Read-only users may view permitted history
-and corrections, but cannot save them. No Access or a disabled feature hides its
-records and prevents its requests.
+The application checks the complete subsequent movement sequence, not just today's total. In particular:
 
-This corrects transaction mistakes. Physical verification and Stocktakes remain
-separate future work. Original identities, receipt Supplier provenance and all
-subsequent chronological records remain available.
+- A receipt cannot be reduced below quantities already checked, registered or used by dependent movements.
+- An issue cannot be reduced below its later returns or direct write-offs.
+- A return cannot be reduced below preparation or write-offs which depend on it.
+- A correction cannot reopen unresolved associated equipment after the Device assignment has ended.
+- An individually tracked unit or canonical Device retains its one permanent identity; this action cannot change its quantity to create, remove or replace it.
+
+A blocked preview is not an instruction to invent compensating movements. Check whether you selected the wrong original entry or entered the difference instead of the correct total. If the supported correction is still irreconcilable with recorded history, stop and give the administrator the movement and entry references, factual evidence and exact explanation. Do not delete records, alter the database or use fictitious receipts/returns to bypass the safeguard.
+
+## Cancel, Stale Data And Recovery
+
+**Cancel** or **Escape** leaves the correction safely. If fields changed, choose **Keep Editing** to retain them or confirm discarding unsaved changes. Changing theme retains your draft. Leaving the page also protects unsaved correction fields. None of these actions reverses a correction already saved.
+
+If another technician changes stock, Device details, assignments or equipment links while the form is open, the save is rejected and requires a fresh preview. Cancel, reload **Movement History**, reopen the original entry and review current information before retrying. The failed operation does not partly change quantities or later records.
+
+If a Device edit reservation blocks a cross-feature correction, let the existing edit finish or be cancelled, then reload. If your session ends or permissions change, sign in and check your effective access before reopening the workflow. A connection failure should be followed by a check of **Correction History** and movement references before starting a separate correction.
+
+## Related Guides And Screenshots
+
+[Issue, Return And Write Off](IT-Assets-Issue-Return-and-Write-Off.md) · [Receive Stock And Stock Inventory](IT-Assets-Stock-Intake.md) · [Associated Equipment](Associated-Equipment.md) · [IT Assets Overview](IT-Assets-Dashboard.md).
+
+The [original correction evidence](../../../development-handovers/evidence/stock-corrections/Report.md) and [Return Equipment integration evidence](../../../development-handovers/evidence/stock-corrections/return-equipment/Report.md) preserve genuine screenshots and their capture context. Later integration screenshots requiring owner approval remain an item in the [documentation review items](../../../development-guide/Stage-1-3-Documentation-Review.md). Physical verification and Stocktakes remain separate work; this guide does not claim native Safari, private-installation, upgrade/restore or release acceptance.
+
+[← Draft v2.2 Guides](README.md) · [Published v2.1 Guides](../README.md)
