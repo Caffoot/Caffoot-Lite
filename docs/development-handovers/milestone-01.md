@@ -1,5 +1,27 @@
 # Milestone 01 Development Handover — v2.2 Target
 
+**Stage 1–3 Finding 1 delivery decision — 17 November 2026:** The owner
+authorised a focused, ordinary public PR targeting `milestone-1` for the
+password-change concurrency correction, with review and regression verification
+before integration. The earlier private advisory fork and its saved work remain
+preserved; direct GitHub integration cannot read that special fork. The public
+branch uses the established account-security write-lock pattern, with its own
+HTTP regressions. Do not describe the saved private commits as transferred or
+the new change as tested until the checks actually pass.
+
+**Release and temporary-risk decision:** Finding 1 is planned for **v2.2**;
+there is **no v2.1.1 maintenance release planned**. Published v2.1 remains
+unchanged until an authorised release, and the owner accepts that the existing
+risk continues during that interval. Public source disclosure before the
+release is a conscious trade-off, not evidence that the issue is harmless.
+During v2.2 release preparation, review the relevant security guidance,
+affected-version information, release notes and advisory/disclosure status.
+Record only actual verification and obtain separate approval for public
+advisory publication, the final merge to `main`, tagging, release and deployment.
+Nothing in this decision starts Stage 4 or overrides deferred native/manual
+acceptance.
+
+
 **Device Type and identity protection — 17 November 2026:** Finding 4 is implemented
 on `fix/finding-4-device-identity`, from verified `milestone-1` revision
 `a9bc3412b2fc43075b429e87c8cde9febd57e1b1`. Ordinary reserved Device saves now
