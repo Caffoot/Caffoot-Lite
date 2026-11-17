@@ -1,5 +1,23 @@
 # Milestone 01 Development Handover — v2.2 Target
 
+**Administrator audit-history correction — 17 November 2026:** Finding 2 is
+implemented on `fix/administrator-essential-audit-history`, from verified
+`milestone-1` revision `3ff192748e9d6e4f8eaea2c3b93b6d96082ae6aa`.
+Active, authenticated administrators with confirmed MFA retain Account, Role and
+Security summaries through both inventory state and history APIs when optional
+features are off. Complete events require Devices, IPAM, Racks and IT Assets to
+be readable; restricted responses keep hidden/unknown inventory and extra
+historical payloads out. Existing association redaction and non-administrator
+rights remain in place. The complete-history fixtures now explicitly enable
+IT Assets as well as the three original inventory features.
+**33 tests passed** in `test_history_permissions`, `test_history_http` and
+`test_feature_access`; **five existing targeted history/association regressions
+passed** in the stock intake, circulation, associated equipment, rack shelf and
+Staff section permission tests. Syntax, Function Index locations and diff checks
+passed. See [the access rules](../development-guide/04-Authentication-and-Permissions.md#administrator-audit-history).
+Draft review remains outstanding; no broad audit, full suite, browser, Docker,
+private-data or Stage 6 verification was repeated. No merge or release sign-off.
+
 **Current Batch 3.12 review checkpoint — 16 November 2026:** IT Assets Overview is
 implemented on `feat/it-assets-dashboard`, from verified base
 `6222d8a87e4a02dd4e69f070e11777d2ec82b591`. The reporting/permission checkpoint

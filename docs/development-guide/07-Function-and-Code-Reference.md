@@ -21,6 +21,7 @@ For the full source-pinned list of named declarations, owning bridge methods and
 | Source | Search terms | Responsibility |
 | --- | --- | --- |
 | [`backend/server.py`](../../backend/server.py) | `Handler.do_GET`, `Handler.do_POST`, `Handler.handle_import`, `main` | HTTPS entry point and request routing |
+| [`backend/history_permissions.py`](../../backend/history_permissions.py) | `visible_change_history`, `visible_subnet_batch_reason` | Both inventory history responses; essential administrator events independent of optional features, with hidden-inventory filtering and existing association redaction; see [administrator audit history](04-Authentication-and-Permissions.md#administrator-audit-history) |
 | [`backend/schema.py`](../../backend/schema.py) | `SCHEMA_VERSION`, `initialise_database` | SQLite definitions and migrations |
 | [`backend/device_handovers.py`](../../backend/device_handovers.py) | `device_handover_context`, `reassign_device` | Atomic prepared direct reassignment, Devices-only operation and registered custody without a receipt; see [the approved sequence](Direct-Handover-Decision.md) |
 | [`backend/handover_schema.py`](../../backend/handover_schema.py) | `migrate_device_handovers`, `validate_device_handovers` | Schema 19 audited canonical closure/successor links and narrowly guarded stock custody |

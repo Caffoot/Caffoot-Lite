@@ -28,7 +28,8 @@ class HistoryHttpPermissionTests(unittest.TestCase):
         with sqlite3.connect(self.path) as db:
             db.execute("PRAGMA foreign_keys=ON")
             initialise_database(db)
-            # This legacy history/RBAC fixture models all three inventory features enabled.
+            # Complete administrator history requires every inventory feature.
+            db.execute("UPDATE organisation_features SET enabled=1 WHERE feature='it_assets'")
             enable_inventory_features(db)
             admin, secret = bootstrap_first_admin(db, "owner", "password")
             now = time.time()
@@ -94,6 +95,104 @@ class HistoryHttpPermissionTests(unittest.TestCase):
                 self.assertEqual(len(inventory_events), 1)
                 self.assertEqual(len(inventory_events[0]["changes"]), 5)
                 self.assertEqual(inventory_events[0]["omitted"], 7)
+                with sqlite3.connect(self.path) as db:
+                    stored = [json.loads(raw) for (raw,) in db.execute(
+                        "SELECT record_json FROM inventory_change_history ORDER BY id")]
+                self.assertEqual(admin_result["changeHistory"], stored)
+
+    def test_admin_essential_history_survives_disabled_features_on_both_routes(self):
+        essential = ("Account", "Role", "Security")
+        inventory = {"devices": "Device", "ipam": "IPAM", "racks": "Rack", "it_assets": "IT Assets"}
+        events = [{"at": "2026-11-02T12:00:00Z", "actor": "owner", "outcome": "Succeeded",
+                   "reason": "PRIVATE_REASON", "omitted": 4, "extra": "PRIVATE_EVENT",
+                   "changes": [{"kind": kind, "action": "Updated", "label": "essential-" + kind,
+                                "fields": ["Status"], "before": {"rackId": "PRIVATE_BEFORE"},
+                                "after": {"rackId": "PRIVATE_AFTER"}}]}
+                  for kind in essential]
+        mixed = {"reason": "PRIVATE_MIXED_REASON", "omitted": 12, "extra": "PRIVATE_EXTRA",
+                 "changes": [{"kind": kind, "label": "mixed-" + kind, "fields": [],
+                              "after": {"rackId": "PRIVATE_DETAIL"}}
+                             for kind in (*essential, *inventory.values(), "Unknown legacy")]}
+        events.append(mixed)
+        with sqlite3.connect(self.path) as db:
+            db.executemany("INSERT INTO inventory_change_history(record_json) VALUES(?)",
+                           [(json.dumps(event),) for event in events])
+            stored = db.execute("SELECT * FROM inventory_change_history ORDER BY id").fetchall()
+        for disabled in [set(inventory)] + [{feature} for feature in inventory]:
+            with sqlite3.connect(self.path) as db:
+                db.execute("UPDATE organisation_features SET enabled=1 WHERE feature IN ('devices','ipam','racks','it_assets')")
+                db.executemany("UPDATE organisation_features SET enabled=0 WHERE feature=?",
+                               [(feature,) for feature in disabled])
+            for path in ("/api/inventory/state", "/api/inventory/history"):
+                with self.subTest(disabled=disabled, path=path):
+                    status, result = self.get(path, self.admin_token)
+                    self.assertEqual(status, 200, result)
+                    history = result["changeHistory"]
+                    singles = [event for event in history
+                               if event["changes"][0]["label"].startswith("essential-")]
+                    self.assertEqual([event["changes"][0]["kind"] for event in singles], list(essential))
+                    self.assertTrue(all(event["actor"] == "owner" and event["outcome"] == "Succeeded"
+                                        for event in singles))
+                    self.assertEqual([change["kind"] for change in history[-1]["changes"]],
+                                     [*essential, *(kind for feature, kind in inventory.items()
+                                                    if feature not in disabled)])
+                    self.assertTrue(all(event["omitted"] == 0 for event in history))
+                    self.assertNotIn("PRIVATE", json.dumps(history))
+                    self.assertNotIn("Unknown legacy", json.dumps(history))
+                    for feature, kind in inventory.items():
+                        if feature in disabled:
+                            self.assertNotIn(kind, [change["kind"] for event in history
+                                                   for change in event["changes"]])
+            with sqlite3.connect(self.path) as db:
+                self.assertEqual(db.execute(
+                    "SELECT * FROM inventory_change_history ORDER BY id").fetchall(), stored)
+        with sqlite3.connect(self.path) as db:
+            db.execute("UPDATE organisation_features SET enabled=1 WHERE feature IN ('devices','ipam','racks','it_assets')")
+        for path in ("/api/inventory/state", "/api/inventory/history"):
+            self.assertEqual(self.get(path, self.admin_token)[1]["changeHistory"],
+                             [json.loads(row[1]) for row in stored])
+
+    def test_inventory_read_and_edit_never_reveal_essential_history_on_either_route(self):
+        essential = ("Account", "Role", "Security")
+        with sqlite3.connect(self.path) as db:
+            admin = db.execute("SELECT id FROM accounts WHERE username='owner'").fetchone()[0]
+            db.executemany("INSERT INTO inventory_change_history(record_json) VALUES(?)", [
+                (json.dumps({"changes": [{"kind": kind, "label": "PRIVATE_" + kind}]}),)
+                for kind in essential])
+            db.execute("INSERT INTO inventory_change_history(record_json) VALUES(?)",
+                       (json.dumps({"changes": [{"kind": kind, "label": "PRIVATE_" + kind}
+                                                for kind in essential] +
+                                               [{"kind": "Device", "label": "visible-mixed"}]}),))
+            db.commit()
+            for level in ("read", "edit"):
+                for section in ("Devices", "IPAM", "Racks", "IT Assets"):
+                    set_permission(db, admin, self.viewer_id, section, level)
+                token = login_session(db, "viewer", "password",
+                                      mfa_code=code_at(self.viewer_secret, time.time()))
+                for path in ("/api/inventory/state", "/api/inventory/history"):
+                    with self.subTest(level=level, path=path):
+                        status, result = self.get(path, token)
+                        self.assertEqual(status, 200, result)
+                        self.assertNotIn("PRIVATE", json.dumps(result["changeHistory"]))
+                        self.assertTrue(all(change["kind"] not in essential
+                                            for event in result["changeHistory"] for change in event["changes"]))
+                        self.assertEqual(result["changeHistory"][-1]["changes"][0]["label"], "visible-mixed")
+
+    def test_history_routes_reject_unauthenticated_inactive_and_unconfirmed_admins(self):
+        for path in ("/api/inventory/state", "/api/inventory/history"):
+            for token in (None, "invalid", "0" * 64):
+                with self.subTest(path=path, token=token):
+                    self.assertEqual(self.get(path, token)[0], 401)
+        with sqlite3.connect(self.path) as db:
+            db.execute("UPDATE organisation_features SET enabled=0")
+        for column in ("active", "mfa_confirmed"):
+            with sqlite3.connect(self.path) as db:
+                db.execute(f"UPDATE accounts SET {column}=0 WHERE username='owner'")
+            for path in ("/api/inventory/state", "/api/inventory/history"):
+                with self.subTest(path=path, column=column):
+                    self.assertEqual(self.get(path, self.admin_token)[0], 401)
+            with sqlite3.connect(self.path) as db:
+                db.execute(f"UPDATE accounts SET {column}=1 WHERE username='owner'")
 
     def test_revoked_permissions_invalidate_access_to_both_routes(self):
         with sqlite3.connect(self.path) as db:

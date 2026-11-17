@@ -50,6 +50,23 @@ Administrator role lifecycle, membership and individual override requests now us
 
 The published v2.1 interface presents **Users** only to administrators and keeps system **Settings & Data** administrator-only. **My Account** contains personal security, appearance and Help/About controls. The sign-in page also provides existing password and MFA self-service for accounts without inventory access. The interface is preserved on `milestone-1`; the shared policy blocks wider inventory access pending MFA, and Batch 02 supplies the backend enrolment/removal routes. Their sign-in/My Account presentation and Users integration must be completed before deployment. See the [route contract and security rules](Role-Permissions.md#existing-account-mfa-operations).
 
+## Administrator audit history
+
+On `milestone-1`, an active, authenticated administrator with confirmed MFA can
+read essential **Account, Role and Security** events through both
+`GET /api/inventory/state` and `GET /api/inventory/history`, including when all
+optional inventory features are off. Settings and Users remain available under
+the existing [approved essential-access contract](https://github.com/Caffoot/Caffoot-Lite/issues/238#issuecomment-6821230015).
+
+When Devices, IPAM, Racks and IT Assets are all readable, administrators receive
+the complete existing history representation. Otherwise, responses contain only
+approved summary fields for visible inventory changes and essential administrator
+events. Hidden categories, unknown categories, extra historical properties,
+before/after details, free-form reasons and unattributable omitted counts are
+excluded. Existing IT Assets/Device association redaction still applies. Ordinary
+users' inventory Read or Edit permissions never grant Account, Role or Security
+history access. Stored events and their order remain unchanged.
+
 ## Boundaries for future maintenance
 
 Never take an account ID, role or permission from a request body as proof of authority. Do not depend on hiding a button for security. Route modifications must require the existing session, trusted origin and CSRF proof before writing. Do not add public registration, extra roles, alternate authentication or recovery mechanisms unless explicitly approved.

@@ -1,5 +1,6 @@
 """Permission-filtered history retains existing inventory and stock boundaries."""
 import json
+import itertools
 import sqlite3
 import unittest
 from unittest.mock import patch
@@ -133,9 +134,115 @@ class HistoryPermissionProjectionTests(unittest.TestCase):
         self.assertEqual(admin[0]["changes"][0]["kind"], "Account")
 
     def test_admin_retains_unchanged_history(self):
-        event = self.add("Device", "IPAM", "Unknown legacy", omitted=21)
-        self.allowed = {"Devices": True, "IPAM": True, "Racks": True}
-        self.assertEqual(visible_change_history(self.db, 1), [event])
+        events = [self.add(kind, omitted=21, reason="Historical free-form reason")
+                  for kind in ("Account", "Role", "Security", "Device", "IPAM",
+                               "Rack", "IT Assets", "Unknown legacy")]
+        events.append({"changes": [{"kind": "Account", "before": {"role": "Old"},
+                                    "after": {"role": "New"}}],
+                       "actorId": 1, "confirmationId": "historical-reference"})
+        self.db.execute("INSERT INTO inventory_change_history(record_json) VALUES(?)",
+                        (json.dumps(events[-1]),))
+        self.allowed = {"Devices": True, "IPAM": True, "Racks": True, "IT Assets": True}
+        self.assertEqual(visible_change_history(self.db, 1), events)
+
+    def test_admin_essential_events_survive_every_inventory_feature_combination(self):
+        inventory_kinds = {"Devices": ("Device", "Device types", "Locations", "Settings"),
+                           "IPAM": ("IPAM", "Subnet", "VLAN"), "Racks": ("Rack",),
+                           "IT Assets": ("IT Assets",)}
+        kinds = ["Account", "Role", "Security"]
+        kinds += [kind for group in inventory_kinds.values() for kind in group]
+        kinds += ["Unknown legacy"]
+        events = [self.add(kind) for kind in kinds]
+        stored = self.db.execute("SELECT * FROM inventory_change_history ORDER BY id").fetchall()
+        for flags in itertools.product((False, True), repeat=4):
+            self.allowed = dict(zip(inventory_kinds, flags))
+            with self.subTest(sections=self.allowed):
+                result = visible_change_history(self.db, 1)
+                expected = kinds[:3] + [kind for section, group in inventory_kinds.items()
+                                        if self.allowed[section] for kind in group]
+                if all(flags):
+                    expected.append("Unknown legacy")
+                    self.assertEqual(result, events)
+                self.assertEqual([event["changes"][0]["kind"] for event in result], expected)
+                self.assertEqual(self.db.execute(
+                    "SELECT * FROM inventory_change_history ORDER BY id").fetchall(), stored)
+
+    def test_restricted_admin_mixed_events_do_not_forward_hidden_payloads(self):
+        event = {"at": "2026-11-02T12:00:00Z", "actor": "owner", "outcome": "Succeeded",
+                 "reason": "PRIVATE_REASON", "omitted": 99, "extra": "PRIVATE_EXTRA",
+                 "subnetBatch": {"createdCount": 1, "firstCidr": "10.80.0.0/24",
+                                 "lastCidr": "10.80.0.0/24", "parentCidr": None},
+                 "changes": [{"kind": kind, "label": "label-" + kind, "action": "Updated",
+                              "fields": ["Status"], "before": {"rackId": "PRIVATE_BEFORE"},
+                              "after": {"rackId": "PRIVATE_AFTER"}, "extra": "PRIVATE_CHANGE"}
+                             for kind in ("Account", "Device", "Role", "IPAM", "Security",
+                                          "Rack", "IT Assets", "Unknown legacy")]}
+        self.db.execute("INSERT INTO inventory_change_history(record_json) VALUES(?)",
+                        (json.dumps(event),))
+        sections = {"Devices": "Device", "IPAM": "IPAM", "Racks": "Rack", "IT Assets": "IT Assets"}
+        for disabled in [set(sections)] + [{section} for section in sections]:
+            self.allowed = {section: section not in disabled for section in sections}
+            with self.subTest(disabled=disabled):
+                result = visible_change_history(self.db, 1)
+                expected = [kind for kind in ("Account", "Device", "Role", "IPAM", "Security",
+                                              "Rack", "IT Assets")
+                            if kind not in {sections[section] for section in disabled}]
+                self.assertEqual([change["kind"] for change in result[0]["changes"]], expected)
+                self.assertEqual(result[0]["omitted"], 0)
+                self.assertEqual(result[0]["actor"], "owner")
+                self.assertEqual(result[0]["outcome"], "Succeeded")
+                self.assertNotIn("reason", result[0])
+                self.assertNotIn("PRIVATE", json.dumps(result))
+                self.assertNotIn("subnetBatch", result[0])
+
+    def test_restricted_admin_ignores_unrecognised_categories_and_event_shapes(self):
+        self.allowed = {"Devices": False, "IPAM": False, "Racks": False, "IT Assets": False}
+        for event in (None, [], "PRIVATE", {"changes": None}, {"changes": {}},
+                      {"changes": [None, "PRIVATE", {"kind": ["Account"]},
+                                   {"kind": {"Account": True}}, {"kind": "Unknown legacy"}]}):
+            self.db.execute("INSERT INTO inventory_change_history(record_json) VALUES(?)",
+                            (json.dumps(event),))
+        self.assertEqual(visible_change_history(self.db, 1), [])
+        self.add("Security")
+        self.assertEqual(len(visible_change_history(self.db, 1)), 1)
+
+    def test_inventory_permissions_never_grant_essential_administrator_history(self):
+        for kind in ("Account", "Role", "Security"):
+            self.add(kind)
+        self.add("Account", "Device", "Role", "Security")
+        self.allowed = {"Devices": True, "IPAM": True, "Racks": True, "IT Assets": True}
+        result = visible_change_history(self.db, 2)
+        self.assertEqual(len(result), 1)
+        self.assertEqual([change["kind"] for change in result[0]["changes"]], ["Device"])
+
+    def test_essential_history_requires_an_active_administrator_with_confirmed_mfa(self):
+        for kind in ("Account", "Role", "Security"):
+            self.add(kind)
+        self.allowed = {}
+        for column in ("active", "is_admin", "mfa_confirmed"):
+            with self.subTest(column=column):
+                self.db.execute(f"UPDATE accounts SET {column}=0 WHERE id=1")
+                self.assertEqual(visible_change_history(self.db, 1), [])
+                self.db.execute(f"UPDATE accounts SET {column}=1 WHERE id=1")
+        self.assertEqual(visible_change_history(self.db, 999), [])
+
+    def test_admin_stock_device_associations_stay_hidden_without_devices(self):
+        self.db.execute("CREATE TABLE it_asset_stock_units (id INTEGER PRIMARY KEY, device_id TEXT)")
+        self.db.execute("CREATE TABLE it_asset_stock_entries (movement_id INTEGER, stock_unit_id INTEGER)")
+        self.db.execute("INSERT INTO it_asset_stock_units VALUES(1,'PRIVATE_DEVICE')")
+        self.db.execute("INSERT INTO it_asset_stock_entries VALUES(7,1)")
+        changes = [{"kind": "IT Assets", "label": "PRIVATE_ASSOCIATION", "after": after}
+                   for after in ({"deviceId": "PRIVATE_DEVICE"}, {"movementId": 7},
+                                 {"closureMovementId": 7})]
+        changes += [{"kind": "IT Assets", "label": "Unassociated stock", "after": {}},
+                    {"kind": "Account", "label": "owner"}]
+        self.db.execute("INSERT INTO inventory_change_history(record_json) VALUES(?)",
+                        (json.dumps({"changes": changes}),))
+        self.allowed = {"Devices": False, "IPAM": True, "Racks": True, "IT Assets": True}
+        result = visible_change_history(self.db, 1)
+        self.assertEqual([change["label"] for change in result[0]["changes"]],
+                         ["Unassociated stock", "owner"])
+        self.assertNotIn("PRIVATE", json.dumps(result))
 
     def test_revocation_and_no_read_permission(self):
         self.add("Device")
