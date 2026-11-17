@@ -1282,14 +1282,20 @@ class Handler(BaseHTTPRequestHandler):
                         raise ValueError("Current and new passwords required")
                     current_password = payload["currentPassword"]
                     new_password = payload["newPassword"]
-                    row = connection.execute(
-                        "SELECT password_hash FROM accounts WHERE id=?", (actor,)
-                    ).fetchone()
-                    if row is None or not verify_password(current_password, row[0]):
-                        raise ValueError("Current password is incorrect")
-                    replacement_hash = hash_password(new_password)
                     connection.execute("BEGIN IMMEDIATE")
                     try:
+                        # Recheck both the session and password after the writer lock:
+                        # concurrent security changes may have revoked either proof.
+                        if authorised_mutation(
+                                connection, self.headers.get("Cookie"), origin,
+                                PUBLIC_ORIGIN, self.headers.get("X-CSRF-Token")) != actor:
+                            raise PermissionError("Session no longer valid")
+                        row = connection.execute(
+                            "SELECT password_hash FROM accounts WHERE id=?", (actor,)
+                        ).fetchone()
+                        if row is None or not verify_password(current_password, row[0]):
+                            raise ValueError("Current password is incorrect")
+                        replacement_hash = hash_password(new_password)
                         connection.execute(
                             "UPDATE accounts SET password_hash=? WHERE id=?",
                             (replacement_hash, actor),
