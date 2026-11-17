@@ -79,11 +79,21 @@ class DeviceAssignmentHttpTests(unittest.TestCase):
                 with self.subTest(changes=changes, section=section):
                     status, result, _ = self.request('/api/devices/edit/save', method='POST',
                         payload=dict(payload, section=section, record=dict(record, name='Rejected', **changes)))
-                    self.assertEqual(status, 400, result)
-                    if 'id' not in changes:
-                        self.assertIn('type or physical/virtual identity', result['error'])
+                    if section == 'Devices' or 'id' in changes:
+                        self.assertEqual(status, 400, result)
+                        if section == 'Devices' and 'id' not in changes:
+                            self.assertIn('type or physical/virtual identity', result['error'])
+                    else:
+                        self.assertEqual(status, 403, result)
+                        self.assertEqual(result, {'error': 'forbidden'})
                     with sqlite3.connect(self.path) as db:
                         self.assertEqual(tuple(db.iterdump()), before)
+        # A scoped editor must not learn whether this Device has protected history.
+        for section in ('IPAM', 'Racks'):
+            status, response, _ = self.request('/api/devices/edit/save', method='POST',
+                payload=dict(payload, section=section, record=dict(record, type='Switch')))
+            self.assertEqual(status, 403, response)
+            self.assertEqual(response, {'error': 'forbidden'})
         status, result, _ = self.request('/api/inventory/record/save', method='POST', payload={
             'collection': 'devices', 'id': 'device', 'record': dict(record, type='Switch')})
         self.assertEqual(status, 403, result)

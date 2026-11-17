@@ -43,8 +43,9 @@ including related Device changes submitted with a host edit. IT Assets visibilit
 and permissions do not remove this protection. Associated equipment remains linked
 through the original assignment; stock balances, movements and history remain intact.
 
-An incompatible API save returns HTTP 400 with a fixed explanation containing no
-hidden equipment details. Rejection leaves the Device, revisions, edit reservations,
+An incompatible ordinary Device edit returns HTTP 400 with a fixed explanation
+containing no hidden equipment details. IPAM-only and Racks-only edits retain their
+existing HTTP 403 field-permission safeguards before the identity check. Rejection leaves the Device, revisions, edit reservations,
 IPAM, assignments, stock and audit records unchanged. Names, hardware details,
 notes, locations and other permitted fields retain their established validation.
 Devices without these relationships can still receive legitimate type/identity

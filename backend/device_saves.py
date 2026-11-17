@@ -156,7 +156,6 @@ def save_reserved_device(connection, account_id, device_id, revision, record, se
             raise ValueError("Device has changed since editing began")
         candidate = reconstruct_inventory(connection)
         previous = next(device for device in candidate["devices"] if device["id"] == device_id)
-        _validate_device_identity_change(connection, previous, record)
         record = prepare_device_rack_fields(connection, record, previous)
         record = prepare_device_address(connection, account_id, record, previous)
         validate_device_storage(record, previous)
@@ -182,6 +181,7 @@ def save_reserved_device(connection, account_id, device_id, revision, record, se
             if (rack_placement_changed and
                     not can_access(connection, account_id, "Racks", edit=True)):
                 raise PermissionError("Racks edit permission required for rack placement changes")
+        _validate_device_identity_change(connection, previous, record)
         candidate["devices"] = [record if device["id"] == device_id else device
                                 for device in candidate["devices"]]
         if related_devices and not can_access(connection, account_id, "Devices", edit=True):
