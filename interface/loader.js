@@ -1,5 +1,38 @@
 /* Load the shared navigation and screen templates before connecting live actions. */
 'use strict';
+// Keep authenticated API errors as JSON. Only navigate after /api/session
+// confirms that a failed application request belongs to an ended session.
+const originalApplicationFetch = window.fetch.bind(window);
+let applicationSessionProbe = null;
+window.caffootSessionRedirectPending = false;
+function returnToExistingSignIn() {
+    if (window.caffootSessionRedirectPending) return;
+    window.caffootSessionRedirectPending = true;
+    window.location.replace('/setup#session-ended');
+}
+window.fetch = async (...args) => {
+    const response = await originalApplicationFetch(...args);
+    if (window.caffootSessionRedirectPending || ![401, 403].includes(response.status)) return response;
+    let url;
+    try {
+        const input = args[0];
+        url = new URL(typeof input === 'string' ? input : input.url, window.location.href);
+    } catch (_) { return response; }
+    if (url.origin !== window.location.origin ||
+        !(url.pathname.startsWith('/api/') || url.pathname.startsWith('/interface/'))) return response;
+    if (url.pathname === '/api/session') {
+        if (response.status === 401) returnToExistingSignIn();
+        return response;
+    }
+    if (!applicationSessionProbe) {
+        applicationSessionProbe = originalApplicationFetch('/api/session', {cache: 'no-store'})
+            .then(check => check.status === 401)
+            .catch(() => false)
+            .finally(() => { applicationSessionProbe = null; });
+    }
+    if (await applicationSessionProbe) returnToExistingSignIn();
+    return response;
+};
 const interfaceTemplates = new Map();
 const interfaceStyles = new Map();
 function renderInterfaceTemplate(name, values = []) {
@@ -66,6 +99,7 @@ async function initialiseInterface() {
     document.body.append(staffScript);
 }
 function showInterfaceLoadError() {
+    if (window.caffootSessionRedirectPending) return;
     const root = document.getElementById('interface-root') || document.getElementById('main-content');
     if (!root) return;
     root.replaceChildren();
