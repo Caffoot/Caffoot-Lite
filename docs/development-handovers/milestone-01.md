@@ -1,5 +1,22 @@
 # Milestone 01 Development Handover — v2.2 Target
 
+**Stale Staff edits — 17 November 2026:** Finding 3 is implemented on
+`fix/stale-staff-edits`, from verified `milestone-1` revision
+`cb5ae4d904ba281a7ac1be2da3e2dfaa5d463b88`. Staff saves and quick status changes
+now require the revision supplied with the originally displayed values. The server
+checks it inside the existing `BEGIN IMMEDIATE` transaction after session and
+permission rechecks. Conflicts return a clear 409 before any Staff, login or audit
+write. No schema migration is needed. The existing form retains unsaved entries;
+its conflict-only refresh control asks before replacing them with current values.
+See the [Staff API contract](../development-guide/Staff-Directory-APIs.md#preventing-stale-staff-edits).
+**Verification: 80 focused backend tests passed**, covering Staff service/HTTP,
+migration, section permissions, Device assignment service/HTTP and Department HTTP.
+The real HTTPS/SQLite Chromium Staff flow passed, including stale form and both
+quick status conflicts, preserved login entries, theme redraws, cancelled/failed
+refresh, successful refreshed saves and unchanged card/action positions.
+See [captures and remaining review](evidence/stale-staff-edits/Report.md).
+This correction does not sign off Stages 1–3 or authorise merge, deployment or release.
+
 **Administrator audit-history correction — 17 November 2026:** Finding 2 is
 implemented on `fix/administrator-essential-audit-history`, from verified
 `milestone-1` revision `3ff192748e9d6e4f8eaea2c3b93b6d96082ae6aa`.

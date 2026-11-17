@@ -1,4 +1,7 @@
 """Protected Staff and flat Department operations, separate from login profiles."""
+import hashlib
+import json
+
 from backend.audit_events import record_actor_event
 from backend.permissions import can_access, _admin, create_user_in_transaction
 from backend.profiles import validate_profile_details
@@ -9,6 +12,25 @@ STAFF_FIELDS = {
     'email': ('email', 254), 'jobTitle': ('job_title', 120),
     'telephone': ('telephone', 100), 'location': ('location', 200),
 }
+
+
+class StaleStaffEdit(FileExistsError):
+    """Keep a newer Staff record when an older form is submitted."""
+
+
+def _staff_revision(connection, record):
+    """Identify the saved Staff values without including linked-account details."""
+    # Include the last Staff save so changing a value back still invalidates old forms.
+    history_id = connection.execute("""
+        SELECT h.id FROM inventory_change_history h
+        WHERE EXISTS (SELECT 1 FROM json_each(h.record_json,'$.changes') c
+            WHERE json_extract(c.value,'$.kind')='Staff Member'
+              AND json_extract(c.value,'$.label')=?)
+        ORDER BY h.id DESC LIMIT 1
+    """, (record['id'],)).fetchone()
+    values = [record['id'], *[record[name] for name in STAFF_FIELDS],
+              record['departmentId'], bool(record['active']), history_id[0] if history_id else None]
+    return hashlib.sha256(json.dumps(values, ensure_ascii=False).encode('utf-8')).hexdigest()
 
 
 def unique_directory_fields(pairs):
@@ -52,6 +74,7 @@ def read_staff_member(connection, actor_id, staff_id):
     require_directory_access(connection, actor_id, 'Staff Members')
     record = _staff_record(connection, staff_id)
     record['active'] = bool(record['active'])
+    record['revision'] = _staff_revision(connection, record)
     try:
         _admin(connection, actor_id)
     except PermissionError:
@@ -113,8 +136,16 @@ def list_staff_department_choices(connection, actor_id):
 
 
 def _validate_staff(payload, *, creating):
-    if not isinstance(payload, dict) or not payload or set(payload) - {*STAFF_FIELDS, 'departmentId', 'active', 'login'}:
+    if not isinstance(payload, dict) or not payload or set(payload) - {*STAFF_FIELDS, 'departmentId', 'active', 'login', 'revision'}:
         raise ValueError('Invalid Staff fields')
+    if creating:
+        if 'revision' in payload:
+            raise ValueError('A new Staff Member cannot have a saved revision')
+    else:
+        revision = payload.get('revision')
+        if (not isinstance(revision, str) or len(revision) != 64
+                or any(character not in '0123456789abcdef' for character in revision)):
+            raise ValueError('Refresh the Staff Member before saving; a valid saved revision is required')
     values = {name: _text(value, name, STAFF_FIELDS[name][1])
               for name, value in payload.items() if name in STAFF_FIELDS}
     if creating and (not values.get('firstName') or not values.get('lastName')):
@@ -160,6 +191,8 @@ def save_staff_member(connection, actor_id, session_token, payload, *, staff_id=
         else:
             values = _validate_staff(payload, creating=creating)
             before = {} if creating else _staff_record(connection, staff_id)
+            if not creating and payload['revision'] != _staff_revision(connection, before):
+                raise StaleStaffEdit('This Staff Member was changed elsewhere. Refresh the current details before editing again.')
             department = payload.get('departmentId', before.get('departmentId'))
             if department is not None and department != before.get('departmentId'):
                 if _department_record(connection, department)['archived']:

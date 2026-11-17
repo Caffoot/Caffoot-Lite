@@ -337,7 +337,8 @@ async function test(){
   }
  }
  // A current Department move removes shared visibility on the next request.
- await save('/api/staff-members/'+person.id,{departmentId:null,active:false});
+ const currentPerson=(await (await context.request.get(address+'/api/staff-members/'+person.id)).json()).staffMember;
+ await save('/api/staff-members/'+person.id,{departmentId:null,active:false,revision:currentPerson.revision});
  await employeePage.locator('#sidebar [data-tab="equipment"]').click();
  await employeePage.getByText('No shared equipment is currently available for your Department.').waitFor();
  assert.equal(await employeePage.locator('[data-personal-equipment] .info-row').count(),2);

@@ -64,7 +64,7 @@ from .equipment_associations import read_equipment_associations, add_associated_
 from .device_handovers import reassign_device
 from .staff_directory import (require_directory_access, list_directory,
                                read_staff_member, read_department,
-                               save_staff_member, save_department, unique_directory_fields,
+                               save_staff_member, save_department, unique_directory_fields, StaleStaffEdit,
                                list_staff_department_choices)
 
 DB_PATH = Path(os.environ.get("CAFFOOT_DB_PATH", "/data/caffoot.sqlite3"))
@@ -918,6 +918,8 @@ class Handler(BaseHTTPRequestHandler):
             self.respond(403, {'error': 'forbidden'})
         except LookupError as exc:
             self.respond(404, {'error': str(exc)})
+        except StaleStaffEdit as exc:
+            self.respond(409, {'error': str(exc), 'code': 'stale_staff_edit'})
         except (FileExistsError, sqlite3.IntegrityError):
             self.respond(409, {'error': 'Directory record conflict'})
         except (ValueError, TypeError) as exc:

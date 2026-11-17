@@ -133,7 +133,7 @@ class StaffDirectoryHttpTests(unittest.TestCase):
         self.assertEqual(self.request('/api/departments/dept', actor=5)[1]['department']['canDelete'], False)
         self.assertEqual(self.request('/api/departments/unused', actor=5)[1]['department']['canDelete'], True)
         self.assertEqual(self.request('/api/staff-members/person', method='POST', actor=2,
-            payload={'departmentId': None})[0], 200)
+            payload={'departmentId': None, 'revision': self.request('/api/staff-members/person', actor=2)[1]['staffMember']['revision']})[0], 200)
         self.assertFalse(self.request('/api/departments/dept', actor=5)[1]['department']['canDelete'])
         self.assertEqual(self.request('/api/departments/dept/delete', method='POST', actor=5,
             payload={})[0], 409)
@@ -186,8 +186,11 @@ class StaffDirectoryHttpTests(unittest.TestCase):
         staff = result['staffMember']
         self.assertNotIn('accountId', staff)
         for active in (False, True):
-            response = self.request('/api/staff-members/' + staff['id'], method='POST', actor=2, payload={'active': active})
+            response = self.request('/api/staff-members/' + staff['id'], method='POST', actor=2,
+                payload={'active': active, 'revision': staff['revision']})
+            self.assertEqual(response[0], 200, response)
             self.assertEqual(response[1]['staffMember']['active'], active)
+            staff = response[1]['staffMember']
         self.assertEqual(len(self.request('/api/staff-members?query=Sam&limit=1&offset=0', actor=3)[1]['staffMembers']), 1)
         for query in ('limit=101', 'limit=bad', 'offset=-1', 'query=a&query=b', 'accountId=1'):
             self.assertEqual(self.request('/api/staff-members?' + query)[0], 400)
@@ -203,7 +206,7 @@ class StaffDirectoryHttpTests(unittest.TestCase):
         self.assertEqual(response, {'staffMembers': [expected]})
         self.assertEqual(cache, 'no-store')
         self.assertEqual(set(expected), {'id', 'firstName', 'lastName', 'email', 'jobTitle',
-            'telephone', 'location', 'departmentId', 'active'})
+            'telephone', 'location', 'departmentId', 'active', 'revision'})
         for query in ('Unstaffed', 'account-4', 'PRIVATE-MFA-SECRET', 'private-hash'):
             self.assertEqual(self.request('/api/staff-members?' + urlencode({'query': query}), actor=3)[1], {'staffMembers': []})
         for path in ('/api/departments', '/api/departments/dept', '/api/departments?query=Production'):
@@ -255,6 +258,66 @@ class StaffDirectoryHttpTests(unittest.TestCase):
         self.assertEqual(self.request('/api/departments/dept', method='POST', actor=5, payload={'archived': True})[0], 200)
         self.assertEqual(self.request(method='POST', actor=2, payload=dict(firstName='A', lastName='B', departmentId='dept'))[0], 409)
         self.assertEqual(self.request('/api/departments/dept', method='POST', actor=5, payload={'archived': False})[0], 200)
-        self.request('/api/staff-members/person', method='POST', actor=2, payload={'departmentId': 'dept'})
-        self.request('/api/staff-members/person', method='POST', actor=2, payload={'departmentId': None})
+        for department in ('dept', None):
+            revision = self.request('/api/staff-members/person', actor=2)[1]['staffMember']['revision']
+            self.assertEqual(self.request('/api/staff-members/person', method='POST', actor=2,
+                payload={'departmentId': department, 'revision': revision})[0], 200)
         self.assertEqual(self.request('/api/departments/dept/delete', method='POST', actor=5, payload={})[0], 409)
+
+    def test_stale_edit_and_quick_status_return_clear_private_conflicts(self):
+        path = '/api/staff-members/person'
+        original = self.request(path)[1]['staffMember']
+        editor = self.request(path, actor=2)[1]['staffMember']
+        self.assertEqual(original['revision'], editor['revision'])
+        status, response, _ = self.request(path, method='POST', actor=2,
+            payload=dict(departmentId='dept', active=False, jobTitle='New title', revision=editor['revision']))
+        self.assertEqual(status, 200, response)
+        with sqlite3.connect(self.path) as db:
+            before = list(db.iterdump())
+        for payload in (dict(active=True, revision=original['revision']),
+                dict(firstName='Old form', departmentId=None, active=True, revision=original['revision'],
+                     login=dict(username='must-not-exist', password='test-password'))):
+            status, conflict, cache = self.request(path, method='POST', payload=payload)
+            self.assertEqual(status, 409, conflict)
+            self.assertEqual(cache, 'no-store')
+            self.assertEqual(conflict, {'code': 'stale_staff_edit',
+                'error': 'This Staff Member was changed elsewhere. Refresh the current details before editing again.'})
+        status, conflict, _ = self.request(path, method='POST', actor=2,
+            payload=dict(active=True, revision=editor['revision']))
+        self.assertEqual(status, 409)
+        self.assertEqual(set(conflict), {'error', 'code'})
+        with sqlite3.connect(self.path) as db:
+            self.assertEqual(before, list(db.iterdump()))
+        refreshed = self.request(path, actor=2)[1]['staffMember']
+        self.assertEqual((refreshed['departmentId'], refreshed['active'], refreshed['jobTitle']), ('dept', False, 'New title'))
+        status, response, _ = self.request(path, method='POST', actor=2,
+            payload=dict(active=True, revision=refreshed['revision']))
+        self.assertEqual(status, 200, response)
+        self.assertTrue(response['staffMember']['active'])
+        self.assertNotIn('accountId', response['staffMember'])
+
+    def test_revision_validation_keeps_authentication_and_permission_guards(self):
+        path = '/api/staff-members/person'
+        revision = self.request(path)[1]['staffMember']['revision']
+        for payload in ({'active': False}, *[dict(active=False, revision=value)
+                for value in (None, True, 0, [], {}, '', 'a' * 63, 'A' * 64, 'a' * 65)]):
+            with self.subTest(payload=payload):
+                self.assertEqual(self.request(path, method='POST', payload=payload)[0], 400)
+        self.assertEqual(self.request(path, method='POST',
+            raw=b'{"active":false,"revision":"a","revision":"b"}')[0], 400)
+        self.assertEqual(self.request(path, method='POST', payload=dict(active=False, revision='0' * 64))[0], 409)
+        for actor in (None, 3, 4, 5, 6):
+            for identifier in ('person', 'missing'):
+                for submitted in ('bad', revision):
+                    self.assertEqual(self.request('/api/staff-members/' + identifier, method='POST', actor=actor,
+                        payload=dict(active=False, revision=submitted))[0], 403)
+        self.assertEqual(self.request(path, method='POST', headers={'X-CSRF-Token': 'bad'},
+            payload=dict(active=False, revision=revision))[0], 403)
+        self.assertEqual(self.request('/api/staff-members/missing', method='POST',
+            payload=dict(active=False, revision=revision))[0], 404)
+        self.assertEqual(self.request(path, method='POST', actor=2,
+            payload=dict(location='Forbidden login', revision=revision,
+                login=dict(username='forbidden', password='test-password')))[0], 403)
+        self.assertEqual(self.request(path)[1]['staffMember']['location'], '')
+        self.assertEqual(self.request(method='POST',
+            payload=dict(firstName='A', lastName='B', revision=revision))[0], 400)
