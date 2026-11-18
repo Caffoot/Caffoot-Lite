@@ -115,3 +115,11 @@ See [Optional Features](Optional-Features-and-Link-To-IPAM.md) for organisation-
 ## Application Screenshots
 
 Screenshot provenance and the desktop and mobile light/dark captures are recorded in the [Batch 4.1 evidence](../../../development-handovers/evidence/stage-4-batch-41/README.md). Independent visual approval is pending.
+
+![Desktop light Supplier Directory with search, the category filter, and Northlight Technology Ltd in the results](../../../development-handovers/evidence/stage-4-batch-41/images/directory-light-1440.png)
+
+The Supplier Directory presents the main office town alongside each company and provides the live category filter.
+
+![Mobile dark Add Supplier form scrolled to the first Contact, with the Add Another Contact, Cancel and Add Supplier controls](../../../development-handovers/evidence/stage-4-batch-41/images/add-supplier-contact-dark-390.png)
+
+Scroll down to reach the initially open Contact entry and save controls on a narrow screen.

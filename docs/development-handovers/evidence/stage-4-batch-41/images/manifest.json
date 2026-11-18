@@ -1,0 +1,328 @@
+{
+  "sourceCommit": "c79354da57e4981f1aa8dd519d42f2ba62113ff7",
+  "schema": 21,
+  "browser": "Chromium 156.0.8078.79",
+  "origin": "https://127.0.0.1:8097",
+  "captures": [
+    {
+      "file": "directory-light-1440.png",
+      "theme": "light",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      }
+    },
+    {
+      "file": "categories-light-1440.png",
+      "theme": "light",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      }
+    },
+    {
+      "file": "add-supplier-light-1440.png",
+      "theme": "light",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      }
+    },
+    {
+      "file": "add-supplier-contact-light-1440.png",
+      "theme": "light",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      }
+    },
+    {
+      "file": "overview-light-1440.png",
+      "theme": "light",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      }
+    },
+    {
+      "file": "locations-light-1440.png",
+      "theme": "light",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      }
+    },
+    {
+      "file": "contacts-light-1440.png",
+      "theme": "light",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      }
+    },
+    {
+      "file": "contact-details-light-1440.png",
+      "theme": "light",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      }
+    },
+    {
+      "file": "notes-light-1440.png",
+      "theme": "light",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      }
+    },
+    {
+      "file": "optional-features-light-1440.png",
+      "theme": "light",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      }
+    },
+    {
+      "file": "directory-dark-1440.png",
+      "theme": "dark",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      }
+    },
+    {
+      "file": "categories-dark-1440.png",
+      "theme": "dark",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      }
+    },
+    {
+      "file": "add-supplier-dark-1440.png",
+      "theme": "dark",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      }
+    },
+    {
+      "file": "add-supplier-contact-dark-1440.png",
+      "theme": "dark",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      }
+    },
+    {
+      "file": "overview-dark-1440.png",
+      "theme": "dark",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      }
+    },
+    {
+      "file": "locations-dark-1440.png",
+      "theme": "dark",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      }
+    },
+    {
+      "file": "contacts-dark-1440.png",
+      "theme": "dark",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      }
+    },
+    {
+      "file": "contact-details-dark-1440.png",
+      "theme": "dark",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      }
+    },
+    {
+      "file": "notes-dark-1440.png",
+      "theme": "dark",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      }
+    },
+    {
+      "file": "optional-features-dark-1440.png",
+      "theme": "dark",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      }
+    },
+    {
+      "file": "directory-light-390.png",
+      "theme": "light",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      }
+    },
+    {
+      "file": "categories-light-390.png",
+      "theme": "light",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      }
+    },
+    {
+      "file": "add-supplier-light-390.png",
+      "theme": "light",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      }
+    },
+    {
+      "file": "add-supplier-contact-light-390.png",
+      "theme": "light",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      }
+    },
+    {
+      "file": "overview-light-390.png",
+      "theme": "light",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      }
+    },
+    {
+      "file": "locations-light-390.png",
+      "theme": "light",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      }
+    },
+    {
+      "file": "contacts-light-390.png",
+      "theme": "light",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      }
+    },
+    {
+      "file": "contact-details-light-390.png",
+      "theme": "light",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      }
+    },
+    {
+      "file": "notes-light-390.png",
+      "theme": "light",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      }
+    },
+    {
+      "file": "optional-features-light-390.png",
+      "theme": "light",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      }
+    },
+    {
+      "file": "directory-dark-390.png",
+      "theme": "dark",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      }
+    },
+    {
+      "file": "categories-dark-390.png",
+      "theme": "dark",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      }
+    },
+    {
+      "file": "add-supplier-dark-390.png",
+      "theme": "dark",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      }
+    },
+    {
+      "file": "add-supplier-contact-dark-390.png",
+      "theme": "dark",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      }
+    },
+    {
+      "file": "overview-dark-390.png",
+      "theme": "dark",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      }
+    },
+    {
+      "file": "locations-dark-390.png",
+      "theme": "dark",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      }
+    },
+    {
+      "file": "contacts-dark-390.png",
+      "theme": "dark",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      }
+    },
+    {
+      "file": "contact-details-dark-390.png",
+      "theme": "dark",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      }
+    },
+    {
+      "file": "notes-dark-390.png",
+      "theme": "dark",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      }
+    },
+    {
+      "file": "optional-features-dark-390.png",
+      "theme": "dark",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      }
+    }
+  ]
+}
