@@ -168,6 +168,11 @@ async function main(){
  await stockTab('receive');
  await newComputer(16,10,'Fictional Supplier A');
  await page.locator('#stock-receivedOn').fill('2026-11-13');
+ await page.locator('#caffoot-uk-stock-receivedOn').waitFor();
+ assert.equal(await page.locator('#caffoot-uk-stock-receivedOn').inputValue(),'13/11/2026');
+ await page.locator('#caffoot-uk-stock-receivedOn').fill('14/11/2026');
+ assert.equal(await page.locator('#stock-receivedOn').inputValue(),'2026-11-14');
+ await page.locator('#caffoot-uk-stock-receivedOn').fill('13/11/2026');
  await page.locator('#stock-notes').fill('First fictional delivery');
  await page.locator('[name="itemsChecked"]').check();
  await page.locator('[name="conditionChecked"]').check();
