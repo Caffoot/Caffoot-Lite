@@ -5,6 +5,7 @@
   let error='',receiptMode='new',pending=false,generation=0,detailRequest=0;
   let issues=[],deviceAssignments=[],registeredDevices=[],deviceChoices=[],movements=[],stockContext={},selectedRegisteredId=null,reissueDevices=[];
   let correction=null,correctionRequest=0,correctionTimer,returnCorrection=null;
+  let receiptFocus = null;
   let issueDraft=null,report=null,reportDays=30,reportCategory='',inventoryFilter=null,movementFilter=null;
   const safe=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   function canRead(){return !!config?.canRead();}
@@ -201,7 +202,7 @@
     const receiptRows=receipts.map(row=>`<tr id="stock-receipt-${row.id}" tabindex="-1">
       ${editable ? `<td class="equipment-supplier-select"><input type="checkbox" data-select-receipt-supplier="${row.id}" aria-label="Select receipt ${row.id}"></td>` : ''}<td>${stockDate(row.date)}<div class="sub">${safe(row.actor)}</div></td><td>${safe(stockLabel({...row.specification,name:row.name}))}<div class="sub">${safe(stockSpecText(row.specification||{}))}</div></td><td>${receiptSupplierCell(row,editable)}</td><td>${row.quantity}</td><td>${row.ready??'Not Recorded'}</td><td>${row.awaiting??'Not Recorded'}</td><td><details><summary>Receipt Checks</summary><p>Items: ${stockCheckLabel(row.checks?.itemsChecked)}<br>Condition: ${stockCheckLabel(row.checks?.conditionChecked)}</p><p>${safe(row.notes||'No receipt notes recorded.')}</p>${(row.units||[]).map(unit=>`<p>Serial Number: ${safe(unit.serialNumber||"Not Recorded")}<br>Asset Tag: ${safe(unit.assetTag||"Not Recorded")}</p>`).join('')}<p class="sub">Recorded: ${safe(row.recordedAt)}</p></details></td></tr>`).join('');
     const changed=changes.map(row=>`<tr><td>${stockDate(row.date)}<div class="sub">${safe(row.actor)}</div></td><td>${safe(stockLabel({...row.specification,name:row.name}))}<div class="sub">${safe(stockSpecText(row.specification||{}))}</div></td><td>${row.preparation?row.quantity+' Prepared':(row.readyBefore??'Not Recorded')+' → '+(row.readyAfter??'Not Recorded')}</td><td>${safe(row.reason||'No note recorded.')}<div class="sub">${row.preparation?safe(row.checks?.workingCheckLabel||'Cleaned / Working')+': '+stockCheckLabel(row.checks?.cleanedWorking)+(row.checks?.dataCheckLabel?' · '+safe(row.checks.dataCheckLabel)+': '+stockCheckLabel(row.checks.dataPreparationConfirmed):''):'Items: '+stockCheckLabel(row.checks?.itemsChecked)+' · Condition: '+stockCheckLabel(row.checks?.conditionChecked)}</div></td></tr>`).join('');
-    return `<div class="stock-card-stack"><div class="section-heading"><h2>Stock Receipts</h2>
+    return `<div class="stock-card-stack"><div class="section-heading"><h2 id="stock-receipts-heading" tabindex="-1">Stock Receipts</h2>
       ${editable ? '<button class="btn" type="button" data-stock-action="assign-receipt-supplier" disabled>Assign Supplier</button>' : ''}</div>
       <div class="card">${stockTable([...(editable ? ['Select'] : []),'Date / Actor','Stock Item','Supplier','Received','Ready','Awaiting','Checks / Notes'],receiptRows,'No Recorded Receipts')}</div><h2>Readiness Changes</h2><p class="sub">Later checks are separate movements. Original receipts are retained.</p><div class="card">${stockTable(['Date / Actor','Stock Item','Ready Before → After','Reason / Checks'],changed,'No Recorded Readiness Changes')}</div></div>`;
   }
@@ -401,6 +402,7 @@
       });
       return;
     }
+    if (action === 'tab' && /^#it-assets\/receipts\//.test(location.hash)) history.replaceState(null,'','#it-assets');
     if(action==='tab'){if(stockContext.association&&button.dataset.tab!=='issue')stockContext={};tab=button.dataset.tab;error='';config.redraw();document.getElementById('stock-tab-'+tab)?.focus();return;}
     if(action==='reload'){void refreshStock();return;}
     if(action==='reissue-device'){if(canEdit()&&config.canEditDevices())openStockWorkflow('reissue',{deviceId:button.dataset.id});return;}
@@ -930,10 +932,23 @@
     hydrateStockCirculation();document.getElementById('stock-recipientKind')?.focus();
   }
 
+  function prepareReceipt(identity) {
+    receiptFocus = identity;
+    tab = 'history';
+    detail = null;
+    loaded = false;
+  }
+
   function hydrateStockPage(){
     const retainedIssue=document.getElementById('stock-issue-draft');
     if(retainedIssue&&issueDraft)retainedIssue.replaceWith(issueDraft.form);
     restoreStockReturn();
+    if (loaded && receiptFocus) {
+      const row = document.getElementById('stock-receipt-' + receiptFocus);
+      receiptFocus = null;
+      (row || document.getElementById('stock-receipts-heading'))?.focus();
+      if (!row) config.notify('This receipt is no longer available.', 'error');
+    }
     const receipt=document.getElementById('stock-receipt-form');
     if(receipt && config.suppliersEnabled() && !receipt.supplierChooser)
       receipt.supplierChooser=window.caffootSuppliers.mountEquipmentChooser(receipt.elements.supplier,'it-assets');
@@ -954,5 +969,5 @@
   }
   function dismissHandover(){if(stockContext.handover)stockContext={};}
   function configureStock(options){config=options;}
-  window.caffootStockIntake={configure:configureStock,enter:enterStock,render:renderStock,hydrate:hydrateStockPage,refresh:refreshStock,clear:clearStock,openWorkflow:openStockWorkflow,openHandover:openDirectHandover,dismissHandover};
+  window.caffootStockIntake={configure:configureStock,enter:enterStock,render:renderStock,hydrate:hydrateStockPage,refresh:refreshStock,clear:clearStock,prepareReceipt,openWorkflow:openStockWorkflow,openHandover:openDirectHandover,dismissHandover};
 })();

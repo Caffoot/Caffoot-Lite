@@ -4,11 +4,13 @@
   const api = '/api/suppliers';
   const tabs = [
     ['overview', 'Overview', 'grid'], ['locations', 'Locations', 'network'],
-    ['contacts', 'Contacts', 'users'], ['notes', 'Notes & Issues', 'history']
+    ['contacts', 'Contacts', 'users'], ['notes', 'Notes & Issues', 'history'],
+    ['equipment', 'Supplied Equipment', 'box']
   ];
   let config, active = false, requestId = 0, draftId = 0, pending = false, returnDialog;
   let directory, supplier, supplierId, purchasing, tab = 'overview', notesView = 'notes', loading = false, error = '';
-  let statusFilter = '', issueCategoryFilter = '';
+  let statusFilter = '', issueCategoryFilter = '', equipmentType = '';
+  const supplierTabs = () => tabs.filter(([key]) => key !== 'equipment' || supplier?.equipment);
   const issueStatuses = ['Open', 'In Progress', 'Resolved', 'Closed'];
   const issueTones = {Open: 'maintenance', 'In Progress': 'issue-progress', Resolved: '', Closed: 'retired'};
   let search = '', categoryFilter = '', contactSearch = '', contactFilter = '', noteFilter = 'all';
@@ -142,6 +144,7 @@
       ['Locations', 'locations', supplier.locations.filter(item => !item.archived).length],
       ['Contacts', 'contacts', supplier.contacts.filter(item => !item.archived).length],
       ['Active Issues', 'issues', supplier.issues.filter(issue => ['Open', 'In Progress'].includes(issue.status)).length],
+      ...(supplier.equipment ? [['Supplier Equipment', 'equipment', BigInt(supplier.equipment.quantity).toLocaleString('en-GB')]] : []),
     ].map(([label, key, count]) =>
       `<button class="card card-padded stat stock-report-metric" type="button" data-supplier-action="tab" data-id="${key}">
         <span class="statnum">${count}</span><span class="stathead">${label}</span></button>`).join('');
@@ -295,17 +298,40 @@
       </div></div></div>`;
   }
 
+  function equipmentRows() {
+    return supplier.equipment.records.filter(record => !equipmentType || equipmentType === record.type).map(record => {
+      const date = record.date ? record.date.split('-').reverse().join('/') : '—';
+      const quantity = record.quantity === null ? '—' : record.quantity.toLocaleString('en-GB');
+      const tone = record.status === 'Retired' ? ' retired' : record.status === 'Maintenance' ? ' maintenance' : '';
+      return `<tr><td><strong>${safe(record.name)}</strong></td><td>${safe(record.sourceLabel)}</td>
+        <td>${safe(record.type)}</td><td>${safe(record.identifier)}</td><td>${quantity}</td>
+        <td>${safe(date)}</td><td><span class="device-status${tone}">${safe(record.status)}</span></td>
+        <td>${button(record.source === 'device' ? 'View Device' : 'View Receipt', 'view-' + record.source, record.id)}</td></tr>`;
+    }).join('');
+  }
+  function renderEquipment() {
+    const records = supplier.equipment.records;
+    const types = [...new Set(records.map(record => record.type))].sort((a,b) => a.localeCompare(b, 'en-GB'));
+    const count = records.length.toLocaleString('en-GB');
+    const controls = select('Equipment Type', 'equipment-type', [['', 'All Equipment Types'], ...types.map(type => [type, type])], equipmentType);
+    return sectionHeading('Supplied Equipment', count + ' Visible ' + (records.length === 1 ? 'Record' : 'Records'), controls) +
+      table(['Equipment Name', 'Source', 'Type', 'Identifier', 'Original Quantity', 'Receipt Date', 'Status', 'Actions'],
+        equipmentRows(), records.length ? 'No Equipment Matches This Type' : 'No Supplied Equipment Recorded', 'supplier-equipment-rows');
+  }
+
   function renderDetails() {
-    const content = {overview: renderOverview, locations: renderLocations, contacts: renderContacts, notes: renderNotesIssues}[tab]();
+    const visibleTab = tab === 'equipment' && !supplier.equipment ? 'overview' : tab;
+    const content = {overview: renderOverview, locations: renderLocations, contacts: renderContacts,
+      notes: renderNotesIssues, equipment: renderEquipment}[visibleTab]();
     const {buttons, explanation} = lifecycleActions('supplier', supplier, supplier.status);
     const edit = editable() ? button('Edit Supplier', 'supplier-form', supplier.id) : '';
     return header(supplier.name, 'Supplier Details', button('Back To Suppliers', 'directory') + edit + buttons, explanation) +
       `<div class="row-between supplier-row">${badge(supplier.status)}</div>
-      <nav class="tabs" role="tablist" aria-label="Supplier Details Tabs">${tabs.map(([key, label, symbol]) =>
-        `<button type="button" class="tab section-tab-control${tab === key ? ' active' : ''}" role="tab" id="supplier-tab-${key}"
-        aria-selected="${tab === key}" aria-controls="supplier-panel" tabindex="${tab === key ? '0' : '-1'}"
+      <nav class="tabs" role="tablist" aria-label="Supplier Details Tabs">${supplierTabs().map(([key, label, symbol]) =>
+        `<button type="button" class="tab section-tab-control${visibleTab === key ? ' active' : ''}" role="tab" id="supplier-tab-${key}"
+        aria-selected="${visibleTab === key}" aria-controls="supplier-panel" tabindex="${visibleTab === key ? '0' : '-1'}"
         data-supplier-action="tab" data-id="${key}">${icon(symbol)}${label}</button>`).join('')}</nav>
-      <section class="stock-panel" id="supplier-panel" role="tabpanel" aria-labelledby="supplier-tab-${tab}">${content}</section>`;
+      <section class="stock-panel" id="supplier-panel" role="tabpanel" aria-labelledby="supplier-tab-${visibleTab}">${content}</section>`;
   }
   function render() {
     let content;
@@ -329,7 +355,7 @@
   }
   function readRoute(section) {
     if (section === 'purchasing') return [null, location.hash === '#purchasing/issues' ? 'all-issues' : 'dashboard'];
-    const route = /^#suppliers(?:\/([1-9]\d*)(?:\/(overview|locations|contacts|notes|notes\/issues))?)?$/.exec(location.hash);
+    const route = /^#suppliers(?:\/([1-9]\d*)(?:\/(overview|locations|contacts|notes|notes\/issues|equipment))?)?$/.exec(location.hash);
     const view = route?.[2] === 'notes/issues' ? 'issues' : route?.[2] || 'overview';
     return [route?.[1] ? Number(route[1]) : null, view];
   }
@@ -344,6 +370,7 @@
       if (identity) statusFilter = issueCategoryFilter = '';
       contactSearch = contactFilter = '';
       noteFilter = 'all';
+      equipmentType = '';
     }
     supplierId = identity;
     tab = view === 'issues' ? 'notes' : view;
@@ -362,7 +389,13 @@
       const path = identity ? '/' + identity : {dashboard: '/dashboard', 'all-issues': '/issues'}[view] || '';
       const data = await request(api + path);
       if (generation !== requestId) return;
-      if (identity) supplier = data;
+      if (identity) {
+        supplier = data;
+        if (tab === 'equipment' && !data.equipment) {
+          tab = 'overview';
+          history.replaceState(null, '', '#suppliers/' + identity + '/overview');
+        }
+      }
       else if (path) purchasing = data;
       else {
         directory = data;
@@ -950,6 +983,13 @@
       }
       case 'issue-details': void openIssue(Number(target.dataset.company), identity, restore, target); break;
       case 'open': void show(identity, 'overview', true, 'supplier-page-heading'); break;
+      case 'view-device':
+      case 'view-receipt': {
+        const record = supplier?.equipment?.records.find(item =>
+          'view-' + item.source === action && String(item.id) === target.dataset.id);
+        if (record) config.viewEquipment(record);
+        break;
+      }
       case 'tab': {
         const selected = target.dataset.id;
         void show(supplierId, selected, true, 'supplier-tab-' + (selected === 'issues' ? 'notes' : selected));
@@ -1041,7 +1081,12 @@
     else if (id === 'supplier-contact-filter') contactFilter = value;
     else if (id === 'supplier-issue-status-filter') statusFilter = value;
     else if (id === 'supplier-issue-category-filter') issueCategoryFilter = value;
-    else if (id === 'supplier-note-filter') {
+    else if (id === 'supplier-equipment-type') {
+      equipmentType = value;
+      document.getElementById('supplier-equipment-rows').innerHTML =
+        equipmentRows() || emptyRow(8, 'No Equipment Matches This Type');
+      return;
+    } else if (id === 'supplier-note-filter') {
       noteFilter = value;
       config.redraw();
       document.getElementById(id)?.focus();
@@ -1056,10 +1101,11 @@
     const target = event.target.closest('[role="tab"][id^="supplier-tab-"]');
     if (!target || !['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
     event.preventDefault();
-    const index = tabs.findIndex(([key]) => key === tab);
-    const next = {Home: 0, End: tabs.length - 1, ArrowLeft: (index + tabs.length - 1) % tabs.length,
-      ArrowRight: (index + 1) % tabs.length}[event.key];
-    const selected = tabs[next][0];
+    const visible = supplierTabs();
+    const index = visible.findIndex(([key]) => key === tab);
+    const next = {Home: 0, End: visible.length - 1, ArrowLeft: (index + visible.length - 1) % visible.length,
+      ArrowRight: (index + 1) % visible.length}[event.key];
+    const selected = visible[next][0];
     void show(supplierId, selected, true, 'supplier-tab-' + selected);
   });
 

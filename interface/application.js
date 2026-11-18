@@ -9550,6 +9550,7 @@ void (async () => {
   const isSupplierPage = tab => ['suppliers','purchasing'].includes(tab);
   const purchasingHash = /^#purchasing(?:\/issues)?$/;
   const supplierHash = /^#suppliers(?:\/|$)/;
+  const receiptHash = /^#it-assets\/receipts\/([1-9]\d{0,15})$/;
   function landingTab() {
     return location.pathname==='/account'?'account':inventorySectionAccess()?'dashboard':
       sessionDirectoryPermissions.staffMembers?.read?'staff':sessionDirectoryPermissions.departments?.read?'departments':
@@ -9559,6 +9560,7 @@ void (async () => {
     if (location.pathname!=='/inventory') return '';
     if (permissions.Suppliers && supplierHash.test(location.hash)) return 'suppliers';
     if (permissions.Suppliers && purchasingHash.test(location.hash)) return 'purchasing';
+    if (permissions['IT Assets'] && receiptHash.test(location.hash)) return 'it-assets';
     const destination = window.location.hash.slice(1);
     const legacyDestination = {
       dashboard:'dashboard', devices:'devices', ipam:'ipam',
@@ -9593,6 +9595,10 @@ void (async () => {
     }
     if (tab === 'purchasing' && (!fromRoute || currentTab !== 'purchasing')) setDepartmentExpanded('purchasing',true);
     if (tab === 'suppliers' && currentTab !== 'suppliers') setDepartmentExpanded('purchasing',true);
+    if (tab === 'it-assets' && fromRoute) {
+      const receipt = receiptHash.exec(location.hash);
+      if (receipt) window.caffootStockIntake.prepareReceipt(receipt[1]);
+    }
     originalSwitchTab(tab);
     if (isSupplierPage(tab)) window.caffootSuppliers.enter(tab, fromRoute);
     applyAllowedControls();
@@ -9602,8 +9608,27 @@ void (async () => {
     if (!tab) return;
     const navigate = () => switchTab(tab, true);
     if (document.querySelector('#modal-container:not(.hidden) [data-supplier-dialog]')) closeModal(false, navigate);
-    else navigate();
+    else {
+      if (document.querySelector('#modal-container:not(.hidden) [data-supplier-equipment-drilldown]')) closeModal(true);
+      navigate();
+    }
   });
+  function viewSupplierEquipment(record) {
+    if (record.source === 'receipt' && permissions['IT Assets']) {
+      history.pushState(null, '', '#it-assets/receipts/' + record.id);
+      switchTab('it-assets', true);
+    } else if (record.source === 'device' && permissions.Devices) {
+      void refreshCentralInventory(false).then(() => {
+        if (!isSupplierPage(currentTab) || !permissions.Devices || !appState.devices.some(device => device.id === record.id)) return;
+        history.pushState(null, '', '#devices');
+        activeDeviceDetailsTab = 'inventory';
+        switchTab('devices', true);
+        openDeviceDetailView(record.id);
+        const dialog = document.querySelector('.device-details-dialog');
+        if (dialog) dialog.dataset.supplierEquipmentDrilldown = '';
+      }).catch(error => showToast(error.message, 'error'));
+    }
+  }
   // Keep the published read-only device details open during a competing edit.
   const originalOpenDeviceDetailView = openDeviceDetailView;
   function updateDeviceEditorNotice(deviceId) {
@@ -11318,7 +11343,8 @@ void (async () => {
       csrf:csrfToken,canEdit:()=>!!editPermissions.Suppliers,admin:sessionIsAdmin,canAssignEquipmentSupplier,
       escape:escapeHtml,icon:renderSectionTabIcon,openModal:html=>openModal(html),openEquipmentSupplierModal,
       closeModal:(force, onClosed)=>closeModal(force,onClosed),
-      navigate:(tab, fromRoute)=>switchTab(tab,fromRoute), redraw:()=>{if(isSupplierPage(currentTab))renderContent();},
+      navigate:(tab, fromRoute)=>switchTab(tab,fromRoute), viewEquipment:viewSupplierEquipment,
+      redraw:()=>{if(isSupplierPage(currentTab))renderContent();},
       notify:(message,type)=>showToast(message,type)
     });
     window.caffootStockIntake.configure({csrf:csrfToken,canRead:()=>!!permissions['IT Assets'],

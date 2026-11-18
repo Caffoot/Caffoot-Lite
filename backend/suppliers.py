@@ -5,6 +5,7 @@ import re
 from urllib.parse import urlsplit
 
 from .audit_events import record_actor_event
+from .equipment_suppliers import read_supplied_equipment
 from .permissions import _admin, can_access
 from .sessions import session_account
 from .supplier_issue_schema import ISSUE_STATUSES
@@ -172,10 +173,12 @@ def location_delete_reason(connection, location, main):
     return ""
 
 
-def read_supplier(connection, identity):
+def read_supplier(connection, identity, actor):
     supplier = get_supplier(connection, identity)
     sections = supply_sections(connection, identity)
+    equipment = read_supplied_equipment(connection, actor, identity)
     return {
+        **({"equipment": equipment} if equipment is not None else {}),
         "id": identity, "name": supplier[1], "website": supplier[2], "description": supplier[3],
         "status": supplier[4], "revision": supplier[5],
         "hasSupplyHistory": bool(sections), "deleteReason": supplier_delete_reason(connection, supplier, sections),
@@ -705,7 +708,7 @@ def save_supplier_operation(connection, actor, session_token, request):
         if record in ("category", "issue-category"):
             result = save_category(connection, actor, identity, revision, operation, data)
         elif operation == "supplier.save" and supplier_id is None:
-            result = read_supplier(connection, save_company(connection, actor, None, data))
+            result = read_supplier(connection, save_company(connection, actor, None, data), actor)
         else:
             supplier = get_supplier(connection, supplier_id)
             require_revision(revision, supplier[5])
@@ -724,7 +727,7 @@ def save_supplier_operation(connection, actor, session_token, request):
                 result = read_directory(connection)
             else:
                 connection.execute("UPDATE suppliers SET revision=revision+1 WHERE id=?", (supplier_id,))
-                result = read_supplier(connection, supplier_id)
+                result = read_supplier(connection, supplier_id, actor)
                 if issue_id is not None:
                     result["issue"] = read_issue(connection, supplier_id, issue_id)
         connection.commit()

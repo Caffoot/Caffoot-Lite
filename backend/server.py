@@ -752,7 +752,7 @@ class Handler(BaseHTTPRequestHandler):
                     elif impact:
                         result = read_supply_impact(connection, actor, int(parts[3]))
                     else:
-                        result = read_supplier(connection, int(parts[3]))
+                        result = read_supplier(connection, int(parts[3]), actor)
                 else:
                     actor = authorised_mutation(connection, cookie, origin, PUBLIC_ORIGIN,
                                                 self.headers.get("X-CSRF-Token"))

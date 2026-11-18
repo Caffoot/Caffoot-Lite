@@ -30,7 +30,9 @@ with sqlite3.connect(sys.argv[1]) as db:
     admin, secret = bootstrap_first_admin(db, 'Owner', sys.argv[2])
     confirm_admin_mfa(db, admin, code_at(secret, time.time()))
     for username, grants in [('Equipment Editor', [('Devices','edit'),('IT Assets','edit')]),
-                             ('Device Reader', [('Devices','read')])]:
+                             ('Device Reader', [('Devices','read')]),
+                             ('Supplier Reader', [('Suppliers','read')]),
+                             ('Receipt Reader', [('Suppliers','read'),('IT Assets','read')])]:
         actor = create_user(db, admin, username, sys.argv[2])
         db.execute("UPDATE accounts SET mfa_secret=?,mfa_confirmed=1 WHERE id=?", (secret, actor))
         db.executemany("INSERT INTO account_permission_overrides VALUES(?,?,?)",
@@ -164,7 +166,43 @@ with sqlite3.connect(sys.argv[1]) as db:
   await receiptDialog.getByRole('option', {name: 'Northlight Technology Ltd'}).click();
   await post(editor.page, '/api/suppliers/assign/receipts', receiptDialog.getByRole('button', {name: 'Confirm Assignment'}));
   await stockRow.getByText('Linked Supplier: Northlight Technology Ltd').waitFor();
+  await page.goto(origin + '/inventory#suppliers/1/overview');
+  const quantity = page.getByRole('button', {name: '51 Supplier Equipment'});
+  await quantity.waitFor();
+  await quantity.click();
+  const rows = page.locator('#supplier-equipment-rows tr');
+  assert.equal(await rows.count(), 2);
+  await page.getByText('2 Visible Records').waitFor();
+  const type = page.getByLabel('Equipment Type');
+  await type.selectOption('Keyboard');
+  assert.equal(await rows.count(), 1);
+  assert.match(await rows.first().innerText(), /USB Keyboards.*IT Assets Receipt/s);
+  await rows.getByRole('button', {name: 'View Receipt'}).click();
+  const receiptRow = page.locator('#stock-receipt-' + receipt.response.receiptId);
+  await receiptRow.waitFor();
+  await page.waitForFunction(id => document.activeElement.id === id, 'stock-receipt-' + receipt.response.receiptId);
+  await page.goBack();
+  await page.getByRole('tab', {name: 'Supplied Equipment', selected: true}).waitFor();
+  await page.getByRole('button', {name: 'View Device'}).click();
+  await page.locator('.device-details-dialog').getByRole('heading', {name: 'Meeting Room Display'}).waitFor();
+  await page.goBack();
+  await page.getByRole('tab', {name: 'Supplied Equipment', selected: true}).waitFor();
+  assert.equal(await page.locator('#modal-container:not(.hidden)').count(), 0);
+
+  const suppliersOnly = await login('Supplier Reader', '#suppliers/1/equipment');
+  await suppliersOnly.page.getByRole('tab', {name: 'Overview', selected: true}).waitFor();
+  assert.equal(await suppliersOnly.page.getByRole('tab', {name: 'Supplied Equipment'}).count(), 0);
+  assert.equal(await suppliersOnly.page.getByRole('button', {name: /Supplier Equipment/}).count(), 0);
+  const receiptsOnly = await login('Receipt Reader', '#suppliers/1/overview');
+  await receiptsOnly.page.getByRole('button', {name: '50 Supplier Equipment'}).click();
+  assert.equal(await receiptsOnly.page.locator('#supplier-equipment-rows tr').count(), 1);
+  assert.deepEqual(await receiptsOnly.page.getByLabel('Equipment Type').locator('option').allTextContents(),
+    ['All Equipment Types', 'Keyboard']);
+  await receiptsOnly.page.getByRole('button', {name: 'View Receipt'}).click();
+  await receiptsOnly.page.locator('#stock-receipt-' + receipt.response.receiptId).waitFor();
+  assert.equal(await receiptsOnly.page.getByRole('button', {name: 'Change Supplier'}).count(), 0);
   assert.deepEqual(errors, []);
+  console.log('PASS: Supplier Equipment counts, filters, canonical drill-down and Back, restricted views.');
   console.log('PASS: real Device and receipt fields, explicit selection, Supplier creation and discard, preserved drafts, duplicate blank, read-only name, and confirmed assignments and removal in the existing lists.');
 }
 main().catch(async error => {

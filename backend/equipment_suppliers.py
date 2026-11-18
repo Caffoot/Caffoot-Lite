@@ -1,4 +1,5 @@
 """Supplier selection and equipment attribution within existing save transactions."""
+import json
 import time
 
 from .audit_events import record_actor_event
@@ -212,3 +213,50 @@ def assign_receipt_suppliers(connection, actor, records, supplier_id):
     for identity, previous, revision in targets:
         write_receipt_supplier(connection, actor, identity, supplier_id, previous, revision=revision)
     return {"updated": len(targets)}
+
+
+def read_supplied_equipment(connection, actor, supplier_id):
+    """Return only readable source records, with original physical supply counted once."""
+    devices = can_access(connection, actor, "Devices")
+    assets = can_access(connection, actor, "IT Assets")
+    if not (can_access(connection, actor, "Suppliers") and (devices or assets)):
+        return None
+    records = []
+    supplied_quantity = 0
+    if devices:
+        for identity, name, raw, from_stock in connection.execute(
+                "SELECT d.id,d.name,d.record_json,EXISTS ("
+                "SELECT 1 FROM it_asset_stock_units u WHERE u.device_id=d.id AND u.stock_item_id IS NOT NULL) "
+                "FROM device_suppliers s JOIN inventory_devices d ON d.id=s.device_id "
+                "WHERE s.supplier_id=? ORDER BY d.name COLLATE NOCASE,d.id", (supplier_id,)):
+            device = json.loads(raw)
+            # Direct Devices can later enter circulation with a unit of their own.
+            # Only a unit attached to pooled stock originated through registration.
+            quantity = None if from_stock else 1
+            records.append({
+                "id": identity, "source": "device",
+                "sourceLabel": ("Stock-derived Device" if assets else "Device") if from_stock else "Independent Device",
+                "name": name, "type": device.get("type") or "Unknown",
+                "identifier": device.get("assetTag") or device.get("serialNumber") or identity,
+                "date": None, "quantity": quantity, "status": device.get("status") or "Active",
+            })
+            supplied_quantity += quantity or 0
+    if assets:
+        for identity, date, quantity, raw in connection.execute(
+                "SELECT m.id,m.event_date,sum(e.quantity),e.snapshot_json FROM receipt_suppliers r "
+                "JOIN it_asset_stock_movements m ON m.id=r.receipt_id "
+                "JOIN it_asset_stock_entries e ON e.movement_id=r.receipt_id "
+                "LEFT JOIN it_asset_stock_units u ON u.id=e.stock_unit_id "
+                "WHERE r.supplier_id=? GROUP BY m.id "
+                "HAVING ? OR max(u.device_id IS NOT NULL)=0 ORDER BY m.event_date DESC,m.id DESC",
+                (supplier_id, devices)):
+            snapshot = json.loads(raw)
+            records.append({
+                "id": identity, "source": "receipt", "sourceLabel": "IT Assets Receipt",
+                "name": snapshot.get("name") or "Stock Item",
+                "type": snapshot.get("category") or "Unknown",
+                "identifier": f"Receipt #{identity}", "date": date,
+                "quantity": quantity, "status": "Received",
+            })
+            supplied_quantity += quantity
+    return {"quantity": str(supplied_quantity), "records": records}

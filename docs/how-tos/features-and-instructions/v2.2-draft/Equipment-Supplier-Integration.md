@@ -70,3 +70,28 @@ You need IT Assets Edit while IT Assets and Suppliers are enabled. Use the origi
 **Example.** A receipt was recorded with the free-text name “Northlight”. The invoice confirms the company was Northlight Technology Ltd. Use **Link Supplier** on that receipt. If a later check shows the invoice belonged to a different delivery, choose **Change Supplier** or **Remove Supplier Association** as appropriate. The original recorded “Northlight” remains visible in the Supplier column.
 
 Only individual deliveries can be corrected here. A row in Stock Inventory can represent several deliveries, each with a different Supplier. Supplier assignment does not change any Physically Held, Ready To Issue or issued quantities.
+
+## Review What A Supplier Provided
+
+You need **Suppliers Read**. You also need **Devices Read** or **IT Assets Read** for each enabled section whose records you want to inspect.
+
+1. Open **Purchasing → Suppliers**, find the company and select its name or **View**.
+2. In **Overview → At A Glance**, read **Supplier Equipment**. This is a quantity of physical units. A confirmed receipt contributes its original quantity. Each explicitly linked independent Device contributes one. A Device registered from stock adds no further units.
+3. Select **Supplier Equipment** or open the **Supplied Equipment** tab. The list shows equipment name, source, type, identifier, original quantity, receipt date, status and available actions. **Visible Records** counts all the source records you may read for the company.
+4. Use **Equipment Type** to narrow the displayed rows. Choose **All Equipment Types** to clear the filter. The filter leaves the Overview quantity and Visible Records count as they were.
+5. Choose **View Device** to open the existing Device Details, or **View Receipt** to go to the original row under **IT Assets → Receipt History → Stock Receipts**. Use the browser Back control to return to the Supplier equipment list. Make corrections in the permitted Device or Receipt History workflow.
+
+**Example.** A confirmed receipt for 50 USB keyboards and one independently added Device from the same company show **51 Supplier Equipment** and **2 Visible Records**. If the company supplies 10 laptops in one receipt and four are later registered as Devices, that delivery still represents 10 supplied units. An explicitly linked Device from stock can be listed separately, with a dash in **Original Quantity**. A dash in **Receipt Date** indicates a Device row.
+
+A delivery keeps its original quantity after issue, return, preparation or write-off. The list shows an explicitly linked Device even when it is retired. Linking or correcting a receipt changes the company that gets credit for that original quantity. Removing the link removes the receipt from the current Supplier list and total while preserving its history.
+
+If **Supplied Equipment** and **Supplier Equipment** are both absent, check whether you can read at least one enabled equipment section. A Supplier reader with only Devices Read sees only Device rows and their permitted quantities. A Supplier reader with only IT Assets Read sees only permitted receipt rows. If a company or equipment record becomes unavailable, reopen its current list and check your permissions and feature switches.
+
+## Manage Supplier Availability And Retention
+
+1. With an administrator account and Suppliers enabled, open the company under **Purchasing → Suppliers**. Review its status and the explanation beside the available actions.
+2. For a company with confirmed supply history, choose **Disable**. Review the affected sections in the confirmation. The warning can include a section whose feature is currently off. Confirm or choose **Cancel** to leave the company available.
+3. To make the company selectable again, open the same company and choose **Re-enable**. Review the latest warning before confirming. If the impact changes while the dialog is open, reopen the company and review it again.
+4. Use the **Audit Trail** to check the recorded changes if your account has the required access. A correction or removal leaves the earlier relationship in the retained audit record. A company with confirmed supply history remains protected from deletion.
+
+For company, location and contact lifecycle actions, see [Supplier Management](Supplier-Management.md). Keep the complete application data volume when following your organisation's SQLite backup process. The published v1.3.3 JSON import is an inventory migration path. Complete v2.2 installation, recovery and upgrade acceptance is tracked separately.
