@@ -152,6 +152,7 @@
     const previous = open;
     open = null;
     previous.record.button.setAttribute('aria-expanded','false');
+    previous.record.button.removeAttribute('aria-controls');
     previous.popup.remove();
     if (restoreFocus && previous.record.button.isConnected) previous.record.button.focus();
   }
@@ -429,6 +430,7 @@
   window.addEventListener('scroll',positionPicker,true);
   const observer = new MutationObserver(mutations => {
     for (const mutation of mutations) for (const node of mutation.addedNodes) scan(node);
+    for (const record of all) if (!record.native.isConnected) all.delete(record);
     if (open && !open.record.native.isConnected) closePicker(false);
   });
   observer.observe(document.documentElement,{childList:true,subtree:true});
