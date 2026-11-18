@@ -78,8 +78,8 @@ class BuiltinRoleMigrationTests(unittest.TestCase):
             if table not in ("schema_migrations", "roles", "role_grants", "account_roles", "account_permission_overrides", "account_sessions", "account_email_proofs"):
                 expected_rows = before[table]
                 if table == "sqlite_sequence":
-                    # Schema 21 seeds eight default Supplier Categories.
-                    expected_rows = expected_rows + [("supplier_categories", 8)]
+                    # Schemas 21 and 22 each seed eight independent categories.
+                    expected_rows = expected_rows + [("supplier_categories", 8), ("supplier_issue_categories", 8)]
                 self.assertEqual(after[table], expected_rows, table)
         for table in ("roles", "role_grants", "account_roles"):
             self.assertEqual([row for row in after[table] if (row[0] if table == "roles" else row[0] if table == "role_grants" else row[1]) != role], before[table], table)
