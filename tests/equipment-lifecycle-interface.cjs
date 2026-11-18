@@ -189,7 +189,7 @@ with sqlite3.connect(sys.argv[1]) as db:
   await metrics.filter({hasText: 'Warranty Expiring Soon'}).click();
   assert.equal(await page.locator('[data-lifecycle-device]').count(), 1);
   await details(page, 'Workshop Desktop');
-  assert.match(await page.locator('.device-lifecycle-section').textContent(), /28 Feb 2027/);
+  assert.match(await page.locator('.device-lifecycle-section').textContent(), /28\/02\/2027/);
   await edit(page);
   const fields = page.locator('[data-lifecycle-editor]');
   await fields.locator('#lifecycle-warrantyExpiry').fill('');
@@ -213,7 +213,7 @@ with sqlite3.connect(sys.argv[1]) as db:
   await page.locator('.device-editor-dialog').waitFor({state:'hidden'});
   await lifecycle(page);
   await details(page, 'Workshop Desktop');
-  assert.match(await page.locator('.device-lifecycle-section').textContent(), /12 Aug 2030/);
+  assert.match(await page.locator('.device-lifecycle-section').textContent(), /12\/08\/2030/);
   await edit(page);
   await fields.getByRole('button', {name: 'Use Calculated Date'}).click();
   const reset = await postOn(page, '/api/devices/edit/save', () =>
