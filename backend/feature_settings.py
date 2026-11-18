@@ -4,7 +4,7 @@ from backend.permissions import _admin
 from backend.sessions import session_account
 
 FEATURES = ('devices', 'ipam', 'racks', 'suppliers', 'equipment_lifecycle', 'it_assets')
-AVAILABLE_FEATURES = frozenset(('devices', 'ipam', 'racks', 'it_assets', 'suppliers'))
+AVAILABLE_FEATURES = frozenset(('devices', 'ipam', 'racks', 'it_assets', 'suppliers', 'equipment_lifecycle'))
 
 
 def unique_feature_fields(pairs):

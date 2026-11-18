@@ -146,7 +146,7 @@ def reissue_stock_device(connection, actor, token, payload):
         recipient = stock_recipient(connection, payload['recipientKind'], payload['recipientId'])
         issued = stock_event_date(payload['issuedOn'], 'Date Issued')
         note = stock_text(payload['note'], 'Issue Note', 2000)
-        capture_first_service_from_stock(connection, actor, device_id, choice['stockUnitId'], issued)
+        capture_first_service_from_stock(connection, actor, choice, issued)
         actor_label = connection.execute('SELECT username FROM accounts WHERE id=?', (actor,)).fetchone()[0]
         assignment = connection.execute('''INSERT INTO device_assignments
             (device_id,staff_id,department_id,recipient_label,assigned_at,actor_id,actor_label)

@@ -28,9 +28,10 @@ Open **Settings & Data → Optional Features**. The cards are grouped as follows
 | Infrastructure | **IP Address Management** | IPAM subnets, address allocations and VLANs |
 | Infrastructure | **Network Racks** | Rack records, accessories and permitted placement workflows |
 | Additional Features | **Suppliers** | Company records, categories, locations, contacts and notes in the [Batch 4.1 draft](Supplier-Management.md) |
+| Additional Features | **Equipment Lifecycle** | Physical Device dates, warranty and replacement warnings and lifespan settings in the [Batch 4.4 draft](Equipment-Lifecycle.md) |
 | Additional Features | **IT Assets** | Stock receipts, inventory, readiness checks, equipment issue and return, write-offs and related stock reporting |
 
-An available card shows **Enabled** or **Disabled**. A disabled card has an **Enable Feature** switch; an enabled card's switch is labelled **Enabled**. The switch's accessible name identifies the feature being enabled or disabled. Equipment Lifecycle becomes available in a later development batch.
+An available card shows **Enabled** or **Disabled**. A disabled card has an **Enable Feature** switch; an enabled card's switch is labelled **Enabled**. The switch's accessible name identifies the feature being enabled or disabled.
 
 **Staff Members** and **Departments** are core areas, subject to their permissions. They have no Optional Features switch and do not have to be populated. **Settings & Data**, account administration and **My Account** remain available under their respective authorisation rules even if every optional area is off. This does not give ordinary users administrator access.
 

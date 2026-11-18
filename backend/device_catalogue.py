@@ -153,6 +153,10 @@ def change_device_catalogue(connection, account_id, kind, operation, old_name,
                 (setting, json.dumps(state[setting], ensure_ascii=False, allow_nan=False))
             )
         if kind == "type":
+            if operation in ("add", "rename"):
+                connection.execute(
+                    "INSERT OR IGNORE INTO equipment_lifecycle_types(name) VALUES(?)",
+                    (old_name if operation == "rename" else name,))
             if operation == "rename":
                 connection.execute(
                     "UPDATE equipment_lifecycle_types SET name=? WHERE name=?", (name, old_name))

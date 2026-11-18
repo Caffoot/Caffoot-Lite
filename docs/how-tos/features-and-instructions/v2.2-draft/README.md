@@ -2,7 +2,7 @@
 
 > **Draft v2.2 — Unreleased.** The Stage 1–3 guides describe `milestone-1` at `753b3266893987addb11406ef8303adb03c3c112` (schema 20), verified on 17 November 2026. Use the [published v2.1 guides](../README.md) for the current release. These drafts are not installation, upgrade or restore instructions.
 
-Caffoot Lite brings accounts, Staff Members, Departments, Devices and optional IT Assets together so your team can record who holds equipment, what is physically in stock and what is ready to issue. These guides explain the implemented Stage 1–3 workflows for ordinary users, IT technicians and administrators. Examples use fictional people, organisations and equipment.
+Caffoot Lite brings accounts, Staff Members, Departments, Devices and optional IT Assets together so your team can record who holds equipment, what is physically in stock and what is ready to issue. These guides explain workflows for ordinary users, IT technicians and administrators, including Suppliers and Equipment Lifecycle in Stage 4. Examples use fictional people, organisations and equipment.
 
 Start with the task you need to complete. Each feature guide explains its permissions, controls, numbered procedures, examples and recovery steps. A missing section may mean the feature is switched off or your account lacks permission; ask an administrator to check before creating duplicate records.
 
@@ -57,6 +57,14 @@ For a new delivery, follow Receive Stock → check/readiness → Issue Equipment
 | Record, correct or review Supplier associations on Devices and stock receipts | [Equipment Supplier Integration](Equipment-Supplier-Integration.md) |
 
 Suppliers starts switched off and uses its own section permissions. Supplier Management and Supplier Issues are integrated on the development branch. Batch 4.3 adds equipment associations and the Supplier Equipment view in schema 23 on [draft PR #416](https://github.com/Caffoot/Caffoot-Lite/pull/416).
+
+## Equipment Lifecycle
+
+| Task | Guide |
+| --- | --- |
+| Record dates, review Dashboard warnings, configure warning periods and lifespans, archive or restore types | [Equipment Lifecycle](Equipment-Lifecycle.md) |
+
+Equipment Lifecycle is independently optional and starts switched off. The guide describes Batch 4.4 on the draft development branch.
 
 ## Publication And Acceptance
 

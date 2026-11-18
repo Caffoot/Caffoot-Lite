@@ -222,3 +222,36 @@
 <!-- interface-template:device-details/link-ipam-action --><div class="device-details-field"><dt>IPAM Association</dt><dd><button type="button" class="device-review-smallbtn" data-action="open-device-ipam-link" data-id="{{slot:0}}">Link to IPAM</button></dd></div><!-- /interface-template -->
 
 <!-- interface-template:device-details/link-ipam-dialog --><div class="device-review-dialog"><header class="device-review-head"><div class="device-review-headline"><div class="min-w-0"><p class="device-review-eyebrow">IP ADDRESS MANAGEMENT</p><h2>Link to IPAM</h2><p class="device-review-sub">{{slot:0}} · {{slot:1}}</p></div><button type="button" class="device-review-close" data-action="cancel-device-ipam-link" aria-label="Cancel Link to IPAM">×</button></div></header><form id="device-ipam-link-form" class="device-review-body"><section class="device-review-panel full"><h3><span class="mini-icon"><i class="fa-solid fa-network-wired" aria-hidden="true"></i></span>Network Identity</h3><p class="device-review-sub">Link this saved basic address to an existing managed subnet. No subnet is created.</p><div class="device-review-field"><label for="device-ipam-link-subnet">Existing Subnet</label><select id="device-ipam-link-subnet" required {{slot:2}}>{{slot:3}}</select></div><p class="device-review-sub" id="device-ipam-link-feedback" role="status">{{slot:4}}</p></section></form><footer class="device-review-footer"><button type="button" class="btn btn-outline" data-action="cancel-device-ipam-link">Cancel</button><button type="submit" form="device-ipam-link-form" class="btn btn-primary" {{slot:2}}>Link to IPAM</button></footer></div><!-- /interface-template -->
+
+<!-- interface-template:device-details/lifecycle-details -->
+<section class="device-lifecycle-section" aria-labelledby="device-lifecycle-heading">
+  <h4 id="device-lifecycle-heading">Equipment Lifecycle</h4>
+  <p class="device-review-quiet">Dates stay with the equipment when it is moved or reissued.</p>
+  <dl class="device-review-facts">{{slot:0}}</dl>
+  <p class="device-help">{{slot:1}}</p>
+</section>
+<!-- /interface-template -->
+
+<!-- interface-template:device-details/lifecycle-editor -->
+<section class="device-lifecycle-section" data-lifecycle-editor aria-labelledby="device-lifecycle-edit-heading">
+  <h4 id="device-lifecycle-edit-heading">Equipment Lifecycle <small>(Optional)</small></h4>
+  <div class="device-review-form-grid">{{slot:0}}</div>
+  <input type="hidden" id="lifecycle-replacement-mode" data-lifecycle-replacement-mode>
+  <div class="device-review-inline-tools" data-lifecycle-warranty hidden>
+    <div><strong data-lifecycle-suggestion></strong><p class="device-help">12 calendar months from Purchase Date. Accept the suggestion to record it.</p></div>
+    <button type="button" class="device-review-smallbtn">Use Suggestion</button>
+  </div>
+  <div class="device-review-inline-tools">
+    <div><strong data-lifecycle-mode-title></strong><p class="device-help" data-lifecycle-mode-description></p></div>
+    <button type="button" class="device-review-smallbtn" data-lifecycle-reset hidden>Use Calculated Date</button>
+  </div>
+</section>
+<!-- /interface-template -->
+
+<!-- interface-template:device-details/lifecycle-field -->
+<div class="device-review-field">
+  <label for="lifecycle-{{slot:0}}">{{slot:1}}</label>
+  <input type="date" id="lifecycle-{{slot:0}}" data-lifecycle-field="{{slot:0}}" aria-describedby="lifecycle-help-{{slot:0}}" {{slot:2}} {{slot:3}}>
+  <small id="lifecycle-help-{{slot:0}}">{{slot:4}}</small>
+</div>
+<!-- /interface-template -->

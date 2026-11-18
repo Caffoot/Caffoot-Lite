@@ -99,6 +99,8 @@ A successful operation records a new permanent dated assignment and its matching
 
 Outstanding accessories are not silently transferred to the new holder. Resolve them using [Associated Equipment](Associated-Equipment.md) before reissue. A missing accessory must follow its approved return/write-off handling; recording it as physically returned when it is missing would make stock inaccurate.
 
+In the Batch 4.4 draft, a genuine first issue of a Device registered from stock also records its **Original In Service Date** when the qualifying history is available. This happens even if Equipment Lifecycle is switched off. See [Record First Service From Stock](Equipment-Lifecycle.md#record-first-service-from-stock) for the date rules and what happens on later reissues.
+
 ## Return And Prepare The Same Device
 
 Record an actual return using **Return Equipment**, keeping the original Device identity. If an eligible previously deployed physical Device has no outstanding recorded assignment, use its authorised **Device Details → Assigned To → Return Equipment** action and explicit physical-return confirmation. That route does not invent an earlier issue or holder and enters Awaiting Preparation.

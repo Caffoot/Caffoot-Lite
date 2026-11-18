@@ -209,7 +209,7 @@ class FirstServiceStockTests(unittest.TestCase):
                 self.assertEqual(reissue_stock_device(self.db, 1, self.token, approved), result)
                 self.assertEqual(self.db.execute('''SELECT count(*) FROM inventory_change_history WHERE
                     json_extract(record_json,'$.reason')='Original In Service Date recorded at first stock issue'
-                    AND json_extract(record_json,'$.changes[0].label')=?''', (device,)).fetchone(), (1,))
+                    AND json_extract(record_json,'$.changes[0].after.deviceId')=?''', (device,)).fetchone(), (1,))
 
     @patch('backend.equipment_lifecycle.utc_today')
     def test_reissue_retains_existing_or_deliberately_cleared_first_service(self, today):
@@ -234,3 +234,16 @@ class FirstServiceStockTests(unittest.TestCase):
         self.db.commit()
         self.issue(device, issuedOn='2099-10-01')
         self.assertEqual(self.service_date(device), '2020-01-01')
+
+    def test_legacy_physical_return_and_issue_do_not_infer_first_service(self):
+        from test_unassigned_device_returns import unassigned_return_payload
+        choice = self.legacy_device(assigned=False)
+        device = choice['deviceId']
+        return_stock(self.db, 1, self.token, unassigned_return_payload(choice))
+        held = registered_stock_devices(self.db)[0]
+        prepare_stock(self.db, 1, self.token, dict(operationId=uuid.uuid4().hex, stockUnitId=held['stockUnitId'],
+            version=held['version'], quantity=1, checkedOn='2026-11-18',
+            checks=dict(cleanedWorking=True, dataPreparationConfirmed=True), note=''))
+        self.assertIsNone(self.service_date(device))
+        self.issue(device, issuedOn='2099-11-18')
+        self.assertIsNone(self.service_date(device))

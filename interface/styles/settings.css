@@ -192,3 +192,9 @@ body{font-size:14px}
 @media(max-width:1150px){.settings-grid{grid-template-columns:minmax(0,1fr)}}
 @media(max-width:720px){.settings-stack{gap:13px}.card-padded{padding:17px}.header{align-items:center}.settings-grid{gap:13px}}
 @media(max-width:510px){.smtp-fields{grid-template-columns:1fr}.danger-panel{flex-wrap:wrap}.danger-button{width:100%}.command{flex-direction:column}.command button{align-self:flex-end}.card-head{flex-wrap:wrap}.mini-tag{margin-left:52px}}
+
+[data-feature-card="equipment_lifecycle"] > .btn { margin-top: 12px; }
+#lifecycle-settings .panel-heading, #lifecycle-settings form > section { margin-top: 14px; }
+.lifecycle-lifespans { margin-top: 8px; }
+.lifecycle-lifespan-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(80px, 140px); gap: 12px; align-items: center; border-top: 1px solid var(--line, #eaf0f4); padding: 7px 0; }
+.lifecycle-lifespan-row input { margin: 0; }

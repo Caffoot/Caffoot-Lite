@@ -96,7 +96,13 @@ async function initialiseInterface() {
                 const supplierScript = document.createElement('script');
                 supplierScript.src = '/interface/suppliers.js';
                 supplierScript.onerror = () => showInterfaceLoadError();
-                supplierScript.onload = loadApplication;
+                supplierScript.onload = () => {
+                    const lifecycleScript = document.createElement('script');
+                    lifecycleScript.src = '/interface/lifecycle.js';
+                    lifecycleScript.onerror = () => showInterfaceLoadError();
+                    lifecycleScript.onload = loadApplication;
+                    document.body.append(lifecycleScript);
+                };
                 document.body.append(supplierScript);
             };
             function loadApplication() {
