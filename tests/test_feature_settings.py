@@ -135,12 +135,11 @@ class FeatureSettingsTests(unittest.TestCase):
                 save_feature_setting(self.db, 1, self.token, payload)
             self.assertEqual(list(self.db.iterdump()), before)
 
-    def test_storage_rejects_unknown_nonboolean_and_future_activation(self):
+    def test_storage_rejects_unknown_and_nonboolean_choices(self):
         schema.initialise_database(self.db)
         for sql in ("INSERT INTO organisation_features VALUES('unknown',0)",
                     "UPDATE organisation_features SET enabled=2 WHERE feature='devices'",
-                    "UPDATE organisation_features SET enabled=0.5 WHERE feature='devices'",
-                    "UPDATE organisation_features SET enabled=1 WHERE feature='equipment_lifecycle'"):
+                    "UPDATE organisation_features SET enabled=0.5 WHERE feature='devices'"):
             with self.subTest(sql=sql), self.assertRaises(sqlite3.IntegrityError):
                 self.db.execute(sql)
             self.db.rollback()

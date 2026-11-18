@@ -27,7 +27,7 @@ class SupplierSchemaTests(unittest.TestCase):
         self.db.execute("INSERT INTO inventory_devices(id,name,record_json,ordinal) VALUES('a','Host','{}',0)")
         self.db.commit()
         schema.initialise_database(self.db)
-        self.assertEqual(self.db.execute('SELECT max(version) FROM schema_migrations').fetchone(), (23,))
+        self.assertEqual(self.db.execute('SELECT max(version) FROM schema_migrations').fetchone(), (schema.SCHEMA_VERSION,))
         self.assertEqual(self.db.execute('SELECT id,name FROM inventory_devices').fetchall(), [('a','Host')])
         self.assertEqual(self.db.execute('SELECT section,level FROM account_permission_overrides ORDER BY section').fetchall(),
                          [('Devices','deny'),('IT Assets','edit')])

@@ -62,3 +62,9 @@ Each checkpoint must be coherent, tested to the extent claimed, committed and **
 **Ready For Review, merge, release and deployment are NOT authorised by this instruction.** Keep draft, wait for owner visual acceptance of the *real integrated application*, independent readiness review and separately approved Ready For Review transition. Then run required GitHub backend/Docker/Chromium/Firefox/WebKit/docs/security checks on the actual final head. Later formal Stage 4 and milestone-wide acceptance remain separate.
 
 **Credit rule:** approximately 9% of weekly Codex credits were reported remaining when authorising this batch. Attempt the full exact scope only if feasible without shortcuts; otherwise stop at a **pushed, honest, reviewable partial checkpoint** and provide a precise continuation hand-off. Do not consume credits reproducing already-approved mock-ups or monitoring CI.
+
+## Checkpoint A — data and authorised settings
+
+The owner approved [Device Type Archive and Unarchive and first-issue date validation](https://github.com/Caffoot/Caffoot-Lite/issues/413#issuecomment-6982869999). Schema 24 adds separate lifecycle storage and settings, with no inferred Device dates. The reserved Device edit and administrator settings services validate, calculate and audit saved dates. Device readers receive lifecycle data only when the feature is enabled. An SQLite backup and restore test checks that dates and settings survive reinitialisation.
+
+The feature switch stays unavailable in the application during this checkpoint. First stock issue, archive operations, the approved interface, complete v2.2 instructions and application screenshots are pending. All application visual acceptance and the final checks scheduled for Ready For Review are pending.

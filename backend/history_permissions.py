@@ -5,6 +5,7 @@ changes apply immediately without a schema migration or history rewrite.
 """
 import json
 
+from .equipment_lifecycle import DEVICE_AUDIT_REASON, FIRST_SERVICE_AUDIT_REASON, SETTINGS_AUDIT_REASON
 from .equipment_suppliers import SUPPLIER_AUDIT_REASON
 from .permissions import can_access, feature_enabled
 from .subnet_validation import parse_hierarchy_cidr
@@ -85,6 +86,14 @@ def visible_change_history(connection, account_id):
         event = json.loads(raw)
         if (isinstance(event, dict) and event.get("reason") == SUPPLIER_AUDIT_REASON
                 and not feature_enabled(connection, "Suppliers")):
+            continue
+        reason = event.get('reason') if isinstance(event, dict) else None
+        if reason == SETTINGS_AUDIT_REASON:
+            if is_admin and feature_enabled(connection, 'Equipment Lifecycle'):
+                history.append(event)
+            continue
+        if reason in (DEVICE_AUDIT_REASON, FIRST_SERVICE_AUDIT_REASON) and not (
+                sections['Devices'] and feature_enabled(connection, 'Equipment Lifecycle')):
             continue
         stock_changes = (isinstance(event, dict) and isinstance(event.get('changes'), list)
                          and any(isinstance(change, dict) and change.get('kind') == 'IT Assets'

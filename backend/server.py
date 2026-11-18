@@ -19,6 +19,7 @@ from .collection_saves import (change_inventory_record, remove_linked_rack_shelf
                                delete_subnet_with_dependencies)
 from .settings_saves import save_inventory_setting
 from .inventory_projection import project_inventory_response
+from .equipment_lifecycle import UNCHANGED_LIFECYCLE, read_lifecycle_settings, save_lifecycle_settings
 from .equipment_suppliers import assign_equipment_supplier, read_supplier_choices
 from .feature_settings import read_feature_settings, save_feature_setting, unique_feature_fields
 from .stock_reporting import read_stock_report
@@ -153,7 +154,7 @@ class Handler(BaseHTTPRequestHandler):
         if self.path.startswith(("/api/staff-members", "/api/departments")):
             self.handle_directory_request()
             return
-        if self.path == "/api/settings/features":
+        if self.path in ("/api/settings/features", "/api/settings/lifecycle"):
             self.handle_feature_settings()
             return
         if self.path in ("/interface/sign-in.js", "/interface/styles/sign-in.css",
@@ -530,7 +531,7 @@ class Handler(BaseHTTPRequestHandler):
         if self.path.startswith(("/api/staff-members", "/api/departments")):
             self.handle_directory_request()
             return
-        if self.path == "/api/settings/features":
+        if self.path in ("/api/settings/features", "/api/settings/lifecycle"):
             self.handle_feature_settings()
             return
         if self.path in ("/api/users/roles/preview", "/api/users/roles/confirm",
@@ -1033,6 +1034,7 @@ class Handler(BaseHTTPRequestHandler):
 
     def handle_feature_settings(self):
         """Use existing session and request proofs for organisation settings."""
+        lifecycle = self.path == "/api/settings/lifecycle"
         origin = self.headers.get("Origin")
         if (self.headers.get("Sec-Fetch-Site") == "cross-site"
                 or (origin is not None and (not PUBLIC_ORIGIN
@@ -1049,7 +1051,10 @@ class Handler(BaseHTTPRequestHandler):
                     if actor is None:
                         self.respond(401, {"error": "unauthorised"})
                         return
-                    self.respond(200, {"features": read_feature_settings(connection, actor)})
+                    if lifecycle:
+                        self.respond(200, {"lifecycle": read_lifecycle_settings(connection, actor)})
+                    else:
+                        self.respond(200, {"features": read_feature_settings(connection, actor)})
                     return
                 actor = authorised_mutation(
                     connection, cookie, origin, PUBLIC_ORIGIN,
@@ -1059,18 +1064,20 @@ class Handler(BaseHTTPRequestHandler):
                     raise PermissionError("Verified session required")
                 read_feature_settings(connection, actor)
                 length = self.headers.get("Content-Length", "")
-                if not length.isdecimal() or not 0 < int(length) <= MAX_LOGIN_BYTES:
+                limit = MAX_IMPORT_BYTES if lifecycle else MAX_LOGIN_BYTES
+                if not length.isdecimal() or not 0 < int(length) <= limit:
                     raise ValueError("Invalid request size")
                 if self.headers.get("Content-Type", "").split(";")[0].strip().lower() != "application/json":
                     self.respond(415, {"error": "JSON required"})
                     return
                 payload = json.loads(self.rfile.read(int(length)), object_pairs_hook=unique_feature_fields)
-                result = save_feature_setting(
-                    connection, actor, read_session_cookie(cookie), payload,
-                )
-            self.respond(200, {"features": result})
+                save = save_lifecycle_settings if lifecycle else save_feature_setting
+                result = save(connection, actor, read_session_cookie(cookie), payload)
+            self.respond(200, {"lifecycle" if lifecycle else "features": result})
         except PermissionError:
             self.respond(403, {"error": "forbidden"})
+        except FileExistsError as exc:
+            self.respond(409, {"error": str(exc)})
         except (ValueError, TypeError, sqlite3.IntegrityError) as exc:
             self.respond(400, {"error": str(exc)})
 
@@ -1137,7 +1144,9 @@ class Handler(BaseHTTPRequestHandler):
             "/api/users/profile", "/api/users/active",
             "/api/users/admin", "/api/users/create", "/api/users/delete")
         try:
-            payload = json.loads(self.rfile.read(int(length)), object_pairs_hook=unique_link_fields) if self.path == "/api/devices/ipam/link" else json.loads(self.rfile.read(int(length)))
+            duplicate_check = {"/api/devices/ipam/link": unique_link_fields,
+                               "/api/devices/edit/save": unique_feature_fields}.get(self.path)
+            payload = json.loads(self.rfile.read(int(length)), object_pairs_hook=duplicate_check)
             if not isinstance(payload, dict):
                 raise ValueError("Invalid user request")
             with connect() as connection:
@@ -1258,12 +1267,13 @@ class Handler(BaseHTTPRequestHandler):
                                                         supplier=payload.get("supplier", UNCHANGED_SUPPLIER))}
                 elif self.path == "/api/devices/edit/save":
                     required = {"deviceId", "revision", "record"}
-                    if not required <= set(payload) <= required | {"section", "relatedDevices", "supplier"}:
+                    if not required <= set(payload) <= required | {"section", "relatedDevices", "supplier", "lifecycle"}:
                         raise ValueError("Invalid device save request")
                     result = {"revision": save_reserved_device(
                         connection, actor, payload["deviceId"], payload["revision"],
                         payload["record"], payload.get("section", "Devices"),
-                        payload.get("relatedDevices"), supplier=payload.get("supplier", UNCHANGED_SUPPLIER))}
+                        payload.get("relatedDevices"), supplier=payload.get("supplier", UNCHANGED_SUPPLIER),
+                        lifecycle=payload.get("lifecycle", UNCHANGED_LIFECYCLE))}
                 elif self.path in ("/api/devices/edit/start", "/api/devices/edit/cancel"):
                     if set(payload) not in ({"deviceId"}, {"deviceId", "section"}) or not isinstance(payload["deviceId"], str):
                         raise ValueError("Device identifier required")

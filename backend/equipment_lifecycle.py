@@ -1,0 +1,235 @@
+"""Authoritative physical Device dates, settings and warning calculations."""
+from calendar import monthrange
+from datetime import date, datetime, timezone
+import json
+
+from .audit_events import record_actor_event
+from .permissions import _admin, can_access, feature_enabled
+from .sessions import session_account
+
+DEFAULT_LIFESPANS = {
+    'Desktop': 3, 'Laptop': 3, 'Server - Physical': 5, 'Switch': 7, 'Tablet': 4,
+    'Layer 3 Switch': 7, 'Router': 7, 'Firewall': 5, 'NAS': 5, 'Printer': 5,
+    'Scanner': 5, 'Access Point': 5, 'Wireless LAN Controller': 7, 'PDU': 7,
+    'UPS': 5, 'Unknown': None,
+}
+VIRTUAL_TYPES = frozenset(('Server - Virtual', 'Virtual Machine'))
+DATE_FIELDS = {
+    'purchaseDate': 'Purchase Date', 'originalInServiceDate': 'Original In Service Date',
+    'warrantyExpiry': 'Warranty Expiry', 'replacementOverride': 'Planned Replacement Date',
+}
+DATE_COLUMNS = 'purchase_date,original_in_service_date,warranty_expiry,replacement_override'
+DEVICE_AUDIT_REASON = 'Equipment Lifecycle dates changed'
+SETTINGS_AUDIT_REASON = 'Equipment Lifecycle settings changed'
+FIRST_SERVICE_AUDIT_REASON = 'Original In Service Date recorded at first stock issue'
+UNCHANGED_LIFECYCLE = object()
+
+
+def utc_today():
+    return datetime.now(timezone.utc).date()
+
+
+def physical_device(record):
+    return not (record.get('isVirtual') or record.get('virtualHostId')
+                or record.get('type') in VIRTUAL_TYPES)
+
+
+def calendar_date(value, label, *, latest=None):
+    if value is None:
+        return None
+    try:
+        parsed = date.fromisoformat(value)
+    except (TypeError, ValueError):
+        raise ValueError(f'Enter a valid {label}.') from None
+    if parsed.isoformat() != value:
+        raise ValueError(f'Enter a valid {label}.')
+    if latest is not None and parsed > latest:
+        raise ValueError(f'{label} cannot be in the future.')
+    return parsed
+
+
+def add_calendar_years(baseline, years):
+    if baseline is None or years is None:
+        return None
+    year = baseline.year + years
+    if year > date.max.year:
+        return None
+    day = min(baseline.day, monthrange(year, baseline.month)[1])
+    return date(year, baseline.month, day)
+
+
+def warning_state(value, today, days):
+    if value is None:
+        return None
+    remaining = (value - today).days
+    if remaining < 0:
+        return 'past'
+    if remaining <= days:
+        return 'upcoming'
+    return None
+
+
+def lifecycle_configuration(connection):
+    warranty, replacement, revision = connection.execute(
+        'SELECT warranty_days,replacement_days,revision FROM equipment_lifecycle_settings'
+    ).fetchone()
+    return dict(warrantyDays=warranty, replacementDays=replacement, revision=revision)
+
+
+def display_type(name):
+    return 'Server' if name == 'Server - Physical' else name
+
+
+def lifecycle_types(connection):
+    """Combine settings with the existing managed and discovered types."""
+    configured = connection.execute(
+        "SELECT value_json FROM inventory_settings WHERE key='deviceTypes'"
+    ).fetchone()
+    managed = json.loads(configured[0]) if configured else []
+    discovered = [name for (name,) in connection.execute(
+        "SELECT DISTINCT json_extract(record_json,'$.type') FROM inventory_devices"
+    )]
+    rows = {name: (years, bool(archived), original) for name, years, archived, original
+            in connection.execute('SELECT name,years,archived,original_name FROM equipment_lifecycle_types')}
+    names = dict.fromkeys((*rows, *managed, *discovered))
+    return [
+        dict(name=name, label=display_type(name), years=rows.get(name, (None, False, None))[0],
+             archived=rows.get(name, (None, False, None))[1])
+        for name in names if isinstance(name, str) and name and name not in VIRTUAL_TYPES
+    ]
+
+
+def read_lifecycle_settings(connection, actor):
+    _admin(connection, actor)
+    if not feature_enabled(connection, 'Equipment Lifecycle'):
+        raise PermissionError('Equipment Lifecycle is disabled')
+    return dict(lifecycle_configuration(connection), types=lifecycle_types(connection))
+
+
+def whole_number(value, minimum, maximum, label, *, optional=False):
+    if optional and value is None:
+        return value
+    if type(value) is not int or not minimum <= value <= maximum:
+        raise ValueError(f'{label} must be a whole number between {minimum:,} and {maximum:,}.')
+    return value
+
+
+def save_lifecycle_settings(connection, actor, token, payload):
+    connection.execute('BEGIN IMMEDIATE')
+    try:
+        if session_account(connection, token) != actor:
+            raise PermissionError('Verified administrator session required')
+        current = read_lifecycle_settings(connection, actor)
+        if not isinstance(payload, dict) or set(payload) != {
+                'warrantyDays', 'replacementDays', 'revision', 'types'}:
+            raise ValueError('Invalid Lifecycle Settings')
+        if type(payload['revision']) is not int or payload['revision'] != current['revision']:
+            raise FileExistsError('Lifecycle Settings changed. Reopen Lifecycle Settings and try again.')
+        warning_fields = {'warrantyDays': 'Warranty Expiry Warning Period',
+                          'replacementDays': 'Planned Replacement Warning Period'}
+        for key, label in warning_fields.items():
+            whole_number(payload[key], 0, 3650, label)
+
+        types = {row['name']: row for row in current['types']}
+        entries = payload['types']
+        if not isinstance(entries, list) or len(entries) != len(types):
+            raise FileExistsError('Device Types changed. Reopen Lifecycle Settings and try again.')
+        seen = set()
+        for entry in entries:
+            if (not isinstance(entry, dict) or set(entry) != {'name', 'years'}
+                    or not isinstance(entry['name'], str)):
+                raise ValueError('Invalid Device Type lifespan')
+            name = entry['name']
+            if name in seen or name not in types:
+                raise FileExistsError('Device Types changed. Reopen Lifecycle Settings and try again.')
+            seen.add(name)
+            kind = types[name]
+            label = kind['label']
+            years = whole_number(entry['years'], 1, 100, f'{label} lifespan', optional=True)
+            if years == kind['years']:
+                continue
+            connection.execute(
+                'INSERT INTO equipment_lifecycle_types(name,years) VALUES(?,?) '
+                'ON CONFLICT(name) DO UPDATE SET years=excluded.years', (name, years))
+            record_actor_event(connection, actor, kind='Settings', action='Updated', label=label,
+                reason=SETTINGS_AUDIT_REASON, fields=['Expected Equipment Lifespan'],
+                before={'Expected Equipment Lifespan': kind['years']},
+                after={'Expected Equipment Lifespan': years})
+
+        before = {label: current[key] for key, label in warning_fields.items() if current[key] != payload[key]}
+        if before:
+            after = {label: payload[key] for key, label in warning_fields.items() if label in before}
+            record_actor_event(connection, actor, kind='Settings', action='Updated', label='Warning Periods',
+                reason=SETTINGS_AUDIT_REASON, fields=before, before=before, after=after)
+        connection.execute(
+            'UPDATE equipment_lifecycle_settings SET warranty_days=?,replacement_days=?,revision=revision+1',
+            (payload['warrantyDays'], payload['replacementDays']))
+        result = read_lifecycle_settings(connection, actor)
+        connection.commit()
+        return result
+    except BaseException:
+        connection.rollback()
+        raise
+
+
+def device_lifecycle_values(connection, device_id):
+    row = connection.execute(
+        f'SELECT {DATE_COLUMNS} FROM device_lifecycle WHERE device_id=?', (device_id,)
+    ).fetchone()
+    return dict(zip(DATE_FIELDS, row or (None,) * len(DATE_FIELDS)))
+
+
+def write_device_lifecycle(connection, actor, record, updates):
+    """Persist approved fields inside the existing reserved Device transaction."""
+    if not feature_enabled(connection, 'Equipment Lifecycle') or not can_access(
+            connection, actor, 'Devices', edit=True):
+        raise PermissionError('Equipment Lifecycle and Devices Edit are required')
+    if not physical_device(record):
+        raise ValueError('Equipment Lifecycle dates apply to physical Devices only.')
+    if not isinstance(updates, dict) or not updates.keys() <= DATE_FIELDS.keys():
+        raise ValueError('Invalid Equipment Lifecycle dates.')
+    if 'replacementOverride' in updates:
+        _admin(connection, actor)
+    device_id = record['id']
+    previous = device_lifecycle_values(connection, device_id)
+    today = utc_today()
+    for key, value in updates.items():
+        calendar_date(value, DATE_FIELDS[key], latest=today if key in ('purchaseDate', 'originalInServiceDate') else None)
+    values = dict(previous, **updates)
+    changed = [key for key in updates if values[key] != previous[key]]
+    if not changed:
+        return
+    connection.execute(
+        f'INSERT INTO device_lifecycle(device_id,{DATE_COLUMNS}) VALUES(?,?,?,?,?) '
+        'ON CONFLICT(device_id) DO UPDATE SET purchase_date=excluded.purchase_date,'
+        'original_in_service_date=excluded.original_in_service_date,warranty_expiry=excluded.warranty_expiry,'
+        'replacement_override=excluded.replacement_override', (device_id, *values.values()))
+    record_actor_event(connection, actor, kind='Device', action='Updated', label=device_id,
+        reason=DEVICE_AUDIT_REASON, fields=[DATE_FIELDS[key] for key in changed],
+        before={DATE_FIELDS[key]: previous[key] for key in changed},
+        after={DATE_FIELDS[key]: values[key] for key in changed})
+
+
+def project_device_lifecycle(connection, devices):
+    """Compute only visible physical Device dates, using one UTC reference date."""
+    settings = lifecycle_configuration(connection)
+    today = utc_today()
+    lifespans = dict(connection.execute('SELECT name,years FROM equipment_lifecycle_types'))
+    saved = {row[0]: dict(zip(DATE_FIELDS, row[1:])) for row in connection.execute(
+        f'SELECT device_id,{DATE_COLUMNS} FROM device_lifecycle')}
+    result = []
+    for device in devices:
+        if not physical_device(device):
+            continue
+        values = saved.get(device['id'], dict.fromkeys(DATE_FIELDS))
+        baseline = values['originalInServiceDate'] or values['purchaseDate']
+        years = lifespans.get(device.get('type'))
+        calculated = add_calendar_years(date.fromisoformat(baseline), years) if baseline else None
+        replacement = date.fromisoformat(values['replacementOverride']) if values['replacementOverride'] else calculated
+        warranty = date.fromisoformat(values['warrantyExpiry']) if values['warrantyExpiry'] else None
+        result.append(dict(values, deviceId=device['id'], lifespan=years,
+            plannedReplacementDate=replacement.isoformat() if replacement else None,
+            warrantyWarning=warning_state(warranty, today, settings['warrantyDays']),
+            replacementWarning=warning_state(replacement, today, settings['replacementDays'])))
+    return dict(today=today.isoformat(), warrantyDays=settings['warrantyDays'],
+                replacementDays=settings['replacementDays'], devices=result)
