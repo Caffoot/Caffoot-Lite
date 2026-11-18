@@ -130,6 +130,7 @@
         continue;
       }
       if (root && root !== record.native && !root.contains(record.native)) continue;
+      if (record.text.matches(':disabled')) continue;
       if (!applyText(record, false) || !record.text.checkValidity()) {
         record.text.reportValidity();
         record.text.focus();
@@ -238,7 +239,7 @@
         button.setAttribute('aria-pressed','true');
       }
       if (iso === today) button.classList.add('is-today');
-      button.disabled = (source.min && validIso(source.min) && iso < source.min) ||
+      button.disabled = !validIso(iso) || (source.min && validIso(source.min) && iso < source.min) ||
         (source.max && validIso(source.max) && iso > source.max);
       button.tabIndex = -1;
       button.addEventListener('click',() => {
@@ -280,7 +281,6 @@
     document.body.append(popup);
     open = {record,popup,year:d.getUTCFullYear(),month:d.getUTCMonth(),
       headingId:popupId+'-month',focusDate:''};
-    popup.setAttribute('aria-labelledby',open.headingId);
     drawCalendar();
     const selected = popup.querySelector('.caffoot-uk-date-day[tabindex="0"]');
     if (selected) selected.focus();
@@ -413,7 +413,10 @@
       event.preventDefault();
       closePicker(true);
     } else if (event.key === 'Tab') {
+      event.preventDefault();
+      const target = event.shiftKey ? open.record.text : open.record.button;
       closePicker(false);
+      target.focus();
     } else if (['ArrowLeft','ArrowRight','ArrowUp','ArrowDown','Home','End','PageUp','PageDown'].includes(event.key) &&
       event.target.classList.contains('caffoot-uk-date-day')) {
       event.preventDefault();
