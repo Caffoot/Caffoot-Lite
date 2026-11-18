@@ -95,7 +95,7 @@ def feature_enabled(connection, section):
     if section in ("Staff Members", "Departments"):
         return True
     feature = {"Devices": "devices", "IPAM": "ipam", "Racks": "racks",
-               "IT Assets": "it_assets"}.get(section)
+               "IT Assets": "it_assets", "Suppliers": "suppliers"}.get(section)
     if feature is None:
         return False
     return connection.execute(

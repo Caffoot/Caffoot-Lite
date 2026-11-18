@@ -141,7 +141,6 @@ class FeatureSettingsTests(unittest.TestCase):
         for sql in ("INSERT INTO organisation_features VALUES('unknown',0)",
                     "UPDATE organisation_features SET enabled=2 WHERE feature='devices'",
                     "UPDATE organisation_features SET enabled=0.5 WHERE feature='devices'",
-                    "UPDATE organisation_features SET enabled=1 WHERE feature='suppliers'",
                     "UPDATE organisation_features SET enabled=1 WHERE feature='equipment_lifecycle'"):
             with self.subTest(sql=sql), self.assertRaises(sqlite3.IntegrityError):
                 self.db.execute(sql)

@@ -10,7 +10,9 @@ from backend.assignment_closure import migrate_assignment_closure, validate_assi
 from backend.equipment_associations import migrate_equipment_associations, validate_equipment_associations
 from backend.handover_schema import migrate_device_handovers, validate_device_handovers
 
-SCHEMA_VERSION = 20
+from backend.supplier_schema import migrate_suppliers
+
+SCHEMA_VERSION = 21
 
 DDL = """
 CREATE TABLE IF NOT EXISTS inventory_devices (
@@ -247,6 +249,9 @@ def initialise_database(connection: sqlite3.Connection) -> None:
         if SCHEMA_VERSION >= 20 and 20 not in versions:
             migrate_it_staff_stock_default(connection)
             connection.execute("INSERT INTO schema_migrations(version) VALUES(20)")
+        if SCHEMA_VERSION >= 21 and 21 not in versions:
+            migrate_suppliers(connection)
+            connection.execute("INSERT INTO schema_migrations(version) VALUES(21)")
         connection.commit()
     except BaseException:
         connection.rollback()
