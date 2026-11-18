@@ -17,7 +17,11 @@ const document = {
 };
 const window = {addEventListener: () => {}};
 class FakeMutationObserver { observe() {} }
-vm.runInNewContext(source, {document, window, MutationObserver: FakeMutationObserver}, {
+const hook = 'window.caffootUkDates = {toIso,toUk,validIso,sync,validate,focus};';
+assert.equal(source.split(hook).length, 2, 'Expected a single production API export');
+const instrumented = source.replace(hook, hook + '\nwindow.__dateValidationTest = {applyText,errorFor};');
+class InputEvent { constructor(type,options) { this.type=type; this.bubbles=!!options?.bubbles; } }
+vm.runInNewContext(instrumented, {document, window, MutationObserver: FakeMutationObserver, Event: InputEvent}, {
   filename: 'uk-date-controls.js',
   timeout: 1000,
 });
@@ -47,3 +51,48 @@ assert.equal(toUk(''), '');
 assert.equal(toIso(''), '');
 assert.equal(toUk('2026-11-18'), '18/11/2026');
 console.log('PASS: UK date display, strict calendar validation and ISO round trips');
+
+const {applyText} = window.__dateValidationTest;
+function makeRecord(value,required=false,max='') {
+  const events=[];
+  const native={value:'2024-02-29',min:'',max,
+    dispatchEvent(event) { events.push(event.type); }};
+  const text={
+    value,required,validity:{customError:false},
+    setCustomValidity(message) { this.validity.customError=!!message; this.message=message; },
+    setAttribute() {},
+  };
+  const error={textContent:''};
+  return {record:{native,text,error},events};
+}
+{
+  const {record,events}=makeRecord('31/02/2024');
+  assert.equal(applyText(record,true),false);
+  assert.equal(record.native.value,'');
+  assert.equal(record.text.validity.customError,true);
+  assert.deepEqual(events,['input']);
+}
+{
+  const {record}=makeRecord('05/06/2024');
+  assert.equal(applyText(record,false),true);
+  assert.equal(record.native.value,'2024-06-05');
+  assert.equal(record.text.validity.customError,false);
+}
+{
+  const {record}=makeRecord('19/11/2026',false,'2026-11-18');
+  assert.equal(applyText(record,false),false);
+  assert.match(record.text.message,/18\/11\/2026/);
+  assert.equal(record.native.value,'');
+}
+{
+  const {record}=makeRecord('',true);
+  assert.equal(applyText(record,false),false);
+  assert.equal(record.native.value,'');
+}
+{
+  const {record}=makeRecord('15032023');
+  assert.equal(applyText(record,false),true);
+  assert.equal(record.text.value,'15/03/2023');
+  assert.equal(record.native.value,'2023-03-15');
+}
+console.log('PASS: required, invalid, future and eight-digit date controls preserve ISO');
