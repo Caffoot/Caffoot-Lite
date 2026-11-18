@@ -96,7 +96,7 @@
       editable() ? button('Manage Categories', 'categories') + button('Add Supplier', 'supplier-form', '', 'primary') : '') +
       `<nav class="tabs" aria-label="Supplier Sections">
         <button type="button" class="tab section-tab-control active" aria-current="page" data-supplier-action="directory">${icon('users')}Supplier Directory</button></nav>
-      <section class="section active" aria-label="Supplier Directory">
+      <section class="section active stock-panel" aria-label="Supplier Directory">
       ${toolSearch('Search Suppliers', 'supplier-search', search,
         select('Filter By Category', 'category-filter', [['', 'All Categories'], ...activeCategories.map(item => [item.id, item.name])], categoryFilter),
         'Search by supplier name or description')}
@@ -202,7 +202,7 @@
         `<button type="button" class="tab section-tab-control${tab === key ? ' active' : ''}" role="tab" id="supplier-tab-${key}"
         aria-selected="${tab === key}" aria-controls="supplier-panel-${key}" tabindex="${tab === key ? '0' : '-1'}"
         data-supplier-action="tab" data-id="${key}">${icon(symbol)}${label}</button>`).join('')}</nav>
-      <section class="section active" id="supplier-panel-${tab}" role="tabpanel" aria-labelledby="supplier-tab-${activeTab[0]}">${content}</section>`;
+      <section class="section active stock-panel" id="supplier-panel-${tab}" role="tabpanel" aria-labelledby="supplier-tab-${activeTab[0]}">${content}</section>`;
   }
   function render() {
     let content;

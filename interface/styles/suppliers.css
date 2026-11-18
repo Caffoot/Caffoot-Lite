@@ -25,5 +25,6 @@
 .supplier-live .device-table td{overflow-wrap:anywhere}
 .supplier-live .device-table{min-width:615px}
 .supplier-live .card .device-table{min-width:420px}
+@media(max-width:720px){.supplier-live .section-page-header>.header:has(>.preview-page-actions)>:first-child{flex:initial}}
 @media(max-width:650px){.supplier-live .supplier-filters,.supplier-live .two-col{grid-template-columns:minmax(0,1fr)}}
 #modal-content:has(>[data-supplier-dialog]){max-height:calc(100dvh - 32px);overflow:auto}

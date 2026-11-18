@@ -357,6 +357,8 @@ def save_contact(connection, actor, supplier, current, payload):
         previous = {row[0] for row in connection.execute(
             "SELECT location_id FROM supplier_contact_locations WHERE contact_id=?", (identity,)
         )}
+        if current[8] and (locations - previous or values[-1] and not current[7]):
+            raise ValueError("Reactivate this Contact before adding new Location assignments")
         connection.execute(
             "UPDATE supplier_contacts SET name=?,role=?,phones=?,emails=?,profiles=?,company_wide=? WHERE id=?",
             (*values, identity),

@@ -144,6 +144,12 @@ class SupplierHttpTests(unittest.TestCase):
         supplier = self.save("location.archive", {"confirmed": True}, supplier, branch)
         self.save("contact.save", {**contact, "name": "New Contact"}, supplier, status=400)
         self.assertEqual(len(supplier["contacts"]), 1)
+        stored_contact = supplier["contacts"][0]
+        supplier = self.save("contact.archive", {"confirmed": True}, supplier, stored_contact)
+        self.save("contact.save", {**contact, "companyWide": True, "locationIds": []}, supplier,
+                  stored_contact, status=400)
+        supplier = self.save("contact.reactivate", {"confirmed": True}, supplier, stored_contact)
+        self.assertEqual(supplier["contacts"][0]["locationIds"], [main["id"], branch["id"]])
         self.assertEqual(self.save("category.archive", {"confirmed": True}, record=category)["categories"][0]["archived"], True)
         self.save("supplier.save", self.company(name="New Supplier", categoryIds=[category["id"]]), status=400)
         self.assertEqual(self.request()[1]["suppliers"][0]["categoryIds"], [category["id"]])

@@ -199,7 +199,7 @@ with sqlite3.connect(sys.argv[1]) as db:
         await capture('directory', theme, width, height);
         await button('Add Supplier').click();
         await capture('add-supplier', theme, width, height);
-        await dialog.getByRole('heading', {name: 'Contact 1'}).scrollIntoViewIfNeeded();
+        await modalButton('Add Supplier').scrollIntoViewIfNeeded();
         await capture('add-supplier-contact', theme, width, height);
         await modalButton('Cancel').click();
         await button('Northlight Technology Ltd').click();
