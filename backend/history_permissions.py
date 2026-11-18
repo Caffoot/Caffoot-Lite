@@ -88,6 +88,14 @@ def visible_change_history(connection, account_id):
         supplier_changes = (isinstance(event, dict) and isinstance(event.get("changes"), list)
                             and any(isinstance(change, dict) and change.get("kind") == "Suppliers"
                                     for change in event["changes"]))
+        # Issue corrections retain private original text. Verified administrators
+        # with Suppliers access can inspect it independently of IT feature choices.
+        supplier_issue_audit = (supplier_changes and len(event["changes"]) == 1
+                                and isinstance(event.get("reason"), str)
+                                and event["reason"].startswith("Supplier issue"))
+        if supplier_issue_audit and is_admin and sections["Suppliers"]:
+            history.append(event)
+            continue
         if (complete_history and (sections["IT Assets"] or not stock_changes)
                 and (sections["Suppliers"] or not supplier_changes)):
             history.append(event)

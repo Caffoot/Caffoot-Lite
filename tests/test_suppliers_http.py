@@ -75,7 +75,7 @@ class SupplierHttpTests(unittest.TestCase):
             payload.update(supplierId=supplier["id"], revision=supplier["revision"])
         if record:
             payload["recordId"] = record["id"]
-            if operation.startswith("category."):
+            if operation.startswith(("category.", "issue-category.")):
                 payload["revision"] = record["revision"]
         code, result = self.request(actor=actor, payload=payload)
         self.assertEqual(code, status, result)
@@ -84,6 +84,110 @@ class SupplierHttpTests(unittest.TestCase):
     def company(self, **options):
         return {"name": "Northlight Ltd", "website": "", "description": "",
                 "address": dict(ADDRESS), "categoryIds": [], **options}
+
+    def test_issue_lifecycle_handover_corrections_and_audit(self):
+        supplier = self.save("supplier.save", self.company(contacts=[CONTACT, {**CONTACT, "name": "Sam Example"}]))
+        original, replacement = supplier["contacts"]
+        other = self.save("supplier.save", self.company(name="Another Ltd", contacts=[CONTACT]))
+        category = supplier["issueCategories"][0]
+        fields = {"title": "Damaged monitors", "description": "Original description",
+                  "categoryId": category["id"], "contactIds": [original["id"]]}
+        self.save("issue.save", {**fields, "status": "Open"}, supplier, status=400)
+        self.save("issue.save", {**fields, "description": " "}, supplier, status=400)
+        self.save("issue.save", {**fields, "contactIds": [other["contacts"][0]["id"]]}, supplier, status=404)
+        self.save("issue.save", fields, supplier, actor=3, status=403)
+        company = self.save("issue.save", fields, supplier)
+        issue = company["issue"]
+        self.assertEqual((issue["status"], issue["createdBy"]), ("Open", "actor-2"))
+        detail = f"{ROOT}/{supplier['id']}/issues/{issue['id']}"
+        self.assertEqual(self.request(detail, actor=3), (200, issue))
+        self.assertEqual(self.request(f"{ROOT}/{other['id']}/issues/{issue['id']}")[0], 404)
+        self.save("supplier.delete", {"confirmed": True}, company, status=409)
+
+        updated = self.save("issue.save", {**fields, "status": "Resolved", "newUpdate": "Original observation"},
+                            company, issue)
+        self.save("issue.save", {**fields, "status": "Closed"}, company, issue, status=409)
+        first = updated["issue"]["updates"][0]
+        updated = self.save("issue.save", {**fields, "status": "Closed", "newUpdate": "Accepted replacements"},
+                            updated, issue)
+        updated = self.save("issue-update.correct", {"issueId": issue["id"], "text": "Corrected observation"},
+                            updated, first, actor=1)
+        fields.update(description="Corrected description", contactIds=[replacement["id"]])
+        updated = self.save("issue.save", {**fields, "status": "Open"}, updated, issue)
+        self.assertEqual(updated["issue"]["createdAt"], issue["createdAt"])
+        self.assertEqual(updated["issue"]["contactIds"], [replacement["id"]])
+        self.assertEqual(updated["issue"]["status"], "Open")
+        corrected, second = updated["issue"]["updates"]
+        self.assertEqual((corrected["id"], corrected["createdAt"], corrected["createdBy"], corrected["updatedBy"]),
+                         (first["id"], first["createdAt"], "actor-2", "actor-1"))
+        self.assertEqual((corrected["text"], second["text"]), ("Corrected observation", "Accepted replacements"))
+        self.save("contact.delete", {"confirmed": True}, updated, original, status=409)
+        self.save("issue.delete", {"confirmed": True}, updated, issue, status=400)
+        self.save("issue-update.delete", {"confirmed": True}, updated, first, status=400)
+        events = self.request("/api/inventory/history", actor=1)[1]["changeHistory"]
+        correction = next(event for event in events if event.get("reason") == "Supplier issue update corrected")
+        self.assertEqual(correction["actor"], "actor-1")
+        self.assertEqual(correction["changes"][0]["before"]["text"], "Original observation")
+        self.assertEqual(correction["changes"][0]["after"]["text"], "Corrected observation")
+        self.assertEqual(correction["changes"][0]["before"]["createdAt"], first["createdAt"])
+        transitions = [(change["before"]["status"], change["after"]["status"])
+                       for event in events if event.get("reason") == "Supplier issue updated"
+                       for change in event["changes"]]
+        self.assertEqual(transitions, [("Open", "Resolved"), ("Resolved", "Closed"), ("Closed", "Open")])
+        with sqlite3.connect(self.db) as db:
+            for query in ("DELETE FROM supplier_issues", "DELETE FROM supplier_issue_updates",
+                          "UPDATE supplier_issue_updates SET created_by=1", "DELETE FROM inventory_change_history"):
+                with self.assertRaises(sqlite3.IntegrityError):
+                    db.execute(query)
+
+    def test_issue_catalogue_and_dashboard_counts_feature_off(self):
+        dashboard = ROOT + "/dashboard"
+        collection = ROOT + "/issues"
+        self.assertEqual(self.request(dashboard, actor=3)[1]["statusCounts"],
+                         {"Open": 0, "In Progress": 0, "Resolved": 0, "Closed": 0})
+        supplier = self.save("supplier.save", self.company())
+        archived = self.save("supplier.save", self.company(name="Old Supplies"))
+        archived = self.save("supplier.archive", {"confirmed": True}, archived)
+        disabled = self.save("supplier.save", self.company(name="On Hold"))
+        deleted = self.save("supplier.save", self.company(name="Unused Supplies"))
+        self.save("supplier.delete", {"confirmed": True}, deleted)
+        with sqlite3.connect(self.db) as db:
+            db.execute("UPDATE suppliers SET status='disabled' WHERE id=?", (disabled["id"],))
+
+        categories = self.save("issue-category.save", {"name": "Replacement Parts"})
+        category = next(item for item in categories["issueCategories"] if item["id"] == categories["categoryId"])
+        self.assertNotIn(category["name"], [item["name"] for item in self.request()[1]["categories"]])
+        self.save("issue-category.save", {"name": "replacement parts"}, status=409)
+        self.save("issue-category.save", {"name": "Private"}, actor=3, status=403)
+        data = {"title": "Broken item", "description": "Three damaged items", "categoryId": category["id"], "contactIds": []}
+        supplier = self.save("issue.save", data, supplier)
+        opened = supplier["issue"]
+        categories = self.save("issue-category.archive", {"confirmed": True}, record=category)
+        retired = next(item for item in categories["issueCategories"] if item["id"] == category["id"])
+        self.save("issue-category.save", {"name": "Stale name"}, record=category, status=409)
+        self.save("issue.save", data, supplier, status=400)
+        supplier = self.save("issue.save", {**data, "status": "In Progress"}, supplier, opened)
+        self.assertEqual(supplier["issue"]["categoryId"], category["id"])
+        self.save("issue-category.reactivate", {"confirmed": True}, record=retired)
+        data["categoryId"] = None
+        for company, title, status in ((archived, "Awaiting response", "Open"),
+                                       (disabled, "Freight delay", "Resolved"),
+                                       (supplier, "Invoice credit", "Closed")):
+            row = self.save("issue.save", {**data, "title": title}, company)
+            if status != "Open":
+                self.save("issue.save", {**data, "title": title, "status": status}, row, row["issue"])
+        counts = self.request(dashboard, actor=3)[1]
+        self.assertEqual((counts["totalSuppliers"], counts["availableSuppliers"]), (3, 1))
+        self.assertEqual(counts["statusCounts"], {"Open": 1, "In Progress": 1, "Resolved": 1, "Closed": 1})
+        self.assertEqual([row["title"] for row in counts["recentIssues"]], ["Awaiting response", "Broken item"])
+        self.assertEqual(len(self.request(collection, actor=3)[1]["issues"]), 4)
+        self.assertEqual(self.request(dashboard, actor=4)[0], 403)
+        self.assertEqual(self.request(collection, actor=5)[0], 401)
+        with sqlite3.connect(self.db) as db:
+            db.execute("UPDATE organisation_features SET enabled=0 WHERE feature='suppliers'")
+        self.assertEqual(self.request(dashboard, actor=1)[0], 403)
+        self.assertEqual(self.request(collection, actor=2)[0], 403)
+        self.assertEqual(self.request(f"{ROOT}/{supplier['id']}/issues/{opened['id']}", actor=3)[0], 403)
 
     def test_access_disabled_reenable_and_audit_privacy(self):
         self.assertEqual(self.request(actor=None)[0], 401)

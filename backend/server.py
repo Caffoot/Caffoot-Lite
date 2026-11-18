@@ -56,7 +56,8 @@ from .roles import (preview_role_change, confirm_role_change, role_catalogue,
                     account_access_details)
 from .history_permissions import visible_change_history
 from .suppliers import (read_directory as read_supplier_directory, read_supplier,
-                        read_supply_impact, save_supplier_operation, supplier_access)
+                        read_issue, read_issues, read_purchasing_dashboard, read_supply_impact,
+                        save_supplier_operation, supplier_access)
 from .request_auth import authorised_mutation
 from .http_security import require_same_origin
 from .tls import ensure_certificate
@@ -708,7 +709,10 @@ class Handler(BaseHTTPRequestHandler):
         detail = len(parts) in (4, 5) and re.fullmatch(r"[1-9][0-9]{0,18}", parts[3])
         impact = detail and len(parts) == 5 and parts[4] == "impact"
         reading = self.command == "GET"
-        if url.query or not (root or reading and (impact or detail and len(parts) == 4)):
+        issue_detail = (len(parts) == 6 and parts[4] == "issues"
+                        and all(re.fullmatch(r"[1-9][0-9]{0,18}", value) for value in (parts[3], parts[5])))
+        collection = {"/api/suppliers/issues": read_issues, "/api/suppliers/dashboard": read_purchasing_dashboard}.get(url.path)
+        if url.query or not (root or reading and (collection or issue_detail or impact or detail and len(parts) == 4)):
             self.respond(404, {"error": "not found"})
             return
         origin = self.headers.get("Origin")
@@ -729,6 +733,10 @@ class Handler(BaseHTTPRequestHandler):
                     supplier_access(connection, actor)
                     if root:
                         result = read_supplier_directory(connection)
+                    elif collection:
+                        result = collection(connection)
+                    elif issue_detail:
+                        result = read_issue(connection, int(parts[3]), int(parts[5]))
                     elif impact:
                         result = read_supply_impact(connection, actor, int(parts[3]))
                     else:
