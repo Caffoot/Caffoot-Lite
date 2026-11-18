@@ -1590,7 +1590,7 @@ function hierarchyValidateTypes(subnets) {
             const dashboardActivityTimelineHtml = filteredDashboardAuditEntries.length
               ? filteredDashboardAuditEntries.map(entry=>{
                   const when=new Date(entry.at);
-                  const time=Number.isNaN(when.getTime())?'Date unavailable':when.toLocaleString();
+                  const time=Number.isNaN(when.getTime())?'Date unavailable':when.toLocaleString('en-GB');
                   const changes=Array.isArray(entry.changes)?entry.changes:[];
                   const description=changes.slice(0,3).map(c=>[c.action||'Changed',c.kind||'record',c.label||''].join(' ')).join(' · ')||'Inventory saved without item-level changes.';
                   const kindText=`${entry.reason||''} ${changes.map(c=>c.kind||'').join(' ')}`.toLowerCase();
@@ -1777,7 +1777,7 @@ function hierarchyValidateTypes(subnets) {
                 const rails=(appState.rackAccessories||[]).filter(a=>a.rackId===rack.id&&a.face===face&&['pdu_vertical','cable_vertical'].includes(a.type)).sort((a,b)=>Number(b.startU)-Number(a.startU)).map(a=>renderInterfaceTemplate("racks/rails-1",[safe(a.name||rackAccessoryTypeDefinitions[a.type]?.label||'Vertical accessory'),safe(a.side==='right'?'Right':'Left'),safe(a.startU),safe(Number(a.startU)+Number(a.heightU)-1)])).join('');
                 return renderInterfaceTemplate("racks/print-capacity-page",[face==='front'?'Front':'Rear',usage.occupied,usage.available,usage.percent,slots,rails?renderInterfaceTemplate("racks/print-equipment-list",[rails]):'<p>None fitted</p>']);
             }).join('');
-            const html = renderInterfaceTemplate("racks/print-rack-elevation-1",[safe(rack.name),safe(rack.name),safe(rack.location||''),safe(rack.heightU),safe(new Date().toLocaleString()),pages]);
+            const html = renderInterfaceTemplate("racks/print-rack-elevation-1",[safe(rack.name),safe(rack.name),safe(rack.location||''),safe(rack.heightU),safe(new Date().toLocaleString('en-GB')),pages]);
             // Keep normal printing until the same-tab trial passes browser acceptance.
             if (new URLSearchParams(window.location.search).get('rack-print') === 'same-tab') {
                 printRackElevationInFrame(html);
