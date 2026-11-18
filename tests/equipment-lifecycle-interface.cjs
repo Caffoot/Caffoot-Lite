@@ -287,7 +287,10 @@ with sqlite3.connect(sys.argv[1]) as db:
         await take('device-details',theme);
         await edit(page);
         await fields.locator('#lifecycle-warrantyExpiry').fill('');
-        await page.locator('#device-lifecycle-edit-heading').scrollIntoViewIfNeeded();
+        await fields.evaluate(section=>{
+          const body=section.closest('.device-review-body');
+          body.scrollTop+=section.getBoundingClientRect().top-body.getBoundingClientRect().top-8;
+        });
         await take('device-edit',theme);
         await settings(page);
         await take('settings',theme,true);

@@ -239,7 +239,8 @@ body{font-size:14px}
 .lifecycle-table th, .lifecycle-table td { border-top: 1px solid var(--line); padding: 10px; vertical-align: top; }
 .lifecycle-table th { font-size: 12px; font-weight: 750; }
 .lifecycle-table td:first-child .db-muted { display: block; margin-top: 3px; }
-.lifecycle-table .db-quicklink { color: inherit; text-align: left; text-decoration: underline; text-underline-offset: 3px; font-weight: 750; }
+.lifecycle-table .db-quicklink { appearance: none; border: 0; padding: 0; background: transparent; cursor: pointer; color: inherit; text-align: left; text-decoration: underline; text-underline-offset: 3px; font-weight: 750; }
+.lifecycle-table .db-quicklink:focus-visible { outline: 2px solid #ed8532; outline-offset: 3px; }
 .lifecycle-attention { display: inline-block; border: 1px solid var(--line); border-radius: 999px; font-size: 11px; padding: 2px 7px; margin: 0 4px 4px 0; }
 .lifecycle-attention.is-past { border-color: #ed8532; color: var(--theme-warning-text, #9d5523); }
 .lifecycle-note { margin-top: 12px; }

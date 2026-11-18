@@ -1643,7 +1643,7 @@ The account hydration/photo functions now have purpose-based callable bindings m
 | Function | Line |
 | --- | ---: |
 | [`addYears`](../../interface/lifecycle.js#L22) | 22 |
-| [`renderDetails`](../../interface/lifecycle.js#L31) | 31 |
-| [`bindEditor`](../../interface/lifecycle.js#L40) | 40 |
-| [`renderDashboard`](../../interface/lifecycle.js#L118) | 118 |
-| [`bindDashboard`](../../interface/lifecycle.js#L150) | 150 |
+| [`renderDetails`](../../interface/lifecycle.js#L32) | 32 |
+| [`bindEditor`](../../interface/lifecycle.js#L41) | 41 |
+| [`renderDashboard`](../../interface/lifecycle.js#L120) | 120 |
+| [`bindDashboard`](../../interface/lifecycle.js#L152) | 152 |

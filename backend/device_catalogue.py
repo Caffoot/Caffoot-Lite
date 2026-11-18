@@ -99,6 +99,11 @@ def change_device_catalogue(connection, account_id, kind, operation, old_name,
             connection.execute(
                 "INSERT INTO equipment_lifecycle_types(name,archived) VALUES(?,?) "
                 "ON CONFLICT(name) DO UPDATE SET archived=excluded.archived", (old_name, int(archived)))
+            if old_name not in raw_list:
+                connection.execute(
+                    "INSERT INTO inventory_settings(key,value_json) VALUES(?,?) "
+                    "ON CONFLICT(key) DO UPDATE SET value_json=excluded.value_json",
+                    (key, json.dumps([*raw_list, old_name], ensure_ascii=False, allow_nan=False)))
             connection.execute("UPDATE equipment_lifecycle_settings SET revision=revision+1")
             record_actor_event(connection, account_id, kind="Device types", action="Updated",
                 label=old_name, reason="Inventory saved", fields=["Availability"],

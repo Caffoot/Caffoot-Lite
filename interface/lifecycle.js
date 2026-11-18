@@ -20,8 +20,9 @@
   const yearsLabel = years => years ? `${years} ${years===1?'year':'years'}` : 'Lifespan Not Set';
 
   function addYears(value, years) {
-    if (!value || !years) return '';
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(value) || !years) return '';
     const date = asDate(value);
+    if (!Number.isFinite(date.getTime()) || date.getUTCFullYear()+years>9999) return '';
     const month = date.getUTCMonth();
     date.setUTCFullYear(date.getUTCFullYear()+years);
     if (date.getUTCMonth()!==month) date.setUTCDate(0);
@@ -72,7 +73,7 @@
         : `${typeLabel(type)} · ${yearsLabel(saved.lifespan)} · ${dateLabel(calculated)}`;
       reset.hidden=!(admin&&manual);
       suggestion.hidden=!suggested||!!warranty;
-      suggestion.querySelector('[data-lifecycle-suggestion]').textContent=suggested?`Suggested Expiry: ${dateLabel(suggested)}`:'';
+      suggestion.querySelector('[data-lifecycle-suggestion]').textContent=suggested?`Suggested Expiry · ${dateLabel(suggested)}`:'';
       accept.dataset.suggested=suggested;
     };
     const values={...saved,...restored};
@@ -100,7 +101,8 @@
         throw new Error('Enter a Planned Replacement Date or choose Use Calculated Date.');
       for (const [key,label] of dates) {
         const control=input(key);
-        if (control.validity.badInput) throw new Error(`Enter a valid ${label}.`);
+        if (control.validity.badInput || control.value&&!/^\d{4}-\d{2}-\d{2}$/.test(control.value))
+          throw new Error(`Enter a valid ${label}.`);
         if (control.validity.rangeOverflow) throw new Error(`${label} cannot be in the future.`);
       }
       return Object.fromEntries(Object.entries(form.lifecycleDraft()).filter(([key,value])=>value!==saved[key]));
