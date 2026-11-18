@@ -13,6 +13,10 @@ Equipment Lifecycle helps IT staff review warranty cover and plan replacements f
 
 Use an existing physical Device. Virtual Machines have no equipment dates or lifespan settings. See [Roles, Section Permissions And MFA](Roles-Section-Permissions-and-MFA.md) for help locating your effective permissions.
 
+## UK Date Format
+
+Enter dates as **DD/MM/YYYY**, such as **15/03/2023** for 15 March 2023. The calendar button uses the same UK order. Enter a complete valid day, month and four-digit year; 29 February is accepted only in leap years. Existing date limits (including no future Purchase Date or Original In Service Date) still apply. Dates continue to be saved internally using ISO `YYYY-MM-DD`, without any change to the real recorded date. For keyboard and calendar navigation, see [UK Date Entry And Calendar Controls](README.md#uk-date-entry-and-calendar-controls).
+
 ## Understand The Four Dates
 
 | Field | What To Enter Or Expect |
