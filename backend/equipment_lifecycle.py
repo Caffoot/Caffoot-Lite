@@ -233,3 +233,29 @@ def project_device_lifecycle(connection, devices):
             replacementWarning=warning_state(replacement, today, settings['replacementDays'])))
     return dict(today=today.isoformat(), warrantyDays=settings['warrantyDays'],
                 replacementDays=settings['replacementDays'], devices=result)
+
+
+def capture_first_service_from_stock(connection, actor, device_id, unit_id, issued_on):
+    """Only known registration followed by its first physical issue proves first service."""
+    if not connection.in_transaction:
+        raise RuntimeError('First service capture requires the stock transaction')
+    if device_lifecycle_values(connection, device_id)['originalInServiceDate'] is not None:
+        return
+    registered, previously_moved, previously_assigned = connection.execute(
+        """SELECT
+            EXISTS(SELECT 1 FROM it_asset_stock_entries e JOIN it_asset_stock_movements m
+                   ON m.id=e.movement_id WHERE e.stock_unit_id=? AND m.kind='registered'),
+            EXISTS(SELECT 1 FROM it_asset_stock_entries e JOIN it_asset_stock_movements m
+                   ON m.id=e.movement_id WHERE e.stock_unit_id=? AND m.kind IN ('issued','returned')),
+            EXISTS(SELECT 1 FROM device_assignments WHERE device_id=?)""",
+        (unit_id, unit_id, device_id)).fetchone()
+    if not registered or previously_moved or previously_assigned:
+        return
+    calendar_date(issued_on, 'Date Issued for first service (UTC)', latest=utc_today())
+    connection.execute(
+        'INSERT INTO device_lifecycle(device_id,original_in_service_date) VALUES(?,?) '
+        'ON CONFLICT(device_id) DO UPDATE SET original_in_service_date=excluded.original_in_service_date',
+        (device_id, issued_on))
+    record_actor_event(connection, actor, kind='Device', action='Updated', label=device_id,
+        reason=FIRST_SERVICE_AUDIT_REASON, fields=['Original In Service Date'],
+        before={'Original In Service Date': None}, after={'Original In Service Date': issued_on})

@@ -6,6 +6,7 @@ from backend.audit_events import record_actor_event
 from backend.device_saves import create_device_in_transaction
 from backend.permissions import can_access
 from backend.equipment_associations import has_outstanding_associated_equipment
+from backend.equipment_lifecycle import capture_first_service_from_stock
 from backend.stock_intake import (COMPUTER_TYPES, append_stock_fact, stock_item,
     stock_operation, stock_replay, stock_write_access, stock_text, stock_json)
 from backend.stock_circulation import (canonical_device_choice, require_stock_device_edit,
@@ -144,6 +145,7 @@ def reissue_stock_device(connection, actor, token, payload):
         recipient = stock_recipient(connection, payload['recipientKind'], payload['recipientId'])
         issued = stock_event_date(payload['issuedOn'], 'Date Issued')
         note = stock_text(payload['note'], 'Issue Note', 2000)
+        capture_first_service_from_stock(connection, actor, device_id, choice['stockUnitId'], issued)
         actor_label = connection.execute('SELECT username FROM accounts WHERE id=?', (actor,)).fetchone()[0]
         assignment = connection.execute('''INSERT INTO device_assignments
             (device_id,staff_id,department_id,recipient_label,assigned_at,actor_id,actor_label)

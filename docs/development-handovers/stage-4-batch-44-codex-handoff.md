@@ -68,3 +68,9 @@ Each checkpoint must be coherent, tested to the extent claimed, committed and **
 The owner approved [Device Type Archive and Unarchive and first-issue date validation](https://github.com/Caffoot/Caffoot-Lite/issues/413#issuecomment-6982869999). Schema 24 adds separate lifecycle storage and settings, with no inferred Device dates. The reserved Device edit and administrator settings services validate, calculate and audit saved dates. Device readers receive lifecycle data only when the feature is enabled. An SQLite backup and restore test checks that dates and settings survive reinitialisation.
 
 The feature switch stays unavailable in the application during this checkpoint. First stock issue, archive operations, the approved interface, complete v2.2 instructions and application screenshots are pending. All application visual acceptance and the final checks scheduled for Ready For Review are pending.
+
+## Checkpoint B — first physical issue
+
+The existing Ready stock issue transaction now records Original In Service Date once, if the unit has a registration fact and no prior issue, return or assignment. This covers the first issue of equipment registered from pooled stock. Direct handovers, ordinary assignments, returns, preparation and accessory issues do not write lifecycle dates. Prior manual dates are preserved and stock replay returns the original result. A future first-issue date is rejected against the UTC calendar date before any part of the transaction persists, including when Lifecycle is off.
+
+Checkpoint A (`cca5540`) passed 28 focused schema, Supplier schema, feature settings, HTTP feature settings and lifecycle tests. Checkpoint B passed the focused Device reissue, Device stock, stock circulation and direct handover suites. Catalogue Archive/Unarchive, the feature switch, interface, complete draft guides and screenshot evidence remain pending.

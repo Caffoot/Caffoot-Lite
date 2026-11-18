@@ -155,3 +155,82 @@ class DeviceReissueTests(unittest.TestCase):
             with sqlite3.connect(path) as db:
                 self.assertEqual(db.execute('SELECT count(*) FROM device_assignments').fetchone()[0], 1)
                 self.assertEqual(db.execute("SELECT count(*) FROM it_asset_stock_movements WHERE kind='issued'").fetchone()[0], 1)
+
+
+class FirstServiceStockTests(unittest.TestCase):
+    setUp = DeviceReissueTests.setUp
+    receipt = DeviceReissueTests.receipt
+    unchanged = DeviceReissueTests.unchanged
+    source = DeviceReissueTests.source
+    legacy_device = DeviceReissueTests.legacy_device
+    ready_device = DeviceReissueTests.ready_device
+    issue = DeviceReissueTests.issue
+
+    def service_date(self, device_id):
+        from backend.equipment_lifecycle import device_lifecycle_values
+        return device_lifecycle_values(self.db, device_id)['originalInServiceDate']
+
+    def return_and_prepare(self, device_id):
+        assignment = canonical_device_choice(self.db, device_id)['deviceAssignmentId']
+        issue = next(row for row in read_stock_issues(self.db, 1)['issues']
+                     if row['deviceAssignmentId'] == assignment)
+        return_stock(self.db, 1, self.token, circulation_fixture.return_payload(issue))
+        returned = next(row for row in registered_stock_devices(self.db) if row['deviceId'] == device_id)
+        prepare_stock(self.db, 1, self.token, dict(operationId=uuid.uuid4().hex,
+            stockUnitId=returned['stockUnitId'], version=returned['version'], quantity=1,
+            checkedOn='2026-11-18', checks=dict(cleanedWorking=True, dataPreparationConfirmed=True), note=''))
+
+    @patch('backend.equipment_lifecycle.utc_today')
+    def test_current_and_historical_first_issue_with_feature_off_or_on(self, today):
+        from datetime import date
+        today.return_value = date(2026, 11, 18)
+        for enabled, issued in ((0, '2026-11-17'), (1, '2026-11-18')):
+            with self.subTest(enabled=enabled):
+                self.db.execute('UPDATE organisation_features SET enabled=? WHERE feature=?',
+                                (enabled, 'equipment_lifecycle'))
+                self.db.commit()
+                item = self.source()
+                self.assertEqual(self.db.execute('SELECT count(*) FROM device_lifecycle').fetchone()[0], enabled)
+                payload = registration_fixture.registration_payload(self.db, item)
+                payload['record']['name'] += f' {enabled}'
+                device = register_stock_device(self.db, 1, self.token, payload)['deviceId']
+                self.assertIsNone(self.service_date(device))
+                rejected = reissue_payload(self.db, device, issuedOn='2026-11-19')
+                before = tuple(self.db.iterdump())
+                with self.assertRaisesRegex(ValueError, 'Date Issued.*cannot be in the future'):
+                    reissue_stock_device(self.db, 1, self.token, rejected)
+                self.assertEqual(before, tuple(self.db.iterdump()))
+                with patch('backend.device_stock.publish_stock_movement', side_effect=RuntimeError('Injected failure')):
+                    self.unchanged(RuntimeError, lambda: self.issue(device, issuedOn=issued))
+                self.assertIsNone(self.service_date(device))
+                approved = dict(rejected, issuedOn=issued)
+                result = reissue_stock_device(self.db, 1, self.token, approved)
+                self.assertEqual(self.service_date(device), issued)
+                self.assertEqual(reissue_stock_device(self.db, 1, self.token, approved), result)
+                self.assertEqual(self.db.execute('''SELECT count(*) FROM inventory_change_history WHERE
+                    json_extract(record_json,'$.reason')='Original In Service Date recorded at first stock issue'
+                    AND json_extract(record_json,'$.changes[0].label')=?''', (device,)).fetchone(), (1,))
+
+    @patch('backend.equipment_lifecycle.utc_today')
+    def test_reissue_retains_existing_or_deliberately_cleared_first_service(self, today):
+        from datetime import date
+        today.return_value = date(2026, 11, 18)
+        _, device = self.ready_device()
+        self.issue(device, issuedOn='2026-11-16')
+        self.return_and_prepare(device)
+        self.assertEqual(self.service_date(device), '2026-11-16')
+        self.issue(device, issuedOn='2026-11-17')
+        self.assertEqual(self.service_date(device), '2026-11-16')
+        self.return_and_prepare(device)
+        self.db.execute('UPDATE device_lifecycle SET original_in_service_date=NULL WHERE device_id=?', (device,))
+        self.db.commit()
+        self.issue(device, issuedOn='2026-11-19')
+        self.assertIsNone(self.service_date(device))
+
+    def test_existing_manual_date_keeps_date_and_uses_existing_issue_validation(self):
+        _, device = self.ready_device()
+        self.db.execute("INSERT INTO device_lifecycle(device_id,original_in_service_date) VALUES(?,'2020-01-01')",
+                        (device,))
+        self.db.commit()
+        self.issue(device, issuedOn='2099-10-01')
+        self.assertEqual(self.service_date(device), '2020-01-01')
