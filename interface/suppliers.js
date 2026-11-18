@@ -315,8 +315,10 @@
     const count = records.length.toLocaleString('en-GB');
     const controls = select('Equipment Type', 'equipment-type', [['', 'All Equipment Types'], ...types.map(type => [type, type])], equipmentType);
     return sectionHeading('Supplied Equipment', count + ' Visible ' + (records.length === 1 ? 'Record' : 'Records'), controls) +
+      '<div class="supplier-equipment-table">' +
       table(['Equipment Name', 'Source', 'Type', 'Identifier', 'Original Quantity', 'Receipt Date', 'Status', 'Actions'],
-        equipmentRows(), records.length ? 'No Equipment Matches This Type' : 'No Supplied Equipment Recorded', 'supplier-equipment-rows');
+        equipmentRows(), records.length ? 'No Equipment Matches This Type' : 'No Supplied Equipment Recorded',
+        'supplier-equipment-rows') + '</div>';
   }
 
   function renderDetails() {

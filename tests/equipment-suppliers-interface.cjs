@@ -4,6 +4,7 @@ const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
 const {spawn, spawnSync} = require('node:child_process');
+const {createHash} = require('node:crypto');
 const {chromium} = require('playwright');
 
 const root = path.resolve(__dirname, '..');
@@ -53,7 +54,7 @@ with sqlite3.connect(sys.argv[1]) as db:
   browser = await chromium.launch({headless: true, executablePath: process.env.CAFFOOT_CHROMIUM_PATH || undefined});
   const errors = [];
   async function login(username, route) {
-    const context = await browser.newContext({ignoreHTTPSErrors: true, viewport: {width: 1440, height: 1050}});
+    const context = await browser.newContext({ignoreHTTPSErrors: true, locale: 'en-GB', viewport: {width: 1440, height: 1050}});
     for (let attempt = 0; attempt < 50; attempt++) {
       try { if ((await context.request.get(origin + '/health', {timeout: 500})).ok()) break; } catch (_) {}
       if (server.exitCode !== null) throw Error(fs.readFileSync(logfile, 'utf8'));
@@ -83,7 +84,7 @@ with sqlite3.connect(sys.argv[1]) as db:
   const deviceSupplier = deviceForm.getByRole('combobox', {name: 'Supplier (Optional)'});
   const supplierDialog = page.locator('[data-supplier-dialog]');
   await page.getByRole('button', {name: 'Add Device', exact: true}).click();
-  await deviceForm.locator('#dev-name').fill('Meeting Room Display');
+  await deviceForm.locator('#dev-name').fill('Meeting Room Laptop');
   await deviceForm.locator('#dev-type').selectOption('Laptop');
   await deviceForm.locator('#dev-location').selectOption('Unknown');
   assert.match(await deviceSupplier.locator('xpath=ancestor::div[contains(@class,"form-section-card")]').locator('h3').textContent(), /Device Identity/);
@@ -92,14 +93,14 @@ with sqlite3.connect(sys.argv[1]) as db:
   await supplierDialog.getByLabel('Supplier Name').fill('Unsaved Company');
   await page.keyboard.press('Escape');
   await page.locator('#discard-dialog [data-action="discard-device-form-changes"]').click();
-  assert.equal(await deviceForm.locator('#dev-name').inputValue(), 'Meeting Room Display');
+  assert.equal(await deviceForm.locator('#dev-name').inputValue(), 'Meeting Room Laptop');
   assert.equal(await deviceSupplier.inputValue(), 'Northlight Technology Ltd');
 
   const direct = await post(page, '/api/devices/create', page.locator('.device-review-footer [type="submit"]'));
   assert.deepEqual(direct.payload.supplier, {text: 'Northlight Technology Ltd'});
   await page.locator('#modal-container.hidden').waitFor({state: 'attached'});
   const state = async () => (await context.request.get(origin + '/api/inventory/state')).json();
-  const device = (await state()).devices.find(record => record.name === 'Meeting Room Display');
+  const device = (await state()).devices.find(record => record.name === 'Meeting Room Laptop');
   await page.evaluate(id => openDeviceModal(id), device.id);
   await deviceSupplier.waitFor();
   await deviceForm.getByRole('button', {name: '+ Add Supplier', exact: true}).click();
@@ -109,7 +110,7 @@ with sqlite3.connect(sys.argv[1]) as db:
   const company = await post(page, '/api/suppliers', supplierDialog.getByRole('button', {name: 'Add Supplier', exact: true}));
   await deviceSupplier.waitFor();
   assert.equal(await deviceSupplier.inputValue(), 'Dockland Equipment Ltd');
-  assert.equal(await deviceForm.locator('#dev-name').inputValue(), 'Meeting Room Display');
+  assert.equal(await deviceForm.locator('#dev-name').inputValue(), 'Meeting Room Laptop');
   const edit = await post(page, '/api/devices/edit/save', page.locator('.device-review-footer [type="submit"]'));
   assert.deepEqual(edit.payload.supplier, {id: company.response.id});
   await page.locator('#modal-container.hidden').waitFor({state: 'attached'});
@@ -141,7 +142,7 @@ with sqlite3.connect(sys.argv[1]) as db:
   assert.equal(await reader.page.getByRole('button', {name: 'View Supplier'}).count(), 0);
   assert.equal(await reader.page.locator('[data-select-device-supplier]').count(), 0);
   await page.evaluate(() => { activeDeviceDetailsTab = 'inventory'; switchTab('devices'); });
-  await page.getByRole('checkbox', {name: 'Select Meeting Room Display'}).check();
+  await page.getByRole('checkbox', {name: 'Select Meeting Room Laptop'}).check();
   await page.getByRole('button', {name: 'Assign Supplier'}).click();
   await supplierDialog.getByText('1 selected Device').waitFor();
   assert.match(await supplierDialog.innerText(), /will be replaced/);
@@ -184,7 +185,7 @@ with sqlite3.connect(sys.argv[1]) as db:
   await page.goBack();
   await page.getByRole('tab', {name: 'Supplied Equipment', selected: true}).waitFor();
   await page.getByRole('button', {name: 'View Device'}).click();
-  await page.locator('.device-details-dialog').getByRole('heading', {name: 'Meeting Room Display'}).waitFor();
+  await page.locator('.device-details-dialog').getByRole('heading', {name: 'Meeting Room Laptop'}).waitFor();
   await page.goBack();
   await page.getByRole('tab', {name: 'Supplied Equipment', selected: true}).waitFor();
   assert.equal(await page.locator('#modal-container:not(.hidden)').count(), 0);
@@ -201,9 +202,164 @@ with sqlite3.connect(sys.argv[1]) as db:
   await receiptsOnly.page.getByRole('button', {name: 'View Receipt'}).click();
   await receiptsOnly.page.locator('#stock-receipt-' + receipt.response.receiptId).waitFor();
   assert.equal(await receiptsOnly.page.getByRole('button', {name: 'Change Supplier'}).count(), 0);
+  const session = await (await context.request.get(origin + '/api/session')).json();
+  async function apiPost(route, data) {
+    const response = await context.request.post(origin + route, {data,
+      headers: {Origin: origin, 'X-CSRF-Token': session.csrf_token}});
+    assert.equal(response.status(), 200, await response.text());
+    return response.json();
+  }
+  async function setSuppliers(enabled) {
+    await apiPost('/api/settings/features', {feature: 'suppliers', enabled, confirmDisable: !enabled});
+    await page.reload();
+    await page.locator('#app[aria-busy="false"]').waitFor();
+  }
+  await page.goto(origin + '/inventory#devices');
+  await setSuppliers(false);
+  await page.evaluate(id => openDeviceModal(id), device.id);
+  await deviceForm.waitFor();
+  assert.equal(await deviceForm.locator('#dev-supplier').count(), 0);
+  await deviceForm.locator('#dev-name').fill('Meeting Room Laptop Renamed');
+  const unrelated = await post(page, '/api/devices/edit/save', page.locator('.device-review-footer [type="submit"]'));
+  assert.equal(Object.hasOwn(unrelated.payload, 'supplier'), false);
+  await page.locator('#modal-container.hidden').waitFor({state: 'attached'});
+  assert.equal(Object.hasOwn(await state(), 'deviceSuppliers'), false);
+
+  await page.goto(origin + '/inventory#it-assets');
+  await page.getByRole('tab', {name: 'Receive Stock', exact: true}).click();
+  const ownerReceipt = page.locator('#stock-receipt-form');
+  await ownerReceipt.getByRole('button', {name: 'Receive More Of An Existing Item'}).click();
+  await ownerReceipt.locator('#stock-existing').selectOption(receipt.response.stockItemId);
+  const legacySupplier = ownerReceipt.getByLabel('Supplier (Optional)');
+  assert.equal(await legacySupplier.getAttribute('role'), null);
+  await legacySupplier.fill('Invoice Name as Recorded');
+  const offReceipt = await post(page, '/api/it-assets/receive', ownerReceipt.getByRole('button', {name: 'Record Receipt'}));
+  assert.equal(Object.hasOwn(offReceipt.payload, 'supplierId'), false);
+  const offRow = page.locator('#stock-receipt-' + offReceipt.response.receiptId);
+  await offRow.getByText('Invoice Name as Recorded').waitFor();
+  assert.equal(await offRow.getByRole('button', {name: 'Link Supplier'}).count(), 0);
+
+  await setSuppliers(true);
+  assert.equal((await state()).deviceSuppliers[device.id].id, 1);
+  await apiPost('/api/devices/create', {record: {id: 'example-switch', name: 'Workshop Switch', type: 'Switch'}});
+  await page.getByRole('tab', {name: 'Receive Stock', exact: true}).click();
+  await ownerReceipt.locator('#stock-model').fill('USB Keyboards');
+  await ownerReceipt.locator('#stock-quantity').fill('25');
+  await ownerReceipt.locator('#stock-notes').fill('Second delivery, for the upstairs training room.');
+  await ownerReceipt.getByLabel('Supplier (Optional)').fill('Draft invoice name');
+  await ownerReceipt.getByRole('button', {name: '+ Add Supplier'}).click();
+  await supplierDialog.getByLabel('Supplier Name').fill('Unfinished Receipt Supplier');
+  await supplierDialog.getByRole('button', {name: 'Cancel', exact: true}).click();
+  await page.getByRole('button', {name: 'Discard Changes'}).click();
+  assert.equal(await ownerReceipt.locator('#stock-quantity').inputValue(), '25');
+  assert.equal(await ownerReceipt.getByLabel('Supplier (Optional)').inputValue(), 'Draft invoice name');
+  await ownerReceipt.getByRole('button', {name: '+ Add Supplier'}).click();
+  await supplierDialog.getByLabel('Supplier Name').fill('Harbourside Supplies Ltd');
+  await post(page, '/api/suppliers', supplierDialog.getByRole('button', {name: 'Add Supplier', exact: true}));
+  assert.equal(await ownerReceipt.getByLabel('Supplier (Optional)').inputValue(), 'Harbourside Supplies Ltd');
+  assert.equal(await ownerReceipt.locator('#stock-notes').inputValue(), 'Second delivery, for the upstairs training room.');
+  assert.equal(await ownerReceipt.locator('#stock-model').inputValue(), 'USB Keyboards');
+  await ownerReceipt.getByRole('button', {name: 'Cancel', exact: true}).click();
+  await page.getByRole('button', {name: 'Discard Changes'}).click();
+
+  const evidence = process.env.CAFFOOT_EQUIPMENT_SUPPLIER_EVIDENCE;
+  if (evidence) {
+    await page.reload();
+    await page.locator('#app[aria-busy="false"]').waitFor();
+    await captureEvidence(page, device.id, receipt.response, evidence);
+  }
   assert.deepEqual(errors, []);
+  console.log('PASS: disabled-Suppliers edit preserves a Device association; receipt text and Add Supplier draft return work.');
   console.log('PASS: Supplier Equipment counts, filters, canonical drill-down and Back, restricted views.');
   console.log('PASS: real Device and receipt fields, explicit selection, Supplier creation and discard, preserved drafts, duplicate blank, read-only name, and confirmed assignments and removal in the existing lists.');
+}
+async function captureEvidence(page, deviceId, receipt, output) {
+  fs.mkdirSync(output, {recursive: true});
+  const screenshots = [];
+  const viewport = () => page.viewportSize();
+  async function capture(scene, theme, {fullPage = false} = {}) {
+    assert.equal(await page.locator('html').evaluate(el => el.classList.contains('dark')), theme === 'dark');
+    if (fullPage) await page.evaluate(() => window.scrollTo({top: 0, behavior: 'instant'}));
+    const overflow = await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1);
+    assert.equal(overflow, false, scene + ' overflows the workspace');
+    const file = scene + '-' + theme + '-' + viewport().width + '.png';
+    const bytes = await page.screenshot({path: path.join(output, file), fullPage, animations: 'disabled'});
+    screenshots.push({file, scene, theme, viewport: viewport(), fullPage,
+      sha256: createHash('sha256').update(bytes).digest('hex')});
+  }
+  const main = page.locator('#main-content');
+  const assignment = page.locator('[data-supplier-dialog]');
+  for (const [width, height] of [[1440, 1050], [390, 844]]) {
+    await page.setViewportSize({width, height});
+    for (const theme of ['light', 'dark']) {
+      await page.evaluate(value => caffootSetTheme(value), theme);
+      await page.goto(origin + '/inventory#devices');
+      await main.getByRole('tab', {name: 'Device Inventory', exact: true}).click();
+      const panel = main.locator('[data-device-panel="inventory"]');
+      await panel.getByRole('checkbox', {name: 'Select Meeting Room Laptop Renamed'}).check();
+      await panel.getByRole('checkbox', {name: 'Select Workshop Switch'}).check();
+      await panel.getByRole('button', {name: 'Assign Supplier'}).scrollIntoViewIfNeeded();
+      await capture('device-inventory', theme, {fullPage: true});
+      await panel.getByRole('button', {name: 'Assign Supplier'}).click();
+      await assignment.getByText('2 selected Devices').waitFor();
+      await capture('device-assignment', theme);
+      await assignment.getByRole('button', {name: 'Cancel', exact: true}).click();
+
+      await page.evaluate(id => openDeviceModal(id), deviceId);
+      const deviceForm = page.locator('form[data-device-form]');
+      const identity = deviceForm.getByRole('heading', {name: 'Device Identity', exact: false});
+      await identity.waitFor();
+      const deviceSupplier = deviceForm.getByRole('combobox', {name: 'Supplier (Optional)'});
+      assert.equal(await deviceSupplier.inputValue(), 'Northlight Technology Ltd');
+      await deviceForm.getByRole('button', {name: '+ Add Supplier'}).scrollIntoViewIfNeeded();
+      await capture('device-identity', theme);
+      await page.evaluate(() => closeModal(true));
+
+      await page.goto(origin + '/inventory#it-assets');
+      await main.getByRole('tab', {name: 'Receive Stock', exact: true}).click();
+      const form = main.locator('#stock-receipt-form');
+      await form.getByRole('button', {name: 'Receive More Of An Existing Item'}).click();
+      await form.locator('#stock-existing').selectOption(receipt.stockItemId);
+      await form.locator('#stock-quantity').fill('25');
+      await form.locator('#stock-notes').fill('Second delivery for the upstairs training room.');
+      await form.getByRole('combobox', {name: 'Supplier (Optional)'}).fill('Dockland');
+      await form.getByRole('option', {name: 'Dockland Equipment Ltd'}).click();
+      await capture('receipt-details', theme, {fullPage: true});
+      await form.getByRole('button', {name: 'Cancel', exact: true}).click();
+      await page.getByRole('button', {name: 'Discard Changes'}).click();
+
+      await main.getByRole('tab', {name: 'Receipt History'}).click();
+      const receiptRow = main.locator('#stock-receipt-' + receipt.receiptId);
+      await receiptRow.getByRole('checkbox').check();
+      await main.locator('[data-select-receipt-supplier]').first().check();
+      if (width === 390) await receiptRow.getByText('Linked Supplier: Northlight Technology Ltd').scrollIntoViewIfNeeded();
+      await capture('receipt-history', theme, {fullPage: true});
+      await main.getByRole('button', {name: 'Assign Supplier'}).click();
+      await assignment.getByText('2 selected receipts').waitFor();
+      await capture('receipt-assignment', theme);
+      await assignment.getByRole('button', {name: 'Cancel', exact: true}).click();
+
+      await page.goto(origin + '/inventory#suppliers/1/overview');
+      const metric = main.getByRole('button', {name: '51 Supplier Equipment'});
+      await metric.waitFor();
+      await capture('supplier-overview', theme, {fullPage: true});
+      await metric.click();
+      await main.getByText('2 Visible Records').waitFor();
+      await capture('supplied-equipment', theme, {fullPage: true});
+      if (width === 390) {
+        await main.getByRole('button', {name: 'View Receipt'}).scrollIntoViewIfNeeded();
+        await capture('supplied-equipment-actions', theme, {fullPage: true});
+      }
+    }
+  }
+  const sha = spawnSync('git', ['rev-parse', 'HEAD'], {cwd: root, encoding: 'utf8'});
+  assert.equal(sha.status, 0, sha.stderr);
+  fs.writeFileSync(path.join(output, '..', 'screenshots.json'), JSON.stringify({
+    applicationCommit: sha.stdout.trim(), browser: 'Chromium ' + browser.version(),
+    origin, fixture: 'Isolated fictional records in a temporary SQLite database',
+    capturedAt: new Date().toISOString(), screenshots,
+  }, null, 2) + '\n');
+  console.log('Captured ' + screenshots.length + ' genuine application screenshots.');
 }
 main().catch(async error => {
   console.error(error);

@@ -272,7 +272,7 @@ async function main(){
  assert.equal((await owner.request.get(address+'/api/it-assets/stock/'+computer)).status(),403);
  await readerPage.goto(address+'/account');assert.equal(await readerPage.locator('[data-action="tab-it-assets"]').isVisible(),false);
  const reenabling=page.waitForResponse(r=>r.url().endsWith('/api/settings/features')&&r.request().method()==='POST');
- await page.locator('#optional-feature-it-assets').check({force:true});assert.equal((await reenabling).status(),200);
+ await page.locator('#optional-feature-it-assets').check();assert.equal((await reenabling).status(),200);
  await page.locator('[data-action="tab-it-assets"]').waitFor({state:'visible'});
  await page.locator('[data-action="tab-it-assets"]').click();
  await stockTab('receive');await page.locator('#stock-receipt-form').waitFor();

@@ -64,7 +64,7 @@ html.dark :is(#app,#modal-container) .supplier-live .device-status.issue-progres
 .equipment-supplier-field [role="option"] {padding:8px;cursor:pointer;overflow-wrap:anywhere}
 .equipment-supplier-field [role="option"]:hover,.equipment-supplier-field [aria-selected="true"] {background:var(--theme-hover,#e2e8f0);color:var(--ink)}
 .equipment-supplier-field>small:not(:empty) {display:block;margin-block:4px}
-.equipment-supplier-field>.btn {margin-top:6px}
+.equipment-supplier-field>.btn {align-self:flex-start;margin-top:6px}
 .equipment-supplier-field[hidden] {display:none}
 
 /* The same Supplier dialog can open over Devices or IT Assets. */
@@ -84,3 +84,6 @@ html.dark :is(#app,#modal-container) .supplier-live .device-status.issue-progres
 .equipment-supplier-select {width:1%;text-align:center}
 .equipment-supplier-select input {width:16px;height:16px;accent-color:var(--orange)}
 .receipt-supplier-actions {display:flex;flex-wrap:wrap;gap:6px}
+
+.supplier-live .supplier-equipment-table .device-table {min-width:900px;table-layout:auto}
+.stock-live .stock-supplier-receipts .small-table {min-width:780px}
