@@ -87,3 +87,9 @@ html.dark :is(#app,#modal-container) .supplier-live .device-status.issue-progres
 
 .supplier-live .supplier-equipment-table .device-table {min-width:900px;table-layout:auto}
 .stock-live .stock-supplier-receipts .small-table {min-width:780px}
+
+.supplier-live [data-equipment-supplier-assignment] .btn-primary {background:var(--orange);border-color:var(--orange);color:white}
+.supplier-live [data-equipment-supplier-assignment] .btn-primary:hover {background:#da782d}
+.supplier-live .supplier-equipment-table th:nth-child(2),.supplier-live .supplier-equipment-table td:nth-child(2),
+.supplier-live .supplier-equipment-table th:nth-child(3),.supplier-live .supplier-equipment-table td:nth-child(3) {white-space:nowrap}
+.stock-live .stock-supplier-receipts .stock-receipt-item {min-width:105px}

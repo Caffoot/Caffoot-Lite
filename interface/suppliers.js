@@ -582,7 +582,7 @@
       <div class="assignment-modal-body">${build ? `<form class="preview-aligned-form" data-supplier-form${equipmentSection ? ` data-equipment-supplier-assignment="${equipmentSection}"` : ''}>
         ${content}<p class="formhint supplier-feedback" data-supplier-feedback role="alert"></p>
         <div class="stock-form-actions"><button class="btn btn-outline" type="button" data-action="close-modal">Cancel</button>
-        <button class="btn ${destructive ? 'bg-rose-700 hover:bg-rose-800 text-white' : 'primary'}" type="submit">${safe(submit)}</button></div></form>`
+        <button class="btn ${destructive ? 'bg-rose-700 hover:bg-rose-800 text-white' : equipmentSection ? 'btn-primary' : 'primary'}" type="submit">${safe(submit)}</button></div></form>`
         : `${content}<div class="stock-form-actions"><button class="btn btn-outline" type="button" data-action="close-modal">Close</button></div>`}</div></div>`, trigger);
     if (build && !destructive) document.querySelector('[data-supplier-form] input:not([type="checkbox"]),[data-supplier-form] textarea')?.focus();
   }
