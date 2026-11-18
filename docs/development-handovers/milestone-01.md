@@ -1,5 +1,11 @@
 # Milestone 01 Development Handover — v2.2 Target
 
+## Stage 4 Batch 4.2 Draft — 18 November 2026
+
+Batch 4.1 was merged to `milestone-1` at `ea6e86c15e207d32795641b52685ae1ec6a828df`. The separately authorised Batch 4.2 adds company-owned Supplier Issues, the independent Issue Category catalogue, the live Purchasing Dashboard and sidebar navigation. The runtime checkpoint is `4055b8e612c262b461baf60954be84668d46ba79` (schema 22). The branch is `feat/stage-4-batch-4-2`. [Owner-approved scope](https://github.com/Caffoot/Caffoot-Lite/issues/411) · [Draft PR #415](https://github.com/Caffoot/Caffoot-Lite/pull/415)
+
+The [Batch 4.2 evidence](evidence/stage-4-batch-42/README.md) records the local checks and application captures. The [v2.2 draft user and administrator instructions](../how-tos/features-and-instructions/v2.2-draft/Supplier-Issues-and-Purchasing.md) explain access, retention, correction and handover. Full Ready For Review checks and owner acceptance remain pending. Batch 4.3 equipment integration and Batch 4.4 lifecycle require their own development authorisation.
+
 ## Current Integration And Documentation — 17 November 2026
 
 Verified `milestone-1` HEAD: **`753b3266893987addb11406ef8303adb03c3c112`**, matching the supplied starting checkpoint; schema 20. Stage 1 and Stage 2 are accepted. Stage 3 Batches 3.1–3.12 are merged, including circulation, registration/reissue, associations/direct handovers, corrections and IT Assets Overview/Low Stock reporting. Issue Equipment confirmation is merged via PR #393; dashboard via #398; subsequent focused corrections through #406 are also integrated. [Development Status](../development-guide/Development-Status.md) records exact merge checkpoints. Earlier statements that these features are awaiting implementation or merge describe historical branches only.

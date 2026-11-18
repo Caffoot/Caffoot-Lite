@@ -82,6 +82,10 @@ The Issue Category catalogue classifies Issues. Supplier company Categories are 
 3. Select **Retire** and confirm **Retire Issue Category** to remove it from new selections. Existing Issues keep the retired category and can still be filtered by it. An Issue already using it can retain that assignment when edited.
 4. Select **Reactivate** and confirm **Reactivate Issue Category** to make the same entry available for new assignments. **Cancel** leaves the catalogue as it was before the current action.
 
+![Desktop dark Manage Issue Categories showing the retired Replacement Parts category and its Reactivate button](../../../development-handovers/evidence/stage-4-batch-42/images/issue-categories-dark-1440.png)
+
+The same catalogue keeps retired categories visible for review and reactivation.
+
 ## Review Retention And Audit
 
 - Supplier Issues and their dated updates are retained, including when a company is archived or disabled. Use status and corrections to keep the record accurate. A Supplier or Contact with protected Issue history can be archived rather than permanently deleted.

@@ -54,8 +54,11 @@ let browser;
    for(const [index,tab] of ['devices','ipam','racks'].entries()){
     assert.equal(await page.locator('#sidebar [data-tab="'+tab+'"]').isVisible(),!!(combination&(1<<index)),tab+' combination '+combination);
    }
+   assert.equal(await page.locator('#sidebar [data-nav-group="it"]').isVisible(),combination!==0);
+   assert.equal(await page.locator('#sidebar [data-nav-group="purchasing"]').isVisible(),false);
    if(combination===0){
-    assert.equal(await page.evaluate(()=>currentTab),'settings');
+    // Staff remains the established landing page when infrastructure features are off.
+    assert.equal(await page.evaluate(()=>currentTab),'staff');
     await page.locator('#next-users-nav').click();
     await page.waitForFunction(()=>currentTab==='users');
     await page.locator('#next-settings-nav').click();
