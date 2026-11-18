@@ -18,6 +18,50 @@ function python(source, args = []) {
   assert.equal(result.status, 0, result.stderr);
   return result.stdout.trim();
 }
+async function verifyAssignmentDiscard(page, openAssignment, supplier, readAssociations) {
+  const dialog = page.locator('[data-supplier-dialog]');
+  const chooser = dialog.getByRole('combobox', {name: 'Supplier', exact: true});
+  const selectedId = dialog.locator('[data-equipment-supplier-id]');
+  const confirmation = page.getByRole('alertdialog', {name: 'Discard Unsaved Changes?'});
+  const dismissals = [
+    ['Cancel', () => dialog.getByRole('button', {name: 'Cancel', exact: true}).click()],
+    ['Escape', async () => {
+      await dialog.getByRole('button', {name: 'Confirm Assignment'}).focus();
+      await page.keyboard.press('Escape');
+    }],
+    ['Close', () => dialog.getByRole('button', {name: 'Close Dialog'}).click()],
+  ];
+  const attemptedSaves = [];
+  const recordSave = request => {
+    if (request.method() === 'POST' && request.url().startsWith(origin + '/api/suppliers/assign/'))
+      attemptedSaves.push(request.url());
+  };
+  const original = await readAssociations();
+  page.on('request', recordSave);
+  try {
+    for (const [label, dismiss] of dismissals) {
+      await openAssignment();
+      await chooser.fill(supplier.name);
+      await dialog.getByRole('option', {name: supplier.name, exact: true}).click();
+      assert.equal(await selectedId.inputValue(), String(supplier.id));
+
+      await dismiss();
+      await confirmation.getByRole('button', {name: 'Keep Editing'}).click();
+      await confirmation.waitFor({state: 'hidden'});
+      assert.equal(await chooser.inputValue(), supplier.name, label + ' must preserve the Supplier name');
+      assert.equal(await selectedId.inputValue(), String(supplier.id), label + ' must preserve the canonical Supplier');
+
+      await dismiss();
+      await confirmation.getByRole('button', {name: 'Discard Changes'}).click();
+      await confirmation.waitFor({state: 'hidden'});
+      await dialog.waitFor({state: 'hidden'});
+      assert.deepEqual(await readAssociations(), original, label + ' must preserve saved associations');
+    }
+    assert.deepEqual(attemptedSaves, [], 'Leaving the dialog must send no assignment request');
+  } finally {
+    page.off('request', recordSave);
+  }
+}
 async function main() {
   const secret = python(`
 import sqlite3, sys, time
@@ -142,8 +186,13 @@ with sqlite3.connect(sys.argv[1]) as db:
   assert.equal(await reader.page.getByRole('button', {name: 'View Supplier'}).count(), 0);
   assert.equal(await reader.page.locator('[data-select-device-supplier]').count(), 0);
   await page.evaluate(() => { activeDeviceDetailsTab = 'inventory'; switchTab('devices'); });
-  await page.getByRole('checkbox', {name: 'Select Meeting Room Laptop'}).check();
-  await page.getByRole('button', {name: 'Assign Supplier'}).click();
+  const openDeviceAssignment = async () => {
+    await page.getByRole('checkbox', {name: 'Select Meeting Room Laptop'}).check();
+    await page.getByRole('button', {name: 'Assign Supplier'}).click();
+  };
+  await verifyAssignmentDiscard(page, openDeviceAssignment, {id: 1, name: 'Northlight Technology Ltd'}, async () =>
+    (await state()).deviceSuppliers);
+  await openDeviceAssignment();
   await supplierDialog.getByText('1 selected Device').waitFor();
   assert.match(await supplierDialog.innerText(), /will be replaced/);
   await supplierDialog.getByRole('combobox', {name: 'Supplier'}).fill('Northlight');
@@ -155,14 +204,22 @@ with sqlite3.connect(sys.argv[1]) as db:
 
   await editor.page.getByRole('tab', {name: 'Receipt History'}).click();
   const stockRow = editor.page.locator('#stock-receipt-' + receipt.response.receiptId);
+  const openReceiptAssignment = async () => {
+    await stockRow.getByRole('checkbox').check();
+    await editor.page.getByRole('button', {name: 'Assign Supplier'}).click();
+  };
+  await verifyAssignmentDiscard(editor.page, openReceiptAssignment, company.response, async () => {
+    const response = await editor.context.request.get(origin + '/api/it-assets/stock/' + receipt.response.stockItemId);
+    assert.equal(response.status(), 200);
+    return (await response.json()).receipts;
+  });
   await stockRow.getByRole('button', {name: 'Remove Supplier Association'}).click();
   const receiptDialog = editor.page.locator('[data-supplier-dialog]');
   assert.match(await receiptDialog.innerText(), /retains the original receipt/);
   await post(editor.page, '/api/suppliers/assign/receipts', receiptDialog.getByRole('button', {name: 'Confirm Removal'}));
   await stockRow.getByRole('button', {name: 'Link Supplier'}).waitFor();
   assert.match(await stockRow.innerText(), /Northlight Technology Ltd/);
-  await stockRow.getByRole('checkbox').check();
-  await editor.page.getByRole('button', {name: 'Assign Supplier'}).click();
+  await openReceiptAssignment();
   await receiptDialog.getByRole('combobox', {name: 'Supplier'}).fill('Northlight');
   await receiptDialog.getByRole('option', {name: 'Northlight Technology Ltd'}).click();
   await post(editor.page, '/api/suppliers/assign/receipts', receiptDialog.getByRole('button', {name: 'Confirm Assignment'}));
@@ -269,6 +326,7 @@ with sqlite3.connect(sys.argv[1]) as db:
     await captureEvidence(page, device.id, receipt.response, evidence);
   }
   assert.deepEqual(errors, []);
+  console.log('PASS: Cancel, Escape and Close preserve a selected Supplier on Keep Editing and leave saved Device and receipt associations intact on Discard Changes.');
   console.log('PASS: disabled-Suppliers edit preserves a Device association; receipt text and Add Supplier draft return work.');
   console.log('PASS: Supplier Equipment counts, filters, canonical drill-down and Back, restricted views.');
   console.log('PASS: real Device and receipt fields, explicit selection, Supplier creation and discard, preserved drafts, duplicate blank, read-only name, and confirmed assignments and removal in the existing lists.');
