@@ -222,6 +222,15 @@ with sqlite3.connect(sys.argv[1]) as db:
   await page.locator('[data-lifecycle-editor]').waitFor({state:'hidden'});
 
   await manager(page);
+  // A legacy stored type key remains attached to its actions while the visible
+  // name (and accessible Archive label) follows the approved public naming.
+  const legacyPhysical = page.locator('.catalog-manager-row')
+    .filter({has: page.locator('[data-action="rename-device-catalogue-entry"][data-name="Server - Physical"]')});
+  const legacyVirtual = page.locator('.catalog-manager-row')
+    .filter({has: page.locator('[data-action="rename-device-catalogue-entry"][data-name="Server - Virtual"]')});
+  assert.equal(await legacyPhysical.locator('strong').innerText(), 'Server');
+  assert.equal(await legacyVirtual.locator('strong').innerText(), 'Virtual Machine');
+  assert.equal(await page.getByRole('button', {name:'Archive Server', exact:true}).count(), 1);
   await postOn(page, '/api/inventory/device-catalogue/change', () =>
     page.getByRole('button', {name: 'Archive Legacy Server', exact: true}).click());
   await page.getByRole('button', {name: 'Unarchive Legacy Server', exact:true}).waitFor();
