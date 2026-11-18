@@ -174,6 +174,18 @@ with sqlite3.connect(sys.argv[1]) as db:
   assert.equal((await context.request.get(origin + '/api/suppliers')).status(), 403);
   await toggleFeature(true);
   await supplierNav.click();
+  await button('Manage Categories').click();
+  await modalButton('Add Category').click();
+  await dialog.getByLabel('Category Name').fill('Cloud Services');
+  await modalButton('Add Category').click();
+  const cloud = dialog.getByRole('row', {name: /Cloud Services/});
+  await cloud.getByRole('button', {name: 'Archive', exact: true}).click();
+  await modalButton('Archive Supplier Category').click();
+  await cloud.getByText('Archived', {exact: true}).waitFor();
+  await cloud.getByRole('button', {name: 'Reactivate', exact: true}).click();
+  await modalButton('Reactivate Supplier Category').click();
+  await cloud.getByText('Active', {exact: true}).waitFor();
+  await modalButton('Close').click();
   await page.getByLabel('Search Suppliers').fill('northlight');
   await button('Filter By Category').click();
   await page.getByRole('listbox').getByRole('option', {name: 'Hardware', exact: true}).click();
@@ -197,6 +209,9 @@ with sqlite3.connect(sys.argv[1]) as db:
         await page.reload();
         await button('Northlight Technology Ltd').waitFor();
         await capture('directory', theme, width, height);
+        await button('Manage Categories').click();
+        await capture('categories', theme, width, height);
+        await modalButton('Close').click();
         await button('Add Supplier').click();
         await capture('add-supplier', theme, width, height);
         await modalButton('Add Supplier').scrollIntoViewIfNeeded();
@@ -214,6 +229,9 @@ with sqlite3.connect(sys.argv[1]) as db:
             await modalButton('Close').click();
           }
         }
+        await settings();
+        await page.locator('[data-feature-card="suppliers"]').scrollIntoViewIfNeeded();
+        await capture('optional-features', theme, width, height);
       }
     }
     fs.writeFileSync(path.join(evidence, 'manifest.json'), JSON.stringify({
@@ -222,7 +240,7 @@ with sqlite3.connect(sys.argv[1]) as db:
     }, null, 2) + '\n');
   }
   assert.deepEqual(errors, []);
-  console.log('PASS Supplier settings, form validation, multi-location Contacts, Notes, Cancel/Escape, filters and Read permissions');
+  console.log('PASS Supplier settings, Categories, form validation, multi-location Contacts, Notes, Cancel/Escape, filters and Read permissions');
 }
 main().catch(error => {console.error(error); process.exitCode = 1;}).finally(async () => {
   await browser?.close();
