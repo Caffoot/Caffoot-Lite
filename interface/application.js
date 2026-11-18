@@ -2277,7 +2277,7 @@ function hierarchyValidateTypes(subnets) {
             if(!maker||!field)return;
             const previous=field.value,allowed=getNonVirtualDeviceTypesAssociatedWithManufacturer(maker.value);
             const legacy=field.dataset.originalType||'',same=maker.value===field.dataset.originalMaker;
-            field.innerHTML='<option value="">'+(maker.value?'Select Device Type':'Select Manufacturer First')+'</option>'+allowed.map(t=>'<option value="'+escapeHtml(t)+'">'+escapeHtml(t)+'</option>').join('')+(same&&legacy&&!allowed.includes(legacy)?'<option value="'+escapeHtml(legacy)+'">'+escapeHtml(legacy)+' (Existing Association)</option>':'');
+            field.innerHTML='<option value="">'+(maker.value?'Select Device Type':'Select Manufacturer First')+'</option>'+allowed.map(t=>'<option value="'+escapeHtml(t)+'">'+escapeHtml(publicDeviceTypeName(t))+'</option>').join('')+(same&&legacy&&!allowed.includes(legacy)?'<option value="'+escapeHtml(legacy)+'">'+escapeHtml(publicDeviceTypeName(legacy))+' (Existing Association)</option>':'');
             field.disabled=!maker.value;
             field.value=[...field.options].some(o=>o.value===previous)?previous:(same&&legacy?legacy:'');
             const note=document.getElementById('hardware-model-device-type-note');
@@ -2347,7 +2347,7 @@ function hierarchyValidateTypes(subnets) {
             const fields=renderInterfaceTemplate("device-management/fields-8",[escapeHtml(pref.label||model),pref.hidden?'checked':'',users.length?'disabled':'',users.length?renderInterfaceTemplate("device-management/fields-7",[users.slice(0,5).map(d=>escapeHtml(d.name||d.hostname||d.id||'Unnamed device')).join(', ')]):'']);
             const actions=renderInterfaceTemplate("device-management/actions-4",[escapeHtml(key)]);
             openCatalogueModal('Manage Built-in Model',
-              `Original: ${maker} · ${model} · ${type}. Existing device records will not be renamed.`,
+              `Original: ${maker} · ${model} · ${publicDeviceTypeName(type)}. Existing device records will not be renamed.`,
               fields,actions,'Built-in models may be renamed or hidden as suggestions. Existing devices and backups are retained.');
         }
         async function saveBuiltInHardwareModelOverride(key){
@@ -5107,7 +5107,7 @@ function openIpModal(ip) {
             preserveDeviceFormDuringOptionsDialog();
             const type=getSelectedHardwareCatalogueDeviceType()||'Device';
             const items=getConfiguredHardwareCatalogueEntries().filter(x=>x.type===type);
-            openModal(renderInterfaceTemplate("device-management/open-hardware-catalogue-manager-2",[escapeHtml(type),items.length?items.map(x=>renderInterfaceTemplate("device-management/open-hardware-catalogue-manager-1",[escapeHtml(x.manufacturer),x.model?' — '+escapeHtml(x.model):'',escapeHtml(x.id),escapeHtml(x.id)])).join(''):'<p class="text-sm text-slate-600 dark:text-slate-300">No custom entries yet. Built-in suggestions are available automatically.</p>']));
+            openModal(renderInterfaceTemplate("device-management/open-hardware-catalogue-manager-2",[escapeHtml(publicDeviceTypeName(type)),items.length?items.map(x=>renderInterfaceTemplate("device-management/open-hardware-catalogue-manager-1",[escapeHtml(x.manufacturer),x.model?' — '+escapeHtml(x.model):'',escapeHtml(x.id),escapeHtml(x.id)])).join(''):'<p class="text-sm text-slate-600 dark:text-slate-300">No custom entries yet. Built-in suggestions are available automatically.</p>']));
         }
         async function updateHardwareCatalogue(action,id=''){
             const type=getSelectedHardwareCatalogueDeviceType()||'Device';
@@ -5311,12 +5311,12 @@ function openIpModal(ip) {
             renderContent();
             document.querySelectorAll('#modal-container [data-action="software-toggle"]').forEach(button=>{
                 if(button.dataset.name===name&&button.dataset.type===type)
-                    button.textContent=type+(isSoftwareHiddenForDeviceType(name,type)?' · Hidden':' · Available');
+                    button.textContent=publicDeviceTypeName(type)+(isSoftwareHiddenForDeviceType(name,type)?' · Hidden':' · Available');
             });
         }
         function renderSoftwareDeviceTypeControls(name){
             const entry=builtInSoftwareSuggestions.find(x=>x.name===name);
-            return entry?entry.types.map(t=>'<button type="button" data-action="software-toggle" data-name="'+escapeHtml(name)+'" data-type="'+escapeHtml(t)+'" class="btn btn-outline mini-btn">'+escapeHtml(t)+(isSoftwareHiddenForDeviceType(name,t)?' · Hidden':' · Available')+'</button>').join(' '):'';
+            return entry?entry.types.map(t=>'<button type="button" data-action="software-toggle" data-name="'+escapeHtml(name)+'" data-type="'+escapeHtml(t)+'" class="btn btn-outline mini-btn">'+escapeHtml(publicDeviceTypeName(t))+(isSoftwareHiddenForDeviceType(name,t)?' · Hidden':' · Available')+'</button>').join(' '):'';
         }
         // Offline catalogue suggestions are not compatibility guarantees or validators.
         // Use the guest's own platform. A dedicated physical host uses its hosting product.
