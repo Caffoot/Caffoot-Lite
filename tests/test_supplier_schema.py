@@ -4,6 +4,7 @@ import unittest
 from unittest.mock import patch
 
 from backend import schema
+from backend.device_saves import create_device
 from backend.permissions import can_access
 from backend.supplier_schema import INITIAL_CATEGORIES
 from backend.supplier_issue_schema import INITIAL_ISSUE_CATEGORIES
@@ -26,7 +27,7 @@ class SupplierSchemaTests(unittest.TestCase):
         self.db.execute("INSERT INTO inventory_devices(id,name,record_json,ordinal) VALUES('a','Host','{}',0)")
         self.db.commit()
         schema.initialise_database(self.db)
-        self.assertEqual(self.db.execute('SELECT max(version) FROM schema_migrations').fetchone(), (22,))
+        self.assertEqual(self.db.execute('SELECT max(version) FROM schema_migrations').fetchone(), (23,))
         self.assertEqual(self.db.execute('SELECT id,name FROM inventory_devices').fetchall(), [('a','Host')])
         self.assertEqual(self.db.execute('SELECT section,level FROM account_permission_overrides ORDER BY section').fetchall(),
                          [('Devices','deny'),('IT Assets','edit')])
@@ -75,6 +76,28 @@ class SupplierSchemaTests(unittest.TestCase):
         self.db.commit()
         schema.initialise_database(self.db)
         self.assertEqual(self.db.execute("SELECT archived FROM supplier_issue_categories WHERE id=1").fetchone(), (1,))
+
+    def test_equipment_supplier_upgrade_and_sqlite_backup(self):
+        with sqlite3.connect(":memory:") as db, sqlite3.connect(":memory:") as backup:
+            db.execute("PRAGMA foreign_keys=ON")
+            with patch.object(schema, "SCHEMA_VERSION", 22):
+                schema.initialise_database(db)
+            db.execute("INSERT INTO accounts(id,username,password_hash,is_admin,mfa_confirmed,mfa_secret) "
+                       "VALUES(1,'Owner','hash',1,1,'secret')")
+            db.execute("UPDATE organisation_features SET enabled=1 WHERE feature IN ('suppliers','it_assets','devices')")
+            db.execute("INSERT INTO suppliers(name,name_key,website,description) VALUES('Northlight','northlight','','')")
+            device = {"id": "host", "name": "Office Laptop", "type": "Laptop"}
+            db.commit()
+            create_device(db, 1, device)
+            schema.initialise_database(db)
+            self.assertEqual(db.execute("SELECT count(*) FROM device_suppliers").fetchone(), (0,))
+            self.assertIsNotNone(db.execute("SELECT record_json FROM inventory_devices WHERE id='host'").fetchone())
+            second = {"id": "switch", "name": "Office Switch", "type": "Switch"}
+            create_device(db, 1, second, supplier={"id": 1})
+            db.backup(backup)
+            self.assertEqual(backup.execute("SELECT * FROM device_suppliers").fetchall(), [("switch", 1, "")])
+            self.assertEqual(backup.execute("SELECT * FROM supplier_supply_history").fetchall(), [(1, "Devices")])
+            self.assertEqual(backup.execute("PRAGMA foreign_key_check").fetchall(), [])
 
     def test_unknown_pre_upgrade_supplier_grant_fails_closed(self):
         with patch.object(schema, 'SCHEMA_VERSION', 20):

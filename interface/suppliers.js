@@ -4,11 +4,13 @@
   const api = '/api/suppliers';
   const tabs = [
     ['overview', 'Overview', 'grid'], ['locations', 'Locations', 'network'],
-    ['contacts', 'Contacts', 'users'], ['notes', 'Notes & Issues', 'history']
+    ['contacts', 'Contacts', 'users'], ['notes', 'Notes & Issues', 'history'],
+    ['equipment', 'Supplied Equipment', 'box']
   ];
   let config, active = false, requestId = 0, draftId = 0, pending = false, returnDialog;
   let directory, supplier, supplierId, purchasing, tab = 'overview', notesView = 'notes', loading = false, error = '';
-  let statusFilter = '', issueCategoryFilter = '';
+  let statusFilter = '', issueCategoryFilter = '', equipmentType = '';
+  const supplierTabs = () => tabs.filter(([key]) => key !== 'equipment' || supplier?.equipment);
   const issueStatuses = ['Open', 'In Progress', 'Resolved', 'Closed'];
   const issueTones = {Open: 'maintenance', 'In Progress': 'issue-progress', Resolved: '', Closed: 'retired'};
   let search = '', categoryFilter = '', contactSearch = '', contactFilter = '', noteFilter = 'all';
@@ -142,6 +144,7 @@
       ['Locations', 'locations', supplier.locations.filter(item => !item.archived).length],
       ['Contacts', 'contacts', supplier.contacts.filter(item => !item.archived).length],
       ['Active Issues', 'issues', supplier.issues.filter(issue => ['Open', 'In Progress'].includes(issue.status)).length],
+      ...(supplier.equipment ? [['Supplier Equipment', 'equipment', BigInt(supplier.equipment.quantity).toLocaleString('en-GB')]] : []),
     ].map(([label, key, count]) =>
       `<button class="card card-padded stat stock-report-metric" type="button" data-supplier-action="tab" data-id="${key}">
         <span class="statnum">${count}</span><span class="stathead">${label}</span></button>`).join('');
@@ -295,17 +298,42 @@
       </div></div></div>`;
   }
 
+  function equipmentRows() {
+    return supplier.equipment.records.filter(record => !equipmentType || equipmentType === record.type).map(record => {
+      const date = record.date ? record.date.split('-').reverse().join('/') : '—';
+      const quantity = record.quantity === null ? '—' : record.quantity.toLocaleString('en-GB');
+      const tone = record.status === 'Retired' ? ' retired' : record.status === 'Maintenance' ? ' maintenance' : '';
+      return `<tr><td><strong>${safe(record.name)}</strong></td><td>${safe(record.sourceLabel)}</td>
+        <td>${safe(record.type)}</td><td>${safe(record.identifier)}</td><td>${quantity}</td>
+        <td>${safe(date)}</td><td><span class="device-status${tone}">${safe(record.status)}</span></td>
+        <td>${button(record.source === 'device' ? 'View Device' : 'View Receipt', 'view-' + record.source, record.id)}</td></tr>`;
+    }).join('');
+  }
+  function renderEquipment() {
+    const records = supplier.equipment.records;
+    const types = [...new Set(records.map(record => record.type))].sort((a,b) => a.localeCompare(b, 'en-GB'));
+    const count = records.length.toLocaleString('en-GB');
+    const controls = select('Equipment Type', 'equipment-type', [['', 'All Equipment Types'], ...types.map(type => [type, type])], equipmentType);
+    return sectionHeading('Supplied Equipment', count + ' Visible ' + (records.length === 1 ? 'Record' : 'Records'), controls) +
+      '<div class="supplier-equipment-table">' +
+      table(['Equipment Name', 'Source', 'Type', 'Identifier', 'Original Quantity', 'Receipt Date', 'Status', 'Actions'],
+        equipmentRows(), records.length ? 'No Equipment Matches This Type' : 'No Supplied Equipment Recorded',
+        'supplier-equipment-rows') + '</div>';
+  }
+
   function renderDetails() {
-    const content = {overview: renderOverview, locations: renderLocations, contacts: renderContacts, notes: renderNotesIssues}[tab]();
+    const visibleTab = tab === 'equipment' && !supplier.equipment ? 'overview' : tab;
+    const content = {overview: renderOverview, locations: renderLocations, contacts: renderContacts,
+      notes: renderNotesIssues, equipment: renderEquipment}[visibleTab]();
     const {buttons, explanation} = lifecycleActions('supplier', supplier, supplier.status);
     const edit = editable() ? button('Edit Supplier', 'supplier-form', supplier.id) : '';
     return header(supplier.name, 'Supplier Details', button('Back To Suppliers', 'directory') + edit + buttons, explanation) +
       `<div class="row-between supplier-row">${badge(supplier.status)}</div>
-      <nav class="tabs" role="tablist" aria-label="Supplier Details Tabs">${tabs.map(([key, label, symbol]) =>
-        `<button type="button" class="tab section-tab-control${tab === key ? ' active' : ''}" role="tab" id="supplier-tab-${key}"
-        aria-selected="${tab === key}" aria-controls="supplier-panel" tabindex="${tab === key ? '0' : '-1'}"
+      <nav class="tabs" role="tablist" aria-label="Supplier Details Tabs">${supplierTabs().map(([key, label, symbol]) =>
+        `<button type="button" class="tab section-tab-control${visibleTab === key ? ' active' : ''}" role="tab" id="supplier-tab-${key}"
+        aria-selected="${visibleTab === key}" aria-controls="supplier-panel" tabindex="${visibleTab === key ? '0' : '-1'}"
         data-supplier-action="tab" data-id="${key}">${icon(symbol)}${label}</button>`).join('')}</nav>
-      <section class="stock-panel" id="supplier-panel" role="tabpanel" aria-labelledby="supplier-tab-${tab}">${content}</section>`;
+      <section class="stock-panel" id="supplier-panel" role="tabpanel" aria-labelledby="supplier-tab-${visibleTab}">${content}</section>`;
   }
   function render() {
     let content;
@@ -329,7 +357,7 @@
   }
   function readRoute(section) {
     if (section === 'purchasing') return [null, location.hash === '#purchasing/issues' ? 'all-issues' : 'dashboard'];
-    const route = /^#suppliers(?:\/([1-9]\d*)(?:\/(overview|locations|contacts|notes|notes\/issues))?)?$/.exec(location.hash);
+    const route = /^#suppliers(?:\/([1-9]\d*)(?:\/(overview|locations|contacts|notes|notes\/issues|equipment))?)?$/.exec(location.hash);
     const view = route?.[2] === 'notes/issues' ? 'issues' : route?.[2] || 'overview';
     return [route?.[1] ? Number(route[1]) : null, view];
   }
@@ -344,6 +372,7 @@
       if (identity) statusFilter = issueCategoryFilter = '';
       contactSearch = contactFilter = '';
       noteFilter = 'all';
+      equipmentType = '';
     }
     supplierId = identity;
     tab = view === 'issues' ? 'notes' : view;
@@ -362,7 +391,13 @@
       const path = identity ? '/' + identity : {dashboard: '/dashboard', 'all-issues': '/issues'}[view] || '';
       const data = await request(api + path);
       if (generation !== requestId) return;
-      if (identity) supplier = data;
+      if (identity) {
+        supplier = data;
+        if (tab === 'equipment' && !data.equipment) {
+          tab = 'overview';
+          history.replaceState(null, '', '#suppliers/' + identity + '/overview');
+        }
+      }
       else if (path) purchasing = data;
       else {
         directory = data;
@@ -380,17 +415,175 @@
     if (focus) document.getElementById(focus)?.focus();
   }
 
-  function dialog(title, description, content, {submit = '', build, destructive = false, restore, success} = {}) {
+  function mountEquipmentChooser(input, section, initial = {}, {allowCreate = true} = {}) {
+    const field = input.parentElement;
+    field.classList.add('equipment-supplier-field');
+    input.value = initial.name || '';
+    input.setAttribute('autocomplete', 'off');
+    input.setAttribute('role', 'combobox');
+    input.setAttribute('aria-autocomplete', 'list');
+    input.setAttribute('aria-expanded', 'false');
+    const selection = document.createElement('input');
+    selection.type = 'hidden';
+    selection.id = input.id + '-association';
+    selection.dataset.equipmentSupplierId = '';
+    selection.value = initial.id ?? '';
+    const listbox = document.createElement('ul');
+    listbox.id = input.id + '-choices';
+    listbox.setAttribute('role', 'listbox');
+    listbox.setAttribute('aria-label', 'Available Suppliers');
+    listbox.hidden = true;
+    input.setAttribute('aria-controls', listbox.id);
+    const status = document.createElement('small');
+    status.id = input.id + '-status';
+    status.setAttribute('role', 'status');
+    input.setAttribute('aria-describedby', status.id);
+    field.append(selection, listbox, status);
+
+    let choices = [], activeOption = -1, requestNumber = 0;
+    const value = () => ({name: input.value, id: selection.value ? Number(selection.value) : null});
+    function describe() {
+      status.textContent = selection.value ? 'Linked to Supplier' : input.value.trim()
+        ? 'Recorded as text unless you select a Supplier.' : '';
+    }
+    function close() {
+      requestNumber++;
+      listbox.hidden = true;
+      input.setAttribute('aria-expanded', 'false');
+      input.removeAttribute('aria-activedescendant');
+      activeOption = -1;
+    }
+    function choose(item) {
+      input.value = item.name;
+      selection.value = item.id;
+      input.focus();
+      close();
+      describe();
+    }
+    function show() {
+      const query = input.value.trim().toLocaleLowerCase('en-GB');
+      const matches = choices.filter(item => item.name.toLocaleLowerCase('en-GB').includes(query));
+      listbox.replaceChildren(...matches.map((item, index) => {
+        const option = document.createElement('li');
+        option.id = listbox.id + '-' + index;
+        option.setAttribute('role', 'option');
+        option.setAttribute('aria-selected', 'false');
+        option.textContent = item.name;
+        option.addEventListener('pointerdown', event => event.preventDefault());
+        option.addEventListener('click', () => choose(item));
+        return option;
+      }));
+      activeOption = -1;
+      input.removeAttribute('aria-activedescendant');
+      listbox.hidden = !matches.length;
+      input.setAttribute('aria-expanded', String(!listbox.hidden));
+    }
+    async function loadChoices() {
+      const generation = ++requestNumber;
+      try {
+        const result = await request(api + '/choices/' + section);
+        if (generation !== requestNumber || !input.isConnected) return;
+        choices = result.suppliers;
+        show();
+      } catch (error) {
+        if (generation === requestNumber && input.isConnected) status.textContent = error.message;
+      }
+    }
+    input.addEventListener('focus', () => void loadChoices());
+    input.addEventListener('blur', close);
+    input.addEventListener('input', () => {
+      selection.value = '';
+      describe();
+      show();
+    });
+    input.addEventListener('keydown', event => {
+      if (event.key === 'Escape' && !listbox.hidden) {
+        event.preventDefault();
+        event.stopPropagation();
+        close();
+      } else if (event.key === 'Enter' && activeOption >= 0) {
+        event.preventDefault();
+        listbox.children[activeOption].click();
+      } else if (['ArrowDown', 'ArrowUp'].includes(event.key)) {
+        if (listbox.hidden) show();
+        if (!listbox.children.length) return;
+        event.preventDefault();
+        const last = listbox.children.length - 1;
+        const step = event.key === 'ArrowDown' ? 1 : -1;
+        activeOption = activeOption < 0 ? (step > 0 ? 0 : last) : Math.max(0, Math.min(last, activeOption + step));
+        [...listbox.children].forEach((option, index) => option.setAttribute('aria-selected', String(index === activeOption)));
+        const option = listbox.children[activeOption];
+        input.setAttribute('aria-activedescendant', option.id);
+        option.scrollIntoView({block: 'nearest'});
+      }
+    });
+
+    if (allowCreate && editable()) {
+      const add = document.createElement('button');
+      add.type = 'button';
+      add.className = 'btn btn-outline';
+      add.textContent = '+ Add Supplier';
+      listbox.before(add);
+      add.addEventListener('click', async () => {
+        add.disabled = true;
+        try {
+          const data = await request(api);
+          if (add.isConnected && editable()) supplierForm({catalogue: data.categories, trigger: add, onCreated: choose});
+        } catch (error) {
+          if (add.isConnected) status.textContent = error.message;
+        } finally {
+          add.disabled = false;
+        }
+      });
+    }
+    describe();
+    if (document.activeElement === input) void loadChoices();
+    return {value};
+  }
+
+  function openEquipmentAssignment(section, records, {action = 'Assign Supplier', refresh, trigger} = {}) {
+    if (!config.canAssignEquipmentSupplier(section) || !records.length) return;
+    const remove = action === 'Remove Supplier Association';
+    const replacing = records.some(record => record.linked);
+    const singular = section === 'devices' ? 'Device' : 'receipt';
+    const count = records.length + ' selected ' + singular + (records.length === 1 ? '' : 's');
+    const warning = remove ? 'This removes the current association and retains the original receipt.'
+      : replacing ? 'Existing Supplier associations on the selected records will be replaced.' : '';
+    let chooser;
+    // Keep the same operation reference for a retry of the same confirmed choice.
+    let previousId, operationId;
+    dialog(action, count, `${warning ? `<p role="status">${warning}</p>` : ''}
+      ${remove ? '' : field('Supplier', 'equipment-choice', '', {attrs: 'required maxlength="200"'})}`, {
+      submit: remove ? 'Confirm Removal' : 'Confirm Assignment', destructive: remove,
+      equipmentSection: section, trigger, path: api + '/assign/' + section,
+      build() {
+        const selectedId = remove ? null : chooser.value().id;
+        if (!remove && !selectedId) throw Error('Select an available Supplier from the choices.');
+        if (!operationId || previousId !== selectedId) operationId = crypto.randomUUID();
+        previousId = selectedId;
+        return {operationId, supplierId: selectedId, confirmed: true,
+          records: records.map(({id, revision}) => ({id, revision}))};
+      },
+      success: refresh
+    });
+    if (!remove) {
+      chooser = mountEquipmentChooser(document.getElementById('supplier-equipment-choice'),
+        section === 'devices' ? 'devices' : 'it-assets', {}, {allowCreate: false});
+      config.rememberModalForm();
+    }
+  }
+
+  function dialog(title, description, content, {submit = '', build, destructive = false, restore, success, trigger, path = api, equipmentSection = ""} = {}) {
     returnDialog = restore;
-    submitDialog = build && {build, success, restore};
-    config.openModal(`<div class="equipment-dialog users-live stock-live supplier-live" data-supplier-dialog>
+    submitDialog = build && {build, success, path, equipmentSection};
+    (trigger ? config.openEquipmentSupplierModal : config.openModal)(`<div class="equipment-dialog users-live stock-live supplier-live" data-supplier-dialog>
       <header class="assignment-modal-head"><div><h2>${safe(title)}</h2>${description ? `<p class="sub">${safe(description)}</p>` : ''}</div>
       <button type="button" class="btn btn-outline" data-action="close-modal" aria-label="Close Dialog">×</button></header>
-      <div class="assignment-modal-body">${build ? `<form class="preview-aligned-form" data-supplier-form>
+      <div class="assignment-modal-body">${build ? `<form class="preview-aligned-form" data-supplier-form${equipmentSection ? ` data-equipment-supplier-assignment="${equipmentSection}"` : ''}>
         ${content}<p class="formhint supplier-feedback" data-supplier-feedback role="alert"></p>
         <div class="stock-form-actions"><button class="btn btn-outline" type="button" data-action="close-modal">Cancel</button>
-        <button class="btn ${destructive ? 'bg-rose-700 hover:bg-rose-800 text-white' : 'primary'}" type="submit">${safe(submit)}</button></div></form>`
-        : `${content}<div class="stock-form-actions"><button class="btn btn-outline" type="button" data-action="close-modal">Close</button></div>`}</div></div>`);
+        <button class="btn ${destructive ? 'bg-rose-700 hover:bg-rose-800 text-white' : equipmentSection ? 'btn-primary' : 'primary'}" type="submit">${safe(submit)}</button></div></form>`
+        : `${content}<div class="stock-form-actions"><button class="btn btn-outline" type="button" data-action="close-modal">Close</button></div>`}</div></div>`, trigger);
     if (build && !destructive) document.querySelector('[data-supplier-form] input:not([type="checkbox"]),[data-supplier-form] textarea')?.focus();
   }
 
@@ -427,9 +620,9 @@
         ${field('Email Addresses', prefix + '-emails', '', {type:'textarea', attrs:'placeholder="One Per Line"'})}
         <div class="staff-span-two">${select('Contact Scope', prefix + '-scope', [['main', 'Main Office'], ['company', 'Company-wide']], 'main')}</div></div></div>`;
   }
-  function supplierForm() {
-    const existing = supplier;
-    const catalogue = existing?.categories || directory.categories;
+  function supplierForm({catalogue, trigger, onCreated} = {}) {
+    const existing = trigger ? null : supplier;
+    catalogue ??= existing?.categories || directory.categories;
     const selected = existing?.categoryIds || [];
     const categories = checkList('categoryIds', catalogue.filter(item => !item.archived || selected.includes(item.id)), selected);
     const company = `<div class="staff-fields">
@@ -444,7 +637,7 @@
       (existing ? '' : formSection('Contacts', 'Enter any contacts you already have.',
         `<div id="supplier-contact-entries" class="stock-card-stack">${contactEntry(1)}</div>`, button('Add Another Contact', 'add-entry')));
     dialog(existing ? 'Edit Supplier' : 'Add Supplier', existing ? existing.name : 'Capture Company Details, Categories And Contacts', content, {
-      submit: existing ? 'Save Supplier' : 'Add Supplier',
+      submit: existing ? 'Save Supplier' : 'Add Supplier', trigger,
       build(form) {
         const data = new FormData(form);
         const payload = {name: valueOf(data, 'name'), website: valueOf(data, 'website'),
@@ -457,7 +650,7 @@
         });
         return command('supplier.save', payload, existing);
       },
-      success: data => updateSupplier(data, !existing)
+      success: onCreated ?? (data => updateSupplier(data, !existing))
     });
   }
   function locationForm(location) {
@@ -771,7 +964,7 @@
 
   document.addEventListener('click', event => {
     const target = event.target.closest('[data-supplier-action]');
-    if (!target || !active || pending) return;
+    if (!target || pending || (!active && !target.closest('[data-supplier-dialog]'))) return;
     const action = target.dataset.supplierAction;
     const identity = Number(target.dataset.id);
     const details = target.closest('[data-supplier-contact-details]');
@@ -795,6 +988,13 @@
       }
       case 'issue-details': void openIssue(Number(target.dataset.company), identity, restore, target); break;
       case 'open': void show(identity, 'overview', true, 'supplier-page-heading'); break;
+      case 'view-device':
+      case 'view-receipt': {
+        const record = supplier?.equipment?.records.find(item =>
+          'view-' + item.source === action && String(item.id) === target.dataset.id);
+        if (record) config.viewEquipment(record);
+        break;
+      }
       case 'tab': {
         const selected = target.dataset.id;
         void show(supplierId, selected, true, 'supplier-tab-' + (selected === 'issues' ? 'notes' : selected));
@@ -850,15 +1050,16 @@
     const form = event.target;
     if (!form.matches('form[data-supplier-form]')) return;
     event.preventDefault();
-    if (!editable() || pending || !submitDialog) return;
-    const {build, success} = submitDialog;
+    if (pending || !submitDialog) return;
+    const {build, success, path, equipmentSection} = submitDialog;
+    if (equipmentSection ? !config.canAssignEquipmentSupplier(equipmentSection) : !editable()) return;
     const feedback = form.querySelector('[data-supplier-feedback]');
     const submit = form.querySelector('button[type="submit"]');
     pending = submit.disabled = true;
     form.dataset.saving = 'true';
     void (async () => {
       try {
-        const data = await request(api, build(form));
+        const data = await request(path, build(form));
         delete form.dataset.saving;
         config.closeModal(true);
         success(data);
@@ -885,7 +1086,12 @@
     else if (id === 'supplier-contact-filter') contactFilter = value;
     else if (id === 'supplier-issue-status-filter') statusFilter = value;
     else if (id === 'supplier-issue-category-filter') issueCategoryFilter = value;
-    else if (id === 'supplier-note-filter') {
+    else if (id === 'supplier-equipment-type') {
+      equipmentType = value;
+      document.getElementById('supplier-equipment-rows').innerHTML =
+        equipmentRows() || emptyRow(8, 'No Equipment Matches This Type');
+      return;
+    } else if (id === 'supplier-note-filter') {
       noteFilter = value;
       config.redraw();
       document.getElementById(id)?.focus();
@@ -900,15 +1106,18 @@
     const target = event.target.closest('[role="tab"][id^="supplier-tab-"]');
     if (!target || !['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
     event.preventDefault();
-    const index = tabs.findIndex(([key]) => key === tab);
-    const next = {Home: 0, End: tabs.length - 1, ArrowLeft: (index + tabs.length - 1) % tabs.length,
-      ArrowRight: (index + 1) % tabs.length}[event.key];
-    const selected = tabs[next][0];
+    const visible = supplierTabs();
+    const index = visible.findIndex(([key]) => key === tab);
+    const next = {Home: 0, End: visible.length - 1, ArrowLeft: (index + visible.length - 1) % visible.length,
+      ArrowRight: (index + 1) % visible.length}[event.key];
+    const selected = visible[next][0];
     void show(supplierId, selected, true, 'supplier-tab-' + selected);
   });
 
   window.caffootSuppliers = {
     configure(settings) { config = settings; },
+    mountEquipmentChooser,
+    openEquipmentAssignment,
     enter(section, fromRoute = false) {
       active = true;
       void show(...(fromRoute ? readRoute(section) : [null, section === 'purchasing' ? 'dashboard' : 'overview']), !fromRoute);

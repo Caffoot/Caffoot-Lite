@@ -64,6 +64,9 @@ async function initialiseInterface() {
     const equipmentStyle = document.createElement('style');
     equipmentStyle.textContent = interfaceStyles.get('equipment');
     document.head.append(equipmentStyle);
+    const supplierStyle = document.createElement('style');
+    supplierStyle.textContent = interfaceStyles.get('suppliers');
+    document.head.append(supplierStyle);
     const staffStyle = interfaceStyles.get('users') + '\n' + interfaceStyles.get('staff');
     interfaceStyles.set('staff', staffStyle);
     interfaceStyles.set('departments', staffStyle);

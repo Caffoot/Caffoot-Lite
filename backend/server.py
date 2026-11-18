@@ -11,7 +11,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import urlsplit, parse_qs
 
-from .device_saves import DeviceIdentityConflict, create_device, delete_reserved_device, save_reserved_device
+from .device_saves import UNCHANGED_SUPPLIER, DeviceIdentityConflict, create_device, delete_reserved_device, save_reserved_device
 from .ipam_linking import link_device_to_ipam, unique_link_fields
 from .ipam_saves import change_independent_allocation, change_bulk_allocations
 from .collection_saves import (change_inventory_record, remove_linked_rack_shelf,
@@ -19,6 +19,7 @@ from .collection_saves import (change_inventory_record, remove_linked_rack_shelf
                                delete_subnet_with_dependencies)
 from .settings_saves import save_inventory_setting
 from .inventory_projection import project_inventory_response
+from .equipment_suppliers import assign_equipment_supplier, read_supplier_choices
 from .feature_settings import read_feature_settings, save_feature_setting, unique_feature_fields
 from .stock_reporting import read_stock_report
 from .stock_intake import stock_access, read_stock, receive_stock, update_stock_readiness
@@ -499,6 +500,7 @@ class Handler(BaseHTTPRequestHandler):
                         can_access(connection, account_id, section)
                         for section in ("Devices", "IPAM", "Racks", "Staff Members", "Departments", "IT Assets", "Suppliers")
                     ),
+                    "suppliers_enabled": feature_enabled(connection, "Suppliers"),
                     "supplier_permissions": {"read": can_access(connection, account_id, "Suppliers"),
                                              "edit": can_access(connection, account_id, "Suppliers", edit=True)},
                     "stock_permissions": {"read": can_access(connection, account_id, "IT Assets"),
@@ -711,8 +713,14 @@ class Handler(BaseHTTPRequestHandler):
         reading = self.command == "GET"
         issue_detail = (len(parts) == 6 and parts[4] == "issues"
                         and all(re.fullmatch(r"[1-9][0-9]{0,18}", value) for value in (parts[3], parts[5])))
+        choices = {"/api/suppliers/choices/devices": "Devices",
+                   "/api/suppliers/choices/it-assets": "IT Assets"}.get(url.path)
+        assignment = {"/api/suppliers/assign/devices": "Devices",
+                      "/api/suppliers/assign/receipts": "IT Assets"}.get(url.path)
         collection = {"/api/suppliers/issues": read_issues, "/api/suppliers/dashboard": read_purchasing_dashboard}.get(url.path)
-        if url.query or not (root or reading and (collection or issue_detail or impact or detail and len(parts) == 4)):
+        if url.query or not (root or assignment and not reading
+                             or reading and (choices or collection or issue_detail or impact
+                                             or detail and len(parts) == 4)):
             self.respond(404, {"error": "not found"})
             return
         origin = self.headers.get("Origin")
@@ -730,6 +738,10 @@ class Handler(BaseHTTPRequestHandler):
                     if actor is None:
                         self.respond(401, {"error": "unauthorised"})
                         return
+                    if choices:
+                        result = read_supplier_choices(connection, actor, choices)
+                        self.respond(200, result)
+                        return
                     supplier_access(connection, actor)
                     if root:
                         result = read_supplier_directory(connection)
@@ -740,13 +752,14 @@ class Handler(BaseHTTPRequestHandler):
                     elif impact:
                         result = read_supply_impact(connection, actor, int(parts[3]))
                     else:
-                        result = read_supplier(connection, int(parts[3]))
+                        result = read_supplier(connection, int(parts[3]), actor)
                 else:
                     actor = authorised_mutation(connection, cookie, origin, PUBLIC_ORIGIN,
                                                 self.headers.get("X-CSRF-Token"))
                     if actor is None:
                         raise PermissionError()
-                    supplier_access(connection, actor, edit=True)
+                    if not assignment:
+                        supplier_access(connection, actor, edit=True)
                     length = self.headers.get("Content-Length", "")
                     if not length.isdecimal() or not 0 < int(length) <= 65536:
                         raise ValueError("Invalid Supplier request size")
@@ -754,7 +767,11 @@ class Handler(BaseHTTPRequestHandler):
                         self.respond(415, {"error": "JSON required"})
                         return
                     payload = json.loads(self.rfile.read(int(length)), object_pairs_hook=unique_directory_fields)
-                    result = save_supplier_operation(connection, actor, read_session_cookie(cookie), payload)
+                    token = read_session_cookie(cookie)
+                    if assignment:
+                        result = assign_equipment_supplier(connection, actor, token, assignment, payload)
+                    else:
+                        result = save_supplier_operation(connection, actor, token, payload)
             self.respond(200, result)
         except PermissionError:
             self.respond(403, {"error": "forbidden"})
@@ -1235,19 +1252,18 @@ class Handler(BaseHTTPRequestHandler):
                     result = link_device_to_ipam(connection, actor,
                         read_session_cookie(self.headers.get("Cookie")), payload)
                 elif self.path == "/api/devices/create":
-                    if set(payload) != {"record"}:
+                    if set(payload) not in ({"record"}, {"record", "supplier"}):
                         raise ValueError("Invalid device create request")
-                    result = {"revision": create_device(connection, actor, payload["record"])}
+                    result = {"revision": create_device(connection, actor, payload["record"],
+                                                        supplier=payload.get("supplier", UNCHANGED_SUPPLIER))}
                 elif self.path == "/api/devices/edit/save":
-                    if set(payload) not in ({"deviceId", "revision", "record"},
-                                            {"deviceId", "revision", "record", "section"},
-                                            {"deviceId", "revision", "record", "relatedDevices"},
-                                            {"deviceId", "revision", "record", "section", "relatedDevices"}):
+                    required = {"deviceId", "revision", "record"}
+                    if not required <= set(payload) <= required | {"section", "relatedDevices", "supplier"}:
                         raise ValueError("Invalid device save request")
                     result = {"revision": save_reserved_device(
                         connection, actor, payload["deviceId"], payload["revision"],
                         payload["record"], payload.get("section", "Devices"),
-                        payload.get("relatedDevices"))}
+                        payload.get("relatedDevices"), supplier=payload.get("supplier", UNCHANGED_SUPPLIER))}
                 elif self.path in ("/api/devices/edit/start", "/api/devices/edit/cancel"):
                     if set(payload) not in ({"deviceId"}, {"deviceId", "section"}) or not isinstance(payload["deviceId"], str):
                         raise ValueError("Device identifier required")

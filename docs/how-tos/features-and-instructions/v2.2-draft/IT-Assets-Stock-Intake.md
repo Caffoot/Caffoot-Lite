@@ -2,6 +2,8 @@
 
 > **Draft v2.2 — Not Yet Published.** This guide describes the implementation on `milestone-1` at `753b3266893987addb11406ef8303adb03c3c112`. It is for review of unreleased functionality. Use the [published v2.1 guides](../README.md) for current production instructions. Native/manual and release acceptance remain separate; these are not installation, upgrade or restore instructions.
 
+> For the Supplier selector and retrospective receipt corrections added in Stage 4 Batch 4.3, see [Equipment Supplier Integration](Equipment-Supplier-Integration.md#record-a-supplier-when-equipment-arrives).
+
 ## What Stock Intake Records
 
 Use **Receive Stock** when equipment actually arrives in your organisation's possession. A receipt records what arrived, how many units arrived, when they arrived, the purchasing Supplier if known, and the checks completed. **Stock Inventory** then shows what is physically held, what is ready to issue and what still needs attention.

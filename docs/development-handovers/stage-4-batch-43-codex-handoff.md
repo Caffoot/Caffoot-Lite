@@ -1,0 +1,45 @@
+# Caffoot Lite v2.2 — Stage 4 Batch 4.3 coding hand-off
+
+**Date:** 18 November 2026. **Status:** authorised for development only. No feature implementation has been completed in this PR at hand-off.
+
+For integrated application results and the remaining owner review, see the [Batch 4.3 application report](evidence/stage-4-batch-43/Application-Report.md).
+
+## Exact GitHub position
+
+- Repository: `Caffoot/Caffoot-Lite`.
+- **Existing authorised working branch:** `feat/stage-4-batch-4-3`.
+- **Existing draft PR:** [#416](https://github.com/Caffoot/Caffoot-Lite/pull/416), base `milestone-1`. **Continue on this same branch and PR; do not open a competing PR, touch `main`, merge or deploy.**
+- Source integration base: `3165457b8c8f824da3e6156f4bf3ce276d7905cd`, immediately after the verified Batch 4.2 PR #415 merge.
+- At hand-off the branch includes only two approved review/archive files: `docs/development-handovers/evidence/stage-4-batch-43/approved-ui-additions-review.html` and its `README.md`. Treat these as **illustrative review evidence**, not application source or screenshots.
+- Product owner **explicitly approved implementation** and archive: [issue #412 authorisation](https://github.com/Caffoot/Caffoot-Lite/issues/412#issuecomment-6975760456). UI additions only accepted in [#412 visual decision](https://github.com/Caffoot/Caffoot-Lite/issues/412#issuecomment-6975660928). All #412 scope and linked later owner decisions remain binding; [Stage 4 master #369](https://github.com/Caffoot/Caffoot-Lite/issues/369).
+
+## Read before editing
+
+1. `AGENTS.md`, `docs/development-guide/Approved-HTML-Integration.md`, `docs/development-guide/Development-Status.md`, and current v2.2 draft documentation quality examples.
+2. Entire #412 specification, the five later owner decisions recorded in its comments, and the approved field-only control restriction in [#369](https://github.com/Caffoot/Caffoot-Lite/issues/369#issuecomment-6961466671).
+3. Current actual source `interface/screens/device-details.html`, `interface/screens/device-inventory.html`, `interface/stock-intake.js`, `interface/application.js`, `interface/suppliers.js`, `backend/stock_intake.py`, `backend/stock_schema.py`, `backend/device_stock.py` and their existing tests. Pinned v2.1 visual source `c26db4a56bbc30f95b56201e81a7a76d13c6037b` when relevant.
+4. Approved supplier HTML for the Supplied Equipment list: `future-design/stage-4-previews/caffoot-suppliers-stage-4-interactive-preview-edit-notes.html` at Git blob `f85bcbd7467304b69508918270c8e2ed97bb817c`, on `docs/milestone-01-stage-2-3-previews`. The old standalone combined Supplier field review demonstrates the **field only**, not complete forms.
+
+## Scope to implement, preserving the current approved application
+
+1. **Canonical association and limited chooser:** retain historical free-text Supplier separately from optional canonical Supplier ID; explicit selection only, never automatic name matching or record creation. Equipment-edit permission may fetch minimal selectable Supplier names/IDs while Suppliers enabled, not full directory, without Suppliers Read. Full Add Supplier requires independent Suppliers Edit, returns to unfinished Device/receipt form with all fields retained; cancellation preserves draft. Archived/disabled suppliers cannot be newly selected; existing historical identity retained. Suppliers off hides Device Supplier-only controls/displays and restricts lookup but does not wipe saved state; receipt free text remains usable. Duplicate Device copies no Supplier text/association. No privilege escalation.
+2. **Device Add/Edit:** enhance *only* the opening **Device Identity** card with the optional combined Supplier field. Keep every other field, type/manufacturer/model, form hierarchy, actions, validation, reservation and discard behaviour. Recorded Supplier name should be visible to Devices Read where permitted without granting full Supplier record access.
+3. **IT Assets Receive Stock:** enhance only **Receipt Details → Supplier (Optional)** in its current position; confirmed canonical link applies to *that receipt/delivery* even when pooled stock item is shared across different suppliers. Do not change actual receipt text, date, quantity, stock movement, issuance, return, registration, reissue, held inventory, checks or stock/Device provenance. No issue-time Supplier chooser, backfill or lot tracing.
+4. **Retrospective assignments and corrections:** use the **existing** Device Inventory table with row checkboxes and Assign Supplier (administrator-only, effective permissions) and **existing Receipt History → Stock Receipts** with row selection/Assign Supplier and per-receipt Link/Change/Remove actions beneath Supplier text. Search canonical eligible Suppliers, display selected record count and replacement warning before confirmation. Revalidate every selected Device/receipt, enforce enabled gates and strict server permissions, transactions, revision/replay/edit reservations and audit evidence. Atomic all-or-nothing bulk update; preserve other fields and historical receipt facts; audit any correction or removal and retain prior historical association evidence. Never operate on pooled Stock Inventory item rows.
+5. **Supplier Details:** implement the approved fifth **Supplied Equipment** tab and Overview **Supplier Equipment** quantity metric. Source list columns: Equipment Name, Source, Type, Identifier, Original Quantity, Receipt Date, Status, Actions; Equipment Type filter, Visible Records indicator, View Device/View Receipt links into canonical records. Original confirmed receipt quantities + separately purchased explicitly associated Devices as one each; exclude stock-derived Devices even when registered/issued. Example 10 laptops received + 4 subsequently registered remains 10 units. Historical supply remains recorded after issue, return, retirement or write-off. Apply both Suppliers and relevant individual equipment effective Read/feature gates to every record, counter and identifier; hide entire tab and metric if neither enabled equipment section readable. Hidden receipt figures must not leak through Device records. Preserve Supplier Delete protection and Disable/Re-enable relationship warnings.
+
+## Working sequence and credit discipline
+
+The owner reports approximately **21% remaining of the current five-hour Codex credits**. Complete full approved scope if possible, but **do not trade away approved behaviour or acceptance checks to fit the budget**. Prefer coherent, testable checkpoints and push each to the existing branch before starting a longer next step:
+
+1. **A — schema/provenance and protected server API foundation**, focused migration, permission, replay, audit and transaction tests. Preserve all existing data and restore compatibility.
+2. **B — Device Identity + receipt intake combined field**, authorised chooser and proper return/cancellation, focused UI/API tests.
+3. **C — Device Inventory and Receipt History assignment/correction**, atomic audited bulk operations, regression checks.
+4. **D — Supplier Equipment tab/metrics and no-double-counting, per-permission safe navigation**, full targeted tests.
+5. **E — comprehensive v2.2 draft user/admin guide, genuine desktop/mobile light/dark application screenshots and evidence provenance, consolidated focused validation and handover**.
+
+These labels are **development checkpoints, not alternative feature scope**. It is acceptable to stop at a pushed, clearly described partial checkpoint if credits run low; never claim an unfinished Batch 4.3 is done or ask to merge. Checkpoint as soon as a coherent component works, run proportionate focused tests, commit/push, report exact SHA, passed/failed/untested checks, remaining steps and blockers. Do **not** poll GitHub Actions in the coding session or repeatedly run all suites. Keep draft PR until implementation, genuine screenshots and owner visual approval; full required CI belongs at Ready For Review, then separate owner merge approval.
+
+## Acceptance boundaries
+
+Preserve original existing layout/typography/field order, all real navigation, keyboard/focus, light/dark and mobile interactions, Save/Cancel/discard, checks, historical snapshots and protected permissions. Keep published v2.1 guides correct; add **long-form v2.2 draft** instructions alongside implementation with complete steps, permissions, examples, failures, security, cross-links and real screenshots (never the archived preview). No new CSV (#288), general bulk framework, new Supplier Integration screen, stock-lot attribution, self-service, new purchases/quotes, new frameworks, unrelated refactors, fake data or application redesign. Stop and ask owner for any genuine material ambiguity rather than assuming. No merge, release, website change or Pi deployment.

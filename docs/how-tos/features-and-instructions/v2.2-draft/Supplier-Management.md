@@ -1,8 +1,8 @@
 # Supplier Management
 
-> **Draft v2.2 — unreleased.** These instructions describe Supplier Management in the Stage 4 development application through Batch 4.2, schema 22. Continue to use the [v2.1 guides](../README.md) for the published version. The examples here use fictional businesses and contacts.
+> **Draft v2.2 — unreleased.** These instructions describe Supplier Management in the Stage 4 development application through Batch 4.3, schema 23. Continue to use the [v2.1 guides](../README.md) for the published version. The examples here use fictional businesses and contacts.
 
-Suppliers holds the companies your organisation buys from. A company can have several offices and contacts, one shared company address and separate notes about the company or individual people. Supplier access is independent of Devices and IT Assets. In the Batch 4.2 draft, open **Purchasing → Suppliers** from the workspace sidebar. The Supplier Details tabs are **Overview**, **Locations**, **Contacts** and **Notes & Issues**. See [Supplier Issues And Purchasing](Supplier-Issues-and-Purchasing.md) for the tracked Issues workflow.
+Suppliers holds the companies your organisation buys from. A company can have several offices and contacts, one shared company address and separate notes about the company or individual people. Supplier access is independent of Devices and IT Assets. Open **Purchasing → Suppliers** from the workspace sidebar. Supplier Details provides **Overview**, **Locations**, **Contacts** and **Notes & Issues**. If you can read an enabled equipment section, **Supplied Equipment** and the **Supplier Equipment** Overview metric also appear. See [Supplier Issues And Purchasing](Supplier-Issues-and-Purchasing.md) for the tracked Issues workflow.
 
 ## Enable Suppliers And Set Access
 
@@ -97,7 +97,7 @@ Review the record and its links before confirming a lifecycle action. Read users
 4. When Delete is unavailable, read the explanation with the lifecycle actions. On Supplier Details it appears under the header buttons. Notes protect their company and owning contact even after the note is removed. Issue history protects the company and contacts that have been linked to it. A directly linked location is protected by its contact relationships. The application checks again when you confirm.
 5. To abandon an action, select **Cancel** or press **Escape** before confirming. If someone changed the record first, close the rejected dialog, reopen the record and review the new details before retrying.
 
-Records with canonical supply history have stronger permanent retention. Any cross-section **Disable** or **Re-enable** action requires a verified administrator and confirmation of the named affected sections. Batch 4.1 does not create equipment associations. The older free-text Supplier names recorded on receipts do not create canonical Supplier records or links.
+Records with canonical supply history have stronger permanent retention. Any cross-section **Disable** or **Re-enable** action requires a verified administrator and confirmation of the named affected sections. Batch 4.3 lets equipment editors confirm Supplier links on Devices and stock receipts. Existing free-text receipt names stay as originally recorded. For explicit assignments, the Supplier Equipment total and historical corrections, see [Equipment Supplier Integration](Equipment-Supplier-Integration.md).
 
 ## Troubleshooting And Related Tasks
 
