@@ -35,6 +35,10 @@ All four dates are optional. Enter a valid calendar date. Purchase Date and Orig
 
 **Example.** A supplier confirms that a laptop bought on 6 October 2026 has three years of cover. Enter the confirmed 6 October 2029 Warranty Expiry instead of accepting the 12-month suggestion. For a commissioned router with an unknown purchase date, enter the known Original In Service Date and leave Purchase Date blank.
 
+![Mobile light Edit Device Hardware tab showing all four lifecycle dates, Use Suggestion, the calculated date and Save Device](../../../development-handovers/evidence/stage-4-batch-44/images/device-edit-light-390.png)
+
+*Edit Device on a narrow screen. The example warranty suggestion remains in the draft until accepted and saved.*
+
 ### Set Or Remove A Manual Replacement Override
 
 1. As an Administrator with **Devices Edit**, open **Edit Device → Hardware → Equipment Lifecycle**.
@@ -70,6 +74,10 @@ All four dates are optional. Enter a valid calendar date. Purchase Date and Orig
 
 With a 90-day warranty warning, a warranty expiring in exactly 90 days appears under **Warranty Expiring Soon**. One expiring in 91 days appears when it reaches the threshold. A zero-day replacement period shows replacements due today and still shows overdue dates. An old expired warranty can continue to appear for an in-use Device. Review the record and confirm its warranty before deciding what action to take.
 
+![Desktop light Lifecycle Dashboard showing the four warning counters, filters and a retired historical row](../../../development-handovers/evidence/stage-4-batch-44/images/dashboard-light-1440.png)
+
+*The Dashboard with Include Retired Devices selected. The Former Reception PC appears in the list for historical review.*
+
 ## Enable And Configure Equipment Lifecycle
 
 1. Sign in as an Administrator and verify MFA. Open **Settings & Data → Optional Features**.
@@ -89,6 +97,10 @@ With a 90-day warranty warning, a warranty expiring in exactly 90 days appears u
 **Example.** Set Warranty Expiry to 30 days and Planned Replacement to 90 days. Clear the custom Test Equipment lifespan if the team plans those replacements individually. Existing manual dates remain available for those Devices.
 
 To turn off Lifecycle, return to the card, switch it off and confirm. The Lifecycle Settings entry, Equipment Lifecycle date controls and Dashboard tab are hidden until re-enabled. Settings and dates are retained. Authorised stock transactions continue to capture eligible first-service dates.
+
+![Mobile dark Lifecycle Settings with separate Warning Periods and Expected Equipment Lifespan cards](../../../development-handovers/evidence/stage-4-batch-44/images/settings-dark-390.png)
+
+*Lifecycle Settings on a narrow screen. The archived Legacy Server type retains its seven-year lifespan.*
 
 ## Archive Or Restore A Device Type
 
@@ -118,3 +130,5 @@ Lifecycle dates and settings are part of the full application database. Keep the
 | An archived type is missing on a new Device | Select a currently available type or ask a Devices editor to unarchive the correct one. |
 
 Related procedures include [Optional Features](Optional-Features-and-Link-To-IPAM.md), [Stock Registration And Reissue](Device-Stock-Registration-and-Reissue.md), [Associated Equipment And Direct Handovers](Associated-Equipment.md) and [Equipment Supplier Integration](Equipment-Supplier-Integration.md).
+
+See [the application evidence](../../../development-handovers/evidence/stage-4-batch-44/Application-Report.md) for all desktop and mobile light and dark examples, including Device Details and Device Type Manager.
