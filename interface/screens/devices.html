@@ -32,6 +32,7 @@
 
 <!-- interface-template:devices/render-devices-html-4 -->
                                         <tr>
+                                            {{slot:12}}
                                             <td><button type="button" data-action="view-device" data-id="{{slot:0}}" class="device-name" title="View device details">{{slot:1}}</button><div class="device-detail">{{slot:2}}</div></td>
                                             <td><span class="device-chip {{slot:3}}">{{slot:4}}</span></td>
                                             <td>{{slot:5}}{{slot:6}}</td>
@@ -47,7 +48,7 @@
                                         </tr>
                                     <!-- /interface-template -->
 
-<!-- interface-template:devices/render-devices-html-5 --><tr><td colspan="7" class="device-empty"><div ><strong>{{slot:0}}</strong><p>{{slot:1}}</p><button type="button" class="{{slot:4}}" data-action="{{slot:2}}">{{slot:3}}</button></div></td></tr><!-- /interface-template -->
+<!-- interface-template:devices/render-devices-html-5 --><tr><td colspan="{{slot:5}}" class="device-empty"><div ><strong>{{slot:0}}</strong><p>{{slot:1}}</p><button type="button" class="{{slot:4}}" data-action="{{slot:2}}">{{slot:3}}</button></div></td></tr><!-- /interface-template -->
 
 <!-- interface-template:devices/render-devices-html-6 --><div class="intelligence-metric"><div class="metric-top"><span class="metric-label">{{slot:0}}</span><span class="metric-ico"><i class="fa-solid {{slot:1}}" aria-hidden="true"></i></span></div><div class="metric-number">{{slot:2}}</div><div class="metric-caption">{{slot:3}}</div></div><!-- /interface-template -->
 

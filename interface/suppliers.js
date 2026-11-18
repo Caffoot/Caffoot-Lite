@@ -502,16 +502,46 @@
       });
     }
     describe();
+    if (document.activeElement === input) void loadChoices();
     return {value};
   }
 
-  function dialog(title, description, content, {submit = '', build, destructive = false, restore, success, trigger} = {}) {
+  function openEquipmentAssignment(section, records, {action = 'Assign Supplier', refresh, trigger} = {}) {
+    if (!config.canAssignEquipmentSupplier(section) || !records.length) return;
+    const remove = action === 'Remove Supplier Association';
+    const replacing = records.some(record => record.linked);
+    const singular = section === 'devices' ? 'Device' : 'receipt';
+    const count = records.length + ' selected ' + singular + (records.length === 1 ? '' : 's');
+    const warning = remove ? 'This removes the current association and retains the original receipt.'
+      : replacing ? 'Existing Supplier associations on the selected records will be replaced.' : '';
+    let chooser;
+    // Keep the same operation reference for a retry of the same confirmed choice.
+    let previousId, operationId;
+    dialog(action, count, `${warning ? `<p role="status">${warning}</p>` : ''}
+      ${remove ? '' : field('Supplier', 'equipment-choice', '', {attrs: 'required maxlength="200"'})}`, {
+      submit: remove ? 'Confirm Removal' : 'Confirm Assignment', destructive: remove,
+      equipmentSection: section, trigger, path: api + '/assign/' + section,
+      build() {
+        const selectedId = remove ? null : chooser.value().id;
+        if (!remove && !selectedId) throw Error('Select an available Supplier from the choices.');
+        if (!operationId || previousId !== selectedId) operationId = crypto.randomUUID();
+        previousId = selectedId;
+        return {operationId, supplierId: selectedId, confirmed: true,
+          records: records.map(({id, revision}) => ({id, revision}))};
+      },
+      success: refresh
+    });
+    if (!remove) chooser = mountEquipmentChooser(document.getElementById('supplier-equipment-choice'),
+      section === 'devices' ? 'devices' : 'it-assets', {}, {allowCreate: false});
+  }
+
+  function dialog(title, description, content, {submit = '', build, destructive = false, restore, success, trigger, path = api, equipmentSection = ""} = {}) {
     returnDialog = restore;
-    submitDialog = build && {build, success, restore};
+    submitDialog = build && {build, success, path, equipmentSection};
     (trigger ? config.openEquipmentSupplierModal : config.openModal)(`<div class="equipment-dialog users-live stock-live supplier-live" data-supplier-dialog>
       <header class="assignment-modal-head"><div><h2>${safe(title)}</h2>${description ? `<p class="sub">${safe(description)}</p>` : ''}</div>
       <button type="button" class="btn btn-outline" data-action="close-modal" aria-label="Close Dialog">×</button></header>
-      <div class="assignment-modal-body">${build ? `<form class="preview-aligned-form" data-supplier-form>
+      <div class="assignment-modal-body">${build ? `<form class="preview-aligned-form" data-supplier-form${equipmentSection ? ` data-equipment-supplier-assignment="${equipmentSection}"` : ''}>
         ${content}<p class="formhint supplier-feedback" data-supplier-feedback role="alert"></p>
         <div class="stock-form-actions"><button class="btn btn-outline" type="button" data-action="close-modal">Cancel</button>
         <button class="btn ${destructive ? 'bg-rose-700 hover:bg-rose-800 text-white' : 'primary'}" type="submit">${safe(submit)}</button></div></form>`
@@ -975,15 +1005,16 @@
     const form = event.target;
     if (!form.matches('form[data-supplier-form]')) return;
     event.preventDefault();
-    if (!editable() || pending || !submitDialog) return;
-    const {build, success} = submitDialog;
+    if (pending || !submitDialog) return;
+    const {build, success, path, equipmentSection} = submitDialog;
+    if (equipmentSection ? !config.canAssignEquipmentSupplier(equipmentSection) : !editable()) return;
     const feedback = form.querySelector('[data-supplier-feedback]');
     const submit = form.querySelector('button[type="submit"]');
     pending = submit.disabled = true;
     form.dataset.saving = 'true';
     void (async () => {
       try {
-        const data = await request(api, build(form));
+        const data = await request(path, build(form));
         delete form.dataset.saving;
         config.closeModal(true);
         success(data);
@@ -1035,6 +1066,7 @@
   window.caffootSuppliers = {
     configure(settings) { config = settings; },
     mountEquipmentChooser,
+    openEquipmentAssignment,
     enter(section, fromRoute = false) {
       active = true;
       void show(...(fromRoute ? readRoute(section) : [null, section === 'purchasing' ? 'dashboard' : 'overview']), !fromRoute);

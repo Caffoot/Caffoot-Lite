@@ -19,7 +19,7 @@ from .collection_saves import (change_inventory_record, remove_linked_rack_shelf
                                delete_subnet_with_dependencies)
 from .settings_saves import save_inventory_setting
 from .inventory_projection import project_inventory_response
-from .equipment_suppliers import read_supplier_choices
+from .equipment_suppliers import assign_equipment_supplier, read_supplier_choices
 from .feature_settings import read_feature_settings, save_feature_setting, unique_feature_fields
 from .stock_reporting import read_stock_report
 from .stock_intake import stock_access, read_stock, receive_stock, update_stock_readiness
@@ -715,8 +715,12 @@ class Handler(BaseHTTPRequestHandler):
                         and all(re.fullmatch(r"[1-9][0-9]{0,18}", value) for value in (parts[3], parts[5])))
         choices = {"/api/suppliers/choices/devices": "Devices",
                    "/api/suppliers/choices/it-assets": "IT Assets"}.get(url.path)
+        assignment = {"/api/suppliers/assign/devices": "Devices",
+                      "/api/suppliers/assign/receipts": "IT Assets"}.get(url.path)
         collection = {"/api/suppliers/issues": read_issues, "/api/suppliers/dashboard": read_purchasing_dashboard}.get(url.path)
-        if url.query or not (root or reading and (choices or collection or issue_detail or impact or detail and len(parts) == 4)):
+        if url.query or not (root or assignment and not reading
+                             or reading and (choices or collection or issue_detail or impact
+                                             or detail and len(parts) == 4)):
             self.respond(404, {"error": "not found"})
             return
         origin = self.headers.get("Origin")
@@ -754,7 +758,8 @@ class Handler(BaseHTTPRequestHandler):
                                                 self.headers.get("X-CSRF-Token"))
                     if actor is None:
                         raise PermissionError()
-                    supplier_access(connection, actor, edit=True)
+                    if not assignment:
+                        supplier_access(connection, actor, edit=True)
                     length = self.headers.get("Content-Length", "")
                     if not length.isdecimal() or not 0 < int(length) <= 65536:
                         raise ValueError("Invalid Supplier request size")
@@ -762,7 +767,11 @@ class Handler(BaseHTTPRequestHandler):
                         self.respond(415, {"error": "JSON required"})
                         return
                     payload = json.loads(self.rfile.read(int(length)), object_pairs_hook=unique_directory_fields)
-                    result = save_supplier_operation(connection, actor, read_session_cookie(cookie), payload)
+                    token = read_session_cookie(cookie)
+                    if assignment:
+                        result = assign_equipment_supplier(connection, actor, token, assignment, payload)
+                    else:
+                        result = save_supplier_operation(connection, actor, token, payload)
             self.respond(200, result)
         except PermissionError:
             self.respond(403, {"error": "forbidden"})

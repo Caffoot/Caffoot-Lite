@@ -44,3 +44,29 @@ If **+ Add Supplier** is missing but company choices are available, ask a collea
 **Example.** Receive 50 USB keyboards from Northlight Technology Ltd. If Dockland Equipment Ltd later delivers 25 identical keyboards, use **Receive More Of An Existing Item** and choose Dockland for the second receipt. Each supplier belongs to its own delivery. Both receipts can add to the same pooled stock item.
 
 With Suppliers switched off, **Supplier (Optional)** still accepts text on the receiving form. Existing confirmed associations and original receipt facts are retained. If a chosen company becomes unavailable before saving, review the error and select another available company or record text. **Issue Equipment** and **Get From Stock** continue to use their existing stock workflows without a Supplier selection. No receipt is inferred for the unit being issued or registered.
+
+## Assign A Supplier To Existing Devices
+
+An administrator needs Devices Edit with Devices and Suppliers enabled. An ordinary Devices editor can correct one Device in its own form.
+
+1. Open **IT → Devices → Device Inventory**. Use **Search & Filter Devices** to find the records you want to change.
+2. Select the checkboxes beside the Devices and choose **Assign Supplier** next to **Sort by**. Check the number of selected Devices.
+3. Search for an available Supplier and select the matching company. Read the replacement warning if a selected Device already has Supplier information.
+4. Select **Confirm Assignment** to apply the same Supplier to the selected Devices. Open Device Details to check a result. This action preserves their other fields and records who made the changes.
+5. Select **Cancel** or close the dialog to leave the saved Devices unchanged. If any selected Device was removed, changed or is reserved for editing, the assignment is rejected for the entire selection. Refresh Device Inventory, wait for the other edit to finish if needed, and select the records again.
+
+**Example.** You find a purchase order listing three independently purchased laptops from Northlight Technology Ltd. Search for the three Device Names, select the matching records and confirm the same Supplier. If you change the search before choosing **Assign Supplier**, check the selection again.
+
+## Link, Correct Or Remove A Historical Receipt Association
+
+You need IT Assets Edit while IT Assets and Suppliers are enabled. Use the original delivery record and any supporting delivery note to verify the Supplier.
+
+1. Open **IT → IT Assets → Receipt History**. Find the delivery under **Stock Receipts** by its date, equipment and quantity. The **Supplier** column shows the name recorded when equipment arrived. Beneath it, check the current **Linked Supplier** or **No Supplier Association** label.
+2. To link a single receipt, choose **Link Supplier**. For a confirmed link that needs correction, choose **Change Supplier**. Select the correct company and choose **Confirm Assignment**.
+3. To update several deliveries, select the rows under **Stock Receipts** and choose **Assign Supplier** next to the heading. Review the count and any replacement warning, select the company and choose **Confirm Assignment**.
+4. To remove a mistaken link, choose **Remove Supplier Association** on that receipt and select **Confirm Removal**. The original receipt text, date, quantity and stock movements remain in history. The supplier's record retains the historical protection and the correction is recorded in the Audit Trail.
+5. Select **Cancel** or close the dialog to abandon the correction. If a receipt changes between selection and confirmation, no selected receipt is updated. Refresh Receipt History and review the current links before trying again.
+
+**Example.** A receipt was recorded with the free-text name “Northlight”. The invoice confirms the company was Northlight Technology Ltd. Use **Link Supplier** on that receipt. If a later check shows the invoice belonged to a different delivery, choose **Change Supplier** or **Remove Supplier Association** as appropriate. The original recorded “Northlight” remains visible in the Supplier column.
+
+Only individual deliveries can be corrected here. A row in Stock Inventory can represent several deliveries, each with a different Supplier. Supplier assignment does not change any Physically Held, Ready To Issue or issued quantities.

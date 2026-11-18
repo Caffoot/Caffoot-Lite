@@ -137,8 +137,35 @@ with sqlite3.connect(sys.argv[1]) as db:
   await reader.page.evaluate(id => openDeviceDetailView(id), device.id);
   await reader.page.getByText('Dockland Equipment Ltd', {exact: true}).waitFor();
   assert.equal(await reader.page.getByRole('button', {name: 'View Supplier'}).count(), 0);
+  assert.equal(await reader.page.locator('[data-select-device-supplier]').count(), 0);
+  await page.evaluate(() => { activeDeviceDetailsTab = 'inventory'; switchTab('devices'); });
+  await page.getByRole('checkbox', {name: 'Select Meeting Room Display'}).check();
+  await page.getByRole('button', {name: 'Assign Supplier'}).click();
+  await supplierDialog.getByText('1 selected Device').waitFor();
+  assert.match(await supplierDialog.innerText(), /will be replaced/);
+  await supplierDialog.getByRole('combobox', {name: 'Supplier'}).fill('Northlight');
+  await supplierDialog.getByRole('option', {name: 'Northlight Technology Ltd'}).click();
+  const assignment = await post(page, '/api/suppliers/assign/devices',
+    supplierDialog.getByRole('button', {name: 'Confirm Assignment'}));
+  assert.equal(assignment.response.updated, 1);
+  assert.equal((await state()).deviceSuppliers[device.id].id, 1);
+
+  await editor.page.getByRole('tab', {name: 'Receipt History'}).click();
+  const stockRow = editor.page.locator('#stock-receipt-' + receipt.response.receiptId);
+  await stockRow.getByRole('button', {name: 'Remove Supplier Association'}).click();
+  const receiptDialog = editor.page.locator('[data-supplier-dialog]');
+  assert.match(await receiptDialog.innerText(), /retains the original receipt/);
+  await post(editor.page, '/api/suppliers/assign/receipts', receiptDialog.getByRole('button', {name: 'Confirm Removal'}));
+  await stockRow.getByRole('button', {name: 'Link Supplier'}).waitFor();
+  assert.match(await stockRow.innerText(), /Northlight Technology Ltd/);
+  await stockRow.getByRole('checkbox').check();
+  await editor.page.getByRole('button', {name: 'Assign Supplier'}).click();
+  await receiptDialog.getByRole('combobox', {name: 'Supplier'}).fill('Northlight');
+  await receiptDialog.getByRole('option', {name: 'Northlight Technology Ltd'}).click();
+  await post(editor.page, '/api/suppliers/assign/receipts', receiptDialog.getByRole('button', {name: 'Confirm Assignment'}));
+  await stockRow.getByText('Linked Supplier: Northlight Technology Ltd').waitFor();
   assert.deepEqual(errors, []);
-  console.log('PASS: real Device and receipt fields, explicit selection, Supplier creation and discard, preserved drafts, duplicate blank, and read-only name.');
+  console.log('PASS: real Device and receipt fields, explicit selection, Supplier creation and discard, preserved drafts, duplicate blank, read-only name, and confirmed assignments and removal in the existing lists.');
 }
 main().catch(async error => {
   console.error(error);

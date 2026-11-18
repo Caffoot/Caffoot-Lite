@@ -188,10 +188,22 @@
 
   function stockDate(value){return /^\d{4}-\d{2}-\d{2}$/.test(value)?`<time datetime="${value}">${value.slice(8,10)}/${value.slice(5,7)}/${value.slice(0,4)}</time>`:safe(value);}
   function stockCheckLabel(value){return value===true?'Confirmed':value===false?'Not Confirmed':'Not Recorded';}
+  function receiptSupplierCell(row, editable) {
+    const original = safe(row.supplier || 'Not Recorded');
+    if (!config.suppliersEnabled()) return original;
+    const linked = row.supplierAssociation;
+    return `<div>${original}</div><div class="sub">${linked ? 'Linked Supplier: ' + safe(linked.name) : 'No Supplier Association'}</div>
+      ${editable ? `<div class="receipt-supplier-actions">${stockButton(linked ? 'Change Supplier' : 'Link Supplier','link-receipt-supplier',row.id)}
+        ${linked ? stockButton('Remove Supplier Association','remove-receipt-supplier',row.id) : ''}</div>` : ''}`;
+  }
   function renderStockHistory(){
-    const receiptRows=receipts.map(row=>`<tr><td>${stockDate(row.date)}<div class="sub">${safe(row.actor)}</div></td><td>${safe(stockLabel({...row.specification,name:row.name}))}<div class="sub">${safe(stockSpecText(row.specification||{}))}</div></td><td>${safe(row.supplier||'Not Recorded')}</td><td>${row.quantity}</td><td>${row.ready??'Not Recorded'}</td><td>${row.awaiting??'Not Recorded'}</td><td><details><summary>Receipt Checks</summary><p>Items: ${stockCheckLabel(row.checks?.itemsChecked)}<br>Condition: ${stockCheckLabel(row.checks?.conditionChecked)}</p><p>${safe(row.notes||'No receipt notes recorded.')}</p>${(row.units||[]).map(unit=>`<p>Serial Number: ${safe(unit.serialNumber||"Not Recorded")}<br>Asset Tag: ${safe(unit.assetTag||"Not Recorded")}</p>`).join('')}<p class="sub">Recorded: ${safe(row.recordedAt)}</p></details></td></tr>`).join('');
+    const editable = canEdit() && config.suppliersEnabled();
+    const receiptRows=receipts.map(row=>`<tr id="stock-receipt-${row.id}" tabindex="-1">
+      ${editable ? `<td class="equipment-supplier-select"><input type="checkbox" data-select-receipt-supplier="${row.id}" aria-label="Select receipt ${row.id}"></td>` : ''}<td>${stockDate(row.date)}<div class="sub">${safe(row.actor)}</div></td><td>${safe(stockLabel({...row.specification,name:row.name}))}<div class="sub">${safe(stockSpecText(row.specification||{}))}</div></td><td>${receiptSupplierCell(row,editable)}</td><td>${row.quantity}</td><td>${row.ready??'Not Recorded'}</td><td>${row.awaiting??'Not Recorded'}</td><td><details><summary>Receipt Checks</summary><p>Items: ${stockCheckLabel(row.checks?.itemsChecked)}<br>Condition: ${stockCheckLabel(row.checks?.conditionChecked)}</p><p>${safe(row.notes||'No receipt notes recorded.')}</p>${(row.units||[]).map(unit=>`<p>Serial Number: ${safe(unit.serialNumber||"Not Recorded")}<br>Asset Tag: ${safe(unit.assetTag||"Not Recorded")}</p>`).join('')}<p class="sub">Recorded: ${safe(row.recordedAt)}</p></details></td></tr>`).join('');
     const changed=changes.map(row=>`<tr><td>${stockDate(row.date)}<div class="sub">${safe(row.actor)}</div></td><td>${safe(stockLabel({...row.specification,name:row.name}))}<div class="sub">${safe(stockSpecText(row.specification||{}))}</div></td><td>${row.preparation?row.quantity+' Prepared':(row.readyBefore??'Not Recorded')+' → '+(row.readyAfter??'Not Recorded')}</td><td>${safe(row.reason||'No note recorded.')}<div class="sub">${row.preparation?safe(row.checks?.workingCheckLabel||'Cleaned / Working')+': '+stockCheckLabel(row.checks?.cleanedWorking)+(row.checks?.dataCheckLabel?' · '+safe(row.checks.dataCheckLabel)+': '+stockCheckLabel(row.checks.dataPreparationConfirmed):''):'Items: '+stockCheckLabel(row.checks?.itemsChecked)+' · Condition: '+stockCheckLabel(row.checks?.conditionChecked)}</div></td></tr>`).join('');
-    return `<div class="stock-card-stack"><h2>Stock Receipts</h2><div class="card">${stockTable(['Date / Actor','Stock Item','Supplier','Received','Ready','Awaiting','Checks / Notes'],receiptRows,'No Recorded Receipts')}</div><h2>Readiness Changes</h2><p class="sub">Later checks are separate movements. Original receipts are retained.</p><div class="card">${stockTable(['Date / Actor','Stock Item','Ready Before → After','Reason / Checks'],changed,'No Recorded Readiness Changes')}</div></div>`;
+    return `<div class="stock-card-stack"><div class="section-heading"><h2>Stock Receipts</h2>
+      ${editable ? '<button class="btn" type="button" data-stock-action="assign-receipt-supplier" disabled>Assign Supplier</button>' : ''}</div>
+      <div class="card">${stockTable([...(editable ? ['Select'] : []),'Date / Actor','Stock Item','Supplier','Received','Ready','Awaiting','Checks / Notes'],receiptRows,'No Recorded Receipts')}</div><h2>Readiness Changes</h2><p class="sub">Later checks are separate movements. Original receipts are retained.</p><div class="card">${stockTable(['Date / Actor','Stock Item','Ready Before → After','Reason / Checks'],changed,'No Recorded Readiness Changes')}</div></div>`;
   }
   function clearStock(){
     issueDraft=null;report=null;inventoryFilter=null;movementFilter=null;
@@ -334,6 +346,24 @@
   document.addEventListener('click',event=>{
     const button=event.target.closest('[data-stock-action]');if(!button||!config)return;
     const action=button.dataset.stockAction;event.preventDefault();
+    if (['assign-receipt-supplier','link-receipt-supplier','remove-receipt-supplier'].includes(action)) {
+      if (!canEdit() || !config.suppliersEnabled() || pending) return;
+      const ids = action === 'assign-receipt-supplier'
+        ? [...document.querySelectorAll('[data-select-receipt-supplier]:checked')].map(input => Number(input.dataset.selectReceiptSupplier))
+        : [Number(button.dataset.id)];
+      const records = receipts.filter(row => ids.includes(row.id))
+        .map(row => ({id:row.id, revision:row.supplierRevision, linked:!!row.supplierAssociation}));
+      const label = action === 'link-receipt-supplier' ? (records[0]?.linked ? 'Change Supplier' : 'Link Supplier')
+        : action === 'remove-receipt-supplier' ? 'Remove Supplier Association' : 'Assign Supplier';
+      window.caffootSuppliers.openEquipmentAssignment('receipts', records, {
+        action: label, trigger: button, refresh: async () => {
+          await refreshStock();
+          const entry = button.dataset.id && document.getElementById('stock-receipt-' + button.dataset.id);
+          (entry || document.getElementById('stock-tab-history'))?.focus();
+        }
+      });
+      return;
+    }
     if(action==='report-drill'){drillStockReport(button);return;}
     if(action==='report-movement'){
       tab='movements';movementFilter={entryId:Number(button.dataset.id)};config.redraw();document.getElementById('stock-tab-movements')?.focus();return;
@@ -407,6 +437,11 @@
   });
   document.addEventListener('input',event=>{if(event.target.closest('#stock-receipt-form,#stock-readiness-form,#stock-issue-form,#stock-return-form,#stock-writeoff-form,#stock-preparation-form,#stock-reissue-form'))hydrateStock();});
   document.addEventListener('change',event=>{
+    if (event.target.hasAttribute('data-select-receipt-supplier')) {
+      const panel = event.target.closest('#stock-panel');
+      panel.querySelector('[data-stock-action="assign-receipt-supplier"]').disabled =
+        !panel.querySelector('[data-select-receipt-supplier]:checked');
+    }
     if(event.target.id==='stock-report-days'||event.target.id==='stock-report-category'){
       reportDays=Number(document.getElementById('stock-report-days').value);reportCategory=document.getElementById('stock-report-category').value;
       void refreshStock();return;

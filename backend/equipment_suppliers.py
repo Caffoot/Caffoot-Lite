@@ -1,6 +1,9 @@
 """Supplier selection and equipment attribution within existing save transactions."""
+import time
+
 from .audit_events import record_actor_event
-from .permissions import can_access, feature_enabled
+from .permissions import _admin, can_access, feature_enabled
+from .sessions import session_account
 
 EQUIPMENT_SECTIONS = ("Devices", "IT Assets")
 SUPPLIER_AUDIT_REASON = "Equipment Supplier association"
@@ -106,3 +109,106 @@ def write_receipt_supplier(connection, actor, receipt_id, supplier_id, previous=
                        reason=SUPPLIER_AUDIT_REASON, fields=["Supplier"],
                        before={"movementId": receipt_id, "supplierId": previous},
                        after={"movementId": receipt_id, "supplierId": supplier_id})
+
+def assign_equipment_supplier(connection, actor, token, section, payload):
+    """Revalidate confirmed selections under the same lock as every association and audit."""
+    from .stock_intake import stock_operation, stock_replay
+
+    fields = {"operationId", "confirmed", "supplierId", "records"}
+    operation, digest = stock_operation(payload, fields, fields)
+    devices = section == "Devices"
+    key = f"supplier:assign:{section}:{actor}:{operation}"
+    connection.execute("BEGIN IMMEDIATE")
+    try:
+        if (section not in EQUIPMENT_SECTIONS or session_account(connection, token) != actor
+                or not can_access(connection, actor, section, edit=True)
+                or not feature_enabled(connection, "Suppliers")):
+            raise PermissionError("Equipment editing and the Suppliers feature are required")
+        if devices:
+            _admin(connection, actor)
+        replay = stock_replay(connection, key, digest)
+        if replay is not None:
+            connection.commit()
+            return replay
+        records, supplier_id = payload["records"], payload["supplierId"]
+        if (payload["confirmed"] is not True or not isinstance(records, list) or not records
+                or supplier_id is None and (devices or len(records) != 1)):
+            raise ValueError("Confirm the Supplier change for the selected records")
+        if supplier_id is not None:
+            selectable_supplier(connection, supplier_id)
+
+        if devices:
+            result = assign_device_suppliers(connection, actor, records, supplier_id)
+        else:
+            result = assign_receipt_suppliers(connection, actor, records, supplier_id)
+        record_actor_event(connection, actor, kind="Device" if devices else "IT Assets",
+                           action="Updated", label="Supplier assignments", reason=SUPPLIER_AUDIT_REASON,
+                           fields=["Supplier"], confirmation_id=key,
+                           after={"operationHash": digest, "result": result})
+        connection.commit()
+        return result
+    except BaseException:
+        connection.rollback()
+        raise
+
+
+def equipment_revisions(records, *, devices):
+    seen = set()
+    for record in records:
+        if not isinstance(record, dict) or set(record) != {"id", "revision"}:
+            raise ValueError("Invalid equipment selection")
+        identity, revision = record["id"], record["revision"]
+        valid_id = (isinstance(identity, str) and bool(identity) if devices
+                    else type(identity) is int and 0 < identity < 2**63)
+        if not valid_id or type(revision) is not int or revision < 0 or identity in seen:
+            raise ValueError("Invalid or repeated equipment selection")
+        seen.add(identity)
+        yield identity, revision
+
+
+def assign_device_suppliers(connection, actor, records, supplier_id):
+    targets = []
+    now = int(time.time())
+    for identity, revision in equipment_revisions(records, devices=True):
+        row = connection.execute(
+            "SELECT d.name,d.revision,s.supplier_id,r.expires_at FROM inventory_devices d "
+            "LEFT JOIN device_suppliers s ON s.device_id=d.id "
+            "LEFT JOIN device_edit_reservations r ON r.device_id=d.id WHERE d.id=?", (identity,),
+        ).fetchone()
+        if row is None or row[1] != revision or (row[3] is not None and row[3] > now):
+            raise FileExistsError("A selected Device is missing, changed or reserved for editing. Refresh the inventory.")
+        if row[2] != supplier_id:
+            targets.append((identity, row[0]))
+
+    for identity, label in targets:
+        write_device_supplier(connection, actor, identity, label, supplier_id, "")
+        connection.execute("UPDATE inventory_devices SET revision=revision+1 WHERE id=?", (identity,))
+    return {"updated": len(targets)}
+
+
+def receipt_visible_to_equipment_reader(connection, receipt_id, can_read_devices):
+    return connection.execute(
+        "SELECT 1 FROM it_asset_stock_movements m WHERE m.id=? AND m.kind='received' AND "
+        "(? OR NOT EXISTS (SELECT 1 FROM it_asset_stock_entries e "
+        "JOIN it_asset_stock_units u ON u.id=e.stock_unit_id "
+        "WHERE e.movement_id=m.id AND u.device_id IS NOT NULL))",
+        (receipt_id, can_read_devices),
+    ).fetchone() is not None
+
+
+def assign_receipt_suppliers(connection, actor, records, supplier_id):
+    targets = []
+    can_read_devices = can_access(connection, actor, "Devices")
+    for identity, revision in equipment_revisions(records, devices=False):
+        if not receipt_visible_to_equipment_reader(connection, identity, can_read_devices):
+            raise FileExistsError("A selected receipt is no longer available. Refresh Receipt History.")
+        previous, current_revision = connection.execute(
+            "SELECT supplier_id,revision FROM receipt_suppliers WHERE receipt_id=?", (identity,),
+        ).fetchone() or (None, 0)
+        if current_revision != revision:
+            raise FileExistsError("A selected receipt association changed. Refresh Receipt History.")
+        if previous != supplier_id:
+            targets.append((identity, previous, revision))
+    for identity, previous, revision in targets:
+        write_receipt_supplier(connection, actor, identity, supplier_id, previous, revision=revision)
+    return {"updated": len(targets)}

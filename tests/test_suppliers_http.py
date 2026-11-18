@@ -162,6 +162,74 @@ class SupplierHttpTests(unittest.TestCase):
                          company["id"])
 
 
+    def test_atomic_confirmed_assignments_and_permanent_receipt_provenance(self):
+        original = self.save("supplier.save", self.company())
+        corrected = self.save("supplier.save", self.company(name="Dockland Ltd"))
+        with sqlite3.connect(self.db) as db:
+            db.execute("UPDATE organisation_features SET enabled=1 WHERE feature IN ('devices','it_assets')")
+            db.executemany("INSERT INTO account_permission_overrides VALUES(?,?,?)", [
+                (4, "IT Assets", "edit"), (4, "Devices", "edit"),
+            ])
+
+        for device_id in ("a", "b"):
+            self.assertEqual(self.request("/api/devices/create", actor=1, payload={
+                "record": {"id": device_id, "name": device_id, "type": "Laptop"},
+            })[0], 200)
+        devices_uri = ROOT + "/assign/devices"
+        devices = [{"id": device_id, "revision": 0} for device_id in ("a", "b")]
+        device_request = {"operationId": uuid4().hex, "confirmed": True,
+                          "supplierId": original["id"], "records": devices}
+        self.assertEqual(self.request(devices_uri, actor=4, payload=device_request)[0], 403)
+        self.assertEqual(self.request("/api/devices/edit/start", actor=4, payload={"deviceId": "b"})[0], 200)
+        self.assertEqual(self.request(devices_uri, actor=1, payload=device_request)[0], 409)
+        with sqlite3.connect(self.db) as db:
+            self.assertEqual(db.execute("SELECT count(*) FROM device_suppliers").fetchone(), (0,))
+        self.assertEqual(self.request("/api/devices/edit/cancel", actor=4, payload={"deviceId": "b"})[0], 200)
+        self.assertEqual(self.request(devices_uri, actor=1, payload={**device_request, "confirmed": False})[0], 400)
+        self.assertEqual(self.request(devices_uri, actor=1, payload=device_request), (200, {"updated": 2}))
+        self.assertEqual(self.request(devices_uri, actor=1, payload=device_request), (200, {"updated": 2}))
+        stale = {**device_request, "operationId": uuid4().hex, "supplierId": corrected["id"]}
+        self.assertEqual(self.request(devices_uri, actor=1, payload=stale)[0], 409)
+
+        receipt_path = "/api/it-assets/receive"
+        payload = receipt_payload(supplierId=original["id"])
+        code, first = self.request(receipt_path, actor=4, payload=payload)
+        self.assertEqual(code, 200, first)
+        with sqlite3.connect(self.db) as db:
+            config = stock_item(db, first["stockItemId"])["configurationKey"]
+        payload = receipt_payload(stockItemId=first["stockItemId"], configurationKey=config)
+        payload.pop("item")
+        code, second = self.request(receipt_path, actor=4, payload=payload)
+        self.assertEqual(code, 200, second)
+        selected = [{"id": first["receiptId"], "revision": 1}, {"id": second["receiptId"], "revision": 0}]
+        request = {"operationId": uuid4().hex, "confirmed": True,
+                   "supplierId": corrected["id"], "records": selected}
+        receipts_uri = ROOT + "/assign/receipts"
+        with sqlite3.connect(self.db) as db:
+            before = [db.execute("SELECT * FROM " + table).fetchall() for table in (
+                "it_asset_stock_movements", "it_asset_stock_entries", "it_asset_stock_items")]
+        invalid = {**request, "records": [selected[0], {**selected[1], "revision": 2}]}
+        self.assertEqual(self.request(receipts_uri, actor=4, payload=invalid)[0], 409)
+        self.assertEqual(self.request(receipts_uri, actor=3, payload=request)[0], 403)
+        self.assertEqual(self.request(receipts_uri, actor=4, payload=request), (200, {"updated": 2}))
+        self.assertEqual(self.request(receipts_uri, actor=4, payload=request), (200, {"updated": 2}))
+        self.assertEqual(self.request(receipts_uri, actor=4, payload={**request, "supplierId": None})[0], 409)
+        removal = {**request, "operationId": uuid4().hex, "supplierId": None,
+                   "records": [{"id": first["receiptId"], "revision": 2}]}
+        self.assertEqual(self.request(receipts_uri, actor=4, payload=removal), (200, {"updated": 1}))
+        with sqlite3.connect(self.db) as db:
+            self.assertEqual([db.execute("SELECT * FROM " + table).fetchall() for table in (
+                "it_asset_stock_movements", "it_asset_stock_entries", "it_asset_stock_items")], before)
+            self.assertEqual(db.execute("SELECT * FROM receipt_suppliers ORDER BY receipt_id").fetchall(),
+                             [(first["receiptId"], None, 3), (second["receiptId"], corrected["id"], 1)])
+            self.assertEqual(db.execute("SELECT count(*) FROM inventory_change_history "
+                                        "WHERE json_extract(record_json,'$.changes[0].after.movementId')=?",
+                                        (first["receiptId"],)).fetchone(), (3,))
+        for supplier in (original, corrected):
+            self.assertIn("IT Assets", self.request(f"{ROOT}/{supplier['id']}/impact", actor=1)[1]["sections"])
+            self.save("supplier.delete", {"confirmed": True}, supplier, status=409)
+        self.save("supplier.disable", {"confirmed": True, "sections": ["Devices"]}, original, actor=1, status=409)
+
     def test_issue_lifecycle_handover_corrections_and_audit(self):
         supplier = self.save("supplier.save", self.company(contacts=[CONTACT, {**CONTACT, "name": "Sam Example"}]))
         original, replacement = supplier["contacts"]

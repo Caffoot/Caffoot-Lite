@@ -2602,6 +2602,7 @@ function hierarchyValidateTypes(subnets) {
                 if(!affected.length)return '<div class="intelligence-overview-box" style="margin-top:0"><span>No devices have archived software recorded.</span></div>';
                 return renderInterfaceTemplate("device-management/render-archived-software-2",[affected.sort((a,b)=>String(a.device.name||'').localeCompare(String(b.device.name||''))).map(x=>renderInterfaceTemplate("device-management/render-archived-software-1",[escapeHtml(String(x.device.id)),escapeHtml(String(x.device.name||'Unnamed Device')),x.software.map(entry=>escapeHtml(String(entry.label||entry.key))).join(', ')])).join('')]);
             };
+            const assignSupplier = nextDeviceBridge?.canAssignSupplier();
             return renderInterfaceTemplate("devices/render-devices-html-9",[activeDeviceDetailsTab==='manufacturers'?renderHardwareManufacturersHtml():'',activeDeviceDetailsTab==='models'?renderHardwareModelsHtml():'',activeDeviceDetailsTab==='software'?renderSoftwareCatalogueHtml():'',activeDeviceDetailsTab==='overview'?'':'hidden',deviceIntelligenceTab==='overview',deviceIntelligenceTab==='overview'?'active':'',deviceIntelligenceTab==='hardware',deviceIntelligenceTab==='hardware'?'active':'',deviceIntelligenceTab==='os',deviceIntelligenceTab==='os'?'active':'',deviceIntelligenceTab==='software',deviceIntelligenceTab==='software'?'active':'',deviceIntelligenceTab==='quality',deviceIntelligenceTab==='quality'?'active':'',deviceIntelligenceTab==='overview'?'':'hidden',[['Total Devices',appState.devices.length,'i-box','orange','Recorded in inventory'],['With Primary IP',appState.devices.filter(d=>String(d.primaryIp||'').trim()).length,'i-network','green','Devices with a primary IP'],['Locations Recorded',appState.devices.filter(d=>String(d.location||'').trim() && d.location!=='Unknown').length,'i-rack','','Known location assigned'],['Device Types',new Set(appState.devices.map(d=>String(d.type||'').trim()).filter(Boolean)).size,'i-grid','','Different classifications']].map(([label,value,icon,tone,caption])=>renderInterfaceTemplate("devices/render-devices-html-1",[label,icon,value,tone,caption])).join(''),[['Devices by Type','type'],['Devices by Location','location']].map(([heading,field])=>{
                                 const counts=new Map();
                                 appState.devices.forEach(d=>{
@@ -2622,8 +2623,11 @@ function hierarchyValidateTypes(subnets) {
                                         Number(d.rackUEnd) <= Number(rack.heightU);
                                     const locationNeedsAttention = isUnknownLocation && !hasValidRackPlacement;
                                     const locText = isUnknownLocation ? 'Unknown' : d.location;
-                                    return renderInterfaceTemplate("devices/render-devices-html-4",[escapeHtml(d.id),escapeHtml(d.name),escapeHtml(d.serialNumber ? 'S/N '+d.serialNumber : rack ? rack.name+' · '+(d.face||'front') : d.mountType || 'Not in rack'),d.type==='Server - Virtual'?'vm':'',escapeHtml(d.type==='Server - Physical' ? 'Server' : d.type==='Server - Virtual' ? 'Virtual Machine' : d.type),escapeHtml(locText),locationNeedsAttention ? '<div class="device-detail" style="color:var(--theme-warning-text,#b26449)">Needs attention</div>' : '',escapeHtml(d.primaryIp || 'None'),d.status === 'Retired' ? 'retired' : d.status === 'Maintenance' ? 'maintenance' : '',escapeHtml(d.status || 'Active'),escapeHtml([d.manufacturer,d.model].filter(Boolean).join(' ') || '—'),escapeHtml(d.id)]);
-                                }).join(''),getVisibleDevices().length === 0 ? renderInterfaceTemplate("devices/render-devices-html-5",[appState.devices.length?'No matching devices':'Your inventory is empty',appState.devices.length?'Try another search or remove your filters.':'Add your first device to get started.',appState.devices.length?'clear-device-filters':'open-device-modal',appState.devices.length?'Clear search and filters':'Add Device',appState.devices.length?'':'btn btn-primary']) : '','hidden','']);
+                                    return renderInterfaceTemplate("devices/render-devices-html-4",[escapeHtml(d.id),escapeHtml(d.name),escapeHtml(d.serialNumber ? 'S/N '+d.serialNumber : rack ? rack.name+' · '+(d.face||'front') : d.mountType || 'Not in rack'),d.type==='Server - Virtual'?'vm':'',escapeHtml(d.type==='Server - Physical' ? 'Server' : d.type==='Server - Virtual' ? 'Virtual Machine' : d.type),escapeHtml(locText),locationNeedsAttention ? '<div class="device-detail" style="color:var(--theme-warning-text,#b26449)">Needs attention</div>' : '',escapeHtml(d.primaryIp || 'None'),d.status === 'Retired' ? 'retired' : d.status === 'Maintenance' ? 'maintenance' : '',escapeHtml(d.status || 'Active'),escapeHtml([d.manufacturer,d.model].filter(Boolean).join(' ') || '—'),escapeHtml(d.id),assignSupplier ?
+                                        `<td class="equipment-supplier-select"><input type="checkbox" data-select-device-supplier="${escapeHtml(d.id)}" aria-label="Select ${escapeHtml(d.name)}"></td>` : '']);
+                                }).join(''),getVisibleDevices().length === 0 ? renderInterfaceTemplate("devices/render-devices-html-5",[appState.devices.length?'No matching devices':'Your inventory is empty',appState.devices.length?'Try another search or remove your filters.':'Add your first device to get started.',appState.devices.length?'clear-device-filters':'open-device-modal',appState.devices.length?'Clear search and filters':'Add Device',appState.devices.length?'':'btn btn-primary',assignSupplier?8:7]) : '','hidden','',
+                assignSupplier ? '<button type="button" class="btn btn-outline" id="assign-device-supplier" disabled>Assign Supplier</button>' : '',
+                assignSupplier ? '<th scope="col" class="equipment-supplier-select">Select</th>' : '']);
         }
 
         // --- MANAGED TYPES & LOCATIONS ---
@@ -9115,6 +9119,35 @@ void (async () => {
     permissions['IT Assets']=!!sessionStockPermissions.read;
     editPermissions['IT Assets']=!!sessionStockPermissions.edit;
   }
+  function canAssignEquipmentSupplier(section) {
+    return suppliersEnabled && (section === 'devices' ? sessionIsAdmin && !!editPermissions.Devices
+      : section === 'receipts' && !!editPermissions['IT Assets']);
+  }
+  function canSubmitSupplierForm(form) {
+    if (!form?.matches('form[data-supplier-form]')) return false;
+    const section = form.dataset.equipmentSupplierAssignment;
+    return section ? canAssignEquipmentSupplier(section) : !!editPermissions.Suppliers;
+  }
+  document.addEventListener('change', event => {
+    const input = event.target.closest('[data-select-device-supplier]');
+    if (!input) return;
+    const panel = input.closest('[data-device-panel="inventory"]');
+    panel.querySelector('#assign-device-supplier').disabled = !panel.querySelector('[data-select-device-supplier]:checked');
+  });
+  document.addEventListener('click', event => {
+    const trigger = event.target.closest('#assign-device-supplier');
+    if (!trigger || !canAssignEquipmentSupplier('devices')) return;
+    const records = [...trigger.closest('[data-device-panel="inventory"]').querySelectorAll('[data-select-device-supplier]:checked')]
+      .map(input => {
+        const id = input.dataset.selectDeviceSupplier;
+        return {id, revision:deviceRevisions[id], linked:Object.hasOwn(deviceSuppliers, id)};
+      });
+    window.caffootSuppliers.openEquipmentAssignment('devices', records, {
+      trigger, refresh: () => { void refreshCentralInventory().then(() => {
+        document.getElementById('device-sort')?.focus();
+      }).catch(error => showToast(error.message, 'error')); }
+    });
+  });
   async function refreshStockAccess(){
     const response=await fetch('/api/session',{cache:'no-store'});
     const session=response.ok?await response.json():{};
@@ -9292,7 +9325,7 @@ void (async () => {
           (sessionIsAdmin && (button.closest('#next-user-create-form,#next-user-profile-form,#smtp-settings-form,#smtp-test-form') || button.form?.matches('#role-definition-form'))) ||
           (editPermissions['Staff Members'] && button.form?.matches('#staff-record-form')) ||
           (editPermissions.Departments && button.form?.matches('#staff-department-form')) ||
-          (editPermissions.Suppliers && button.form?.matches('form[data-supplier-form]')) ||
+          canSubmitSupplierForm(button.form) ||
           (editPermissions['IT Assets'] && button.form?.matches('#stock-receipt-form,#stock-readiness-form,#stock-issue-form,#stock-return-form,#stock-writeoff-form,#stock-preparation-form,#stock-reissue-form,#stock-correction-form')) ||
           (editPermissions.Devices && button.form?.matches('form[data-device-form="true"],#equipment-assignment-form,#stock-reissue-form[data-direct-handover]')) ||
           (editPermissions.IPAM && button.closest('form[data-form-action="ip"],form[data-form-action="bulk-ip"],form[data-form-action="subnet"],form[data-ipam-subnet-creation]')) ||
@@ -10341,7 +10374,8 @@ void (async () => {
     }
   }
   nextDeviceBridge = {
-    canReadSuppliers: () => !!permissions.Suppliers,save:saveDevice,reserveForDelete,remove:removeDevice,
+    canReadSuppliers: () => !!permissions.Suppliers,
+    canAssignSupplier: () => canAssignEquipmentSupplier('devices'),save:saveDevice,reserveForDelete,remove:removeDevice,
     cancelDelete,saveArchivedInstallation};
 
   // Self-service account controls follow the established Users card styling.
@@ -11220,7 +11254,7 @@ void (async () => {
         !(editPermissions.Racks && element.closest('form[data-form-action="rack"],form[data-form-action="assign"],#rack-accessory-form')) &&
         !(editPermissions['Staff Members'] && element.form?.matches('#staff-record-form')) &&
         !(editPermissions.Departments && element.form?.matches('#staff-department-form')) &&
-        !(editPermissions.Suppliers && element.form?.matches('form[data-supplier-form]')) &&
+        !canSubmitSupplierForm(element.form) &&
         !(editPermissions['IT Assets'] && element.form?.matches('#stock-receipt-form,#stock-readiness-form,#stock-issue-form,#stock-return-form,#stock-writeoff-form,#stock-preparation-form,#stock-reissue-form,#stock-correction-form')))) {
       event.preventDefault();
       event.stopImmediatePropagation();
@@ -11232,7 +11266,7 @@ void (async () => {
     if (event.target.matches('#next-account-password-form,#next-account-mfa-start,#next-account-mfa-confirm,#account-mfa-removal-form,#personal-details-form,#next-user-profile-form,#smtp-settings-form,#smtp-test-form,#account-email-verification-form') ||
         (editPermissions['Staff Members'] && event.target.matches('#staff-record-form')) ||
         (editPermissions.Departments && event.target.matches('#staff-department-form')) ||
-        (editPermissions.Suppliers && event.target.matches('form[data-supplier-form]')) ||
+        canSubmitSupplierForm(event.target) ||
         (editPermissions['IT Assets'] && event.target.matches('#stock-receipt-form,#stock-readiness-form,#stock-issue-form,#stock-return-form,#stock-writeoff-form,#stock-preparation-form,#stock-reissue-form,#stock-correction-form')) ||
         (editPermissions.Devices && event.target.matches('form[data-device-form="true"],#equipment-assignment-form,#stock-reissue-form[data-direct-handover]')) ||
         (editPermissions.IPAM && event.target.matches('form[data-form-action="ip"],form[data-form-action="bulk-ip"],form[data-form-action="subnet"],form[data-ipam-subnet-creation]')) ||
@@ -11281,7 +11315,7 @@ void (async () => {
       }
     });
     window.caffootSuppliers.configure({
-      csrf:csrfToken,canEdit:()=>!!editPermissions.Suppliers,admin:sessionIsAdmin,
+      csrf:csrfToken,canEdit:()=>!!editPermissions.Suppliers,admin:sessionIsAdmin,canAssignEquipmentSupplier,
       escape:escapeHtml,icon:renderSectionTabIcon,openModal:html=>openModal(html),openEquipmentSupplierModal,
       closeModal:(force, onClosed)=>closeModal(force,onClosed),
       navigate:(tab, fromRoute)=>switchTab(tab,fromRoute), redraw:()=>{if(isSupplierPage(currentTab))renderContent();},
