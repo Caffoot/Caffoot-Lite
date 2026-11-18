@@ -123,3 +123,7 @@ The Supplier Directory presents the main office town alongside each company and 
 ![Mobile dark Add Supplier form scrolled to the first Contact, with the Add Another Contact, Cancel and Add Supplier controls](../../../development-handovers/evidence/stage-4-batch-41/images/add-supplier-contact-dark-390.png)
 
 Scroll down to reach the initially open Contact entry and save controls on a narrow screen.
+
+![Desktop light Supplier Details header on the Notes tab with Back To Suppliers, Edit Supplier and Archive above the Note-history explanation](../../../development-handovers/evidence/stage-4-batch-41/header-correction/notes-light-1440.png)
+
+The Supplier Details header groups company actions above the explanation of why Delete is unavailable.
