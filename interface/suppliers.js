@@ -93,10 +93,10 @@
     const {rows, count} = directoryResults();
     const activeCategories = directory.categories.filter(item => !item.archived);
     return header('Suppliers', 'Manage supplier companies, locations and contacts.',
-      editable() ? button('Manage Categories', 'categories') + button('Add Supplier', 'supplier-form', '', 'btn-primary') : '') +
-      `<nav class="subnav device-tabs" aria-label="Supplier Sections">
-        <button type="button" class="section-tab-control active" aria-current="page" data-supplier-action="directory">${icon('users')}Supplier Directory</button></nav>
-      <section class="section-page-body" aria-label="Supplier Directory">
+      editable() ? button('Manage Categories', 'categories') + button('Add Supplier', 'supplier-form', '', 'primary') : '') +
+      `<nav class="tabs" aria-label="Supplier Sections">
+        <button type="button" class="tab section-tab-control active" aria-current="page" data-supplier-action="directory">${icon('users')}Supplier Directory</button></nav>
+      <section class="section active" aria-label="Supplier Directory">
       ${toolSearch('Search Suppliers', 'supplier-search', search,
         select('Filter By Category', 'category-filter', [['', 'All Categories'], ...activeCategories.map(item => [item.id, item.name])], categoryFilter),
         'Search by supplier name or description')}
@@ -148,7 +148,7 @@
         editable() ? button('Edit Location', 'location-form', location.id) : '');
     }).join('');
     return sectionHeading('Supplier Locations', 'View offices and branches and the contacts who cover them.',
-      editable() ? button('Add Location', 'location-form', '', 'btn-primary') : '') +
+      editable() ? button('Add Location', 'location-form', '', 'primary') : '') +
       `<div class="stock-card-stack">${entries}</div>`;
   }
   function contactRows() {
@@ -164,7 +164,7 @@
     const locations = supplier.locations.map(location =>
       [location.id, location.name + (location.archived ? ' (Archived)' : '') + ' + Company-wide']);
     return sectionHeading('Supplier Contacts', 'Find people by name, email or the locations they cover.',
-      editable() ? button('Add Contact', 'contact-form', '', 'btn-primary') : '') +
+      editable() ? button('Add Contact', 'contact-form', '', 'primary') : '') +
       toolSearch('Search Contacts', 'supplier-contact-search', contactSearch, select('Filter Contacts By Location',
         'contact-filter', [['', 'All Contacts'], ['company', 'Company-wide'], ...locations], contactFilter), 'Search by name, role or email') +
       `<div class="supplier-results">${table(['Name', 'Role', 'Location', 'Telephone', 'Email', 'Actions'],
@@ -187,7 +187,7 @@
   function renderNotes() {
     const notes = supplier.notes.filter(note => noteFilter === 'all' || (noteFilter === 'supplier') === (note.contactId === null));
     return sectionHeading('Notes', 'Read notes about the company and its contacts.',
-      editable() ? button('Add Supplier Note', 'note-form', '', 'btn-primary') : '') +
+      editable() ? button('Add Supplier Note', 'note-form', '', 'primary') : '') +
       `<div class="device-toolbar supplier-results">${select('Filter Notes By Owner', 'note-filter',
         [['all', 'All Notes'], ['supplier', 'Supplier Notes'], ['contacts', 'Contact Notes']], noteFilter)}</div>
       <div class="stock-card-stack">${noteCards(notes) || card('No Notes Match Your Filter', '')}</div>`;
@@ -198,11 +198,11 @@
     return header(supplier.name, 'Supplier Details',
       button('Back To Suppliers', 'directory') + (editable() ? button('Edit Supplier', 'supplier-form', supplier.id) : '')) +
       `<div class="row-between supplier-row">${badge(supplier.status)}<div class="preview-page-actions">${lifecycleButtons('supplier', supplier, supplier.status)}</div></div>
-      <nav class="subnav device-tabs" role="tablist" aria-label="Supplier Details Tabs">${tabs.map(([key, label, symbol]) =>
-        `<button type="button" class="section-tab-control${tab === key ? ' active' : ''}" role="tab" id="supplier-tab-${key}"
+      <nav class="tabs" role="tablist" aria-label="Supplier Details Tabs">${tabs.map(([key, label, symbol]) =>
+        `<button type="button" class="tab section-tab-control${tab === key ? ' active' : ''}" role="tab" id="supplier-tab-${key}"
         aria-selected="${tab === key}" aria-controls="supplier-panel-${key}" tabindex="${tab === key ? '0' : '-1'}"
         data-supplier-action="tab" data-id="${key}">${icon(symbol)}${label}</button>`).join('')}</nav>
-      <section class="section-page-body" id="supplier-panel-${tab}" role="tabpanel" aria-labelledby="supplier-tab-${activeTab[0]}">${content}</section>`;
+      <section class="section active" id="supplier-panel-${tab}" role="tabpanel" aria-labelledby="supplier-tab-${activeTab[0]}">${content}</section>`;
   }
   function render() {
     let content;
@@ -277,7 +277,7 @@
       <div class="assignment-modal-body">${build ? `<form class="preview-aligned-form" data-supplier-form>
         ${content}<p class="formhint supplier-feedback" data-supplier-feedback role="alert"></p>
         <div class="stock-form-actions"><button class="btn btn-outline" type="button" data-action="close-modal">Cancel</button>
-        <button class="btn ${destructive ? 'bg-rose-700 hover:bg-rose-800 text-white' : 'btn-primary'}" type="submit">${safe(submit)}</button></div></form>`
+        <button class="btn ${destructive ? 'bg-rose-700 hover:bg-rose-800 text-white' : 'primary'}" type="submit">${safe(submit)}</button></div></form>`
         : `${content}<div class="stock-form-actions"><button class="btn btn-outline" type="button" data-action="close-modal">Close</button></div>`}</div></div>`);
     if (build && !destructive) document.querySelector('[data-supplier-form] input:not([type="checkbox"]),[data-supplier-form] textarea')?.focus();
   }
@@ -420,7 +420,7 @@
       ${button(item.archived ? 'Reactivate' : 'Archive', item.archived ? 'category.reactivate' : 'category.archive', item.id)}</td></tr>`).join('');
     dialog('Manage Supplier Categories', 'Archived categories stay on existing Supplier records.',
       table(['Category', 'Status', 'Actions'], rows, 'No Supplier Categories') +
-      `<div class="preview-details-actions">${button('Add Category', 'category-form', '', 'btn-primary')}</div>`);
+      `<div class="preview-details-actions">${button('Add Category', 'category-form', '', 'primary')}</div>`);
   }
   function categoryForm(category) {
     dialog(category ? 'Rename Category' : 'Add Category', 'Supplier Categories',

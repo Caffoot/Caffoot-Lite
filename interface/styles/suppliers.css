@@ -7,6 +7,7 @@
 .supplier-live .supplier-metrics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:16px}
 .supplier-live .supplier-retention{max-width:330px}
 .supplier-live .supplier-note-text{white-space:pre-wrap;overflow-wrap:anywhere}
+.supplier-live .info-row{border-color:var(--line)}
 .supplier-live .info-row b{min-width:0;overflow-wrap:anywhere}
 .supplier-live .inline-link{overflow-wrap:anywhere}
 .supplier-live .supplier-form-section{margin:22px 0 0;padding-top:10px}

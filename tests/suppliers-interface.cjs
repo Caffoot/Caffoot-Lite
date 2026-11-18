@@ -90,6 +90,9 @@ with sqlite3.connect(sys.argv[1]) as db:
   assert.equal(await page.locator('#optional-feature-equipment-lifecycle').count(), 0);
   await toggleFeature(true);
   await supplierNav.click();
+  assert.equal(await page.locator('.supplier-live .tabs').evaluate(nav => getComputedStyle(nav).display), 'flex');
+  assert.notEqual(await button('Add Supplier').evaluate(control => getComputedStyle(control).backgroundColor),
+    await button('Manage Categories').evaluate(control => getComputedStyle(control).backgroundColor));
   await button('Add Supplier').click();
   await dialog.getByLabel('Supplier Name').fill('Northlight Technology Ltd');
   await dialog.getByLabel('Website').fill('https://example.org');
