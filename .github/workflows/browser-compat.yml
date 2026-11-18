@@ -362,7 +362,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        engine: [firefox, webkit]
+        engine: [firefox]
     steps:
       - uses: actions/checkout@v4
         with:
@@ -420,6 +420,78 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: issue-333-${{ matrix.engine }}-${{ github.sha }}
+          path: ${{ runner.temp }}/issue-333-evidence
+          if-no-files-found: ignore
+          retention-days: 14
+
+  native-select-webkit:
+    name: native-select-engines (webkit)
+    if: github.event_name != 'pull_request' || github.event.pull_request.draft == false
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    # Verified against the same application revision by isolated issue #361 run #44320029826.
+    # Keep WebKit separate to leave the working Firefox runner unchanged.
+    container:
+      image: mcr.microsoft.com/playwright:v1.62.1-noble
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Trust only this checked-out repository for pinned Git reference reads
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - name: Install isolated browser test tools
+        run: |
+          npm install --prefix "$RUNNER_TEMP/caffoot-browser-tests" --no-save --no-package-lock --no-audit --no-fund playwright@1.62.1 axe-core@4.14.0
+          "$RUNNER_TEMP/caffoot-browser-tests/node_modules/.bin/playwright" --version
+      - name: Check Raspberry Pi acceptance corrections in each engine
+        env:
+          NODE_PATH: ${{ runner.temp }}/caffoot-browser-tests/node_modules
+          CAFFOOT_PI_ENGINE: webkit
+          CAFFOOT_VISUAL_OUTPUT: ${{ runner.temp }}/pi-acceptance-corrections
+        run: node tests/pi-acceptance-corrections.cjs
+      - name: Save Raspberry Pi correction engine evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pi-corrections-webkit-${{ github.sha }}
+          path: ${{ runner.temp }}/pi-acceptance-corrections
+          if-no-files-found: ignore
+          retention-days: 14
+      - name: Check Users roles, MFA and Staff My Account in each engine
+        env:
+          NODE_PATH: ${{ runner.temp }}/caffoot-browser-tests/node_modules
+          CAFFOOT_ROLES_ENGINE: webkit
+          CAFFOOT_AXE_SOURCE: ${{ runner.temp }}/caffoot-browser-tests/node_modules/axe-core/axe.min.js
+          CAFFOOT_ROLES_OUTPUT: ${{ runner.temp }}/users-roles-evidence
+        run: node tests/users-roles-interface.cjs
+      - name: Save Users roles engine evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: users-roles-webkit-${{ github.sha }}
+          path: ${{ runner.temp }}/users-roles-evidence
+          if-no-files-found: ignore
+          retention-days: 14
+      - name: Check native selection, rack feedback and pinned select appearance
+        env:
+          NODE_PATH: ${{ runner.temp }}/caffoot-browser-tests/node_modules
+          CAFFOOT_VISUAL_ENGINE: webkit
+          CAFFOOT_HOST_SELECT_REVIEW: "1"
+          CAFFOOT_SUBNET_FIRST: "1"
+          CAFFOOT_VISUAL_FILTER: "^$"
+          CAFFOOT_VISUAL_OUTPUT: ${{ runner.temp }}/issue-333-evidence
+        run: node tests/approved-visual.cjs
+      - name: Save fictional engine comparisons
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: issue-333-webkit-${{ github.sha }}
           path: ${{ runner.temp }}/issue-333-evidence
           if-no-files-found: ignore
           retention-days: 14
