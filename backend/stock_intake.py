@@ -7,6 +7,7 @@ import re
 import uuid
 
 from backend.audit_events import record_actor_event
+from backend.equipment_suppliers import read_receipt_suppliers, selectable_supplier, write_receipt_supplier
 from backend.permissions import can_access
 from backend.sessions import session_account
 
@@ -197,6 +198,7 @@ def read_stock(connection, account_id, item_id=None):
 
 def project_stock_details(connection, actor, result):
     """Keep authorised stock totals but omit individual hidden Device units."""
+    read_receipt_suppliers(connection, actor, result.get("receipts", []))
     if can_access(connection, actor, "Devices"):
         return result
     hidden = {row[0] for row in connection.execute(
@@ -271,7 +273,7 @@ def stock_write_access(connection, actor, token):
 def receive_stock(connection, actor, token, payload):
     """Save a delivery, its optional checked readiness and provenance atomically."""
     allowed = {"operationId", "item", "stockItemId", "configurationKey", "quantity",
-               "receivedOn", "supplier", "notes", "checks", "readyQuantity", "serialNumber", "assetTag"}
+               "receivedOn", "supplier", "supplierId", "notes", "checks", "readyQuantity", "serialNumber", "assetTag"}
     operation, digest = stock_operation(payload, allowed,
         {"operationId", "quantity", "receivedOn", "checks", "readyQuantity"})
     key = "stock:receive:" + str(actor) + ":" + operation
@@ -291,6 +293,9 @@ def receive_stock(connection, actor, token, payload):
         if ready > quantity or (ready and not all(checks.values())):
             raise ValueError("Ready quantity requires both checks and cannot exceed the received quantity")
         supplier = stock_text(payload.get("supplier", ""), "Supplier", 200) or None
+        supplier_id = payload.get("supplierId")
+        if "supplierId" in payload:
+            supplier = selectable_supplier(connection, supplier_id)
         notes = stock_text(payload.get("notes", ""), "Receipt Notes", 2000)
         if "item" in payload:
             if "stockItemId" in payload or "configurationKey" in payload:
@@ -347,6 +352,8 @@ def receive_stock(connection, actor, token, payload):
         append_stock_fact(connection, actor, key, "received", item,
                           [(subject, quantity, None, "awaiting_checks")], details,
                           event_date=received, supplier=supplier)
+        if supplier_id is not None:
+            write_receipt_supplier(connection, actor, next_id, supplier_id)
         if ready:
             append_stock_fact(connection, actor, key+":ready", "readiness_changed", item,
                 [(subject, ready, "awaiting_checks", "ready")],

@@ -9,6 +9,11 @@ import tempfile
 import threading
 import unittest
 from unittest.mock import patch
+from uuid import uuid4
+
+from backend.history_permissions import visible_change_history
+from backend.stock_intake import stock_item
+from test_stock_intake import receipt_payload
 
 from backend.http_security import COOKIE_NAME
 from backend.request_auth import csrf_for_session
@@ -86,6 +91,76 @@ class SupplierHttpTests(unittest.TestCase):
     def company(self, **options):
         return {"name": "Northlight Ltd", "website": "", "description": "",
                 "address": dict(ADDRESS), "categoryIds": [], **options}
+
+    def test_lookup_edit_boundaries_and_receipt_replay(self):
+        company = self.save("supplier.save", self.company())
+        archived = self.save("supplier.save", self.company(name="Distant Ltd"))
+        self.save("supplier.archive", {"confirmed": True}, archived)
+        with sqlite3.connect(self.db) as db:
+            db.execute("UPDATE organisation_features SET enabled=1 WHERE feature IN ('devices','it_assets')")
+            db.executemany("INSERT INTO account_permission_overrides VALUES(?,?,?)", [
+                (4, "IT Assets", "edit"), (3, "IT Assets", "read"),
+                (4, "Devices", "edit"), (5, "IT Assets", "edit"),
+            ])
+        choice_uri = ROOT + "/choices/it-assets"
+        self.assertEqual(self.request(choice_uri, actor=4), (200, {
+            "suppliers": [{"id": company["id"], "name": company["name"]}],
+        }))
+        for actor in (2, 3):
+            self.assertEqual(self.request(choice_uri, actor=actor)[0], 403)
+        self.assertEqual(self.request(choice_uri, actor=5)[0], 401)
+        self.assertEqual(self.request(ROOT, actor=4)[0], 403)
+        device = {"id": "monitor", "name": "Office Monitor", "type": "Monitor"}
+        code, result = self.request("/api/devices/create", actor=4, payload={
+            "record": device, "supplier": {"id": company["id"]},
+        })
+        self.assertEqual(code, 200, result)
+        self.assertEqual(self.request("/api/inventory/state", actor=4)[1]["deviceSuppliers"],
+                         {"monitor": {"id": company["id"], "name": company["name"]}})
+        with sqlite3.connect(self.db) as db:
+            db.execute("UPDATE account_permission_overrides SET level='read' WHERE account_id=4 AND section='Devices'")
+        self.assertEqual(self.request("/api/inventory/state", actor=4)[1]["deviceSuppliers"],
+                         {"monitor": {"name": company["name"]}})
+
+        path = "/api/it-assets/receive"
+        free_text = receipt_payload()
+        free_text["supplier"] = company["name"]
+        code, first = self.request(path, actor=4, payload=free_text)
+        self.assertEqual(code, 200, first)
+        with sqlite3.connect(self.db) as db:
+            config = stock_item(db, first["stockItemId"])["configurationKey"]
+        explicit = receipt_payload(stockItemId=first["stockItemId"], configurationKey=config,
+                                   supplierId=company["id"])
+        explicit.pop("item")
+        code, second = self.request(path, actor=4, payload=explicit)
+        self.assertEqual(code, 200, second)
+        self.assertEqual(self.request(path, actor=4, payload=explicit), (200, second))
+        self.assertEqual(self.request(path, actor=4, payload={**explicit, "quantity": 2})[0], 409)
+        invalid = {**explicit, "operationId": uuid4().hex, "supplierId": archived["id"]}
+        self.assertEqual(self.request(path, actor=4, payload=invalid)[0], 400)
+        receipt = self.request("/api/it-assets/stock", actor=4)[1]["receipts"]
+        self.assertEqual([record["supplierAssociation"] for record in receipt], [
+            {"id": company["id"], "name": company["name"]}, None,
+        ])
+        with sqlite3.connect(self.db) as db:
+            self.assertEqual(db.execute("SELECT supplier_id,section FROM supplier_supply_history ORDER BY section").fetchall(),
+                             [(company["id"], "Devices"), (company["id"], "IT Assets")])
+            before = db.execute("SELECT * FROM it_asset_stock_movements").fetchall()
+            self.assertEqual(len(before), 2)
+            db.execute("UPDATE organisation_features SET enabled=0 WHERE feature='suppliers'")
+        self.assertEqual(self.request(choice_uri, actor=4)[0], 403)
+        self.assertNotIn("deviceSuppliers", self.request("/api/inventory/state", actor=4)[1])
+        hidden = self.request("/api/it-assets/stock", actor=4)[1]["receipts"]
+        self.assertTrue(all(record["supplier"] == company["name"] for record in hidden))
+        self.assertTrue(all("supplierAssociation" not in record for record in hidden))
+        with sqlite3.connect(self.db) as db:
+            self.assertEqual(db.execute("SELECT * FROM it_asset_stock_movements").fetchall(), before)
+            self.assertFalse(any(event.get("reason") == "Equipment Supplier association"
+                                 for event in visible_change_history(db, 1)))
+            db.execute("UPDATE organisation_features SET enabled=1 WHERE feature='suppliers'")
+        self.assertEqual(self.request("/api/it-assets/stock", actor=4)[1]["receipts"][0]["supplierAssociation"]["id"],
+                         company["id"])
+
 
     def test_issue_lifecycle_handover_corrections_and_audit(self):
         supplier = self.save("supplier.save", self.company(contacts=[CONTACT, {**CONTACT, "name": "Sam Example"}]))

@@ -8,6 +8,7 @@ from .application_integrity import validate_live_application_state as validate_d
 from .device_addresses import prepare_device_address, is_basic_address
 from .device_rack_fields import prepare_device_rack_fields
 from .device_storage import validate_device_storage
+from .equipment_suppliers import device_supplier_values, write_device_supplier
 from .inventory import reconstruct_inventory
 from .normalisation_validation import validate_normalisation_devices
 from .permissions import can_access, feature_enabled
@@ -17,6 +18,8 @@ from .rack_validation import find_rack_import_conflicts
 class DeviceIdentityConflict(ValueError):
     """A normal edit cannot replace the identity of recorded equipment."""
 
+
+UNCHANGED_SUPPLIER = object()
 
 _RACK_PLACEMENT_FIELDS = frozenset((
     "rackId", "face", "rackUStart", "rackUEnd", "rackUHeight", "mountType",
@@ -126,7 +129,8 @@ def _persist_related_guests(connection, updates):
     return changes
 
 
-def save_reserved_device(connection, account_id, device_id, revision, record, section="Devices", related_devices=None):
+def save_reserved_device(connection, account_id, device_id, revision, record, section="Devices", related_devices=None,
+                         *, supplier=UNCHANGED_SUPPLIER):
     """Commit one reserved device change only if its original revision still matches."""
     if section not in ("Devices", "IPAM", "Racks") or not can_access(
         connection, account_id, section, edit=True
@@ -154,6 +158,10 @@ def save_reserved_device(connection, account_id, device_id, revision, record, se
             raise ValueError("Device edit reservation is no longer valid")
         if row[0] != revision or reservation[2] != revision:
             raise ValueError("Device has changed since editing began")
+        if supplier is not UNCHANGED_SUPPLIER and section != "Devices":
+            raise PermissionError("Devices edit permission required for Supplier changes")
+        supplier_values = (device_supplier_values(connection, supplier)
+                           if supplier is not UNCHANGED_SUPPLIER else None)
         candidate = reconstruct_inventory(connection)
         previous = next(device for device in candidate["devices"] if device["id"] == device_id)
         record = prepare_device_rack_fields(connection, record, previous)
@@ -222,6 +230,8 @@ def save_reserved_device(connection, account_id, device_id, revision, record, se
             "UPDATE inventory_devices SET name=?,record_json=?,revision=revision+1 WHERE id=?",
             (record["name"], json.dumps(record, ensure_ascii=False, allow_nan=False), device_id),
         )
+        if supplier_values is not None:
+            write_device_supplier(connection, account_id, device_id, record["name"], *supplier_values)
         for ip in {old_ip, new_ip} - {None, ""}:
             if ip in allocations and before_allocations.get(ip) != allocations[ip]:
                 connection.execute(
@@ -345,11 +355,14 @@ def create_device_in_transaction(connection, account_id, record):
     return 0
 
 
-def create_device(connection, account_id, record):
+def create_device(connection, account_id, record, *, supplier=UNCHANGED_SUPPLIER):
     """Create a normal Device and commit all of its related changes together."""
     connection.execute("BEGIN IMMEDIATE")
     try:
         revision = create_device_in_transaction(connection, account_id, record)
+        if supplier is not UNCHANGED_SUPPLIER:
+            values = device_supplier_values(connection, supplier)
+            write_device_supplier(connection, account_id, record["id"], record["name"], *values)
         connection.commit()
         return revision
     except BaseException:

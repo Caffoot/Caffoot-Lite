@@ -5,7 +5,8 @@ changes apply immediately without a schema migration or history rewrite.
 """
 import json
 
-from .permissions import can_access
+from .equipment_suppliers import SUPPLIER_AUDIT_REASON
+from .permissions import can_access, feature_enabled
 from .subnet_validation import parse_hierarchy_cidr
 
 # Categories emitted by the established inventory writers, including the
@@ -82,6 +83,9 @@ def visible_change_history(connection, account_id):
     for (raw,) in connection.execute(
             "SELECT record_json FROM inventory_change_history ORDER BY id"):
         event = json.loads(raw)
+        if (isinstance(event, dict) and event.get("reason") == SUPPLIER_AUDIT_REASON
+                and not feature_enabled(connection, "Suppliers")):
+            continue
         stock_changes = (isinstance(event, dict) and isinstance(event.get('changes'), list)
                          and any(isinstance(change, dict) and change.get('kind') == 'IT Assets'
                                  for change in event['changes']))

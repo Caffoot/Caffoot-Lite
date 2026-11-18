@@ -1,7 +1,8 @@
 """Keep feature-only collections out of other sections' API responses."""
 import ipaddress
 
-from .permissions import can_access
+from .equipment_suppliers import read_device_suppliers
+from .permissions import can_access, feature_enabled
 from .inventory import SETTINGS
 
 
@@ -31,6 +32,8 @@ def project_inventory_response(connection, account_id, result):
                      if key != "hostname" or not (allocation.get("deviceId") or allocation.get("reservedForDeviceId"))}
                 for ip, allocation in result["ipAllocations"].items()
             }
+    if sections["Devices"] and "devices" in result and feature_enabled(connection, "Suppliers"):
+        result["deviceSuppliers"] = read_device_suppliers(connection, account_id)
     if sections['Devices'] and sections['IPAM'] and 'devices' in result and 'subnets' in result:
         result['basicIpsOutsideSubnets'] = count_basic_ips_outside_subnets(result['devices'], result['subnets'])
     return result
