@@ -126,7 +126,6 @@ class FeatureSettingsTests(unittest.TestCase):
                     {'feature': 'devices', 'enabled': 'false'},
                     {'feature': [], 'enabled': True},
                     {'feature': 'unknown', 'enabled': True},
-                    {'feature': 'suppliers', 'enabled': True},
                     {'feature': 'equipment_lifecycle', 'enabled': False, 'confirmDisable': True},
                     {'feature': 'devices', 'enabled': False},
                     {'feature': 'devices', 'enabled': False, 'confirmDisable': 1},

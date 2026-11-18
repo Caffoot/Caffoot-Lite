@@ -74,16 +74,14 @@ async function main(){
  const input=()=>page.locator('#optional-feature-it-assets');
  const card=()=>page.locator('[data-feature-card="it_assets"]');
  assert.deepEqual(await page.locator('#optional-feature-additional [data-feature-card]').evaluateAll(
-  cards=>cards.map(node=>node.dataset.featureCard)),['suppliers','equipment_lifecycle','it_assets']);
+  cards=>cards.map(node=>node.dataset.featureCard)),['suppliers','it_assets']);
  assert.equal(await input().isChecked(),false);
  assert.equal(await input().getAttribute('aria-label'),'Enable IT Assets');
  assert.equal(await card().locator('.description').textContent(),
   'Receive, issue and return equipment, record checks and write off unusable items.');
  const originalCards=await page.locator('[data-feature-card]:not([data-feature-card="it_assets"])').evaluateAll(
   cards=>cards.map(node=>node.outerHTML));
- for(const feature of ['suppliers','equipment_lifecycle']){
-  assert.equal(await page.locator('[data-optional-feature="'+feature+'"]').isDisabled(),true);
- }
+ assert.equal(await page.locator('[data-optional-feature="equipment_lifecycle"]').count(),0);
  const preserved=snapshot();
  const saved=page.waitForResponse(response=>response.url().endsWith('/api/settings/features')&&response.request().method()==='POST');
  await input().check({force:true});assert.equal((await saved).status(),200);
@@ -121,7 +119,7 @@ async function main(){
      return {padding:css.padding,radius:css.borderRadius,font:heading.fontFamily,
       background:css.backgroundColor,colour:css.color,width:node.getBoundingClientRect().width};
     });
-    const existingStyle=await page.locator('[data-feature-card="equipment_lifecycle"]').evaluate(node=>{
+    const existingStyle=await page.locator('[data-feature-card="suppliers"]').evaluate(node=>{
      const css=getComputedStyle(node),heading=getComputedStyle(node.querySelector('h4'));
      return {padding:css.padding,radius:css.borderRadius,font:heading.fontFamily,
       background:css.backgroundColor,colour:css.color,width:node.getBoundingClientRect().width};

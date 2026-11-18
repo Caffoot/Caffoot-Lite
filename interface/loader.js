@@ -57,7 +57,7 @@ async function initialiseInterface() {
             interfaceTemplates.set(match[1], match[2]);
         }
     }
-    const designs = ['dashboard','my-account','settings','device-details','devices','device-inventory','device-management','ipam','racks','users','audit-trail','staff','equipment','stock'];
+    const designs = ['dashboard','my-account','settings','device-details','devices','device-inventory','device-management','ipam','racks','users','audit-trail','staff','equipment','stock','suppliers'];
     await Promise.all(designs.map(async name => {
         interfaceStyles.set(name, await loadInterfaceText('styles/' + name + '.css'));
     }));
@@ -68,6 +68,8 @@ async function initialiseInterface() {
     interfaceStyles.set('staff', staffStyle);
     interfaceStyles.set('departments', staffStyle);
     interfaceStyles.set('it-assets', staffStyle + '\n' + interfaceStyles.get('stock'));
+    interfaceStyles.set('suppliers', interfaceStyles.get('device-inventory') + '\n' + staffStyle +
+        '\n' + interfaceStyles.get('stock') + '\n' + interfaceStyles.get('suppliers'));
     const currentStyle = document.getElementById('interface-page-style');
     const pageStyle = document.createElement('style');
     pageStyle.id = currentStyle.id;
@@ -87,11 +89,18 @@ async function initialiseInterface() {
             stockScript.src = '/interface/stock-intake.js';
             stockScript.onerror = () => showInterfaceLoadError();
             stockScript.onload = () => {
+                const supplierScript = document.createElement('script');
+                supplierScript.src = '/interface/suppliers.js';
+                supplierScript.onerror = () => showInterfaceLoadError();
+                supplierScript.onload = loadApplication;
+                document.body.append(supplierScript);
+            };
+            function loadApplication() {
                 const applicationScript = document.createElement('script');
                 applicationScript.src = '/interface/application.js';
                 applicationScript.onerror = () => showInterfaceLoadError();
                 document.body.append(applicationScript);
-            };
+            }
             document.body.append(stockScript);
         };
         document.body.append(script);

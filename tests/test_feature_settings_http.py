@@ -28,7 +28,7 @@ class FeatureSettingsHttpTests(unittest.TestCase):
         self.assertEqual(cache, 'no-store')
         self.assertEqual(json.loads(raw)['features'], dict(devices=False, ipam=False, racks=False, suppliers=False, equipment_lifecycle=False, it_assets=False))
         with patch('backend.server.PUBLIC_ORIGIN', 'https://caffoot.example'):
-            for feature in ('devices', 'ipam', 'racks', 'it_assets'):
+            for feature in ('devices', 'ipam', 'racks', 'it_assets', 'suppliers'):
                 status, result = self.post(self.endpoint, dict(feature=feature, enabled=True), self.token, csrf_for_session(self.token))
                 self.assertEqual(status, 200, result)
                 self.assertTrue(result['features'][feature])
@@ -37,7 +37,7 @@ class FeatureSettingsHttpTests(unittest.TestCase):
                 self.assertEqual(status, 200, result)
                 self.assertFalse(result['features'][feature])
         with sqlite3.connect(self.path) as db:
-            self.assertEqual(db.execute('SELECT count(*) FROM inventory_change_history').fetchone()[0], 8)
+            self.assertEqual(db.execute('SELECT count(*) FROM inventory_change_history').fetchone()[0], 10)
 
     def test_unauthenticated_ordinary_and_revoked_sessions_denied(self):
         self.assertEqual(self.request(self.endpoint)[0], 401)
@@ -64,7 +64,6 @@ class FeatureSettingsHttpTests(unittest.TestCase):
         with patch('backend.server.PUBLIC_ORIGIN', 'https://caffoot.example'):
             for payload in ([], None, {}, dict(feature='devices', enabled=1),
                             dict(feature='Devices', enabled=True),
-                            dict(feature='suppliers', enabled=True),
                             dict(feature='equipment_lifecycle', enabled=True),
                             dict(feature='stocktakes', enabled=True),
                             dict(feature='devices', enabled=True, actorId=1)):

@@ -1,10 +1,10 @@
 # Optional Features, Basic IPv4 And Link To IPAM
 
-> **Draft v2.2 — Unreleased.** This guide describes the implementation on `milestone-1` at `753b3266893987addb11406ef8303adb03c3c112`. Use the [published v2.1 guides](../README.md) for the current release. This is not an installation, upgrade or restore procedure.
+> **Draft v2.2 — Unreleased.** The Stage 2 and 3 procedures describe `milestone-1` at `753b3266893987addb11406ef8303adb03c3c112`. Use the [published v2.1 guides](../README.md) for the current release. This is not an installation, upgrade or restore procedure.
 
 ## Choose The Features Your Organisation Uses
 
-Caffoot Lite lets an administrator decide which areas the whole organisation uses. You can record Devices without managing subnets, manage IP addresses without a Device inventory, or document Network Racks independently. **IT Assets** has its own switch for equipment stock and circulation. Turning an area off retains its records so that you can use it again later.
+Caffoot Lite lets an administrator decide which areas the whole organisation uses. You can record Devices without managing subnets, manage IP addresses without a Device inventory, or document Network Racks independently. **IT Assets** has its own switch for equipment stock and circulation. **Suppliers** has an independent switch for Supplier Management. Turning an area off retains its records so that you can use it again later.
 
 An **optional feature** is an organisation-wide choice. A **permission** decides what a particular account may read or change. Both must allow the action. For example, enabling IPAM does not give a Staff Member access to it, and a saved IPAM Edit permission cannot override the organisation's decision to disable IPAM.
 
@@ -27,11 +27,10 @@ Open **Settings & Data → Optional Features**. The cards are grouped as follows
 | Infrastructure | **Devices** | The Device inventory and its permitted workflows, including optional basic IP information |
 | Infrastructure | **IP Address Management** | IPAM subnets, address allocations and VLANs |
 | Infrastructure | **Network Racks** | Rack records, accessories and permitted placement workflows |
-| Additional Features | **Suppliers** | A future feature, shown as **Coming in Stage 4** and **Not Available Yet** |
-| Additional Features | **Equipment Lifecycle** | A future feature, shown as **Coming in Stage 4** and **Not Available Yet** |
+| Additional Features | **Suppliers** | Company records, categories, locations, contacts and notes in the [Batch 4.1 draft](Supplier-Management.md) |
 | Additional Features | **IT Assets** | Stock receipts, inventory, readiness checks, equipment issue and return, write-offs and related stock reporting |
 
-An available card shows **Enabled** or **Disabled**. A disabled card has an **Enable Feature** switch; an enabled card's switch is labelled **Enabled**. The switch's accessible name identifies the feature being enabled or disabled. Future-feature switches are unavailable and cannot be activated.
+An available card shows **Enabled** or **Disabled**. A disabled card has an **Enable Feature** switch; an enabled card's switch is labelled **Enabled**. The switch's accessible name identifies the feature being enabled or disabled. Equipment Lifecycle becomes available in a later development batch.
 
 **Staff Members** and **Departments** are core areas, subject to their permissions. They have no Optional Features switch and do not have to be populated. **Settings & Data**, account administration and **My Account** remain available under their respective authorisation rules even if every optional area is off. This does not give ordinary users administrator access.
 
@@ -57,7 +56,7 @@ Disabling does not delete inventory, stock, placements, address relationships or
 
 ### Defaults And Independent Use
 
-In the unreleased implementation, a genuinely new installation starts with all optional areas disabled. The existing-installation migration preserves prior Devices, IPAM and Network Racks availability by initially enabling those three, even when the existing inventory is empty. IT Assets is added disabled. Later restarts and upgrades retain saved choices. These are descriptions of the implementation, not a verified production-upgrade procedure.
+In the unreleased implementation, a genuinely new installation starts with all optional areas disabled. The existing-installation migration preserves prior Devices, IPAM and Network Racks availability by initially enabling those three, even when the existing inventory is empty. IT Assets and Suppliers are added disabled. Later restarts and upgrades retain saved choices. These are descriptions of the implementation, not a verified production-upgrade procedure.
 
 | Intended Use | Feature Choices And Practical Effect |
 | --- | --- |
@@ -156,7 +155,7 @@ When Rack information is unavailable, related views may show **Rack information 
 | --- | --- |
 | A feature is enabled but absent from my navigation | Check your section permission, MFA and account status with an administrator. Enabling a feature grants no account access. |
 | I cannot change Optional Features | The controls require an active, MFA-verified administrator. Ordinary section Edit rights are insufficient. |
-| A future-feature switch is unavailable | Suppliers and Equipment Lifecycle are labelled Coming in Stage 4. They cannot be activated in this implementation. |
+| Suppliers is missing | Verify that your build includes Batch 4.1, then check the Suppliers switch and effective section access. |
 | A feature switch appears to revert | Wait for the pending save, read its error and check the reloaded saved state. Verify your session before trying again. |
 | I cannot edit the Device's IP | Determine whether it is managed. Managed changes require enabled IPAM and IPAM Edit; turning IPAM off preserves the address read-only. |
 | I cannot start a new basic address with IPAM on | The basic entry route starts with IPAM disabled. A previously basic Device remains editable after re-enabling; a new managed address uses the normal subnet workflow. |

@@ -401,13 +401,14 @@ def save_note(connection, actor, supplier, current, payload):
         connection.execute("UPDATE suppliers SET has_note_history=1 WHERE id=?", (supplier,))
         if contact:
             connection.execute("UPDATE supplier_contacts SET has_note_history=1 WHERE id=?", (contact_id,))
-    log_note(connection, actor, "Updated" if current else "Created", identity,
+    log_note(connection, actor, "Updated" if current else "Created", supplier, identity,
              contact_id, current[4:7] if current else (actor, actor_name, now))
 
 
-def log_note(connection, actor, action, identity, contact_id, creator):
+def log_note(connection, actor, action, supplier, identity, contact_id, creator):
     log_change(connection, actor, action, "Contact Note" if contact_id is not None else "Supplier Note", "Note", identity,
-               after={"contactId": contact_id, "createdById": creator[0], "createdBy": creator[1], "createdAt": creator[2]})
+               after={"supplierId": supplier, "contactId": contact_id, "createdById": creator[0],
+                      "createdBy": creator[1], "createdAt": creator[2]})
 
 
 def change_company_status(connection, actor, supplier, operation, payload):
@@ -480,7 +481,7 @@ def change_child(connection, actor, supplier, record, identity, operation, paylo
             raise FileExistsError(reason)
         connection.execute(f"DELETE FROM {table} WHERE id=?", (identity,))
         if record == "note":
-            log_note(connection, actor, "Deleted", identity, current[2], current[4:7])
+            log_note(connection, actor, "Deleted", supplier, identity, current[2], current[4:7])
         else:
             log_change(connection, actor, "Deleted", current[2], kind, identity)
     else:

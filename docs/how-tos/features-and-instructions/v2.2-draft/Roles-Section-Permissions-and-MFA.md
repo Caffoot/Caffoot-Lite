@@ -36,7 +36,7 @@ Enabling a feature does not grant permissions. Granting a permission does not en
 | **Read** | View permitted records and information; no authority to change that section |
 | **Edit** | View and change permitted records, subject to the workflow's other permissions and safeguards |
 
-The six independent section controls are **Devices**, **IPAM**, **Racks**, **Staff Members**, **Departments** and **IT Assets**. The Racks permission governs **Network Racks** in navigation. Staff Members and Departments are core sections, still protected by their own permissions. Devices, IPAM, Network Racks and IT Assets also have independent organisation switches.
+The independent section controls are **Devices**, **IPAM**, **Racks**, **Staff Members**, **Departments** and **IT Assets**. The [Batch 4.1 draft](Supplier-Management.md) adds **Suppliers**. The Racks permission governs **Network Racks** in navigation. Staff Members and Departments are core sections, still protected by their own permissions. Devices, IPAM, Network Racks, IT Assets and Suppliers have independent organisation switches in the Batch 4.1 draft.
 
 Forms can involve several sections. Devices Edit does not authorise changing protected IPAM links or rack placement; those actions need the applicable IPAM or Racks authority. IT Assets Edit permits stock operations, while registering or changing a canonical Device also needs Devices Edit and the Devices feature. See [Optional Features And Link To IPAM](Optional-Features-and-Link-To-IPAM.md) and [Device Stock Registration And Reissue](Device-Stock-Registration-and-Reissue.md) for the exact workflows.
 
