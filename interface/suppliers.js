@@ -191,7 +191,7 @@
         contactRows(), 'No Contacts Match These Filters', 'supplier-contact-rows')}</div>`;
   }
   function formatDate(value) {
-    return new Intl.DateTimeFormat('en-GB', {dateStyle: 'medium', timeStyle: 'short'}).format(new Date(value));
+    return new Intl.DateTimeFormat('en-GB', {day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'}).format(new Date(value));
   }
   const time = value => `<time datetime="${safe(value)}">${formatDate(value)}</time>`;
   function noteCards(notes, contactDetail = false) {
