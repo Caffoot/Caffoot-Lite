@@ -187,8 +187,10 @@ async function run(){
     buttons.map(button=>[button.dataset.tab,button.querySelector('.nav-text').textContent.trim()])), [
       ['dashboard','Dashboard'],['devices','Devices'],['it-assets','IT Assets'],['ipam','IPAM'],['racks','Network Racks'],
       ['staff','Staff Members'],['departments','Departments'],['users','Permissions'],
-      ['audit','Audit Trail'],['equipment','My Equipment'],['settings','Settings & Data']
-    ], 'The shared sidebar must contain exactly the eleven approved navigation destinations');
+      ['suppliers','Suppliers'],['audit','Audit Trail'],['equipment','My Equipment'],['settings','Settings & Data']
+    ], 'The shared sidebar must contain exactly the twelve approved navigation destinations');
+  assert.equal(await page.locator('#sidebar [data-tab="suppliers"]').isVisible(),false,
+    'Default-off Suppliers must remain hidden until the feature and access are enabled');
   assert.deepEqual(await page.locator('#sidebar [data-nav-group="it"] .nav-item[data-tab] .nav-text').allTextContents(),
     ['Devices','IT Assets','IPAM','Network Racks']);
   assert.equal(await page.locator('#sidebar [data-tab="it-assets"]').isVisible(),false,

@@ -1173,6 +1173,7 @@ function hierarchyValidateTypes(subnets) {
                 ipam: 'IPAM',
                 devices: 'Devices',
                 'it-assets': 'IT Assets',
+                suppliers: 'Suppliers',
                 racks: 'Network Racks',
 
 
@@ -1295,6 +1296,7 @@ function hierarchyValidateTypes(subnets) {
             else if (currentTab === 'racks') html = renderRackHubV13();
             else if (currentTab === 'audit') html = renderAuditHTML();
             else if (currentTab === 'users') html = nextRenderUsers();
+            else if (currentTab === 'suppliers') html = window.caffootSuppliers.render();
             else if (currentTab === 'it-assets') {
                 window.caffootStockIntake.enter();
                 html = window.caffootStockIntake.render();
@@ -3979,7 +3981,7 @@ function openIpModal(ip) {
             return initial!==undefined&&(modalFormSnapshot(form)+'|'+(form.dataset.receiptMode||''))!==initial;
         }
         function rememberModalForm() {
-            const form = document.querySelector('#modal-content #stock-reissue-form[data-direct-handover="true"], #modal-content form[data-device-form="true"], #modal-content form[data-ipam-subnet-creation], #modal-content form[data-form-action="subnet"], #modal-content form[data-form-action="rack"], #modal-content form[data-form-action="ip"], #modal-content form[data-form-action="assign"], #modal-content form[data-form-action="bulk-ip"], #modal-content form[data-form-action="manufacturer"], #modal-content form[data-form-action="model"], #modal-content form[data-form-action="software"], #modal-content form[data-form-action="server-service"]');
+            const form = document.querySelector('#modal-content #stock-reissue-form[data-direct-handover="true"], #modal-content form[data-device-form="true"], #modal-content form[data-supplier-form], #modal-content form[data-ipam-subnet-creation], #modal-content form[data-form-action="subnet"], #modal-content form[data-form-action="rack"], #modal-content form[data-form-action="ip"], #modal-content form[data-form-action="assign"], #modal-content form[data-form-action="bulk-ip"], #modal-content form[data-form-action="manufacturer"], #modal-content form[data-form-action="model"], #modal-content form[data-form-action="software"], #modal-content form[data-form-action="server-service"]');
             if (form) modalFormSnapshots.set(form, modalFormSnapshot(form));
         }
         let pendingDeviceFormDiscardCallback=null;
@@ -4062,7 +4064,8 @@ function openIpModal(ip) {
                 }
             });
         }
-        function closeModal(force = false, onClosed = null) {
+        function closeModal(force = false, onClosed = null, discard = false) {
+            if(document.querySelector('#modal-container:not(.hidden) [data-supplier-form][data-saving="true"]'))return;
             if(document.getElementById('subnet-batch-preview')?.dataset.saving==='true'||document.getElementById('equipment-assignment-form')?.dataset.saving==='true'||document.querySelector('#stock-reissue-form[data-direct-handover]')?.dataset.saving==='true')return;
             if(rackShelfReturnContext){returnFromRackShelfCreation();return;}
             if (deviceOptionsReturnContent) {
@@ -4075,10 +4078,11 @@ function openIpModal(ip) {
                 content.querySelector('form[data-device-form="true"]')?.querySelector('input,select,textarea')?.focus();
                 return;
             }
-            const editableForm = document.querySelector('#modal-content #stock-reissue-form[data-direct-handover="true"], #modal-content form[data-device-form="true"], #modal-content form[data-ipam-subnet-creation], #modal-content form[data-form-action="subnet"], #modal-content form[data-form-action="rack"], #modal-content form[data-form-action="ip"], #modal-content form[data-form-action="assign"], #modal-content form[data-form-action="bulk-ip"], #modal-content form[data-form-action="manufacturer"], #modal-content form[data-form-action="model"], #modal-content form[data-form-action="software"], #modal-content form[data-form-action="server-service"]');
+            const editableForm = document.querySelector('#modal-content #stock-reissue-form[data-direct-handover="true"], #modal-content form[data-device-form="true"], #modal-content form[data-supplier-form], #modal-content form[data-ipam-subnet-creation], #modal-content form[data-form-action="subnet"], #modal-content form[data-form-action="rack"], #modal-content form[data-form-action="ip"], #modal-content form[data-form-action="assign"], #modal-content form[data-form-action="bulk-ip"], #modal-content form[data-form-action="manufacturer"], #modal-content form[data-form-action="model"], #modal-content form[data-form-action="software"], #modal-content form[data-form-action="server-service"]');
             if (!force && editableForm && modalFormSnapshots.has(editableForm) &&
                 modalFormSnapshot(editableForm) !== modalFormSnapshots.get(editableForm) &&
-                !confirmDiscardDeviceFormChanges(() => closeModal(true, onClosed))) return;
+                !confirmDiscardDeviceFormChanges(() => closeModal(true, onClosed, true))) return;
+            const dismissedSupplier=!!document.querySelector('#modal-container:not(.hidden) [data-supplier-dialog]');
             const dismissedHandover=!!document.querySelector('#modal-content #stock-reissue-form[data-direct-handover="true"]');
             const container = document.getElementById('modal-container');
             container.classList.add('hidden');
@@ -4091,6 +4095,10 @@ function openIpModal(ip) {
             if (nextImportModalClosed) nextImportModalClosed();
             if (modalReturnFocus && modalReturnFocus.isConnected) modalReturnFocus.focus();
             modalReturnFocus = null;
+            if (dismissedSupplier) {
+                document.getElementById('modal-content').replaceChildren();
+                window.caffootSuppliers.closed((force && !discard) || typeof onClosed === 'function');
+            }
             if (typeof onClosed === 'function') onClosed();
         }
 
@@ -9006,6 +9014,7 @@ function openIpModal(ip) {
                 case 'tab-dashboard': switchTab('dashboard'); break;
                 case 'tab-devices': switchTab('devices'); break;
                 case 'tab-it-assets': switchTab('it-assets'); break;
+                case 'tab-suppliers': switchTab('suppliers'); break;
 
 
                 case 'tab-ipam': switchTab('ipam'); break;
@@ -9046,7 +9055,7 @@ function openIpModal(ip) {
 // Caffoot Lite: published inventory UI, authoritative SQLite persistence.
 void (async () => {
   const collections = ['devices','subnets','vlans','racks','rackAccessories','ipAllocations'];
-  const section = {devices:'Devices','it-assets':'IT Assets',ipam:'IPAM',racks:'Racks',staff:'Staff Members',departments:'Departments'};
+  const section = {devices:'Devices','it-assets':'IT Assets',suppliers:'Suppliers',ipam:'IPAM',racks:'Racks',staff:'Staff Members',departments:'Departments'};
   let permissions = {};
   let editPermissions = {};
   let deviceRevisions = {};
@@ -9059,12 +9068,15 @@ void (async () => {
   let sessionCanEnterInventory = false;
   let sessionDirectoryPermissions = {staffMembers:{read:false,edit:false},departments:{read:false,edit:false}};
   let sessionStockPermissions = {read:false,edit:false};
+  let sessionSupplierPermissions = {read:false,edit:false};
   const inventorySectionAccess = () => ['Devices','IPAM','Racks'].some(key=>permissions[key]);
   function addDirectoryAccess(){
     permissions['Staff Members']=!!sessionDirectoryPermissions.staffMembers?.read;
     permissions.Departments=!!sessionDirectoryPermissions.departments?.read;
     editPermissions['Staff Members']=!!sessionDirectoryPermissions.staffMembers?.edit;
     editPermissions.Departments=!!sessionDirectoryPermissions.departments?.edit;
+    permissions.Suppliers=!!sessionSupplierPermissions.read;
+    editPermissions.Suppliers=!!sessionSupplierPermissions.edit;
     permissions['IT Assets']=!!sessionStockPermissions.read;
     editPermissions['IT Assets']=!!sessionStockPermissions.edit;
   }
@@ -9072,6 +9084,7 @@ void (async () => {
     const response=await fetch('/api/session',{cache:'no-store'});
     const session=response.ok?await response.json():{};
     sessionStockPermissions=session.stock_permissions||{read:false,edit:false};
+    sessionSupplierPermissions=session.supplier_permissions||{read:false,edit:false};
     addDirectoryAccess();
     window.caffootStockIntake.clear();
     applyAllowedControls();
@@ -9236,6 +9249,7 @@ void (async () => {
           (sessionIsAdmin && (button.closest('#next-user-create-form,#next-user-profile-form,#smtp-settings-form,#smtp-test-form') || button.form?.matches('#role-definition-form'))) ||
           (editPermissions['Staff Members'] && button.form?.matches('#staff-record-form')) ||
           (editPermissions.Departments && button.form?.matches('#staff-department-form')) ||
+          (editPermissions.Suppliers && button.form?.matches('form[data-supplier-form]')) ||
           (editPermissions['IT Assets'] && button.form?.matches('#stock-receipt-form,#stock-readiness-form,#stock-issue-form,#stock-return-form,#stock-writeoff-form,#stock-preparation-form,#stock-reissue-form,#stock-correction-form')) ||
           (editPermissions.Devices && button.form?.matches('form[data-device-form="true"],#equipment-assignment-form,#stock-reissue-form[data-direct-handover]')) ||
           (editPermissions.IPAM && button.closest('form[data-form-action="ip"],form[data-form-action="bulk-ip"],form[data-form-action="subnet"],form[data-ipam-subnet-creation]')) ||
@@ -9452,15 +9466,29 @@ void (async () => {
     body.hidden=!next;
   },true);
   const originalSwitchTab = switchTab;
-  switchTab = function(tab) {
-    if ((!sessionCanEnterInventory && !['account','equipment','staff','departments','it-assets'].includes(tab) && !(sessionIsAdmin && ['users','settings'].includes(tab))) || (['dashboard','audit'].includes(tab) && !inventorySectionAccess()) || ((tab === 'users' || tab === 'settings') && !sessionIsAdmin) ||
+  switchTab = function(tab, supplierRoute = false) {
+    if ((!sessionCanEnterInventory && !['account','equipment','staff','departments','it-assets','suppliers'].includes(tab) && !(sessionIsAdmin && ['users','settings'].includes(tab))) || (['dashboard','audit'].includes(tab) && !inventorySectionAccess()) || ((tab === 'users' || tab === 'settings') && !sessionIsAdmin) ||
         (section[tab] && !permissions[section[tab]])) {
       showToast('You do not have access to this section.', 'error');
       return;
     }
+    if (currentTab === 'suppliers' && tab !== 'suppliers') {
+      window.caffootSuppliers.leave();
+      if (location.hash.startsWith('#suppliers')) history.replaceState(null, '', location.pathname + location.search);
+    }
     originalSwitchTab(tab);
+    if (tab === 'suppliers') window.caffootSuppliers.enter(supplierRoute);
     applyAllowedControls();
   };
+  window.addEventListener('popstate', () => {
+    if (/^#suppliers(?:\/|$)/.test(location.hash) && permissions.Suppliers) {
+      const navigate = () => switchTab('suppliers', true);
+      if (document.querySelector('#modal-container:not(.hidden) [data-supplier-dialog]')) closeModal(false, navigate);
+      else navigate();
+    } else if (currentTab === 'suppliers') {
+      switchTab(inventorySectionAccess() ? 'dashboard' : permissions.Suppliers ? 'suppliers' : 'account');
+    }
+  });
   // Keep the published read-only device details open during a competing edit.
   const originalOpenDeviceDetailView = openDeviceDetailView;
   function updateDeviceEditorNotice(deviceId) {
@@ -9827,8 +9855,7 @@ void (async () => {
     ['devices','Devices','<rect x="4" y="4" width="16" height="12" rx="2"/><path d="M9 20h6m-3-4v4"/>','Record and manage equipment, including its location and basic IP address details.','orange'],
     ['ipam','IP Address Management','<rect x="9" y="3" width="6" height="6" rx="1"/><rect x="2" y="16" width="7" height="5" rx="1"/><rect x="15" y="16" width="7" height="5" rx="1"/><path d="M12 9v4M5.5 16v-3h13v3"/>','Manage subnets, IP address allocations and VLANs. Without IPAM, Devices still offers basic IP entry.',''],
     ['racks','Network Racks','<rect x="6" y="2" width="12" height="20" rx="1"/><path d="M9 6h6M9 10h6M9 14h6M9 18h6"/>','Document racks, rack accessories and equipment placement within racks.','green'],
-    ['suppliers','Suppliers','<circle cx="9" cy="8" r="3"/><path d="M3 20v-2a6 6 0 0 1 12 0v2M17 6a3 3 0 0 1 0 6m1 4a5 5 0 0 1 3 4"/>','Manage supplier records, contacts and related notes and issues.','orange'],
-    ['equipment_lifecycle','Equipment Lifecycle','<circle cx="12" cy="12" r="9"/><path d="M12 7v5l4 2"/>','Track equipment lifecycle information, warranty dates and related warnings.',''],
+    ['suppliers','Suppliers','<circle cx="9" cy="8" r="3"/><path d="M3 20v-2a6 6 0 0 1 12 0v2M17 6a3 3 0 0 1 0 6m1 4a5 5 0 0 1 3 4"/>','Manage supplier companies, locations, contacts and notes.','orange'],
     ['it_assets','IT Assets','<path d="m12 3 9 5-9 5-9-5 9-5Zm-9 5v8l9 5 9-5V8M12 13v8"/>','Receive, issue and return equipment, record checks and write off unusable items.','']
   ];
   let featureSettingsPending=false;
@@ -9842,8 +9869,8 @@ void (async () => {
       if(!response.ok)throw Error(result.error||'Unable to load feature settings.');
       if(!root.isConnected)return;
       const cards=optionalFeatureDescriptions.map(([key,label,icon,description,colour])=>{
-        const future=['suppliers','equipment_lifecycle'].includes(key),enabled=!future&&result.features[key]===true;
-        return renderInterfaceTemplate('settings/optional-feature-card',[key,icon,label,description,future?'Coming in Stage 4':enabled?'Enabled':'Disabled',future?'Not Available Yet':enabled?'Enabled':'Enable Feature',future?label+' — Coming in Stage 4':(enabled?'Disable ':'Enable ')+label,String(enabled),enabled?'checked':'',future?'disabled':'',colour,future?'planned':enabled?'enabled':'',future?'unavailable':'',future?'<div class="detail">This feature cannot be enabled until Stage 4 functionality is developed and approved.</div>':'',key.replaceAll('_','-')]);
+        const enabled=result.features[key]===true;
+        return renderInterfaceTemplate('settings/optional-feature-card',[key,icon,label,description,enabled?'Enabled':'Disabled',enabled?'Enabled':'Enable Feature',(enabled?'Disable ':'Enable ')+label,String(enabled),enabled?'checked':'','',colour,enabled?'enabled':'','','',key.replaceAll('_','-')]);
       });
       root.querySelector('#optional-feature-infrastructure').innerHTML=cards.slice(0,3).join('');
       root.querySelector('#optional-feature-additional').innerHTML=cards.slice(3).join('');
@@ -10428,7 +10455,7 @@ void (async () => {
   let users = null;
   let activeUserEditorId = null;
   let roleCatalogue=[];
-  const roleSections=['Devices','IPAM','Racks','Staff Members','Departments','IT Assets'];
+  const roleSections=['Devices','IPAM','Racks','Staff Members','Departments','IT Assets','Suppliers'];
   const roleLayers=[];
   function permissionLabel(level){
     return ({read:'Read',edit:'Edit',deny:'No Access'})[level]||'No Access';
@@ -11078,6 +11105,7 @@ void (async () => {
         !(editPermissions.Racks && element.closest('form[data-form-action="rack"],form[data-form-action="assign"],#rack-accessory-form')) &&
         !(editPermissions['Staff Members'] && element.form?.matches('#staff-record-form')) &&
         !(editPermissions.Departments && element.form?.matches('#staff-department-form')) &&
+        !(editPermissions.Suppliers && element.form?.matches('form[data-supplier-form]')) &&
         !(editPermissions['IT Assets'] && element.form?.matches('#stock-receipt-form,#stock-readiness-form,#stock-issue-form,#stock-return-form,#stock-writeoff-form,#stock-preparation-form,#stock-reissue-form,#stock-correction-form')))) {
       event.preventDefault();
       event.stopImmediatePropagation();
@@ -11089,6 +11117,7 @@ void (async () => {
     if (event.target.matches('#next-account-password-form,#next-account-mfa-start,#next-account-mfa-confirm,#account-mfa-removal-form,#personal-details-form,#next-user-profile-form,#smtp-settings-form,#smtp-test-form,#account-email-verification-form') ||
         (editPermissions['Staff Members'] && event.target.matches('#staff-record-form')) ||
         (editPermissions.Departments && event.target.matches('#staff-department-form')) ||
+        (editPermissions.Suppliers && event.target.matches('form[data-supplier-form]')) ||
         (editPermissions['IT Assets'] && event.target.matches('#stock-receipt-form,#stock-readiness-form,#stock-issue-form,#stock-return-form,#stock-writeoff-form,#stock-preparation-form,#stock-reissue-form,#stock-correction-form')) ||
         (editPermissions.Devices && event.target.matches('form[data-device-form="true"],#equipment-assignment-form,#stock-reissue-form[data-direct-handover]')) ||
         (editPermissions.IPAM && event.target.matches('form[data-form-action="ip"],form[data-form-action="bulk-ip"],form[data-form-action="subnet"],form[data-ipam-subnet-creation]')) ||
@@ -11107,6 +11136,7 @@ void (async () => {
     csrfToken=session.csrf_token;
     sessionDirectoryPermissions=session.directory_permissions||sessionDirectoryPermissions;
     sessionStockPermissions=session.stock_permissions||sessionStockPermissions;
+    sessionSupplierPermissions=session.supplier_permissions||sessionSupplierPermissions;
     addDirectoryAccess();
     sessionIsAdmin=!!session.is_admin;
     sessionAssignedRoles=session.assigned_roles||[];
@@ -11133,6 +11163,12 @@ void (async () => {
         if(!sessionIsAdmin)return;
         activeUsersTab='list';activeUserEditorId=Number(accountId);switchTab('users');
       }
+    });
+    window.caffootSuppliers.configure({
+      csrf:csrfToken,canEdit:()=>!!editPermissions.Suppliers,admin:sessionIsAdmin,
+      escape:escapeHtml,icon:renderSectionTabIcon,openModal:html=>openModal(html),
+      closeModal:force=>closeModal(force),redraw:()=>{if(currentTab==='suppliers')renderContent();},
+      notify:(message,type)=>showToast(message,type)
     });
     window.caffootStockIntake.configure({csrf:csrfToken,canRead:()=>!!permissions['IT Assets'],
       canEdit:()=>!!editPermissions['IT Assets'],canEditDevices:()=>!!editPermissions.Devices,refreshAccess:refreshStockAccess,
@@ -11165,7 +11201,10 @@ void (async () => {
       await window.caffootStaffDirectory.refresh();
     // Hide only the browser-backup actions excluded from the server application by issue #215.
     document.querySelectorAll('[data-action="settings-backup"],[data-action="export-data"],[data-action="export-backup"]').forEach(el=>el.hidden=true);
-    switchTab(window.location.pathname==='/account'?'account':inventorySectionAccess()?'dashboard':sessionDirectoryPermissions.staffMembers?.read?'staff':sessionDirectoryPermissions.departments?.read?'departments':permissions['IT Assets']?'it-assets':sessionIsAdmin?'settings':'account');
+    const initialSupplierRoute=window.location.pathname==='/inventory' &&
+      /^#suppliers(?:\/|$)/.test(location.hash) && permissions.Suppliers;
+    if(initialSupplierRoute) switchTab('suppliers',true);
+    else switchTab(window.location.pathname==='/account'?'account':inventorySectionAccess()?'dashboard':sessionDirectoryPermissions.staffMembers?.read?'staff':sessionDirectoryPermissions.departments?.read?'departments':permissions['IT Assets']?'it-assets':permissions.Suppliers?'suppliers':sessionIsAdmin?'settings':'account');
     // Preserve existing fragment entry points without changing server permissions.
     const destination = window.location.hash.slice(1);
     const legacyDestination = {

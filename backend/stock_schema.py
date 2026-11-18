@@ -504,12 +504,18 @@ def normalise_schema_statement(statement):
     return " ".join(statement.strip().rstrip(";").split())
 
 
-def validate_feature_table(connection, *, upgraded):
+def validate_feature_table(connection, *, upgraded, suppliers=None):
     """Stop if feature choices or their existing safeguards are unexpected."""
     expected = PREVIOUS_FEATURE_TABLE_SQL
     if upgraded:
         expected = next(stock_schema_statements(FEATURE_UPGRADE_SQL)).replace(
             "organisation_features_next", '"organisation_features"')
+    if suppliers is None:
+        suppliers = upgraded and connection.execute(
+            "SELECT 1 FROM schema_migrations WHERE version=21"
+        ).fetchone() is not None
+    if suppliers:
+        expected = expected.replace("'racks','it_assets') OR", "'racks','it_assets','suppliers') OR")
     row = connection.execute(
         "SELECT sql FROM sqlite_master WHERE type='table' AND name='organisation_features'"
     ).fetchone()
@@ -522,7 +528,7 @@ def validate_feature_table(connection, *, upgraded):
     if (len(choices) != len(expected_keys) or {key for key, _ in choices} != expected_keys
             or any(type(value) is not int or value not in (0, 1) for _, value in choices)
             or any(value for key, value in choices
-                   if key in ("suppliers", "equipment_lifecycle"))):
+                   if key == "equipment_lifecycle" or key == "suppliers" and not suppliers)):
         raise RuntimeError("Unexpected organisation feature choices; review required")
     if connection.execute(
         "SELECT 1 FROM sqlite_master WHERE tbl_name='organisation_features' "

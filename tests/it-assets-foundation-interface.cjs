@@ -74,16 +74,14 @@ async function main(){
  const input=()=>page.locator('#optional-feature-it-assets');
  const card=()=>page.locator('[data-feature-card="it_assets"]');
  assert.deepEqual(await page.locator('#optional-feature-additional [data-feature-card]').evaluateAll(
-  cards=>cards.map(node=>node.dataset.featureCard)),['suppliers','equipment_lifecycle','it_assets']);
+  cards=>cards.map(node=>node.dataset.featureCard)),['suppliers','it_assets']);
  assert.equal(await input().isChecked(),false);
  assert.equal(await input().getAttribute('aria-label'),'Enable IT Assets');
  assert.equal(await card().locator('.description').textContent(),
   'Receive, issue and return equipment, record checks and write off unusable items.');
  const originalCards=await page.locator('[data-feature-card]:not([data-feature-card="it_assets"])').evaluateAll(
   cards=>cards.map(node=>node.outerHTML));
- for(const feature of ['suppliers','equipment_lifecycle']){
-  assert.equal(await page.locator('[data-optional-feature="'+feature+'"]').isDisabled(),true);
- }
+ assert.equal(await page.locator('[data-optional-feature="equipment_lifecycle"]').count(),0);
  const preserved=snapshot();
  const saved=page.waitForResponse(response=>response.url().endsWith('/api/settings/features')&&response.request().method()==='POST');
  await input().check({force:true});assert.equal((await saved).status(),200);
@@ -121,7 +119,7 @@ async function main(){
      return {padding:css.padding,radius:css.borderRadius,font:heading.fontFamily,
       background:css.backgroundColor,colour:css.color,width:node.getBoundingClientRect().width};
     });
-    const existingStyle=await page.locator('[data-feature-card="equipment_lifecycle"]').evaluate(node=>{
+    const existingStyle=await page.locator('[data-feature-card="suppliers"]').evaluate(node=>{
      const css=getComputedStyle(node),heading=getComputedStyle(node.querySelector('h4'));
      return {padding:css.padding,radius:css.borderRadius,font:heading.fontFamily,
       background:css.backgroundColor,colour:css.color,width:node.getBoundingClientRect().width};
@@ -145,21 +143,27 @@ async function main(){
  assert.equal((await reader.request.get(address+'/api/inventory/devices')).status(),403);
  assert.equal((await reader.request.get(address+'/api/staff-members')).status(),403);
  await reader.close();
- const unchanged=[
-  'interface/screens/settings.html','interface/styles/settings.css','interface/styles/components.css',
-  'interface/styles/staff.css','interface/staff-directory.js','interface/design-sources.json'
- ];
+ const preservedSources={
+  'interface/screens/settings.html':baseline,
+  'interface/styles/settings.css':baseline,
+  // Stage 3 Server Storage and direct-handover styling merged through PRs #390 and #391.
+  'interface/styles/components.css':'53b04328c4f895bfc1f72f0416c43a519b2e8b42',
+  'interface/styles/staff.css':baseline,
+  // Later Staff stock, stale-edit and help corrections merged through PRs #389, #402 and #408.
+  'interface/staff-directory.js':'5de585aae716d2b4db8d568e0a23fcc8cddaf750',
+  'interface/design-sources.json':baseline
+ };
  const hashes={};
- for(const name of unchanged){
-  const prior=spawnSync('git',['show',baseline+':'+name],{cwd:root});
+ for(const [name,revision] of Object.entries(preservedSources)){
+  const prior=spawnSync('git',['show',revision+':'+name],{cwd:root});
   assert.equal(prior.status,0);const current=fs.readFileSync(path.join(root,name));
-  assert.deepEqual(current,prior.stdout,name+' changed');
+  assert.deepEqual(current,prior.stdout,name+' differs from '+revision);
   hashes[name]=createHash('sha256').update(current).digest('hex');
  }
  assert.deepEqual(errors,[]);
  fs.writeFileSync(path.join(output,'browser-results.json'),JSON.stringify({
   baseline,captureSource:spawnSync('git',['rev-parse','HEAD'],{cwd:root,encoding:'utf8'}).stdout.trim(),
-  screenshots:screens,metrics,unchangedSourceHashes:hashes,pageErrors:errors,
+  screenshots:screens,metrics,preservedSources,unchangedSourceHashes:hashes,pageErrors:errors,
   checks:['Default Off','Additional Features','Saved Choice','Cancel Sends No POST',
    'Existing Cards Preserved','Retained Data And Security','Keyboard Toggle',
    'Independent Permissions','Stock Access Follows Feature Choice','Responsive Light And Dark']

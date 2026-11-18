@@ -116,23 +116,20 @@ const errors=[],metrics=[],screens=[];
   assert.equal(await owner.locator('#optional-feature-infrastructure article').count(),3);
   assert.equal(await owner.locator('#optional-feature-additional article').count(),2);
   assert.equal(await owner.getByText('Design Review · No Settings Saved',{exact:true}).count(),0);
-  assert.deepEqual(await owner.locator('[data-optional-feature]').evaluateAll(inputs=>inputs.map(input=>input.dataset.optionalFeature)),['devices','ipam','racks','suppliers','equipment_lifecycle','it_assets']);
+  assert.deepEqual(await owner.locator('[data-optional-feature]').evaluateAll(inputs=>inputs.map(input=>input.dataset.optionalFeature)),['devices','ipam','racks','suppliers','it_assets']);
   const savedFeatures=(await (await contexts.owner.request.get(address+'/api/settings/features')).json()).features;
-  for(const [index,feature] of ['devices','ipam','racks','suppliers','equipment_lifecycle'].entries()){
+  for(const [index,feature] of ['devices','ipam','racks','suppliers'].entries()){
    const card=owner.locator('[data-feature-card="'+feature+'"]'),approvedCard=approvedFeatures.locator('article').nth(index);
    assert.equal(await card.locator('.feature-title').textContent(),await approvedCard.locator('.feature-title').textContent());
-   assert.equal(await card.locator('.description').textContent(),await approvedCard.locator('.description').textContent());
+   assert.equal(await card.locator('.description').textContent(), feature==='suppliers' ?
+    'Manage supplier companies, locations, contacts and notes.' : await approvedCard.locator('.description').textContent());
    assert.equal(await card.locator('.iconwrap svg').innerHTML(),await approvedCard.locator('.iconwrap svg').innerHTML());
    assert.equal(await card.locator('input').isChecked(),savedFeatures[feature]);
    assert.equal(await card.locator('.feature-bottom>[data-feature-status]').count(),1);
    assert.equal(await card.locator('label').getAttribute('for'),await card.locator('input').getAttribute('id'));
   }
   await approvedFeatures.close();
-  for(const feature of ['suppliers','equipment_lifecycle']){
-   assert.ok(await owner.locator('[data-optional-feature="'+feature+'"]').isDisabled());
-   assert.match(await owner.locator('[data-feature-card="'+feature+'"] [data-feature-status]').textContent(),/Coming in Stage 4/);
-   assert.equal(await owner.locator('[data-feature-card="'+feature+'"] .toggle-label>span').textContent(),'Not Available Yet');
-  }
+  assert.equal(await owner.locator('[data-optional-feature="equipment_lifecycle"]').count(),0);
   // Failed requests must leave saved feature choices and inventory intact.
   const loadErrorPage=await open('owner','#settings');
   await loadErrorPage.route('**/api/settings/features',route=>route.fulfill({status:503,json:{error:'Feature settings temporarily unavailable.'}}));
