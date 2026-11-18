@@ -2,7 +2,7 @@
 
 > **Draft v2.2 — unreleased.** These instructions describe the Stage 4 development application. The examples use fictional companies and equipment. For the published release, use the [v2.1 guides](../README.md).
 
-A purchasing Supplier is the company that provided equipment. A Manufacturer identifies who made it. For example, a monitor manufactured by Dell might be purchased from Northlight Technology Ltd. Record Dell under Manufacturer and Northlight Technology Ltd under Supplier.
+A purchasing Supplier is the company that provided equipment. A Manufacturer identifies who made it. For example, a laptop manufactured by Dell might be purchased from Northlight Technology Ltd. Record Dell under Manufacturer and Northlight Technology Ltd under Supplier.
 
 ## Enable Suppliers And Check Access
 
@@ -15,13 +15,17 @@ Devices Read lets a colleague see the recorded Supplier name on Device Details w
 
 ## Record A Supplier On One Device
 
-1. Open **IT → Devices → Device Inventory**. Select **Add Device**, or open a Device and select **Edit**.
+1. Open **IT → Devices → Device Inventory**. Select **Add Device**, or open a Device and select **Edit device**.
 2. In the opening **Device Identity** card, find **Supplier (Optional)**. Enter part of a company name. Select an available result with the pointer, or use the arrow keys and press **Enter** to confirm the highlighted company.
 3. If the company is unlisted, type its name and leave the field without selecting a result. Caffoot Lite saves that text with the Device. A typed name that exactly matches a company is also text until you explicitly select the result.
 4. Complete the other Device fields as normal. Select **Save Device** to save. Open Device Details to check the recorded name. If you have Suppliers Read and the Device has a confirmed company association, **View Supplier** opens that company.
-5. **Cancel**, close or press **Escape** to leave the form. If the choice list is open, the first Escape closes the list. When asked about unsaved changes, select **Keep Editing** to return to the form or **Discard Changes** to drop the draft.
+5. Choose **Cancel** when adding a Device or **Back to Details** when editing. You can also use the close button or press **Escape**. If the choice list is open, the first Escape closes the list. When asked about unsaved changes, select **Keep Editing** to return to the form or **Discard Changes** to drop the draft.
 
-**Example.** Create Meeting Room Display, set its Manufacturer to Dell and select Northlight Technology Ltd as Supplier. If you duplicate the display to record another unit, check the blank Supplier field and record its own purchase information if known.
+**Example.** Create Meeting Room Laptop, set its Manufacturer to Dell and select Northlight Technology Ltd as Supplier. If you duplicate the laptop to record another unit, check the blank Supplier field and record its own purchase information if known.
+
+![Desktop dark Edit Device showing the linked Supplier field and Add Supplier control at the end of Device Identity](../../../development-handovers/evidence/stage-4-batch-43/images/device-identity-dark-1440.png)
+
+*Device Identity on the existing General tab. Manufacturer and Model remain on the Hardware tab.*
 
 If an existing company is unavailable for new selections, the saved Device can still show its linked name. Leave the field alone to retain it. To correct it, select another available company, enter the correct text or clear the field, then save. When Suppliers is switched off, the field and associated display are hidden. Saving an unrelated Device edit retains the existing Supplier data, which becomes visible again when the feature is re-enabled.
 
@@ -43,6 +47,10 @@ If **+ Add Supplier** is missing but company choices are available, ask a collea
 
 **Example.** Receive 50 USB keyboards from Northlight Technology Ltd. If Dockland Equipment Ltd later delivers 25 identical keyboards, use **Receive More Of An Existing Item** and choose Dockland for the second receipt. Each supplier belongs to its own delivery. Both receipts can add to the same pooled stock item.
 
+![Desktop light stock receiving form showing Dockland Equipment Ltd selected between Date Received and Receipt Notes](../../../development-handovers/evidence/stage-4-batch-43/images/receipt-details-light-1440.png)
+
+*Receipt Details for a second delivery of the same stock item. The receipt checks, summary and Record Receipt action remain in the receiving form.*
+
 With Suppliers switched off, **Supplier (Optional)** still accepts text on the receiving form. Existing confirmed associations and original receipt facts are retained. If a chosen company becomes unavailable before saving, review the error and select another available company or record text. **Issue Equipment** and **Get From Stock** continue to use their existing stock workflows without a Supplier selection. No receipt is inferred for the unit being issued or registered.
 
 ## Assign A Supplier To Existing Devices
@@ -55,6 +63,10 @@ An administrator needs Devices Edit with Devices and Suppliers enabled. An ordin
 4. Select **Confirm Assignment** to apply the same Supplier to the selected Devices. Open Device Details to check a result. This action preserves their other fields and records who made the changes.
 5. Select **Cancel** or close the dialog to leave the saved Devices unchanged. If any selected Device was removed, changed or is reserved for editing, the assignment is rejected for the entire selection. Refresh Device Inventory, wait for the other edit to finish if needed, and select the records again.
 
+![Desktop light Device Inventory with two selected Devices and Assign Supplier beside Sort by](../../../development-handovers/evidence/stage-4-batch-43/images/device-inventory-light-1440.png)
+
+*Select rows in the existing inventory, then open Assign Supplier to review the change.*
+
 **Example.** You find a purchase order listing three independently purchased laptops from Northlight Technology Ltd. Search for the three Device Names, select the matching records and confirm the same Supplier. If you change the search before choosing **Assign Supplier**, check the selection again.
 
 ## Link, Correct Or Remove A Historical Receipt Association
@@ -66,6 +78,10 @@ You need IT Assets Edit while IT Assets and Suppliers are enabled. Use the origi
 3. To update several deliveries, select the rows under **Stock Receipts** and choose **Assign Supplier** next to the heading. Review the count and any replacement warning, select the company and choose **Confirm Assignment**.
 4. To remove a mistaken link, choose **Remove Supplier Association** on that receipt and select **Confirm Removal**. The original receipt text, date, quantity and stock movements remain in history. The supplier's record retains the historical protection and the correction is recorded in the Audit Trail.
 5. Select **Cancel** or close the dialog to abandon the correction. If a receipt changes between selection and confirmation, no selected receipt is updated. Refresh Receipt History and review the current links before trying again.
+
+![Mobile dark Receipt History scrolled to the Supplier column with original invoice text and Link, Change and Remove actions](../../../development-handovers/evidence/stage-4-batch-43/images/receipt-history-dark-390.png)
+
+*On a narrow screen, scroll the table sideways to reach all receipt columns and actions.*
 
 **Example.** A receipt was recorded with the free-text name “Northlight”. The invoice confirms the company was Northlight Technology Ltd. Use **Link Supplier** on that receipt. If a later check shows the invoice belonged to a different delivery, choose **Change Supplier** or **Remove Supplier Association** as appropriate. The original recorded “Northlight” remains visible in the Supplier column.
 
@@ -83,6 +99,10 @@ You need **Suppliers Read**. You also need **Devices Read** or **IT Assets Read*
 
 **Example.** A confirmed receipt for 50 USB keyboards and one independently added Device from the same company show **51 Supplier Equipment** and **2 Visible Records**. If the company supplies 10 laptops in one receipt and four are later registered as Devices, that delivery still represents 10 supplied units. An explicitly linked Device from stock can be listed separately, with a dash in **Original Quantity**. A dash in **Receipt Date** indicates a Device row.
 
+![Desktop light Supplied Equipment table showing a Laptop and a receipt for 50 keyboards, with an Equipment Type filter and View actions](../../../development-handovers/evidence/stage-4-batch-43/images/supplied-equipment-light-1440.png)
+
+*The two visible records contribute 51 units. On a narrow screen, scroll the table sideways to reach View Device or View Receipt.*
+
 A delivery keeps its original quantity after issue, return, preparation or write-off. The list shows an explicitly linked Device even when it is retired. Linking or correcting a receipt changes the company that gets credit for that original quantity. Removing the link removes the receipt from the current Supplier list and total while preserving its history.
 
 If **Supplied Equipment** and **Supplier Equipment** are both absent, check whether you can read at least one enabled equipment section. A Supplier reader with only Devices Read sees only Device rows and their permitted quantities. A Supplier reader with only IT Assets Read sees only permitted receipt rows. If a company or equipment record becomes unavailable, reopen its current list and check your permissions and feature switches.
@@ -95,3 +115,15 @@ If **Supplied Equipment** and **Supplier Equipment** are both absent, check whet
 4. Use the **Audit Trail** to check the recorded changes if your account has the required access. A correction or removal leaves the earlier relationship in the retained audit record. A company with confirmed supply history remains protected from deletion.
 
 For company, location and contact lifecycle actions, see [Supplier Management](Supplier-Management.md). Keep the complete application data volume when following your organisation's SQLite backup process. The published v1.3.3 JSON import is an inventory migration path. Complete v2.2 installation, recovery and upgrade acceptance is tracked separately.
+
+## Troubleshoot Access And Confirmations
+
+| What you see | What to check |
+| --- | --- |
+| The field accepts typing but an exact company match stays as text | Select the company from the list to confirm the link. If the company is archived or disabled, leave the saved link in place or choose an available company for the correction. |
+| The chooser shows results, but **+ Add Supplier** is missing | Company creation requires Suppliers Edit independently of Devices Edit or IT Assets Edit. |
+| **Assign Supplier** is missing or disabled | Check the relevant feature switches and effective edit rights. Device bulk assignment additionally requires a verified administrator. When the action is visible, select one or more rows to enable it. |
+| A confirmation says a selected record changed | Close the dialog, refresh the current inventory or Receipt History, and review the newly saved record before selecting again. |
+| The Supplier Equipment total differs between two authorised accounts | Compare effective Devices Read and IT Assets Read and the switches. Each total uses only the source records the signed-in account can read. |
+
+More desktop and mobile captures, their exact source revision, and verification details are available in the [Batch 4.3 application evidence](../../../development-handovers/evidence/stage-4-batch-43/Application-Report.md).

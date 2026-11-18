@@ -320,9 +320,19 @@ class SupplierHttpTests(unittest.TestCase):
         disabled = self.save("supplier.disable", {"confirmed": True, "sections": ["Devices", "IT Assets"]},
                              company, actor=1)
         self.assertEqual(disabled["status"], "disabled")
-        self.save("supplier.enable", {"confirmed": True, "sections": ["Devices", "IT Assets"]}, disabled, actor=1)
         with sqlite3.connect(self.db) as db:
             db.execute("UPDATE organisation_features SET enabled=1 WHERE feature IN ('devices','it_assets')")
+        self.assertEqual(read(1)["equipment"], all_equipment)
+        self.assertNotIn(company["id"], [supplier["id"] for supplier in
+                                        self.request(ROOT + "/choices/devices", actor=1)[1]["suppliers"]])
+        enabled = self.save("supplier.enable", {"confirmed": True, "sections": ["Devices", "IT Assets"]},
+                            disabled, actor=1)
+        renamed = self.save("supplier.save", self.company(name="Northlight Equipment Ltd"), enabled, actor=1)
+        code, history = self.request("/api/it-assets/stock/" + item, actor=1)
+        self.assertEqual(code, 200, history)
+        original = next(row for row in history["receipts"] if row["id"] == receipt["receiptId"])
+        self.assertEqual(original["supplier"], company["name"])
+        self.assertEqual(original["supplierAssociation"], {"id": renamed["id"], "name": renamed["name"]})
         self.assertEqual(read(1)["equipment"], all_equipment)
 
     def test_issue_lifecycle_handover_corrections_and_audit(self):

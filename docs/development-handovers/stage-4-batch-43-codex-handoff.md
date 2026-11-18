@@ -2,6 +2,8 @@
 
 **Date:** 18 November 2026. **Status:** authorised for development only. No feature implementation has been completed in this PR at hand-off.
 
+For integrated application results and the remaining owner review, see the [Batch 4.3 application report](evidence/stage-4-batch-43/Application-Report.md).
+
 ## Exact GitHub position
 
 - Repository: `Caffoot/Caffoot-Lite`.

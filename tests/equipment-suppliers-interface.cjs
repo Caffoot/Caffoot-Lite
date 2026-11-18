@@ -305,6 +305,7 @@ async function captureEvidence(page, deviceId, receipt, output) {
       await panel.getByRole('button', {name: 'Assign Supplier'}).click();
       await assignment.getByText('2 selected Devices').waitFor();
       await assignment.getByRole('button', {name: 'Cancel', exact: true}).focus();
+      await page.mouse.move(0, 0);
       assert.equal(await assignment.getByRole('button', {name: 'Confirm Assignment'}).evaluate(
         button => getComputedStyle(button).backgroundColor), 'rgb(237, 133, 50)');
       await capture('device-assignment', theme);
@@ -351,6 +352,7 @@ async function captureEvidence(page, deviceId, receipt, output) {
       await main.getByRole('button', {name: 'Assign Supplier'}).click();
       await assignment.getByText('2 selected receipts').waitFor();
       await assignment.getByRole('button', {name: 'Cancel', exact: true}).focus();
+      await page.mouse.move(0, 0);
       assert.equal(await assignment.getByRole('button', {name: 'Confirm Assignment'}).evaluate(
         button => getComputedStyle(button).backgroundColor), 'rgb(237, 133, 50)');
       await capture('receipt-assignment', theme);

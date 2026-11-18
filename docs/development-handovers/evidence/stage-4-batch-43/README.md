@@ -1,6 +1,6 @@
 # Stage 4 Batch 4.3 — approved additions-only UI review
 
-**Status:** Product-owner design approval **only** for the proposals identified below. This evidence folder is not application implementation evidence and does not assert that any new Supplier controls have been coded, tested or accepted in the live application.
+**Status:** This page records the owner’s approval of the proposals below. The [application report](Application-Report.md) records the integrated screens, verification and remaining acceptance separately.
 
 ## Source and provenance
 

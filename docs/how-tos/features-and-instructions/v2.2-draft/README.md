@@ -54,12 +54,13 @@ For a new delivery, follow Receive Stock → check/readiness → Issue Equipment
 | --- | --- |
 | Enable Suppliers, set access, and manage companies, categories, locations, contacts and notes | [Supplier Management](Supplier-Management.md) |
 | Use Purchasing, file or correct Issues, hand them over between contacts and manage Issue Categories | [Supplier Issues And Purchasing](Supplier-Issues-and-Purchasing.md) |
+| Record, correct or review Supplier associations on Devices and stock receipts | [Equipment Supplier Integration](Equipment-Supplier-Integration.md) |
 
-Suppliers starts switched off and uses its own section permissions. Batch 4.1 Supplier Management is merged on the development branch. Batch 4.2 adds Purchasing and Supplier Issues in schema 22 and remains in draft.
+Suppliers starts switched off and uses its own section permissions. Supplier Management and Supplier Issues are integrated on the development branch. Batch 4.3 adds equipment associations and the Supplier Equipment view in schema 23 on [draft PR #416](https://github.com/Caffoot/Caffoot-Lite/pull/416).
 
 ## Publication And Acceptance
 
-Stage 1 and Stage 2 are accepted. Stage 3 Batches 3.1–3.12 and subsequent focused corrections are merged on the development branch. This does not establish completed milestone or release acceptance. Batch 3.4 manual/native acceptance, broader native Safari/private-installation evidence and Stage 6 compatibility/full upgrade/restore acceptance remain deferred. The Batch 4.2 application and guides remain subject to independent review. Service Desk and later milestone stages remain separate work.
+Stage 1 and Stage 2 are accepted. Stage 3 Batches 3.1–3.12 and subsequent focused corrections are merged on the development branch. This does not establish completed milestone or release acceptance. Batch 3.4 manual/native acceptance, broader native Safari/private-installation evidence and Stage 6 compatibility/full upgrade/restore acceptance remain deferred. The Batch 4.3 integrated application and instructions await independent product-owner review. Service Desk and later milestone stages remain separate work.
 
 Images used here are genuine application captures with an identified approval source and captions describing their scope. Functional HTML previews are retained as development references, never presented as application screenshots. Missing or outdated images and remaining wording discrepancies are listed in the [documentation review record](../../../development-guide/Stage-1-3-Documentation-Review.md).
 

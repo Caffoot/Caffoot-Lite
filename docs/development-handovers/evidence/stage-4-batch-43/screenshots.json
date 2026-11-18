@@ -1,0 +1,383 @@
+{
+  "applicationCommit": "e5bf98ed4fdaaeb3e2594238103534dfcac243c3",
+  "browser": "Chromium 156.0.8078.79",
+  "origin": "https://127.0.0.1:8098",
+  "fixture": "Isolated fictional records in a temporary SQLite database",
+  "capturedAt": "2026-11-18T12:36:19.004Z",
+  "screenshots": [
+    {
+      "file": "device-inventory-light-1440.png",
+      "scene": "device-inventory",
+      "theme": "light",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "fullPage": true,
+      "sha256": "5d72e023b521e781973646024f0aac7de01b73c3900afccecc1ae38f43c4e2e2"
+    },
+    {
+      "file": "device-assignment-light-1440.png",
+      "scene": "device-assignment",
+      "theme": "light",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "fullPage": false,
+      "sha256": "6794ca5f5ff5abf2479d7c89ca7ae487482ea46867eb870a16b91ea11875e8c0"
+    },
+    {
+      "file": "device-identity-light-1440.png",
+      "scene": "device-identity",
+      "theme": "light",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "fullPage": false,
+      "sha256": "26793eb214c599360145b6877f87da67bb6b7d834f5d14643beb6f1dd13d943d"
+    },
+    {
+      "file": "receipt-details-light-1440.png",
+      "scene": "receipt-details",
+      "theme": "light",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "fullPage": true,
+      "sha256": "e02db950bc1bd52cffe431f3184f8e42382323398e907e332c9b84d062c7f844"
+    },
+    {
+      "file": "receipt-history-light-1440.png",
+      "scene": "receipt-history",
+      "theme": "light",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "fullPage": true,
+      "sha256": "bdd9c952cac14eaccffa9821bbda9aa31794edfa77c98db8b480a2fca797989f"
+    },
+    {
+      "file": "receipt-assignment-light-1440.png",
+      "scene": "receipt-assignment",
+      "theme": "light",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "fullPage": false,
+      "sha256": "d9a5810700d796d9045d761beccbb5ce3a3da1b3c16ee0d28c9dab69316e4138"
+    },
+    {
+      "file": "supplier-overview-light-1440.png",
+      "scene": "supplier-overview",
+      "theme": "light",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "fullPage": true,
+      "sha256": "79c1ad56b80c412f2040c29ed1943cd359d609cc741e1a80ff6ae874e7fabeba"
+    },
+    {
+      "file": "supplied-equipment-light-1440.png",
+      "scene": "supplied-equipment",
+      "theme": "light",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "fullPage": true,
+      "sha256": "a0ff7c4ac3cf9621f81bf0ec5d57eab1deef874da78c52a1f66c1db327527e65"
+    },
+    {
+      "file": "device-inventory-dark-1440.png",
+      "scene": "device-inventory",
+      "theme": "dark",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "fullPage": true,
+      "sha256": "e7af63b783b4c8a256816c84b342f991e9b77359ba65cb6a3ebb4ffed6e32629"
+    },
+    {
+      "file": "device-assignment-dark-1440.png",
+      "scene": "device-assignment",
+      "theme": "dark",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "fullPage": false,
+      "sha256": "bc04b5f1e0001dbf2d0fa798eb7a0b8c5e50553566d040bd4eabd3df326c5fb9"
+    },
+    {
+      "file": "device-identity-dark-1440.png",
+      "scene": "device-identity",
+      "theme": "dark",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "fullPage": false,
+      "sha256": "2a0da1870ff390445fe11773525ef1c73deeda9afffc456c354f30e797df9078"
+    },
+    {
+      "file": "receipt-details-dark-1440.png",
+      "scene": "receipt-details",
+      "theme": "dark",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "fullPage": true,
+      "sha256": "ef025d21866e80320ae73d82dc40c967103a969a89ca7045a835225bd06a8a13"
+    },
+    {
+      "file": "receipt-history-dark-1440.png",
+      "scene": "receipt-history",
+      "theme": "dark",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "fullPage": true,
+      "sha256": "2245ca8d21cf458af9891fa5a83902cf47124ef810fdc9ce828ef32da4f55cfa"
+    },
+    {
+      "file": "receipt-assignment-dark-1440.png",
+      "scene": "receipt-assignment",
+      "theme": "dark",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "fullPage": false,
+      "sha256": "8cbd95280bcf92a07af32a843ab9eab1bd0ad2c832634808ff7c43136762d05b"
+    },
+    {
+      "file": "supplier-overview-dark-1440.png",
+      "scene": "supplier-overview",
+      "theme": "dark",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "fullPage": true,
+      "sha256": "39f1e5715b26f998cee87a7c4630178e80e27be236564cb341dd1b225056240d"
+    },
+    {
+      "file": "supplied-equipment-dark-1440.png",
+      "scene": "supplied-equipment",
+      "theme": "dark",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "fullPage": true,
+      "sha256": "562d77f03ef42f53bfbe380244a3531e14412f0c7e5c58021d24b74a5afe49e0"
+    },
+    {
+      "file": "device-inventory-light-390.png",
+      "scene": "device-inventory",
+      "theme": "light",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "fullPage": true,
+      "sha256": "2794733fda602e2db57fd0c12e8db9ee7eee0764a20559a58e548fc020cf03d5"
+    },
+    {
+      "file": "device-assignment-light-390.png",
+      "scene": "device-assignment",
+      "theme": "light",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "fullPage": false,
+      "sha256": "cec65dc8781310585463cc2dd4bebd0c642def9280e49bb9bfeda8daf208d985"
+    },
+    {
+      "file": "device-identity-light-390.png",
+      "scene": "device-identity",
+      "theme": "light",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "fullPage": false,
+      "sha256": "2496de987f02d2f78225d1958572be5285d9b7a003fbc36342238146ec6dcbba"
+    },
+    {
+      "file": "receipt-details-light-390.png",
+      "scene": "receipt-details",
+      "theme": "light",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "fullPage": true,
+      "sha256": "4dcdff7bc217105d900c348f9bebe00e474bd357089732dcf817786d9e44dda8"
+    },
+    {
+      "file": "receipt-history-light-390.png",
+      "scene": "receipt-history",
+      "theme": "light",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "fullPage": true,
+      "sha256": "a92b015c124cbea16a1bcd34dd22afb15e6e1ae05faf4d46a41b7ad1a0cc9750"
+    },
+    {
+      "file": "receipt-assignment-light-390.png",
+      "scene": "receipt-assignment",
+      "theme": "light",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "fullPage": false,
+      "sha256": "cea29ce0582f5a3f3d9e87445d5ec8d15f8ffc47981b363cc4a9a0e0025ea4c2"
+    },
+    {
+      "file": "supplier-overview-light-390.png",
+      "scene": "supplier-overview",
+      "theme": "light",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "fullPage": true,
+      "sha256": "69492fca20d8524119ad8e16565ca64fc53fa868ea232cbd07f925a4f0b6f68b"
+    },
+    {
+      "file": "supplied-equipment-light-390.png",
+      "scene": "supplied-equipment",
+      "theme": "light",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "fullPage": true,
+      "sha256": "e369cfec417235c1f213d901d71fdf36a9b022336c02e1974710b728d6859448"
+    },
+    {
+      "file": "supplied-equipment-actions-light-390.png",
+      "scene": "supplied-equipment-actions",
+      "theme": "light",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "fullPage": true,
+      "sha256": "d08fb5366dc0a692778e9bcb064a43cae507347cea9fbe91299626e40348fb56"
+    },
+    {
+      "file": "device-inventory-dark-390.png",
+      "scene": "device-inventory",
+      "theme": "dark",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "fullPage": true,
+      "sha256": "a182cb0099bac0c0d7dbffef50d4f2d0ccbec05867d8dead12ab991f7979cf99"
+    },
+    {
+      "file": "device-assignment-dark-390.png",
+      "scene": "device-assignment",
+      "theme": "dark",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "fullPage": false,
+      "sha256": "971a07f1c9365a554744bb10ac8a3f54f4d8c6695ac0ca33fa7b233fd7a62bd0"
+    },
+    {
+      "file": "device-identity-dark-390.png",
+      "scene": "device-identity",
+      "theme": "dark",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "fullPage": false,
+      "sha256": "46494489915323451d17d782e272a7cbbbdb7ca4d269cb0878b0f11a35e23be4"
+    },
+    {
+      "file": "receipt-details-dark-390.png",
+      "scene": "receipt-details",
+      "theme": "dark",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "fullPage": true,
+      "sha256": "edc7ebfdf1f7ec394f8eea84278b972adf38942eec8ad2cc27c7020dcbb51ebf"
+    },
+    {
+      "file": "receipt-history-dark-390.png",
+      "scene": "receipt-history",
+      "theme": "dark",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "fullPage": true,
+      "sha256": "240cd6aa073491bc92c37ce0c57fa177317149cc9c94a99ee0a3caa97472407c"
+    },
+    {
+      "file": "receipt-assignment-dark-390.png",
+      "scene": "receipt-assignment",
+      "theme": "dark",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "fullPage": false,
+      "sha256": "9f305c6bb04e5951059be2c2fb0de353b617af511fbdb0b607699aa3be2d36e0"
+    },
+    {
+      "file": "supplier-overview-dark-390.png",
+      "scene": "supplier-overview",
+      "theme": "dark",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "fullPage": true,
+      "sha256": "3502d9fee4320d10d6ce9c6b85429da3b3491c3db5ba63d100f3467cf2a1df66"
+    },
+    {
+      "file": "supplied-equipment-dark-390.png",
+      "scene": "supplied-equipment",
+      "theme": "dark",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "fullPage": true,
+      "sha256": "2cf60385364f9b83383705db549c640389fa52695c7729ff8ceaea9ef801ed55"
+    },
+    {
+      "file": "supplied-equipment-actions-dark-390.png",
+      "scene": "supplied-equipment-actions",
+      "theme": "dark",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "fullPage": true,
+      "sha256": "b61ae93f3cd1079ed1f6900dcac8406c40b0daca9d541a92184909862d209df2"
+    }
+  ]
+}
