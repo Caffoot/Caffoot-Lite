@@ -100,7 +100,13 @@ async function initialiseInterface() {
                     const lifecycleScript = document.createElement('script');
                     lifecycleScript.src = '/interface/lifecycle.js';
                     lifecycleScript.onerror = () => showInterfaceLoadError();
-                    lifecycleScript.onload = loadApplication;
+                    lifecycleScript.onload = () => {
+                        const ukDatesScript = document.createElement('script');
+                        ukDatesScript.src = '/interface/uk-date-controls.js';
+                        ukDatesScript.onerror = () => showInterfaceLoadError();
+                        ukDatesScript.onload = loadApplication;
+                        document.body.append(ukDatesScript);
+                    };
                     document.body.append(lifecycleScript);
                 };
                 document.body.append(supplierScript);
