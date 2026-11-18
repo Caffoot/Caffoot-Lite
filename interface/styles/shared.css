@@ -125,3 +125,16 @@ body{font-size:14px}
 .header-account-photo img[hidden]{display:none}
 .header-account-text{color:#29445e}
 @media(max-width:720px){.header-account{padding:4px;border-radius:50%;min-height:40px}.header-account-text{display:none}.header-account-photo{width:32px;height:32px}}
+
+#sidebar .department-nav-row{display:grid;grid-template-columns:minmax(0,1fr) 32px;gap:3px}
+#sidebar .department-nav-toggle{display:grid;place-items:center;border:0;border-radius:8px;color:inherit;background:transparent;cursor:pointer}
+#sidebar .department-nav-toggle:hover,#sidebar .department-nav-toggle:focus-visible{background:#ffffff18}
+#sidebar .department-nav-toggle .preview-group-chevron{display:block;margin:0}
+#sidebar .department-nav-toggle[aria-expanded="true"] .preview-group-chevron{transform:rotate(90deg)}
+#app.collapsed #sidebar .department-nav-row{grid-template-columns:minmax(0,1fr) 22px}
+
+#sidebar .department-nav-row .nav-item{min-width:0}
+#sidebar .department-nav-row .nav-item:disabled{cursor:default}
+#sidebar .department-nav-row .nav-item:disabled:hover{background:transparent}
+@media(max-width:720px){#sidebar .department-nav-row{grid-template-columns:minmax(0,1fr) 20px;gap:1px}
+ #sidebar .department-nav-row .nav-item{padding-inline:0}}

@@ -33,3 +33,28 @@
 }
 @media(max-width:650px){.supplier-live .supplier-filters,.supplier-live .two-col{grid-template-columns:minmax(0,1fr)}}
 #modal-content:has(>[data-supplier-dialog]){max-height:calc(100dvh - 32px);overflow:auto}
+
+.supplier-live .device-status.issue-progress{color:#315f89;background:#e3eef8}
+html.dark :is(#app,#modal-container) .supplier-live .device-status.issue-progress{color:#bfdbfe;background:#172554}
+.supplier-live .purchasing-dashboard{margin-top:20px}
+.supplier-live .purchasing-recent .device-table{min-width:480px}
+.supplier-live .purchasing-recent th:first-child{width:24%}
+.supplier-live .purchasing-cell-label{display:none}
+.supplier-live textarea.input[name^="issue-"]{min-height:82px}
+.supplier-live .db-progress-title .db-dot{display:inline-block;margin-right:7px}
+.supplier-live .db-bar .db-dot{height:100%}
+.supplier-live [data-issue-status]+[data-issue-status]{margin-top:12px}
+.supplier-live [data-inline-issue-category]{margin-top:10px}
+@media(max-width:560px){
+ .supplier-live .purchasing-recent .device-table{display:block;min-width:0;table-layout:auto}
+ .supplier-live .purchasing-recent thead{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+ .supplier-live .purchasing-recent tbody,.supplier-live .purchasing-recent tr{display:block}
+ .supplier-live .purchasing-recent tbody>tr{padding:10px 12px;border-bottom:1px solid var(--line)}
+ .supplier-live .purchasing-recent tbody>tr:last-child{border-bottom:0}
+ .supplier-live .purchasing-recent tbody>tr>td{display:grid;grid-template-columns:80px minmax(0,1fr);gap:8px;padding:4px 0;border:0}
+ .supplier-live .purchasing-recent tbody>tr>td:first-child{display:block;padding-bottom:8px}
+ .supplier-live .purchasing-cell-label{display:block;color:var(--muted);font-size:11px;font-weight:700}
+}
+@media(max-width:385px){
+ .supplier-live .purchasing-dashboard .db-summary{grid-template-columns:minmax(0,1fr)}
+}

@@ -4,10 +4,13 @@
   const api = '/api/suppliers';
   const tabs = [
     ['overview', 'Overview', 'grid'], ['locations', 'Locations', 'network'],
-    ['contacts', 'Contacts', 'users'], ['notes', 'Notes', 'history']
+    ['contacts', 'Contacts', 'users'], ['notes', 'Notes & Issues', 'history']
   ];
   let config, active = false, requestId = 0, draftId = 0, pending = false, returnDialog;
-  let directory, supplier, supplierId, tab = 'overview', loading = false, error = '';
+  let directory, supplier, supplierId, purchasing, tab = 'overview', notesView = 'notes', loading = false, error = '';
+  let statusFilter = '', issueCategoryFilter = '';
+  const issueStatuses = ['Open', 'In Progress', 'Resolved', 'Closed'];
+  const issueTones = {Open: 'maintenance', 'In Progress': 'issue-progress', Resolved: '', Closed: 'retired'};
   let search = '', categoryFilter = '', contactSearch = '', contactFilter = '', noteFilter = 'all';
 
   const safe = value => config.escape(value);
@@ -41,8 +44,8 @@
   }
   function table(headings, rows, empty, id = '') {
     return `<div class="device-table-card"><div class="device-table-scroll" tabindex="0" role="region" aria-label="${safe(headings[0])} table">
-      <table class="device-table"><thead><tr>${headings.map(label => `<th scope="col">${label}</th>`).join('')}</tr></thead>
-      <tbody${id ? ` id="${id}"` : ''}>${rows || emptyRow(headings.length, empty)}</tbody></table></div></div>`;
+      <table class="device-table" role="table"><thead role="rowgroup"><tr role="row">${headings.map(label => `<th scope="col" role="columnheader">${label}</th>`).join('')}</tr></thead>
+      <tbody role="rowgroup"${id ? ` id="${id}"` : ''}>${rows || emptyRow(headings.length, empty)}</tbody></table></div></div>`;
   }
   function emptyRow(columns, message) {
     return `<tr><td colspan="${columns}"><div class="department-empty">${safe(message)}</div></td></tr>`;
@@ -135,9 +138,13 @@
       info('Supplier Description', `<span class="supplier-note-text">${safe(supplier.description || 'Not Recorded')}</span>`) +
       info('Website', webLink(supplier.website, supplier.website)) + info('Company Address', locationAddress(location)) +
       info('Categories', categoryTags(supplier.categoryIds, supplier.categories));
-    const metrics = [['Locations', 'locations', supplier.locations], ['Contacts', 'contacts', supplier.contacts]].map(([label, key, data]) =>
+    const metrics = [
+      ['Locations', 'locations', supplier.locations.filter(item => !item.archived).length],
+      ['Contacts', 'contacts', supplier.contacts.filter(item => !item.archived).length],
+      ['Active Issues', 'issues', supplier.issues.filter(issue => ['Open', 'In Progress'].includes(issue.status)).length],
+    ].map(([label, key, count]) =>
       `<button class="card card-padded stat stock-report-metric" type="button" data-supplier-action="tab" data-id="${key}">
-        <span class="statnum">${data.filter(item => !item.archived).length}</span><span class="stathead">${label}</span></button>`).join('');
+        <span class="statnum">${count}</span><span class="stathead">${label}</span></button>`).join('');
     return sectionHeading('Supplier Overview', 'Company details and a summary of the supplier relationship.') +
       `<div class="two-col">${card('Company Information', information + '<p class="sub">The company address uses the Main Office Location.</p>',
         editable() ? button('Edit', 'supplier-form', supplier.id) : '')}
@@ -183,6 +190,7 @@
   function formatDate(value) {
     return new Intl.DateTimeFormat('en-GB', {dateStyle: 'medium', timeStyle: 'short'}).format(new Date(value));
   }
+  const time = value => `<time datetime="${safe(value)}">${formatDate(value)}</time>`;
   function noteCards(notes, contactDetail = false) {
     return notes.map(note => {
       const contact = findContact(note.contactId);
@@ -196,14 +204,99 @@
   }
   function renderNotes() {
     const notes = supplier.notes.filter(note => noteFilter === 'all' || (noteFilter === 'supplier') === (note.contactId === null));
-    return sectionHeading('Notes', 'Read notes about the company and its contacts.',
-      editable() ? button('Add Supplier Note', 'note-form', '', 'primary') : '') +
-      `<div class="device-toolbar supplier-results">${select('Filter Notes By Owner', 'note-filter',
+    return `<div class="device-toolbar supplier-results">${select('Filter Notes By Owner', 'note-filter',
         [['all', 'All Notes'], ['supplier', 'Supplier Notes'], ['contacts', 'Contact Notes']], noteFilter)}</div>
       <div class="stock-card-stack">${noteCards(notes) || card('No Notes Match Your Filter', '')}</div>`;
   }
+  function issueCategoryName(item) {
+    return item.name + (item.archived ? ' (Retired)' : '');
+  }
+  function issueCategoryLabel(id, catalogue) {
+    const item = catalogue.find(category => category.id === id);
+    return item ? safe(issueCategoryName(item)) : '—';
+  }
+  function issueStatusBadge(status) {
+    return `<span class="device-status ${issueTones[status]}">${safe(status)}</span>`;
+  }
+  function issueButton(label, issue, asTitle = false) {
+    return `<button type="button" class="${asTitle ? 'device-name' : 'btn btn-outline'}" data-supplier-action="issue-details"
+      data-id="${issue.id}" data-company="${issue.supplierId}">${safe(label)}</button>`;
+  }
+  function issueRows(source, all) {
+    return source.issues.filter(issue => (!statusFilter || issue.status === statusFilter) &&
+      (!issueCategoryFilter || issue.categoryId === Number(issueCategoryFilter))).map(issue =>
+      `<tr><td>${issueButton(issue.title, issue, true)}</td>${all ? `<td>${safe(issue.supplierName)}</td>` : ''}
+      <td>${time(issue.createdAt)}</td><td>${issueCategoryLabel(issue.categoryId, source.issueCategories)}</td>
+      <td>${issue.contacts.map(contact => safe(contact.name) + (contact.archived ? ' (Archived)' : '')).join(', ') || '—'}</td>
+      <td>${issueStatusBadge(issue.status)}</td><td class="supplier-table-actions">${issueButton('View Details', issue)}</td></tr>`).join('');
+  }
+  function issuesList(source, all = false) {
+    const columns = ['Issue Title', ...(all ? ['Supplier'] : []), 'Creation Date', 'Category', 'Associated Contacts', 'Status', 'Actions'];
+    return `<div class="device-toolbar"><div class="supplier-filters">
+      ${select('Filter Issues By Status', 'issue-status-filter', [['', 'All Statuses'], ...issueStatuses.map(status => [status, status])], statusFilter)}
+      ${select('Filter Issues By Category', 'issue-category-filter', [['', 'All Categories'], ...source.issueCategories.map(item => [item.id, issueCategoryName(item)])], issueCategoryFilter)}
+      </div></div>${table(columns, issueRows(source, all), 'No Issues Match These Filters', 'supplier-issue-rows')}`;
+  }
+  function renderNotesIssues() {
+    return sectionHeading('Notes &amp; Issues', 'Keep company and contact notes and track Supplier Issues.',
+      editable() ? button('Add Supplier Note', 'note-form') + button('Add Issue', 'issue-add', '', 'primary') : '') +
+      `<nav class="tabs" aria-label="Notes and Issues Views">${['notes', 'issues'].map(view =>
+        `<button type="button" class="tab section-tab-control${notesView === view ? ' active' : ''}"
+        ${notesView === view ? 'aria-current="page"' : ''} id="supplier-view-${view}" data-id="${view}" data-supplier-action="notes-view">${view === 'notes' ? 'Notes' : 'Issues'}</button>`).join('')}</nav>
+      ${notesView === 'notes' ? renderNotes() : `${editable() ? `<div class="preview-details-actions">${button('Manage Issue Categories', 'issue-categories')}</div>` : ''}
+        ${issuesList(supplier)}`}`;
+  }
+  function renderAllIssues() {
+    return header('Supplier Issues', 'Track issues across all retained Suppliers.',
+      button('Back To Purchasing Dashboard', 'dashboard') + (editable() ? button('Manage Issue Categories', 'issue-categories') : '')) +
+      `<section class="stock-panel" aria-label="Supplier Issues">${issuesList(purchasing, true)}</section>`;
+  }
+  function dashboardIcon(symbol, tone = '') {
+    return `<span class="iconwrap ${tone}">${icon(symbol)}</span>`;
+  }
+  function dashboardMetric(label, value, description, symbol, action, id = '', tone = '') {
+    return `<button type="button" class="db-metric" data-supplier-action="${action}" data-id="${safe(id)}">
+      <span class="db-metric-head">${label}${dashboardIcon(symbol, tone)}</span><strong>${value}</strong><small>${description}</small></button>`;
+  }
+  function dashboardCard(title, subtitle, symbol, content, tone = '') {
+    return `<section class="card db-card"><div class="card-head">${dashboardIcon(symbol, tone)}
+      <div><h3>${title}</h3><p class="sub">${subtitle}</p></div></div><div class="divider"></div>${content}</section>`;
+  }
+  function renderPurchasing() {
+    const {totalSuppliers, availableSuppliers, statusCounts, recentIssues, issueCategories} = purchasing;
+    const totalIssues = Object.values(statusCounts).reduce((total, count) => total + count, 0);
+    const metrics = dashboardMetric('Total Suppliers', totalSuppliers, 'All retained Supplier records', 'users', 'directory') +
+      dashboardMetric('Available Suppliers', availableSuppliers, 'Neither archived nor disabled', 'shield', 'directory', '', 'green') +
+      dashboardMetric('Open Supplier Issues', statusCounts.Open, 'Issues requiring attention', 'alert', 'all-issues', 'Open', 'orange') +
+      dashboardMetric('Issues In Progress', statusCounts['In Progress'], 'Issues currently being handled', 'history', 'all-issues', 'In Progress');
+    const recentCell = (label, value) =>
+      `<td role="cell"><span class="purchasing-cell-label" aria-hidden="true">${label}</span><span>${value}</span></td>`;
+    const rows = recentIssues.map(issue => `<tr role="row"><td role="cell">${issueButton(issue.title, issue, true)}</td>
+      ${recentCell('Supplier', safe(issue.supplierName))}
+      ${recentCell('Category', issueCategoryLabel(issue.categoryId, issueCategories))}
+      ${recentCell('Status', issueStatusBadge(issue.status))}
+      ${recentCell('Last Updated', time(issue.updatedAt))}</tr>`).join('');
+    const recent = dashboardCard('Recent Supplier Issues', 'Open and In Progress, most recently updated first.', 'alert',
+      `<div class="purchasing-recent">${table(['Issue', 'Supplier', 'Category', 'Status', 'Last Updated'], rows, 'No Active Supplier Issues')}</div>
+       <div class="db-actionrow">${button('View All Issues', 'all-issues')}</div>`, 'orange');
+    const breakdown = issueStatuses.map((status, index) => {
+      const count = statusCounts[status];
+      const tone = ['', 'blue', 'green', 'gray'][index];
+      const percent = totalIssues ? Math.round(100 * count / totalIssues) : 0;
+      return `<div data-issue-status="${status}"><div class="db-progress-title"><span><span class="db-dot ${tone}" aria-hidden="true"></span>${status}</span><strong>${count}</strong></div>
+        <div class="db-bar" aria-hidden="true"><span class="db-dot ${tone}" style="width:${percent}%"></span></div></div>`;
+    }).join('');
+    return header('Purchasing Dashboard', 'An overview of your Suppliers and current Supplier Issues.') +
+      `<div class="purchasing-dashboard"><section class="db-summary" aria-label="Purchasing Summary">${metrics}</section>
+      <div class="db-two"><div class="db-stack">${recent}</div><div class="db-stack">
+        ${dashboardCard('Supplier Issue Status', `Current status of ${totalIssues} tracked ${totalIssues === 1 ? 'Issue' : 'Issues'}.`, 'history', breakdown)}
+        ${dashboardCard('Quick Access', 'Open Suppliers or the full Issues list.', 'box',
+          `<div class="db-actionrow">${button('View Suppliers', 'directory')}${button('View All Issues', 'all-issues')}</div>`, 'orange')}
+      </div></div></div>`;
+  }
+
   function renderDetails() {
-    const content = {overview: renderOverview, locations: renderLocations, contacts: renderContacts, notes: renderNotes}[tab]();
+    const content = {overview: renderOverview, locations: renderLocations, contacts: renderContacts, notes: renderNotesIssues}[tab]();
     const {buttons, explanation} = lifecycleActions('supplier', supplier, supplier.status);
     const edit = editable() ? button('Edit Supplier', 'supplier-form', supplier.id) : '';
     return header(supplier.name, 'Supplier Details', button('Back To Suppliers', 'directory') + edit + buttons, explanation) +
@@ -216,9 +309,10 @@
   }
   function render() {
     let content;
-    if (loading || error) content = header('Suppliers', 'Supplier Directory', supplierId ? button('Back To Suppliers', 'directory') : '') +
+    if (loading || error) content = header(tab === 'dashboard' ? 'Purchasing Dashboard' : tab === 'all-issues' ? 'Supplier Issues' : 'Suppliers', 'Supplier Directory', supplierId ? button('Back To Suppliers', 'directory') : '') +
       `<p role="status">${safe(error || 'Loading Suppliers…')}</p>${error ? button('Try Again', 'retry') : ''}`;
     else if (supplier) content = renderDetails();
+    else if (purchasing) content = tab === 'dashboard' ? renderPurchasing() : renderAllIssues();
     else if (directory) content = renderDirectory();
     else content = '';
     return `<div class="users-live stock-live supplier-live">${content}</div>`;
@@ -233,41 +327,49 @@
     if (!response.ok) throw Error(response.status === 403 ? 'Suppliers access is unavailable. Check Optional Features and your permissions.' : body.error);
     return body;
   }
-  function readRoute() {
-    const route = /^#suppliers(?:\/([1-9]\d*)(?:\/(overview|locations|contacts|notes))?)?$/.exec(location.hash);
-    return [route?.[1] ? Number(route[1]) : null, route?.[2] || 'overview'];
+  function readRoute(section) {
+    if (section === 'purchasing') return [null, location.hash === '#purchasing/issues' ? 'all-issues' : 'dashboard'];
+    const route = /^#suppliers(?:\/([1-9]\d*)(?:\/(overview|locations|contacts|notes|notes\/issues))?)?$/.exec(location.hash);
+    const view = route?.[2] === 'notes/issues' ? 'issues' : route?.[2] || 'overview';
+    return [route?.[1] ? Number(route[1]) : null, view];
   }
   function writeRoute(identity, view) {
-    const hash = '#suppliers' + (identity ? '/' + identity + '/' + view : '');
+    const hash = view === 'dashboard' ? '#purchasing' : view === 'all-issues' ? '#purchasing/issues'
+      : '#suppliers' + (identity ? '/' + identity + '/' + (view === 'issues' ? 'notes/issues' : view) : '');
     if (location.hash !== hash) history.pushState(null, '', hash);
   }
-  async function show(identity, view = 'overview', navigate = true, focus = '') {
+  async function show(identity, view = 'overview', navigate = true, focus = '', reload = false) {
     if (navigate) writeRoute(identity, view);
     if (identity !== supplierId) {
+      if (identity) statusFilter = issueCategoryFilter = '';
       contactSearch = contactFilter = '';
       noteFilter = 'all';
     }
     supplierId = identity;
-    tab = view;
-    if (supplier && supplier.id === identity && !error) {
+    tab = view === 'issues' ? 'notes' : view;
+    notesView = view === 'issues' ? 'issues' : 'notes';
+    if (!reload && supplier && supplier.id === identity && !error) {
       config.redraw();
       if (focus) document.getElementById(focus)?.focus({preventScroll: true});
       return;
     }
     const generation = ++requestId;
-    supplier = null;
-    directory = null;
+    supplier = directory = purchasing = null;
     loading = true;
     error = '';
     config.redraw();
     try {
-      const data = await request(identity ? api + '/' + identity : api);
+      const path = identity ? '/' + identity : {dashboard: '/dashboard', 'all-issues': '/issues'}[view] || '';
+      const data = await request(api + path);
       if (generation !== requestId) return;
       if (identity) supplier = data;
+      else if (path) purchasing = data;
       else {
         directory = data;
         if (categoryFilter && !data.categories.some(item => item.id === Number(categoryFilter) && !item.archived)) categoryFilter = '';
       }
+      if (data.issueCategories && !data.issueCategories.some(item => item.id === Number(issueCategoryFilter)))
+        issueCategoryFilter = '';
     } catch (failure) {
       if (generation !== requestId) return;
       error = failure.message;
@@ -404,6 +506,9 @@
   }
   function contactDetails(contact) {
     if (!contact) return;
+    const related = supplier.issues.filter(issue => issue.contacts.some(item => item.id === contact.id));
+    const linkedIssues = related.map(issue => `<div class="info-row"><span>${issueButton(issue.title, issue, true)}
+      <span class="sub">${time(issue.createdAt)}</span></span>${issueStatusBadge(issue.status)}${issueButton('View Supplier Issue', issue)}</div>`).join('');
     const content = `<div data-supplier-contact-details="${contact.id}" class="stock-card-stack">
       <div class="row-between supplier-row"><p class="sub">${safe(contact.role)} ${contact.archived ? badge('archived') : ''}</p>
       <div class="preview-page-actions">${editable() ? button('Edit Contact', 'contact-form', contact.id) : ''}</div></div>
@@ -412,6 +517,7 @@
           info('Locations', safe(contactScope(contact))) + info('Professional Links', contact.profiles.map(item => webLink(item.url, item.label)).join('<br>')))}
         ${card('Contact Notes', `<div class="stock-card-stack supplier-results">${noteCards(supplier.notes.filter(note => note.contactId === contact.id), true)
           || '<p class="sub">No Contact Notes Yet.</p>'}</div>`, editable() ? button('Add Note', 'new-contact-note', contact.id) : '')}</div>
+      ${card('Associated Supplier Issues', linkedIssues || '<p class="sub">No Supplier Issues Are Linked To This Contact.</p>')}
       ${editable() ? `<div class="preview-page-actions">${lifecycleButtons('contact', contact)}</div>` : ''}</div>`;
     dialog(contact.name, 'Contact Details', content);
   }
@@ -424,20 +530,151 @@
         success: data => { updateSupplier(data); restore?.(); }
       });
   }
-  function categoriesDialog() {
-    const rows = directory.categories.map(item => `<tr><td>${safe(item.name)}</td><td>${badge(item.archived ? 'archived' : 'active')}</td>
-      <td class="supplier-table-actions">${button('Rename', 'category-form', item.id)}
-      ${button(item.archived ? 'Reactivate' : 'Archive', item.archived ? 'category.reactivate' : 'category.archive', item.id)}</td></tr>`).join('');
-    dialog('Manage Supplier Categories', 'Archived categories stay on existing Supplier records.',
-      table(['Category', 'Status', 'Actions'], rows, 'No Supplier Categories') +
-      `<div class="preview-details-actions">${button('Add Category', 'category-form', '', 'primary')}</div>`);
+  const issueText = 'rows="4" maxlength="12000"';
+  function issueCategoryOptions(company, current) {
+    return [['', 'No Category'], ...company.issueCategories.filter(item => !item.archived || item.id === current)
+      .map(item => [item.id, issueCategoryName(item)])];
   }
-  function categoryForm(category) {
-    dialog(category ? 'Rename Category' : 'Add Category', 'Supplier Categories',
+  function issueUpdates(issue) {
+    return (issue.updates.map(update => `<article class="card card-padded"><div class="row-between supplier-row">
+      <p class="sub">${time(update.createdAt)} · ${safe(update.createdBy)}
+      ${update.updatedAt ? `<br>Corrected by ${safe(update.updatedBy)} · ${time(update.updatedAt)}` : ''}</p>
+      ${editable() ? button('Edit', 'issue-update', update.id) : ''}</div>
+      <p class="supplier-note-text">${safe(update.text)}</p></article>`).join('') || '<p class="sub">No Updates Yet.</p>');
+  }
+  let shownIssue;
+  function issueDialog(company, issue = null, restore) {
+    shownIssue = issue && {company, issue, restore};
+    const contacts = company.contacts.filter(contact => !contact.archived || issue?.contactIds.includes(contact.id));
+    const attribution = issue ? `<p class="sub">Created by ${safe(issue.createdBy)} · ${time(issue.createdAt)}<br>Last updated ${time(issue.updatedAt)}</p>` : '';
+    if (!editable()) {
+      const linked = company.contacts.filter(contact => issue.contactIds.includes(contact.id))
+        .map(contact => safe(contact.name) + (contact.archived ? ' (Archived)' : '')).join(', ');
+      dialog('Supplier Issue Details', company.name, attribution + `
+        <div class="staff-fields">${info('Issue Title', safe(issue.title))}${info('Issue Status', issueStatusBadge(issue.status))}
+        ${info('Issue Category', issueCategoryLabel(issue.categoryId, company.issueCategories))}
+        ${info('Associated Contacts', linked || '—')}</div>
+        ${card('Main Description', `<p class="supplier-note-text">${safe(issue.description)}</p>`)}
+        ${card('Chronological Updates', `<div class="stock-card-stack">${issueUpdates(issue)}</div>`)}`, {restore});
+      return;
+    }
+    const category = `<div class="preview-form-field"><label for="supplier-issue-category">Issue Category</label>
+      <select class="input" id="supplier-issue-category" name="issue-category">${options(issueCategoryOptions(company, issue?.categoryId), issue?.categoryId ?? '')}</select>
+      <div>${button('Add Issue Category', 'issue-category-inline')}</div>
+      <div data-inline-issue-category hidden>${field('Category Name', 'new-issue-category', '', {attrs:'maxlength="70"'})}
+        <div class="preview-details-actions">${button('Cancel', 'issue-category-inline-cancel')}
+        ${button('Save Category', 'issue-category-inline-save', '', 'primary')}</div></div></div>`;
+    const status = issue ? `<div class="preview-form-field"><label for="supplier-issue-status">Issue Status</label>
+      <select class="input" id="supplier-issue-status" name="issue-status">${options(issueStatuses.map(item => [item, item]), issue.status)}</select></div>` : '';
+    dialog(issue ? 'Supplier Issue Details' : 'Add Supplier Issue', company.name, attribution +
+      `<div class="staff-fields" data-issue-fields>${field('Issue Title *', 'issue-title', issue?.title, {attrs: required, wide: true})}
+      ${status}${category}
+      ${field('Main Description *', 'issue-description', issue?.description, {type: 'textarea', attrs: issueText + ' required', wide: true})}</div>` +
+      formSection('Associated Contacts', 'Choose contacts who are dealing with this Issue.',
+        contacts.length ? checkList('issue-contacts', contacts, issue?.contactIds || []) : '<p class="sub">No Contacts Available.</p>') +
+      (issue ? formSection('Chronological Updates', '', `<div class="stock-card-stack">${issueUpdates(issue)}</div>
+        ${field('New Dated Update (Optional)', 'issue-new-update', '', {type: 'textarea', attrs: issueText})}`) : ''), {
+      submit: issue ? 'Save Issue Changes' : 'Add Issue', restore,
+      build(form) {
+        const data = new FormData(form);
+        if (!form.querySelector('[data-inline-issue-category]').hidden)
+          throw Error('Save or cancel the new Issue Category before saving the Issue.');
+        const payload = {title: valueOf(data, 'issue-title'), description: valueOf(data, 'issue-description'),
+          categoryId: Number(data.get('issue-category')) || null, contactIds: selectedIds(data, 'issue-contacts')};
+        if (issue) Object.assign(payload, {status: data.get('issue-status'), newUpdate: valueOf(data, 'issue-new-update')});
+        return command('issue.save', payload, company, issue);
+      },
+      success(data) {
+        refreshAfterIssueSave(data);
+        restore?.();
+      }
+    });
+  }
+  async function openIssue(company, id, restore, trigger) {
+    const generation = requestId;
+    try {
+      const issue = await request(`${api}/${company}/issues/${id}`);
+      if (active && generation === requestId && trigger.isConnected && !pending) issueDialog(issue.supplier, issue, restore);
+    } catch (failure) {
+      if (active && generation === requestId) config.notify(failure.message, 'error');
+    }
+  }
+  function refreshAfterIssueSave(data) {
+    if (supplier?.id === data.id) updateSupplier(data);
+    else if (purchasing) void show(null, tab, false, '', true);
+  }
+  function correctIssueUpdate(identity) {
+    if (!shownIssue) return;
+    const {company, issue, restore} = shownIssue;
+    const update = issue.updates.find(item => item.id === identity);
+    if (!update) return;
+    config.closeModal(false, () => {
+      const backToIssue = () => issueDialog(company, issue, restore);
+      dialog('Edit Issue Update', `Recorded by ${update.createdBy} · ${formatDate(update.createdAt)}`,
+        field('Issue Update *', 'issue-correction', update.text, {type: 'textarea', attrs: issueText + ' required'}), {
+        submit: 'Save Changes', restore: backToIssue,
+        build: form => command('issue-update.correct', {issueId: issue.id, text: valueOf(new FormData(form), 'issue-correction')}, company, update),
+        success(data) {
+          refreshAfterIssueSave(data);
+          issueDialog(data.issue.supplier, data.issue, restore);
+        }
+      });
+    });
+  }
+  async function addInlineIssueCategory(form) {
+    const entry = form.querySelector('#supplier-new-issue-category');
+    const feedback = form.querySelector('[data-supplier-feedback]');
+    pending = true;
+    form.dataset.saving = 'true';
+    try {
+      const result = await request(api, command('issue-category.save', {name: entry.value}));
+      const select = form.querySelector('#supplier-issue-category');
+      select.innerHTML = options(issueCategoryOptions(result, shownIssue?.issue.categoryId), result.categoryId);
+      select.dispatchEvent(new Event('device-dropdown-refresh'));
+      applyIssueCategories(result);
+      toggleInlineCategory(form, false);
+      feedback.textContent = '';
+      config.notify('Issue Category added.');
+    } catch (failure) {
+      feedback.textContent = failure.message;
+      entry.focus();
+    } finally {
+      pending = false;
+      delete form.dataset.saving;
+    }
+  }
+  function toggleInlineCategory(form, visible) {
+    form.querySelector('[data-inline-issue-category]').hidden = !visible;
+    const entry = form.querySelector('#supplier-new-issue-category');
+    entry.value = '';
+    const category = form.querySelector('#supplier-issue-category + .caffoot-select-host button, #supplier-issue-category:not(.caffoot-search-native)');
+    (visible ? entry : category)?.focus();
+  }
+  function applyIssueCategories(result) {
+    const source = supplier || purchasing;
+    if (source) source.issueCategories = result.issueCategories;
+    if (shownIssue) shownIssue.company.issueCategories = result.issueCategories;
+    config.redraw();
+  }
+
+  function categoriesDialog(issues = false) {
+    const catalogue = issues ? (supplier || purchasing).issueCategories : directory.categories;
+    const type = issues ? 'issue-category' : 'category';
+    const rows = catalogue.map(item => `<tr><td>${safe(item.name)}</td>
+      <td>${issues && item.archived ? '<span class="device-status maintenance">Retired</span>' : badge(item.archived ? 'archived' : 'active')}</td>
+      <td class="supplier-table-actions">${button('Rename', type + '-form', item.id)}
+      ${button(item.archived ? 'Reactivate' : issues ? 'Retire' : 'Archive', type + (item.archived ? '.reactivate' : '.archive'), item.id)}</td></tr>`).join('');
+    dialog(issues ? 'Manage Issue Categories' : 'Manage Supplier Categories',
+      issues ? 'Retired Issue Categories are kept on existing Issues.' : 'Archived categories stay on existing Supplier records.',
+      table(['Category', 'Status', 'Actions'], rows, 'No Categories') +
+      `<div class="preview-details-actions">${button('Add Category', type + '-form', '', 'primary')}</div>`);
+  }
+  function categoryForm(category, issues = false) {
+    dialog(category ? 'Rename Category' : 'Add Category', issues ? 'Issue Categories' : 'Supplier Categories',
       field('Category Name *', 'name', category?.name, {attrs:'required maxlength="70"'}), {
-        submit: category ? 'Save Category' : 'Add Category', restore: categoriesDialog,
-        build: form => command('category.save', {name: valueOf(new FormData(form), 'name')}, null, category),
-        success: updateCategories
+        submit: category ? 'Save Category' : 'Add Category', restore: () => categoriesDialog(issues),
+        build: form => command(issues ? 'issue-category.save' : 'category.save', {name: valueOf(new FormData(form), 'name')}, null, category),
+        success: data => updateCategories(data, issues)
       });
   }
 
@@ -461,7 +698,12 @@
     config.redraw();
     document.getElementById(newCompany ? 'supplier-page-heading' : 'supplier-tab-' + tab)?.focus({preventScroll: !newCompany});
   }
-  function updateCategories(data) {
+  function updateCategories(data, issues = false) {
+    if (issues) {
+      applyIssueCategories(data);
+      categoriesDialog(true);
+      return;
+    }
     directory = data;
     if (categoryFilter && !data.categories.some(item => item.id === Number(categoryFilter) && !item.archived)) categoryFilter = '';
     config.redraw();
@@ -469,23 +711,26 @@
   }
   function statusConfirmation(operation, identity, restore) {
     const [kind, verb] = operation.split('.');
+    const issueCategory = kind === 'issue-category';
+    const categoryAction = issueCategory || kind === 'category';
     const record = {supplier, location: supplier && findLocation(identity), contact: supplier && findContact(identity),
-      note: supplier && findNote(identity), category: directory?.categories.find(item => item.id === identity)}[kind];
+      note: supplier && findNote(identity), category: directory?.categories.find(item => item.id === identity),
+      'issue-category': (supplier || purchasing)?.issueCategories?.find(item => item.id === identity)}[kind];
     if (!record) return;
-    const label = {supplier: 'Supplier', category: 'Supplier Category', location: 'Location', contact: 'Contact', note: 'Note'}[kind];
-    const title = verb === 'make-main' ? 'Make Main Office' : `${verb[0].toUpperCase() + verb.slice(1)} ${label}`;
+    const label = {supplier: 'Supplier', category: 'Supplier Category', 'issue-category': 'Issue Category', location: 'Location', contact: 'Contact', note: 'Note'}[kind];
+    const title = verb === 'make-main' ? 'Make Main Office' : issueCategory && verb === 'archive' ? 'Retire Issue Category' : `${verb[0].toUpperCase() + verb.slice(1)} ${label}`;
     const descriptions = {
       delete: kind === 'supplier' ? 'Permanently delete this Supplier and its unused Locations and Contacts.' : `Permanently delete this ${label}.`,
-      archive: `Archive this ${label} and keep its existing history and relationships.`,
+      archive: `${issueCategory ? "Retire" : "Archive"} this ${label} and keep its existing history and relationships.`,
       reactivate: `Return this ${label} to active use with its existing record and history.`,
       'make-main': 'Use this Location as the company address. Existing Contact assignments stay with their Locations.'
     };
     dialog(title + '?', record.name || (record.contactId ? findContact(record.contactId)?.name : supplier?.name),
       `<p>${descriptions[verb]}</p>`, {
-        submit: title, destructive: verb === 'delete', restore: kind === 'category' ? categoriesDialog : restore,
-        build: () => command(operation, {confirmed: true}, kind === 'category' ? null : supplier, kind === 'supplier' ? null : record),
+        submit: title, destructive: verb === 'delete', restore: categoryAction ? () => categoriesDialog(issueCategory) : restore,
+        build: () => command(operation, {confirmed: true}, categoryAction ? null : supplier, kind === 'supplier' ? null : record),
         success(data) {
-          if (kind === 'category') updateCategories(data);
+          if (categoryAction) updateCategories(data, issueCategory);
           else if (kind === 'supplier' && verb === 'delete') void show(null);
           else {
             updateSupplier(data);
@@ -517,6 +762,9 @@
       directoryRows.innerHTML = rows || emptyRow(6, 'No Suppliers Match These Filters');
       document.getElementById('supplier-result-count').textContent = `Showing ${count} of ${directory.suppliers.length} suppliers`;
     }
+    const issueList = document.getElementById('supplier-issue-rows');
+    if (issueList) issueList.innerHTML = issueRows(supplier || purchasing, !supplier)
+      || emptyRow(supplier ? 6 : 7, 'No Issues Match These Filters');
     const contacts = document.getElementById('supplier-contact-rows');
     if (contacts && supplier) contacts.innerHTML = contactRows() || emptyRow(6, 'No Contacts Match These Filters');
   }
@@ -529,12 +777,27 @@
     const details = target.closest('[data-supplier-contact-details]');
     const restore = details && (() => contactDetails(findContact(Number(details.dataset.supplierContactDetails))));
     switch (action) {
-      case 'directory': if (supplierId || error) void show(null, 'overview', true, 'supplier-page-heading'); break;
-      case 'retry': void show(supplierId, tab, false); break;
+      case 'directory':
+        if (purchasing) config.navigate('suppliers');
+        else if (supplierId || error) void show(null, 'overview', true, 'supplier-page-heading');
+        break;
+      case 'dashboard': config.navigate('purchasing'); break;
+      case 'all-issues':
+        statusFilter = target.dataset.id;
+        issueCategoryFilter = '';
+        void show(null, 'all-issues', true, 'supplier-page-heading');
+        break;
+      case 'retry': void show(supplierId, notesView === 'issues' ? 'issues' : tab, false); break;
+      case 'notes-view': {
+        const view = target.dataset.id;
+        void show(supplierId, view, true, 'supplier-view-' + view);
+        break;
+      }
+      case 'issue-details': void openIssue(Number(target.dataset.company), identity, restore, target); break;
       case 'open': void show(identity, 'overview', true, 'supplier-page-heading'); break;
       case 'tab': {
         const selected = target.dataset.id;
-        void show(supplierId, selected, true, 'supplier-tab-' + selected);
+        void show(supplierId, selected, true, 'supplier-tab-' + (selected === 'issues' ? 'notes' : selected));
         break;
       }
       case 'contact-details': contactDetails(findContact(identity)); break;
@@ -550,6 +813,15 @@
             noteForm(note, note?.contactId ?? null, restore);
             break;
           }
+          case 'issue-add': issueDialog(supplier); break;
+          case 'issue-update': correctIssueUpdate(identity); break;
+          case 'issue-categories': categoriesDialog(true); break;
+          case 'issue-category-form':
+            categoryForm((supplier || purchasing).issueCategories.find(item => item.id === identity), true);
+            break;
+          case 'issue-category-inline': toggleInlineCategory(target.form, true); break;
+          case 'issue-category-inline-cancel': toggleInlineCategory(target.form, false); break;
+          case 'issue-category-inline-save': void addInlineIssueCategory(target.form); break;
           case 'categories': categoriesDialog(); break;
           case 'category-form': categoryForm(directory.categories.find(item => item.id === identity)); break;
           case 'add-entry': {
@@ -611,6 +883,8 @@
     const {id, value, checked} = event.target;
     if (id === 'supplier-category-filter') categoryFilter = value;
     else if (id === 'supplier-contact-filter') contactFilter = value;
+    else if (id === 'supplier-issue-status-filter') statusFilter = value;
+    else if (id === 'supplier-issue-category-filter') issueCategoryFilter = value;
     else if (id === 'supplier-note-filter') {
       noteFilter = value;
       config.redraw();
@@ -635,20 +909,20 @@
 
   window.caffootSuppliers = {
     configure(settings) { config = settings; },
-    enter(fromRoute = false) {
+    enter(section, fromRoute = false) {
       active = true;
-      void show(...(fromRoute ? readRoute() : [null, 'overview']), !fromRoute);
+      void show(...(fromRoute ? readRoute(section) : [null, section === 'purchasing' ? 'dashboard' : 'overview']), !fromRoute);
     },
     leave() {
       active = false;
       requestId++;
-      directory = supplier = supplierId = null;
+      directory = supplier = supplierId = purchasing = shownIssue = null;
       loading = false;
       error = '';
     },
     closed(force) {
       const restore = returnDialog;
-      returnDialog = submitDialog = null;
+      returnDialog = submitDialog = shownIssue = null;
       if (!force) restore?.();
     },
     render

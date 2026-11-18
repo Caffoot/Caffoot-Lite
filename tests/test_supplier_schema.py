@@ -6,6 +6,7 @@ from unittest.mock import patch
 from backend import schema
 from backend.permissions import can_access
 from backend.supplier_schema import INITIAL_CATEGORIES
+from backend.supplier_issue_schema import INITIAL_ISSUE_CATEGORIES
 
 
 class SupplierSchemaTests(unittest.TestCase):
@@ -25,7 +26,7 @@ class SupplierSchemaTests(unittest.TestCase):
         self.db.execute("INSERT INTO inventory_devices(id,name,record_json,ordinal) VALUES('a','Host','{}',0)")
         self.db.commit()
         schema.initialise_database(self.db)
-        self.assertEqual(self.db.execute('SELECT max(version) FROM schema_migrations').fetchone(), (21,))
+        self.assertEqual(self.db.execute('SELECT max(version) FROM schema_migrations').fetchone(), (22,))
         self.assertEqual(self.db.execute('SELECT id,name FROM inventory_devices').fetchall(), [('a','Host')])
         self.assertEqual(self.db.execute('SELECT section,level FROM account_permission_overrides ORDER BY section').fetchall(),
                          [('Devices','deny'),('IT Assets','edit')])
@@ -53,6 +54,27 @@ class SupplierSchemaTests(unittest.TestCase):
         self.assertFalse(can_access(self.db, 1, 'IT Assets'))
         self.db.execute("UPDATE organisation_features SET enabled=0 WHERE feature='suppliers'")
         self.assertFalse(can_access(self.db, 1, 'Suppliers'))
+
+    def test_schema_21_upgrade_preserves_supplier_records_and_seeds_once(self):
+        with patch.object(schema, 'SCHEMA_VERSION', 21):
+            schema.initialise_database(self.db)
+        self.db.execute("INSERT INTO suppliers(name,name_key,website,description) VALUES('Northlight','northlight','','')")
+        self.db.execute("INSERT INTO supplier_contacts(supplier_id,name,role,phones,emails,profiles,company_wide) "
+                        "VALUES(1,'Kim','Buyer','[]','[]','[]',1)")
+        self.db.execute("INSERT INTO supplier_notes(supplier_id,contact_id,body,created_by,created_label,created_at) "
+                        "VALUES(1,1,'Retain this note',1,'Editor','2026-11-18')")
+        self.db.execute("UPDATE organisation_features SET enabled=1 WHERE feature='suppliers'")
+        self.db.commit()
+        schema.initialise_database(self.db)
+        self.assertEqual(self.db.execute("SELECT body FROM supplier_notes").fetchone(), ("Retain this note",))
+        self.assertEqual(self.db.execute("SELECT has_issue_history FROM supplier_contacts").fetchone(), (0,))
+        self.assertEqual(self.db.execute("SELECT enabled FROM organisation_features WHERE feature='suppliers'").fetchone(), (1,))
+        self.assertEqual(self.db.execute("SELECT name FROM supplier_issue_categories ORDER BY id").fetchall(),
+                         [(name,) for name in INITIAL_ISSUE_CATEGORIES])
+        self.db.execute("UPDATE supplier_issue_categories SET archived=1 WHERE id=1")
+        self.db.commit()
+        schema.initialise_database(self.db)
+        self.assertEqual(self.db.execute("SELECT archived FROM supplier_issue_categories WHERE id=1").fetchone(), (1,))
 
     def test_unknown_pre_upgrade_supplier_grant_fails_closed(self):
         with patch.object(schema, 'SCHEMA_VERSION', 20):

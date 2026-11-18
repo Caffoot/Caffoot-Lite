@@ -1,0 +1,260 @@
+{
+  "sourceCommit": "4055b8e612c262b461baf60954be84668d46ba79",
+  "schema": 22,
+  "browser": "Chromium 156.0.8078.79",
+  "origin": "https://127.0.0.1:8097",
+  "captures": [
+    {
+      "file": "purchasing-dashboard-light-1440.png",
+      "theme": "light",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "sha256": "f0af5c59f6c66f6644088d57ae7ef32818cf9e4885b699ed5d33f0764e672e32"
+    },
+    {
+      "file": "all-supplier-issues-light-1440.png",
+      "theme": "light",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "sha256": "81ebd6b88e033be62f3f87c0daf16a37acedf4390a2b8d23bb5a4982ad9a1f1d"
+    },
+    {
+      "file": "issue-categories-light-1440.png",
+      "theme": "light",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "sha256": "85c0f138112ef097a5d88ca911fa46456dff09a51b058c5db9bb9c6aa78c30fd"
+    },
+    {
+      "file": "supplier-issues-light-1440.png",
+      "theme": "light",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "sha256": "807a140903c1cad9db42a254214608fc34f03c595aad168867a72cdb2efea4b5"
+    },
+    {
+      "file": "add-issue-light-1440.png",
+      "theme": "light",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "sha256": "60ea3345a2f5fb2ccb8933e45b19a821f71ce5fbac80b48c561ccbeb683284d9"
+    },
+    {
+      "file": "issue-details-light-1440.png",
+      "theme": "light",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "sha256": "00126df6bef62603ea8daa099144765964ff1452406d8b86b40cb5f045f842f4"
+    },
+    {
+      "file": "issue-update-history-light-1440.png",
+      "theme": "light",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "sha256": "0f0d5f8a21ab9cf537f4e102cb18fed59ec08761661b1ec7f37f388eee780605"
+    },
+    {
+      "file": "purchasing-dashboard-dark-1440.png",
+      "theme": "dark",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "sha256": "0cf3d76711238c4f654baa14d9b220d63e564de995444e04369da58a30863177"
+    },
+    {
+      "file": "all-supplier-issues-dark-1440.png",
+      "theme": "dark",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "sha256": "5bba4906fa394cbafd192f3a6465e048e824ee2d8c0344478d44c6900bff80d2"
+    },
+    {
+      "file": "issue-categories-dark-1440.png",
+      "theme": "dark",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "sha256": "7ee391526b4c594d94a65b22b1e4869735f5d4806d494e3b874c5b96f5a90c1c"
+    },
+    {
+      "file": "supplier-issues-dark-1440.png",
+      "theme": "dark",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "sha256": "5b1dec8c570a4b9f4643b3906fb51d00c5dcabe08c1ba1f211ca835ae82f98a8"
+    },
+    {
+      "file": "add-issue-dark-1440.png",
+      "theme": "dark",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "sha256": "1d7eae0b2057288e80fe3eadc20efaa5d8823a130ea73edb82b5629265173219"
+    },
+    {
+      "file": "issue-details-dark-1440.png",
+      "theme": "dark",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "sha256": "22a236bf2b5407336abf366e74592ed9b1f24202601e52770f12983ec8445694"
+    },
+    {
+      "file": "issue-update-history-dark-1440.png",
+      "theme": "dark",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "sha256": "15a39dba8c07d5ec5736b939a3c553335a62f300fa1ddedf94e7cdf266951492"
+    },
+    {
+      "file": "purchasing-dashboard-light-390.png",
+      "theme": "light",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "sha256": "ebf3b268c500bd0275cc83d985b1da147b7af6073a227b7c08555ff63e05170d"
+    },
+    {
+      "file": "all-supplier-issues-light-390.png",
+      "theme": "light",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "sha256": "4a22fca47b39b97757105576daab91f6d261d2e2f8b272e1db378229e798e932"
+    },
+    {
+      "file": "issue-categories-light-390.png",
+      "theme": "light",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "sha256": "4504dbb16454456640b0e08e727be37c6e9e83d7268d4802429e75c36382b395"
+    },
+    {
+      "file": "supplier-issues-light-390.png",
+      "theme": "light",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "sha256": "8f599ab0e4683b17a278fd462d7a8ceef8520a9d2c7a7724d0a516a2bf2438a4"
+    },
+    {
+      "file": "add-issue-light-390.png",
+      "theme": "light",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "sha256": "5cdc0ad1527faecd7b0e30ca18de9ed7e9928a9f60914a2c685128341acc6e4c"
+    },
+    {
+      "file": "issue-details-light-390.png",
+      "theme": "light",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "sha256": "52c6d86d8166cc88443a508a6c56b3fdda8befcc7dd4ef44d2424d259b141267"
+    },
+    {
+      "file": "issue-update-history-light-390.png",
+      "theme": "light",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "sha256": "18c7fe01b15ffa591e2fc18aef3dfb6d4f77ddc46b4bc500516053fc87531072"
+    },
+    {
+      "file": "purchasing-dashboard-dark-390.png",
+      "theme": "dark",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "sha256": "9ef74bfb11291347e5694b47ddbf002f50019c77ed5a18d9a44e8915fdc9fe0b"
+    },
+    {
+      "file": "all-supplier-issues-dark-390.png",
+      "theme": "dark",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "sha256": "9a455bb68dd9bcc7e43d23704824ee65a44de46ef41c1e555d2163c636a03827"
+    },
+    {
+      "file": "issue-categories-dark-390.png",
+      "theme": "dark",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "sha256": "303343bf2698c54f3bb123fbcd7904d8dbac7a18e046d82d1269f6fe9e8167fa"
+    },
+    {
+      "file": "supplier-issues-dark-390.png",
+      "theme": "dark",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "sha256": "1a45882d686e639445a7f30f35ec221b670c21cb99120516bdde39ded6bae624"
+    },
+    {
+      "file": "add-issue-dark-390.png",
+      "theme": "dark",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "sha256": "679efa19d0970b1a5b805a9e05baa777d413915774747945176d04435d845068"
+    },
+    {
+      "file": "issue-details-dark-390.png",
+      "theme": "dark",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "sha256": "b80a7d2c3b4071909519ed05ce0547425e33f5c47e10ecc8ea1361d4e9f00942"
+    },
+    {
+      "file": "issue-update-history-dark-390.png",
+      "theme": "dark",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "sha256": "e8af93e4a7adee11bf5356a81c300e76f524f794fbf67f9fc16cdb09a23e4a92"
+    }
+  ]
+}

@@ -7,6 +7,7 @@ from urllib.parse import urlsplit
 from .audit_events import record_actor_event
 from .permissions import _admin, can_access
 from .sessions import session_account
+from .supplier_issue_schema import ISSUE_STATUSES
 
 
 def supplier_access(connection, actor, *, edit=False):
@@ -96,10 +97,11 @@ def address(value):
     ))
 
 
-def directory_categories(connection):
+def directory_categories(connection, *, issues=False):
+    table = "supplier_issue_categories" if issues else "supplier_categories"
     return [{"id": identity, "name": name, "archived": bool(archived), "revision": revision}
             for identity, name, archived, revision in connection.execute(
-                "SELECT id,name,archived,revision FROM supplier_categories ORDER BY name COLLATE NOCASE,id"
+                f"SELECT id,name,archived,revision FROM {table} ORDER BY name COLLATE NOCASE,id"
             )]
 
 
@@ -149,6 +151,16 @@ def supplier_delete_reason(connection, supplier, sections):
         return "This Supplier has supply history. Use Disable to retain its records."
     if supplier[6] or connection.execute("SELECT 1 FROM supplier_notes WHERE supplier_id=? LIMIT 1", (supplier[0],)).fetchone():
         return "This Supplier has Note history. Use Archive to retain its records."
+    if connection.execute("SELECT 1 FROM supplier_issues WHERE supplier_id=? LIMIT 1", (supplier[0],)).fetchone():
+        return "This Supplier has Issue history. Use Archive to retain its records."
+    return ""
+
+
+def contact_delete_reason(note_history, issue_history):
+    if note_history:
+        return "This Contact has Note history. Use Archive to retain its record."
+    if issue_history:
+        return "This Contact has Issue history. Use Archive to retain its record."
     return ""
 
 
@@ -171,6 +183,8 @@ def read_supplier(connection, identity):
             "SELECT category_id FROM supplier_category_assignments WHERE supplier_id=?", (identity,)
         )],
         "categories": directory_categories(connection),
+        "issueCategories": directory_categories(connection, issues=True),
+        "issues": read_issue_rows(connection, identity),
         "locations": [
             {"id": lid, "name": name, "address": street, "city": city, "postcode": postcode, "country": country,
              "main": bool(main), "archived": bool(archived), "deleteReason": location_delete_reason(connection, lid, main)}
@@ -182,12 +196,12 @@ def read_supplier(connection, identity):
         "contacts": [
             {"id": cid, "name": name, "role": role, "phones": json.loads(phones), "emails": json.loads(emails),
              "profiles": json.loads(profiles), "companyWide": bool(wide), "archived": bool(archived),
-             "deleteReason": "This Contact has Note history. Use Archive to retain its record." if history else "",
+             "deleteReason": contact_delete_reason(note_history, issue_history),
              "locationIds": [row[0] for row in connection.execute(
                  "SELECT location_id FROM supplier_contact_locations WHERE contact_id=? ORDER BY location_id", (cid,)
              )]}
-            for cid, name, role, phones, emails, profiles, wide, archived, history in connection.execute(
-                "SELECT id,name,role,phones,emails,profiles,company_wide,archived,has_note_history "
+            for cid, name, role, phones, emails, profiles, wide, archived, note_history, issue_history in connection.execute(
+                "SELECT id,name,role,phones,emails,profiles,company_wide,archived,has_note_history,has_issue_history "
                 "FROM supplier_contacts WHERE supplier_id=? ORDER BY name COLLATE NOCASE,id", (identity,)
             )
         ],
@@ -291,36 +305,39 @@ def save_company(connection, actor, supplier, payload):
 
 
 def save_category(connection, actor, identity, revision, operation, payload):
+    issues = operation.startswith("issue-category.")
+    table = "supplier_issue_categories" if issues else "supplier_categories"
+    kind = "Issue Category" if issues else "Category"
     current = None
     if identity is not None:
         if type(identity) is not int or not 0 < identity < 2**63:
-            raise LookupError("Supplier Category not found")
+            raise LookupError(f"Supplier {kind} not found")
         current = connection.execute(
-            "SELECT name,archived,revision FROM supplier_categories WHERE id=?", (identity,)
+            f"SELECT name,archived,revision FROM {table} WHERE id=?", (identity,)
         ).fetchone()
         if current is None:
-            raise LookupError("Supplier Category not found")
+            raise LookupError(f"Supplier {kind} not found")
         require_revision(revision, current[2])
-    if operation == "category.save":
+    if operation.endswith(".save"):
         fields(payload, ("name",))
         name = cleaned(payload["name"], "a Category name", 70, required=True)
         key = name.casefold()
-        if connection.execute("SELECT 1 FROM supplier_categories WHERE name_key=? AND id!=?", (key, identity or 0)).fetchone():
-            raise FileExistsError("A Supplier Category with this name already exists")
+        if connection.execute(f"SELECT 1 FROM {table} WHERE name_key=? AND id!=?", (key, identity or 0)).fetchone():
+            raise FileExistsError(f"A Supplier {kind} with this name already exists")
         if current:
-            connection.execute("UPDATE supplier_categories SET name=?,name_key=?,revision=revision+1 WHERE id=?", (name, key, identity))
+            connection.execute(f"UPDATE {table} SET name=?,name_key=?,revision=revision+1 WHERE id=?", (name, key, identity))
         else:
-            identity = connection.execute("INSERT INTO supplier_categories(name,name_key) VALUES(?,?)", (name, key)).lastrowid
-        log_change(connection, actor, "Updated" if current else "Created", name, "Category", identity,
-                   before={"name": current[0]} if current else None)
+            identity = connection.execute(f"INSERT INTO {table}(name,name_key) VALUES(?,?)", (name, key)).lastrowid
+        log_change(connection, actor, "Updated" if current else "Created", name, kind, identity,
+                   before={"name": current[0]} if current else None, after={"name": name})
     else:
         if not current:
-            raise LookupError("Supplier Category not found")
+            raise LookupError(f"Supplier {kind} not found")
         fields(payload, ("confirmed",))
         confirmed(payload)
-        set_archived(connection, actor, "supplier_categories", identity, current[0], "Category",
+        set_archived(connection, actor, table, identity, current[0], kind,
                      current[1], operation, revision=True)
-    return read_directory(connection)
+    return {"issueCategories": directory_categories(connection, issues=True), "categoryId": identity} if issues else read_directory(connection)
 
 
 def set_archived(connection, actor, table, identity, label, kind, current, operation, *, revision=False):
@@ -475,8 +492,8 @@ def change_child(connection, actor, supplier, record, identity, operation, paylo
     elif operation == f"{record}.delete":
         if record == "location":
             reason = location_delete_reason(connection, identity, current[7])
-        elif record == "contact" and current[9]:
-            reason = "This Contact has Note history. Use Archive to retain its record."
+        elif record == "contact":
+            reason = contact_delete_reason(current[9], current[10])
         else:
             reason = ""
         if reason:
@@ -491,11 +508,183 @@ def change_child(connection, actor, supplier, record, identity, operation, paylo
         set_archived(connection, actor, table, identity, current[2], kind, archived, operation)
 
 
+def read_issue_rows(connection, supplier=None, *, recent=False):
+    where, values = ("WHERE i.supplier_id=?", (supplier,)) if supplier is not None else ("", ())
+    limit = ""
+    if recent:
+        where = "WHERE i.status IN ('Open','In Progress')"
+        limit = "LIMIT 5"
+    rows = connection.execute(f"""
+        SELECT i.id,i.supplier_id,s.name,i.title,i.category_id,i.status,i.created_at,i.updated_at
+        FROM supplier_issues i JOIN suppliers s ON s.id=i.supplier_id
+        {where} ORDER BY i.updated_at DESC,i.id DESC {limit}
+    """, values).fetchall()
+    issues = {
+        identity: {"id": identity, "supplierId": company, "supplierName": name, "title": title,
+                   "categoryId": category, "status": status, "createdAt": created, "updatedAt": updated, "contacts": []}
+        for identity, company, name, title, category, status, created, updated in rows
+    }
+    if issues and not recent:
+        for issue, contact, name, archived in connection.execute(f"""
+            SELECT x.issue_id,c.id,c.name,c.archived FROM supplier_issue_contacts x
+            JOIN supplier_issues i ON i.id=x.issue_id
+            JOIN supplier_contacts c ON c.id=x.contact_id
+            {where} ORDER BY c.name COLLATE NOCASE,c.id
+        """, values):
+            issues[issue]["contacts"].append({"id": contact, "name": name, "archived": bool(archived)})
+    return list(issues.values())
+
+
+def read_issues(connection):
+    return {"issues": read_issue_rows(connection), "issueCategories": directory_categories(connection, issues=True)}
+
+
+def read_purchasing_dashboard(connection):
+    total, available = connection.execute("SELECT count(*),count(CASE WHEN status='active' THEN 1 END) FROM suppliers").fetchone()
+    counts = dict(connection.execute("SELECT status,count(*) FROM supplier_issues GROUP BY status"))
+    return {"totalSuppliers": total, "availableSuppliers": available,
+            "statusCounts": {status: counts.get(status, 0) for status in ISSUE_STATUSES},
+            "recentIssues": read_issue_rows(connection, recent=True),
+            "issueCategories": directory_categories(connection, issues=True)}
+
+
+def read_issue(connection, supplier_id, identity):
+    issue = child_record(connection, "supplier_issues", supplier_id, identity)
+    company = get_supplier(connection, supplier_id)
+    return {
+        "supplier": {
+            "id": supplier_id, "name": company[1], "revision": company[5],
+            "contacts": [
+                {"id": contact, "name": name, "archived": bool(archived)}
+                for contact, name, archived in connection.execute(
+                    "SELECT id,name,archived FROM supplier_contacts WHERE supplier_id=? ORDER BY name COLLATE NOCASE,id",
+                    (supplier_id,),
+                )
+            ],
+            "issueCategories": directory_categories(connection, issues=True),
+        },
+        "id": identity, "supplierId": supplier_id, "title": issue[2], "description": issue[3],
+        "categoryId": issue[4], "status": issue[5], "createdBy": issue[7], "createdAt": issue[8],
+        "updatedAt": issue[9],
+        "contactIds": [contact for (contact,) in connection.execute(
+            "SELECT contact_id FROM supplier_issue_contacts WHERE issue_id=? ORDER BY contact_id", (identity,)
+        )],
+        "updates": [
+            {"id": update, "text": body, "createdBy": creator, "createdAt": created,
+             "updatedBy": editor, "updatedAt": updated}
+            for update, body, creator, created, editor, updated in connection.execute(
+                "SELECT id,body,created_label,created_at,updated_label,updated_at FROM supplier_issue_updates "
+                "WHERE issue_id=? ORDER BY created_at,id", (identity,)
+            )
+        ],
+    }
+
+
+def issue_snapshot(supplier_id, values, contacts, origin):
+    title, description, category, status = values
+    actor, author, created = origin
+    return {"supplierId": supplier_id, "title": title, "description": description,
+            "categoryId": category, "status": status, "contactIds": sorted(contacts),
+            "createdById": actor, "createdBy": author, "createdAt": created}
+
+
+def save_issue(connection, actor, supplier_id, identity, payload):
+    current = child_record(connection, "supplier_issues", supplier_id, identity) if identity is not None else None
+    if current:
+        fields(payload, ("title", "description", "categoryId", "contactIds"), ("status", "newUpdate"))
+    else:
+        fields(payload, ("title", "description"), ("categoryId", "contactIds"))
+    title = cleaned(payload["title"], "an Issue Title", required=True)
+    description = cleaned(payload["description"], "a Main Description", 12000, required=True, multiline=True)
+    status = payload.get("status", current[5] if current else "Open")
+    if status not in ISSUE_STATUSES:
+        raise ValueError("Choose a valid Issue Status")
+    category = payload.get("categoryId")
+    if category is not None:
+        if type(category) is not int or not 0 < category < 2**63:
+            raise ValueError("Choose a valid Issue Category")
+        if not (current and category == current[4]) and not connection.execute(
+                "SELECT 1 FROM supplier_issue_categories WHERE id=? AND archived=0", (category,)).fetchone():
+            raise ValueError("Only active Issue Categories can be newly assigned")
+    contacts = identities(payload.get("contactIds", []))
+    previous = {contact for (contact,) in connection.execute(
+        "SELECT contact_id FROM supplier_issue_contacts WHERE issue_id=?", (identity,)
+    )} if current else set()
+    for contact in contacts - previous:
+        if child_record(connection, "supplier_contacts", supplier_id, contact)[8]:
+            raise ValueError("Archived Contacts cannot be newly linked")
+    new_update = cleaned(payload.get("newUpdate", ""), "Issue Update", 12000, multiline=True)
+    author = connection.execute("SELECT username FROM accounts WHERE id=?", (actor,)).fetchone()[0]
+    now = datetime.now(timezone.utc).isoformat(timespec="microseconds").replace("+00:00", "Z")
+    values = (title, description, category, status)
+    if current:
+        if current[2:6] != values or previous != contacts:
+            connection.execute("UPDATE supplier_issues SET title=?,description=?,category_id=?,status=?,updated_at=? WHERE id=?",
+                               (*values, now, identity))
+            log_change(connection, actor, "Updated", title, "Issue", identity,
+                       issue_snapshot(supplier_id, current[2:6], previous, current[6:9]),
+                       issue_snapshot(supplier_id, values, contacts, current[6:9]))
+    else:
+        identity = connection.execute(
+            "INSERT INTO supplier_issues(supplier_id,title,description,category_id,status,created_by,created_label,created_at,updated_at) "
+            "VALUES(?,?,?,?,?,?,?,?,?)", (supplier_id, *values, actor, author, now, now)
+        ).lastrowid
+        log_change(connection, actor, "Created", title, "Issue", identity,
+                   after=issue_snapshot(supplier_id, values, contacts, (actor, author, now)))
+    connection.executemany("DELETE FROM supplier_issue_contacts WHERE issue_id=? AND contact_id=?",
+                           [(identity, contact) for contact in previous - contacts])
+    connection.executemany("INSERT INTO supplier_issue_contacts VALUES(?,?,?)",
+                           [(supplier_id, identity, contact) for contact in contacts - previous])
+    if new_update:
+        write_issue_update(connection, actor, supplier_id, identity, title, new_update)
+    return identity
+
+
+def write_issue_update(connection, actor, supplier_id, issue_id, title, body, current=None):
+    author = connection.execute("SELECT username FROM accounts WHERE id=?", (actor,)).fetchone()[0]
+    now = datetime.now(timezone.utc).isoformat(timespec="microseconds").replace("+00:00", "Z")
+    if current:
+        identity, previous, creator, created_label, created_at = current
+        if previous == body:
+            return
+        connection.execute("UPDATE supplier_issue_updates SET body=?,updated_by=?,updated_label=?,updated_at=? WHERE id=?",
+                           (body, actor, author, now, identity))
+    else:
+        identity = connection.execute(
+            "INSERT INTO supplier_issue_updates(issue_id,body,created_by,created_label,created_at) VALUES(?,?,?,?,?)",
+            (issue_id, body, actor, author, now),
+        ).lastrowid
+        creator, created_label, created_at = actor, author, now
+    connection.execute("UPDATE supplier_issues SET updated_at=? WHERE id=?", (now, issue_id))
+    snapshot = {"supplierId": supplier_id, "issueId": issue_id, "createdById": creator,
+                "createdBy": created_label, "createdAt": created_at}
+    log_change(connection, actor, "Corrected" if current else "Created", title, "Issue Update", identity,
+               before={**snapshot, "text": previous} if current else None,
+               after={**snapshot, "text": body})
+
+
+def correct_issue_update(connection, actor, supplier_id, identity, payload):
+    fields(payload, ("issueId", "text"))
+    issue = child_record(connection, "supplier_issues", supplier_id, payload["issueId"])
+    if type(identity) is not int or not 0 < identity < 2**63:
+        raise LookupError("Issue Update not found")
+    update = connection.execute(
+        "SELECT id,body,created_by,created_label,created_at FROM supplier_issue_updates WHERE issue_id=? AND id=?",
+        (issue[0], identity),
+    ).fetchone()
+    if not update:
+        raise LookupError("Issue Update not found")
+    body = cleaned(payload["text"], "an Issue Update", 12000, required=True, multiline=True)
+    write_issue_update(connection, actor, supplier_id, issue[0], issue[2], body, update)
+    return issue[0]
+
+
 OPERATIONS = frozenset((
     "supplier.save", "supplier.archive", "supplier.reactivate", "supplier.delete",
     "supplier.disable", "supplier.enable", "category.save", "category.archive", "category.reactivate",
     "location.save", "location.archive", "location.reactivate", "location.delete", "location.make-main",
     "contact.save", "contact.archive", "contact.reactivate", "contact.delete", "note.save", "note.delete",
+    "issue.save", "issue-update.correct", "issue-category.save", "issue-category.archive", "issue-category.reactivate",
 ))
 
 
@@ -513,17 +702,22 @@ def save_supplier_operation(connection, actor, session_token, request):
         data, supplier_id = request["data"], request.get("supplierId")
         identity, revision = request.get("recordId"), request.get("revision")
         record = operation.split(".")[0]
-        if record == "category":
+        if record in ("category", "issue-category"):
             result = save_category(connection, actor, identity, revision, operation, data)
         elif operation == "supplier.save" and supplier_id is None:
             result = read_supplier(connection, save_company(connection, actor, None, data))
         else:
             supplier = get_supplier(connection, supplier_id)
             require_revision(revision, supplier[5])
+            issue_id = None
             if operation == "supplier.save":
                 save_company(connection, actor, supplier, data)
             elif record == "supplier":
                 supplier_id = change_company_status(connection, actor, supplier, operation, data)
+            elif record == "issue":
+                issue_id = save_issue(connection, actor, supplier_id, identity, data)
+            elif record == "issue-update":
+                issue_id = correct_issue_update(connection, actor, supplier_id, identity, data)
             else:
                 change_child(connection, actor, supplier_id, record, identity, operation, data)
             if supplier_id is None:
@@ -531,6 +725,8 @@ def save_supplier_operation(connection, actor, session_token, request):
             else:
                 connection.execute("UPDATE suppliers SET revision=revision+1 WHERE id=?", (supplier_id,))
                 result = read_supplier(connection, supplier_id)
+                if issue_id is not None:
+                    result["issue"] = read_issue(connection, supplier_id, issue_id)
         connection.commit()
         return result
     except BaseException:

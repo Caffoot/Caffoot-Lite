@@ -1,28 +1,28 @@
 # Supplier Management
 
-> **Draft v2.2 — unreleased.** These instructions describe Batch 4.1 in the development application using database schema 21. Continue to use the [v2.1 guides](../README.md) for the published version. The examples here use fictional businesses and contacts.
+> **Draft v2.2 — unreleased.** These instructions describe Supplier Management in the Stage 4 development application through Batch 4.2, schema 22. Continue to use the [v2.1 guides](../README.md) for the published version. The examples here use fictional businesses and contacts.
 
-Suppliers holds the companies your organisation buys from. A company can have several offices and contacts, one shared company address and separate notes about the company or individual people. Supplier access is independent of Devices and IT Assets. In Batch 4.1, open **Suppliers** directly from the workspace sidebar. The Supplier Details tabs are **Overview**, **Locations**, **Contacts** and **Notes**.
+Suppliers holds the companies your organisation buys from. A company can have several offices and contacts, one shared company address and separate notes about the company or individual people. Supplier access is independent of Devices and IT Assets. In the Batch 4.2 draft, open **Purchasing → Suppliers** from the workspace sidebar. The Supplier Details tabs are **Overview**, **Locations**, **Contacts** and **Notes & Issues**. See [Supplier Issues And Purchasing](Supplier-Issues-and-Purchasing.md) for the tracked Issues workflow.
 
 ## Enable Suppliers And Set Access
 
 A verified administrator can enable Suppliers and manage access. Suppliers starts switched off on fresh installations and when upgrading from schema 20.
 
 1. Sign in as an administrator using your authenticator. Open **Settings & Data** → **Optional Features**.
-2. In **Additional Features**, switch on **Suppliers**. Wait for the saved confirmation. **Suppliers** becomes available in the workspace sidebar whenever the effective permissions allow it.
+2. In **Additional Features**, switch on **Suppliers**. Wait for the saved confirmation. **Purchasing** and its **Suppliers** link become available in the workspace sidebar whenever the effective permissions allow it.
 3. To give access to purchasing staff, open **Permissions**. Use **Manage Roles** to give a suitable role **Suppliers Read** or **Suppliers Edit**. To give an individual a different level, open the account from **User List** and review its permission overrides. Apply changes through the existing preview and confirmation process. See [Roles, Section Permissions And MFA](Roles-Section-Permissions-and-MFA.md).
 4. Verify the staff member's effective access after sign-in. **Read** shows company records, locations, contacts, categories and notes. **Edit** adds and changes these records and permits local archive, reactivation and eligible deletion. **No Access** keeps the Supplier section and data unavailable. A deliberate No Access override blocks an inherited role grant. No existing role gains Supplier access automatically.
 5. To suspend Suppliers for the organisation, return to **Optional Features**, switch it off and confirm. Cancel the confirmation to keep the current setting. Switching it on again makes the stored records, categories, statuses and existing permissions available again.
 
 **Example.** Give your purchasing team Edit through a purchasing role. Give a colleague who needs supplier telephone numbers Read through an individual override. A colleague who receives equipment can keep their existing IT Assets permission. The effective permission view shows each section separately.
 
-If Suppliers is missing, check the organisation's switch, the user's active roles and individual override, and MFA enrolment. If the switch is unavailable, verify that you are a signed-in administrator using the Batch 4.1 build. An organisation-wide feature change may require colleagues to reopen the workspace.
+If Suppliers is missing, check the organisation's switch, the user's active roles and individual override, and MFA enrolment. If the switch is unavailable, verify that you are a signed-in administrator using the v2.2 development build. An organisation-wide feature change may require colleagues to reopen the workspace.
 
 ## Find A Supplier
 
-1. Open **Suppliers**. The **Supplier Directory** lists names, categories, location and contact counts, and status. A town or city appears under the name when recorded for the Main Office. The counts show active locations and contacts.
+1. Open **Purchasing → Suppliers**. The **Supplier Directory** lists names, categories, location and contact counts, and status. A town or city appears under the name when recorded for the Main Office. The counts show active locations and contacts.
 2. Enter part of the company name or description in **Search Suppliers**. Choose a category in **Filter By Category** to narrow the results. Clear the search or choose **All Categories** to broaden them.
-3. Select the supplier name or **View**. **Overview** shows company information and an **At A Glance** summary. Select **Locations** or **Contacts** in that summary to open the respective tab.
+3. Select the supplier name or **View**. **Overview** shows company information and an **At A Glance** summary. Select **Locations** or **Contacts** in that summary to open the respective tab. **Active Issues** opens the company Issues list and counts Open and In Progress records.
 4. Choose **Back To Suppliers** to return to your directory search. You can share a Supplier Details link with a colleague who has sign-in and Supplier Read access.
 
 An archived supplier is still searchable. Retired categories remain visible on suppliers that already use them. Use **All Categories** to find a record whose only category is archived.
@@ -79,9 +79,9 @@ The current primary location is protected from individual permanent deletion. A 
 
 A Supplier Note belongs to the company. A Contact Note belongs to one contact. Each note has its own creation attribution and date.
 
-1. For a company note, open **Notes** and choose **Add Supplier Note**. For a personal contact note, open that person's **Contact Details** and choose **Add Note** in **Contact Notes**.
+1. For a company note, open **Notes & Issues → Notes** and choose **Add Supplier Note**. For a personal contact note, open that person's **Contact Details** and choose **Add Note** in **Contact Notes**.
 2. Enter **Note** and select **Save Note**. For example, record that the quarterly licence review takes place in March or that a named contact covers two branches.
-3. On the Notes tab, choose **All Notes**, **Supplier Notes** or **Contact Notes** from **Filter Notes By Owner**. Use **View Contact** to check who owns a Contact Note.
+3. In the Notes view, choose **All Notes**, **Supplier Notes** or **Contact Notes** from **Filter Notes By Owner**. Use **View Contact** to check who owns a Contact Note.
 4. To correct a note, choose **Edit**, make the correction and choose **Save Changes**. Any Suppliers editor can correct it. The original creator, time and owner stay on the note and the current correction shows who edited it and when.
 5. To remove an ordinary note, choose **Delete** and confirm. **Cancel** leaves it intact. The application keeps an attributed audit event and the note history still protects the company and, where relevant, the contact against permanent deletion.
 
@@ -91,10 +91,10 @@ Only put work-related information in notes. Keep passwords, tokens, sensitive pe
 
 Review the record and its links before confirming a lifecycle action. Read users can inspect retained records. Suppliers Edit is required to make local lifecycle changes.
 
-1. In the Supplier Details header, on a location card or in Contact Details, choose **Archive** and confirm to keep the record and its existing relationships for reference. Archived locations are unavailable for new contact assignments. Reactivate an archived contact before adding location assignments to it. For a company with note history, archiving is the way to take it out of active use.
+1. In the Supplier Details header, on a location card or in Contact Details, choose **Archive** and confirm to keep the record and its existing relationships for reference. Archived locations are unavailable for new contact assignments. Reactivate an archived contact before adding location assignments to it. For a company with Note or Issue history, archiving is the way to take it out of active use.
 2. Choose **Reactivate** and confirm to return the original record to active use. Existing identity and history are retained.
 3. To remove a genuinely unused record, choose **Delete**, review the named record and confirm. A company without protected history can be deleted together with its unused locations and contacts. Deleting an eligible contact removes its location links. Deleting a single eligible non-primary location removes only that location.
-4. When Delete is unavailable, read the explanation with the lifecycle actions. On Supplier Details it appears under the header buttons. Notes protect their company and owning contact even after the note is removed. A directly linked location is protected by its contact relationships. The application checks again when you confirm.
+4. When Delete is unavailable, read the explanation with the lifecycle actions. On Supplier Details it appears under the header buttons. Notes protect their company and owning contact even after the note is removed. Issue history protects the company and contacts that have been linked to it. A directly linked location is protected by its contact relationships. The application checks again when you confirm.
 5. To abandon an action, select **Cancel** or press **Escape** before confirming. If someone changed the record first, close the rejected dialog, reopen the record and review the new details before retrying.
 
 Records with canonical supply history have stronger permanent retention. Any cross-section **Disable** or **Re-enable** action requires a verified administrator and confirmation of the named affected sections. Batch 4.1 does not create equipment associations. The older free-text Supplier names recorded on receipts do not create canonical Supplier records or links.
@@ -114,7 +114,7 @@ See [Optional Features](Optional-Features-and-Link-To-IPAM.md) for organisation-
 
 ## Application Screenshots
 
-Screenshot provenance and the desktop and mobile light/dark captures are recorded in the [Batch 4.1 evidence](../../../development-handovers/evidence/stage-4-batch-41/README.md). Independent visual approval is pending.
+These historical Batch 4.1 captures show the same Supplier forms with the earlier sidebar and Notes tab. See the [Batch 4.1 capture provenance](../../../development-handovers/evidence/stage-4-batch-41/README.md) and [current Batch 4.2 application evidence](../../../development-handovers/evidence/stage-4-batch-42/README.md).
 
 ![Desktop light Supplier Directory with search, the category filter, and Northlight Technology Ltd in the results](../../../development-handovers/evidence/stage-4-batch-41/images/directory-light-1440.png)
 
