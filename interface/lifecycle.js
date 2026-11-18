@@ -79,18 +79,21 @@
     for (const [key] of dates) input(key).value=values[key]||'';
     mode.value=values.replacementOverride?'manual':'calculated';
     section.addEventListener('input',event=>{
-      if(event.target===planned) mode.value='manual';
+      const backing = event.target.closest('.caffoot-uk-date-wrap')?.querySelector('[data-lifecycle-field]');
+      if(event.target===planned || backing===planned) mode.value='manual';
       update();
     });
     accept.addEventListener('click',()=>{
       input('warrantyExpiry').value=accept.dataset.suggested;
       update();
-      window.caffootUkDates?.focus(input('warrantyExpiry')) || (window.caffootUkDates ? undefined : input('warrantyExpiry').focus());
+      if (window.caffootUkDates) window.caffootUkDates.focus(input('warrantyExpiry'));
+      else input('warrantyExpiry').focus();
     });
     reset.addEventListener('click',()=>{
       mode.value='calculated';
       update();
-      window.caffootUkDates?.focus(planned) || (window.caffootUkDates ? undefined : planned.focus());
+      if (window.caffootUkDates) window.caffootUkDates.focus(planned);
+      else planned.focus();
     });
     form.lifecycleDraft = () => Object.fromEntries(dates.map(([key])=>[
       key,key==='replacementOverride'&&mode.value==='calculated'?null:input(key).value||null,
