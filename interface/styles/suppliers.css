@@ -6,6 +6,8 @@
 .supplier-live .supplier-results{margin-top:16px}
 .supplier-live .supplier-metrics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:16px}
 .supplier-live .supplier-retention{max-width:330px}
+.supplier-live .header .preview-page-actions:has(>.supplier-header-retention){max-width:min(100%,440px)}
+.supplier-live .header .supplier-header-retention{flex-basis:100%;margin:0;text-align:right}
 .supplier-live .supplier-note-text{white-space:pre-wrap;overflow-wrap:anywhere}
 .supplier-live .info-row{border-color:var(--line)}
 .supplier-live .info-row b{min-width:0;overflow-wrap:anywhere}
@@ -25,6 +27,9 @@
 .supplier-live .device-table td{overflow-wrap:anywhere}
 .supplier-live .device-table{min-width:615px}
 .supplier-live .card .device-table{min-width:420px}
-@media(max-width:720px){.supplier-live .section-page-header>.header:has(>.preview-page-actions)>:first-child{flex:initial}}
+@media(max-width:720px){
+ .supplier-live .section-page-header>.header:has(>.preview-page-actions)>:first-child{flex:initial}
+ .supplier-live .header .supplier-header-retention{text-align:left}
+}
 @media(max-width:650px){.supplier-live .supplier-filters,.supplier-live .two-col{grid-template-columns:minmax(0,1fr)}}
 #modal-content:has(>[data-supplier-dialog]){max-height:calc(100dvh - 32px);overflow:auto}

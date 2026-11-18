@@ -29,10 +29,12 @@
   function nameButton(label, action, id) {
     return `<button class="device-name" type="button" data-supplier-action="${action}" data-id="${id}">${safe(label)}</button>`;
   }
-  function header(title, heading, actions = '') {
+  function header(title, heading, actions = '', actionExplanation = '') {
     return `<div class="section-page-header"><div class="eyebrow">Purchasing</div>
       <div class="header"><div><h1 tabindex="-1" id="supplier-page-heading">${safe(title)}</h1><p>${safe(heading)}</p></div>
-      ${actions ? `<div class="preview-page-actions">${actions}</div>` : ''}</div></div>`;
+      ${actions ? `<div class="preview-page-actions">${actions}
+        ${actionExplanation ? `<p class="sub supplier-header-retention">${safe(actionExplanation)}</p>` : ''}
+      </div>` : ''}</div></div>`;
   }
   function sectionHeading(title, description, actions = '') {
     return `<div class="section-heading"><div><h2>${title}</h2><p>${description}</p></div><div class="preview-page-actions">${actions}</div></div>`;
@@ -109,15 +111,23 @@
       return location ? location.name + (location.archived ? ' (Archived)' : '') : '';
     }).filter(Boolean).join(', ');
   }
-  function lifecycleButtons(record, item, status = item.archived ? 'archived' : 'active') {
-    if (!editable()) return '';
+  function lifecycleActions(record, item, status = item.archived ? 'archived' : 'active') {
+    if (!editable()) return {buttons: '', explanation: ''};
     const key = record === 'supplier' ? '' : item.id;
     let lifecycle = status === 'archived' ? button('Reactivate', record + '.reactivate', key) : button('Archive', record + '.archive', key);
     if (record === 'supplier' && item.hasSupplyHistory)
       lifecycle = config.admin ? button(status === 'disabled' ? 'Re-enable' : 'Disable', status === 'disabled' ? 'supplier.enable' : 'supplier.disable') : '';
-    const removal = item.deleteReason ? `<p class="sub supplier-retention">${safe(item.deleteReason)}${record === 'supplier' && item.hasSupplyHistory && !config.admin ? ' An administrator can change its availability.' : ''}</p>`
-      : button('Delete', record + '.delete', key);
-    return lifecycle + removal;
+    const explanation = item.deleteReason || '';
+    const adminHint = record === 'supplier' && item.hasSupplyHistory && !config.admin
+      ? ' An administrator can change its availability.' : '';
+    return {
+      buttons: lifecycle + (explanation ? '' : button('Delete', record + '.delete', key)),
+      explanation: explanation ? explanation + adminHint : ''
+    };
+  }
+  function lifecycleButtons(record, item) {
+    const {buttons, explanation} = lifecycleActions(record, item);
+    return buttons + (explanation ? `<p class="sub supplier-retention">${safe(explanation)}</p>` : '');
   }
   function renderOverview() {
     const location = supplier.locations.find(item => item.main);
@@ -194,9 +204,10 @@
   }
   function renderDetails() {
     const content = {overview: renderOverview, locations: renderLocations, contacts: renderContacts, notes: renderNotes}[tab]();
-    return header(supplier.name, 'Supplier Details',
-      button('Back To Suppliers', 'directory') + (editable() ? button('Edit Supplier', 'supplier-form', supplier.id) : '')) +
-      `<div class="row-between supplier-row">${badge(supplier.status)}<div class="preview-page-actions">${lifecycleButtons('supplier', supplier, supplier.status)}</div></div>
+    const {buttons, explanation} = lifecycleActions('supplier', supplier, supplier.status);
+    const edit = editable() ? button('Edit Supplier', 'supplier-form', supplier.id) : '';
+    return header(supplier.name, 'Supplier Details', button('Back To Suppliers', 'directory') + edit + buttons, explanation) +
+      `<div class="row-between supplier-row">${badge(supplier.status)}</div>
       <nav class="tabs" role="tablist" aria-label="Supplier Details Tabs">${tabs.map(([key, label, symbol]) =>
         `<button type="button" class="tab section-tab-control${tab === key ? ' active' : ''}" role="tab" id="supplier-tab-${key}"
         aria-selected="${tab === key}" aria-controls="supplier-panel" tabindex="${tab === key ? '0' : '-1'}"

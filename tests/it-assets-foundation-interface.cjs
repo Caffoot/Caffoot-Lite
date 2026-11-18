@@ -143,21 +143,27 @@ async function main(){
  assert.equal((await reader.request.get(address+'/api/inventory/devices')).status(),403);
  assert.equal((await reader.request.get(address+'/api/staff-members')).status(),403);
  await reader.close();
- const unchanged=[
-  'interface/screens/settings.html','interface/styles/settings.css','interface/styles/components.css',
-  'interface/styles/staff.css','interface/staff-directory.js','interface/design-sources.json'
- ];
+ const preservedSources={
+  'interface/screens/settings.html':baseline,
+  'interface/styles/settings.css':baseline,
+  // Stage 3 Server Storage and direct-handover styling merged through PRs #390 and #391.
+  'interface/styles/components.css':'53b04328c4f895bfc1f72f0416c43a519b2e8b42',
+  'interface/styles/staff.css':baseline,
+  // Later Staff stock, stale-edit and help corrections merged through PRs #389, #402 and #408.
+  'interface/staff-directory.js':'5de585aae716d2b4db8d568e0a23fcc8cddaf750',
+  'interface/design-sources.json':baseline
+ };
  const hashes={};
- for(const name of unchanged){
-  const prior=spawnSync('git',['show',baseline+':'+name],{cwd:root});
+ for(const [name,revision] of Object.entries(preservedSources)){
+  const prior=spawnSync('git',['show',revision+':'+name],{cwd:root});
   assert.equal(prior.status,0);const current=fs.readFileSync(path.join(root,name));
-  assert.deepEqual(current,prior.stdout,name+' changed');
+  assert.deepEqual(current,prior.stdout,name+' differs from '+revision);
   hashes[name]=createHash('sha256').update(current).digest('hex');
  }
  assert.deepEqual(errors,[]);
  fs.writeFileSync(path.join(output,'browser-results.json'),JSON.stringify({
   baseline,captureSource:spawnSync('git',['rev-parse','HEAD'],{cwd:root,encoding:'utf8'}).stdout.trim(),
-  screenshots:screens,metrics,unchangedSourceHashes:hashes,pageErrors:errors,
+  screenshots:screens,metrics,preservedSources,unchangedSourceHashes:hashes,pageErrors:errors,
   checks:['Default Off','Additional Features','Saved Choice','Cancel Sends No POST',
    'Existing Cards Preserved','Retained Data And Security','Keyboard Toggle',
    'Independent Permissions','Stock Access Follows Feature Choice','Responsive Light And Dark']

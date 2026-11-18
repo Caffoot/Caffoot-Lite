@@ -10,7 +10,8 @@ const root = path.resolve(__dirname, '..');
 const temporary = fs.mkdtempSync(path.join(os.tmpdir(), 'caffoot-suppliers-'));
 const database = path.join(temporary, 'inventory.sqlite3');
 const origin = 'https://127.0.0.1:8097';
-const evidence = process.env.CAFFOOT_SUPPLIER_EVIDENCE;
+const headerEvidence = process.env.CAFFOOT_SUPPLIER_HEADER_EVIDENCE;
+const evidence = headerEvidence || process.env.CAFFOOT_SUPPLIER_EVIDENCE;
 let browser, server, log;
 const owner = 'Purchasing Owner', reader = 'Purchasing Reader';
 const password = 'Fictional-Supplier-Acceptance-2026!';
@@ -20,6 +21,29 @@ function python(source, args = []) {
   return result.stdout.trim();
 }
 const revision = () => spawnSync('git', ['rev-parse', 'HEAD'], {cwd: root, encoding: 'utf8'}).stdout.trim();
+
+async function checkDetailsHeader(page, actions, explanation = null) {
+  const group = page.locator('.supplier-live .section-page-header > .header > .preview-page-actions');
+  assert.deepEqual(await group.getByRole('button').allTextContents(), actions);
+  const note = group.locator('.supplier-header-retention');
+  if (explanation) assert.match(await note.textContent(), explanation);
+  else assert.equal(await note.count(), 0);
+
+  await group.evaluate((element, expectedNote) => {
+    const bounds = element.closest('.header').getBoundingClientRect();
+    const buttons = [...element.querySelectorAll('button')].map(button => button.getBoundingClientRect());
+    if (buttons.some(button => button.left < bounds.left - 1 || button.right > bounds.right + 1))
+      throw Error('Supplier Details header actions overflow their container');
+    if (innerWidth >= 1200 && buttons.some(button => Math.abs(button.top - buttons[0].top) > 1))
+      throw Error('Supplier Details header actions wrap at desktop width');
+    if (expectedNote) {
+      const note = element.querySelector('.supplier-header-retention').getBoundingClientRect();
+      if (note.top < Math.max(...buttons.map(button => button.bottom)) ||
+          note.left < bounds.left - 1 || note.right > bounds.right + 1)
+        throw Error('Supplier retention explanation does not fit below the header actions');
+    }
+  }, Boolean(explanation));
+}
 
 async function main() {
   const secret = python(`
@@ -118,6 +142,13 @@ with sqlite3.connect(sys.argv[1]) as db:
   await modalButton('Add Supplier').click();
   await page.getByRole('heading', {name: 'Supplier Overview'}).waitFor();
   const supplierUrl = page.url();
+  const archiveActions = ['Back To Suppliers', 'Edit Supplier', 'Archive'];
+  const retention = /This Supplier has Note history\. Use Archive to retain its records\./;
+  await checkDetailsHeader(page, [...archiveActions, 'Delete']);
+  await button('Delete').click();
+  await dialog.getByRole('heading', {name: 'Delete Supplier?'}).waitFor();
+  await modalButton('Cancel').click();
+  await checkDetailsHeader(page, [...archiveActions, 'Delete']);
   await page.getByRole('tab', {name: 'Locations', exact: true}).click();
   await button('Add Location').click();
   await dialog.getByLabel('Location Name').fill('Leeds Branch');
@@ -157,13 +188,21 @@ with sqlite3.connect(sys.argv[1]) as db:
   assert.equal(await page.getByText(contactNote).count(), 1);
   assert.equal(await page.getByText('Quarterly licensing review takes place in March.').count(), 0);
   await page.getByLabel('Filter Notes By Owner').selectOption('all');
-  assert.equal(await page.getByText(/Use Archive to retain/).isVisible(), true);
+  await checkDetailsHeader(page, archiveActions, retention);
+  await button('Archive').click();
+  await modalButton('Archive Supplier').click();
+  await button('Reactivate').waitFor();
+  await checkDetailsHeader(page, ['Back To Suppliers', 'Edit Supplier', 'Reactivate'], retention);
+  await button('Reactivate').click();
+  await modalButton('Reactivate Supplier').click();
+  await button('Archive').waitFor();
+  await checkDetailsHeader(page, archiveActions, retention);
   const readContext = await browser.newContext(contextOptions);
   await login(readContext, reader);
   const readPage = await readContext.newPage();
   await readPage.goto(supplierUrl);
   await readPage.getByRole('heading', {name: 'Supplier Overview'}).waitFor();
-  assert.equal(await readPage.getByRole('button', {name: 'Edit Supplier'}).count(), 0);
+  await checkDetailsHeader(readPage, ['Back To Suppliers']);
   assert.equal(await readPage.locator('#sidebar [data-tab="it-assets"]').isVisible(), false);
   assert.equal(await readPage.locator('#sidebar [data-tab="devices"]').isVisible(), false);
   await readContext.close();
@@ -208,30 +247,36 @@ with sqlite3.connect(sys.argv[1]) as db:
         await page.goto(origin + '/inventory#suppliers');
         await page.reload();
         await button('Northlight Technology Ltd').waitFor();
-        await capture('directory', theme, width, height);
-        await button('Manage Categories').click();
-        await capture('categories', theme, width, height);
-        await modalButton('Close').click();
-        await button('Add Supplier').click();
-        await capture('add-supplier', theme, width, height);
-        await modalButton('Add Supplier').scrollIntoViewIfNeeded();
-        await capture('add-supplier-contact', theme, width, height);
-        await modalButton('Cancel').click();
+        if (!headerEvidence) {
+          await capture('directory', theme, width, height);
+          await button('Manage Categories').click();
+          await capture('categories', theme, width, height);
+          await modalButton('Close').click();
+          await button('Add Supplier').click();
+          await capture('add-supplier', theme, width, height);
+          await modalButton('Add Supplier').scrollIntoViewIfNeeded();
+          await capture('add-supplier-contact', theme, width, height);
+          await modalButton('Cancel').click();
+        }
         await button('Northlight Technology Ltd').click();
         await page.getByRole('heading', {name: 'Supplier Overview'}).waitFor();
+        await checkDetailsHeader(page, archiveActions, retention);
         await capture('overview', theme, width, height);
         for (const tab of ['Locations', 'Contacts', 'Notes']) {
           await page.getByRole('tab', {name: tab, exact: true}).click();
+          await checkDetailsHeader(page, archiveActions, retention);
           await capture(tab.toLowerCase(), theme, width, height);
-          if (tab === 'Contacts') {
+          if (!headerEvidence && tab === 'Contacts') {
             await button('Jo Patel').click();
             await capture('contact-details', theme, width, height);
             await modalButton('Close').click();
           }
         }
-        await settings();
-        await page.locator('[data-feature-card="suppliers"]').scrollIntoViewIfNeeded();
-        await capture('optional-features', theme, width, height);
+        if (!headerEvidence) {
+          await settings();
+          await page.locator('[data-feature-card="suppliers"]').scrollIntoViewIfNeeded();
+          await capture('optional-features', theme, width, height);
+        }
       }
     }
     fs.writeFileSync(path.join(evidence, 'manifest.json'), JSON.stringify({
@@ -240,7 +285,7 @@ with sqlite3.connect(sys.argv[1]) as db:
     }, null, 2) + '\n');
   }
   assert.deepEqual(errors, []);
-  console.log('PASS Supplier settings, Categories, form validation, multi-location Contacts, Notes, Cancel/Escape, filters and Read permissions');
+  console.log('PASS Supplier workflows and Details header, including lifecycle controls, retention explanation and Read access');
 }
 main().catch(error => {console.error(error); process.exitCode = 1;}).finally(async () => {
   await browser?.close();
