@@ -500,6 +500,7 @@ class Handler(BaseHTTPRequestHandler):
                         can_access(connection, account_id, section)
                         for section in ("Devices", "IPAM", "Racks", "Staff Members", "Departments", "IT Assets", "Suppliers")
                     ),
+                    "suppliers_enabled": feature_enabled(connection, "Suppliers"),
                     "supplier_permissions": {"read": can_access(connection, account_id, "Suppliers"),
                                              "edit": can_access(connection, account_id, "Suppliers", edit=True)},
                     "stock_permissions": {"read": can_access(connection, account_id, "IT Assets"),

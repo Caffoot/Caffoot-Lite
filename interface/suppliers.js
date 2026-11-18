@@ -380,17 +380,142 @@
     if (focus) document.getElementById(focus)?.focus();
   }
 
-  function dialog(title, description, content, {submit = '', build, destructive = false, restore, success} = {}) {
+  function mountEquipmentChooser(input, section, initial = {}, {allowCreate = true} = {}) {
+    const field = input.parentElement;
+    field.classList.add('equipment-supplier-field');
+    input.value = initial.name || '';
+    input.setAttribute('autocomplete', 'off');
+    input.setAttribute('role', 'combobox');
+    input.setAttribute('aria-autocomplete', 'list');
+    input.setAttribute('aria-expanded', 'false');
+    const selection = document.createElement('input');
+    selection.type = 'hidden';
+    selection.id = input.id + '-association';
+    selection.dataset.equipmentSupplierId = '';
+    selection.value = initial.id ?? '';
+    const listbox = document.createElement('ul');
+    listbox.id = input.id + '-choices';
+    listbox.setAttribute('role', 'listbox');
+    listbox.setAttribute('aria-label', 'Available Suppliers');
+    listbox.hidden = true;
+    input.setAttribute('aria-controls', listbox.id);
+    const status = document.createElement('small');
+    status.id = input.id + '-status';
+    status.setAttribute('role', 'status');
+    input.setAttribute('aria-describedby', status.id);
+    field.append(selection, listbox, status);
+
+    let choices = [], activeOption = -1, requestNumber = 0;
+    const value = () => ({name: input.value, id: selection.value ? Number(selection.value) : null});
+    function describe() {
+      status.textContent = selection.value ? 'Linked to Supplier' : input.value.trim()
+        ? 'Recorded as text unless you select a Supplier.' : '';
+    }
+    function close() {
+      requestNumber++;
+      listbox.hidden = true;
+      input.setAttribute('aria-expanded', 'false');
+      input.removeAttribute('aria-activedescendant');
+      activeOption = -1;
+    }
+    function choose(item) {
+      input.value = item.name;
+      selection.value = item.id;
+      input.focus();
+      close();
+      describe();
+    }
+    function show() {
+      const query = input.value.trim().toLocaleLowerCase('en-GB');
+      const matches = choices.filter(item => item.name.toLocaleLowerCase('en-GB').includes(query));
+      listbox.replaceChildren(...matches.map((item, index) => {
+        const option = document.createElement('li');
+        option.id = listbox.id + '-' + index;
+        option.setAttribute('role', 'option');
+        option.setAttribute('aria-selected', 'false');
+        option.textContent = item.name;
+        option.addEventListener('pointerdown', event => event.preventDefault());
+        option.addEventListener('click', () => choose(item));
+        return option;
+      }));
+      activeOption = -1;
+      input.removeAttribute('aria-activedescendant');
+      listbox.hidden = !matches.length;
+      input.setAttribute('aria-expanded', String(!listbox.hidden));
+    }
+    async function loadChoices() {
+      const generation = ++requestNumber;
+      try {
+        const result = await request(api + '/choices/' + section);
+        if (generation !== requestNumber || !input.isConnected) return;
+        choices = result.suppliers;
+        show();
+      } catch (error) {
+        if (generation === requestNumber && input.isConnected) status.textContent = error.message;
+      }
+    }
+    input.addEventListener('focus', () => void loadChoices());
+    input.addEventListener('blur', close);
+    input.addEventListener('input', () => {
+      selection.value = '';
+      describe();
+      show();
+    });
+    input.addEventListener('keydown', event => {
+      if (event.key === 'Escape' && !listbox.hidden) {
+        event.preventDefault();
+        event.stopPropagation();
+        close();
+      } else if (event.key === 'Enter' && activeOption >= 0) {
+        event.preventDefault();
+        listbox.children[activeOption].click();
+      } else if (['ArrowDown', 'ArrowUp'].includes(event.key)) {
+        if (listbox.hidden) show();
+        if (!listbox.children.length) return;
+        event.preventDefault();
+        const last = listbox.children.length - 1;
+        const step = event.key === 'ArrowDown' ? 1 : -1;
+        activeOption = activeOption < 0 ? (step > 0 ? 0 : last) : Math.max(0, Math.min(last, activeOption + step));
+        [...listbox.children].forEach((option, index) => option.setAttribute('aria-selected', String(index === activeOption)));
+        const option = listbox.children[activeOption];
+        input.setAttribute('aria-activedescendant', option.id);
+        option.scrollIntoView({block: 'nearest'});
+      }
+    });
+
+    if (allowCreate && editable()) {
+      const add = document.createElement('button');
+      add.type = 'button';
+      add.className = 'btn btn-outline';
+      add.textContent = '+ Add Supplier';
+      listbox.before(add);
+      add.addEventListener('click', async () => {
+        add.disabled = true;
+        try {
+          const data = await request(api);
+          if (add.isConnected && editable()) supplierForm({catalogue: data.categories, trigger: add, onCreated: choose});
+        } catch (error) {
+          if (add.isConnected) status.textContent = error.message;
+        } finally {
+          add.disabled = false;
+        }
+      });
+    }
+    describe();
+    return {value};
+  }
+
+  function dialog(title, description, content, {submit = '', build, destructive = false, restore, success, trigger} = {}) {
     returnDialog = restore;
     submitDialog = build && {build, success, restore};
-    config.openModal(`<div class="equipment-dialog users-live stock-live supplier-live" data-supplier-dialog>
+    (trigger ? config.openEquipmentSupplierModal : config.openModal)(`<div class="equipment-dialog users-live stock-live supplier-live" data-supplier-dialog>
       <header class="assignment-modal-head"><div><h2>${safe(title)}</h2>${description ? `<p class="sub">${safe(description)}</p>` : ''}</div>
       <button type="button" class="btn btn-outline" data-action="close-modal" aria-label="Close Dialog">×</button></header>
       <div class="assignment-modal-body">${build ? `<form class="preview-aligned-form" data-supplier-form>
         ${content}<p class="formhint supplier-feedback" data-supplier-feedback role="alert"></p>
         <div class="stock-form-actions"><button class="btn btn-outline" type="button" data-action="close-modal">Cancel</button>
         <button class="btn ${destructive ? 'bg-rose-700 hover:bg-rose-800 text-white' : 'primary'}" type="submit">${safe(submit)}</button></div></form>`
-        : `${content}<div class="stock-form-actions"><button class="btn btn-outline" type="button" data-action="close-modal">Close</button></div>`}</div></div>`);
+        : `${content}<div class="stock-form-actions"><button class="btn btn-outline" type="button" data-action="close-modal">Close</button></div>`}</div></div>`, trigger);
     if (build && !destructive) document.querySelector('[data-supplier-form] input:not([type="checkbox"]),[data-supplier-form] textarea')?.focus();
   }
 
@@ -427,9 +552,9 @@
         ${field('Email Addresses', prefix + '-emails', '', {type:'textarea', attrs:'placeholder="One Per Line"'})}
         <div class="staff-span-two">${select('Contact Scope', prefix + '-scope', [['main', 'Main Office'], ['company', 'Company-wide']], 'main')}</div></div></div>`;
   }
-  function supplierForm() {
-    const existing = supplier;
-    const catalogue = existing?.categories || directory.categories;
+  function supplierForm({catalogue, trigger, onCreated} = {}) {
+    const existing = trigger ? null : supplier;
+    catalogue ??= existing?.categories || directory.categories;
     const selected = existing?.categoryIds || [];
     const categories = checkList('categoryIds', catalogue.filter(item => !item.archived || selected.includes(item.id)), selected);
     const company = `<div class="staff-fields">
@@ -444,7 +569,7 @@
       (existing ? '' : formSection('Contacts', 'Enter any contacts you already have.',
         `<div id="supplier-contact-entries" class="stock-card-stack">${contactEntry(1)}</div>`, button('Add Another Contact', 'add-entry')));
     dialog(existing ? 'Edit Supplier' : 'Add Supplier', existing ? existing.name : 'Capture Company Details, Categories And Contacts', content, {
-      submit: existing ? 'Save Supplier' : 'Add Supplier',
+      submit: existing ? 'Save Supplier' : 'Add Supplier', trigger,
       build(form) {
         const data = new FormData(form);
         const payload = {name: valueOf(data, 'name'), website: valueOf(data, 'website'),
@@ -457,7 +582,7 @@
         });
         return command('supplier.save', payload, existing);
       },
-      success: data => updateSupplier(data, !existing)
+      success: onCreated ?? (data => updateSupplier(data, !existing))
     });
   }
   function locationForm(location) {
@@ -771,7 +896,7 @@
 
   document.addEventListener('click', event => {
     const target = event.target.closest('[data-supplier-action]');
-    if (!target || !active || pending) return;
+    if (!target || pending || (!active && !target.closest('[data-supplier-dialog]'))) return;
     const action = target.dataset.supplierAction;
     const identity = Number(target.dataset.id);
     const details = target.closest('[data-supplier-contact-details]');
@@ -909,6 +1034,7 @@
 
   window.caffootSuppliers = {
     configure(settings) { config = settings; },
+    mountEquipmentChooser,
     enter(section, fromRoute = false) {
       active = true;
       void show(...(fromRoute ? readRoute(section) : [null, section === 'purchasing' ? 'dashboard' : 'overview']), !fromRoute);

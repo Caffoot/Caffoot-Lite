@@ -304,6 +304,8 @@
     }else{
       payload={operationId,quantity:Number(data.get('quantity')),receivedOn:String(data.get('receivedOn')),
         supplier:String(data.get('supplier')||''),notes:String(data.get('notes')||''),checks,readyQuantity:Number(data.get('readyQuantity')||0)};
+      const chosenSupplier=form.supplierChooser?.value();
+      if(chosenSupplier?.id)payload.supplierId=chosenSupplier.id;
       if(receiptMode==='existing'){
         const item=items.find(item=>item.id===data.get('existing'));
         if(!item)throw Error('Choose an existing stock item.');
@@ -897,6 +899,9 @@
     const retainedIssue=document.getElementById('stock-issue-draft');
     if(retainedIssue&&issueDraft)retainedIssue.replaceWith(issueDraft.form);
     restoreStockReturn();
+    const receipt=document.getElementById('stock-receipt-form');
+    if(receipt && config.suppliersEnabled() && !receipt.supplierChooser)
+      receipt.supplierChooser=window.caffootSuppliers.mountEquipmentChooser(receipt.elements.supplier,'it-assets');
     hydrateStock();
     document.querySelectorAll('#stock-panel form[data-stock-cancellable="true"]').forEach(form=>config.rememberStockForm(form,
       form.id==='stock-correction-form'?{'stock-correctedQuantity':String(correction.effectiveQuantity),'stock-correctionReason':''}:null));

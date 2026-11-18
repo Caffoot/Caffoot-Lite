@@ -58,3 +58,25 @@ html.dark :is(#app,#modal-container) .supplier-live .device-status.issue-progres
 @media(max-width:385px){
  .supplier-live .purchasing-dashboard .db-summary{grid-template-columns:minmax(0,1fr)}
 }
+
+.equipment-supplier-field {position:relative;min-width:0}
+.equipment-supplier-field>[role="listbox"] {position:absolute;z-index:5;inset-block-start:100%;inset-inline:0;margin:0;padding:4px;max-height:12rem;overflow:auto;list-style:none;border:1px solid var(--line);border-radius:8px;background:var(--white);color:var(--ink);box-shadow:0 4px 12px #0002}
+.equipment-supplier-field [role="option"] {padding:8px;cursor:pointer;overflow-wrap:anywhere}
+.equipment-supplier-field [role="option"]:hover,.equipment-supplier-field [aria-selected="true"] {background:var(--theme-hover,#e2e8f0);color:var(--ink)}
+.equipment-supplier-field>small:not(:empty) {display:block;margin-block:4px}
+.equipment-supplier-field>.btn {margin-top:6px}
+.equipment-supplier-field[hidden] {display:none}
+
+/* The same Supplier dialog can open over Devices or IT Assets. */
+[data-supplier-dialog] .staff-fields {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:17px 16px}
+[data-supplier-dialog] .staff-span-two {grid-column:1/-1}
+[data-supplier-dialog] .stock-card-stack {display:grid;gap:17px}
+[data-supplier-dialog] .stock-check {display:flex;align-items:center;gap:9px;font-size:12px}
+[data-supplier-dialog] .preview-form-field {display:flex;flex-direction:column;gap:7px;min-width:0}
+[data-supplier-dialog] .preview-form-field>label {font-size:11px;line-height:16px}
+[data-supplier-dialog] .preview-form-field>.input {height:42px;padding:10px 11px;font-size:12px;line-height:20px}
+[data-supplier-dialog] .preview-form-field>textarea.input {height:auto;min-height:88px;resize:vertical}
+@media(max-width:590px) {
+ [data-supplier-dialog] .staff-fields {grid-template-columns:1fr}
+ [data-supplier-dialog] .staff-span-two {grid-column:auto}
+}
