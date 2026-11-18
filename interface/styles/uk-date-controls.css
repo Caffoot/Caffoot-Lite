@@ -53,6 +53,7 @@
   opacity: .45;
   cursor: not-allowed;
 }
+.caffoot-uk-date-error:empty { display: none; }
 .caffoot-uk-date-error:not(:empty) {
   display: block;
   color: var(--theme-danger-text,#b42336);
