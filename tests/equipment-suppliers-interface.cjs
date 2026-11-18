@@ -296,14 +296,19 @@ async function captureEvidence(page, deviceId, receipt, output) {
       await page.goto(origin + '/inventory#devices');
       await main.getByRole('tab', {name: 'Device Inventory', exact: true}).click();
       const panel = main.locator('[data-device-panel="inventory"]');
+      assert.deepEqual(await panel.locator('thead th').allTextContents(),
+        ['Select', 'Name', 'Type', 'Location Area', 'Primary IP', 'Status', 'Hardware', 'Actions']);
       await panel.getByRole('checkbox', {name: 'Select Meeting Room Laptop Renamed'}).check();
       await panel.getByRole('checkbox', {name: 'Select Workshop Switch'}).check();
       await panel.getByRole('button', {name: 'Assign Supplier'}).scrollIntoViewIfNeeded();
       await capture('device-inventory', theme, {fullPage: true});
       await panel.getByRole('button', {name: 'Assign Supplier'}).click();
       await assignment.getByText('2 selected Devices').waitFor();
+      await assignment.getByRole('button', {name: 'Cancel', exact: true}).focus();
       await capture('device-assignment', theme);
       await assignment.getByRole('button', {name: 'Cancel', exact: true}).click();
+      assert.equal(await page.locator('#discard-dialog').count(), 0);
+      await assignment.waitFor({state: 'hidden'});
 
       await page.evaluate(id => openDeviceModal(id), deviceId);
       const deviceForm = page.locator('form[data-device-form]');
@@ -311,6 +316,8 @@ async function captureEvidence(page, deviceId, receipt, output) {
       await identity.waitFor();
       const deviceSupplier = deviceForm.getByRole('combobox', {name: 'Supplier (Optional)'});
       assert.equal(await deviceSupplier.inputValue(), 'Northlight Technology Ltd');
+      assert.equal(await identity.locator('xpath=..').locator('#dev-supplier').count(), 1);
+      assert.equal(await identity.locator('xpath=..').locator('#dev-manufacturer,#dev-model').count(), 0);
       await deviceForm.getByRole('button', {name: '+ Add Supplier'}).scrollIntoViewIfNeeded();
       await capture('device-identity', theme);
       await page.evaluate(() => closeModal(true));
@@ -324,20 +331,28 @@ async function captureEvidence(page, deviceId, receipt, output) {
       await form.locator('#stock-notes').fill('Second delivery for the upstairs training room.');
       await form.getByRole('combobox', {name: 'Supplier (Optional)'}).fill('Dockland');
       await form.getByRole('option', {name: 'Dockland Equipment Ltd'}).click();
+      assert.deepEqual(await form.locator('#stock-quantity,#stock-receivedOn,#stock-supplier,#stock-notes').evaluateAll(
+        fields => fields.map(field => field.id)), ['stock-quantity', 'stock-receivedOn', 'stock-supplier', 'stock-notes']);
+      assert.deepEqual(await form.locator('.stock-form-actions button').allTextContents(), ['Cancel', 'Record Receipt']);
       await capture('receipt-details', theme, {fullPage: true});
       await form.getByRole('button', {name: 'Cancel', exact: true}).click();
       await page.getByRole('button', {name: 'Discard Changes'}).click();
 
       await main.getByRole('tab', {name: 'Receipt History'}).click();
       const receiptRow = main.locator('#stock-receipt-' + receipt.receiptId);
+      assert.deepEqual(await receiptRow.locator('xpath=ancestor::table').locator('thead th').allTextContents(),
+        ['Select', 'Date / Actor', 'Stock Item', 'Supplier', 'Received', 'Ready', 'Awaiting', 'Checks / Notes']);
       await receiptRow.getByRole('checkbox').check();
       await main.locator('[data-select-receipt-supplier]').first().check();
       if (width === 390) await receiptRow.getByText('Linked Supplier: Northlight Technology Ltd').scrollIntoViewIfNeeded();
       await capture('receipt-history', theme, {fullPage: true});
       await main.getByRole('button', {name: 'Assign Supplier'}).click();
       await assignment.getByText('2 selected receipts').waitFor();
+      await assignment.getByRole('button', {name: 'Cancel', exact: true}).focus();
       await capture('receipt-assignment', theme);
       await assignment.getByRole('button', {name: 'Cancel', exact: true}).click();
+      assert.equal(await page.locator('#discard-dialog').count(), 0);
+      await assignment.waitFor({state: 'hidden'});
 
       await page.goto(origin + '/inventory#suppliers/1/overview');
       const metric = main.getByRole('button', {name: '51 Supplier Equipment'});
@@ -345,6 +360,8 @@ async function captureEvidence(page, deviceId, receipt, output) {
       await capture('supplier-overview', theme, {fullPage: true});
       await metric.click();
       await main.getByText('2 Visible Records').waitFor();
+      assert.deepEqual(await main.locator('.supplier-equipment-table thead th').allTextContents(),
+        ['Equipment Name', 'Source', 'Type', 'Identifier', 'Original Quantity', 'Receipt Date', 'Status', 'Actions']);
       await capture('supplied-equipment', theme, {fullPage: true});
       if (width === 390) {
         await main.getByRole('button', {name: 'View Receipt'}).scrollIntoViewIfNeeded();

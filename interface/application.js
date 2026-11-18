@@ -11341,7 +11341,7 @@ void (async () => {
     });
     window.caffootSuppliers.configure({
       csrf:csrfToken,canEdit:()=>!!editPermissions.Suppliers,admin:sessionIsAdmin,canAssignEquipmentSupplier,
-      escape:escapeHtml,icon:renderSectionTabIcon,openModal:html=>openModal(html),openEquipmentSupplierModal,
+      escape:escapeHtml,icon:renderSectionTabIcon,openModal:html=>openModal(html),openEquipmentSupplierModal,rememberModalForm,
       closeModal:(force, onClosed)=>closeModal(force,onClosed),
       navigate:(tab, fromRoute)=>switchTab(tab,fromRoute), viewEquipment:viewSupplierEquipment,
       redraw:()=>{if(isSupplierPage(currentTab))renderContent();},

@@ -566,8 +566,11 @@
       },
       success: refresh
     });
-    if (!remove) chooser = mountEquipmentChooser(document.getElementById('supplier-equipment-choice'),
-      section === 'devices' ? 'devices' : 'it-assets', {}, {allowCreate: false});
+    if (!remove) {
+      chooser = mountEquipmentChooser(document.getElementById('supplier-equipment-choice'),
+        section === 'devices' ? 'devices' : 'it-assets', {}, {allowCreate: false});
+      config.rememberModalForm();
+    }
   }
 
   function dialog(title, description, content, {submit = '', build, destructive = false, restore, success, trigger, path = api, equipmentSection = ""} = {}) {
