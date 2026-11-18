@@ -1,5 +1,6 @@
 """Caffoot Lite HTTPS routes for accounts, shared inventory and protected resources."""
 import json
+import re
 import secrets
 import os
 import sqlite3
@@ -54,6 +55,8 @@ from .role_policy import evaluate_role_policy
 from .roles import (preview_role_change, confirm_role_change, role_catalogue,
                     account_access_details)
 from .history_permissions import visible_change_history
+from .suppliers import (read_directory as read_supplier_directory, read_supplier,
+                        read_supply_impact, save_supplier_operation, supplier_access)
 from .request_auth import authorised_mutation
 from .http_security import require_same_origin
 from .tls import ensure_certificate
@@ -135,6 +138,10 @@ class Handler(BaseHTTPRequestHandler):
         super().end_headers()
 
     def do_GET(self):
+        path = urlsplit(self.path).path
+        if path == "/api/suppliers" or path.startswith("/api/suppliers/"):
+            self.handle_supplier_request()
+            return
         if urlsplit(self.path).path.startswith('/api/it-assets/'):
             self.handle_stock_request()
             return
@@ -222,7 +229,7 @@ class Handler(BaseHTTPRequestHandler):
                     self.end_headers()
                     return
                 if self.path != "/account" and not evaluate_role_policy(connection, account_id).is_admin and not any(can_access(connection, account_id, section)
-                           for section in ("Devices", "IPAM", "Racks", "Staff Members", "Departments", "IT Assets")):
+                           for section in ("Devices", "IPAM", "Racks", "Staff Members", "Departments", "IT Assets", "Suppliers")):
                     self.respond(403, {"error": "forbidden"})
                     return
             body = (Path(__file__).resolve().parent.parent / "inventory.html").read_bytes()
@@ -489,8 +496,10 @@ class Handler(BaseHTTPRequestHandler):
                     ),
                     "can_enter_workspace": bool(account[1]) or any(
                         can_access(connection, account_id, section)
-                        for section in ("Devices", "IPAM", "Racks", "Staff Members", "Departments", "IT Assets")
+                        for section in ("Devices", "IPAM", "Racks", "Staff Members", "Departments", "IT Assets", "Suppliers")
                     ),
+                    "supplier_permissions": {"read": can_access(connection, account_id, "Suppliers"),
+                                             "edit": can_access(connection, account_id, "Suppliers", edit=True)},
                     "stock_permissions": {"read": can_access(connection, account_id, "IT Assets"),
                                           "edit": can_access(connection, account_id, "IT Assets", edit=True)},
                     "directory_permissions": {
@@ -505,6 +514,10 @@ class Handler(BaseHTTPRequestHandler):
             self.respond(404, {"error": "not found"})
 
     def do_POST(self):
+        path = urlsplit(self.path).path
+        if path == "/api/suppliers" or path.startswith("/api/suppliers/"):
+            self.handle_supplier_request()
+            return
         if urlsplit(self.path).path.startswith('/api/it-assets/'):
             self.handle_stock_request()
             return
@@ -686,6 +699,65 @@ class Handler(BaseHTTPRequestHandler):
             self.respond(401, {"error": "invalid credentials"})
             return
         self.respond(200, {"status": "signed in"}, cookie=session_cookie(token))
+
+    def handle_supplier_request(self):
+        """Use the authenticated request boundary for every Supplier operation."""
+        url = urlsplit(self.path)
+        parts = url.path.split("/")
+        root = url.path == "/api/suppliers"
+        detail = len(parts) in (4, 5) and re.fullmatch(r"[1-9][0-9]{0,18}", parts[3])
+        impact = detail and len(parts) == 5 and parts[4] == "impact"
+        reading = self.command == "GET"
+        if url.query or not (root or reading and (impact or detail and len(parts) == 4)):
+            self.respond(404, {"error": "not found"})
+            return
+        origin = self.headers.get("Origin")
+        if (self.headers.get("Sec-Fetch-Site") == "cross-site"
+                or (origin is not None or not reading)
+                and (not PUBLIC_ORIGIN or not require_same_origin(origin, PUBLIC_ORIGIN))):
+            self.respond(403, {"error": "forbidden"})
+            return
+        try:
+            with connect() as connection:
+                cookie = self.headers.get("Cookie")
+                if reading:
+                    connection.execute("BEGIN")
+                    actor = authenticated_account(connection, cookie)
+                    if actor is None:
+                        self.respond(401, {"error": "unauthorised"})
+                        return
+                    supplier_access(connection, actor)
+                    if root:
+                        result = read_supplier_directory(connection)
+                    elif impact:
+                        result = read_supply_impact(connection, actor, int(parts[3]))
+                    else:
+                        result = read_supplier(connection, int(parts[3]))
+                else:
+                    actor = authorised_mutation(connection, cookie, origin, PUBLIC_ORIGIN,
+                                                self.headers.get("X-CSRF-Token"))
+                    if actor is None:
+                        raise PermissionError()
+                    supplier_access(connection, actor, edit=True)
+                    length = self.headers.get("Content-Length", "")
+                    if not length.isdecimal() or not 0 < int(length) <= 65536:
+                        raise ValueError("Invalid Supplier request size")
+                    if self.headers.get("Content-Type", "").split(";")[0].strip().lower() != "application/json":
+                        self.respond(415, {"error": "JSON required"})
+                        return
+                    payload = json.loads(self.rfile.read(int(length)), object_pairs_hook=unique_directory_fields)
+                    result = save_supplier_operation(connection, actor, read_session_cookie(cookie), payload)
+            self.respond(200, result)
+        except PermissionError:
+            self.respond(403, {"error": "forbidden"})
+        except LookupError as exc:
+            self.respond(404, {"error": str(exc)})
+        except FileExistsError as exc:
+            self.respond(409, {"error": str(exc)})
+        except sqlite3.IntegrityError:
+            self.respond(409, {"error": "A protected Supplier relationship prevented this change."})
+        except (ValueError, TypeError, UnicodeError, RecursionError) as exc:
+            self.respond(400, {"error": str(exc)})
 
     def handle_stock_request(self):
         """Protect stock reads and saves with the existing session and request checks."""
