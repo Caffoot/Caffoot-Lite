@@ -6,6 +6,10 @@ Use IT Assets to record who has equipment, what has physically returned and whic
 
 This guide follows equipment after [receipt and checking](IT-Assets-Stock-Intake.md). For managed computers, also read [Device Registration And Reissue](Device-Stock-Registration-and-Reissue.md): a computer's Device record, physical possession, assignment and readiness describe different things.
 
+## Date Format For Stock Movements
+
+Use UK **DD/MM/YYYY** for Date Issued, Date Returned, Date Checked, Date Reassigned and Date Written Off (for example, **18/11/2026**), or choose from the calendar button. Caffoot Lite preserves the event as an ISO `YYYY-MM-DD` value internally and retains the original stock movement, validation, future-date and handover safeguards. An invalid typed date cannot be saved. For accessibility and calendar-keyboard help, see [UK Date Entry And Calendar Controls](README.md#uk-date-entry-and-calendar-controls).
+
 ## Before You Start
 
 An administrator enables **IT Assets** under **Settings & Data → Optional Features → Additional Features**. It is independently optional and starts off. **IT Assets Read** permits stock and movement viewing; **IT Assets Edit** permits the actions below, subject to existing role, individual override, MFA and session rules. The switch grants no permission.
