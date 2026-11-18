@@ -8,7 +8,8 @@ from .application_integrity import validate_live_application_state as validate_d
 from .device_addresses import prepare_device_address, is_basic_address
 from .device_rack_fields import prepare_device_rack_fields
 from .device_storage import validate_device_storage
-from .equipment_lifecycle import UNCHANGED_LIFECYCLE, write_device_lifecycle
+from .equipment_lifecycle import (UNCHANGED_LIFECYCLE, require_selectable_device_type,
+                                  write_device_lifecycle)
 from .equipment_suppliers import device_supplier_values, write_device_supplier
 from .inventory import reconstruct_inventory
 from .normalisation_validation import validate_normalisation_devices
@@ -98,6 +99,7 @@ def _prepare_related_guests(connection, candidate, host_id, related_devices, acc
                    if previous.get(key) != record.get(key)}
         if not changed or not changed.issubset(_GUEST_FIELDS):
             raise ValueError("Unsupported related device change")
+        require_selectable_device_type(connection, record.get('type'), previous.get('type'))
         _validate_device_identity_change(connection, previous, record)
         row = connection.execute(
             "SELECT revision FROM inventory_devices WHERE id=?", (guest_id,)
@@ -192,6 +194,7 @@ def save_reserved_device(connection, account_id, device_id, revision, record, se
             if (rack_placement_changed and
                     not can_access(connection, account_id, "Racks", edit=True)):
                 raise PermissionError("Racks edit permission required for rack placement changes")
+        require_selectable_device_type(connection, record.get('type'), previous.get('type'))
         _validate_device_identity_change(connection, previous, record)
         candidate["devices"] = [record if device["id"] == device_id else device
                                 for device in candidate["devices"]]
@@ -299,6 +302,7 @@ def create_device_in_transaction(connection, account_id, record):
         raise PermissionError("Racks edit permission required to add a rack-mounted device")
     if not can_access(connection, account_id, "Devices", edit=True):
         raise PermissionError("Section edit permission was revoked")
+    require_selectable_device_type(connection, record.get('type'))
     record = prepare_device_rack_fields(connection, record)
     record = prepare_device_address(connection, account_id, record)
     validate_device_storage(record)

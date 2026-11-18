@@ -125,3 +125,27 @@ class EquipmentLifecycleTests(unittest.TestCase):
             self.assertNotIn('equipmentLifecycle', project_inventory_response(self.db, 1, {'devices': [self.record]}))
             self.assertNotIn('2024-03-12', json.dumps(visible_change_history(self.db, 1)))
             self.assertEqual(self.db.execute('SELECT purchase_date FROM device_lifecycle').fetchone(), ('2024-03-12',))
+
+    def test_archive_and_rename_keep_type_identity_and_existing_calculation(self):
+        from backend.device_catalogue import change_device_catalogue
+        self.setup_devices()
+        self.save_dates({'purchaseDate': '2024-02-29'})
+        original = self.db.execute(
+            "SELECT id FROM equipment_lifecycle_types WHERE name='Desktop'").fetchone()
+        change = lambda op, old, new: change_device_catalogue(self.db, 1, 'type', op, old, new, ['desk'])
+        change('archive', 'Desktop', '')
+        self.assertTrue(read_lifecycle_settings(self.db, 1)['types'][0]['archived'])
+        with self.assertRaisesRegex(ValueError, 'available for new selections'):
+            create_device(self.db, 1, dict(self.record, id='new', name='Archived New Device'))
+        self.save_dates({'warrantyExpiry': '2025-02-28'})
+        change('rename', 'Desktop', 'Fictional Workstation')
+        self.record = json.loads(self.db.execute(
+            "SELECT record_json FROM inventory_devices WHERE id='desk'").fetchone()[0])
+        self.assertEqual(self.record['type'], 'Fictional Workstation')
+        self.assertEqual(project_device_lifecycle(self.db, [self.record])['devices'][0]['plannedReplacementDate'], '2027-02-28')
+        self.assertEqual(self.db.execute(
+            "SELECT id FROM equipment_lifecycle_types WHERE name='Fictional Workstation'").fetchone(), original)
+        self.assertNotIn('Desktop', {entry['name'] for entry in read_lifecycle_settings(self.db, 1)['types']})
+        change('unarchive', 'Fictional Workstation', '')
+        create_device(self.db, 1, dict(self.record, id='new', name='Unarchived New Device'))
+        self.assertEqual(self.db.execute("SELECT count(*) FROM device_lifecycle").fetchone(), (1,))

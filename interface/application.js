@@ -537,6 +537,7 @@ function hierarchyValidateTypes(subnets) {
         // temporarily preserve the device form while creating a missing subnet.
         let deviceFormDraft = null;
         let deviceSuppliers = {};
+        let deviceTypeAvailability = {archived:[], renamed:[]};
         let ipViewRange = '1-32';
         let ipAddressGridPage = 0;
 
@@ -2639,7 +2640,7 @@ function hierarchyValidateTypes(subnets) {
             return [...new Set([...list,...appState.devices.map(d=>d[prop])].filter(Boolean))]
                 .sort((a,b)=>a.localeCompare(b,undefined,{sensitivity:'base'}));
         }
-        function getUniqueDeviceTypes() { return [...new Set([...getManagedDeviceTypeOrLocationNames('type'), ...defaultData.deviceTypes])].sort((a,b)=>a.localeCompare(b,undefined,{sensitivity:'base'})); }
+        function getUniqueDeviceTypes() { return [...new Set([...getManagedDeviceTypeOrLocationNames('type'), ...defaultData.deviceTypes.filter(name=>!deviceTypeAvailability.renamed.includes(name))])].sort((a,b)=>a.localeCompare(b,undefined,{sensitivity:'base'})); }
         function getUniqueDeviceLocations() { return getManagedDeviceTypeOrLocationNames('location'); }
         function isProtectedDeviceTypeOrLocation(kind,name) {
             return name.toLowerCase()==='unknown';
@@ -2652,13 +2653,16 @@ function hierarchyValidateTypes(subnets) {
             const fields=renderInterfaceTemplate("device-management/fields-14",[isType?'Device Type':'Location',isType?'device type':'location',kind,isType?'Type':'Location',isType?'device types':'locations',escapeHtml(deviceTypeLocationSearchFilters[kind]),kind,isType?'Device types':'Locations',isType?'device types':'locations',entries.length,all.length,entries.length?entries.map(name=>{
                   const count=appState.devices.filter(d=>d[isType?'type':'location']===name).length;
                   const locked=isProtectedDeviceTypeOrLocation(kind,name);
-                  return renderInterfaceTemplate("device-management/fields-12",[escapeHtml(name),count,count===1?'':'s',locked?' · Protected':'',kind,escapeHtml(name),locked?'disabled':'',escapeHtml(name),kind,escapeHtml(name),locked?'disabled':'',escapeHtml(name)]);
+                  const archived=isType&&deviceTypeAvailability.archived.includes(name);
+                  const archiveAction=isType&&!locked&&!['Server - Virtual','Virtual Machine'].includes(name)
+                    ? renderInterfaceTemplate('device-management/archive-device-type',[archived?'unarchive':'archive',escapeHtml(name),archived?'Unarchive':'Archive']) : '';
+                  return renderInterfaceTemplate("device-management/fields-12",[escapeHtml(name),count,count===1?'':'s',locked?' · Protected':archived?' · Archived':'',kind,escapeHtml(name),locked?'disabled':'',escapeHtml(name),kind,escapeHtml(name),locked?'disabled':'',escapeHtml(name),archiveAction]);
                 }).join(''):renderInterfaceTemplate("device-management/fields-13",[isType?'device types':'locations'])]);
             const actions=renderInterfaceTemplate("device-management/actions-7",[]);
             openCatalogueModal(`Manage ${label}`,
               `${all.length} configured · Changes update the existing saved device inventory.`,
               fields,actions,
-              `Unknown is protected. Deleting an in-use ${isType?'device type':'location'} requires confirmation and changes affected devices to Unknown.`);
+              `Unknown is protected. Deleting an in-use ${isType?'device type':'location'} requires confirmation and changes affected devices to Unknown.${isType?' Archiving a type keeps it on existing Devices and hides it from new selections.':''}`);
         }
         function openManageTypesModal(){openDeviceCatalogueManager('type');}
         function openManageLocationsModal(){openDeviceCatalogueManager('location');}
@@ -6886,12 +6890,14 @@ function openIpModal(ip) {
             deviceFormDraft = null;
             const types = getUniqueDeviceTypes();
             const locations = getUniqueDeviceLocations();
-            const currentType = draft?.type ?? device?.type ?? '';
+            const requestedType = draft?.type ?? device?.type ?? '';
+            const selectableType = type => !deviceTypeAvailability.archived.includes(type) || device?.type === type;
+            const currentType = selectableType(requestedType) ? requestedType : '';
             const hasEligiblePhysicalHost = appState.devices.some(d => d.type === 'Server - Physical' && d.status !== 'Retired' && (d.typeDetails?.serverService_Hypervisor === true || d.serverService_Hypervisor === true));
             // Keep legacy virtual types selectable when editing, even without a current host.
-            const availableFormTypes = types.filter(t => t !== 'Server - Virtual');
+            const availableFormTypes = types.filter(t => t !== 'Server - Virtual' && selectableType(t));
             const isExistingVirtual = (draft?.isVirtual ?? device?.isVirtual) === true || currentType === 'Server - Virtual';
-            const vmPurposes = [['Server','Server - Virtual'],['Desktop','Desktop'],['Firewall','Firewall'],['Router','Router'],['NAS','NAS'],['Wireless LAN Controller','Wireless LAN Controller']];
+            const vmPurposes = [['Server','Server - Virtual'],['Desktop','Desktop'],['Firewall','Firewall'],['Router','Router'],['NAS','NAS'],['Wireless LAN Controller','Wireless LAN Controller']].filter(([,type])=>selectableType(type));
             deviceDetailFormValues = {...(draft?.typeDetails ?? device?.typeDetails ?? {})};
             const sourceRecord=device||(isDuplicate?getDeviceById(draft.duplicatedFrom):null);
             deviceEditorSoftwareSource=sourceRecord?JSON.parse(JSON.stringify(sourceRecord)):null;
@@ -8846,6 +8852,12 @@ function openIpModal(ip) {
                 case 'discard-device-form-changes': discardDeviceFormChanges(); break;
                 case 'save-rename': applyDeviceCatalogueChange(target.dataset.kind,'rename',name,document.getElementById('device-catalogue-rename-value')?.value||''); break;
                 case 'cancel-rename': cancelDeviceCatalogueEntryRename(); break;
+                case 'change-device-type-availability': {
+                    const operation=target.dataset.operation;
+                    if(['archive','unarchive'].includes(operation))
+                        void nextDeviceCatalogueBridge?.change('type',operation,name,'');
+                    break;
+                }
                 case 'rename-device-catalogue-entry': openDeviceTypeOrLocationRename(target.dataset.kind,name); break;
                 case 'delete-device-type-or-location': requestDeviceCatalogueEntryDeletion(target.dataset.kind,name); break;
                 case 'cancel-delete': cancelDeviceCatalogueEntryDeletion(); break;
@@ -9170,6 +9182,7 @@ void (async () => {
     nextImportAllowed = ['Devices','IPAM','Racks'].every(key => editPermissions[key]);
     deviceRevisions = state.deviceRevisions || {};
     deviceSuppliers = state.deviceSuppliers || {};
+    deviceTypeAvailability = state.deviceTypeAvailability || {archived:[],renamed:[]};
     suppliersEnabled = Object.hasOwn(state, "deviceSuppliers") || (!state.sections?.Devices && suppliersEnabled);
     deviceEditors = state.deviceEditors || {};
     // A replacement import or Clean Start can remove optional managed settings.
@@ -9215,7 +9228,7 @@ void (async () => {
     'add-service','rename-service','delete-service',
     'add-software','rename-software','delete-software',
     'add-custom-location','add-device-type-or-location','save-rename',
-    'rename-device-catalogue-entry','delete-device-type-or-location',
+    'rename-device-catalogue-entry','delete-device-type-or-location','change-device-type-availability',
     'delete-device-type','delete-location','edit-device-type','edit-location',
     'confirm-delete'
   ]);
@@ -10236,8 +10249,13 @@ void (async () => {
         await refreshCentralInventory(false);
         showToast(operation==='delete'
           ? result.affectedDevices+' device(s) set to Unknown; '+kind+' deleted.'
-          : (kind==='type'?'Type':'Location')+' '+(operation==='add'?'added':'renamed')+' successfully.','success');
+          : (kind==='type'?'Type':'Location')+' '+({add:'added',rename:'renamed',archive:'archived',unarchive:'unarchived'}[operation])+' successfully.','success');
         openDeviceCatalogueManager(kind);
+        if(operation==='archive'||operation==='unarchive'){
+          const button=[...document.querySelectorAll('[data-action="change-device-type-availability"]')]
+            .find(item=>item.dataset.name===oldName);
+          button?.focus();
+        }
         renderContent();
         return true;
       } catch(error) {

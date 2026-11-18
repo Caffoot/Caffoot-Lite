@@ -91,12 +91,40 @@ def lifecycle_types(connection):
     )]
     rows = {name: (years, bool(archived), original) for name, years, archived, original
             in connection.execute('SELECT name,years,archived,original_name FROM equipment_lifecycle_types')}
-    names = dict.fromkeys((*rows, *managed, *discovered))
+    canonical = (name for name, (_, _, original) in rows.items() if original is not None)
+    names = dict.fromkeys(name for name in (*canonical, *managed, *discovered)
+                          if isinstance(name, str) and name and name not in VIRTUAL_TYPES)
     return [
-        dict(name=name, label=display_type(name), years=rows.get(name, (None, False, None))[0],
-             archived=rows.get(name, (None, False, None))[1])
-        for name in names if isinstance(name, str) and name and name not in VIRTUAL_TYPES
+        dict(name=name, label='Server (Custom)' if name == 'Server' and 'Server - Physical' in names else display_type(name),
+             years=rows.get(name, (None, False, None))[0], archived=rows.get(name, (None, False, None))[1])
+        for name in names
     ]
+
+
+def device_type_availability(connection):
+    archived, renamed = [], []
+    for name, is_archived, original in connection.execute(
+            'SELECT name,archived,original_name FROM equipment_lifecycle_types'):
+        if is_archived:
+            archived.append(name)
+        if original is not None and original != name:
+            renamed.append(original)
+    return dict(archived=archived, renamed=renamed)
+
+
+def require_selectable_device_type(connection, device_type, previous=None):
+    if device_type == previous:
+        return
+    availability = device_type_availability(connection)
+    if isinstance(device_type, str) and any(
+            name.casefold() == device_type.casefold() for name in availability['archived']):
+        raise ValueError('Choose a Device Type that is available for new selections.')
+    if device_type in availability['renamed']:
+        row = connection.execute(
+            "SELECT value_json FROM inventory_settings WHERE key='deviceTypes'"
+        ).fetchone()
+        if row is None or device_type not in json.loads(row[0]):
+            raise ValueError('Choose the current name of this Device Type.')
 
 
 def read_lifecycle_settings(connection, actor):

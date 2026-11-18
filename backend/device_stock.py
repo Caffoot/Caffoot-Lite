@@ -6,7 +6,7 @@ from backend.audit_events import record_actor_event
 from backend.device_saves import create_device_in_transaction
 from backend.permissions import can_access
 from backend.equipment_associations import has_outstanding_associated_equipment
-from backend.equipment_lifecycle import capture_first_service_from_stock
+from backend.equipment_lifecycle import capture_first_service_from_stock, device_type_availability
 from backend.stock_intake import (COMPUTER_TYPES, append_stock_fact, stock_item,
     stock_operation, stock_replay, stock_write_access, stock_text, stock_json)
 from backend.stock_circulation import (canonical_device_choice, require_stock_device_edit,
@@ -29,10 +29,11 @@ def registration_source_ready(item):
 def device_stock_sources(connection, actor):
     """Offer only compatible, unregistered Ready stock and common specifications."""
     require_device_stock_access(connection, actor)
+    archived = set(device_type_availability(connection)['archived'])
     sources = []
     for identity, in connection.execute('SELECT id FROM it_asset_stock_items ORDER BY name,id'):
         item = stock_item(connection, identity)
-        if not registration_source_ready(item):
+        if not registration_source_ready(item) or item['category'] in archived:
             continue
         details = dict(item['sharedSpecifications'])
         if 'storageMedium' in details:
