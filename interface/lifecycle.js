@@ -73,6 +73,7 @@
       suggestion.hidden=!suggested||!!warranty;
       suggestion.querySelector('[data-lifecycle-suggestion]').textContent=suggested?`Suggested Expiry · ${dateLabel(suggested)}`:'';
       accept.dataset.suggested=suggested;
+      window.caffootUkDates?.sync(section);
     };
     const values={...saved,...restored};
     for (const [key] of dates) input(key).value=values[key]||'';
@@ -84,17 +85,19 @@
     accept.addEventListener('click',()=>{
       input('warrantyExpiry').value=accept.dataset.suggested;
       update();
-      input('warrantyExpiry').focus();
+      window.caffootUkDates?.focus(input('warrantyExpiry')) || (window.caffootUkDates ? undefined : input('warrantyExpiry').focus());
     });
     reset.addEventListener('click',()=>{
       mode.value='calculated';
       update();
-      planned.focus();
+      window.caffootUkDates?.focus(planned) || (window.caffootUkDates ? undefined : planned.focus());
     });
     form.lifecycleDraft = () => Object.fromEntries(dates.map(([key])=>[
       key,key==='replacementOverride'&&mode.value==='calculated'?null:input(key).value||null,
     ]));
     form.lifecycleChanges = () => {
+      if (window.caffootUkDates && !window.caffootUkDates.validate(form))
+        throw new Error('Enter a valid date in DD/MM/YYYY format.');
       if (mode.value==='manual'&&!planned.value)
         throw new Error('Enter a Planned Replacement Date or choose Use Calculated Date.');
       for (const [key,label] of dates) {
