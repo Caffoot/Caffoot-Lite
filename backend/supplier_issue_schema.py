@@ -65,10 +65,14 @@ CREATE TRIGGER supplier_issue_contact_history_immutable BEFORE UPDATE OF has_iss
 WHEN OLD.has_issue_history=1 AND NEW.has_issue_history!=1
 BEGIN SELECT RAISE(ABORT,'Supplier Contact Issue history is retained'); END;
 CREATE TRIGGER supplier_issue_audit_no_update BEFORE UPDATE ON inventory_change_history
-WHEN CASE WHEN json_valid(OLD.record_json) THEN json_extract(OLD.record_json,'$.reason') LIKE 'Supplier issue%' END
+WHEN CASE WHEN json_valid(OLD.record_json) THEN
+    json_extract(OLD.record_json,'$.changes[0].kind')='Suppliers'
+    AND json_extract(OLD.record_json,'$.reason') LIKE 'Supplier issue%' END
 BEGIN SELECT RAISE(ABORT,'Supplier Issue audit is immutable'); END;
 CREATE TRIGGER supplier_issue_audit_no_delete BEFORE DELETE ON inventory_change_history
-WHEN CASE WHEN json_valid(OLD.record_json) THEN json_extract(OLD.record_json,'$.reason') LIKE 'Supplier issue%' END
+WHEN CASE WHEN json_valid(OLD.record_json) THEN
+    json_extract(OLD.record_json,'$.changes[0].kind')='Suppliers'
+    AND json_extract(OLD.record_json,'$.reason') LIKE 'Supplier issue%' END
 BEGIN SELECT RAISE(ABORT,'Supplier Issue audit is retained'); END;
 """
 

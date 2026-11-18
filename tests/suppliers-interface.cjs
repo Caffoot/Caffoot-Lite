@@ -4,6 +4,7 @@ const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
 const {spawn, spawnSync} = require('node:child_process');
+const {createHash} = require('node:crypto');
 const {chromium} = require('playwright');
 
 const root = path.resolve(__dirname, '..');
@@ -12,6 +13,7 @@ const database = path.join(temporary, 'inventory.sqlite3');
 const origin = 'https://127.0.0.1:8097';
 const headerEvidence = process.env.CAFFOOT_SUPPLIER_HEADER_EVIDENCE;
 const evidence = headerEvidence || process.env.CAFFOOT_SUPPLIER_EVIDENCE;
+const issueEvidence = process.env.CAFFOOT_SUPPLIER_ISSUE_EVIDENCE;
 let browser, server, log;
 const owner = 'Purchasing Owner', reader = 'Purchasing Reader';
 const password = 'Fictional-Supplier-Acceptance-2026!';
@@ -45,6 +47,11 @@ async function checkDetailsHeader(page, actions, explanation = null) {
   }, Boolean(explanation));
 }
 
+async function purchaserHasOneSelected(page) {
+  return page.locator('#sidebar [aria-current="page"]').evaluateAll(items =>
+    items.length === 1 && items[0].dataset.tab === 'purchasing');
+}
+
 async function main() {
   const secret = python(`
 import sqlite3, sys, time
@@ -60,6 +67,7 @@ with sqlite3.connect(sys.argv[1]) as db:
     reader = create_user(db, owner, sys.argv[3], sys.argv[4])
     db.execute("UPDATE accounts SET mfa_secret=?,mfa_confirmed=1 WHERE id=?", (secret, reader))
     db.execute("INSERT INTO account_permission_overrides VALUES(?,'Suppliers','read')", (reader,))
+    db.execute("UPDATE organisation_features SET enabled=1 WHERE feature='devices'")
     print(secret)
 `, [database, owner, reader, password]);
   log = fs.openSync(path.join(temporary, 'server.log'), 'w');
@@ -113,6 +121,27 @@ with sqlite3.connect(sys.argv[1]) as db:
   assert.equal(await supplierNav.isVisible(), false);
   assert.equal(await page.locator('#optional-feature-equipment-lifecycle').count(), 0);
   await toggleFeature(true);
+  const purchasingNav = button('Purchasing');
+  const itToggle = page.locator('#sidebar [data-group="it"]');
+  const purchasingToggle = page.locator('#sidebar [data-group="purchasing"]');
+  await purchasingNav.click();
+  await page.getByText('No Active Supplier Issues', {exact: true}).waitFor();
+  assert.equal(await page.locator('#sidebar [aria-label="Dashboard"]').count(), 0);
+  assert.equal(await supplierNav.isVisible(), true);
+  await itToggle.press('Space');
+  assert.equal(await itToggle.getAttribute('aria-expanded'), 'false');
+  assert.equal(await supplierNav.isVisible(), true);
+  await purchasingToggle.press('Space');
+  assert.equal(await purchasingToggle.getAttribute('aria-expanded'), 'false');
+  await button('IT').click();
+  await page.waitForURL('**/inventory#dashboard');
+  assert.equal(await itToggle.getAttribute('aria-expanded'), 'true');
+  assert.equal(await purchasingToggle.getAttribute('aria-expanded'), 'false');
+  await page.locator('#sidebar [data-tab="devices"]').click();
+  await page.locator('#sidebar [data-tab="devices"][aria-current="page"]').waitFor();
+  assert.deepEqual(await page.locator('#sidebar [aria-current="page"]').evaluateAll(items => items.map(item => item.dataset.tab)), ['devices']);
+  await purchasingNav.click();
+  assert.equal(await purchasingToggle.getAttribute('aria-expanded'), 'true');
   await supplierNav.click();
   assert.equal(await page.locator('.supplier-live .tabs').evaluate(nav => getComputedStyle(nav).display), 'flex');
   assert.notEqual(await button('Add Supplier').evaluate(control => getComputedStyle(control).backgroundColor),
@@ -179,7 +208,7 @@ with sqlite3.connect(sys.argv[1]) as db:
   await button('Discard Changes').click();
   await dialog.getByText(contactNote).waitFor();
   await modalButton('Close').click();
-  await page.getByRole('tab', {name: 'Notes', exact: true}).click();
+  await page.getByRole('tab', {name: 'Notes & Issues', exact: true}).click();
   await button('Add Supplier Note').click();
   await dialog.getByLabel('Note').fill('Quarterly licensing review takes place in March.');
   await modalButton('Save Note').click();
@@ -197,6 +226,131 @@ with sqlite3.connect(sys.argv[1]) as db:
   await modalButton('Reactivate Supplier').click();
   await button('Archive').waitFor();
   await checkDetailsHeader(page, archiveActions, retention);
+  async function addIssue(title, description, contact) {
+    await button('Add Issue').click();
+    await dialog.getByRole('heading', {name: 'Add Supplier Issue'}).waitFor();
+    assert.equal(await dialog.getByLabel('Issue Status').count(), 0);
+    await dialog.getByLabel('Issue Title').fill(title);
+    await dialog.getByLabel('Main Description').fill(description);
+    if (contact) await dialog.getByLabel(contact, {exact: true}).check();
+  }
+  await button('Issues').click();
+  const issueEvidenceUrl = page.url();
+  assert.match(issueEvidenceUrl, /\/notes\/issues$/);
+  await addIssue('Damaged monitors', 'Three monitors arrived with cracked screens.', 'Jo Patel');
+  await modalButton('Add Issue Category').click();
+  await dialog.getByLabel('Category Name').fill('Replacement Parts');
+  await modalButton('Save Category').click();
+  await dialog.getByRole('button', {name: 'Issue Category', exact: true}).filter({hasText: 'Replacement Parts'}).waitFor();
+  await modalButton('Add Issue').click();
+  const monitorRow = page.locator('#supplier-issue-rows tr').filter({hasText: 'Damaged monitors'});
+  await monitorRow.waitFor();
+  assert.match(await monitorRow.innerText(), /Replacement Parts[\s\S]*Jo Patel[\s\S]*Open/);
+  await page.getByRole('button', {name: 'Filter Issues By Category', exact: true}).click();
+  await page.getByRole('listbox').getByRole('option', {name: 'Warranty', exact: true}).click();
+  assert.equal(await monitorRow.count(), 0);
+  await page.getByRole('button', {name: 'Filter Issues By Category', exact: true}).click();
+  await page.getByRole('listbox').getByRole('option', {name: 'Replacement Parts', exact: true}).click();
+  await monitorRow.getByRole('button', {name: 'View Details'}).click();
+  await dialog.getByRole('heading', {name: 'Supplier Issue Details'}).waitFor();
+  await dialog.getByLabel('Issue Status').selectOption('In Progress');
+  await dialog.getByLabel('New Dated Update').fill('The supplier is arranging replacements.');
+  await modalButton('Save Issue Changes').click();
+  await monitorRow.getByText('In Progress', {exact: true}).waitFor();
+  await monitorRow.getByRole('button', {name: 'View Details'}).click();
+  await modalButton('Edit').click();
+  await dialog.getByLabel('Issue Update').fill('Uncommitted update correction');
+  await page.keyboard.press('Escape');
+  await button('Keep Editing').click();
+  assert.equal(await dialog.getByLabel('Issue Update').inputValue(), 'Uncommitted update correction');
+  await modalButton('Cancel').click();
+  await button('Discard Changes').click();
+  await dialog.getByText('The supplier is arranging replacements.').waitFor();
+  await modalButton('Edit').click();
+  await dialog.getByLabel('Issue Update').fill('The supplier has confirmed that replacements are being arranged.');
+  await modalButton('Save Changes').click();
+  await dialog.getByText(/Corrected by Purchasing Owner/).waitFor();
+  await dialog.getByLabel('Jo Patel', {exact: true}).uncheck();
+  await dialog.getByLabel('Kim Cooper', {exact: true}).check();
+  await modalButton('Save Issue Changes').click();
+  await monitorRow.getByText('Kim Cooper', {exact: true}).waitFor();
+  await page.getByRole('tab', {name: 'Contacts', exact: true}).click();
+  await button('Jo Patel').click();
+  await dialog.getByText('No Supplier Issues Are Linked To This Contact.').waitFor();
+  await modalButton('Close').click();
+  await button('Kim Cooper').click();
+  await modalButton('View Supplier Issue').click();
+  await dialog.getByRole('heading', {name: 'Supplier Issue Details'}).waitFor();
+  await modalButton('Cancel').click();
+  await dialog.getByRole('heading', {name: 'Kim Cooper'}).waitFor();
+  await modalButton('Close').click();
+
+  await page.getByRole('tab', {name: 'Overview', exact: true}).click();
+  assert.match(await button(/Active Issues/).innerText(), /1/);
+  await button(/Active Issues/).click();
+  await button('Manage Issue Categories').click();
+  const replacement = dialog.getByRole('row', {name: /Replacement Parts/});
+  await replacement.getByRole('button', {name: 'Retire', exact: true}).click();
+  await modalButton('Retire Issue Category').click();
+  await replacement.getByText('Retired', {exact: true}).waitFor();
+  await modalButton('Close').click();
+  assert.match(await monitorRow.innerText(), /Replacement Parts \(Retired\)/);
+  await button('Filter Issues By Category').click();
+  await page.getByRole('listbox').getByRole('option', {name: 'All Categories', exact: true}).click();
+
+  for (const [title, description, status] of [
+    ['Missing delivery label', 'The dispatch label is missing from the delivery.', 'Open'],
+    ['Incorrect dock model', 'The supplier sent the correct dock model as a replacement.', 'Resolved'],
+    ['Invoice credit checked', 'Accounts checked the replacement invoice and accepted the credit.', 'Closed']
+  ]) {
+    await addIssue(title, description);
+    await modalButton('Add Issue').click();
+    await button(title).waitFor();
+    if (status === 'Open') continue;
+    await button(title).click();
+    await dialog.getByLabel('Issue Status').selectOption(status);
+    await modalButton('Save Issue Changes').click();
+    await page.locator('#supplier-issue-rows tr').filter({hasText: title}).getByText(status, {exact: true}).waitFor();
+  }
+
+  await button('Purchasing').click();
+  const dashboard = page.locator('.purchasing-dashboard');
+  await dashboard.waitFor();
+  assert.deepEqual(await dashboard.locator('.db-metric strong').allTextContents(), ['1', '1', '1', '1']);
+  assert.deepEqual(await dashboard.locator('[data-issue-status] strong').allTextContents(), ['1', '1', '1', '1']);
+  assert.deepEqual(await dashboard.locator('.device-table button').allTextContents(), ['Missing delivery label', 'Damaged monitors']);
+  await button('Damaged monitors').click();
+  await dialog.getByLabel('Issue Title').waitFor();
+  assert.equal(await dialog.getByLabel('Main Description').inputValue(), 'Three monitors arrived with cracked screens.');
+  await modalButton('Cancel').click();
+  await dashboard.locator('section').filter({has: page.getByRole('heading', {name: 'Recent Supplier Issues'})})
+    .getByRole('button', {name: 'View All Issues'}).click();
+  await page.getByRole('heading', {name: 'Supplier Issues', exact: true}).waitFor();
+  await page.locator('#supplier-issue-rows tr').first().waitFor();
+  assert.equal(await page.locator('#supplier-issue-rows tr').count(), 4);
+  await page.getByLabel('Filter Issues By Status').selectOption('Closed');
+  assert.equal(await page.locator('#supplier-issue-rows tr').count(), 1);
+  await button('Invoice credit checked').click();
+  await dialog.getByLabel('Issue Status').selectOption('Open');
+  await modalButton('Save Issue Changes').click();
+  await page.getByText('No Issues Match These Filters').waitFor();
+  await button('Back To Purchasing Dashboard').click();
+  await dashboard.waitFor();
+  assert.deepEqual(await dashboard.locator('.db-metric strong').allTextContents(), ['1', '1', '2', '1']);
+  await page.getByRole('button', {name: /Open Supplier Issues/}).click();
+  await page.getByRole('heading', {name: 'Supplier Issues', exact: true}).waitFor();
+  await page.getByLabel('Filter Issues By Status').waitFor();
+  assert.equal(await page.getByLabel('Filter Issues By Status').inputValue(), 'Open');
+  assert.equal(await page.locator('#supplier-issue-rows tr').count(), 2);
+  await page.goBack();
+  await dashboard.waitFor();
+  await button('Audit Trail').click();
+  const audit = page.locator('#activity-results tr').filter({hasText: 'Supplier issue update corrected'});
+  await audit.getByRole('button', {name: 'View Details'}).click();
+  const auditDetail = page.locator('#audit-detail-body');
+  await auditDetail.getByText('The supplier is arranging replacements.', {exact: true}).waitFor();
+  await auditDetail.getByText('The supplier has confirmed that replacements are being arranged.', {exact: true}).waitFor();
+
   const readContext = await browser.newContext(contextOptions);
   await login(readContext, reader);
   const readPage = await readContext.newPage();
@@ -205,13 +359,29 @@ with sqlite3.connect(sys.argv[1]) as db:
   await checkDetailsHeader(readPage, ['Back To Suppliers']);
   assert.equal(await readPage.locator('#sidebar [data-tab="it-assets"]').isVisible(), false);
   assert.equal(await readPage.locator('#sidebar [data-tab="devices"]').isVisible(), false);
+  await readPage.goto(origin + '/inventory#purchasing');
+  await readPage.getByRole('button', {name: 'Damaged monitors', exact: true}).click();
+  await readPage.getByRole('heading', {name: 'Supplier Issue Details'}).waitFor();
+  assert.equal(await readPage.getByRole('button', {name: 'Edit', exact: true}).count(), 0);
+  assert.match(await readPage.locator('#modal-content').innerText(), /Three monitors arrived with cracked screens/);
+  await readPage.getByRole('button', {name: 'Close', exact: true}).click();
+  await readPage.goto(issueEvidenceUrl);
+  await readPage.locator('#supplier-issue-rows tr').first().waitFor();
+  assert.equal(await readPage.getByRole('button', {name: 'Add Issue', exact: true}).count(), 0);
   await readContext.close();
 
   await settings();
   await toggleFeature(false);
   await supplierNav.waitFor({state: 'hidden'});
   assert.equal((await context.request.get(origin + '/api/suppliers')).status(), 403);
+  assert.equal((await context.request.get(origin + '/api/suppliers/dashboard')).status(), 403);
+  assert.equal(await purchasingNav.isVisible(), false);
+  await page.goto(origin + '/inventory#purchasing/issues');
+  await page.locator('#app[aria-busy="false"]').waitFor();
+  assert.equal(await page.getByRole('heading', {name: 'Supplier Issues', exact: true}).count(), 0);
+  await settings();
   await toggleFeature(true);
+  await button('Purchasing').click();
   await supplierNav.click();
   await button('Manage Categories').click();
   await modalButton('Add Category').click();
@@ -262,7 +432,7 @@ with sqlite3.connect(sys.argv[1]) as db:
         await page.getByRole('heading', {name: 'Supplier Overview'}).waitFor();
         await checkDetailsHeader(page, archiveActions, retention);
         await capture('overview', theme, width, height);
-        for (const tab of ['Locations', 'Contacts', 'Notes']) {
+        for (const tab of ['Locations', 'Contacts', 'Notes & Issues']) {
           await page.getByRole('tab', {name: tab, exact: true}).click();
           await checkDetailsHeader(page, archiveActions, retention);
           await capture(tab.toLowerCase(), theme, width, height);
@@ -280,12 +450,70 @@ with sqlite3.connect(sys.argv[1]) as db:
       }
     }
     fs.writeFileSync(path.join(evidence, 'manifest.json'), JSON.stringify({
-      sourceCommit: revision(), schema: 21, browser: 'Chromium ' + browser.version(),
+      sourceCommit: revision(), schema: 22, browser: 'Chromium ' + browser.version(),
       origin, captures: shots
     }, null, 2) + '\n');
   }
+  if (issueEvidence) {
+    fs.mkdirSync(issueEvidence, {recursive: true});
+    const captures = [];
+    async function capture(name, theme, width, height, fullPage = false) {
+      await page.waitForFunction(() => document.documentElement.scrollWidth <= innerWidth + 1);
+      assert.equal(await page.locator('html').evaluate(el => el.classList.contains('dark')), theme === 'dark');
+      const filename = `${name}-${theme}-${width}.png`;
+      const bytes = await page.screenshot({path: path.join(issueEvidence, filename), animations: 'disabled', fullPage});
+      captures.push({file: filename, theme, viewport: {width, height}, sha256: createHash('sha256').update(bytes).digest('hex')});
+    }
+    await page.waitForFunction(() => document.getElementById('toast').classList.contains('opacity-0'));
+    for (const [width, height] of [[1440, 1050], [390, 844]]) {
+      await page.setViewportSize({width, height});
+      for (const theme of ['light', 'dark']) {
+        await page.evaluate(theme => caffootSetTheme(theme), theme);
+        await page.goto(origin + '/inventory#purchasing');
+        await dashboard.waitFor();
+        assert.equal(await dashboard.locator('.db-summary').evaluate(el => getComputedStyle(el).display), 'grid');
+        assert.equal(await purchaserHasOneSelected(page), true);
+        if (width < 500) {
+          const table = dashboard.locator('.purchasing-recent table');
+          assert.equal(await table.evaluate(el => getComputedStyle(el).display), 'block');
+          assert.equal(await table.locator('tbody').evaluate(el => el.scrollWidth <= el.clientWidth + 1), true);
+          await purchasingToggle.press('Enter');
+          assert.equal(await supplierNav.isVisible(), false);
+          await purchasingToggle.press('Enter');
+          assert.equal(await supplierNav.isVisible(), true);
+          await purchasingToggle.evaluate(el => el.blur());
+        }
+        await capture('purchasing-dashboard', theme, width, height, true);
+        await dashboard.locator('section').filter({has: page.getByRole('heading', {name: 'Recent Supplier Issues'})})
+          .getByRole('button', {name: 'View All Issues'}).click();
+        await page.locator('#supplier-issue-rows tr').first().waitFor();
+        await capture('all-supplier-issues', theme, width, height, true);
+        await button('Manage Issue Categories').click();
+        await dialog.getByRole('heading', {name: 'Manage Issue Categories'}).waitFor();
+        await capture('issue-categories', theme, width, height);
+        await modalButton('Close').click();
+        await page.goto(issueEvidenceUrl);
+        await monitorRow.waitFor();
+        await capture('supplier-issues', theme, width, height, true);
+        await button('Add Issue').click();
+        await dialog.getByRole('heading', {name: 'Add Supplier Issue'}).waitFor();
+        await capture('add-issue', theme, width, height);
+        await modalButton('Cancel').click();
+        await button('Damaged monitors').click();
+        await dialog.getByLabel('Issue Title').waitFor();
+        await capture('issue-details', theme, width, height);
+        await dialog.evaluate(modal => modal.scrollTop = modal.scrollHeight);
+        await capture('issue-update-history', theme, width, height);
+        await modalButton('Cancel').click();
+      }
+    }
+    fs.writeFileSync(path.join(issueEvidence, 'manifest.json'), JSON.stringify({
+      sourceCommit: revision(), schema: 22, browser: 'Chromium ' + browser.version(),
+      origin, captures
+    }, null, 2) + '\n');
+  }
   assert.deepEqual(errors, []);
-  console.log('PASS Supplier workflows and Details header, including lifecycle controls, retention explanation and Read access');
+  console.log('PASS Supplier workflows and Details header, including Issue correction, status transitions, handover, categories, Purchasing metrics, navigation and access');
 }
 main().catch(error => {console.error(error); process.exitCode = 1;}).finally(async () => {
   await browser?.close();

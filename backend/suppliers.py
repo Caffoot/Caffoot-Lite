@@ -590,21 +590,23 @@ def issue_snapshot(supplier_id, values, contacts, origin):
 
 def save_issue(connection, actor, supplier_id, identity, payload):
     current = child_record(connection, "supplier_issues", supplier_id, identity) if identity is not None else None
-    fields(payload, ("title", "description", "categoryId", "contactIds"),
-           ("status", "newUpdate") if current else ())
+    if current:
+        fields(payload, ("title", "description", "categoryId", "contactIds"), ("status", "newUpdate"))
+    else:
+        fields(payload, ("title", "description"), ("categoryId", "contactIds"))
     title = cleaned(payload["title"], "an Issue Title", required=True)
     description = cleaned(payload["description"], "a Main Description", 12000, required=True, multiline=True)
     status = payload.get("status", current[5] if current else "Open")
     if status not in ISSUE_STATUSES:
         raise ValueError("Choose a valid Issue Status")
-    category = payload["categoryId"]
+    category = payload.get("categoryId")
     if category is not None:
         if type(category) is not int or not 0 < category < 2**63:
             raise ValueError("Choose a valid Issue Category")
         if not (current and category == current[4]) and not connection.execute(
                 "SELECT 1 FROM supplier_issue_categories WHERE id=? AND archived=0", (category,)).fetchone():
             raise ValueError("Only active Issue Categories can be newly assigned")
-    contacts = identities(payload["contactIds"])
+    contacts = identities(payload.get("contactIds", []))
     previous = {contact for (contact,) in connection.execute(
         "SELECT contact_id FROM supplier_issue_contacts WHERE issue_id=?", (identity,)
     )} if current else set()

@@ -1,4 +1,5 @@
 """Supplier HTTP journeys exercise access, validation, attribution and retention."""
+from concurrent.futures import ThreadPoolExecutor
 import http.client
 from http.server import ThreadingHTTPServer
 import json
@@ -14,6 +15,7 @@ from backend.request_auth import csrf_for_session
 from backend.schema import initialise_database
 from backend.server import Handler
 from backend.sessions import _digest
+from backend.supplier_issue_schema import ISSUE_STATUSES
 
 ORIGIN = "https://caffoot.example"
 ROOT = "/api/suppliers"
@@ -140,6 +142,34 @@ class SupplierHttpTests(unittest.TestCase):
                 with self.assertRaises(sqlite3.IntegrityError):
                     db.execute(query)
 
+    def test_every_status_transition_and_competing_edits(self):
+        original = self.save("supplier.save", self.company())
+        values = {"title": "Intermittent fault", "description": "Initial report", "categoryId": None, "contactIds": []}
+        company = self.save("issue.save", {"title": values["title"], "description": values["description"]}, original)
+        identity = company["issue"]
+        self.assertIsNone(identity["categoryId"])
+        self.assertEqual(identity["contactIds"], [])
+        for start in ISSUE_STATUSES:
+            for end in ISSUE_STATUSES:
+                with self.subTest(start=start, end=end):
+                    company = self.save("issue.save", {**values, "status": start}, company, identity)
+                    company = self.save("issue.save", {**values, "status": end}, company, identity)
+                    self.assertEqual(company["issue"]["status"], end)
+                    self.assertEqual(company["issue"]["createdAt"], identity["createdAt"])
+                    self.assertEqual(company["issue"]["updates"], [])
+
+        def edit(actor):
+            return self.request(actor=actor, payload={
+                "operation": "issue.save", "supplierId": company["id"], "recordId": identity["id"],
+                "revision": company["revision"], "data": {**values, "description": f"Correction by {actor}"},
+            })
+
+        with ThreadPoolExecutor(max_workers=2) as editors:
+            responses = list(editors.map(edit, (1, 2)))
+        self.assertEqual(sorted(code for code, _ in responses), [200, 409])
+        saved = next(result["issue"] for code, result in responses if code == 200)
+        self.assertEqual(self.request(f"{ROOT}/{company['id']}/issues/{identity['id']}")[1], saved)
+
     def test_issue_catalogue_and_dashboard_counts_feature_off(self):
         dashboard = ROOT + "/dashboard"
         collection = ROOT + "/issues"
@@ -185,6 +215,7 @@ class SupplierHttpTests(unittest.TestCase):
         self.assertEqual(self.request(collection, actor=5)[0], 401)
         with sqlite3.connect(self.db) as db:
             db.execute("UPDATE organisation_features SET enabled=0 WHERE feature='suppliers'")
+        self.assertNotIn("Broken item", json.dumps(self.request("/api/inventory/history", actor=1)[1]))
         self.assertEqual(self.request(dashboard, actor=1)[0], 403)
         self.assertEqual(self.request(collection, actor=2)[0], 403)
         self.assertEqual(self.request(f"{ROOT}/{supplier['id']}/issues/{opened['id']}", actor=3)[0], 403)

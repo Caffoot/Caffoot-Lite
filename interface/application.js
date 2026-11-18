@@ -1174,6 +1174,7 @@ function hierarchyValidateTypes(subnets) {
                 devices: 'Devices',
                 'it-assets': 'IT Assets',
                 suppliers: 'Suppliers',
+                purchasing: 'Purchasing',
                 racks: 'Network Racks',
 
 
@@ -1296,7 +1297,7 @@ function hierarchyValidateTypes(subnets) {
             else if (currentTab === 'racks') html = renderRackHubV13();
             else if (currentTab === 'audit') html = renderAuditHTML();
             else if (currentTab === 'users') html = nextRenderUsers();
-            else if (currentTab === 'suppliers') html = window.caffootSuppliers.render();
+            else if (['suppliers','purchasing'].includes(currentTab)) html = window.caffootSuppliers.render();
             else if (currentTab === 'it-assets') {
                 window.caffootStockIntake.enter();
                 html = window.caffootStockIntake.render();
@@ -9012,6 +9013,7 @@ function openIpModal(ip) {
                     break;
                 }
                 case 'tab-dashboard': switchTab('dashboard'); break;
+                case 'tab-purchasing': switchTab('purchasing'); break;
                 case 'tab-devices': switchTab('devices'); break;
                 case 'tab-it-assets': switchTab('it-assets'); break;
                 case 'tab-suppliers': switchTab('suppliers'); break;
@@ -9055,7 +9057,7 @@ function openIpModal(ip) {
 // Caffoot Lite: published inventory UI, authoritative SQLite persistence.
 void (async () => {
   const collections = ['devices','subnets','vlans','racks','rackAccessories','ipAllocations'];
-  const section = {devices:'Devices','it-assets':'IT Assets',suppliers:'Suppliers',ipam:'IPAM',racks:'Racks',staff:'Staff Members',departments:'Departments'};
+  const section = {devices:'Devices','it-assets':'IT Assets',suppliers:'Suppliers',purchasing:'Suppliers',ipam:'IPAM',racks:'Racks',staff:'Staff Members',departments:'Departments'};
   let permissions = {};
   let editPermissions = {};
   let deviceRevisions = {};
@@ -9209,7 +9211,12 @@ void (async () => {
     document.querySelectorAll('#sidebar [data-nav-group]').forEach(group=>{
       const anyVisible=[...group.querySelectorAll('.preview-group-children [data-tab]')]
         .some(button=>!button.hidden&&!button.classList.contains('hidden'));
-      group.hidden=!anyVisible;
+      const heading=group.querySelector('.department-nav-row [data-tab]');
+      if (group.dataset.navGroup === 'it' && heading) {
+        heading.hidden=false;
+        heading.disabled=!inventorySectionAccess();
+        group.hidden=!anyVisible && heading.disabled;
+      } else group.hidden=!anyVisible && (!heading || heading.hidden);
     });
     const featureActions={Devices:['tab-devices','open-device-modal'],IPAM:['tab-ipam'],Racks:['tab-racks','dashboard-racks-overview','open-rack-modal']};
     for(const [area,actions] of Object.entries(featureActions)){
@@ -9455,39 +9462,78 @@ void (async () => {
       finally { resumingFreshNavigation = false; }
     }).catch(error => showToast(error.message, 'error'));
   }, true);
+  function setDepartmentExpanded(group, expanded) {
+    const button=document.querySelector('#sidebar [data-action="toggle-nav-group"][data-group="'+group+'"]');
+    const body=document.getElementById('nav-group-'+group);
+    if(!button||!body)return;
+    button.setAttribute('aria-expanded',String(expanded));
+    body.hidden=!expanded;
+    if(button.classList.contains('department-nav-toggle'))
+      button.setAttribute('aria-label',(expanded?'Collapse ':'Expand ')+(group==='it'?'IT':'Purchasing')+' Submenu');
+  }
   document.addEventListener('click',event=>{
     const button=event.target.closest('#sidebar [data-action="toggle-nav-group"]');
     if(!button)return;
     event.preventDefault();event.stopImmediatePropagation();
-    const body=document.getElementById('nav-group-'+button.dataset.group);
-    if(!body)return;
-    const next=button.getAttribute('aria-expanded')!=='true';
-    button.setAttribute('aria-expanded',String(next));
-    body.hidden=!next;
+    setDepartmentExpanded(button.dataset.group,button.getAttribute('aria-expanded')!=='true');
   },true);
   const originalSwitchTab = switchTab;
-  switchTab = function(tab, supplierRoute = false) {
-    if ((!sessionCanEnterInventory && !['account','equipment','staff','departments','it-assets','suppliers'].includes(tab) && !(sessionIsAdmin && ['users','settings'].includes(tab))) || (['dashboard','audit'].includes(tab) && !inventorySectionAccess()) || ((tab === 'users' || tab === 'settings') && !sessionIsAdmin) ||
+  const isSupplierPage = tab => ['suppliers','purchasing'].includes(tab);
+  const purchasingHash = /^#purchasing(?:\/issues)?$/;
+  const supplierHash = /^#suppliers(?:\/|$)/;
+  function landingTab() {
+    return location.pathname==='/account'?'account':inventorySectionAccess()?'dashboard':
+      sessionDirectoryPermissions.staffMembers?.read?'staff':sessionDirectoryPermissions.departments?.read?'departments':
+      permissions['IT Assets']?'it-assets':permissions.Suppliers?'suppliers':sessionIsAdmin?'settings':'account';
+  }
+  function workspaceHashTab() {
+    if (location.pathname!=='/inventory') return '';
+    if (permissions.Suppliers && supplierHash.test(location.hash)) return 'suppliers';
+    if (permissions.Suppliers && purchasingHash.test(location.hash)) return 'purchasing';
+    const destination = window.location.hash.slice(1);
+    const legacyDestination = {
+      dashboard:'dashboard', devices:'devices', ipam:'ipam',
+      racks:'racks', audit:'audit', users:'users',
+      settings:'settings', account:'account',equipment:'equipment',staff:'staff',departments:'departments','it-assets':'it-assets'
+    }[destination];
+    const canOpen = (legacyDestination === 'dashboard' && inventorySectionAccess()) || legacyDestination === 'account' || legacyDestination === 'equipment' ||
+      (legacyDestination === 'it-assets' && permissions['IT Assets']) ||
+      (legacyDestination === 'staff' && permissions['Staff Members']) ||
+      (legacyDestination === 'departments' && permissions.Departments) ||
+      (legacyDestination === 'devices' && permissions.Devices) ||
+      (legacyDestination === 'ipam' && permissions.IPAM) ||
+      (legacyDestination === 'racks' && permissions.Racks) ||
+      (legacyDestination === 'audit' && ['Devices','IPAM','Racks'].some(area => permissions[area])) ||
+      (sessionIsAdmin && ['users','settings'].includes(legacyDestination));
+    return canOpen ? legacyDestination : '';
+  }
+  switchTab = function(tab, fromRoute = false) {
+    if ((!sessionCanEnterInventory && !['account','equipment','staff','departments','it-assets','suppliers','purchasing'].includes(tab) && !(sessionIsAdmin && ['users','settings'].includes(tab))) || (['dashboard','audit'].includes(tab) && !inventorySectionAccess()) || ((tab === 'users' || tab === 'settings') && !sessionIsAdmin) ||
         (section[tab] && !permissions[section[tab]])) {
       showToast('You do not have access to this section.', 'error');
       return;
     }
-    if (currentTab === 'suppliers' && tab !== 'suppliers') {
+    if (isSupplierPage(currentTab) && !isSupplierPage(tab)) {
       window.caffootSuppliers.leave();
-      if (location.hash.startsWith('#suppliers')) history.replaceState(null, '', location.pathname + location.search);
+      if (tab !== 'dashboard' && (supplierHash.test(location.hash) || purchasingHash.test(location.hash)))
+        history.replaceState(null, '', location.pathname + location.search);
     }
+    if (tab === 'dashboard' && !fromRoute) {
+      setDepartmentExpanded('it',true);
+      if (location.hash !== '#dashboard') history.pushState(null, '', '#dashboard');
+    }
+    if (tab === 'purchasing' && (!fromRoute || currentTab !== 'purchasing')) setDepartmentExpanded('purchasing',true);
+    if (tab === 'suppliers' && currentTab !== 'suppliers') setDepartmentExpanded('purchasing',true);
     originalSwitchTab(tab);
-    if (tab === 'suppliers') window.caffootSuppliers.enter(supplierRoute);
+    if (isSupplierPage(tab)) window.caffootSuppliers.enter(tab, fromRoute);
     applyAllowedControls();
   };
   window.addEventListener('popstate', () => {
-    if (/^#suppliers(?:\/|$)/.test(location.hash) && permissions.Suppliers) {
-      const navigate = () => switchTab('suppliers', true);
-      if (document.querySelector('#modal-container:not(.hidden) [data-supplier-dialog]')) closeModal(false, navigate);
-      else navigate();
-    } else if (currentTab === 'suppliers') {
-      switchTab(inventorySectionAccess() ? 'dashboard' : permissions.Suppliers ? 'suppliers' : 'account');
-    }
+    const tab = workspaceHashTab() || (isSupplierPage(currentTab) ? landingTab() : '');
+    if (!tab) return;
+    const navigate = () => switchTab(tab, true);
+    if (document.querySelector('#modal-container:not(.hidden) [data-supplier-dialog]')) closeModal(false, navigate);
+    else navigate();
   });
   // Keep the published read-only device details open during a competing edit.
   const originalOpenDeviceDetailView = openDeviceDetailView;
@@ -11167,7 +11213,8 @@ void (async () => {
     window.caffootSuppliers.configure({
       csrf:csrfToken,canEdit:()=>!!editPermissions.Suppliers,admin:sessionIsAdmin,
       escape:escapeHtml,icon:renderSectionTabIcon,openModal:html=>openModal(html),
-      closeModal:force=>closeModal(force),redraw:()=>{if(currentTab==='suppliers')renderContent();},
+      closeModal:(force, onClosed)=>closeModal(force,onClosed),
+      navigate:(tab, fromRoute)=>switchTab(tab,fromRoute), redraw:()=>{if(isSupplierPage(currentTab))renderContent();},
       notify:(message,type)=>showToast(message,type)
     });
     window.caffootStockIntake.configure({csrf:csrfToken,canRead:()=>!!permissions['IT Assets'],
@@ -11201,27 +11248,7 @@ void (async () => {
       await window.caffootStaffDirectory.refresh();
     // Hide only the browser-backup actions excluded from the server application by issue #215.
     document.querySelectorAll('[data-action="settings-backup"],[data-action="export-data"],[data-action="export-backup"]').forEach(el=>el.hidden=true);
-    const initialSupplierRoute=window.location.pathname==='/inventory' &&
-      /^#suppliers(?:\/|$)/.test(location.hash) && permissions.Suppliers;
-    if(initialSupplierRoute) switchTab('suppliers',true);
-    else switchTab(window.location.pathname==='/account'?'account':inventorySectionAccess()?'dashboard':sessionDirectoryPermissions.staffMembers?.read?'staff':sessionDirectoryPermissions.departments?.read?'departments':permissions['IT Assets']?'it-assets':permissions.Suppliers?'suppliers':sessionIsAdmin?'settings':'account');
-    // Preserve existing fragment entry points without changing server permissions.
-    const destination = window.location.hash.slice(1);
-    const legacyDestination = {
-      dashboard:'dashboard', devices:'devices', ipam:'ipam',
-      racks:'racks', audit:'audit', users:'users',
-      settings:'settings', account:'account',equipment:'equipment',staff:'staff',departments:'departments','it-assets':'it-assets'
-    }[destination];
-    const canOpen = (legacyDestination === 'dashboard' && inventorySectionAccess()) || legacyDestination === 'account' || legacyDestination === 'equipment' ||
-      (legacyDestination === 'it-assets' && permissions['IT Assets']) ||
-      (legacyDestination === 'staff' && permissions['Staff Members']) ||
-      (legacyDestination === 'departments' && permissions.Departments) ||
-      (legacyDestination === 'devices' && permissions.Devices) ||
-      (legacyDestination === 'ipam' && permissions.IPAM) ||
-      (legacyDestination === 'racks' && permissions.Racks) ||
-      (legacyDestination === 'audit' && ['Devices','IPAM','Racks'].some(area => permissions[area])) ||
-      (sessionIsAdmin && ['users','settings'].includes(legacyDestination));
-    if (legacyDestination && canOpen) switchTab(legacyDestination);
+    switchTab(workspaceHashTab() || landingTab(),true);
     document.getElementById('app').inert=false;
     document.getElementById('app').setAttribute('aria-busy','false');
   }catch(error){

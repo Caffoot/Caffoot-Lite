@@ -70,6 +70,7 @@ async function initialiseInterface() {
     interfaceStyles.set('it-assets', staffStyle + '\n' + interfaceStyles.get('stock'));
     interfaceStyles.set('suppliers', interfaceStyles.get('device-inventory') + '\n' + staffStyle +
         '\n' + interfaceStyles.get('stock') + '\n' + interfaceStyles.get('suppliers'));
+    interfaceStyles.set('purchasing', interfaceStyles.get('dashboard') + '\n' + interfaceStyles.get('suppliers'));
     const currentStyle = document.getElementById('interface-page-style');
     const pageStyle = document.createElement('style');
     pageStyle.id = currentStyle.id;
