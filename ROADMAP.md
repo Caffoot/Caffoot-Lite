@@ -18,18 +18,17 @@ Caffoot Lite v2.1 was published on **8 November 2026**. The current release incl
 
 ## In development — v2.2, not published
 
-**Milestone 01 — Everyday IT Management** targets v2.2. Stage 1 roles/IT Staff and Stage 2 optional Devices/IPAM/Racks are accepted. Stage 3 Batches 3.1–3.12 are merged on the separate `milestone-1` branch at `753b3266893987addb11406ef8303adb03c3c112` (schema 20), verified on 17 November 2026. This includes:
+**Milestone 01 — Everyday IT Management** targets v2.2. **Stages 1–4 have completed development and integration** on the separate `milestone-1` branch, verified at `c1b5f8008e8ba56840d9790e3ba1c7e91ad35e0b` (schema 24) on 19 November 2026. They are not published features in v2.1.
 
-- Core Staff Members and Departments, linked accounts, individual/shared Device assignments and My Equipment.
-- Independently optional IT Assets: receipts, Stock Inventory, checks/readiness, issue, partial returns and write-offs.
-- Canonical Device registration/reissue, explicit Associated Equipment, checked direct handovers and attributed movement corrections.
-- IT Assets Overview, stock reporting and per-item Minimum Stock Level warnings.
+- **Stage 1 and 2:** accepted shared roles, IT Staff/MFA protections and optional Devices/IPAM/Racks foundations.
+- **Stage 3:** accepted Staff Members/Departments, equipment assignments and My Equipment; optional IT Assets with receipt, stock movement, Device registration/reissue, Associated Equipment, direct handover and stock reporting.
+- **Stage 4:** owner-accepted Supplier Management, company-owned Supplier Issues and Purchasing Dashboard, supplier/equipment integration and configurable Equipment Lifecycle. [Four merged batches #410–#413 and formal sign-off](https://github.com/Caffoot/Caffoot-Lite/issues/369#issuecomment-7007760294).
 
-See [exact checkpoints and boundaries](docs/development-guide/Development-Status.md), [tracker #351](https://github.com/Caffoot/Caffoot-Lite/issues/351) and the [draft Stage 1–3 guides](docs/how-tos/features-and-instructions/v2.2-draft/README.md). **Batch 3.4 manual/native acceptance remains deferred, not passed.** Merged development is not completed milestone or release acceptance.
+**Next planned Stage 5:** The [Service Desk and Central Email Templates tracker #419](https://github.com/Caffoot/Caffoot-Lite/issues/419) records four frozen, owner-approved HTML designs and the agreed six-batch sequence [#420–#425](https://github.com/Caffoot/Caffoot-Lite/issues/420). **No Stage 5 application development or individual batch is authorised yet.** Ordinary Staff Member My/Department Tickets access and authorised IT Staff Service Desk access are already approved; later implementation must retain the agreed privacy and existing security model. No extra dashboards, KPIs, work-credit schemes or redesigned interfaces are authorised.
 
-Later milestone work includes Suppliers in Stage 4, linked Service Desk work in Stage 5 and Stage 6 integrated compatibility, complete-volume upgrade/restore and final acceptance. These remain separate from the implemented Stage 1–3 workflows.
+**Still outstanding:** explicitly deferred native Raspberry Pi/Safari and other manual evidence, Stage 6 integrated security/compatibility and full-volume upgrade/backup/restore acceptance, and separate owner approval for the final milestone merge, deployment and release. [Development Status](docs/development-guide/Development-Status.md), [Milestone tracker #351](https://github.com/Caffoot/Caffoot-Lite/issues/351) and [draft v2.2 guides](docs/how-tos/features-and-instructions/v2.2-draft/README.md) contain the current boundaries.
 
-**v2.2 remains unreleased.** No release date is promised. The draft guides describe the verified development build; they are not published installation or upgrade instructions. The [six planning milestones](docs/product-direction/PROPOSED-MILESTONES.md) organise later work without approving every proposal. Their dated original structure remains historical context; later issue decisions control current scope.
+**v2.2 remains unreleased.** No release date is promised. The draft guides are not published installation or upgrade instructions. The [six planning milestones](docs/product-direction/PROPOSED-MILESTONES.md) preserve earlier planning context, while later explicit owner decisions control current scope.
 
 ## Ideas under consideration — not yet scheduled
 
@@ -58,4 +57,4 @@ Please [report security vulnerabilities privately](SECURITY.md), not in public i
 
 ---
 
-*Updated: 17 November 2026. Published v2.1, unreleased implementation, approved pending work and unscheduled proposals are distinguished above.*
+*Updated: 19 November 2026. Published v2.1, integrated unreleased work, Stage 5 planning and unscheduled proposals are distinguished above.*
