@@ -1,0 +1,29 @@
+{
+  "source": "8e25fd1451d3297cfa34b2d8c37bbee5ec4878bf",
+  "sha256": {
+    "stock-receive-light-1440.png": "2675dcedd585bf96504af70c91dd5f38dd5090bff35845c29526ba79e9a1105c",
+    "stock-receive-new-light-1440.png": "e637e302a7c21583e7d26240e9fd2ea5e8d5b25396db0328838ed168da642054",
+    "stock-inventory-light-1440.png": "13afce38bc0762f9f005de029c29903935d6153aadc8c39cb6d1b447283a5c20",
+    "stock-details-light-1440.png": "dce6550dcacb5a59cb1dc5382c5fe6162dcaeef1cd35db66f5e079a9a2d55487",
+    "stock-individual-light-1440.png": "7bab39c6f0ae6f8cbc96349b70e0a4b7339252adad14261ff138a9763ac28aa5",
+    "stock-history-light-1440.png": "02ab45b5b3e99624f763efbd668af6a9e9ad80c5335e5819a55bc257c2120aab",
+    "stock-receive-dark-1440.png": "59ce44df5791ce2ad8d6263dea322a8f92c10a8cd879ca16e1c2a7f26b6108e8",
+    "stock-receive-new-dark-1440.png": "718297a6a0bc9b2f805819be861207d0c667bd5d342b024b14516a54ed69f16d",
+    "stock-inventory-dark-1440.png": "aed85579bb7b7deac64b45d0798edc22574adab84a972a5158e1976401defe9f",
+    "stock-details-dark-1440.png": "66afcd2f9d6185c8850ad804a1275ded7d1e7351b43e047921e9fd46631a577c",
+    "stock-individual-dark-1440.png": "aed85579bb7b7deac64b45d0798edc22574adab84a972a5158e1976401defe9f",
+    "stock-history-dark-1440.png": "e33af2ddfac02e96efaaf8db7c74f636e4e275a2d9c9ff872a0553fc43ec7029",
+    "stock-receive-light-390.png": "5c8a0d742cf96905b7519e66f2a16b21f037db010aced3f4fdb4f43a71072ef4",
+    "stock-receive-new-light-390.png": "91f5329e38aa1cbb685860b9be4f4003a7c5bc6f53f6e637fad0cd15ac15e622",
+    "stock-inventory-light-390.png": "31057cc7f5cc791262f2ac6ec0684568f52b864733392daf00646a70d1ac41e8",
+    "stock-details-light-390.png": "2df442a1148cd196714e90efea7bc98fa9cfaa2c0e45e818a8b591b25b3314f7",
+    "stock-individual-light-390.png": "7b4300826f78b03e0783878ec055aa7c4b1f32e579ab12aa4b24d22735416514",
+    "stock-history-light-390.png": "20605809bc6d7515b7c4b23e3f3e0811ddf75ba0001e96432b44d6aaa7e94ed1",
+    "stock-receive-dark-390.png": "aff272c5ed00b271d63a89fec65ce3a884d77b1c50ba92f91f9aad3bddb5d95d",
+    "stock-receive-new-dark-390.png": "7405955e9c72c95fd294913d757f2c3fa73afa4ca7f7bd5f86c55740cc3d291f",
+    "stock-inventory-dark-390.png": "0416fcafe2181aae48226b9a0606c3c7e7c37306e99c8cb894dc845735fddf31",
+    "stock-details-dark-390.png": "50c98704854fdd57fde80a4e07a48abdd20971f87600f84b4af957fc04a73732",
+    "stock-individual-dark-390.png": "edf8c61c207d2264ab3b46512adf1d3561c29ce0021e05fec76c507614d2a94f",
+    "stock-history-dark-390.png": "abfeb86b70a8822da520c7ef9fb075c13dcc753881e77e485fe683054782be01"
+  }
+}
