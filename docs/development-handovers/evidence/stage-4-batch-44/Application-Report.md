@@ -1,4 +1,6 @@
-# Batch 4.4 Equipment Lifecycle Application Evidence
+# Batch 4.4 Equipment Lifecycle Application Evidence — Historical Capture
+
+> **Original pre-correction screenshots.** These captures predate the approved UK DD/MM/YYYY date controls and public Device Type label changes. Their original revision and SHA-256 manifest are retained unchanged. The [new 19 November 2026 owner-approved evidence](../stage-4-batch-44-corrected/README.md) contains 48 updated real-application captures and is the current visual reference; do not use the older images below as proof of the corrected date fields.
 
 This report accompanies [issue #413](https://github.com/Caffoot/Caffoot-Lite/issues/413) and [draft PR #418](https://github.com/Caffoot/Caffoot-Lite/pull/418). The application revision captured is [`dc412fb5d51f7ba8b74522a35bad213be26a6e12`](https://github.com/Caffoot/Caffoot-Lite/commit/dc412fb5d51f7ba8b74522a35bad213be26a6e12). It uses schema 24 on the approved Batch 4.3 integration base.
 

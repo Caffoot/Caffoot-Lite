@@ -50,7 +50,7 @@ Shared fields must describe every unit represented by the item. Do not put an em
 
 ## Record The First Receipt
 
-![Accepted Receive Stock screen showing a new Desktop stock entry, shared specifications, receipt details and checks](../../../development-handovers/evidence/stock-intake/screenshots/stock-receive-new-light-1440.png)
+![Accepted Receive Stock screen showing a new Desktop stock entry, shared specifications, receipt details and checks](../../../development-handovers/evidence/stage-4-batch-44-corrected/stock/stock-receive-new-light-1440.png)
 
 *Genuine application capture accepted with [PR #388](https://github.com/Caffoot/Caffoot-Lite/pull/388#issuecomment-6899646571), using fictional data. The current application also has Overview and circulation tabs, and the unsaved-form action is now Cancel rather than the pictured Reset. Receipt fields and checks remain as shown.*
 

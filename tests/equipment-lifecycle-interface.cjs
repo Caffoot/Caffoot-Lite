@@ -5,7 +5,10 @@ const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
 const {createHash} = require('node:crypto');
-const {chromium} = require('playwright');
+const {chromium, firefox, webkit} = require('playwright');
+const engine = process.env.CAFFOOT_LIFECYCLE_ENGINE || 'chromium';
+assert.ok(['chromium','firefox','webkit'].includes(engine));
+const locale = process.env.CAFFOOT_LIFECYCLE_LOCALE || 'en-GB';
 
 const root = path.resolve(__dirname, '..');
 const temporary = fs.mkdtempSync(path.join(os.tmpdir(), 'caffoot-lifecycle-'));
@@ -76,10 +79,10 @@ with sqlite3.connect(sys.argv[1]) as db:
       CAFFOOT_SERVER_ADDRESS: '127.0.0.1', CAFFOOT_HOST: '127.0.0.1', PYTHONDONTWRITEBYTECODE: '1'},
   });
   fs.closeSync(log);
-  browser = await chromium.launch({executablePath: process.env.CAFFOOT_CHROMIUM_PATH || undefined});
+  browser = await {chromium, firefox, webkit}[engine].launch(engine==='chromium' && process.env.CAFFOOT_CHROMIUM_PATH ? {executablePath:process.env.CAFFOOT_CHROMIUM_PATH} : {});
   const errors = [];
   async function login(username) {
-    const context = await browser.newContext({ignoreHTTPSErrors: true, locale: 'en-GB',
+    const context = await browser.newContext({ignoreHTTPSErrors: true, locale,
       viewport: {width: 1440, height: 1050}});
     for (let attempt = 0; attempt < 40; attempt++) {
       try { if ((await context.request.get(origin + '/health', {timeout: 500})).ok()) break; } catch (_) {}
@@ -333,6 +336,21 @@ with sqlite3.connect(sys.argv[1]) as db:
         await page.locator('#device-lifecycle-heading').scrollIntoViewIfNeeded();
         await take('device-details',theme);
         await edit(page);
+        // Prove UK ordering and invalid-date accessibility under a US browser locale,
+        // including at the 390px mobile viewport, in each real browser engine.
+        if(locale==='en-US') {
+          const visible=fields.locator('#caffoot-uk-lifecycle-purchaseDate');
+          const backing=fields.locator('#lifecycle-purchaseDate');
+          await visible.fill('03/04/2024');
+          assert.equal(await backing.inputValue(),'2024-04-03');
+          await visible.fill('04/03/2024');
+          assert.equal(await backing.inputValue(),'2024-03-04');
+          await visible.fill('31/02/2024');
+          assert.equal(await backing.inputValue(),'');
+          assert.equal(await visible.getAttribute('aria-invalid'),'true');
+          await visible.fill('15/03/2024');
+          assert.equal(await backing.inputValue(),'2024-03-15');
+        }
         await fields.locator('#caffoot-uk-lifecycle-warrantyExpiry').fill('');
         await fields.evaluate(section=>{
           const body=section.closest('.device-review-body');
@@ -366,7 +384,7 @@ with sqlite3.connect(sys.argv[1]) as db:
   assert.deepEqual(errors,[]);
   await context.close();
   completed=true;
-  console.log('Equipment Lifecycle journeys passed in the real HTTPS application.');
+  console.log(`Equipment Lifecycle journeys passed in the real HTTPS application (${engine}, ${locale}).`);
 }
 
 main().catch(error=>{console.error(error);process.exitCode=1;}).finally(async()=>{
