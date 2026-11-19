@@ -157,6 +157,16 @@ async function main(){
  assert.ok(returnGaps.originalIssue>=16,'Original issue and return fields need separation: '+JSON.stringify(returnGaps));
  assert.ok(returnGaps.returnNoteMargin>=16,'Return notes need section spacing: '+JSON.stringify(returnGaps));
  await stockTab('receive');
+ // An invalid visible date must also remain a protected unsaved edit on Cancel.
+ const invalidReceiptDate=page.locator('#caffoot-uk-stock-receivedOn');
+ await invalidReceiptDate.fill('31/02/2026');
+ assert.equal(await page.locator('#stock-receivedOn').inputValue(),'');
+ assert.equal(await invalidReceiptDate.getAttribute('aria-invalid'),'true');
+ await page.locator('#stock-receipt-form [data-stock-action="cancel-stock"]').click();
+ await page.locator('#discard-dialog').waitFor();
+ await page.locator('#discard-dialog [data-action="discard-device-form-changes"]').click();
+ assert.equal(await page.locator('#stock-tab-inventory').getAttribute('aria-selected'),'true');
+ await stockTab('receive');
  await page.locator('#stock-supplier').fill('Discard this unsaved delivery');
  await page.locator('#stock-receipt-form [data-stock-action="cancel-stock"]').click();
  await page.locator('#discard-dialog').waitFor();
@@ -167,7 +177,15 @@ async function main(){
  assert.equal(await page.locator('#stock-tab-inventory').getAttribute('aria-selected'),'true');
  await stockTab('receive');
  await newComputer(16,10,'Fictional Supplier A');
- await page.locator('#stock-receivedOn').fill('2026-11-13');
+ await page.locator('#caffoot-uk-stock-receivedOn').waitFor();
+ assert.match(await page.locator('#stock-receivedOn').inputValue(),/^\d{4}-\d{2}-\d{2}$/);
+ assert.match(await page.locator('#caffoot-uk-stock-receivedOn').inputValue(),/^\d{2}\/\d{2}\/\d{4}$/);
+ await page.locator('#caffoot-uk-stock-receivedOn').fill('13/11/2026');
+ await page.locator('#caffoot-uk-stock-receivedOn').waitFor();
+ assert.equal(await page.locator('#caffoot-uk-stock-receivedOn').inputValue(),'13/11/2026');
+ await page.locator('#caffoot-uk-stock-receivedOn').fill('14/11/2026');
+ assert.equal(await page.locator('#stock-receivedOn').inputValue(),'2026-11-14');
+ await page.locator('#caffoot-uk-stock-receivedOn').fill('13/11/2026');
  await page.locator('#stock-notes').fill('First fictional delivery');
  await page.locator('[name="itemsChecked"]').check();
  await page.locator('[name="conditionChecked"]').check();
@@ -180,7 +198,7 @@ async function main(){
  await stockTab('receive');await page.locator('[data-stock-action="mode-existing"]').click();
  await page.locator('#stock-existing').selectOption(computer);
  await page.locator('#stock-quantity').fill('5');
- await page.locator('#stock-receivedOn').fill('2026-11-14');
+ await page.locator('#caffoot-uk-stock-receivedOn').fill('14/11/2026');
  await page.locator('#stock-supplier').fill('Fictional Supplier B');
  await page.locator('[name="itemsChecked"]').check();await page.locator('[name="conditionChecked"]').check();
  await page.locator('#stock-readyQuantity').fill('2');

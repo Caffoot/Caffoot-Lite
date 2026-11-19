@@ -17,6 +17,7 @@
 
   const safe = value => config.escape(value);
   const icon = name => config.icon('i-' + name);
+  const displayEquipmentType = name => name === 'Server - Physical' ? 'Server' : name === 'Server - Virtual' ? 'Virtual Machine' : name;
   const editable = () => config?.canEdit();
   const list = (items, fallback = 'Not Recorded') => items.filter(Boolean).map(safe).join('<br>') || fallback;
   const locationAddress = location => list(location ? [location.address, location.city, location.postcode, location.country] : []);
@@ -191,7 +192,7 @@
         contactRows(), 'No Contacts Match These Filters', 'supplier-contact-rows')}</div>`;
   }
   function formatDate(value) {
-    return new Intl.DateTimeFormat('en-GB', {dateStyle: 'medium', timeStyle: 'short'}).format(new Date(value));
+    return new Intl.DateTimeFormat('en-GB', {day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'}).format(new Date(value));
   }
   const time = value => `<time datetime="${safe(value)}">${formatDate(value)}</time>`;
   function noteCards(notes, contactDetail = false) {
@@ -304,7 +305,7 @@
       const quantity = record.quantity === null ? '—' : record.quantity.toLocaleString('en-GB');
       const tone = record.status === 'Retired' ? ' retired' : record.status === 'Maintenance' ? ' maintenance' : '';
       return `<tr><td><strong>${safe(record.name)}</strong></td><td>${safe(record.sourceLabel)}</td>
-        <td>${safe(record.type)}</td><td>${safe(record.identifier)}</td><td>${quantity}</td>
+        <td>${safe(displayEquipmentType(record.type))}</td><td>${safe(record.identifier)}</td><td>${quantity}</td>
         <td>${safe(date)}</td><td><span class="device-status${tone}">${safe(record.status)}</span></td>
         <td>${button(record.source === 'device' ? 'View Device' : 'View Receipt', 'view-' + record.source, record.id)}</td></tr>`;
     }).join('');
@@ -313,7 +314,7 @@
     const records = supplier.equipment.records;
     const types = [...new Set(records.map(record => record.type))].sort((a,b) => a.localeCompare(b, 'en-GB'));
     const count = records.length.toLocaleString('en-GB');
-    const controls = select('Equipment Type', 'equipment-type', [['', 'All Equipment Types'], ...types.map(type => [type, type])], equipmentType);
+    const controls = select('Equipment Type', 'equipment-type', [['', 'All Equipment Types'], ...types.map(type => [type, displayEquipmentType(type)])], equipmentType);
     return sectionHeading('Supplied Equipment', count + ' Visible ' + (records.length === 1 ? 'Record' : 'Records'), controls) +
       '<div class="supplier-equipment-table">' +
       table(['Equipment Name', 'Source', 'Type', 'Identifier', 'Original Quantity', 'Receipt Date', 'Status', 'Actions'],

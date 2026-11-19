@@ -1,0 +1,202 @@
+'use strict';
+
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const path = require('node:path');
+const vm = require('node:vm');
+
+const filename = path.join(__dirname, '..', 'interface', 'uk-date-controls.js');
+const source = fs.readFileSync(filename, 'utf8');
+const document = {
+  documentElement: {
+    nodeType: 1,
+    matches: () => false,
+    querySelectorAll: () => [],
+  },
+  addEventListener: () => {},
+};
+const window = {addEventListener: () => {}};
+class FakeMutationObserver { observe() {} }
+const hook = 'window.caffootUkDates = {toIso,toUk,validIso,sync,validate,focus};';
+assert.equal(source.split(hook).length, 2, 'Expected a single production API export');
+const instrumented = source.replace(hook, hook + '\nwindow.__dateValidationTest = {applyText,errorFor,syncOne,todayIso};');
+class InputEvent { constructor(type,options) { this.type=type; this.bubbles=!!options?.bubbles; } }
+vm.runInNewContext(instrumented, {document, window, MutationObserver: FakeMutationObserver, Event: InputEvent}, {
+  filename: 'uk-date-controls.js',
+  timeout: 1000,
+});
+const {toIso, toUk, validIso} = window.caffootUkDates;
+
+const cases = [
+  ['15/03/2023', '2023-03-15'],
+  ['05/06/2024', '2024-06-05'], // DD/MM, not MM/DD
+  ['29/02/2024', '2024-02-29'],
+  ['29/02/2000', '2000-02-29'],
+  ['31/12/2026', '2026-12-31'],
+  ['01/01/0001', '0001-01-01'],
+];
+for (const [visible, iso] of cases) {
+  assert.equal(toIso(visible), iso);
+  assert.equal(toUk(iso), visible);
+  assert.equal(validIso(iso), true);
+}
+for (const invalid of [
+  '29/02/2023','29/02/1900','31/04/2026','00/12/2026','01/13/2026',
+  '1/2/2026','03/15/2023','2023-03-15','31/12/0000','not a date',
+]) assert.equal(toIso(invalid), '', invalid);
+for (const invalid of [
+  '2023-02-29','1900-02-29','2026-04-31','2026-00-12','0000-12-31','not a date',
+]) assert.equal(validIso(invalid), false, invalid);
+assert.equal(toUk(''), '');
+assert.equal(toIso(''), '');
+assert.equal(toUk('2026-11-18'), '18/11/2026');
+console.log('PASS: UK date display, strict calendar validation and ISO round trips');
+
+const {applyText,syncOne} = window.__dateValidationTest;
+function makeRecord(value,required=false,max='') {
+  const events=[];
+  const native={isConnected:true,value:'2024-02-29',min:'',max,
+    dispatchEvent(event) { events.push(event.type); }};
+  const text={
+    value,required,validity:{customError:false},
+    setCustomValidity(message) { this.validity.customError=!!message; this.message=message; },
+    setAttribute() {},
+  };
+  const error={textContent:''};
+  return {record:{native,text,button:{disabled:false},error},events};
+}
+{
+  const {record,events}=makeRecord('31/02/2024');
+  assert.equal(applyText(record,true),false);
+  assert.equal(record.native.value,'');
+  assert.equal(record.text.validity.customError,true);
+  assert.deepEqual(events,['input']);
+}
+{
+  const {record}=makeRecord('05/06/2024');
+  assert.equal(applyText(record,false),true);
+  assert.equal(record.native.value,'2024-06-05');
+  assert.equal(record.text.validity.customError,false);
+}
+{
+  const {record}=makeRecord('19/11/2026',false,'2026-11-18');
+  assert.equal(applyText(record,false),false);
+  assert.match(record.text.message,/18\/11\/2026/);
+  assert.equal(record.native.value,'');
+}
+{
+  const {record}=makeRecord('',true);
+  assert.equal(applyText(record,false),false);
+  assert.equal(record.native.value,'');
+}
+{
+  const {record}=makeRecord('15032023');
+  assert.equal(applyText(record,false),true);
+  assert.equal(record.text.value,'15/03/2023');
+  assert.equal(record.native.value,'2023-03-15');
+}
+console.log('PASS: required, invalid, future and eight-digit date controls preserve ISO');
+
+{
+  // A real calendar date beyond max must not disappear when focus moves to Save.
+  // The native value is intentionally empty until the user corrects the visible field.
+  const {record}=makeRecord('19/11/2026',false,'2026-11-18');
+  assert.equal(applyText(record,true),false);
+  assert.equal(record.native.value,'');
+  syncOne(record,false);
+  assert.equal(record.text.value,'19/11/2026');
+  assert.equal(record.text.validity.customError,true);
+  assert.match(record.error.textContent,/18\/11\/2026/);
+}
+{
+  // Programmatic updates still refresh valid, non-editing controls normally.
+  const {record}=makeRecord('05/06/2024');
+  record.native.value='2025-02-03';
+  syncOne(record,false);
+  assert.equal(record.text.value,'03/02/2025');
+}
+{
+  // An explicit suggested/programmatic source date replaces a prior invalid entry.
+  const {record}=makeRecord('31/02/2026');
+  assert.equal(applyText(record,false),false);
+  record.native.value='2026-02-28';
+  syncOne(record,false);
+  assert.equal(record.text.value,'28/02/2026');
+  assert.equal(record.text.validity.customError,false);
+}
+
+console.log('PASS: out-of-range UK dates persist for correction; valid values resynchronise');
+
+{
+  // At 00:30 on 1 August in BST, UTC still reports 31 July.
+  // The picker must open on the local calendar day, like stock date defaults.
+  class LondonAfterMidnight extends Date {
+    constructor(...args) { super(...(args.length ? args : ['2026-07-31T23:30:00Z'])); }
+    getFullYear() { return 2026; }
+    getMonth() { return 7; }
+    getDate() { return 1; }
+  }
+  const localWindow = {addEventListener: () => {}};
+  vm.runInNewContext(instrumented, {document, window: localWindow,
+    MutationObserver: FakeMutationObserver, Event: InputEvent, Date: LondonAfterMidnight}, {
+    filename: 'uk-date-controls.js',
+    timeout: 1000,
+  });
+  assert.equal(localWindow.__dateValidationTest.todayIso(),'2026-08-01');
+}
+console.log('PASS: date-picker today follows local calendar day at BST midnight');
+
+class CalendarTestNode {
+  constructor(tag, doc) {
+    this.tag=tag; this.doc=doc; this.children=[]; this.attributes={};
+    this.dataset={}; this.style={}; this.handlers={}; this.disabled=false;
+    this.tabIndex=-1; this.isConnected=true; this.classes=new Set();
+    this.classList={add: name=>this.classes.add(name), contains: name=>this.classes.has(name)};
+  }
+  append(...children) {
+    for (const child of children) { child.parentNode=this; this.children.push(child); }
+  }
+  replaceChildren(...children) { this.children=[]; this.append(...children); }
+  setAttribute(name,value) { this.attributes[name]=value; }
+  addEventListener(type,callback) { this.handlers[type]=callback; }
+  getBoundingClientRect() { return {height:275,left:20,bottom:48,top:17}; }
+  focus() { this.doc.activeElement=this; }
+  walk() { return [this,...this.children.flatMap(child=>child.walk())]; }
+  querySelector(selector) {
+    const descendants=this.walk().slice(1);
+    if (selector==='button:not([disabled])')
+      return descendants.find(node=>node.tag==='button'&&!node.disabled)||null;
+    if (selector==='.caffoot-uk-date-day[tabindex="0"]')
+      return descendants.find(node=>node.classes.has('caffoot-uk-date-day')&&node.tabIndex===0)||null;
+    return null;
+  }
+}
+const calendarDocument={
+  documentElement: document.documentElement, addEventListener:()=>{}, activeElement:null,
+  createElement(tag) { return new CalendarTestNode(tag,this); },
+};
+const calendarWindow={innerWidth:390,innerHeight:800,addEventListener:()=>{}};
+const calendarScript=source.replace(hook,hook+'\nwindow.__calendarFocusTest = {drawCalendar,setState: value => {open=value}};');
+vm.runInNewContext(calendarScript, {
+  document:calendarDocument,window:calendarWindow,
+  MutationObserver:FakeMutationObserver,Event:InputEvent,
+}, {filename:'uk-date-controls.js',timeout:1000});
+for (const [year,expected] of [[2026,'2026-02-28'],[2024,'2024-02-29']]) {
+  const popup=new CalendarTestNode('div',calendarDocument);
+  const native={value:year+'-01-31',min:'',max:''};
+  const trigger=new CalendarTestNode('button',calendarDocument);
+  const state={record:{native,button:trigger},popup,year,month:0,headingId:'month-label',
+    focusDate:year+'-01-31'};
+  calendarWindow.__calendarFocusTest.setState(state);
+  calendarWindow.__calendarFocusTest.drawCalendar();
+  const next=popup.walk().find(node=>node.attributes['aria-label']==='Next month');
+  assert.ok(next,'Expected calendar Next month button');
+  next.handlers.click();
+  assert.equal(state.month,1,'Expected February');
+  assert.equal(calendarDocument.activeElement?.dataset.iso,expected,
+    'Focus must move to valid target-month day after the old controls are replaced');
+}
+console.log('PASS: calendar month navigation preserves day focus, including leap February');
+
+
+

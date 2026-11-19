@@ -416,8 +416,3 @@ body{font-size:14px}
 @media(max-width:950px){.catalog-kpis{grid-template-columns:repeat(3,minmax(0,1fr))}.catalog-toolbar{gap:10px}}
 @media(max-width:680px){.catalog-card{padding:16px}.catalog-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.catalog-kpis>.intelligence-metric:last-child{grid-column:1/-1}.catalog-record{align-items:flex-start;flex-direction:column;gap:10px}.record-controls{justify-content:flex-start}.catalog-toolbar{align-items:stretch}.catalog-search{flex-basis:100%}.catalog-select-label{flex:1}.catalog-clear{align-self:end}.catalog-header{align-items:flex-start}}
 @media(max-width:430px){.catalog-kpis{grid-template-columns:1fr}.catalog-kpis>.intelligence-metric:last-child{grid-column:auto}.catalog-modal{padding:16px}.catalog-header .btn{width:100%}}
-
-@media (max-width: 480px) {
-  .catalog-manager-row:has([data-action="change-device-type-availability"]) { flex-wrap: wrap; }
-  .catalog-manager-row:has([data-action="change-device-type-availability"]) > span { flex-basis: 100%; }
-}

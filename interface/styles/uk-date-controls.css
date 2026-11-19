@@ -1,0 +1,170 @@
+/* Stable UK DD/MM/YYYY date entry, matching existing Caffoot form dimensions. */
+.caffoot-uk-date-wrap {
+  position: relative;
+  display: block;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+.caffoot-uk-date-wrap > input.caffoot-uk-date-text {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  padding-right: 44px;
+  font-variant-numeric: tabular-nums;
+}
+.caffoot-uk-date-wrap > input.caffoot-uk-date-source {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-width: 1px !important;
+  padding: 0 !important;
+  border: 0 !important;
+  margin: 0 !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  z-index: -1 !important;
+}
+.caffoot-uk-date-trigger {
+  position: absolute;
+  top: 4px;
+  bottom: 4px;
+  right: 4px;
+  width: 35px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--theme-secondary,#4e6981);
+  cursor: pointer;
+}
+.caffoot-uk-date-trigger:hover:not(:disabled) {
+  background: var(--theme-hover,#eef3f7);
+}
+.caffoot-uk-date-trigger:focus-visible,
+.caffoot-uk-date-picker button:focus-visible {
+  outline: 2px solid #e77e2d;
+  outline-offset: 1px;
+}
+.caffoot-uk-date-trigger:disabled {
+  opacity: .45;
+  cursor: not-allowed;
+}
+.caffoot-uk-date-error:empty { display: none; }
+.caffoot-uk-date-error:not(:empty) {
+  display: block;
+  color: var(--theme-danger-text,#b42336);
+  font-size: 11px;
+  line-height: 1.45;
+  margin-top: 4px;
+}
+.caffoot-uk-date-text[aria-invalid="true"] {
+  border-color: #c3394b !important;
+}
+.caffoot-uk-date-picker {
+  position: fixed;
+  z-index: 2147483000;
+  box-sizing: border-box;
+  width: min(310px,calc(100vw - 16px));
+  padding: 11px;
+  background: var(--theme-control,#fff);
+  color: var(--theme-text,#223b53);
+  border: 1px solid var(--theme-border,#d2dfeb);
+  border-radius: 11px;
+  box-shadow: 0 14px 34px rgba(27,49,71,.22);
+  font: 13px Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Arial,sans-serif;
+  max-height: min(385px,90vh);
+  overflow-y: auto;
+}
+.caffoot-uk-date-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 9px;
+}
+.caffoot-uk-date-header strong {
+  color: inherit;
+  font-size: 13px;
+  font-weight: 750;
+}
+.caffoot-uk-date-nav {
+  border: 1px solid var(--theme-border,#d2dfeb);
+  background: var(--theme-control,#fff);
+  color: inherit;
+  border-radius: 8px;
+  min-width: 34px;
+  min-height: 32px;
+  font-size: 22px;
+  cursor: pointer;
+}
+.caffoot-uk-date-nav:disabled {
+  opacity: .35;
+  cursor: not-allowed;
+}
+.caffoot-uk-date-weekdays,
+.caffoot-uk-date-days {
+  display: grid;
+  grid-template-columns: repeat(7,minmax(0,1fr));
+  gap: 2px;
+  text-align: center;
+}
+.caffoot-uk-date-weekdays {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--theme-secondary,#627f96);
+  padding: 3px 0 6px;
+}
+.caffoot-uk-date-day {
+  min-height: 34px;
+  min-width: 0;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: 7px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+.caffoot-uk-date-day:hover:not(:disabled) {
+  background: var(--theme-hover,#eaf2f8);
+}
+.caffoot-uk-date-day.is-outside {
+  color: var(--theme-secondary,#7c91a3);
+  opacity: .6;
+}
+.caffoot-uk-date-day.is-today {
+  border-color: #e77e2d;
+}
+.caffoot-uk-date-day.is-selected {
+  background: #d15d16;
+  color: #fff;
+}
+.caffoot-uk-date-day:disabled {
+  opacity: .28;
+  cursor: not-allowed;
+}
+html.dark .caffoot-uk-date-picker {
+  background: var(--theme-control,#0f172a);
+  color: var(--theme-text,#f1f5f9);
+  border-color: var(--theme-control-border,#64748b);
+}
+html.dark .caffoot-uk-date-header strong,
+html.dark .caffoot-uk-date-day {
+  color: inherit;
+}
+html.dark .caffoot-uk-date-day.is-selected {
+  background: #e77e2d;
+  color: #111827;
+}
+html.dark .caffoot-uk-date-nav {
+  background: var(--theme-control,#0f172a);
+  border-color: var(--theme-control-border,#64748b);
+}
+@media (max-width: 420px) {
+  .caffoot-uk-date-picker {padding: 9px;}
+  .caffoot-uk-date-day {min-height: 36px;}
+}

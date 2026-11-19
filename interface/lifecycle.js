@@ -8,13 +8,11 @@
     ['warrantyExpiry','Warranty Expiry','Enter the confirmed warranty expiry, if known.'],
     ['replacementOverride','Planned Replacement Date',''],
   ];
-  const formatDate = new Intl.DateTimeFormat('en-GB', {
-    dateStyle:'medium', timeZone:'UTC',
-  });
+  // Present recorded ISO calendar dates in the approved UK DD/MM/YYYY format.
   const day = 86400000;
   const asDate = value => new Date(value+'T00:00:00Z');
-  const dateLabel = value => value ? formatDate.format(asDate(value)) : 'Not recorded';
-  const typeLabel = name => name === 'Server - Physical' ? 'Server' : name || 'Unknown';
+  const dateLabel = value => value ? value.slice(8,10)+'/'+value.slice(5,7)+'/'+value.slice(0,4) : 'Not recorded';
+  const typeLabel = name => name === 'Server - Physical' ? 'Server' : name === 'Server - Virtual' ? 'Virtual Machine' : name || 'Unknown';
   const esc = value => String(value ?? '').replace(/[&<>"']/g,
     character=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[character]));
   const yearsLabel = years => years ? `${years} ${years===1?'year':'years'}` : 'Lifespan Not Set';
@@ -75,28 +73,34 @@
       suggestion.hidden=!suggested||!!warranty;
       suggestion.querySelector('[data-lifecycle-suggestion]').textContent=suggested?`Suggested Expiry · ${dateLabel(suggested)}`:'';
       accept.dataset.suggested=suggested;
+      window.caffootUkDates?.sync(section);
     };
     const values={...saved,...restored};
     for (const [key] of dates) input(key).value=values[key]||'';
     mode.value=values.replacementOverride?'manual':'calculated';
     section.addEventListener('input',event=>{
-      if(event.target===planned) mode.value='manual';
+      const backing = event.target.closest('.caffoot-uk-date-wrap')?.querySelector('[data-lifecycle-field]');
+      if(event.target===planned || backing===planned) mode.value='manual';
       update();
     });
     accept.addEventListener('click',()=>{
       input('warrantyExpiry').value=accept.dataset.suggested;
       update();
-      input('warrantyExpiry').focus();
+      if (window.caffootUkDates) window.caffootUkDates.focus(input('warrantyExpiry'));
+      else input('warrantyExpiry').focus();
     });
     reset.addEventListener('click',()=>{
       mode.value='calculated';
       update();
-      planned.focus();
+      if (window.caffootUkDates) window.caffootUkDates.focus(planned);
+      else planned.focus();
     });
     form.lifecycleDraft = () => Object.fromEntries(dates.map(([key])=>[
       key,key==='replacementOverride'&&mode.value==='calculated'?null:input(key).value||null,
     ]));
     form.lifecycleChanges = () => {
+      if (window.caffootUkDates && !window.caffootUkDates.validate(form))
+        throw new Error('Enter a valid date in DD/MM/YYYY format.');
       if (mode.value==='manual'&&!planned.value)
         throw new Error('Enter a Planned Replacement Date or choose Use Calculated Date.');
       for (const [key,label] of dates) {

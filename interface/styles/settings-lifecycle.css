@@ -1,0 +1,6 @@
+
+[data-feature-card="equipment_lifecycle"] > .btn { margin-top: 12px; }
+#lifecycle-settings .panel-heading, #lifecycle-settings form > section { margin-top: 14px; }
+.lifecycle-lifespans { margin-top: 8px; }
+.lifecycle-lifespan-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(80px, 140px); gap: 12px; align-items: center; border-top: 1px solid var(--line, #eaf0f4); padding: 7px 0; }
+.lifecycle-lifespan-row input { margin: 0; }

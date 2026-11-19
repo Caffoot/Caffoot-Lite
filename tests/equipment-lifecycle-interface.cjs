@@ -189,15 +189,42 @@ with sqlite3.connect(sys.argv[1]) as db:
   await metrics.filter({hasText: 'Warranty Expiring Soon'}).click();
   assert.equal(await page.locator('[data-lifecycle-device]').count(), 1);
   await details(page, 'Workshop Desktop');
-  assert.match(await page.locator('.device-lifecycle-section').textContent(), /28 Feb 2027/);
+  assert.match(await page.locator('.device-lifecycle-section').textContent(), /28\/02\/2027/);
   await edit(page);
   const fields = page.locator('[data-lifecycle-editor]');
-  await fields.locator('#lifecycle-warrantyExpiry').fill('');
+  const ukPurchase = fields.locator('#caffoot-uk-lifecycle-purchaseDate');
+  await ukPurchase.waitFor();
+  assert.equal(await ukPurchase.inputValue(), '15/03/2024');
+  await ukPurchase.fill('29/02/2024');
+  assert.equal(await fields.locator('#lifecycle-purchaseDate').inputValue(), '2024-02-29');
+  await ukPurchase.fill('31/02/2024');
+  assert.equal(await fields.locator('#lifecycle-purchaseDate').inputValue(), '');
+  const invalidDateState = await fields.evaluate(section => {
+    const text = section.querySelector('#caffoot-uk-lifecycle-purchaseDate');
+    const source = section.querySelector('#lifecycle-purchaseDate');
+    return {
+      visibleValue:text?.value, isoValue:source?.value, ariaInvalid:text?.getAttribute('aria-invalid'),
+      customError:text?.validity.customError, valid:text?.validity.valid,
+      validationMessage:text?.validationMessage, activeElementId:document.activeElement?.id,
+      inlineError:section.querySelector('#caffoot-uk-lifecycle-purchaseDate-error')?.textContent,
+    };
+  });
+  assert.equal(invalidDateState.ariaInvalid, 'true',
+    'Invalid UK Purchase Date should remain accessibility-invalid: ' + JSON.stringify(invalidDateState));
+  await ukPurchase.fill('15/03/2024');
+  await fields.getByRole('button', {name:'Choose Purchase Date from calendar'}).click();
+  const ukPicker = page.getByRole('dialog', {name:'Choose Purchase Date (DD/MM/YYYY)'});
+  await ukPicker.waitFor();
+  assert.equal(await ukPicker.getByRole('button', {name:/15 March 2024/}).count(), 1);
+  await page.keyboard.press('Escape');
+  await ukPicker.waitFor({state:'hidden'});
+  assert.equal(await fields.locator('#lifecycle-purchaseDate').inputValue(), '2024-03-15');
+  await fields.locator('#caffoot-uk-lifecycle-warrantyExpiry').fill('');
   await fields.getByRole('button', {name: 'Use Suggestion'}).click();
   assert.equal(await fields.locator('#lifecycle-warrantyExpiry').inputValue(), '2025-03-15');
-  await fields.locator('#lifecycle-purchaseDate').fill('2023-03-15');
+  await fields.locator('#caffoot-uk-lifecycle-purchaseDate').fill('15/03/2023');
   assert.equal(await fields.locator('#lifecycle-warrantyExpiry').inputValue(), '2025-03-15');
-  await fields.locator('#lifecycle-replacementOverride').fill('2030-08-12');
+  await fields.locator('#caffoot-uk-lifecycle-replacementOverride').fill('12/08/2030');
   const saved = await postOn(page, '/api/devices/edit/save', () =>
     page.getByRole('button', {name: 'Save Device', exact: true}).click());
   assert.deepEqual(saved.lifecycle, {purchaseDate:'2023-03-15', warrantyExpiry:'2025-03-15', replacementOverride:'2030-08-12'});
@@ -213,7 +240,7 @@ with sqlite3.connect(sys.argv[1]) as db:
   await page.locator('.device-editor-dialog').waitFor({state:'hidden'});
   await lifecycle(page);
   await details(page, 'Workshop Desktop');
-  assert.match(await page.locator('.device-lifecycle-section').textContent(), /12 Aug 2030/);
+  assert.match(await page.locator('.device-lifecycle-section').textContent(), /12\/08\/2030/);
   await edit(page);
   await fields.getByRole('button', {name: 'Use Calculated Date'}).click();
   const reset = await postOn(page, '/api/devices/edit/save', () =>
@@ -222,6 +249,15 @@ with sqlite3.connect(sys.argv[1]) as db:
   await page.locator('[data-lifecycle-editor]').waitFor({state:'hidden'});
 
   await manager(page);
+  // A legacy stored type key remains attached to its actions while the visible
+  // name (and accessible Archive label) follows the approved public naming.
+  const legacyPhysical = page.locator('.catalog-manager-row')
+    .filter({has: page.locator('[data-action="rename-device-catalogue-entry"][data-name="Server - Physical"]')});
+  const legacyVirtual = page.locator('.catalog-manager-row')
+    .filter({has: page.locator('[data-action="rename-device-catalogue-entry"][data-name="Server - Virtual"]')});
+  assert.equal(await legacyPhysical.locator('strong').innerText(), 'Server');
+  assert.equal(await legacyVirtual.locator('strong').innerText(), 'Virtual Machine');
+  assert.equal(await page.getByRole('button', {name:'Archive Server', exact:true}).count(), 1);
   await postOn(page, '/api/inventory/device-catalogue/change', () =>
     page.getByRole('button', {name: 'Archive Legacy Server', exact: true}).click());
   await page.getByRole('button', {name: 'Unarchive Legacy Server', exact:true}).waitFor();
@@ -250,7 +286,7 @@ with sqlite3.connect(sys.argv[1]) as db:
   await edit(editor.page);
   assert.equal(await editor.page.locator('#lifecycle-replacementOverride').getAttribute('readonly'), '');
   assert.equal(await editor.page.getByRole('button', {name:'Use Calculated Date'}).isVisible(), false);
-  await editor.page.locator('#lifecycle-purchaseDate').fill('2021-02-15');
+  await editor.page.locator('#caffoot-uk-lifecycle-purchaseDate').fill('15/02/2021');
   const ordinaryEdit = await postOn(editor.page, '/api/devices/edit/save', () =>
     editor.page.getByRole('button', {name: 'Save Device', exact:true}).click());
   assert.deepEqual(ordinaryEdit.lifecycle, {purchaseDate:'2021-02-15'});
@@ -286,12 +322,18 @@ with sqlite3.connect(sys.argv[1]) as db:
         await page.locator('#device-lifecycle-heading').scrollIntoViewIfNeeded();
         await take('device-details',theme);
         await edit(page);
-        await fields.locator('#lifecycle-warrantyExpiry').fill('');
+        await fields.locator('#caffoot-uk-lifecycle-warrantyExpiry').fill('');
         await fields.evaluate(section=>{
           const body=section.closest('.device-review-body');
           body.scrollTop+=section.getBoundingClientRect().top-body.getBoundingClientRect().top-8;
         });
         await take('device-edit',theme);
+        await fields.getByRole('button', {name:'Choose Purchase Date from calendar'}).click();
+        const calendar = page.getByRole('dialog', {name:'Choose Purchase Date (DD/MM/YYYY)'});
+        await calendar.waitFor();
+        await take('device-edit-calendar',theme);
+        await page.keyboard.press('Escape');
+        await calendar.waitFor({state:'hidden'});
         await settings(page);
         await take('settings',theme,true);
         await manager(page);

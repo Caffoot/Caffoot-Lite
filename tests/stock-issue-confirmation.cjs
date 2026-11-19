@@ -38,7 +38,7 @@ module.exports=async function verifyIssueConfirmation({page,owner,session,techni
   await page.setViewportSize({width:1440,height:1050});await page.evaluate(()=>caffootSetTheme('light'));
  }
  await issueForm(page,quantityItem,'staff','confirmation-recipient',4);
- await page.locator('#stock-issuedOn').fill('2026-11-15');await page.locator('#stock-issueNote').fill('Keep this entered note & date.');
+ await page.locator('#caffoot-uk-stock-issuedOn').fill('15/11/2026');await page.locator('#stock-issueNote').fill('Keep this entered note & date.');
  await page.locator('#stock-issueQuantity').fill('13');assert.ok(await form.locator('[type="submit"]').isDisabled());
  await page.locator('#stock-issueQuantity').fill('1.5');await form.evaluate(form=>form.requestSubmit());assert.equal(await confirmation.count(),0);assert.equal(requests,0);
  await page.locator('#stock-issueQuantity').fill('4');const entered=await snapshot();

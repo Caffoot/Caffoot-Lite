@@ -10,6 +10,10 @@ Use **Receive Stock** when equipment actually arrives in your organisation's pos
 
 Receiving ten computers does not create ten managed Devices or assign them to employees. A stock item describes equipment with the same common specification; a canonical Device is the permanent record for one managed machine. To create that individual record from computer stock, use [Brand New — Get From Stock](Device-Stock-Registration-and-Reissue.md). To give equipment to someone, use [Issue Equipment or Reissue Existing Device](IT-Assets-Issue-Return-and-Write-Off.md).
 
+## Date Format For Receipts
+
+Enter **Date Received** using UK **DD/MM/YYYY** (for example, **18/11/2026**) or choose the date with the calendar button. The system retains the existing ISO `YYYY-MM-DD` value in the saved receipt and movement history. Invalid day/month combinations are rejected rather than silently swapped. See [UK Date Entry And Calendar Controls](README.md#uk-date-entry-and-calendar-controls) for keyboard instructions.
+
 ## Before You Start
 
 You need an account with effective **IT Assets Edit** permission to receive stock or change readiness. **IT Assets Read** allows viewing permitted stock and history. These rights do not grant Devices, Staff Members, Departments, account administration or permission management access. Role assignments, individual overrides, MFA and current sign-in requirements still apply.
