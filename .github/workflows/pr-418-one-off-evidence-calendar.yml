@@ -1,0 +1,108 @@
+# Temporary PR 418-only image preservation and real browser UK date verification.
+# Run only when this exact workflow file changes on the specific draft feature branch.
+# Remove the workflow after recording the results; do not ship it to milestone-1.
+name: PR 418 one-off screenshot archive and UK calendar engines
+on:
+  push:
+    branches:
+      - feat/stage-4-batch-4-4
+    paths:
+      - .github/workflows/pr-418-one-off-evidence-calendar.yml
+permissions:
+  contents: read
+jobs:
+  archive-genuine-evidence:
+    if: github.repository == 'Caffoot/Caffoot-Lite' && github.ref == 'refs/heads/feat/stage-4-batch-4-4'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    permissions:
+      contents: write
+      actions: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Download both original PR 428 screenshot packages
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/life-evidence" "$RUNNER_TEMP/stock-evidence"
+          gh run download 44485244095 --repo "$GITHUB_REPOSITORY" -n pr428-lifecycle-desktop-mobile-light-dark-8e25fd1451d3297cfa34b2d8c37bbee5ec4878bf -D "$RUNNER_TEMP/life-evidence"
+          gh run download 44485244095 --repo "$GITHUB_REPOSITORY" -n pr428-stock-desktop-mobile-light-dark-8e25fd1451d3297cfa34b2d8c37bbee5ec4878bf -D "$RUNNER_TEMP/stock-evidence"
+      - name: Verify SHA-256 and preserve original PNG bytes
+        run: |
+          python3 - <<'PY'
+          import hashlib, json, os, pathlib, shutil
+          root=pathlib.Path('docs/development-handovers/evidence/stage-4-batch-44-corrected')
+          original='8e25fd1451d3297cfa34b2d8c37bbee5ec4878bf'
+          life=pathlib.Path(os.environ['RUNNER_TEMP'])/'life-evidence'
+          stock=pathlib.Path(os.environ['RUNNER_TEMP'])/'stock-evidence'
+          manifest=json.loads((life/'captures.json').read_text())
+          assert manifest['revision']==original and len(manifest['captures'])==24
+          assert len(list(life.glob('*.png')))==24
+          dest=root/'lifecycle'
+          dest.mkdir(parents=True,exist_ok=True)
+          for capture in manifest['captures']:
+              file=life/capture['file']
+              assert file.is_file() and hashlib.sha256(file.read_bytes()).hexdigest()==capture['sha256'],capture['file']
+              shutil.copyfile(file,dest/file.name)
+          shutil.copyfile(life/'captures.json',dest/'captures.json')
+          result=json.loads((stock/'browser-results.json').read_text())
+          assert result['source']==original and len(result['screenshots'])==24 and result['pageErrors']==[]
+          assert len(list(stock.glob('*.png')))==24
+          dest=root/'stock'
+          dest.mkdir(parents=True,exist_ok=True)
+          hashes={}
+          for name in result['screenshots']:
+              file=stock/name
+              assert file.is_file(),name
+              hashes[name]=hashlib.sha256(file.read_bytes()).hexdigest()
+              shutil.copyfile(file,dest/name)
+          shutil.copyfile(stock/'browser-results.json',dest/'browser-results.json')
+          (dest/'stock-sha256.json').write_text(json.dumps({'source':original,'sha256':hashes},indent=2)+'\n')
+          print('Verified and preserved 48 PNGs from the actual approved capture.')
+          PY
+          git add docs/development-handovers/evidence/stage-4-batch-44-corrected/
+          git diff --cached --check
+      - name: Save the screenshots to the draft PR branch
+        run: |
+          if ! git diff --cached --quiet; then
+            git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -m 'docs: preserve 48 original owner-approved PR 428 screenshot PNGs'
+            git push origin HEAD:feat/stage-4-batch-4-4
+          fi
+  real-uk-date-cross-engines:
+    if: github.repository == 'Caffoot/Caffoot-Lite' && github.ref == 'refs/heads/feat/stage-4-batch-4-4'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 50
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Install isolated Chromium Firefox and WebKit dependencies
+        run: |
+          npm install --prefix "$RUNNER_TEMP/caffoot-browser-tests" --no-save --no-package-lock --no-audit --no-fund playwright@1.62.1 axe-core@4.14.0
+          "$RUNNER_TEMP/caffoot-browser-tests/node_modules/.bin/playwright" install --with-deps chromium firefox webkit
+      - name: Validate UK date input calendar and app workflows with en-US locale
+        env:
+          NODE_PATH: ${{ runner.temp }}/caffoot-browser-tests/node_modules
+          CAFFOOT_LIFECYCLE_LOCALE: en-US
+        run: |
+          set -euo pipefail
+          for engine in chromium firefox webkit; do
+            export CAFFOOT_LIFECYCLE_ENGINE="$engine"
+            export CAFFOOT_LIFECYCLE_OUTPUT="$RUNNER_TEMP/pr418-uk-calendar-$engine"
+            echo "Testing $engine with en-US locale, 1440px/390px and light/dark"
+            node tests/equipment-lifecycle-interface.cjs
+          done
+      - name: Preserve cross-browser evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pr418-uk-calendar-cross-engine-${{ github.sha }}
+          path: ${{ runner.temp }}/pr418-uk-calendar-*
+          if-no-files-found: ignore
+          retention-days: 14
