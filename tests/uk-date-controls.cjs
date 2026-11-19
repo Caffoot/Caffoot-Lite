@@ -19,7 +19,7 @@ const window = {addEventListener: () => {}};
 class FakeMutationObserver { observe() {} }
 const hook = 'window.caffootUkDates = {toIso,toUk,validIso,sync,validate,focus};';
 assert.equal(source.split(hook).length, 2, 'Expected a single production API export');
-const instrumented = source.replace(hook, hook + '\nwindow.__dateValidationTest = {applyText,errorFor};');
+const instrumented = source.replace(hook, hook + '\nwindow.__dateValidationTest = {applyText,errorFor,syncOne};');
 class InputEvent { constructor(type,options) { this.type=type; this.bubbles=!!options?.bubbles; } }
 vm.runInNewContext(instrumented, {document, window, MutationObserver: FakeMutationObserver, Event: InputEvent}, {
   filename: 'uk-date-controls.js',
@@ -52,10 +52,10 @@ assert.equal(toIso(''), '');
 assert.equal(toUk('2026-11-18'), '18/11/2026');
 console.log('PASS: UK date display, strict calendar validation and ISO round trips');
 
-const {applyText} = window.__dateValidationTest;
+const {applyText,syncOne} = window.__dateValidationTest;
 function makeRecord(value,required=false,max='') {
   const events=[];
-  const native={value:'2024-02-29',min:'',max,
+  const native={isConnected:true,value:'2024-02-29',min:'',max,
     dispatchEvent(event) { events.push(event.type); }};
   const text={
     value,required,validity:{customError:false},
@@ -63,7 +63,7 @@ function makeRecord(value,required=false,max='') {
     setAttribute() {},
   };
   const error={textContent:''};
-  return {record:{native,text,error},events};
+  return {record:{native,text,button:{disabled:false},error},events};
 }
 {
   const {record,events}=makeRecord('31/02/2024');
@@ -96,3 +96,24 @@ function makeRecord(value,required=false,max='') {
   assert.equal(record.native.value,'2023-03-15');
 }
 console.log('PASS: required, invalid, future and eight-digit date controls preserve ISO');
+
+{
+  // A real calendar date beyond max must not disappear when focus moves to Save.
+  // The native value is intentionally empty until the user corrects the visible field.
+  const {record}=makeRecord('19/11/2026',false,'2026-11-18');
+  assert.equal(applyText(record,true),false);
+  assert.equal(record.native.value,'');
+  syncOne(record,false);
+  assert.equal(record.text.value,'19/11/2026');
+  assert.equal(record.text.validity.customError,true);
+  assert.match(record.error.textContent,/18\/11\/2026/);
+}
+{
+  // Programmatic updates still refresh valid, non-editing controls normally.
+  const {record}=makeRecord('05/06/2024');
+  record.native.value='2025-02-03';
+  syncOne(record,false);
+  assert.equal(record.text.value,'03/02/2025');
+}
+console.log('PASS: out-of-range UK dates persist for correction; valid values resynchronise');
+
