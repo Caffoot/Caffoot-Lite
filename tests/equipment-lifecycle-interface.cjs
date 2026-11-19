@@ -199,7 +199,18 @@ with sqlite3.connect(sys.argv[1]) as db:
   assert.equal(await fields.locator('#lifecycle-purchaseDate').inputValue(), '2024-02-29');
   await ukPurchase.fill('31/02/2024');
   assert.equal(await fields.locator('#lifecycle-purchaseDate').inputValue(), '');
-  assert.equal(await ukPurchase.getAttribute('aria-invalid'), 'true');
+  const invalidDateState = await fields.evaluate(section => {
+    const text = section.querySelector('#caffoot-uk-lifecycle-purchaseDate');
+    const source = section.querySelector('#lifecycle-purchaseDate');
+    return {
+      visibleValue:text?.value, isoValue:source?.value, ariaInvalid:text?.getAttribute('aria-invalid'),
+      customError:text?.validity.customError, valid:text?.validity.valid,
+      validationMessage:text?.validationMessage, activeElementId:document.activeElement?.id,
+      inlineError:section.querySelector('#caffoot-uk-lifecycle-purchaseDate-error')?.textContent,
+    };
+  });
+  assert.equal(invalidDateState.ariaInvalid, 'true',
+    'Invalid UK Purchase Date should remain accessibility-invalid: ' + JSON.stringify(invalidDateState));
   await ukPurchase.fill('15/03/2024');
   await fields.getByRole('button', {name:'Choose Purchase Date from calendar'}).click();
   const ukPicker = page.getByRole('dialog', {name:'Choose Purchase Date (DD/MM/YYYY)'});
