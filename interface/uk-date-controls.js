@@ -47,6 +47,15 @@
       String(date.getUTCDate()).padStart(2,'0');
   }
 
+  // Match the local calendar-day defaults in IT Assets, including BST midnight.
+  // Date-only ISO values remain unchanged for form submission and navigation.
+  function todayIso() {
+    const now = new Date();
+    return String(now.getFullYear()).padStart(4,'0') + '-' +
+      String(now.getMonth() + 1).padStart(2,'0') + '-' +
+      String(now.getDate()).padStart(2,'0');
+  }
+
   function shiftDate(value, days) {
     const date = dateFromIso(value);
     date.setUTCDate(date.getUTCDate() + days);
@@ -226,7 +235,7 @@
 
     const days = document.createElement('div');
     days.className = 'caffoot-uk-date-days';
-    const today = isoFromDate(new Date());
+    const today = todayIso();
     let focusButton = null;
     for (let i = 0; i < 42; i++) {
       const date = monthDate(start.getUTCFullYear(),start.getUTCMonth(),start.getUTCDate() + i);
@@ -272,7 +281,7 @@
       return;
     }
     closePicker(false);
-    const initial = toIso(record.text.value) || record.native.value || isoFromDate(new Date());
+    const initial = toIso(record.text.value) || record.native.value || todayIso();
     const d = dateFromIso(initial);
     const popup = document.createElement('div');
     const popupId = 'caffoot-uk-date-picker-' + (++serial);
