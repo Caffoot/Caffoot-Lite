@@ -19,7 +19,7 @@ const window = {addEventListener: () => {}};
 class FakeMutationObserver { observe() {} }
 const hook = 'window.caffootUkDates = {toIso,toUk,validIso,sync,validate,focus};';
 assert.equal(source.split(hook).length, 2, 'Expected a single production API export');
-const instrumented = source.replace(hook, hook + '\nwindow.__dateValidationTest = {applyText,errorFor,syncOne};');
+const instrumented = source.replace(hook, hook + '\nwindow.__dateValidationTest = {applyText,errorFor,syncOne,todayIso};');
 class InputEvent { constructor(type,options) { this.type=type; this.bubbles=!!options?.bubbles; } }
 vm.runInNewContext(instrumented, {document, window, MutationObserver: FakeMutationObserver, Event: InputEvent}, {
   filename: 'uk-date-controls.js',
@@ -126,4 +126,24 @@ console.log('PASS: required, invalid, future and eight-digit date controls prese
 }
 
 console.log('PASS: out-of-range UK dates persist for correction; valid values resynchronise');
+
+{
+  // At 00:30 on 1 August in BST, UTC still reports 31 July.
+  // The picker must open on the local calendar day, like stock date defaults.
+  class LondonAfterMidnight extends Date {
+    constructor(...args) { super(...(args.length ? args : ['2026-07-31T23:30:00Z'])); }
+    getFullYear() { return 2026; }
+    getMonth() { return 7; }
+    getDate() { return 1; }
+  }
+  const localWindow = {addEventListener: () => {}};
+  vm.runInNewContext(instrumented, {document, window: localWindow,
+    MutationObserver: FakeMutationObserver, Event: InputEvent, Date: LondonAfterMidnight}, {
+    filename: 'uk-date-controls.js',
+    timeout: 1000,
+  });
+  assert.equal(localWindow.__dateValidationTest.todayIso(),'2026-08-01');
+}
+console.log('PASS: date-picker today follows local calendar day at BST midnight');
+
 
