@@ -115,5 +115,15 @@ console.log('PASS: required, invalid, future and eight-digit date controls prese
   syncOne(record,false);
   assert.equal(record.text.value,'03/02/2025');
 }
+{
+  // An explicit suggested/programmatic source date replaces a prior invalid entry.
+  const {record}=makeRecord('31/02/2026');
+  assert.equal(applyText(record,false),false);
+  record.native.value='2026-02-28';
+  syncOne(record,false);
+  assert.equal(record.text.value,'28/02/2026');
+  assert.equal(record.text.validity.customError,false);
+}
+
 console.log('PASS: out-of-range UK dates persist for correction; valid values resynchronise');
 
