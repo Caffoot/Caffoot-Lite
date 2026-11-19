@@ -3,7 +3,7 @@
 (function(){
   let config=null,dialogContext=null,selectedDevices=new Map(),recipientResults=[];
   const escapeHtml=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-  const displayDeviceType=name=>name==='Server - Physical'?'Server':name==='Server - Virtual'?'Virtual Machine':name;
+  const displayDeviceType=name=>window.caffootPublicDeviceTypeName?.(name) ?? (name==='Server - Physical'?'Server':name==='Server - Virtual'?'Virtual Machine':name);
   const dateLabel=value=>/^\d{4}-\d{2}-\d{2}$/.test(value)?value.slice(8,10)+'/'+value.slice(5,7)+'/'+value.slice(0,4):value?new Date(value).toLocaleDateString('en-GB'):'—';
   const button=(label,action,id='')=>`<button type="button" class="btn btn-outline" data-equipment-action="${action}" data-id="${escapeHtml(id)}">${label}</button>`;
   function canReadAssociations(){return !!config?.canReadAssociations();}

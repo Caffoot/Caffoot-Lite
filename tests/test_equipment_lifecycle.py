@@ -126,6 +126,21 @@ class EquipmentLifecycleTests(unittest.TestCase):
             self.assertNotIn('2024-03-12', json.dumps(visible_change_history(self.db, 1)))
             self.assertEqual(self.db.execute('SELECT purchase_date FROM device_lifecycle').fetchone(), ('2024-03-12',))
 
+    def test_existing_custom_server_label_and_new_name_reservation(self):
+        from backend.device_catalogue import change_device_catalogue
+        self.setup_devices()
+        with self.assertRaisesRegex(ValueError, 'Server is the existing physical server type'):
+            change_device_catalogue(self.db, 1, 'type', 'add', '', 'Server', [])
+        # Simulate a valid pre-existing custom catalogue identity from an older version.
+        self.db.execute("INSERT INTO equipment_lifecycle_types(name,years) VALUES('Server',7)")
+        self.db.commit()
+        labels = {row['name']: row['label'] for row in read_lifecycle_settings(self.db, 1)['types']}
+        self.assertEqual(labels['Server - Physical'], 'Server')
+        self.assertEqual(labels['Server'], 'Server (Custom)')
+        self.assertEqual(self.db.execute(
+            "SELECT name,years FROM equipment_lifecycle_types WHERE name='Server'").fetchone(),
+            ('Server', 7))
+
     def test_archive_and_rename_keep_type_identity_and_existing_calculation(self):
         from backend.device_catalogue import change_device_catalogue
         self.setup_devices()

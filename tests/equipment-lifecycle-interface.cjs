@@ -56,7 +56,7 @@ with sqlite3.connect(sys.argv[1]) as db:
         dict(common, id='virtual', name='Virtual Training Server', type='Server - Virtual',
              isVirtual=True, mountType='Not Applicable', status='Active'),
         dict(common, id='spare', name='Stockroom Laptop', type='Laptop', status='Active'),
-    ], deviceTypes=['Desktop','Laptop','Legacy Server','Server - Physical','Server - Virtual','Unknown'],
+    ], deviceTypes=['Desktop','Laptop','Legacy Server','Server','Server - Physical','Server - Virtual','Unknown'],
         deviceLocations=['Office','Unknown'], subnets=[], vlans=[], racks=[], ipAllocations={}))
     today = datetime.now(timezone.utc).date()
     db.executemany("INSERT INTO device_lifecycle VALUES(?,?,?,?,?)", [
@@ -150,6 +150,7 @@ with sqlite3.connect(sys.argv[1]) as db:
   assert.equal(await form.locator('[name=warrantyDays]').inputValue(), '90');
   assert.equal(await form.locator('[name=replacementDays]').inputValue(), '90');
   assert.equal(await form.getByRole('spinbutton', {name: 'Server lifespan in years', exact: true}).inputValue(), '5');
+  assert.equal(await form.getByRole('spinbutton', {name: 'Server (Custom) lifespan in years', exact: true}).inputValue(), '');
   assert.equal(await form.getByRole('spinbutton', {name: 'Legacy Server lifespan in years'}).inputValue(), '');
   assert.equal(await form.getByRole('spinbutton', {name: /Virtual Machine|Server - Virtual/}).count(), 0);
   await form.locator('[name=warrantyDays]').fill('0');
@@ -257,12 +258,22 @@ with sqlite3.connect(sys.argv[1]) as db:
     .filter({has: page.locator('[data-action="rename-device-catalogue-entry"][data-name="Server - Virtual"]')});
   assert.equal(await legacyPhysical.locator('strong').innerText(), 'Server');
   assert.equal(await legacyVirtual.locator('strong').innerText(), 'Virtual Machine');
+  const legacyCustom = page.locator('.catalog-manager-row')
+    .filter({has: page.locator('[data-action="rename-device-catalogue-entry"][data-name="Server"]')});
+  assert.equal(await legacyCustom.locator('strong').innerText(), 'Server (Custom)');
+  assert.equal(await page.getByRole('button', {name:'Archive Server (Custom)', exact:true}).count(), 1);
   assert.equal(await page.getByRole('button', {name:'Archive Server', exact:true}).count(), 1);
   await postOn(page, '/api/inventory/device-catalogue/change', () =>
     page.getByRole('button', {name: 'Archive Legacy Server', exact: true}).click());
   await page.getByRole('button', {name: 'Unarchive Legacy Server', exact:true}).waitFor();
   await go(page, 'devices');
   await page.getByRole('button', {name: 'Add Device', exact:true}).click();
+  assert.equal(await page.locator('#dev-type option[value="Server - Physical"]').textContent(), 'Server');
+  assert.equal(await page.locator('#dev-type option[value="Server"]').textContent(), 'Server (Custom)');
+  await page.locator('#dev-type').selectOption('Server');
+  assert.equal(await page.locator('#dev-type').inputValue(), 'Server');
+  await page.locator('#dev-type').selectOption('Server - Physical');
+  assert.equal(await page.locator('#dev-type').inputValue(), 'Server - Physical');
   assert.equal(await page.locator('#dev-type option').filter({hasText: 'Legacy Server'}).count(), 0);
   assert.equal(await fields.count(), 0);
   await lifecycle(page);

@@ -12,7 +12,7 @@
   const day = 86400000;
   const asDate = value => new Date(value+'T00:00:00Z');
   const dateLabel = value => value ? value.slice(8,10)+'/'+value.slice(5,7)+'/'+value.slice(0,4) : 'Not recorded';
-  const typeLabel = name => name === 'Server - Physical' ? 'Server' : name === 'Server - Virtual' ? 'Virtual Machine' : name || 'Unknown';
+  const typeLabel = name => window.caffootPublicDeviceTypeName?.(name || 'Unknown') ?? (name === 'Server - Physical' ? 'Server' : name === 'Server - Virtual' ? 'Virtual Machine' : name || 'Unknown');
   const esc = value => String(value ?? '').replace(/[&<>"']/g,
     character=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[character]));
   const yearsLabel = years => years ? `${years} ${years===1?'year':'years'}` : 'Lifespan Not Set';

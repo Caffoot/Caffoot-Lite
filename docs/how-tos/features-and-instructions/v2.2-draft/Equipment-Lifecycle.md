@@ -117,6 +117,12 @@ You need **Devices Edit** and the Devices feature. Open **IT → Devices → Dev
 
 **Example.** Five Devices use the custom **Legacy Server** type with a seven-year lifespan. Archiving the type keeps all five on that lifespan. When the team needs the type for new Devices again, **Unarchive** restores its availability and the seven-year setting.
 
+### Existing Custom Server Types
+
+The standard physical **Server** Device Type uses an internal legacy identity and is displayed as **Server**. In older Caffoot Lite installations, an administrator might already have created a separate custom Device Type named **Server**. Where such an older custom type exists, the application displays its name as **Server (Custom)** to distinguish it from the standard Server type. This is a **display label only**: the original saved type identity, Devices, configured lifespan, history, stock associations and filtering remain unchanged. The existing type can still be managed using its own Archive, Unarchive, Rename and Delete actions.
+
+Creating a new custom type called **Server**, or renaming a different type to **Server**, is blocked because that name is reserved for the standard physical Server type. Administrators do not need to rename or reclassify any existing Devices to apply this distinction. On the Add/Edit Device form, **Server** and **Server (Custom)** are separate choices when both existing type identities are available; selecting either retains its corresponding saved identity.
+
 ## Audit, Backup And Troubleshooting
 
 The existing **Audit Trail** records successful changes to lifecycle dates and settings, including the affected Device or setting, previous and new values, actor and time. Lifecycle settings audit details require Administrator access. Device history follows the existing Audit Trail and Devices permissions. Rejected saves or discarded drafts do not create successful change records.

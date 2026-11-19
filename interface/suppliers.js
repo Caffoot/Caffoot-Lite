@@ -17,7 +17,7 @@
 
   const safe = value => config.escape(value);
   const icon = name => config.icon('i-' + name);
-  const displayEquipmentType = name => name === 'Server - Physical' ? 'Server' : name === 'Server - Virtual' ? 'Virtual Machine' : name;
+  const displayEquipmentType = name => window.caffootPublicDeviceTypeName?.(name) ?? (name === 'Server - Physical' ? 'Server' : name === 'Server - Virtual' ? 'Virtual Machine' : name);
   const editable = () => config?.canEdit();
   const list = (items, fallback = 'Not Recorded') => items.filter(Boolean).map(safe).join('<br>') || fallback;
   const locationAddress = location => list(location ? [location.address, location.city, location.postcode, location.country] : []);

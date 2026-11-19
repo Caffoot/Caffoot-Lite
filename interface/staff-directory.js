@@ -8,7 +8,7 @@
   let mode='list',config=null,loaded=false,loading=false,activeSection='staff';
   let currentDepartmentId=null,departmentTab='overview',departmentDetails=null,departmentRequest=0;
   const escapeHtml=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-  const displayDeviceType=name=>name==='Server - Physical'?'Server':name==='Server - Virtual'?'Virtual Machine':name;
+  const displayDeviceType=name=>window.caffootPublicDeviceTypeName?.(name) ?? (name==='Server - Physical'?'Server':name==='Server - Virtual'?'Virtual Machine':name);
   const displayName=record=>[record.firstName,record.lastName].filter(Boolean).join(' ')||'Name Not Recorded';
   const departmentName=id=>departments.find(item=>item.id===id)?.name||'No Department';
   const isAdministrator=()=>!!config?.admin;

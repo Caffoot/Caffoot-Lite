@@ -9,7 +9,7 @@
   let issueDraft=null,report=null,reportDays=30,reportCategory='',inventoryFilter=null,movementFilter=null;
   const safe=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   // Display label only; stock category IDs and all stock transactions remain unchanged.
-  const displayStockType=name=>name==='Server - Physical'?'Server':name==='Server - Virtual'?'Virtual Machine':name;
+  const displayStockType=name=>window.caffootPublicDeviceTypeName?.(name) ?? (name==='Server - Physical'?'Server':name==='Server - Virtual'?'Virtual Machine':name);
   function canRead(){return !!config?.canRead();}
   function canEdit(){return !!config?.canEdit();}
   // Preserve the browser-local calendar day; avoid locale-dependent native input defaults.
