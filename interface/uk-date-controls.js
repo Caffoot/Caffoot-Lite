@@ -108,7 +108,7 @@
     if (!force && document.activeElement === record.text) return;
     // Preserve invalid typed dates, including real dates outside min/max, on blur or save.
     // Otherwise an optional out-of-range date could silently clear before validation.
-    if (!force && record.text.validity.customError) return;
+    if (!force && record.text.validity.customError && !record.native.value) return;
     record.text.value = toUk(record.native.value);
     record.text.setCustomValidity('');
     record.text.setAttribute('aria-invalid', 'false');
