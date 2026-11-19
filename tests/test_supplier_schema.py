@@ -1,4 +1,5 @@
 """Schema 20 upgrade and Supplier feature/role boundaries."""
+import json
 import sqlite3
 import unittest
 from unittest.mock import patch
@@ -27,7 +28,7 @@ class SupplierSchemaTests(unittest.TestCase):
         self.db.execute("INSERT INTO inventory_devices(id,name,record_json,ordinal) VALUES('a','Host','{}',0)")
         self.db.commit()
         schema.initialise_database(self.db)
-        self.assertEqual(self.db.execute('SELECT max(version) FROM schema_migrations').fetchone(), (23,))
+        self.assertEqual(self.db.execute('SELECT max(version) FROM schema_migrations').fetchone(), (schema.SCHEMA_VERSION,))
         self.assertEqual(self.db.execute('SELECT id,name FROM inventory_devices').fetchall(), [('a','Host')])
         self.assertEqual(self.db.execute('SELECT section,level FROM account_permission_overrides ORDER BY section').fetchall(),
                          [('Devices','deny'),('IT Assets','edit')])
@@ -87,8 +88,9 @@ class SupplierSchemaTests(unittest.TestCase):
             db.execute("UPDATE organisation_features SET enabled=1 WHERE feature IN ('suppliers','it_assets','devices')")
             db.execute("INSERT INTO suppliers(name,name_key,website,description) VALUES('Northlight','northlight','','')")
             device = {"id": "host", "name": "Office Laptop", "type": "Laptop"}
+            db.execute("INSERT INTO inventory_devices(id,name,record_json,ordinal) VALUES(?,?,?,0)",
+                       (device["id"], device["name"], json.dumps(device)))
             db.commit()
-            create_device(db, 1, device)
             schema.initialise_database(db)
             self.assertEqual(db.execute("SELECT count(*) FROM device_suppliers").fetchone(), (0,))
             self.assertIsNotNone(db.execute("SELECT record_json FROM inventory_devices WHERE id='host'").fetchone())

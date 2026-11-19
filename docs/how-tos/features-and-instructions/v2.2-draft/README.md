@@ -2,9 +2,19 @@
 
 > **Draft v2.2 — Unreleased.** The Stage 1–3 guides describe `milestone-1` at `753b3266893987addb11406ef8303adb03c3c112` (schema 20), verified on 17 November 2026. Use the [published v2.1 guides](../README.md) for the current release. These drafts are not installation, upgrade or restore instructions.
 
-Caffoot Lite brings accounts, Staff Members, Departments, Devices and optional IT Assets together so your team can record who holds equipment, what is physically in stock and what is ready to issue. These guides explain the implemented Stage 1–3 workflows for ordinary users, IT technicians and administrators. Examples use fictional people, organisations and equipment.
+Caffoot Lite brings accounts, Staff Members, Departments, Devices and optional IT Assets together so your team can record who holds equipment, what is physically in stock and what is ready to issue. These guides explain workflows for ordinary users, IT technicians and administrators, including Suppliers and Equipment Lifecycle in Stage 4. Examples use fictional people, organisations and equipment.
 
 Start with the task you need to complete. Each feature guide explains its permissions, controls, numbered procedures, examples and recovery steps. A missing section may mean the feature is switched off or your account lacks permission; ask an administrator to check before creating duplicate records.
+
+## UK Date Entry And Calendar Controls
+
+In v2.2, Caffoot Lite's date-entry controls show and accept **DD/MM/YYYY** regardless of the browser's own regional date display. For example, **15/03/2023** means 15 March 2023, and **05/06/2024** means 5 June 2024, not 6 May. Use a four-digit year. The visible format is for people: the application continues to save and exchange dates in its existing ISO `YYYY-MM-DD` format.
+
+Type a date with slashes, or enter eight consecutive digits (for example, `15032023`), which are formatted as `15/03/2023`. Use the calendar button on the same field if you prefer not to type. The calendar begins each week on Monday and includes the month, year and labelled days. With keyboard focus inside the calendar, use the arrow keys to move by day or week, Home/End for the beginning/end of the week, Page Up/Down to move months, Shift+Page Up/Down to move years, Enter to select and Escape to close it.
+
+Only real calendar dates are accepted: **29/02/2024** is valid, but **29/02/2023** is not. Fields with existing restrictions, such as no future Purchase Date or Date Issued, keep those restrictions. An invalid date is shown with a validation message and is not submitted as a replacement for the previous recorded value. Clearing an optional date remains possible. The calendar preserves existing permissions, readonly fields, Cancel and unsaved-change/discard behaviour.
+
+This is a change to how dates are **entered and shown**, not to the dates already saved, the actual event times, the configured timezone, lifecycle calculations, or stock movement history. Existing published v2.1 instructions and records are unchanged.
 
 ## Accounts And Access
 
@@ -57,6 +67,14 @@ For a new delivery, follow Receive Stock → check/readiness → Issue Equipment
 | Record, correct or review Supplier associations on Devices and stock receipts | [Equipment Supplier Integration](Equipment-Supplier-Integration.md) |
 
 Suppliers starts switched off and uses its own section permissions. Supplier Management and Supplier Issues are integrated on the development branch. Batch 4.3 adds equipment associations and the Supplier Equipment view in schema 23 on [draft PR #416](https://github.com/Caffoot/Caffoot-Lite/pull/416).
+
+## Equipment Lifecycle
+
+| Task | Guide |
+| --- | --- |
+| Record dates, review Dashboard warnings, configure warning periods and lifespans, archive or restore types | [Equipment Lifecycle](Equipment-Lifecycle.md) |
+
+Equipment Lifecycle is independently optional and starts switched off. The guide describes Batch 4.4 on the draft development branch.
 
 ## Publication And Acceptance
 

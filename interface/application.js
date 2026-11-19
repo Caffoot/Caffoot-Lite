@@ -13,6 +13,16 @@ const defaultData = {
             managedOptionsCleared: false
         };
 
+        // Show the approved Device Type names without changing saved legacy type keys.
+        function publicDeviceTypeName(name) {
+            // An older, distinct custom type can still have the saved key 'Server'.
+            // Present it separately; never change the key used by Saves or filters.
+            return name === 'Server - Physical' ? 'Server' :
+                   name === 'Server - Virtual' ? 'Virtual Machine' :
+                   name === 'Server' ? 'Server (Custom)' : name;
+        }
+        window.caffootPublicDeviceTypeName = publicDeviceTypeName;
+
         const STATE_VERSION = 3;
         const SOFTWARE_SERVICE_NAME_MAX_LENGTH = 100;
 
@@ -324,7 +334,7 @@ function hierarchyValidateTypes(subnets) {
                 if (!isPlainObject(device) || !device.id || !device.name) throw new Error('Every device must have an id and name.');
                 if (deviceIds.has(device.id)) throw new Error(`Duplicate device ID: ${device.id}.`);
                 deviceIds.add(device.id);
-                if (!getRecognisedDeviceMountTypes(device.type).includes(device.mountType || (device.rackId ? 'Rack Mounted' : 'Desktop'))) throw new Error(`Device ${device.name} has an incompatible mounting type for ${device.type}.`);
+                if (!getRecognisedDeviceMountTypes(device.type).includes(device.mountType || (device.rackId ? 'Rack Mounted' : 'Desktop'))) throw new Error(`Device ${device.name} has an incompatible mounting type for ${publicDeviceTypeName(device.type)}.`);
                 if (device.primaryIp && !isValidIpv4(device.primaryIp)) throw new Error(`Invalid primary IP on device ${device.name}.`);
                 const shelfError=getDeviceShelfAssociationError(device,state);
                 if(shelfError)throw new Error(shelfError);
@@ -439,7 +449,7 @@ function hierarchyValidateTypes(subnets) {
             appState.devices.forEach(device => {
                 if (!device.id || deviceIds.has(device.id)) errors.push(`Duplicate or missing device ID: ${device.id || '(missing)'}`);
                 deviceIds.add(device.id);
-                if (!getRecognisedDeviceMountTypes(device.type).includes(device.mountType || (device.rackId ? 'Rack Mounted' : 'Desktop'))) errors.push(`Device ${device.name} has an incompatible mounting type for ${device.type}.`);
+                if (!getRecognisedDeviceMountTypes(device.type).includes(device.mountType || (device.rackId ? 'Rack Mounted' : 'Desktop'))) errors.push(`Device ${device.name} has an incompatible mounting type for ${publicDeviceTypeName(device.type)}.`);
                 if (device.location === 'Blank') errors.push(`Device ${device.name} still uses the retired Blank location.`);
                 if (device.primaryIp) {
                     if (primaryIps.has(device.primaryIp)) errors.push(`Duplicate primary IP: ${device.primaryIp}.`);
@@ -537,6 +547,11 @@ function hierarchyValidateTypes(subnets) {
         // temporarily preserve the device form while creating a missing subnet.
         let deviceFormDraft = null;
         let deviceSuppliers = {};
+        let equipmentLifecycle = null;
+        let lifecycleDeviceDates = new Map();
+        let lifecycleDashboard = null;
+        let leaveLifecycleSettings = null;
+        let deviceTypeAvailability = {archived:[], renamed:[]};
         let ipViewRange = '1-32';
         let ipAddressGridPage = 0;
 
@@ -1316,6 +1331,12 @@ function hierarchyValidateTypes(subnets) {
             }
             container.innerHTML = html;
             if (currentTab === 'it-assets') window.caffootStockIntake.hydrate();
+            if (currentTab === 'dashboard') window.caffootLifecycle.bindDashboard(
+                container.querySelector('#dashboard-panel-lifecycle'), lifecycleDashboard, id=>{
+                    if(!equipmentLifecycle || !lifecycleDeviceDates.has(id))return;
+                    openDeviceDetailView(id);
+                    selectDeviceDetailsTab('hardware');
+                });
             window.caffootEquipment.hydrate(container);
             if (currentTab === 'account') hydrateAccount(container);
             if (currentTab === 'audit') hydrateAudit(container);
@@ -1477,6 +1498,16 @@ function hierarchyValidateTypes(subnets) {
             renderContent();
             document.getElementById(filter.id)?.focus({preventScroll:true});
         });
+        document.addEventListener('keydown',event=>{
+            const tab=event.target.closest('.dashboard-tabs [role="tab"]');
+            if(!tab||!['ArrowLeft','ArrowRight','Home','End'].includes(event.key))return;
+            const tabs=[...tab.parentElement.querySelectorAll('[role="tab"]')];
+            const position=tabs.indexOf(tab);
+            const next={Home:0,End:tabs.length-1,ArrowLeft:(position+tabs.length-1)%tabs.length,
+                ArrowRight:(position+1)%tabs.length}[event.key];
+            event.preventDefault();
+            tabs[next].click();
+        });
         function renderDashboardHTML() {
             const readSections = Object.fromEntries(['Devices','IPAM','Racks'].map(section=>[section,!!nextIntegrityRepairBridge?.canViewSection(section)]));
             const devices = Array.isArray(appState.devices) ? appState.devices : [];
@@ -1563,7 +1594,7 @@ function hierarchyValidateTypes(subnets) {
             const dashboardActivityTimelineHtml = filteredDashboardAuditEntries.length
               ? filteredDashboardAuditEntries.map(entry=>{
                   const when=new Date(entry.at);
-                  const time=Number.isNaN(when.getTime())?'Date unavailable':when.toLocaleString();
+                  const time=Number.isNaN(when.getTime())?'Date unavailable':when.toLocaleString('en-GB');
                   const changes=Array.isArray(entry.changes)?entry.changes:[];
                   const description=changes.slice(0,3).map(c=>[c.action||'Changed',c.kind||'record',c.label||''].join(' ')).join(' · ')||'Inventory saved without item-level changes.';
                   const kindText=`${entry.reason||''} ${changes.map(c=>c.kind||'').join(' ')}`.toLowerCase();
@@ -1595,7 +1626,7 @@ function hierarchyValidateTypes(subnets) {
             const recentDeviceRows = recentDevices.slice(0,3).map(d=>renderInterfaceTemplate("devices/recent-device-rows-1",[escapeHtml(d.name),escapeHtml(d.type||'Device'),escapeHtml(d.primaryIp||'No primary IP'),String(d.status||'Active').toLowerCase()==='active'?'db-good':'',escapeHtml(d.status||'Active')])).join('')||'<p class="db-muted">No devices configured yet.</p>';
             const deviceRows = recentDevices.length ? recentDevices.map(device => renderInterfaceTemplate("devices/device-rows-1",[getCategoryIcon(device.type),escapeHtml(device.name),escapeHtml(device.type || 'Device'),escapeHtml(device.primaryIp || 'No primary IP'),String(device.status).toLowerCase() === 'active' ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300' : 'bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300',escapeHtml(device.status || 'Active')])).join('') : renderInterfaceTemplate("devices/device-rows-2",[]);
 
-            const typeRows = topTypes.length ? topTypes.map(([type, count]) => renderInterfaceTemplate("dashboard/type-rows-1",[escapeHtml(type),escapeHtml(type),Math.round((count / maxTypeCount) * 100),count])).join('') : renderInterfaceTemplate("dashboard/type-rows-2",[]);
+            const typeRows = topTypes.length ? topTypes.map(([type, count]) => renderInterfaceTemplate("dashboard/type-rows-1",[escapeHtml(publicDeviceTypeName(type)),escapeHtml(publicDeviceTypeName(type)),Math.round((count / maxTypeCount) * 100),count])).join('') : renderInterfaceTemplate("dashboard/type-rows-2",[]);
 
             const subnetRows = subnetStats.length ? subnetStats.map(subnet => renderInterfaceTemplate("ipam/subnet-rows-1",[escapeHtml(subnet.name),escapeHtml(subnet.cidr),escapeHtml(subnet.vlan),subnet.used,subnet.capacity || 0,subnet.percentage >= 85 ? 'bg-amber-500' : 'bg-emerald-500',Math.max(subnet.percentage, subnet.used ? 1 : 0)])).join('') : renderInterfaceTemplate("ipam/subnet-rows-2",[]);
 
@@ -1627,8 +1658,13 @@ function hierarchyValidateTypes(subnets) {
                 return {rack, faces};
             });
             // Original approved four-card grid: all figures are from saved inventory.
-            const networkInsights = renderInterfaceTemplate("dashboard/network-insights-4",[ipUtilisation,ipUtilisation,ipUtilisation,subnetAssigned,subnetReserved,Math.max(0,totalSubnetCapacity-subnetAssigned-subnetReserved),devices.length,statusEntries.length?statusEntries.map(([name,count],i)=>renderInterfaceTemplate("dashboard/network-insights-1",[i%3===0?'green':i%3===1?'':'gray',escapeHtml(name),count])).join(''):'<p class="db-muted">No devices configured yet.</p>',topTypes.length?topTypes.map(([name,count],i)=>renderInterfaceTemplate("dashboard/network-insights-2",[i?'margin-top:18px':'',escapeHtml(name==='Server - Physical'?'Server':name==='Server - Virtual'?'Virtual Machine':name),count,Math.round(count/maxTypeCount*100)])).join(''):'<p class="db-muted">No devices configured yet.</p>',rackInsights.length?rackInsights.flatMap(({rack,faces})=>faces.map(({face,used,capacity,percent})=>renderInterfaceTemplate("dashboard/network-insights-3",[escapeHtml(rack.name),face==='front'?'Front':'Rear',used,capacity,percent,face==='front'?'#7396bb':'#4a9c86']))).join(''):'<p class="db-muted">No racks configured yet.</p>']);
-            return filterDashboardReadAccess(renderInterfaceTemplate("dashboard/render-dashboard-html-10",[window.nextMfaEnrolled === false ? renderInterfaceTemplate("dashboard/render-dashboard-html-1",[]) : '',[['overview','Overview','i-grid'],['insights','Network Insights','i-network'],['activity','Activity & Alerts','i-history']].map(([id,label,icon])=>renderInterfaceTemplate("dashboard/render-dashboard-html-2",[id,id,activeDashboardTab===id,activeDashboardTab===id?'0':'-1',activeDashboardTab===id?'active':'',id,icon,label])).join(''),activeDashboardTab==='overview'?'':'hidden',[
+            const networkInsights = renderInterfaceTemplate("dashboard/network-insights-4",[ipUtilisation,ipUtilisation,ipUtilisation,subnetAssigned,subnetReserved,Math.max(0,totalSubnetCapacity-subnetAssigned-subnetReserved),devices.length,statusEntries.length?statusEntries.map(([name,count],i)=>renderInterfaceTemplate("dashboard/network-insights-1",[i%3===0?'green':i%3===1?'':'gray',escapeHtml(name),count])).join(''):'<p class="db-muted">No devices configured yet.</p>',topTypes.length?topTypes.map(([name,count],i)=>renderInterfaceTemplate("dashboard/network-insights-2",[i?'margin-top:18px':'',escapeHtml(publicDeviceTypeName(name)),count,Math.round(count/maxTypeCount*100)])).join(''):'<p class="db-muted">No devices configured yet.</p>',rackInsights.length?rackInsights.flatMap(({rack,faces})=>faces.map(({face,used,capacity,percent})=>renderInterfaceTemplate("dashboard/network-insights-3",[escapeHtml(rack.name),face==='front'?'Front':'Rear',used,capacity,percent,face==='front'?'#7396bb':'#4a9c86']))).join(''):'<p class="db-muted">No racks configured yet.</p>']);
+            if (!equipmentLifecycle && activeDashboardTab==='lifecycle') activeDashboardTab='overview';
+            lifecycleDashboard=equipmentLifecycle?window.caffootLifecycle.renderDashboard(
+                equipmentLifecycle,devices,activeDashboardTab==='lifecycle'):null;
+            const tabs=[['overview','Overview','i-grid'],['insights','Network Insights','i-network'],['activity','Activity & Alerts','i-history']];
+            if(lifecycleDashboard) tabs.push(['lifecycle','Lifecycle','i-history']);
+            return filterDashboardReadAccess(renderInterfaceTemplate("dashboard/render-dashboard-html-10",[window.nextMfaEnrolled === false ? renderInterfaceTemplate("dashboard/render-dashboard-html-1",[]) : '',tabs.map(([id,label,icon])=>renderInterfaceTemplate("dashboard/render-dashboard-html-2",[id,id,activeDashboardTab===id,activeDashboardTab===id?'0':'-1',activeDashboardTab===id?'active':'',id,icon,label])).join(''),activeDashboardTab==='overview'?'':'hidden',[
                                 ['Devices', devices.length, `${activeDevices} active · ${inactiveDevices} other`, 'i-box', 'tab-devices'],
                                 ['IP Addresses', totalTrackedIps, `${assignedIps} assigned · ${reservedIps} reserved`, 'i-network', 'tab-ipam'],
                                 ['Subnets', subnets.length, 'Managed networks', 'i-network', 'tab-ipam'],
@@ -1638,7 +1674,7 @@ function hierarchyValidateTypes(subnets) {
                                         const capacity = Number(rack.heightU)||0;
                                         const pct = capacity ? Math.round(used/capacity*100) : 0;
                                         return renderInterfaceTemplate("dashboard/render-dashboard-html-7",[escapeHtml(rack.name),used,capacity,escapeHtml(rack.name),pct,pct,pct>=85?'#ed8532':'#7799b5']);
-                                    }).join('') : '<p class="db-muted">No network racks configured yet.</p>',networkSnapshot,devices.length,subnets.length,racks.length,activeDashboardTab==='insights'?'':'hidden',networkInsights,rackCards,activeDashboardTab==='activity'?'':'hidden',filteredDashboardAuditEntries.length,alerts.length,window.nextSessionIsAdmin===true&&integrityErrors.length?renderInterfaceTemplate("dashboard/render-dashboard-html-8",[integrityErrors.length]):'',dashboardActivityFilterControlsHtml,dashboardActivityTimelineHtml,filteredDashboardAuditEntries.length?'hidden':'',dashboardAlertFilterControlsHtml,dashboardWarningRowsHtml,filteredDashboardAlerts.length?'hidden':'',alerts.length?'No saved warnings match this filter.':Object.values(readSections).every(Boolean)?'No saved warnings detected.':'No warnings detected in accessible sections.',alerts.length>filteredDashboardAlerts.length?renderInterfaceTemplate("dashboard/render-dashboard-html-9",[filteredDashboardAlerts.length,alerts.length]):'','']),readSections);
+                                    }).join('') : '<p class="db-muted">No network racks configured yet.</p>',networkSnapshot,devices.length,subnets.length,racks.length,activeDashboardTab==='insights'?'':'hidden',networkInsights,rackCards,activeDashboardTab==='activity'?'':'hidden',filteredDashboardAuditEntries.length,alerts.length,window.nextSessionIsAdmin===true&&integrityErrors.length?renderInterfaceTemplate("dashboard/render-dashboard-html-8",[integrityErrors.length]):'',dashboardActivityFilterControlsHtml,dashboardActivityTimelineHtml,filteredDashboardAuditEntries.length?'hidden':'',dashboardAlertFilterControlsHtml,dashboardWarningRowsHtml,filteredDashboardAlerts.length?'hidden':'',alerts.length?'No saved warnings match this filter.':Object.values(readSections).every(Boolean)?'No saved warnings detected.':'No warnings detected in accessible sections.',alerts.length>filteredDashboardAlerts.length?renderInterfaceTemplate("dashboard/render-dashboard-html-9",[filteredDashboardAlerts.length,alerts.length]):'',lifecycleDashboard?.html||'']),readSections);
         }
 
         function filterDashboardReadAccess(html, readSections) {
@@ -1745,7 +1781,7 @@ function hierarchyValidateTypes(subnets) {
                 const rails=(appState.rackAccessories||[]).filter(a=>a.rackId===rack.id&&a.face===face&&['pdu_vertical','cable_vertical'].includes(a.type)).sort((a,b)=>Number(b.startU)-Number(a.startU)).map(a=>renderInterfaceTemplate("racks/rails-1",[safe(a.name||rackAccessoryTypeDefinitions[a.type]?.label||'Vertical accessory'),safe(a.side==='right'?'Right':'Left'),safe(a.startU),safe(Number(a.startU)+Number(a.heightU)-1)])).join('');
                 return renderInterfaceTemplate("racks/print-capacity-page",[face==='front'?'Front':'Rear',usage.occupied,usage.available,usage.percent,slots,rails?renderInterfaceTemplate("racks/print-equipment-list",[rails]):'<p>None fitted</p>']);
             }).join('');
-            const html = renderInterfaceTemplate("racks/print-rack-elevation-1",[safe(rack.name),safe(rack.name),safe(rack.location||''),safe(rack.heightU),safe(new Date().toLocaleString()),pages]);
+            const html = renderInterfaceTemplate("racks/print-rack-elevation-1",[safe(rack.name),safe(rack.name),safe(rack.location||''),safe(rack.heightU),safe(new Date().toLocaleString('en-GB')),pages]);
             // Keep normal printing until the same-tab trial passes browser acceptance.
             if (new URLSearchParams(window.location.search).get('rack-print') === 'same-tab') {
                 printRackElevationInFrame(html);
@@ -1951,7 +1987,7 @@ function hierarchyValidateTypes(subnets) {
                             ? 'border-purple-300 dark:border-purple-800 bg-purple-50/90 dark:bg-purple-950/40' 
                             : 'border-emerald-300 dark:border-emerald-800 bg-emerald-50/90 dark:bg-emerald-950/40';
 
-                        rackSlotsHtml += renderInterfaceTemplate("racks/rack-slots-html-2",[escapeHtml(dev.id),isRear?'rear':'front',u,escapeHtml(currentRack.id),span*40,escapeHtml(dev.name),escapeHtml(dev.type),escapeHtml(dev.primaryIp||'No IP'),span,dev.face||'front',isRear?'rear':'front',span===1?`U${start}`:`U${start}–${end}`,escapeHtml(dev.name),escapeHtml(dev.type||'Device'),escapeHtml(dev.primaryIp||'No IP recorded'),escapeHtml(dev.id),escapeHtml(currentRack.id),start,escapeHtml(dev.name),escapeHtml(dev.id),escapeHtml(dev.name)]);
+                        rackSlotsHtml += renderInterfaceTemplate("racks/rack-slots-html-2",[escapeHtml(dev.id),isRear?'rear':'front',u,escapeHtml(currentRack.id),span*40,escapeHtml(dev.name),escapeHtml(publicDeviceTypeName(dev.type)),escapeHtml(dev.primaryIp||'No IP'),span,dev.face||'front',isRear?'rear':'front',span===1?`U${start}`:`U${start}–${end}`,escapeHtml(dev.name),escapeHtml(publicDeviceTypeName(dev.type||'Device')),escapeHtml(dev.primaryIp||'No IP recorded'),escapeHtml(dev.id),escapeHtml(currentRack.id),start,escapeHtml(dev.name),escapeHtml(dev.id),escapeHtml(dev.name)]);
                     }
                     continue;
                 } else {
@@ -2080,7 +2116,7 @@ function hierarchyValidateTypes(subnets) {
             const selected=new Set([...matches.map(x=>x.type),...seedTypes]);
             const types=[...new Set([...(appState.deviceTypes||[]),...Object.keys(builtInHardwareSuggestions),...selected])].filter(t=>t&&t!=='Server - Virtual').sort();
             const affected=makerName?appState.devices.filter(d=>String(d.manufacturer||'').toLowerCase()===makerName.toLowerCase()).length:0;
-            const checks=types.map(t=>renderInterfaceTemplate("device-management/checks-1",[escapeHtml(t),selected.has(t)?'checked':'',seedTypes.includes(t)?'disabled':'',escapeHtml(t)])).join('');
+            const checks=types.map(t=>renderInterfaceTemplate("device-management/checks-1",[escapeHtml(t),selected.has(t)?'checked':'',seedTypes.includes(t)?'disabled':'',escapeHtml(publicDeviceTypeName(t))])).join('');
             const fields=deleting
               ? renderInterfaceTemplate("device-management/fields-1",[escapeHtml(entry.manufacturer),matches.length,affected])
               : renderInterfaceTemplate("device-management/fields-2",[escapeHtml(makerName||''),isBuiltIn?'readonly':'',isBuiltIn?'<p class="catalog-modal-info">Built-in manufacturer names and default associations are protected. You may add custom associations.</p>':'',checks]);
@@ -2177,7 +2213,7 @@ function hierarchyValidateTypes(subnets) {
                 counts.set(key,(counts.get(key)||0)+1);
             });
             const rows=[...new Set([...values.filter(value=>value&&value!=='Unknown'),'Not Recorded'])]
-                .map(name=>({name,label:isType?(name==='Server - Physical'?'Server':name==='Server - Virtual'?'Virtual Machine':name):name,count:counts.get(name)||0}))
+                .map(name=>({name,label:isType?publicDeviceTypeName(name):name,count:counts.get(name)||0}))
                 .filter(row=>row.count||row.name!=='Not Recorded').sort((a,b)=>b.count-a.count||a.label.localeCompare(b.label));
             const markup=rows.map(({name,label,count})=>renderCatalogueRecord(
                 `data-catalog-row="${field}" data-filter-text="${escapeHtml(label.toLowerCase())}"`,label,
@@ -2225,7 +2261,7 @@ function hierarchyValidateTypes(subnets) {
                 controls+=renderCatalogueButton(item.sources.has('Built-in')?'Device Types':'Edit','manufacturer-edit',`data-name="${escapeHtml(key)}"`);
                 if(!item.sources.has('Built-in')&&!key.startsWith('builtin:'))controls+=renderCatalogueButton('Remove','manufacturer-remove',`data-name="${escapeHtml(key)}"`);
                 return renderCatalogueRecord(`data-manufacturer-row="${escapeHtml(item.name.toLowerCase())}"`,item.name,item.sources.has('Built-in')?'Built-in':item.sources.has('Custom')?'Custom':'Recorded',
-                    `${[...item.types].join(', ')} · ${item.devices} device${item.devices===1?'':'s'} in inventory`,controls);
+                    `${[...item.types].map(publicDeviceTypeName).join(', ')} · ${item.devices} device${item.devices===1?'':'s'} in inventory`,controls);
             }).join('');
             const hiddenRows=hiddenMakers.map(name=>renderCatalogueRecord('',name,'Archived','Hidden from new suggestions',renderCatalogueButton('Manage / Restore','built-in-manufacturer-edit',`data-name="${escapeHtml(name)}"`))).join('');
             const hidden=hiddenRows?renderInterfaceTemplate("device-management/source-hidden",['Hidden Built-in Manufacturers',hiddenRows]):'';
@@ -2245,7 +2281,7 @@ function hierarchyValidateTypes(subnets) {
             if(!maker||!field)return;
             const previous=field.value,allowed=getNonVirtualDeviceTypesAssociatedWithManufacturer(maker.value);
             const legacy=field.dataset.originalType||'',same=maker.value===field.dataset.originalMaker;
-            field.innerHTML='<option value="">'+(maker.value?'Select Device Type':'Select Manufacturer First')+'</option>'+allowed.map(t=>'<option value="'+escapeHtml(t)+'">'+escapeHtml(t)+'</option>').join('')+(same&&legacy&&!allowed.includes(legacy)?'<option value="'+escapeHtml(legacy)+'">'+escapeHtml(legacy)+' (Existing Association)</option>':'');
+            field.innerHTML='<option value="">'+(maker.value?'Select Device Type':'Select Manufacturer First')+'</option>'+allowed.map(t=>'<option value="'+escapeHtml(t)+'">'+escapeHtml(publicDeviceTypeName(t))+'</option>').join('')+(same&&legacy&&!allowed.includes(legacy)?'<option value="'+escapeHtml(legacy)+'">'+escapeHtml(publicDeviceTypeName(legacy))+' (Existing Association)</option>':'');
             field.disabled=!maker.value;
             field.value=[...field.options].some(o=>o.value===previous)?previous:(same&&legacy?legacy:'');
             const note=document.getElementById('hardware-model-device-type-note');
@@ -2257,11 +2293,11 @@ function hierarchyValidateTypes(subnets) {
             if(id&&!item)return;
             const makers=new Set([...Object.values(getVisibleBuiltInHardwareSuggestions()).flatMap(x=>Object.keys(x)),...getConfiguredHardwareCatalogueEntries().map(x=>x.manufacturer),...appState.devices.map(x=>x.manufacturer)].filter(Boolean));
             const types=item?getNonVirtualDeviceTypesAssociatedWithManufacturer(item.manufacturer):[];
-            const opts=(values,current)=>[...values].sort((a,b)=>a.localeCompare(b)).map(v=>`<option value="${escapeHtml(v)}" ${v===current?'selected':''}>${escapeHtml(v)}</option>`).join('');
+            const opts=(values,current,typeNames=false)=>[...values].sort((a,b)=>a.localeCompare(b)).map(v=>`<option value="${escapeHtml(v)}" ${v===current?'selected':''}>${escapeHtml(typeNames?publicDeviceTypeName(v):v)}</option>`).join('');
             const used=item?appState.devices.filter(d=>d.model?.toLowerCase()===item.model.toLowerCase()&&d.manufacturer?.toLowerCase()===item.manufacturer.toLowerCase()&&d.type===item.type).length:0;
             const fields=remove
-              ? renderInterfaceTemplate("device-management/fields-5",[escapeHtml(item.model),escapeHtml(item.manufacturer),escapeHtml(item.type),used,used?'Removal is blocked until those devices are updated.':'This unused custom suggestion can be removed.'])
-              : renderInterfaceTemplate("device-management/fields-6",[escapeHtml(item?.model||''),opts(makers,item?.manufacturer||''),opts(types,item?.type||'')]);
+              ? renderInterfaceTemplate("device-management/fields-5",[escapeHtml(item.model),escapeHtml(item.manufacturer),escapeHtml(publicDeviceTypeName(item.type)),used,used?'Removal is blocked until those devices are updated.':'This unused custom suggestion can be removed.'])
+              : renderInterfaceTemplate("device-management/fields-6",[escapeHtml(item?.model||''),opts(makers,item?.manufacturer||''),opts(types,item?.type||'',true)]);
             const actions=renderInterfaceTemplate("device-management/actions-3",[remove?'confirm-remove-catalogue-model':'save-catalogue-model',escapeHtml(id),remove?'btn-outline':'btn-primary',remove?'Remove Model':'Save Model']);
             openCatalogueModal(remove?'Remove Model Suggestion':item?'Edit Model Suggestion':'Add Model Suggestion',
               'Custom suggestions only. Built-in models and saved devices are never changed.',
@@ -2315,7 +2351,7 @@ function hierarchyValidateTypes(subnets) {
             const fields=renderInterfaceTemplate("device-management/fields-8",[escapeHtml(pref.label||model),pref.hidden?'checked':'',users.length?'disabled':'',users.length?renderInterfaceTemplate("device-management/fields-7",[users.slice(0,5).map(d=>escapeHtml(d.name||d.hostname||d.id||'Unnamed device')).join(', ')]):'']);
             const actions=renderInterfaceTemplate("device-management/actions-4",[escapeHtml(key)]);
             openCatalogueModal('Manage Built-in Model',
-              `Original: ${maker} · ${model} · ${type}. Existing device records will not be renamed.`,
+              `Original: ${maker} · ${model} · ${publicDeviceTypeName(type)}. Existing device records will not be renamed.`,
               fields,actions,'Built-in models may be renamed or hidden as suggestions. Existing devices and backups are retained.');
         }
         async function saveBuiltInHardwareModelOverride(key){
@@ -2378,18 +2414,18 @@ function hierarchyValidateTypes(subnets) {
             const items=[...map.values()].sort((a,b)=>a.manufacturer.localeCompare(b.manufacturer)||a.model.localeCompare(b.model)||a.type.localeCompare(b.type));
             const makers=[...new Set(items.map(item=>item.manufacturer))].sort((a,b)=>a.localeCompare(b));
             const types=[...new Set(items.map(item=>item.type).filter(Boolean))].sort((a,b)=>a.localeCompare(b));
-            const options=values=>values.map(value=>`<option value="${escapeHtml(value)}">${escapeHtml(value)}</option>`).join('');
+            const options=(values,typeNames=false)=>values.map(value=>`<option value="${escapeHtml(value)}">${escapeHtml(typeNames?publicDeviceTypeName(value):value)}</option>`).join('');
             const rows=items.map(item=>{
                 let controls=renderCatalogueButton('View Devices','device-hardware-drilldown',`data-field="model" data-value="${escapeHtml(item.model)}"`);
                 if(item.sources.has('Built-in'))controls+=renderCatalogueButton('Manage Suggestion','built-in-model-edit',`data-name="${escapeHtml(builtinModelOrigins.get([item.model,item.manufacturer,item.type].map(value=>value.toLowerCase()).join('|'))||'')}"`);
                 else for(const entry of getConfiguredHardwareCatalogueEntries().filter(entry=>entry.model&&entry.model.toLowerCase()===item.model.toLowerCase()&&entry.manufacturer.toLowerCase()===item.manufacturer.toLowerCase()&&entry.type.toLowerCase()===item.type.toLowerCase())){
                     controls+=renderCatalogueButton('Edit','model-edit',`data-name="${escapeHtml(entry.id)}"`)+renderCatalogueButton('Remove','model-remove',`data-name="${escapeHtml(entry.id)}"`);
                 }
-                return renderCatalogueRecord(`data-model-maker="${escapeHtml(item.manufacturer.toLowerCase())}" data-model-type="${escapeHtml(item.type.toLowerCase())}" data-model-sources="${escapeHtml([...item.sources].join('|').toLowerCase())}" data-model-devices="${item.devices}" data-model-row="${escapeHtml([item.model,item.manufacturer,item.type].join(' ').toLowerCase())}"`,item.model,item.sources.has('Built-in')?'Built-in':item.sources.has('Custom')?'Custom':'Recorded',`${item.manufacturer} · ${item.type} · ${item.devices} device${item.devices===1?'':'s'} in inventory`,controls);
+                return renderCatalogueRecord(`data-model-maker="${escapeHtml(item.manufacturer.toLowerCase())}" data-model-type="${escapeHtml(item.type.toLowerCase())}" data-model-sources="${escapeHtml([...item.sources].join('|').toLowerCase())}" data-model-devices="${item.devices}" data-model-row="${escapeHtml([item.model,item.manufacturer,item.type].join(' ').toLowerCase())}"`,item.model,item.sources.has('Built-in')?'Built-in':item.sources.has('Custom')?'Custom':'Recorded',`${item.manufacturer} · ${publicDeviceTypeName(item.type)} · ${item.devices} device${item.devices===1?'':'s'} in inventory`,controls);
             }).join('');
-            const hiddenRows=hiddenBuiltins.map(item=>renderCatalogueRecord('',item.model,'Archived',`${item.maker} · ${item.type}`,renderCatalogueButton('Manage / Restore','built-in-model-edit',`data-name="${escapeHtml(item.key)}"`))).join('');
+            const hiddenRows=hiddenBuiltins.map(item=>renderCatalogueRecord('',item.model,'Archived',`${item.maker} · ${publicDeviceTypeName(item.type)}`,renderCatalogueButton('Manage / Restore','built-in-model-edit',`data-name="${escapeHtml(item.key)}"`))).join('');
             const hidden=hiddenRows?renderInterfaceTemplate("device-management/source-hidden",['Hidden Built-in Models',hiddenRows]):'';
-            return renderInterfaceTemplate("device-management/source-models",[items.length,items.filter(item=>item.devices>0).length,items.filter(item=>item.sources.has('Custom')).length,rows,`${items.length} models shown`,options(makers),options(types),'',0,hidden]);
+            return renderInterfaceTemplate("device-management/source-models",[items.length,items.filter(item=>item.devices>0).length,items.filter(item=>item.sources.has('Custom')).length,rows,`${items.length} models shown`,options(makers),options(types,true),'',0,hidden]);
         }
         const builtInSoftwareSuggestions = [{"name":"Microsoft 365 Apps","types":["Desktop","Laptop","Tablet"],"platformContexts":["mac-desktop","windows-desktop"]},{"name":"LibreOffice","types":["Desktop","Laptop","Tablet"],"platformContexts":["linux-desktop","mac-desktop","windows-desktop"]},{"name":"Google Chrome","types":["Desktop","Laptop","Tablet"],"platformContexts":["linux-desktop","mac-desktop","windows-desktop"]},{"name":"Mozilla Firefox","types":["Desktop","Laptop","Tablet"],"platformContexts":["linux-desktop","mac-desktop","windows-desktop"]},{"name":"Microsoft Edge","types":["Desktop","Laptop","Tablet"],"platformContexts":["windows-desktop"]},{"name":"Adobe Acrobat Reader","types":["Desktop","Laptop","Tablet"],"platformContexts":[]},{"name":"Microsoft Teams","types":["Desktop","Laptop","Tablet"],"platformContexts":["mac-desktop","windows-desktop"]},{"name":"Zoom Workplace","types":["Desktop","Laptop","Tablet"],"platformContexts":["mac-desktop","windows-desktop"]},{"name":"7-Zip","types":["Desktop","Laptop","Tablet"],"platformContexts":["windows-desktop"]},{"name":"VLC media player","types":["Desktop","Laptop","Tablet"],"platformContexts":["linux-desktop","mac-desktop","windows-desktop"]},{"name":"Bitwarden","types":["Desktop","Laptop","Tablet"],"platformContexts":["linux-desktop","mac-desktop","windows-desktop"]},{"name":"KeePassXC","types":["Desktop","Laptop","Tablet"],"platformContexts":["linux-desktop","mac-desktop","windows-desktop"]},{"name":"Microsoft Defender for Endpoint","types":["Desktop","Laptop","Tablet","Server - Physical","Server - Virtual"],"platformContexts":["linux-desktop","linux-server","mac-desktop","windows-desktop","windows-server"]},{"name":"CrowdStrike Falcon Sensor","types":["Desktop","Laptop","Tablet","Server - Physical","Server - Virtual"],"platformContexts":["linux-desktop","linux-server","mac-desktop","windows-desktop","windows-server"]},{"name":"SentinelOne Agent","types":["Desktop","Laptop","Tablet","Server - Physical","Server - Virtual"],"platformContexts":["linux-desktop","linux-server","mac-desktop","windows-desktop","windows-server"]},{"name":"Tailscale","types":["Desktop","Laptop","Tablet","Server - Physical","Server - Virtual","Firewall","Router","Layer 3 Switch","Wireless Access Point","Access Point","Wireless LAN Controller","NAS"],"platformContexts":["linux-desktop","linux-server","mac-desktop","nas-apps","openwrt","windows-desktop","windows-server"]},{"name":"OpenVPN Connect","types":["Desktop","Laptop","Tablet"],"platformContexts":[]},{"name":"WireGuard","types":["Desktop","Laptop","Tablet","Server - Physical","Server - Virtual","Firewall","Router","Layer 3 Switch","Wireless Access Point","Access Point","Wireless LAN Controller"],"platformContexts":["linux-desktop","linux-server","openwrt"]},{"name":"AnyDesk","types":["Desktop","Laptop","Tablet"],"platformContexts":[]},{"name":"RustDesk","types":["Desktop","Laptop","Tablet"],"platformContexts":[]},{"name":"TeamViewer","types":["Desktop","Laptop","Tablet"],"platformContexts":[]},{"name":"Microsoft Remote Desktop","types":["Desktop","Laptop","Tablet"],"platformContexts":[]},{"name":"Zabbix Agent","types":["Desktop","Laptop","Tablet","Server - Physical","Server - Virtual","Firewall","Router","Layer 3 Switch","Switch"],"platformContexts":["linux-desktop","linux-server","mac-desktop","windows-desktop","windows-server"]},{"name":"NinjaOne Agent","types":["Desktop","Laptop","Tablet","Server - Physical","Server - Virtual"],"platformContexts":["mac-desktop","windows-desktop","windows-server"]},{"name":"PDQ Connect","types":["Desktop","Laptop","Tablet","Server - Physical","Server - Virtual"],"platformContexts":["windows-desktop","windows-server"]},{"name":"Visual Studio Code","types":["Desktop","Laptop","Tablet"],"platformContexts":["linux-desktop","mac-desktop","windows-desktop"]},{"name":"Git","types":["Desktop","Laptop","Server - Physical","Server - Virtual","Tablet"],"platformContexts":["linux-desktop","linux-server","mac-desktop","windows-desktop","windows-server"]},{"name":"PowerShell 7","types":["Desktop","Laptop","Server - Physical","Server - Virtual","Tablet"],"platformContexts":["windows-desktop","windows-server"]},{"name":"PuTTY","types":["Desktop","Laptop"],"platformContexts":[]},{"name":"WinSCP","types":["Desktop","Laptop","Tablet"],"platformContexts":["windows-desktop"]},{"name":"Wireshark","types":["Desktop","Laptop"],"platformContexts":[]},{"name":"Docker Desktop","types":["Desktop","Laptop"],"platformContexts":[]},{"name":"VMware Workstation","types":["Desktop","Laptop"],"platformContexts":[]},{"name":"VirtualBox","types":["Desktop","Laptop"],"platformContexts":[]},{"name":"Notepad++","types":["Desktop","Laptop","Tablet"],"platformContexts":["windows-desktop"]},{"name":"Python","types":["Desktop","Laptop","Server - Physical","Server - Virtual"],"platformContexts":[]},{"name":"Java Runtime","types":["Desktop","Laptop"],"platformContexts":[]},{"name":"Node.js","types":["Desktop","Laptop"],"platformContexts":[]},{"name":"Microsoft Power BI Desktop","types":["Desktop","Laptop","Tablet"],"platformContexts":["windows-desktop"]},{"name":"AutoCAD","types":["Desktop","Laptop"],"platformContexts":[]},{"name":"Docker Engine","types":["Server - Physical","Server - Virtual"],"platformContexts":["linux-server"]},{"name":"Podman","types":["Server - Physical","Server - Virtual"],"platformContexts":["linux-server"]},{"name":"Kubernetes","types":["Server - Physical","Server - Virtual"],"platformContexts":["linux-server"]},{"name":"containerd","types":["Server - Physical","Server - Virtual"],"platformContexts":["linux-server"]},{"name":"Nginx","types":["Server - Physical","Server - Virtual"],"platformContexts":["linux-server"]},{"name":"Apache HTTP Server","types":["Server - Physical","Server - Virtual"],"platformContexts":["linux-server"]},{"name":"IIS","types":["Server - Physical","Server - Virtual"],"platformContexts":["windows-server"]},{"name":"PostgreSQL","types":["Server - Physical","Server - Virtual"],"platformContexts":["linux-server","windows-server"]},{"name":"MariaDB","types":["Server - Physical","Server - Virtual"],"platformContexts":["linux-server","windows-server"]},{"name":"MySQL Server","types":["Server - Physical","Server - Virtual"],"platformContexts":["linux-server","windows-server"]},{"name":"Microsoft SQL Server","types":["Server - Physical","Server - Virtual"],"platformContexts":["windows-server"]},{"name":"Redis","types":["Server - Physical","Server - Virtual"],"platformContexts":["linux-server"]},{"name":"RabbitMQ","types":["Server - Physical","Server - Virtual"],"platformContexts":["linux-server"]},{"name":"Prometheus","types":["Server - Physical","Server - Virtual"],"platformContexts":["linux-server"]},{"name":"Grafana","types":["Server - Physical","Server - Virtual"],"platformContexts":["linux-server"]},{"name":"Zabbix Server","types":["Server - Physical","Server - Virtual"],"platformContexts":["linux-server"]},{"name":"Wazuh Agent","types":["Server - Physical","Server - Virtual","Firewall","Router","Layer 3 Switch"],"platformContexts":["linux-server","opnsense","windows-server"]},{"name":"Veeam Agent","types":["Server - Physical","Server - Virtual","NAS"],"platformContexts":["windows-server"]},{"name":"Restic","types":["Server - Physical","Server - Virtual","NAS"],"platformContexts":["linux-server"]},{"name":"BorgBackup","types":["Server - Physical","Server - Virtual","NAS"],"platformContexts":["linux-server"]},{"name":"OpenSSH Server","types":["Server - Physical","Server - Virtual"],"platformContexts":["linux-server"]},{"name":"Ansible","types":["Server - Physical","Server - Virtual"],"platformContexts":["linux-server"]},{"name":"Terraform","types":["Server - Physical","Server - Virtual"],"platformContexts":["linux-server"]},{"name":"HashiCorp Vault","types":["Server - Physical","Server - Virtual"],"platformContexts":["linux-server"]},{"name":"VMware ESXi","types":["Server - Physical"],"platformContexts":[]},{"name":"Proxmox VE","types":["Server - Physical"],"platformContexts":[]},{"name":"Microsoft Hyper-V","types":["Server - Physical"],"platformContexts":[]},{"name":"Dell OpenManage","types":["Server - Physical"],"platformContexts":[]},{"name":"HPE iLO Management","types":["Server - Physical"],"platformContexts":[]},{"name":"IPMItool","types":["Server - Physical"],"platformContexts":[]},{"name":"TrueNAS SCALE","types":["Server - Physical","NAS"],"platformContexts":[]},{"name":"Ubuntu Server","types":["Server - Physical","Server - Virtual"],"platformContexts":[]},{"name":"Windows Server","types":["Server - Physical","Server - Virtual"],"platformContexts":[]},{"name":"VMware Tools","types":["Server - Virtual"],"platformContexts":[]},{"name":"QEMU Guest Agent","types":["Server - Virtual"],"platformContexts":[]},{"name":"Hyper-V Integration Services","types":["Server - Virtual"],"platformContexts":[]},{"name":"cloud-init","types":["Server - Virtual"],"platformContexts":[]},{"name":"Synology DSM","types":["NAS"],"platformContexts":[]},{"name":"QNAP QTS","types":["NAS"],"platformContexts":[]},{"name":"OpenMediaVault","types":["NAS"],"platformContexts":[]},{"name":"rsync","types":["NAS"],"platformContexts":[]},{"name":"Syncthing","types":["NAS","Server - Physical","Server - Virtual"],"platformContexts":["nas-apps"]},{"name":"pfSense","types":["Firewall","Router","Layer 3 Switch"],"platformContexts":[]},{"name":"OPNsense","types":["Firewall","Router","Layer 3 Switch"],"platformContexts":[]},{"name":"FortiOS","types":["Firewall","Router","Layer 3 Switch"],"platformContexts":[]},{"name":"Cisco IOS XE","types":["Firewall","Router","Layer 3 Switch"],"platformContexts":[]},{"name":"MikroTik RouterOS","types":["Firewall","Router","Layer 3 Switch","Switch"],"platformContexts":[]},{"name":"VyOS","types":["Firewall","Router","Layer 3 Switch"],"platformContexts":[]},{"name":"OpenWrt","types":["Firewall","Router","Layer 3 Switch","Wireless Access Point","Access Point","Wireless LAN Controller"],"platformContexts":[]},{"name":"OpenVPN","types":["Firewall","Router","Layer 3 Switch"],"platformContexts":[]},{"name":"Cisco IOS","types":["Switch"],"platformContexts":[]},{"name":"Cisco NX-OS","types":["Switch"],"platformContexts":[]},{"name":"Aruba AOS-CX","types":["Switch"],"platformContexts":[]},{"name":"UniFi Network","types":["Switch","Wireless Access Point","Access Point","Wireless LAN Controller","Server - Physical","Server - Virtual","Firewall","Router"],"platformContexts":["linux-server","unifi-console","windows-server"]},{"name":"Aruba Instant On","types":["Wireless Access Point","Access Point","Wireless LAN Controller"],"platformContexts":[]},{"name":"ArubaOS","types":["Wireless Access Point","Access Point","Wireless LAN Controller"],"platformContexts":[]},{"name":"Cisco Catalyst Center","types":["Wireless Access Point","Access Point","Wireless LAN Controller"],"platformContexts":[]},{"name":"TP-Link Omada Controller","types":["Wireless Access Point","Access Point","Wireless LAN Controller","Server - Physical","Server - Virtual"],"platformContexts":["linux-server","windows-server"]},{"name":"HP Universal Print Driver","types":["Printer"],"platformContexts":[]},{"name":"Brother Printer Driver","types":["Printer"],"platformContexts":[]},{"name":"Canon Printer Driver","types":["Printer"],"platformContexts":[]},{"name":"Epson Printer Driver","types":["Printer"],"platformContexts":[]},{"name":"PaperCut MF","types":["Printer"],"platformContexts":[]},{"name":"Microsoft Intune Company Portal","types":["Tablet"],"platformContexts":[]},{"name":"Jamf Self Service","types":["Tablet"],"platformContexts":[]},{"name":"Microsoft Authenticator","types":["Tablet"],"platformContexts":[]},{"name":"Google Authenticator","types":["Tablet"],"platformContexts":[]},{"name":"Snort","types":["Firewall","Router","Layer 3 Switch"],"platformContexts":["pfsense"]},{"name":"Suricata","types":["Firewall","Router","Layer 3 Switch"],"platformContexts":["pfsense"]},{"name":"pfBlockerNG","types":["Firewall","Router","Layer 3 Switch"],"platformContexts":["pfsense"]},{"name":"HAProxy","types":["Firewall","Router","Layer 3 Switch"],"platformContexts":["opnsense","pfsense"]},{"name":"ACME","types":["Firewall","Router","Layer 3 Switch"],"platformContexts":["pfsense"]},{"name":"FRR","types":["Firewall","Router","Layer 3 Switch"],"platformContexts":["opnsense","pfsense"]},{"name":"FreeRADIUS","types":["Firewall","Router","Layer 3 Switch"],"platformContexts":["opnsense","pfsense"]},{"name":"NUT","types":["Firewall","Router","Layer 3 Switch"],"platformContexts":["pfsense"]},{"name":"ACME Client","types":["Firewall","Router","Layer 3 Switch"],"platformContexts":["opnsense"]},{"name":"Caddy","types":["Firewall","Router","Layer 3 Switch"],"platformContexts":["opnsense"]},{"name":"CrowdSec","types":["Firewall","Router","Layer 3 Switch"],"platformContexts":["opnsense"]},{"name":"Nginx plugin","types":["Firewall","Router","Layer 3 Switch"],"platformContexts":["opnsense"]},{"name":"SQM / LuCI SQM","types":["Firewall","Router","Layer 3 Switch","Wireless Access Point","Access Point","Wireless LAN Controller"],"platformContexts":["openwrt"]},{"name":"adblock","types":["Firewall","Router","Layer 3 Switch","Wireless Access Point","Access Point","Wireless LAN Controller"],"platformContexts":["openwrt"]},{"name":"mwan3","types":["Firewall","Router","Layer 3 Switch","Wireless Access Point","Access Point","Wireless LAN Controller"],"platformContexts":["openwrt"]},{"name":"UniFi Protect","types":["Firewall","Router","Wireless LAN Controller"],"platformContexts":["unifi-console"]},{"name":"UniFi Access","types":["Firewall","Router","Wireless LAN Controller"],"platformContexts":["unifi-console"]},{"name":"UniFi Talk","types":["Firewall","Router","Wireless LAN Controller"],"platformContexts":["unifi-console"]},{"name":"UniFi Connect","types":["Firewall","Router","Wireless LAN Controller"],"platformContexts":["unifi-console"]},{"name":"UniFi InnerSpace","types":["Firewall","Router","Wireless LAN Controller"],"platformContexts":["unifi-console"]},{"name":"Synology Drive Server","types":["NAS","Server - Physical","Server - Virtual"],"platformContexts":["synology"]},{"name":"Active Backup for Business","types":["NAS","Server - Physical","Server - Virtual"],"platformContexts":["synology"]},{"name":"Hyper Backup","types":["NAS","Server - Physical","Server - Virtual"],"platformContexts":["synology"]},{"name":"Surveillance Station","types":["NAS","Server - Physical","Server - Virtual"],"platformContexts":["synology"]},{"name":"Container Manager","types":["NAS","Server - Physical","Server - Virtual"],"platformContexts":["synology"]},{"name":"HBS 3","types":["NAS","Server - Physical","Server - Virtual"],"platformContexts":["qnap"]},{"name":"Container Station","types":["NAS","Server - Physical","Server - Virtual"],"platformContexts":["qnap"]},{"name":"Virtualization Station","types":["NAS","Server - Physical","Server - Virtual"],"platformContexts":["qnap"]},{"name":"Qsync Central","types":["NAS","Server - Physical","Server - Virtual"],"platformContexts":["qnap"]},{"name":"Plex","types":["NAS","Server - Physical","Server - Virtual"],"platformContexts":["nas-apps"]},{"name":"Jellyfin","types":["NAS","Server - Physical","Server - Virtual"],"platformContexts":["nas-apps"]},{"name":"Nextcloud","types":["NAS","Server - Physical","Server - Virtual"],"platformContexts":["nas-apps"]},{"name":"Immich","types":["NAS","Server - Physical","Server - Virtual"],"platformContexts":["nas-apps"]},{"name":"PaperCut embedded","types":["Printer"],"platformContexts":["printer"]}];
         function openSoftwareCatalogueEditor(key='') {
@@ -2397,7 +2433,7 @@ function hierarchyValidateTypes(subnets) {
             if(key&&!entry)return;
             const types=[...new Set([...(appState.deviceTypes||[]),...builtInSoftwareSuggestions.flatMap(x=>x.types),...getConfiguredSoftwareCatalogueEntries().flatMap(x=>x.deviceTypes||[])])].sort();
             const selected=new Set(entry?.deviceTypes||[]);
-            let fields=renderInterfaceTemplate("device-management/fields-10",[escapeHtml(entry?.label||''),types.map(t=>renderInterfaceTemplate("device-management/fields-9",[escapeHtml(t),selected.has(t)?'checked':'',escapeHtml(t)])).join('')]);
+            let fields=renderInterfaceTemplate("device-management/fields-10",[escapeHtml(entry?.label||''),types.map(t=>renderInterfaceTemplate("device-management/fields-9",[escapeHtml(t),selected.has(t)?'checked':'',escapeHtml(publicDeviceTypeName(t))])).join('')]);
             const builtIn=builtInSoftwareSuggestions.find(item=>createBuiltInSoftwareCatalogueKey(item.name)===key);
             if(builtIn)fields+=renderInterfaceTemplate("device-management/source-availability",[renderSoftwareDeviceTypeControls(builtIn.name)]);
             const actions=renderInterfaceTemplate("device-management/actions-5",[escapeHtml(key)]);
@@ -2463,13 +2499,13 @@ function hierarchyValidateTypes(subnets) {
             const types=[...new Set([...items.flatMap(x=>x.types),...(appState.deviceTypes||[])])].sort((a,b)=>a.localeCompare(b));
             const rows=items.map(item=>renderCatalogueRecord(
                 `data-software-row="${escapeHtml(item.name.toLowerCase())}" data-software-types="${escapeHtml('|'+item.types.join('|')+'|')}" data-software-used="${item.count}" data-software-source="${item.source}"`,item.name,item.source==='built-in'?'Built-in':'Custom',
-                `${item.types.join(', ')} · ${item.count} installed record${item.count===1?'':'s'}`,
+                `${item.types.map(publicDeviceTypeName).join(', ')} · ${item.count} installed record${item.count===1?'':'s'}`,
                 renderCatalogueButton('View Devices','device-intelligence-drilldown',`data-kind="service" data-value="${escapeHtml(item.key)}"`)+
                 renderCatalogueButton(item.source==='built-in'?'Manage':'Edit','software-custom-edit',`data-name="${escapeHtml(item.key)}"`)+
                 renderCatalogueButton('Remove','software-custom-remove',`data-name="${escapeHtml(item.key)}"`))).join('');
             const archivedRows=archived.map(item=>renderCatalogueRecord('',item.label,'Archived','Preserved historical installations',
                 renderCatalogueButton('View Devices','device-intelligence-drilldown',`data-kind="service" data-value="${escapeHtml(item.key)}"`)+renderCatalogueButton('Restore','software-custom-restore',`data-name="${escapeHtml(item.key)}"`))).join('');
-            const typeOptions=types.map(type=>`<option value="${escapeHtml(type)}">${escapeHtml(type)}</option>`).join('');
+            const typeOptions=types.map(type=>`<option value="${escapeHtml(type)}">${escapeHtml(publicDeviceTypeName(type))}</option>`).join('');
             return renderInterfaceTemplate("device-management/source-software",[items.length,items.filter(item=>item.count>0).length,archived.length,rows,`${items.length} software options shown`,'',typeOptions,archivedRows,archived.length]);
         }
         async function enableSuggestedSoftware(name){
@@ -2607,13 +2643,13 @@ function hierarchyValidateTypes(subnets) {
                                 const counts=new Map();
                                 appState.devices.forEach(d=>{
                                     const raw=String(d[field]||'').trim();
-                                    const name=raw && raw!=='Unknown' ? (field==='type' && raw==='Server - Physical' ? 'Server' : field==='type' && raw==='Server - Virtual' ? 'Virtual Machine' : raw) : 'Not Recorded';
+                                    const name=raw && raw!=='Unknown' ? (field==='type' ? publicDeviceTypeName(raw) : raw) : 'Not Recorded';
                                     counts.set(name,(counts.get(name)||0)+1);
                                 });
                                 const groups=[...counts.entries()].sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0]));
                                 const max=Math.max(1,...groups.map(g=>g[1]));
                                 return renderInterfaceTemplate("devices/render-devices-html-3",[field==='type'?'orange':'',field==='type'?'#i-box':'#i-network',heading,field==='type'?'Equipment classification across your inventory.':'Physical areas associated with your devices.',groups.length?groups.map(([name,count])=>renderInterfaceTemplate("devices/render-devices-html-2",[field,escapeHtml(name),escapeHtml(name),count,escapeHtml(name),count,field==='type'?'orange':'blue',(count/max)*100])).join(''):'<p class="intelligence-empty">No devices recorded yet.</p>']);
-                            }).join(''),deviceIntelligenceTab==='hardware'?'':'hidden',[['Manufacturers','manufacturer','i-box','orange'],['Models','model','i-grid',''],['Mounting Methods','mountType','i-rack','']].map(([label,field,icon,tone])=>renderHardwareMetric(label,field,icon,tone)).join(''),renderHardwareChart('manufacturer','orange'),renderHardwareChart('model'),renderHardwareChart('mountType','green'),deviceIntelligenceTab==='os'?'':'hidden',renderDeviceInsightChart('os'),deviceIntelligenceTab==='software'?'':'hidden',renderDeviceInsightChart('software'),renderArchivedSoftware(),deviceIntelligenceTab==='quality'?'':'hidden',renderDeviceQualityCards(),activeDeviceDetailsTab==='inventory'?'':'hidden',escapeHtml(deviceSearchTerm),deviceAssignmentFilter===''?'selected':'',deviceAssignmentFilter==='assigned'?'selected':'',deviceAssignmentFilter==='unassigned'?'selected':'',getUniqueDeviceTypes().sort((a,b)=>a.localeCompare(b)).map(t=>`<option value="${escapeHtml(t)}" ${deviceTypeFilter === t ? 'selected' : ''}>${escapeHtml(t==='Server - Physical' ? 'Server' : t==='Server - Virtual' ? 'Virtual Machine' : t)}</option>`).join(''),['Active','Maintenance','Retired'].map(v=>`<option value="${v}" ${deviceStatusFilter===v?'selected':''}>${v}</option>`).join(''),[...new Set(appState.devices.map(d=>d.location||'Unknown'))].sort((a,b)=>a.localeCompare(b)).map(v=>`<option value="${escapeHtml(v)}" ${deviceLocationFilter===v?'selected':''}>${escapeHtml(v)}</option>`).join(''),deviceMountFilter==='racked'?'selected':'',deviceMountFilter==='unracked'?'selected':'',(deviceOsFilter || deviceServiceFilter || deviceMissingFilter || deviceHardwareFilter)?'':'hidden',escapeHtml(deviceOsFilter?'Operating System: '+deviceOsFilter:deviceServiceFilter?'Software / Service: '+deviceServiceFilter:deviceMissingFilter?({ip:'Missing Primary IP',type:'Missing Device Type',location:'Missing Location'}[deviceMissingFilter]||'Data Quality'):deviceHardwareFilter?({manufacturer:'Manufacturer',model:'Model',mountType:'Mounting Method'}[deviceHardwareFilter.field]||'Hardware')+': '+deviceHardwareFilter.value:''),getVisibleDevices().length,appState.devices.length,[['name-asc','Name A–Z'],['name-desc','Name Z–A'],['type-asc','Type A–Z'],['type-desc','Type Z–A'],['location-asc','Location A–Z'],['location-desc','Location Z–A'],['ip-asc','IP address ↑'],['ip-desc','IP address ↓']].map(([value,label])=>`<option value="${value}" ${deviceSort === value ? 'selected' : ''}>${label}</option>`).join(''),getVisibleDevices().map(d => {
+                            }).join(''),deviceIntelligenceTab==='hardware'?'':'hidden',[['Manufacturers','manufacturer','i-box','orange'],['Models','model','i-grid',''],['Mounting Methods','mountType','i-rack','']].map(([label,field,icon,tone])=>renderHardwareMetric(label,field,icon,tone)).join(''),renderHardwareChart('manufacturer','orange'),renderHardwareChart('model'),renderHardwareChart('mountType','green'),deviceIntelligenceTab==='os'?'':'hidden',renderDeviceInsightChart('os'),deviceIntelligenceTab==='software'?'':'hidden',renderDeviceInsightChart('software'),renderArchivedSoftware(),deviceIntelligenceTab==='quality'?'':'hidden',renderDeviceQualityCards(),activeDeviceDetailsTab==='inventory'?'':'hidden',escapeHtml(deviceSearchTerm),deviceAssignmentFilter===''?'selected':'',deviceAssignmentFilter==='assigned'?'selected':'',deviceAssignmentFilter==='unassigned'?'selected':'',getUniqueDeviceTypes().sort((a,b)=>a.localeCompare(b)).map(t=>`<option value="${escapeHtml(t)}" ${deviceTypeFilter === t ? 'selected' : ''}>${escapeHtml(publicDeviceTypeName(t))}</option>`).join(''),['Active','Maintenance','Retired'].map(v=>`<option value="${v}" ${deviceStatusFilter===v?'selected':''}>${v}</option>`).join(''),[...new Set(appState.devices.map(d=>d.location||'Unknown'))].sort((a,b)=>a.localeCompare(b)).map(v=>`<option value="${escapeHtml(v)}" ${deviceLocationFilter===v?'selected':''}>${escapeHtml(v)}</option>`).join(''),deviceMountFilter==='racked'?'selected':'',deviceMountFilter==='unracked'?'selected':'',(deviceOsFilter || deviceServiceFilter || deviceMissingFilter || deviceHardwareFilter)?'':'hidden',escapeHtml(deviceOsFilter?'Operating System: '+deviceOsFilter:deviceServiceFilter?'Software / Service: '+deviceServiceFilter:deviceMissingFilter?({ip:'Missing Primary IP',type:'Missing Device Type',location:'Missing Location'}[deviceMissingFilter]||'Data Quality'):deviceHardwareFilter?({manufacturer:'Manufacturer',model:'Model',mountType:'Mounting Method'}[deviceHardwareFilter.field]||'Hardware')+': '+deviceHardwareFilter.value:''),getVisibleDevices().length,appState.devices.length,[['name-asc','Name A–Z'],['name-desc','Name Z–A'],['type-asc','Type A–Z'],['type-desc','Type Z–A'],['location-asc','Location A–Z'],['location-desc','Location Z–A'],['ip-asc','IP address ↑'],['ip-desc','IP address ↓']].map(([value,label])=>`<option value="${value}" ${deviceSort === value ? 'selected' : ''}>${label}</option>`).join(''),getVisibleDevices().map(d => {
                                     const rack = appState.racks.find(r => String(r.id) === String(d.rackId));
                                     const isUnknownLocation = !d.location || d.location === 'Unknown' || !getUniqueDeviceLocations().includes(d.location);
                                     // A valid rack placement does not imply a known physical room/site.
@@ -2623,7 +2659,7 @@ function hierarchyValidateTypes(subnets) {
                                         Number(d.rackUEnd) <= Number(rack.heightU);
                                     const locationNeedsAttention = isUnknownLocation && !hasValidRackPlacement;
                                     const locText = isUnknownLocation ? 'Unknown' : d.location;
-                                    return renderInterfaceTemplate("devices/render-devices-html-4",[escapeHtml(d.id),escapeHtml(d.name),escapeHtml(d.serialNumber ? 'S/N '+d.serialNumber : rack ? rack.name+' · '+(d.face||'front') : d.mountType || 'Not in rack'),d.type==='Server - Virtual'?'vm':'',escapeHtml(d.type==='Server - Physical' ? 'Server' : d.type==='Server - Virtual' ? 'Virtual Machine' : d.type),escapeHtml(locText),locationNeedsAttention ? '<div class="device-detail" style="color:var(--theme-warning-text,#b26449)">Needs attention</div>' : '',escapeHtml(d.primaryIp || 'None'),d.status === 'Retired' ? 'retired' : d.status === 'Maintenance' ? 'maintenance' : '',escapeHtml(d.status || 'Active'),escapeHtml([d.manufacturer,d.model].filter(Boolean).join(' ') || '—'),escapeHtml(d.id),assignSupplier ?
+                                    return renderInterfaceTemplate("devices/render-devices-html-4",[escapeHtml(d.id),escapeHtml(d.name),escapeHtml(d.serialNumber ? 'S/N '+d.serialNumber : rack ? rack.name+' · '+(d.face||'front') : d.mountType || 'Not in rack'),d.type==='Server - Virtual'?'vm':'',escapeHtml(publicDeviceTypeName(d.type)),escapeHtml(locText),locationNeedsAttention ? '<div class="device-detail" style="color:var(--theme-warning-text,#b26449)">Needs attention</div>' : '',escapeHtml(d.primaryIp || 'None'),d.status === 'Retired' ? 'retired' : d.status === 'Maintenance' ? 'maintenance' : '',escapeHtml(d.status || 'Active'),escapeHtml([d.manufacturer,d.model].filter(Boolean).join(' ') || '—'),escapeHtml(d.id),assignSupplier ?
                                         `<td class="equipment-supplier-select"><input type="checkbox" data-select-device-supplier="${escapeHtml(d.id)}" aria-label="Select ${escapeHtml(d.name)}"></td>` : '']);
                                 }).join(''),getVisibleDevices().length === 0 ? renderInterfaceTemplate("devices/render-devices-html-5",[appState.devices.length?'No matching devices':'Your inventory is empty',appState.devices.length?'Try another search or remove your filters.':'Add your first device to get started.',appState.devices.length?'clear-device-filters':'open-device-modal',appState.devices.length?'Clear search and filters':'Add Device',appState.devices.length?'':'btn btn-primary',assignSupplier?8:7]) : '','hidden','',
                 assignSupplier ? '<button type="button" class="btn btn-outline" id="assign-device-supplier" disabled>Assign Supplier</button>' : '',
@@ -2639,7 +2675,7 @@ function hierarchyValidateTypes(subnets) {
             return [...new Set([...list,...appState.devices.map(d=>d[prop])].filter(Boolean))]
                 .sort((a,b)=>a.localeCompare(b,undefined,{sensitivity:'base'}));
         }
-        function getUniqueDeviceTypes() { return [...new Set([...getManagedDeviceTypeOrLocationNames('type'), ...defaultData.deviceTypes])].sort((a,b)=>a.localeCompare(b,undefined,{sensitivity:'base'})); }
+        function getUniqueDeviceTypes() { return [...new Set([...getManagedDeviceTypeOrLocationNames('type'), ...defaultData.deviceTypes.filter(name=>!deviceTypeAvailability.renamed.includes(name))])].sort((a,b)=>a.localeCompare(b,undefined,{sensitivity:'base'})); }
         function getUniqueDeviceLocations() { return getManagedDeviceTypeOrLocationNames('location'); }
         function isProtectedDeviceTypeOrLocation(kind,name) {
             return name.toLowerCase()==='unknown';
@@ -2648,17 +2684,21 @@ function hierarchyValidateTypes(subnets) {
             const isType=kind==='type',label=isType?'Device Types':'Locations';
             const search=deviceTypeLocationSearchFilters[kind].trim().toLowerCase();
             const all=getManagedDeviceTypeOrLocationNames(kind);
-            const entries=all.filter(n=>n.toLowerCase().includes(search));
+            const entries=all.filter(n=>n.toLowerCase().includes(search) ||
+                (isType && publicDeviceTypeName(n).toLowerCase().includes(search)));
             const fields=renderInterfaceTemplate("device-management/fields-14",[isType?'Device Type':'Location',isType?'device type':'location',kind,isType?'Type':'Location',isType?'device types':'locations',escapeHtml(deviceTypeLocationSearchFilters[kind]),kind,isType?'Device types':'Locations',isType?'device types':'locations',entries.length,all.length,entries.length?entries.map(name=>{
                   const count=appState.devices.filter(d=>d[isType?'type':'location']===name).length;
                   const locked=isProtectedDeviceTypeOrLocation(kind,name);
-                  return renderInterfaceTemplate("device-management/fields-12",[escapeHtml(name),count,count===1?'':'s',locked?' · Protected':'',kind,escapeHtml(name),locked?'disabled':'',escapeHtml(name),kind,escapeHtml(name),locked?'disabled':'',escapeHtml(name)]);
+                  const archived=isType&&deviceTypeAvailability.archived.includes(name);
+                  const archiveAction=isType&&!locked&&!['Server - Virtual','Virtual Machine'].includes(name)
+                    ? renderInterfaceTemplate('device-management/archive-device-type',[archived?'unarchive':'archive',escapeHtml(name),archived?'Unarchive':'Archive',escapeHtml(publicDeviceTypeName(name))]) : '';
+                  return renderInterfaceTemplate("device-management/fields-12",[escapeHtml(isType?publicDeviceTypeName(name):name),count,count===1?'':'s',locked?' · Protected':archived?' · Archived':'',kind,escapeHtml(name),locked?'disabled':'',escapeHtml(isType?publicDeviceTypeName(name):name),kind,escapeHtml(name),locked?'disabled':'',escapeHtml(isType?publicDeviceTypeName(name):name),archiveAction]);
                 }).join(''):renderInterfaceTemplate("device-management/fields-13",[isType?'device types':'locations'])]);
             const actions=renderInterfaceTemplate("device-management/actions-7",[]);
             openCatalogueModal(`Manage ${label}`,
               `${all.length} configured · Changes update the existing saved device inventory.`,
               fields,actions,
-              `Unknown is protected. Deleting an in-use ${isType?'device type':'location'} requires confirmation and changes affected devices to Unknown.`);
+              `Unknown is protected. Deleting an in-use ${isType?'device type':'location'} requires confirmation and changes affected devices to Unknown.${isType?' Archiving a type keeps it on existing Devices and hides it from new selections.':''}`);
         }
         function openManageTypesModal(){openDeviceCatalogueManager('type');}
         function openManageLocationsModal(){openDeviceCatalogueManager('location');}
@@ -2679,7 +2719,7 @@ function hierarchyValidateTypes(subnets) {
             overlay.setAttribute('aria-describedby','delete-description');
             overlay.className='absolute inset-0 z-50 flex items-center justify-center p-3';
             overlay.style.background='#10283cca';
-            overlay.innerHTML=renderInterfaceTemplate("device-management/request-device-catalogue-entry-deletion-1",[kind==='type'?'Device Type':'Location',escapeHtml(name),kind==='type'?'device type':'location',affected,affected===1?'':'s',affected?'Affected devices will be changed to Unknown.':'No existing devices will be changed.']);
+            overlay.innerHTML=renderInterfaceTemplate("device-management/request-device-catalogue-entry-deletion-1",[kind==='type'?'Device Type':'Location',escapeHtml(kind==='type'?publicDeviceTypeName(name):name),kind==='type'?'device type':'location',affected,affected===1?'':'s',affected?'Affected devices will be changed to Unknown.':'No existing devices will be changed.']);
             if(getComputedStyle(content).position==='static')content.style.position='relative';
             overlay._returnFocus=document.activeElement;
             pendingDeviceTypeLocationDeletion={kind,name};
@@ -3992,8 +4032,19 @@ function openIpModal(ip) {
         const modalFormSnapshots = new WeakMap();
         function modalFormSnapshot(form) {
             return JSON.stringify(Array.from(form.querySelectorAll('input,select,textarea'))
-                .filter(field => field.hasAttribute('data-equipment-supplier-id') || !['button','submit','reset','hidden'].includes(field.type))
-                .map(field => [field.id || field.name || '', field.type, field.type === 'checkbox' || field.type === 'radio' ? field.checked : field.value]));
+                .filter(field => !field.classList.contains('caffoot-uk-date-text') &&
+                    (field.hasAttribute('data-equipment-supplier-id') ||
+                    field.hasAttribute('data-lifecycle-replacement-mode') || !['button','submit','reset','hidden'].includes(field.type)))
+                .map(field => {
+                    // The visible UK field is a presentation adapter, not a second saved date.
+                    // Track its original ISO field once; still treat an invalid typed date as unsaved.
+                    let value = field.type === 'checkbox' || field.type === 'radio' ? field.checked : field.value;
+                    if (field.type === 'date') {
+                        const visible = field.closest('.caffoot-uk-date-wrap')?.querySelector('.caffoot-uk-date-text');
+                        if (visible?.value.trim() && !field.value) value = 'invalid-uk-date:' + visible.value.trim();
+                    }
+                    return [field.id || field.name || '', field.type, value];
+                }));
         }
         function stockFormHasChanges(form) {
             const initial=modalFormSnapshots.get(form);
@@ -4235,7 +4286,7 @@ function openIpModal(ip) {
             const physicalEditable = !rack || correction;
             const types = Array.from(new Set([...rackTypes, details.type]));
             const heights = Array.from(new Set([...rackHeightPresets, details.height])).filter(h => Number.isInteger(h) && h > 0).sort((a,b) => a-b);
-            openModal(renderInterfaceTemplate("racks/open-rack-modal-2",[rack ? (correction ? 'Correct Rack Specifications' : 'Edit Network Rack') : 'Add Network Rack Enclosure',!rack?'Create a new enclosure with its physical dimensions.':correction?'A protected correction workflow reviews physical specifications and mounted equipment.':'Edit rack identity and placement; physical specifications remain locked.',escapeHtml(rack ? rack.id : ''),correction,rack ? escapeHtml(rack.name) : '',rack ? escapeHtml(rack.location || '') : '',physicalEditable ? '' : 'disabled',types.map(t => `<option value="${escapeHtml(t)}" ${t === details.type ? 'selected' : ''}>${escapeHtml(t)}</option>`).join(''),physicalEditable ? '' : 'disabled',heights.map(h => `<option value="${h}" ${h === details.height ? 'selected' : ''}>${h}U</option>`).join(''),physicalEditable ? '' : 'disabled',Number.isFinite(details.width) ? details.width : '',physicalEditable ? '' : 'disabled',Number.isFinite(details.depth) ? details.depth : '',physicalEditable ? '' : 'disabled',rack && !correction ? renderInterfaceTemplate("racks/open-rack-modal-1",[]) : correction ? '<div class="rack-modal-info rack-warn">Changes to physical specifications must not invalidate any mounted devices or accessories.</div>' : '',correction ? 'Review Correction' : 'Save Rack']));
+            openModal(renderInterfaceTemplate("racks/open-rack-modal-2",[rack ? (correction ? 'Correct Rack Specifications' : 'Edit Network Rack') : 'Add Network Rack Enclosure',!rack?'Create a new enclosure with its physical dimensions.':correction?'A protected correction workflow reviews physical specifications and mounted equipment.':'Edit rack identity and placement; physical specifications remain locked.',escapeHtml(rack ? rack.id : ''),correction,rack ? escapeHtml(rack.name) : '',rack ? escapeHtml(rack.location || '') : '',physicalEditable ? '' : 'disabled',types.map(t => `<option value="${escapeHtml(t)}" ${t === details.type ? 'selected' : ''}>${escapeHtml(publicDeviceTypeName(t))}</option>`).join(''),physicalEditable ? '' : 'disabled',heights.map(h => `<option value="${h}" ${h === details.height ? 'selected' : ''}>${h}U</option>`).join(''),physicalEditable ? '' : 'disabled',Number.isFinite(details.width) ? details.width : '',physicalEditable ? '' : 'disabled',Number.isFinite(details.depth) ? details.depth : '',physicalEditable ? '' : 'disabled',rack && !correction ? renderInterfaceTemplate("racks/open-rack-modal-1",[]) : correction ? '<div class="rack-modal-info rack-warn">Changes to physical specifications must not invalidate any mounted devices or accessories.</div>' : '',correction ? 'Review Correction' : 'Save Rack']));
             const heightSelect = document.getElementById('rack-height');
             if (physicalEditable && heightSelect) heightSelect.addEventListener('change', () => {
                 const custom = document.getElementById('rack-height-custom');
@@ -4345,7 +4396,7 @@ function openIpModal(ip) {
             const types = Object.entries(rackAccessoryTypeDefinitions).filter(([,definition]) => !definition.vertical);
             const isAccessory = mode === 'accessory';
             const preferredHeight = Math.max(1, Math.min(12, Number(rackAccessoryPlacementHeightU) || 1));
-            openModal(renderInterfaceTemplate("racks/open-rack-slot-placement-dialog-1",[u,escapeHtml(rackId),u,isAccessory?'':'selected',isAccessory?'selected':'',activeRackFace==='front'?'selected':'',activeRackFace==='rear'?'selected':'',devices.length?'Select a device...':'No eligible Rack Mounted devices available',devices.map(d=>`<option value="${escapeHtml(d.id)}">${escapeHtml(d.name)} · ${escapeHtml(d.type)}</option>`).join(''),types.map(([key,definition])=>`<option value="${escapeHtml(key)}" ${key==='patch'?'selected':''}>${escapeHtml(definition.label)}</option>`).join(''),Math.min(12,Number(rack.heightU)),preferredHeight]));
+            openModal(renderInterfaceTemplate("racks/open-rack-slot-placement-dialog-1",[u,escapeHtml(rackId),u,isAccessory?'':'selected',isAccessory?'selected':'',activeRackFace==='front'?'selected':'',activeRackFace==='rear'?'selected':'',devices.length?'Select a device...':'No eligible Rack Mounted devices available',devices.map(d=>`<option value="${escapeHtml(d.id)}">${escapeHtml(d.name)} · ${escapeHtml(publicDeviceTypeName(d.type))}</option>`).join(''),types.map(([key,definition])=>`<option value="${escapeHtml(key)}" ${key==='patch'?'selected':''}>${escapeHtml(definition.label)}</option>`).join(''),Math.min(12,Number(rack.heightU)),preferredHeight]));
             const form = document.getElementById('rack-placement-form');
             const kind = form.querySelector('#place-item-type');
             const deviceSelect = form.querySelector('#assign-device-id');
@@ -4446,7 +4497,7 @@ function openIpModal(ip) {
             const unassignedDevices = appState.devices.filter(d => d.mountType === 'Rack Mounted' && getRecognisedDeviceMountTypes(d.type).includes('Rack Mounted') && (!d.rackId || d.rackId === rackId));
             if (occupant) unassignedDevices.sort((a, b) => (a.id === occupant.id ? -1 : b.id === occupant.id ? 1 : 0));
 
-            openModal(renderInterfaceTemplate("device-details/open-assign-device-modal-1",[escapeHtml(rackId),Number(slotU)||1,editingDevice ? 'aria-label="Mounted device being edited"' : '',editingDevice ? '' : (unassignedDevices.length ? '<option value="" selected disabled>Select a device...</option>' : '<option value="" selected disabled>No eligible Rack Mounted devices available</option>'),unassignedDevices.map(d => `<option value="${escapeHtml(d.id)}" ${editingDevice && d.id === editingDevice.id ? 'selected' : ''}>${escapeHtml(d.name)} (${escapeHtml(d.type)})</option>`).join(''),activeRackFace==='front'?'selected':'',activeRackFace==='rear'?'selected':'']));
+            openModal(renderInterfaceTemplate("device-details/open-assign-device-modal-1",[escapeHtml(rackId),Number(slotU)||1,editingDevice ? 'aria-label="Mounted device being edited"' : '',editingDevice ? '' : (unassignedDevices.length ? '<option value="" selected disabled>Select a device...</option>' : '<option value="" selected disabled>No eligible Rack Mounted devices available</option>'),unassignedDevices.map(d => `<option value="${escapeHtml(d.id)}" ${editingDevice && d.id === editingDevice.id ? 'selected' : ''}>${escapeHtml(d.name)} (${escapeHtml(publicDeviceTypeName(d.type))})</option>`).join(''),activeRackFace==='front'?'selected':'',activeRackFace==='rear'?'selected':'']));
             const deviceSelect = document.getElementById('assign-device-id');
             const faceSelect = document.getElementById('assign-face');
             const startSelect = document.getElementById('assign-u-start');
@@ -4796,7 +4847,7 @@ function openIpModal(ip) {
                 : '';
             const hostingSection = d.type === 'Server - Physical'
                 ? section('Hosted Virtual Machines', 'fa-server', hostedGuests.length
-                    ? hostedGuests.map(guest => renderInterfaceTemplate("devices/hosting-section-1",[safe(guest.name || guest.id),guest.type === 'Server - Virtual' ? 'Virtual Machine' : safe(guest.type || 'Virtual Machine'),safe(guest.status || 'Active'),guest.primaryIp ? ' · ' + safe(guest.primaryIp) : '',safe(guest.id),safe(guest.name || guest.id)])).join('') + '<div class="device-review-quiet">Existing host–guest relationships remain unchanged.</div>'
+                    ? hostedGuests.map(guest => renderInterfaceTemplate("devices/hosting-section-1",[safe(guest.name || guest.id),safe(publicDeviceTypeName(guest.type || 'Virtual Machine')),safe(guest.status || 'Active'),guest.primaryIp ? ' · ' + safe(guest.primaryIp) : '',safe(guest.id),safe(guest.name || guest.id)])).join('') + '<div class="device-review-quiet">Existing host–guest relationships remain unchanged.</div>'
                     : '<p class="device-review-quiet">No hosted virtual machines recorded.</p>', true, 'Guests are linked to this physical server.', true)
                 : d.type === 'Server - Virtual'
                     ? section('Physical Host', 'fa-server', renderInterfaceTemplate("devices/hosting-section-2",[safe(d.virtualHostId ? (appState.devices.find(host => host.id === d.virtualHostId)?.name || 'Missing or unavailable host (legacy reference preserved)') : 'Not assigned'),d.virtualHostId && appState.devices.some(host => host.id === d.virtualHostId) ? `<button type="button" data-action="view-hosted-virtual-machine" data-id="${safe(d.virtualHostId)}" class="btn btn-outline">View Host</button>` : '']),true,'A virtual machine is hosted by a physical hypervisor.',true)
@@ -4807,11 +4858,16 @@ function openIpModal(ip) {
                 field('Virtual disk (GB)', deviceDetails.vmDiskGb) + field('Virtual network adapters', deviceDetails.vmNicCount), false, 'These are the VM’s own allocated resources, not physical host hardware.') : '';
             const hardware = field('Manufacturer', d.manufacturer) + field('Model', d.model) + field('Serial number', d.serialNumber);
             const rackRows = d.rackShelfAccessoryId ? field('Rack Shelf',getRackShelfLocation(d)) : mounted ? field('Rack', rack.name) + field('Face', String(d.face || 'front').toLowerCase() === 'rear' ? 'Rear' : 'Front') + field('Start U', Number.isFinite(uStart) && uStart > 0 ? uStart : 'Not assigned') + field('U height', (Number(d.rackUHeight) || (uEnd-uStart+1) || 1) + 'U') : '';
-            openDeviceReviewModal(renderInterfaceTemplate("devices/open-device-detail-view-7",[safe(d.name),safe(d.type),safe(d.location),safe(status),[['overview','Overview'],...(showVirtualMachinesTab ? [['virtual-machines','Virtual Machines']] : []),...(!isVirtualDevice ? [['hardware','Hardware']] : []),['network','Network'],['software','Software'],['location','Location'],['assigned','Assigned To'],...(window.caffootEquipment?.canReadAssociations()?[['associated','Associated Equipment']]:[]),...(historyRows?[['history','History']]:[])].map(([key,label],i)=>`<button type="button" role="tab" id="device-details-tab-${key}" aria-controls="device-details-panel-${key}" aria-selected="${i===0?'true':'false'}" tabindex="${i===0?'0':'-1'}" data-action="select-device-details-tab" data-name="${key}" class="device-details-tab device-review-tab ${i===0?'device-details-tab-active':''}">${label}</button>`).join(''),section('Device Overview', 'fa-circle-info',
+            openDeviceReviewModal(renderInterfaceTemplate("devices/open-device-detail-view-7",[safe(d.name),safe(publicDeviceTypeName(d.type)),safe(d.location),safe(status),[['overview','Overview'],...(showVirtualMachinesTab ? [['virtual-machines','Virtual Machines']] : []),...(!isVirtualDevice ? [['hardware','Hardware']] : []),['network','Network'],['software','Software'],['location','Location'],['assigned','Assigned To'],...(window.caffootEquipment?.canReadAssociations()?[['associated','Associated Equipment']]:[]),...(historyRows?[['history','History']]:[])].map(([key,label],i)=>`<button type="button" role="tab" id="device-details-tab-${key}" aria-controls="device-details-panel-${key}" aria-selected="${i===0?'true':'false'}" tabindex="${i===0?'0':'-1'}" data-action="select-device-details-tab" data-name="${key}" class="device-details-tab device-review-tab ${i===0?'device-details-tab-active':''}">${label}</button>`).join(''),section('Device Overview', 'fa-circle-info',
                             field('Device name',d.name)+field('Type',d.type)+field('Status',status)+field('Primary IP',d.primaryIp)+field('Location Area',d.location)+field('Operating System',getEffectiveDevicePlatform(d))+supplierField, false, 'Recorded identity and status'),isVirtualDevice ? virtualHardware :
                             section('At a Glance','fa-microchip',
                               field('Manufacturer',d.manufacturer)+field('Model',d.model)+field('Serial number',d.serialNumber)+
-                              field('Mounting',d.mountType||(mounted?'Rack Mounted':'Desktop'))+field('Rack',d.rackShelfAccessoryId?getRackShelfLocation(d):mounted?rack.name:'Not racked'), false, 'Existing inventory and mounting details'),d.type==='Server - Physical'?'':hostingSection,d.notes?safe(d.notes):'No additional notes have been recorded.',showVirtualMachinesTab ? renderInterfaceTemplate("devices/open-device-detail-view-1",[hypervisorNotice,hostingSection]) : '',!isVirtualDevice ? renderInterfaceTemplate("devices/open-device-detail-view-3",[section('Hardware & Lifecycle', 'fa-microchip', hardware + field('Device Type', d.type) + field('Status', status) + field('Mount Type', d.mountType || (mounted ? 'Rack Mounted' : 'Desktop')) + (detailRows ? renderInterfaceTemplate("devices/open-device-detail-view-2",[safe(d.type),detailRows]) : ''), true, 'Physical hardware and device identity')]) : '',section('Network Identity', 'fa-network-wired', field('Primary IP', d.primaryIp) + field('Subnet', subnet ? (subnet.cidr || subnet.name || subnet.network || subnet.id) : 'Not linked') + field('IP reserved', d.ipReserved ? 'Yes' : 'No') + field('Status', status) + (nextDeviceLinkBridge?.canLink(d)?renderInterfaceTemplate("device-details/link-ipam-action",[safe(d.id)]):''), true, 'Recorded IPAM information'),section('Operating System / Platform', 'fa-desktop',platformDetails || field('Operating System','Not recorded'), false, 'Recorded software platform'),section('Installed Software', 'fa-laptop-code', installedSoftware || '<p class="device-review-quiet">No installed software recorded.</p>', false, 'Installed on this device', true),isHypervisorHost ? section('Hypervisor Service', 'fa-server', field('Hosts virtual machines','Yes') + field('Hypervisor software',deviceDetails.hypervisorProduct || 'Not recorded') + field('Version', deviceDetails.hypervisorVersion || 'Not recorded'), true, 'The virtualisation product is recorded on the physical host.') : '',serverServices?section('Server Services', 'fa-server',serverServices):'',section('Mounting & Location', 'fa-location-dot', isVirtualDevice ? field('Location Area', d.location) + field('Physical Host', d.virtualHostId ? (appState.devices.find(host => host.id === d.virtualHostId)?.name || 'Missing or unavailable host (legacy reference preserved)') : 'Not assigned') : field('Location Area', d.location) + field('Mounting', d.mountType || (mounted ? 'Rack Mounted' : 'Desktop')) + rackRows, true, 'Virtual machines are not physically mounted in racks.'),mounted && !isVirtualDevice ? renderInterfaceTemplate("devices/open-device-detail-view-4",[safe(d.id)]) : '',historyRows?renderInterfaceTemplate("devices/open-device-detail-view-5",[historyRows]):'',safe(d.id),mounted ? renderInterfaceTemplate("devices/open-device-detail-view-6",[safe(d.id)]) : '',safe(d.id),safe(d.id)]));
+                              field('Mounting',d.mountType||(mounted?'Rack Mounted':'Desktop'))+field('Rack',d.rackShelfAccessoryId?getRackShelfLocation(d):mounted?rack.name:'Not racked'), false, 'Existing inventory and mounting details'),d.type==='Server - Physical'?'':hostingSection,d.notes?safe(d.notes):'No additional notes have been recorded.',showVirtualMachinesTab ? renderInterfaceTemplate("devices/open-device-detail-view-1",[hypervisorNotice,hostingSection]) : '',!isVirtualDevice ? renderInterfaceTemplate("devices/open-device-detail-view-3",[section('Hardware & Lifecycle', 'fa-microchip', hardware + field('Device Type', publicDeviceTypeName(d.type)) + field('Status', status) + field('Mount Type', d.mountType || (mounted ? 'Rack Mounted' : 'Desktop')) + (detailRows ? renderInterfaceTemplate("devices/open-device-detail-view-2",[safe(publicDeviceTypeName(d.type)),detailRows]) : ''), true, 'Physical hardware and device identity')]) : '',section('Network Identity', 'fa-network-wired', field('Primary IP', d.primaryIp) + field('Subnet', subnet ? (subnet.cidr || subnet.name || subnet.network || subnet.id) : 'Not linked') + field('IP reserved', d.ipReserved ? 'Yes' : 'No') + field('Status', status) + (nextDeviceLinkBridge?.canLink(d)?renderInterfaceTemplate("device-details/link-ipam-action",[safe(d.id)]):''), true, 'Recorded IPAM information'),section('Operating System / Platform', 'fa-desktop',platformDetails || field('Operating System','Not recorded'), false, 'Recorded software platform'),section('Installed Software', 'fa-laptop-code', installedSoftware || '<p class="device-review-quiet">No installed software recorded.</p>', false, 'Installed on this device', true),isHypervisorHost ? section('Hypervisor Service', 'fa-server', field('Hosts virtual machines','Yes') + field('Hypervisor software',deviceDetails.hypervisorProduct || 'Not recorded') + field('Version', deviceDetails.hypervisorVersion || 'Not recorded'), true, 'The virtualisation product is recorded on the physical host.') : '',serverServices?section('Server Services', 'fa-server',serverServices):'',section('Mounting & Location', 'fa-location-dot', isVirtualDevice ? field('Location Area', d.location) + field('Physical Host', d.virtualHostId ? (appState.devices.find(host => host.id === d.virtualHostId)?.name || 'Missing or unavailable host (legacy reference preserved)') : 'Not assigned') : field('Location Area', d.location) + field('Mounting', d.mountType || (mounted ? 'Rack Mounted' : 'Desktop')) + rackRows, true, 'Virtual machines are not physically mounted in racks.'),mounted && !isVirtualDevice ? renderInterfaceTemplate("devices/open-device-detail-view-4",[safe(d.id)]) : '',historyRows?renderInterfaceTemplate("devices/open-device-detail-view-5",[historyRows]):'',safe(d.id),mounted ? renderInterfaceTemplate("devices/open-device-detail-view-6",[safe(d.id)]) : '',safe(d.id),safe(d.id)]));
+            const lifecycle=lifecycleDeviceDates.get(d.id);
+            if(lifecycle){
+                document.querySelector('#device-details-panel-hardware .device-review-panel')
+                  ?.insertAdjacentHTML('beforeend',window.caffootLifecycle.renderDetails(lifecycle,d.type,field));
+            }
         }
         function confirmUninstallOfArchivedSoftware(deviceId,key){
             const device=appState.devices.find(d=>String(d.id)===String(deviceId));
@@ -5065,7 +5121,7 @@ function openIpModal(ip) {
             preserveDeviceFormDuringOptionsDialog();
             const type=getSelectedHardwareCatalogueDeviceType()||'Device';
             const items=getConfiguredHardwareCatalogueEntries().filter(x=>x.type===type);
-            openModal(renderInterfaceTemplate("device-management/open-hardware-catalogue-manager-2",[escapeHtml(type),items.length?items.map(x=>renderInterfaceTemplate("device-management/open-hardware-catalogue-manager-1",[escapeHtml(x.manufacturer),x.model?' — '+escapeHtml(x.model):'',escapeHtml(x.id),escapeHtml(x.id)])).join(''):'<p class="text-sm text-slate-600 dark:text-slate-300">No custom entries yet. Built-in suggestions are available automatically.</p>']));
+            openModal(renderInterfaceTemplate("device-management/open-hardware-catalogue-manager-2",[escapeHtml(publicDeviceTypeName(type)),items.length?items.map(x=>renderInterfaceTemplate("device-management/open-hardware-catalogue-manager-1",[escapeHtml(x.manufacturer),x.model?' — '+escapeHtml(x.model):'',escapeHtml(x.id),escapeHtml(x.id)])).join(''):'<p class="text-sm text-slate-600 dark:text-slate-300">No custom entries yet. Built-in suggestions are available automatically.</p>']));
         }
         async function updateHardwareCatalogue(action,id=''){
             const type=getSelectedHardwareCatalogueDeviceType()||'Device';
@@ -5269,12 +5325,12 @@ function openIpModal(ip) {
             renderContent();
             document.querySelectorAll('#modal-container [data-action="software-toggle"]').forEach(button=>{
                 if(button.dataset.name===name&&button.dataset.type===type)
-                    button.textContent=type+(isSoftwareHiddenForDeviceType(name,type)?' · Hidden':' · Available');
+                    button.textContent=publicDeviceTypeName(type)+(isSoftwareHiddenForDeviceType(name,type)?' · Hidden':' · Available');
             });
         }
         function renderSoftwareDeviceTypeControls(name){
             const entry=builtInSoftwareSuggestions.find(x=>x.name===name);
-            return entry?entry.types.map(t=>'<button type="button" data-action="software-toggle" data-name="'+escapeHtml(name)+'" data-type="'+escapeHtml(t)+'" class="btn btn-outline mini-btn">'+escapeHtml(t)+(isSoftwareHiddenForDeviceType(name,t)?' · Hidden':' · Available')+'</button>').join(' '):'';
+            return entry?entry.types.map(t=>'<button type="button" data-action="software-toggle" data-name="'+escapeHtml(name)+'" data-type="'+escapeHtml(t)+'" class="btn btn-outline mini-btn">'+escapeHtml(publicDeviceTypeName(t))+(isSoftwareHiddenForDeviceType(name,t)?' · Hidden':' · Available')+'</button>').join(' '):'';
         }
         // Offline catalogue suggestions are not compatibility guarantees or validators.
         // Use the guest's own platform. A dedicated physical host uses its hosting product.
@@ -5469,7 +5525,7 @@ function openIpModal(ip) {
             const selected=entries.filter(item=>isDeviceSoftwareSelected(item.key,values,deviceEditorSoftwareSource)).length;
             const deviceTypes=getUniqueDeviceTypes();
             const choices=entries.map(item=>renderInterfaceTemplate("devices/choices-1",[escapeHtml(item.key),isDeviceSoftwareSelected(item.key,values,deviceEditorSoftwareSource)?'checked':'',escapeHtml(item.label)])).join('');
-            return (software ? '<p class="device-review-quiet">Suggestions depend on this device and its OS. Check package availability for the recorded edition, release and model. Custom software remains available.</p>'+renderDeviceEditorRetainedSoftware(type,values) : '') + renderInterfaceTemplate("devices/render-inline-device-picker-3",[kind,kind,software?'software':'server services',kind,kind,software?'software':'server services',kind,label,kind,selected,entries.length,software?'Installed Software':'Server Services',kind,choices,kind,label,kind,label,kind,kind,label.toLowerCase(),software?renderInterfaceTemplate("devices/render-inline-device-picker-2",[deviceTypes.map(t=>renderInterfaceTemplate("devices/render-inline-device-picker-1",[escapeHtml(t),t===type?'checked':'',escapeHtml(t)])).join('')]):'',kind,kind]);
+            return (software ? '<p class="device-review-quiet">Suggestions depend on this device and its OS. Check package availability for the recorded edition, release and model. Custom software remains available.</p>'+renderDeviceEditorRetainedSoftware(type,values) : '') + renderInterfaceTemplate("devices/render-inline-device-picker-3",[kind,kind,software?'software':'server services',kind,kind,software?'software':'server services',kind,label,kind,selected,entries.length,software?'Installed Software':'Server Services',kind,choices,kind,label,kind,label,kind,kind,label.toLowerCase(),software?renderInterfaceTemplate("devices/render-inline-device-picker-2",[deviceTypes.map(t=>renderInterfaceTemplate("devices/render-inline-device-picker-1",[escapeHtml(t),t===type?'checked':'',escapeHtml(publicDeviceTypeName(t))])).join('')]):'',kind,kind]);
         }
                 function updateInlinePickerCount(picker) {
             if(!picker)return;
@@ -5486,7 +5542,7 @@ function openIpModal(ip) {
             if(kind==='manufacturer'){
                 const group=panel.querySelector('[data-review-associated-types="manufacturer"]');
                 const type=document.getElementById('dev-type')?.value||'';
-                if(group)group.innerHTML=getUniqueDeviceTypes().filter(t=>t&&t!=='Server - Virtual').map(t=>'<label><input type="checkbox" value="'+escapeHtml(t)+'" '+(t===type?'checked':'')+'><span>'+escapeHtml(t==='Server - Physical'?'Server (Physical)':t)+'</span></label>').join('');
+                if(group)group.innerHTML=getUniqueDeviceTypes().filter(t=>t&&t!=='Server - Virtual').map(t=>'<label><input type="checkbox" value="'+escapeHtml(t)+'" '+(t===type?'checked':'')+'><span>'+escapeHtml(publicDeviceTypeName(t))+'</span></label>').join('');
             }
             panel.querySelector('[data-review-new-name]')?.focus();
         }
@@ -5565,7 +5621,7 @@ function openIpModal(ip) {
             const current=document.getElementById('dev-type')?.value||'';
             const types=kind==='manufacturer'?getUniqueDeviceTypes().filter(t=>t&&t!=='Server - Virtual'):[];
             const associations=kind==='manufacturer'
-                ? renderInterfaceTemplate("shared/associations-1",[])+types.map(t=>'<label><input type="checkbox" value="'+escapeHtml(t)+'" '+(t===current?'checked':'')+'><span>'+escapeHtml(t==='Server - Physical'?'Server (Physical)':t)+'</span></label>').join('')+'</div>'
+                ? renderInterfaceTemplate("shared/associations-1",[])+types.map(t=>'<label><input type="checkbox" value="'+escapeHtml(t)+'" '+(t===current?'checked':'')+'><span>'+escapeHtml(publicDeviceTypeName(t))+'</span></label>').join('')+'</div>'
                 : '';
             return '<div class="device-review-inline-create" data-review-create="'+kind+'" hidden>'
                 +'<h4>Add '+label+' without leaving the device form</h4>'
@@ -6886,12 +6942,14 @@ function openIpModal(ip) {
             deviceFormDraft = null;
             const types = getUniqueDeviceTypes();
             const locations = getUniqueDeviceLocations();
-            const currentType = draft?.type ?? device?.type ?? '';
+            const requestedType = draft?.type ?? device?.type ?? '';
+            const selectableType = type => !deviceTypeAvailability.archived.includes(type) || device?.type === type;
+            const currentType = selectableType(requestedType) ? requestedType : '';
             const hasEligiblePhysicalHost = appState.devices.some(d => d.type === 'Server - Physical' && d.status !== 'Retired' && (d.typeDetails?.serverService_Hypervisor === true || d.serverService_Hypervisor === true));
             // Keep legacy virtual types selectable when editing, even without a current host.
-            const availableFormTypes = types.filter(t => t !== 'Server - Virtual');
+            const availableFormTypes = types.filter(t => t !== 'Server - Virtual' && selectableType(t));
             const isExistingVirtual = (draft?.isVirtual ?? device?.isVirtual) === true || currentType === 'Server - Virtual';
-            const vmPurposes = [['Server','Server - Virtual'],['Desktop','Desktop'],['Firewall','Firewall'],['Router','Router'],['NAS','NAS'],['Wireless LAN Controller','Wireless LAN Controller']];
+            const vmPurposes = [['Server','Server - Virtual'],['Desktop','Desktop'],['Firewall','Firewall'],['Router','Router'],['NAS','NAS'],['Wireless LAN Controller','Wireless LAN Controller']].filter(([,type])=>selectableType(type));
             deviceDetailFormValues = {...(draft?.typeDetails ?? device?.typeDetails ?? {})};
             const sourceRecord=device||(isDuplicate?getDeviceById(draft.duplicatedFrom):null);
             deviceEditorSoftwareSource=sourceRecord?JSON.parse(JSON.stringify(sourceRecord)):null;
@@ -6914,7 +6972,7 @@ function openIpModal(ip) {
             const retainedHostId = draft?.virtualHostId ?? device?.virtualHostId ?? '';
             const missingLegacyHost = device && isExistingVirtual && retainedHostId && retainedHostId===device.virtualHostId &&
                 !appState.devices.some(host=>host.id===retainedHostId&&host.type==='Server - Physical');
-            openDeviceReviewModal(renderInterfaceTemplate("device-details/open-device-modal-5",[device ? 'Edit Device' : isDuplicate ? 'Duplicate Device' : 'Add New Device',device ? escapeHtml(device.name)+' · Existing device details' : isDuplicate ? 'Enter a unique name and IP. The original device is unchanged.' : 'Configure a physical device or VM with the existing Caffoot fields.','',escapeHtml(device?.id || draft?.deviceId || ''),escapeHtml(draft?.name ?? device?.name ?? ''),device ? 'hidden' : '',!isExistingVirtual?'selected':'',hasEligiblePhysicalHost||isExistingVirtual?`<option value="virtual" ${isExistingVirtual?'selected':''}>Virtual Machine (VM)</option>`:'',isExistingVirtual || device ? 'hidden' : '',currentType === '' ? 'selected' : '',availableFormTypes.map(t => `<option value="${escapeHtml(t)}" ${currentType === t ? 'selected' : ''}>${escapeHtml(t === 'Server - Physical' ? 'Server' : t)}</option>`).join(''),currentType==='Server - Virtual'?'selected':'',isExistingVirtual && !device ? '' : 'hidden',vmPurposes.map(([label,value])=>`<option value="${escapeHtml(value)}" ${currentType===value?'selected':''}>${escapeHtml(label)}</option>`).join(''),device ? renderInterfaceTemplate("device-details/open-device-modal-2",[escapeHtml(isExistingVirtual ? 'Virtual ' : 'Physical '),escapeHtml(currentType === 'Server - Virtual' || currentType === 'Server - Physical' ? 'Server' : currentType)]) : '',['','VMware ESXi','Proxmox VE','Microsoft Hyper-V','KVM','XCP-ng','Other'].map(x=>'<option value="'+escapeHtml(x)+'" '+((draft?.virtualPlatform ?? device?.virtualPlatform ?? '')===x?'selected':'')+'>'+escapeHtml(x||'Select Platform...')+'</option>').join(''),device?.type === 'Server - Virtual' ? '(legacy assignments preserved)' : '(required)',appState.devices.filter(x=>x.id!==(device?.id||'')&&x.type==='Server - Physical'&&((x.status!=='Retired'&&(x.typeDetails?.serverService_Hypervisor===true||x.serverService_Hypervisor===true))||x.id===(draft?.virtualHostId??device?.virtualHostId??''))).map(x=>'<option value="'+escapeHtml(x.id)+'" '+((draft?.virtualHostId ?? device?.virtualHostId ?? '')===x.id?'selected':'')+'>'+escapeHtml(x.name)+(x.status==='Retired'||!(x.typeDetails?.serverService_Hypervisor===true||x.serverService_Hypervisor===true)?' (existing legacy assignment)':'')+'</option>').join('')+(missingLegacyHost?'<option value="'+escapeHtml(retainedHostId)+'" selected>Missing or legacy host (retained)</option>':''),[['vmVcpu','vCPU count'],['vmRamGb','Allocated RAM (GB)'],['vmDiskGb','Virtual disk (GB)'],['vmNicCount','Virtual network adapters']].map(([key,label])=>renderInterfaceTemplate("device-details/open-device-modal-3",[key,label,key,key,escapeHtml(deviceDetailFormValues[key] ?? '')])).join(''),deviceDetailFormValues.serverService_Hypervisor === true ? 'checked' : '',deviceDetailFormValues.serverService_Hypervisor === true ? '' : 'hidden',['VMware ESXi','Proxmox VE','Microsoft Hyper-V','KVM','XCP-ng'].map(p=>`<option value="${escapeHtml(p)}" ${deviceDetailFormValues.hypervisorProduct===p?'selected':''}>${escapeHtml(p)}</option>`).join(''),deviceDetailFormValues.hypervisorProduct && !['VMware ESXi','Proxmox VE','Microsoft Hyper-V','KVM','XCP-ng'].includes(deviceDetailFormValues.hypervisorProduct)?'selected':'',escapeHtml(deviceDetailFormValues.hypervisorProduct || ''),deviceDetailFormValues.hypervisorProduct && !['VMware ESXi','Proxmox VE','Microsoft Hyper-V','KVM','XCP-ng'].includes(deviceDetailFormValues.hypervisorProduct)?'':'hidden',escapeHtml(deviceDetailFormValues.hypervisorVersion || ''),device ? renderInterfaceTemplate("device-details/open-device-modal-4",[['Active','Maintenance','Retired'].map(v=>`<option value="${v}" ${(draft?.status ?? device?.status ?? 'Active')===v?'selected':''}>${v}</option>`).join('')]) : '<input type="hidden" id="dev-status" value="Active">',escapeHtml(draft?.manufacturer ?? device?.manufacturer ?? ''),escapeHtml(draft?.model ?? device?.model ?? ''),escapeHtml(draft?.serialNumber ?? device?.serialNumber ?? ''),renderInlineHardwareQuickAdd("manufacturer"),renderInlineHardwareQuickAdd("model"),getDetailFieldsForDeviceType(currentType).length===0?'hidden':'',deviceTypeDetailGroups[String(currentType||'').toLowerCase().trim()]==='server'?'':'hidden',['server','computer'].includes(deviceTypeDetailGroups[String(currentType||'').toLowerCase().trim()])?'':'hidden',renderDeviceDetailFields(currentType,deviceDetailFormValues,'hardware'),renderDeviceMountOptions(currentType,mountType),escapeHtml(currentLoc),currentLoc === '' ? 'selected' : '',locations.map(l => `<option value="${escapeHtml(l)}" ${currentLoc === l ? 'selected' : ''}>${escapeHtml(l)}</option>`).join(''),mountType === 'Rack Mounted' ? '' : 'hidden',mountType === 'Rack Mounted' ? '' : 'hidden',!appState.racks.length ? 'selected' : '',appState.racks.length ? 'Select a network rack...' : 'No network racks created yet',appState.racks.map(r => `<option value="${escapeHtml(r.id)}" ${(draft?.rackId ?? device?.rackId) === r.id ? 'selected' : ''}>${escapeHtml(r.name)}</option>`).join(''),(draft?.face ?? device?.face) !== 'rear' ? 'selected' : '',(draft?.face ?? device?.face) === 'rear' ? 'selected' : '',escapeHtml(String(draft?.rackUStart ?? device?.rackUStart ?? 1)),currentHeight,appState.subnets.filter(s => s.kind === 'container').map(b => `<option value="${escapeHtml(b.id)}" ${currentSubnet && getDeviceSubnetTopLevelBlock(currentSubnet)?.id === b.id ? 'selected' : ''}>${escapeHtml(b.name || b.cidr)}</option>`).join(''),currentSubnet && !getDeviceSubnetTopLevelBlock(currentSubnet) ? 'selected' : '',escapeHtml(currentSubnet?.id || ''),escapeHtml(draft?.primaryIp ?? device?.primaryIp ?? ''),(draft?.ipReserved ?? device?.ipReserved ?? (device?.primaryIp && appState.ipAllocations[device.primaryIp]?.status === 'Reserved')) ? 'checked' : '',escapeHtml(draft?.notes ?? device?.notes ?? '')]));
+            openDeviceReviewModal(renderInterfaceTemplate("device-details/open-device-modal-5",[device ? 'Edit Device' : isDuplicate ? 'Duplicate Device' : 'Add New Device',device ? escapeHtml(device.name)+' · Existing device details' : isDuplicate ? 'Enter a unique name and IP. The original device is unchanged.' : 'Configure a physical device or VM with the existing Caffoot fields.','',escapeHtml(device?.id || draft?.deviceId || ''),escapeHtml(draft?.name ?? device?.name ?? ''),device ? 'hidden' : '',!isExistingVirtual?'selected':'',hasEligiblePhysicalHost||isExistingVirtual?`<option value="virtual" ${isExistingVirtual?'selected':''}>Virtual Machine (VM)</option>`:'',isExistingVirtual || device ? 'hidden' : '',currentType === '' ? 'selected' : '',availableFormTypes.map(t => `<option value="${escapeHtml(t)}" ${currentType === t ? 'selected' : ''}>${escapeHtml(publicDeviceTypeName(t))}</option>`).join(''),currentType==='Server - Virtual'?'selected':'',isExistingVirtual && !device ? '' : 'hidden',vmPurposes.map(([label,value])=>`<option value="${escapeHtml(value)}" ${currentType===value?'selected':''}>${escapeHtml(label)}</option>`).join(''),device ? renderInterfaceTemplate("device-details/open-device-modal-2",[escapeHtml(isExistingVirtual ? 'Virtual ' : 'Physical '),escapeHtml(currentType === 'Server' ? publicDeviceTypeName(currentType) : currentType === 'Server - Virtual' || currentType === 'Server - Physical' ? 'Server' : currentType)]) : '',['','VMware ESXi','Proxmox VE','Microsoft Hyper-V','KVM','XCP-ng','Other'].map(x=>'<option value="'+escapeHtml(x)+'" '+((draft?.virtualPlatform ?? device?.virtualPlatform ?? '')===x?'selected':'')+'>'+escapeHtml(x||'Select Platform...')+'</option>').join(''),device?.type === 'Server - Virtual' ? '(legacy assignments preserved)' : '(required)',appState.devices.filter(x=>x.id!==(device?.id||'')&&x.type==='Server - Physical'&&((x.status!=='Retired'&&(x.typeDetails?.serverService_Hypervisor===true||x.serverService_Hypervisor===true))||x.id===(draft?.virtualHostId??device?.virtualHostId??''))).map(x=>'<option value="'+escapeHtml(x.id)+'" '+((draft?.virtualHostId ?? device?.virtualHostId ?? '')===x.id?'selected':'')+'>'+escapeHtml(x.name)+(x.status==='Retired'||!(x.typeDetails?.serverService_Hypervisor===true||x.serverService_Hypervisor===true)?' (existing legacy assignment)':'')+'</option>').join('')+(missingLegacyHost?'<option value="'+escapeHtml(retainedHostId)+'" selected>Missing or legacy host (retained)</option>':''),[['vmVcpu','vCPU count'],['vmRamGb','Allocated RAM (GB)'],['vmDiskGb','Virtual disk (GB)'],['vmNicCount','Virtual network adapters']].map(([key,label])=>renderInterfaceTemplate("device-details/open-device-modal-3",[key,label,key,key,escapeHtml(deviceDetailFormValues[key] ?? '')])).join(''),deviceDetailFormValues.serverService_Hypervisor === true ? 'checked' : '',deviceDetailFormValues.serverService_Hypervisor === true ? '' : 'hidden',['VMware ESXi','Proxmox VE','Microsoft Hyper-V','KVM','XCP-ng'].map(p=>`<option value="${escapeHtml(p)}" ${deviceDetailFormValues.hypervisorProduct===p?'selected':''}>${escapeHtml(p)}</option>`).join(''),deviceDetailFormValues.hypervisorProduct && !['VMware ESXi','Proxmox VE','Microsoft Hyper-V','KVM','XCP-ng'].includes(deviceDetailFormValues.hypervisorProduct)?'selected':'',escapeHtml(deviceDetailFormValues.hypervisorProduct || ''),deviceDetailFormValues.hypervisorProduct && !['VMware ESXi','Proxmox VE','Microsoft Hyper-V','KVM','XCP-ng'].includes(deviceDetailFormValues.hypervisorProduct)?'':'hidden',escapeHtml(deviceDetailFormValues.hypervisorVersion || ''),device ? renderInterfaceTemplate("device-details/open-device-modal-4",[['Active','Maintenance','Retired'].map(v=>`<option value="${v}" ${(draft?.status ?? device?.status ?? 'Active')===v?'selected':''}>${v}</option>`).join('')]) : '<input type="hidden" id="dev-status" value="Active">',escapeHtml(draft?.manufacturer ?? device?.manufacturer ?? ''),escapeHtml(draft?.model ?? device?.model ?? ''),escapeHtml(draft?.serialNumber ?? device?.serialNumber ?? ''),renderInlineHardwareQuickAdd("manufacturer"),renderInlineHardwareQuickAdd("model"),getDetailFieldsForDeviceType(currentType).length===0?'hidden':'',deviceTypeDetailGroups[String(currentType||'').toLowerCase().trim()]==='server'?'':'hidden',['server','computer'].includes(deviceTypeDetailGroups[String(currentType||'').toLowerCase().trim()])?'':'hidden',renderDeviceDetailFields(currentType,deviceDetailFormValues,'hardware'),renderDeviceMountOptions(currentType,mountType),escapeHtml(currentLoc),currentLoc === '' ? 'selected' : '',locations.map(l => `<option value="${escapeHtml(l)}" ${currentLoc === l ? 'selected' : ''}>${escapeHtml(l)}</option>`).join(''),mountType === 'Rack Mounted' ? '' : 'hidden',mountType === 'Rack Mounted' ? '' : 'hidden',!appState.racks.length ? 'selected' : '',appState.racks.length ? 'Select a network rack...' : 'No network racks created yet',appState.racks.map(r => `<option value="${escapeHtml(r.id)}" ${(draft?.rackId ?? device?.rackId) === r.id ? 'selected' : ''}>${escapeHtml(r.name)}</option>`).join(''),(draft?.face ?? device?.face) !== 'rear' ? 'selected' : '',(draft?.face ?? device?.face) === 'rear' ? 'selected' : '',escapeHtml(String(draft?.rackUStart ?? device?.rackUStart ?? 1)),currentHeight,appState.subnets.filter(s => s.kind === 'container').map(b => `<option value="${escapeHtml(b.id)}" ${currentSubnet && getDeviceSubnetTopLevelBlock(currentSubnet)?.id === b.id ? 'selected' : ''}>${escapeHtml(b.name || b.cidr)}</option>`).join(''),currentSubnet && !getDeviceSubnetTopLevelBlock(currentSubnet) ? 'selected' : '',escapeHtml(currentSubnet?.id || ''),escapeHtml(draft?.primaryIp ?? device?.primaryIp ?? ''),(draft?.ipReserved ?? device?.ipReserved ?? (device?.primaryIp && appState.ipAllocations[device.primaryIp]?.status === 'Reserved')) ? 'checked' : '',escapeHtml(draft?.notes ?? device?.notes ?? '')]));
             const tabbedDeviceForm = document.querySelector('[data-device-form="true"]');
             if(tabbedDeviceForm&&isDuplicate)tabbedDeviceForm.dataset.duplicateSourceId=draft.duplicatedFrom;
             if (tabbedDeviceForm && draft?.activeDeviceTab) tabbedDeviceForm.dataset.initialDeviceTab = draft.activeDeviceTab;
@@ -6985,6 +7043,9 @@ function openIpModal(ip) {
             updateDeviceRackLimits();
             updateDeviceMountChoices();
             updateVirtualHardwareFieldVisibility();
+            const lifecycle=device&&lifecycleDeviceDates.get(device.id);
+            if(lifecycle)window.caffootLifecycle.bindEditor(tabbedDeviceForm,lifecycle,
+                equipmentLifecycle.today,device.type,window.nextSessionIsAdmin===true,draft?.lifecycle);
             rememberModalForm();
             const deviceForm = document.querySelector('[data-device-form="true"]');
             if (deviceForm) {
@@ -6992,7 +7053,9 @@ function openIpModal(ip) {
                     const field = event.target;
                     if (field && field.matches('input,select')) {
                         field.classList.remove('device-form-invalid-field');
-                        field.removeAttribute('aria-invalid');
+                        // Keep an invalid UK date accessible until the user corrects it.
+                        if (!field.classList.contains('caffoot-uk-date-text') || field.validity.valid)
+                            field.removeAttribute('aria-invalid');
                     }
                 };
                 deviceForm.addEventListener('input', clearFieldError);
@@ -7015,6 +7078,7 @@ function openIpModal(ip) {
                 duplicatedFrom: form.dataset.duplicateSourceId || null,
                 stockRegistration: form.stockRegistration || null,
                 supplier: form.supplierChooser?.value(),
+                lifecycle: form.lifecycleDraft?.(),
                 activeDeviceTab: form.dataset.activeDeviceTab || 'general',
                 name: document.getElementById('dev-name')?.value || '',
                 type: document.getElementById('dev-type')?.value || '',
@@ -8846,6 +8910,12 @@ function openIpModal(ip) {
                 case 'discard-device-form-changes': discardDeviceFormChanges(); break;
                 case 'save-rename': applyDeviceCatalogueChange(target.dataset.kind,'rename',name,document.getElementById('device-catalogue-rename-value')?.value||''); break;
                 case 'cancel-rename': cancelDeviceCatalogueEntryRename(); break;
+                case 'change-device-type-availability': {
+                    const operation=target.dataset.operation;
+                    if(['archive','unarchive'].includes(operation))
+                        void nextDeviceCatalogueBridge?.change('type',operation,name,'');
+                    break;
+                }
                 case 'rename-device-catalogue-entry': openDeviceTypeOrLocationRename(target.dataset.kind,name); break;
                 case 'delete-device-type-or-location': requestDeviceCatalogueEntryDeletion(target.dataset.kind,name); break;
                 case 'cancel-delete': cancelDeviceCatalogueEntryDeletion(); break;
@@ -9010,7 +9080,7 @@ function openIpModal(ip) {
                 }
                 case 'dashboard-tab': {
                     const next = target.dataset.dashboardTab;
-                    if (['overview','insights','activity'].includes(next)) {
+                    if (['overview','insights','activity'].includes(next)||(next==='lifecycle'&&equipmentLifecycle)) {
                         activeDashboardTab = next;
                         renderContent();
                         const active = document.getElementById('dashboard-tab-' + next);
@@ -9170,6 +9240,9 @@ void (async () => {
     nextImportAllowed = ['Devices','IPAM','Racks'].every(key => editPermissions[key]);
     deviceRevisions = state.deviceRevisions || {};
     deviceSuppliers = state.deviceSuppliers || {};
+    equipmentLifecycle = state.equipmentLifecycle || null;
+    lifecycleDeviceDates = new Map((equipmentLifecycle?.devices || []).map(device=>[device.deviceId,device]));
+    deviceTypeAvailability = state.deviceTypeAvailability || {archived:[],renamed:[]};
     suppliersEnabled = Object.hasOwn(state, "deviceSuppliers") || (!state.sections?.Devices && suppliersEnabled);
     deviceEditors = state.deviceEditors || {};
     // A replacement import or Clean Start can remove optional managed settings.
@@ -9215,7 +9288,7 @@ void (async () => {
     'add-service','rename-service','delete-service',
     'add-software','rename-software','delete-software',
     'add-custom-location','add-device-type-or-location','save-rename',
-    'rename-device-catalogue-entry','delete-device-type-or-location',
+    'rename-device-catalogue-entry','delete-device-type-or-location','change-device-type-availability',
     'delete-device-type','delete-location','edit-device-type','edit-location',
     'confirm-delete'
   ]);
@@ -9322,6 +9395,7 @@ void (async () => {
         const unsupportedSubmit=button.type==='submit' && button.form && !(
           (editPermissions.Devices&&editPermissions.IPAM&&button.form.id==='device-ipam-link-form') ||
           button.form?.matches('#next-account-password-form,#next-account-mfa-start,#next-account-mfa-confirm,#account-mfa-removal-form,#personal-details-form,#account-email-verification-form') ||
+          canSubmitLifecycleSettings(button.form) ||
           (sessionIsAdmin && (button.closest('#next-user-create-form,#next-user-profile-form,#smtp-settings-form,#smtp-test-form') || button.form?.matches('#role-definition-form'))) ||
           (editPermissions['Staff Members'] && button.form?.matches('#staff-record-form')) ||
           (editPermissions.Departments && button.form?.matches('#staff-department-form')) ||
@@ -9584,6 +9658,7 @@ void (async () => {
       showToast('You do not have access to this section.', 'error');
       return;
     }
+    if (currentTab==='settings' && leaveLifecycleSettings && !leaveLifecycleSettings()) return;
     if (isSupplierPage(currentTab) && !isSupplierPage(tab)) {
       window.caffootSuppliers.leave();
       if (tab !== 'dashboard' && (supplierHash.test(location.hash) || purchasingHash.test(location.hash)))
@@ -9891,12 +9966,22 @@ void (async () => {
       }
       if(window.nextDeviceAddressPolicy?.racksEnabled===false&&previous&&(previous.rackId||previous.rackShelfAccessoryId||previous.mountType==='Rack Mounted')){
         for(const key of ['mountType','rackId','rackUStart','rackUEnd','rackUHeight','face','rackFace','rackShelfAccessoryId','location'])delete outboundRecord[key];
+      } else if(previous&&!editPermissions.Racks){
+        // Preserve read-only placement values, including omitted fields on legacy Devices.
+        for(const key of ['rackId','rackUStart','rackUEnd','rackUHeight','face','rackFace','rackShelfAccessoryId']){
+          if(Object.hasOwn(previous,key))outboundRecord[key]=previous[key];
+          else delete outboundRecord[key];
+        }
       }
       const payload = deviceId
         ? {deviceId, revision:activeEdit.revision, record:outboundRecord, relatedDevices}
         : {record:outboundRecord};
       const form=document.querySelector('[data-device-form="true"]');
       const stockRegistration=!deviceId&&form?.stockRegistration;
+      if (deviceId && form?.lifecycleChanges) {
+        const changes=form.lifecycleChanges();
+        if (Object.keys(changes).length) payload.lifecycle=changes;
+      }
       if (!stockRegistration && suppliersEnabled && form?.supplierChooser) {
         const choice=form.supplierChooser.value();
         const original=form.originalSupplier;
@@ -10028,6 +10113,7 @@ void (async () => {
     ['ipam','IP Address Management','<rect x="9" y="3" width="6" height="6" rx="1"/><rect x="2" y="16" width="7" height="5" rx="1"/><rect x="15" y="16" width="7" height="5" rx="1"/><path d="M12 9v4M5.5 16v-3h13v3"/>','Manage subnets, IP address allocations and VLANs. Without IPAM, Devices still offers basic IP entry.',''],
     ['racks','Network Racks','<rect x="6" y="2" width="12" height="20" rx="1"/><path d="M9 6h6M9 10h6M9 14h6M9 18h6"/>','Document racks, rack accessories and equipment placement within racks.','green'],
     ['suppliers','Suppliers','<circle cx="9" cy="8" r="3"/><path d="M3 20v-2a6 6 0 0 1 12 0v2M17 6a3 3 0 0 1 0 6m1 4a5 5 0 0 1 3 4"/>','Manage supplier companies, locations, contacts and notes.','orange'],
+    ['equipment_lifecycle','Equipment Lifecycle','<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>','Plan for warranty expiry and Device replacement.',''],
     ['it_assets','IT Assets','<path d="m12 3 9 5-9 5-9-5 9-5Zm-9 5v8l9 5 9-5V8M12 13v8"/>','Receive, issue and return equipment, record checks and write off unusable items.','']
   ];
   let featureSettingsPending=false;
@@ -10042,7 +10128,7 @@ void (async () => {
       if(!root.isConnected)return;
       const cards=optionalFeatureDescriptions.map(([key,label,icon,description,colour])=>{
         const enabled=result.features[key]===true;
-        return renderInterfaceTemplate('settings/optional-feature-card',[key,icon,label,description,enabled?'Enabled':'Disabled',enabled?'Enabled':'Enable Feature',(enabled?'Disable ':'Enable ')+label,String(enabled),enabled?'checked':'','',colour,enabled?'enabled':'','','',key.replaceAll('_','-')]);
+        return renderInterfaceTemplate('settings/optional-feature-card',[key,icon,label,description,enabled?'Enabled':'Disabled',enabled?'Enabled':'Enable Feature',(enabled?'Disable ':'Enable ')+label,String(enabled),enabled?'checked':'','',colour,enabled?'enabled':'','',enabled&&key==='equipment_lifecycle'?'<button type="button" class="btn btn-outline" data-action="open-lifecycle-settings">Lifecycle Settings</button>':'',key.replaceAll('_','-')]);
       });
       root.querySelector('#optional-feature-infrastructure').innerHTML=cards.slice(0,3).join('');
       root.querySelector('#optional-feature-additional').innerHTML=cards.slice(3).join('');
@@ -10236,8 +10322,13 @@ void (async () => {
         await refreshCentralInventory(false);
         showToast(operation==='delete'
           ? result.affectedDevices+' device(s) set to Unknown; '+kind+' deleted.'
-          : (kind==='type'?'Type':'Location')+' '+(operation==='add'?'added':'renamed')+' successfully.','success');
+          : (kind==='type'?'Type':'Location')+' '+({add:'added',rename:'renamed',archive:'archived',unarchive:'unarchived'}[operation])+' successfully.','success');
         openDeviceCatalogueManager(kind);
+        if(operation==='archive'||operation==='unarchive'){
+          const button=[...document.querySelectorAll('[data-action="change-device-type-availability"]')]
+            .find(item=>item.dataset.name===oldName);
+          button?.focus();
+        }
         renderContent();
         return true;
       } catch(error) {
@@ -11203,12 +11294,85 @@ void (async () => {
     void changeCentralUser(path,payload).catch(error=>showToast(error.message,'error'));
   },true);
 
+  function canSubmitLifecycleSettings(form) {
+    return sessionIsAdmin && form?.id==='lifecycle-settings-form';
+  }
+  async function openLifecycleSettings(trigger) {
+    const response=await fetch('/api/settings/lifecycle',{cache:'no-store'});
+    const result=await response.json();
+    if(!response.ok)throw Error(result.error||'Unable to open Lifecycle Settings.');
+    if(!trigger.isConnected||!sessionIsAdmin||leaveLifecycleSettings)return;
+    const config=result.lifecycle;
+    const panel=trigger.closest('[data-section="features"]');
+    const overview=[...panel.children];
+    overview.forEach(element=>element.hidden=true);
+    panel.insertAdjacentHTML('beforeend',renderInterfaceTemplate('settings/lifecycle-settings',[
+      config.warrantyDays,config.replacementDays,config.types.map((type,index)=>
+        renderInterfaceTemplate('settings/lifecycle-lifespan-item',[
+          escapeHtml(type.label),type.archived?' · Archived':'',index,escapeHtml(type.name),type.years??'',
+        ])).join(''),
+    ]));
+    const settings=panel.querySelector('#lifecycle-settings');
+    const form=settings.querySelector('form');
+    const baseline=modalFormSnapshot(form);
+    let saving=false;
+    const close=()=>{
+      settings.remove();
+      overview.forEach(element=>element.hidden=false);
+      leaveLifecycleSettings=null;
+      if(trigger.isConnected)trigger.focus();
+    };
+    leaveLifecycleSettings=()=>{
+      if(!settings.isConnected){leaveLifecycleSettings=null;return true;}
+      if(saving)return false;
+      if(baseline!==modalFormSnapshot(form)&&!confirm('Discard unsaved Lifecycle Settings changes?'))return false;
+      close();
+      return true;
+    };
+    form.addEventListener('submit',async event=>{
+      event.preventDefault();
+      if(!canSubmitLifecycleSettings(form)||saving||!form.reportValidity())return;
+      const payload={
+        revision:config.revision,warrantyDays:form.elements.warrantyDays.valueAsNumber,
+        replacementDays:form.elements.replacementDays.valueAsNumber,
+        types:[...form.querySelectorAll('[data-type-name]')].map(input=>({
+          name:input.dataset.typeName,years:input.value===''?null:input.valueAsNumber,
+        })),
+      };
+      saving=true;
+      const button=form.querySelector('[type="submit"]');
+      button.disabled=true;
+      try{
+        await postInventory('/api/settings/lifecycle',payload);
+        close();
+        void refreshCentralInventory(false).catch(error=>showToast(error.message,'error'));
+        showToast('Lifecycle Settings saved.');
+      }catch(error){
+        form.querySelector('[data-lifecycle-settings-feedback]').textContent=error.message;
+        showToast(error.message,'error');
+      }finally{saving=false;button.disabled=false;}
+    });
+    settings.querySelector('[data-action="close-lifecycle-settings"]').focus();
+    settings.scrollIntoView({block:'start'});
+  }
+  document.addEventListener('keydown',event=>{
+    if(event.key==='Escape'&&leaveLifecycleSettings&&currentTab==='settings'){
+      event.preventDefault();
+      leaveLifecycleSettings();
+    }
+  });
+
   // Settings & Data: replace stand-alone preview actions with live workflows.
   document.addEventListener('click',event=>{
     const target=event.target.closest('.settings-screen [data-action]');
     if(!target||currentTab!=='settings'||!sessionIsAdmin)return;
     const action=target.dataset.action;
-    if(action==='select-settings-tab'&&['data','email','maintenance','features'].includes(target.dataset.tab)){
+    if(action==='open-lifecycle-settings'){
+      void openLifecycleSettings(target).catch(error=>showToast(error.message,'error'));
+    }else if(action==='close-lifecycle-settings'){
+      leaveLifecycleSettings?.();
+    }else if(action==='select-settings-tab'&&['data','email','maintenance','features'].includes(target.dataset.tab)){
+      if(leaveLifecycleSettings&&!leaveLifecycleSettings())return;
       activeSettingsTab=target.dataset.tab;
       renderContent();
     }else if(action==='settings-screen-copy'){
@@ -11271,6 +11435,7 @@ void (async () => {
     if (!element) return;
     const action = element.dataset.action || '';
     if(element.form?.id==='device-ipam-link-form'&&editPermissions.Devices&&editPermissions.IPAM)return;
+    if(canSubmitLifecycleSettings(element.form))return;
     if (isBlockedAction(action, element) || (element.matches('button') && element.type==='submit' && element.form &&
         !element.form.matches('form[data-device-form="true"],#role-definition-form,#next-user-create-form,#next-user-profile-form,#next-account-password-form,#next-account-mfa-start,#next-account-mfa-confirm,#account-mfa-removal-form,#personal-details-form,#smtp-settings-form,#smtp-test-form,#account-email-verification-form') &&
         !(editPermissions.IPAM && element.closest('form[data-form-action="ip"],form[data-form-action="bulk-ip"],form[data-form-action="subnet"],form[data-ipam-subnet-creation]')) &&
@@ -11288,6 +11453,7 @@ void (async () => {
   },true);
   document.addEventListener('submit',event => {
     if(editPermissions.Devices&&editPermissions.IPAM&&event.target.matches('#device-ipam-link-form'))return;
+    if(canSubmitLifecycleSettings(event.target))return;
     if (event.target.matches('#next-account-password-form,#next-account-mfa-start,#next-account-mfa-confirm,#account-mfa-removal-form,#personal-details-form,#next-user-profile-form,#smtp-settings-form,#smtp-test-form,#account-email-verification-form') ||
         (editPermissions['Staff Members'] && event.target.matches('#staff-record-form')) ||
         (editPermissions.Departments && event.target.matches('#staff-department-form')) ||

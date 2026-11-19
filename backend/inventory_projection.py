@@ -1,6 +1,7 @@
 """Keep feature-only collections out of other sections' API responses."""
 import ipaddress
 
+from .equipment_lifecycle import device_type_availability, project_device_lifecycle
 from .equipment_suppliers import read_device_suppliers
 from .permissions import can_access, feature_enabled
 from .inventory import SETTINGS
@@ -34,6 +35,10 @@ def project_inventory_response(connection, account_id, result):
             }
     if sections["Devices"] and "devices" in result and feature_enabled(connection, "Suppliers"):
         result["deviceSuppliers"] = read_device_suppliers(connection, account_id)
+    if sections['Devices'] and 'devices' in result:
+        result['deviceTypeAvailability'] = device_type_availability(connection)
+        if feature_enabled(connection, 'Equipment Lifecycle'):
+            result['equipmentLifecycle'] = project_device_lifecycle(connection, result['devices'])
     if sections['Devices'] and sections['IPAM'] and 'devices' in result and 'subnets' in result:
         result['basicIpsOutsideSubnets'] = count_basic_ips_outside_subnets(result['devices'], result['subnets'])
     return result

@@ -130,3 +130,35 @@
 </main></div><!-- /interface-template -->
 
 <!-- interface-template:settings/optional-feature-card --><article class="card card-padded" data-feature-card="{{slot:0}}"><div class="card-head"><span class="iconwrap {{slot:10}}"><svg viewBox="0 0 24 24" aria-hidden="true">{{slot:1}}</svg></span><div><h4 class="feature-title">{{slot:2}}</h4><p class="description">{{slot:3}}</p></div></div><div class="separator"></div><div class="feature-bottom"><span class="status {{slot:11}}" data-feature-status>{{slot:4}}</span><label class="toggle-label {{slot:12}}" for="optional-feature-{{slot:14}}"><span>{{slot:5}}</span><input id="optional-feature-{{slot:14}}" class="switch" type="checkbox" role="switch" aria-label="{{slot:6}}" aria-checked="{{slot:7}}" data-optional-feature="{{slot:0}}" {{slot:8}} {{slot:9}}></label></div>{{slot:13}}</article><!-- /interface-template -->
+
+<!-- interface-template:settings/lifecycle-settings -->
+<div id="lifecycle-settings">
+  <button type="button" class="btn btn-outline" data-action="close-lifecycle-settings">Back To Optional Features</button>
+  <div class="panel-heading"><div><h2>Lifecycle Settings</h2><p>Set warning periods and expected lifespans for physical equipment.</p></div></div>
+  <form id="lifecycle-settings-form">
+    <section class="card card-padded">
+      <div class="card-head"><span class="iconwrap"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-history"></use></svg></span>
+        <div><h3>Warning Periods</h3><p>Each warning period accepts 0 to 3,650 days. Use 0 for warnings on the date itself. Past dates still appear as expired or overdue.</p></div>
+      </div>
+      <div class="settings-grid smtp-fields">
+        <label class="setting-field">Warranty Expiry (Days)<input type="number" name="warrantyDays" min="0" max="3650" step="1" required value="{{slot:0}}"></label>
+        <label class="setting-field">Planned Replacement (Days)<input type="number" name="replacementDays" min="0" max="3650" step="1" required value="{{slot:1}}"></label>
+      </div>
+    </section>
+    <section class="card card-padded">
+      <div class="card-head"><span class="iconwrap orange"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-box"></use></svg></span>
+        <div><h3>Expected Equipment Lifespan</h3><p>Enter 1 to 100 years. Leave a lifespan blank to skip calculating a replacement date for that type.</p></div>
+      </div>
+      <div class="lifecycle-lifespans">{{slot:2}}</div>
+    </section>
+    <p class="muted-note" data-lifecycle-settings-feedback role="status"></p>
+    <div class="form-actions"><button type="button" class="btn btn-outline" data-action="close-lifecycle-settings">Cancel</button><button class="btn btn-primary" type="submit">Save Settings</button></div>
+  </form>
+</div>
+<!-- /interface-template -->
+
+<!-- interface-template:settings/lifecycle-lifespan-item -->
+<label class="setting-field lifecycle-lifespan-row"><span>{{slot:0}}{{slot:1}}</span>
+  <input type="number" name="lifespan-{{slot:2}}" data-type-name="{{slot:3}}" min="1" max="100" step="1" placeholder="Not Set" aria-label="{{slot:0}} lifespan in years" value="{{slot:4}}">
+</label>
+<!-- /interface-template -->

@@ -25,7 +25,14 @@ class OptionalFeaturesVisualBoundaryTests(unittest.TestCase):
 
     def test_existing_style_sources_and_twelve_design_pins_are_unchanged(self):
         for path in ('interface/styles/settings.css','interface/styles/ipam.css','interface/styles/device-details.css','interface/design-sources.json'):
-            self.assertEqual((ROOT/path).read_text(),baseline_text(path),path)
+            current = (ROOT/path).read_text()
+            additions = {
+                'interface/styles/settings.css': '\n[data-feature-card="equipment_lifecycle"] > .btn',
+                'interface/styles/device-details.css': '\n.device-lifecycle-section {',
+            }
+            if path in additions:
+                current = current.split(additions[path], 1)[0]
+            self.assertEqual(current,baseline_text(path),path)
         self.assertEqual(len(json.loads((ROOT/'interface/design-sources.json').read_text())),12)
 
     def test_pi_correction_templates_keep_existing_dashboard_and_report_layout(self):
@@ -34,4 +41,7 @@ class OptionalFeaturesVisualBoundaryTests(unittest.TestCase):
                 ['git', 'show', 'bda35d73398820f49c8c1cf0647aa1c8c92bbf2e:' + path],
                 cwd=ROOT, text=True)
             current = (ROOT / path).read_text()
+            if path.endswith('/dashboard.html'):
+                current = current.split('\n<!-- interface-template:dashboard/lifecycle-panel -->', 1)[0]
+                current = current.replace('                {{slot:28}}\n', '', 1)
             self.assertEqual(re.sub(r' data-dashboard-sections="[^"]*"', '', current), original)

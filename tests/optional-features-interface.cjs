@@ -114,9 +114,9 @@ const errors=[],metrics=[],screens=[];
   assert.equal(await owner.locator('.optional-features-panel .note').textContent(),await approvedFeatures.locator('.note').textContent());
   assert.deepEqual(await owner.locator('.optional-features-panel .section-title').allTextContents(),await approvedFeatures.locator('.section-title').allTextContents());
   assert.equal(await owner.locator('#optional-feature-infrastructure article').count(),3);
-  assert.equal(await owner.locator('#optional-feature-additional article').count(),2);
+  assert.equal(await owner.locator('#optional-feature-additional article').count(),3);
   assert.equal(await owner.getByText('Design Review · No Settings Saved',{exact:true}).count(),0);
-  assert.deepEqual(await owner.locator('[data-optional-feature]').evaluateAll(inputs=>inputs.map(input=>input.dataset.optionalFeature)),['devices','ipam','racks','suppliers','it_assets']);
+  assert.deepEqual(await owner.locator('[data-optional-feature]').evaluateAll(inputs=>inputs.map(input=>input.dataset.optionalFeature)),['devices','ipam','racks','suppliers','equipment_lifecycle','it_assets']);
   const savedFeatures=(await (await contexts.owner.request.get(address+'/api/settings/features')).json()).features;
   for(const [index,feature] of ['devices','ipam','racks','suppliers'].entries()){
    const card=owner.locator('[data-feature-card="'+feature+'"]'),approvedCard=approvedFeatures.locator('article').nth(index);
@@ -129,7 +129,7 @@ const errors=[],metrics=[],screens=[];
    assert.equal(await card.locator('label').getAttribute('for'),await card.locator('input').getAttribute('id'));
   }
   await approvedFeatures.close();
-  assert.equal(await owner.locator('[data-optional-feature="equipment_lifecycle"]').count(),0);
+  assert.equal(await owner.locator('[data-optional-feature="equipment_lifecycle"]').isChecked(),false);
   // Failed requests must leave saved feature choices and inventory intact.
   const loadErrorPage=await open('owner','#settings');
   await loadErrorPage.route('**/api/settings/features',route=>route.fulfill({status:503,json:{error:'Feature settings temporarily unavailable.'}}));

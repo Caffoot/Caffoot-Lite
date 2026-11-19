@@ -254,7 +254,47 @@
 
                       </div>
                     </div>
+                {{slot:28}}
                 <footer class="footer"><span>Caffoot Lite · Infrastructure, Simplified.</span><span>Dashboard</span></footer></div>
             <!-- /interface-template -->
 
 <!-- interface-template:dashboard/source-network-reports --><div class="catalog-modal"><div class="catalog-modal-head"><div><div class="eyebrow">REPORTS &amp; EXPORTS</div><h2>Network Reports</h2></div><button type="button" data-action="close-modal" aria-label="Close dialog" class="btn btn-outline mini-btn app-modal-close">Close ×</button></div><div>{{slot:0}}</div></div><!-- /interface-template -->
+
+<!-- interface-template:dashboard/lifecycle-panel -->
+<div id="dashboard-panel-lifecycle" role="tabpanel" aria-labelledby="dashboard-tab-lifecycle" class="account-panel active dashboard-tab-panel" {{slot:0}}>
+  <div class="panel-heading"><div><h2>Equipment Lifecycle</h2><p>Review recorded warranty and replacement dates.</p></div></div>
+  <section class="db-summary" aria-label="Lifecycle Summary">{{slot:1}}</section>
+  <section class="db-section card db-card" aria-labelledby="lifecycle-attention-heading">
+    <div class="card-head"><span class="iconwrap orange"><svg aria-hidden="true" fill="none" height="18" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" width="18"><use href="#i-box"></use></svg></span>
+      <div><h3 id="lifecycle-attention-heading">Equipment Requiring Attention</h3><p class="sub">Open a Device to review its recorded dates.</p></div></div>
+    <div class="divider"></div>
+    <form class="db-filters lifecycle-filters">
+      <label for="lifecycle-search">Search Devices<input id="lifecycle-search" name="search" type="search" placeholder="Device name, type or status"></label>
+      <label for="lifecycle-attention">Attention<select id="lifecycle-attention" name="attention"><option value="all">All Conditions</option>{{slot:2}}</select></label>
+      <label for="lifecycle-type">Device Type<select id="lifecycle-type" name="deviceType"><option value="">All Device Types</option>{{slot:3}}</select></label>
+      <label class="lifecycle-retired"><input name="retired" type="checkbox"> Include Retired Devices</label>
+      <div class="lifecycle-filter-actions"><span data-lifecycle-count aria-live="polite"></span><button type="reset" class="btn btn-outline">Clear Filters</button></div>
+    </form>
+    <div data-lifecycle-results></div>
+    <p class="db-muted lifecycle-note">A Device can appear in more than one count. Missing dates generate no warning. Retired records are available for historical review.</p>
+  </section>
+</div>
+<!-- /interface-template -->
+
+<!-- interface-template:dashboard/lifecycle-metric -->
+<button class="db-metric" type="button" data-lifecycle-category="{{slot:0}}" aria-pressed="false" aria-label="{{slot:1}}: {{slot:2}}. Filter equipment">
+  <span class="db-metric-head">{{slot:1}}<span class="iconwrap {{slot:4}}"><svg aria-hidden="true" fill="none" height="18" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" width="18"><use href="#{{slot:3}}"></use></svg></span></span>
+  <strong>{{slot:2}}</strong><small>{{slot:5}}</small>
+</button>
+<!-- /interface-template -->
+
+<!-- interface-template:dashboard/lifecycle-table -->
+<div class="lifecycle-table" role="region" tabindex="0" aria-label="Equipment Lifecycle Results">
+  <table role="table"><thead><tr><th scope="col">Device</th><th scope="col">Status</th><th scope="col">Warranty Expiry</th><th scope="col">Planned Replacement</th><th scope="col">Attention</th></tr></thead><tbody role="rowgroup">{{slot:0}}</tbody></table>
+</div>
+<!-- /interface-template -->
+
+<!-- interface-template:dashboard/lifecycle-row -->
+<tr role="row"><td role="cell"><button type="button" class="db-quicklink" data-lifecycle-device="{{slot:0}}">{{slot:1}}</button><span class="db-muted">{{slot:2}}</span></td>
+<td role="cell" data-label="Status">{{slot:3}}</td><td role="cell" data-label="Warranty Expiry">{{slot:4}}</td><td role="cell" data-label="Planned Replacement">{{slot:5}}</td><td role="cell" data-label="Attention">{{slot:6}}</td></tr>
+<!-- /interface-template -->

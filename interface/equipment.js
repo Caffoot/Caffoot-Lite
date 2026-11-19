@@ -3,6 +3,7 @@
 (function(){
   let config=null,dialogContext=null,selectedDevices=new Map(),recipientResults=[];
   const escapeHtml=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const displayDeviceType=name=>window.caffootPublicDeviceTypeName?.(name) ?? (name==='Server - Physical'?'Server':name==='Server - Virtual'?'Virtual Machine':name);
   const dateLabel=value=>/^\d{4}-\d{2}-\d{2}$/.test(value)?value.slice(8,10)+'/'+value.slice(5,7)+'/'+value.slice(0,4):value?new Date(value).toLocaleDateString('en-GB'):'—';
   const button=(label,action,id='')=>`<button type="button" class="btn btn-outline" data-equipment-action="${action}" data-id="${escapeHtml(id)}">${label}</button>`;
   function canReadAssociations(){return !!config?.canReadAssociations();}
@@ -115,7 +116,7 @@
     const query=search.value;
     const result=await request('/api/equipment/available-devices?query='+encodeURIComponent(query));
     if(!host.isConnected||search.value!==query)return;
-    host.innerHTML=result.devices.map(item=>`<label class="device-review-check-item"><input type="checkbox" data-equipment-device="${escapeHtml(item.id)}" data-revision="${item.revision}" ${selectedDevices.has(item.id)?'checked':''}><span>${escapeHtml(item.name)} · ${escapeHtml(item.type)}</span></label>`).join('')||'<p>No eligible, unassigned Devices found.</p>';
+    host.innerHTML=result.devices.map(item=>`<label class="device-review-check-item"><input type="checkbox" data-equipment-device="${escapeHtml(item.id)}" data-revision="${item.revision}" ${selectedDevices.has(item.id)?'checked':''}><span>${escapeHtml(item.name)} · ${escapeHtml(displayDeviceType(item.type))}</span></label>`).join('')||'<p>No eligible, unassigned Devices found.</p>';
   }
   function leaveAssignmentDialog(){
     const previous=dialogContext;dialogContext=null;

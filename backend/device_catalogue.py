@@ -1,10 +1,11 @@
 """Published Device Types and Locations management on central SQLite."""
 import json
-from .audit_events import attribute_event
+from .audit_events import attribute_event, record_actor_event
 import time
 from datetime import datetime, timezone
 
 from .application_integrity import validate_live_application_state as validate_detached_application_state
+from .equipment_lifecycle import DEFAULT_LIFESPANS, VIRTUAL_TYPES
 from .inventory import reconstruct_inventory
 from .normalisation_pipeline import PUBLISHED_DEFAULTS
 from .normalisation_validation import validate_normalisation_devices
@@ -17,7 +18,9 @@ def change_device_catalogue(connection, account_id, kind, operation, old_name,
     """Save an existing v1.3.3 manager operation and dependent devices atomically."""
     if not can_access(connection, account_id, "Devices", edit=True):
         raise PermissionError("Devices edit permission required")
-    if kind not in ("type", "location") or operation not in ("add", "rename", "delete"):
+    archive_operation = operation in ("archive", "unarchive")
+    if (kind not in ("type", "location") or
+            (kind != "type" if archive_operation else operation not in ("add", "rename", "delete"))):
         raise ValueError("Invalid managed catalogue operation")
     if not isinstance(old_name, str) or not isinstance(new_name, str):
         raise ValueError("Invalid managed catalogue name")
@@ -41,7 +44,18 @@ def change_device_catalogue(connection, account_id, kind, operation, old_name,
             value for value in (*raw_list, *(device.get(field) for device in state["devices"]))
             if isinstance(value, str) and value
         ))
-        if operation != "delete":
+        if kind == "type" and operation in ("add", "rename"):
+            renamed = {original for _, original in connection.execute(
+                "SELECT name,original_name FROM equipment_lifecycle_types WHERE name<>original_name")}
+            fallback = set(DEFAULT_LIFESPANS) - renamed
+            if name.casefold() == "server" and name.casefold() != old_name.casefold():
+                raise ValueError("Server is the existing physical server type.")
+            if name != old_name and any(
+                    default.casefold() == name.casefold() and default != old_name
+                    and not (operation == "add" and default == name)
+                    for default in fallback | VIRTUAL_TYPES):
+                raise ValueError("That name already exists.")
+        if operation in ("add", "rename"):
             if not name:
                 raise ValueError("Enter a name first.")
             if len(name) > 100:
@@ -72,6 +86,31 @@ def change_device_catalogue(connection, account_id, kind, operation, old_name,
             )}
             if any(device["id"] in active for device in affected):
                 raise ValueError("An affected device is being edited by another user.")
+
+        if archive_operation:
+            if old_name in VIRTUAL_TYPES:
+                raise ValueError("Virtual Machine deployment remains available.")
+            archived = operation == "archive"
+            current = connection.execute(
+                "SELECT archived FROM equipment_lifecycle_types WHERE name=?", (old_name,)
+            ).fetchone()
+            if bool(current and current[0]) == archived:
+                raise FileExistsError("Device Type availability changed. Refresh the inventory.")
+            connection.execute(
+                "INSERT INTO equipment_lifecycle_types(name,archived) VALUES(?,?) "
+                "ON CONFLICT(name) DO UPDATE SET archived=excluded.archived", (old_name, int(archived)))
+            if old_name not in raw_list:
+                connection.execute(
+                    "INSERT INTO inventory_settings(key,value_json) VALUES(?,?) "
+                    "ON CONFLICT(key) DO UPDATE SET value_json=excluded.value_json",
+                    (key, json.dumps([*raw_list, old_name], ensure_ascii=False, allow_nan=False)))
+            connection.execute("UPDATE equipment_lifecycle_settings SET revision=revision+1")
+            record_actor_event(connection, account_id, kind="Device types", action="Updated",
+                label=old_name, reason="Inventory saved", fields=["Availability"],
+                before={"Availability": "Available" if archived else "Archived"},
+                after={"Availability": "Archived" if archived else "Available"})
+            connection.commit()
+            return len(affected)
 
         if operation == "add":
             state[key] = list(dict.fromkeys((*raw_list, name)))
@@ -118,6 +157,25 @@ def change_device_catalogue(connection, account_id, kind, operation, old_name,
                 "ON CONFLICT(key) DO UPDATE SET value_json=excluded.value_json",
                 (setting, json.dumps(state[setting], ensure_ascii=False, allow_nan=False))
             )
+        if kind == "type":
+            if operation in ("add", "rename"):
+                connection.execute(
+                    "INSERT OR IGNORE INTO equipment_lifecycle_types(name) VALUES(?)",
+                    (old_name if operation == "rename" else name,))
+            if operation == "rename":
+                connection.execute(
+                    "UPDATE equipment_lifecycle_types SET name=? WHERE name=?", (name, old_name))
+            elif operation == "delete":
+                seed = connection.execute(
+                    "SELECT original_name FROM equipment_lifecycle_types WHERE name=?", (old_name,)
+                ).fetchone()
+                connection.execute("DELETE FROM equipment_lifecycle_types WHERE name=?", (old_name,))
+                if seed and seed[0] in DEFAULT_LIFESPANS:
+                    original = seed[0]
+                    connection.execute(
+                        "INSERT OR IGNORE INTO equipment_lifecycle_types(name,years,original_name) VALUES(?,?,?)",
+                        (original, DEFAULT_LIFESPANS[original], original))
+            connection.execute("UPDATE equipment_lifecycle_settings SET revision=revision+1")
         changes = [
             {"action": "Updated", "kind": "Device", "label": str(d["name"])[:100],
              "fields": [field]}

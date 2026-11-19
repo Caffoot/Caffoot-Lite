@@ -1,0 +1,5 @@
+
+@media (max-width: 480px) {
+  .catalog-manager-row:has([data-action="change-device-type-availability"]) { flex-wrap: wrap; }
+  .catalog-manager-row:has([data-action="change-device-type-availability"]) > span { flex-basis: 100%; }
+}

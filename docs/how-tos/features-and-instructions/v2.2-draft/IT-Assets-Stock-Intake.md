@@ -10,6 +10,10 @@ Use **Receive Stock** when equipment actually arrives in your organisation's pos
 
 Receiving ten computers does not create ten managed Devices or assign them to employees. A stock item describes equipment with the same common specification; a canonical Device is the permanent record for one managed machine. To create that individual record from computer stock, use [Brand New — Get From Stock](Device-Stock-Registration-and-Reissue.md). To give equipment to someone, use [Issue Equipment or Reissue Existing Device](IT-Assets-Issue-Return-and-Write-Off.md).
 
+## Date Format For Receipts
+
+Enter **Date Received** using UK **DD/MM/YYYY** (for example, **18/11/2026**) or choose the date with the calendar button. The system retains the existing ISO `YYYY-MM-DD` value in the saved receipt and movement history. Invalid day/month combinations are rejected rather than silently swapped. See [UK Date Entry And Calendar Controls](README.md#uk-date-entry-and-calendar-controls) for keyboard instructions.
+
 ## Before You Start
 
 You need an account with effective **IT Assets Edit** permission to receive stock or change readiness. **IT Assets Read** allows viewing permitted stock and history. These rights do not grant Devices, Staff Members, Departments, account administration or permission management access. Role assignments, individual overrides, MFA and current sign-in requirements still apply.
@@ -46,7 +50,7 @@ Shared fields must describe every unit represented by the item. Do not put an em
 
 ## Record The First Receipt
 
-![Accepted Receive Stock screen showing a new Desktop stock entry, shared specifications, receipt details and checks](../../../development-handovers/evidence/stock-intake/screenshots/stock-receive-new-light-1440.png)
+![Accepted Receive Stock screen showing a new Desktop stock entry, shared specifications, receipt details and checks](../../../development-handovers/evidence/stage-4-batch-44-corrected/stock/stock-receive-new-light-1440.png)
 
 *Genuine application capture accepted with [PR #388](https://github.com/Caffoot/Caffoot-Lite/pull/388#issuecomment-6899646571), using fictional data. The current application also has Overview and circulation tabs, and the unsaved-form action is now Cancel rather than the pictured Reset. Receipt fields and checks remain as shown.*
 

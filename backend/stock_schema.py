@@ -504,7 +504,16 @@ def normalise_schema_statement(statement):
     return " ".join(statement.strip().rstrip(";").split())
 
 
-def validate_feature_table(connection, *, upgraded, suppliers=None):
+LIFECYCLE_FEATURE_TABLE_SQL = """
+    CREATE TABLE "organisation_features" (
+        feature TEXT NOT NULL PRIMARY KEY CHECK(feature IN
+            ('devices','ipam','racks','suppliers','equipment_lifecycle','it_assets')),
+        enabled INTEGER NOT NULL CHECK(typeof(enabled)='integer' AND enabled IN (0,1))
+    )
+"""
+
+
+def validate_feature_table(connection, *, upgraded, suppliers=None, lifecycle=None):
     """Stop if feature choices or their existing safeguards are unexpected."""
     expected = PREVIOUS_FEATURE_TABLE_SQL
     if upgraded:
@@ -516,6 +525,12 @@ def validate_feature_table(connection, *, upgraded, suppliers=None):
         ).fetchone() is not None
     if suppliers:
         expected = expected.replace("'racks','it_assets') OR", "'racks','it_assets','suppliers') OR")
+    if lifecycle is None:
+        lifecycle = upgraded and connection.execute(
+            "SELECT 1 FROM schema_migrations WHERE version=24"
+        ).fetchone() is not None
+    if lifecycle:
+        expected = LIFECYCLE_FEATURE_TABLE_SQL
     row = connection.execute(
         "SELECT sql FROM sqlite_master WHERE type='table' AND name='organisation_features'"
     ).fetchone()
@@ -528,7 +543,7 @@ def validate_feature_table(connection, *, upgraded, suppliers=None):
     if (len(choices) != len(expected_keys) or {key for key, _ in choices} != expected_keys
             or any(type(value) is not int or value not in (0, 1) for _, value in choices)
             or any(value for key, value in choices
-                   if key == "equipment_lifecycle" or key == "suppliers" and not suppliers)):
+                   if key == "equipment_lifecycle" and not lifecycle or key == "suppliers" and not suppliers)):
         raise RuntimeError("Unexpected organisation feature choices; review required")
     if connection.execute(
         "SELECT 1 FROM sqlite_master WHERE tbl_name='organisation_features' "
