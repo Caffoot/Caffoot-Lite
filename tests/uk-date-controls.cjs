@@ -146,4 +146,57 @@ console.log('PASS: out-of-range UK dates persist for correction; valid values re
 }
 console.log('PASS: date-picker today follows local calendar day at BST midnight');
 
+class CalendarTestNode {
+  constructor(tag, doc) {
+    this.tag=tag; this.doc=doc; this.children=[]; this.attributes={};
+    this.dataset={}; this.style={}; this.handlers={}; this.disabled=false;
+    this.tabIndex=-1; this.isConnected=true; this.classes=new Set();
+    this.classList={add: name=>this.classes.add(name), contains: name=>this.classes.has(name)};
+  }
+  append(...children) {
+    for (const child of children) { child.parentNode=this; this.children.push(child); }
+  }
+  replaceChildren(...children) { this.children=[]; this.append(...children); }
+  setAttribute(name,value) { this.attributes[name]=value; }
+  addEventListener(type,callback) { this.handlers[type]=callback; }
+  getBoundingClientRect() { return {height:275,left:20,bottom:48,top:17}; }
+  focus() { this.doc.activeElement=this; }
+  walk() { return [this,...this.children.flatMap(child=>child.walk())]; }
+  querySelector(selector) {
+    const descendants=this.walk().slice(1);
+    if (selector==='button:not([disabled])')
+      return descendants.find(node=>node.tag==='button'&&!node.disabled)||null;
+    if (selector==='.caffoot-uk-date-day[tabindex="0"]')
+      return descendants.find(node=>node.classes.has('caffoot-uk-date-day')&&node.tabIndex===0)||null;
+    return null;
+  }
+}
+const calendarDocument={
+  documentElement: document.documentElement, addEventListener:()=>{}, activeElement:null,
+  createElement(tag) { return new CalendarTestNode(tag,this); },
+};
+const calendarWindow={innerWidth:390,innerHeight:800,addEventListener:()=>{}};
+const calendarScript=source.replace(hook,hook+'\nwindow.__calendarFocusTest = {drawCalendar,setState: value => {open=value}};');
+vm.runInNewContext(calendarScript, {
+  document:calendarDocument,window:calendarWindow,
+  MutationObserver:FakeMutationObserver,Event:InputEvent,
+}, {filename:'uk-date-controls.js',timeout:1000});
+for (const [year,expected] of [[2026,'2026-02-28'],[2024,'2024-02-29']]) {
+  const popup=new CalendarTestNode('div',calendarDocument);
+  const native={value:year+'-01-31',min:'',max:''};
+  const trigger=new CalendarTestNode('button',calendarDocument);
+  const state={record:{native,button:trigger},popup,year,month:0,headingId:'month-label',
+    focusDate:year+'-01-31'};
+  calendarWindow.__calendarFocusTest.setState(state);
+  calendarWindow.__calendarFocusTest.drawCalendar();
+  const next=popup.walk().find(node=>node.attributes['aria-label']==='Next month');
+  assert.ok(next,'Expected calendar Next month button');
+  next.handlers.click();
+  assert.equal(state.month,1,'Expected February');
+  assert.equal(calendarDocument.activeElement?.dataset.iso,expected,
+    'Focus must move to valid target-month day after the old controls are replaced');
+}
+console.log('PASS: calendar month navigation preserves day focus, including leap February');
+
+
 
