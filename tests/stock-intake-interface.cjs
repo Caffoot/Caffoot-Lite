@@ -167,7 +167,7 @@ async function main(){
  assert.equal(await page.locator('#stock-tab-inventory').getAttribute('aria-selected'),'true');
  await stockTab('receive');
  await newComputer(16,10,'Fictional Supplier A');
- await page.locator('#stock-receivedOn').fill('2026-11-13');
+ await page.locator('#caffoot-uk-stock-receivedOn').fill('13/11/2026');
  await page.locator('#caffoot-uk-stock-receivedOn').waitFor();
  assert.equal(await page.locator('#caffoot-uk-stock-receivedOn').inputValue(),'13/11/2026');
  await page.locator('#caffoot-uk-stock-receivedOn').fill('14/11/2026');
@@ -185,7 +185,7 @@ async function main(){
  await stockTab('receive');await page.locator('[data-stock-action="mode-existing"]').click();
  await page.locator('#stock-existing').selectOption(computer);
  await page.locator('#stock-quantity').fill('5');
- await page.locator('#stock-receivedOn').fill('2026-11-14');
+ await page.locator('#caffoot-uk-stock-receivedOn').fill('14/11/2026');
  await page.locator('#stock-supplier').fill('Fictional Supplier B');
  await page.locator('[name="itemsChecked"]').check();await page.locator('[name="conditionChecked"]').check();
  await page.locator('#stock-readyQuantity').fill('2');
