@@ -131,7 +131,18 @@ class EquipmentLifecycleTests(unittest.TestCase):
         self.setup_devices()
         with self.assertRaisesRegex(ValueError, 'Server is the existing physical server type'):
             change_device_catalogue(self.db, 1, 'type', 'add', '', 'Server', [])
-        # Simulate a valid pre-existing custom catalogue identity from an older version.
+        # A historical custom type is part of the managed catalogue, not just
+        # its lifespan table. Reproduce both persisted records without using
+        # the newly protected Add Device Type operation.
+        managed = self.db.execute(
+            "SELECT value_json FROM inventory_settings WHERE key='deviceTypes'"
+        ).fetchone()
+        existing = json.loads(managed[0]) if managed else []
+        self.assertNotIn('Server', existing)
+        self.db.execute(
+            "INSERT INTO inventory_settings(key,value_json) VALUES('deviceTypes',?) "
+            "ON CONFLICT(key) DO UPDATE SET value_json=excluded.value_json",
+            (json.dumps([*existing, 'Server']),))
         self.db.execute("INSERT INTO equipment_lifecycle_types(name,years) VALUES('Server',7)")
         self.db.commit()
         labels = {row['name']: row['label'] for row in read_lifecycle_settings(self.db, 1)['types']}
