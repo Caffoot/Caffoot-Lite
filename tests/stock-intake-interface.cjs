@@ -157,6 +157,16 @@ async function main(){
  assert.ok(returnGaps.originalIssue>=16,'Original issue and return fields need separation: '+JSON.stringify(returnGaps));
  assert.ok(returnGaps.returnNoteMargin>=16,'Return notes need section spacing: '+JSON.stringify(returnGaps));
  await stockTab('receive');
+ // An invalid visible date must also remain a protected unsaved edit on Cancel.
+ const invalidReceiptDate=page.locator('#caffoot-uk-stock-receivedOn');
+ await invalidReceiptDate.fill('31/02/2026');
+ assert.equal(await page.locator('#stock-receivedOn').inputValue(),'');
+ assert.equal(await invalidReceiptDate.getAttribute('aria-invalid'),'true');
+ await page.locator('#stock-receipt-form [data-stock-action="cancel-stock"]').click();
+ await page.locator('#discard-dialog').waitFor();
+ await page.locator('#discard-dialog [data-action="discard-device-form-changes"]').click();
+ assert.equal(await page.locator('#stock-tab-inventory').getAttribute('aria-selected'),'true');
+ await stockTab('receive');
  await page.locator('#stock-supplier').fill('Discard this unsaved delivery');
  await page.locator('#stock-receipt-form [data-stock-action="cancel-stock"]').click();
  await page.locator('#discard-dialog').waitFor();
