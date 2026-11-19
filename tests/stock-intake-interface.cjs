@@ -167,6 +167,9 @@ async function main(){
  assert.equal(await page.locator('#stock-tab-inventory').getAttribute('aria-selected'),'true');
  await stockTab('receive');
  await newComputer(16,10,'Fictional Supplier A');
+ await page.locator('#caffoot-uk-stock-receivedOn').waitFor();
+ assert.match(await page.locator('#stock-receivedOn').inputValue(),/^\d{4}-\d{2}-\d{2}$/);
+ assert.match(await page.locator('#caffoot-uk-stock-receivedOn').inputValue(),/^\d{2}\/\d{2}\/\d{4}$/);
  await page.locator('#caffoot-uk-stock-receivedOn').fill('13/11/2026');
  await page.locator('#caffoot-uk-stock-receivedOn').waitFor();
  assert.equal(await page.locator('#caffoot-uk-stock-receivedOn').inputValue(),'13/11/2026');
