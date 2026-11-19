@@ -215,9 +215,12 @@
     next.disabled = state.year === 9999 && state.month === 11;
     function stepMonth(delta) {
       const d = monthDate(state.year,state.month + delta,1);
+      const priorDay = validIso(state.focusDate) ? Number(state.focusDate.slice(8,10)) : 1;
       state.year = d.getUTCFullYear();
       state.month = d.getUTCMonth();
-      drawCalendar();
+      const lastDay = monthDate(state.year,state.month + 1,0).getUTCDate();
+      // Rebuilt month navigation buttons disappear; return keyboard focus to a valid day.
+      drawCalendar(isoFromDate(monthDate(state.year,state.month,Math.min(priorDay,lastDay))));
     }
     previous.addEventListener('click', () => stepMonth(-1));
     next.addEventListener('click', () => stepMonth(1));
