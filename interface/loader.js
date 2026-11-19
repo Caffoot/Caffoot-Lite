@@ -57,10 +57,13 @@ async function initialiseInterface() {
             interfaceTemplates.set(match[1], match[2]);
         }
     }
-    const designs = ['dashboard','my-account','settings','device-details','devices','device-inventory','device-management','ipam','racks','users','audit-trail','staff','equipment','stock','suppliers'];
+    const designs = ['dashboard','my-account','settings','device-details','devices','device-inventory','device-management','ipam','racks','users','audit-trail','staff','equipment','stock','suppliers','dashboard-lifecycle','settings-lifecycle','device-details-lifecycle','device-management-lifecycle'];
     await Promise.all(designs.map(async name => {
         interfaceStyles.set(name, await loadInterfaceText('styles/' + name + '.css'));
     }));
+    // Preserve the exact pinned v2.1 stylesheets and append only approved Batch 4.4 rules.
+    for(const name of ['dashboard','settings','device-details','device-management'])
+        interfaceStyles.set(name, interfaceStyles.get(name) + interfaceStyles.get(name + '-lifecycle'));
     const equipmentStyle = document.createElement('style');
     equipmentStyle.textContent = interfaceStyles.get('equipment');
     document.head.append(equipmentStyle);
