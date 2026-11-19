@@ -106,8 +106,9 @@
     record.text.readOnly = record.native.readOnly;
     record.button.disabled = record.native.disabled || record.native.readOnly;
     if (!force && document.activeElement === record.text) return;
-    // Never erase an invalid typed date merely because another action was clicked.
-    if (!force && record.text.value.trim() && !toIso(record.text.value) && record.text.validity.customError) return;
+    // Preserve invalid typed dates, including real dates outside min/max, on blur or save.
+    // Otherwise an optional out-of-range date could silently clear before validation.
+    if (!force && record.text.validity.customError) return;
     record.text.value = toUk(record.native.value);
     record.text.setCustomValidity('');
     record.text.setAttribute('aria-invalid', 'false');
