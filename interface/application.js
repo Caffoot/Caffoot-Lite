@@ -4028,9 +4028,19 @@ function openIpModal(ip) {
         const modalFormSnapshots = new WeakMap();
         function modalFormSnapshot(form) {
             return JSON.stringify(Array.from(form.querySelectorAll('input,select,textarea'))
-                .filter(field => field.hasAttribute('data-equipment-supplier-id') ||
-                    field.hasAttribute('data-lifecycle-replacement-mode') || !['button','submit','reset','hidden'].includes(field.type))
-                .map(field => [field.id || field.name || '', field.type, field.type === 'checkbox' || field.type === 'radio' ? field.checked : field.value]));
+                .filter(field => !field.classList.contains('caffoot-uk-date-text') &&
+                    (field.hasAttribute('data-equipment-supplier-id') ||
+                    field.hasAttribute('data-lifecycle-replacement-mode') || !['button','submit','reset','hidden'].includes(field.type)))
+                .map(field => {
+                    // The visible UK field is a presentation adapter, not a second saved date.
+                    // Track its original ISO field once; still treat an invalid typed date as unsaved.
+                    let value = field.type === 'checkbox' || field.type === 'radio' ? field.checked : field.value;
+                    if (field.type === 'date') {
+                        const visible = field.closest('.caffoot-uk-date-wrap')?.querySelector('.caffoot-uk-date-text');
+                        if (visible?.value.trim() && !field.value) value = 'invalid-uk-date:' + visible.value.trim();
+                    }
+                    return [field.id || field.name || '', field.type, value];
+                }));
         }
         function stockFormHasChanges(form) {
             const initial=modalFormSnapshots.get(form);
@@ -7039,7 +7049,9 @@ function openIpModal(ip) {
                     const field = event.target;
                     if (field && field.matches('input,select')) {
                         field.classList.remove('device-form-invalid-field');
-                        field.removeAttribute('aria-invalid');
+                        // Keep an invalid UK date accessible until the user corrects it.
+                        if (!field.classList.contains('caffoot-uk-date-text') || field.validity.valid)
+                            field.removeAttribute('aria-invalid');
                     }
                 };
                 deviceForm.addEventListener('input', clearFieldError);
