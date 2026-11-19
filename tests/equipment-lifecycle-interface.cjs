@@ -208,12 +208,12 @@ with sqlite3.connect(sys.argv[1]) as db:
   await page.keyboard.press('Escape');
   await ukPicker.waitFor({state:'hidden'});
   assert.equal(await fields.locator('#lifecycle-purchaseDate').inputValue(), '2024-03-15');
-  await fields.locator('#lifecycle-warrantyExpiry').fill('');
+  await fields.locator('#caffoot-uk-lifecycle-warrantyExpiry').fill('');
   await fields.getByRole('button', {name: 'Use Suggestion'}).click();
   assert.equal(await fields.locator('#lifecycle-warrantyExpiry').inputValue(), '2025-03-15');
-  await fields.locator('#lifecycle-purchaseDate').fill('2023-03-15');
+  await fields.locator('#caffoot-uk-lifecycle-purchaseDate').fill('15/03/2023');
   assert.equal(await fields.locator('#lifecycle-warrantyExpiry').inputValue(), '2025-03-15');
-  await fields.locator('#lifecycle-replacementOverride').fill('2030-08-12');
+  await fields.locator('#caffoot-uk-lifecycle-replacementOverride').fill('12/08/2030');
   const saved = await postOn(page, '/api/devices/edit/save', () =>
     page.getByRole('button', {name: 'Save Device', exact: true}).click());
   assert.deepEqual(saved.lifecycle, {purchaseDate:'2023-03-15', warrantyExpiry:'2025-03-15', replacementOverride:'2030-08-12'});
@@ -275,7 +275,7 @@ with sqlite3.connect(sys.argv[1]) as db:
   await edit(editor.page);
   assert.equal(await editor.page.locator('#lifecycle-replacementOverride').getAttribute('readonly'), '');
   assert.equal(await editor.page.getByRole('button', {name:'Use Calculated Date'}).isVisible(), false);
-  await editor.page.locator('#lifecycle-purchaseDate').fill('2021-02-15');
+  await editor.page.locator('#caffoot-uk-lifecycle-purchaseDate').fill('15/02/2021');
   const ordinaryEdit = await postOn(editor.page, '/api/devices/edit/save', () =>
     editor.page.getByRole('button', {name: 'Save Device', exact:true}).click());
   assert.deepEqual(ordinaryEdit.lifecycle, {purchaseDate:'2021-02-15'});
@@ -311,7 +311,7 @@ with sqlite3.connect(sys.argv[1]) as db:
         await page.locator('#device-lifecycle-heading').scrollIntoViewIfNeeded();
         await take('device-details',theme);
         await edit(page);
-        await fields.locator('#lifecycle-warrantyExpiry').fill('');
+        await fields.locator('#caffoot-uk-lifecycle-warrantyExpiry').fill('');
         await fields.evaluate(section=>{
           const body=section.closest('.device-review-body');
           body.scrollTop+=section.getBoundingClientRect().top-body.getBoundingClientRect().top-8;
