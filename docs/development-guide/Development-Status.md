@@ -1,10 +1,12 @@
 # Published And Development Versions
 
-## Current Integration — 17 November 2026
+## Current Integration — 19 November 2026
 
 Caffoot Lite **v2.1 remains the published release**, at tagged source `c3237114108cad9f7d4e57657b6aed5e0091a5ef` (schema 10). Use the [published user guides](../how-tos/features-and-instructions/README.md) and [installation instructions](../../INSTALLATION.md) for that release.
 
-The verified `milestone-1` HEAD is **`753b3266893987addb11406ef8303adb03c3c112`**, schema 20. Stage 1 and Stage 2 are accepted; **Stage 3 Batches 3.1–3.12 are merged**. Its implemented workflows are described in the [draft v2.2 user guides](../how-tos/features-and-instructions/v2.2-draft/README.md). This verification records source and merge state, not a new application test run or completed milestone acceptance.
+The verified `milestone-1` HEAD is **`c1b5f8008e8ba56840d9790e3ba1c7e91ad35e0b`**, schema **24**. Stages 1–3 have been development-accepted and integrated with their documented deferred manual/native checks; Stage 4 has completed all four owner-accepted development batches and their merges. This records verified integration and recorded sign-off, **not** a new application test, Stage 6 completion or v2.2 release. Earlier stage-specific source checkpoints below remain historical and are not today's HEAD. See [formal Stage 4 sign-off](https://github.com/Caffoot/Caffoot-Lite/issues/369#issuecomment-7007760294) and the [draft v2.2 user guides](../how-tos/features-and-instructions/v2.2-draft/README.md).
+
+### Stage 3 Development Integration — Historical Merge Ledger
 
 | Integrated Work | Verified Merge Checkpoint |
 | --- | --- |
@@ -18,9 +20,19 @@ The verified `milestone-1` HEAD is **`753b3266893987addb11406ef8303adb03c3c112`*
 | Overview, reporting and Low Stock warnings, Batch 3.12/schema 20 | PR #398, `558286c2430ebee40246180d9f09aefdbb46f6b9` |
 | Subsequent display/account/Staff/identity/session corrections | PRs #399, #401–#403, #405–#406, through `753b3266893987addb11406ef8303adb03c3c112` |
 
+### Stage 4 — Owner-Accepted And Merged 19 November 2026
+
+| Development batch | Issue | Merged PR | Verified integration checkpoint |
+| --- | --- | --- | --- |
+| 4.1 Supplier Management | #410 | [#414](https://github.com/Caffoot/Caffoot-Lite/pull/414) | `ea6e86c15e207d32795641b52685ae1ec6a828df` |
+| 4.2 Supplier Issues / Purchasing Dashboard | #411 | [#415](https://github.com/Caffoot/Caffoot-Lite/pull/415) | `3165457b8c8f824da3e6156f4bf3ce276d7905cd` |
+| 4.3 Equipment Supplier Integration | #412 | [#416](https://github.com/Caffoot/Caffoot-Lite/pull/416) | `e67ca1590f1669d722c1ebe2ba11896035d0c49c` |
+| 4.4 Equipment Lifecycle | #413 | [#418](https://github.com/Caffoot/Caffoot-Lite/pull/418) | `c1b5f8008e8ba56840d9790e3ba1c7e91ad35e0b` |
+
+
 Staff Members and Departments are core and independently permissioned. IT Assets is independently optional and defaults off on fresh installations. Schema 20 adds IT Assets Edit to the built-in IT Staff role default while preserving existing accounts' configured access with compatibility overrides; it does not automatically add new ordinary accounts to IT Staff.
 
-**Still deferred:** Batch 3.4 manual/native acceptance, broader native Safari/private-installation evidence, private legacy-data checks and completed-milestone compatibility/full upgrade/restore acceptance. Earlier individual owner tests retain their actual scope. Stages 4–6 and release approval remain separate. No v2.2 image, production upgrade procedure, merge to `main`, release or deployment is authorised here.
+**Still deferred:** Batch 3.4 manual/native acceptance, broader native Raspberry Pi/Safari and private-installation checks, private legacy-data verification, and Stage 6 cross-stage security/compatibility, supported upgrade and complete-volume backup/restore acceptance. These are not marked passed by Stage 4's hosted CI. Stage 5 has four frozen, approved HTML designs and the six-batch plan [#419–#425](https://github.com/Caffoot/Caffoot-Lite/issues/419), but **no individual Stage 5 implementation batch is yet authorised**. Separate owner approval is required for each development batch, PR merge, final milestone merge, release and deployment. No v2.2 image, production upgrade procedure or publication is implied.
 
 The [documentation review record](Stage-1-3-Documentation-Review.md) lists sources, screenshot approvals, wording discrepancies and remaining documentation acceptance. The [active handover](../development-handovers/milestone-01.md) preserves implementation evidence.
 

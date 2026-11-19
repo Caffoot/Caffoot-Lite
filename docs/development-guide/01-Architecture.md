@@ -2,9 +2,9 @@
 
 ## In simple terms
 
-**Version boundary:** Published v2.1 is the tagged schema-10 release. `main` includes accepted but unreleased Stage 1/schema 12; this `milestone-1` development branch is schema 15 through merged Stage 3 Batch 3.4. Batch 3.4 manual/native acceptance remains deferred, not passed. See [Development Status](Development-Status.md) for source checkpoints; documentation synchronisation does not release v2.2.
+**Current version boundary — 19 November 2026:** Published v2.1 is the tagged schema-10 release. `main` includes published-source and subsequently accepted-but-unreleased work; the separate `milestone-1` development branch has integrated Stages 1–4 at verified HEAD `c1b5f8008e8ba56840d9790e3ba1c7e91ad35e0b`, schema 24. Stage 5 is planning-only under [#419](https://github.com/Caffoot/Caffoot-Lite/issues/419). Native/manual and Stage 6 upgrade/restore acceptance remain deferred. See [Development Status](Development-Status.md).
 
-Stage 1's role tables, permission policy, MFA flow and reviewed administrator role changes remain in use. Stage 2 adds independent optional-feature rules; the subsequent Staff Members, Departments and Device assignment work is on this branch. Refer to [Role Permissions](Role-Permissions.md), [Optional Features](Optional-Features.md) and [Staff Directory Foundation](Staff-Directory-Foundation.md) for their established contracts.
+Stage 1's role tables, permission policy, MFA flow and reviewed administrator role changes remain in use. Stage 2 adds independent optional-feature rules; Stage 3 adds Staff/Department equipment assignments and IT Assets workflows; Stage 4 adds Suppliers/Purchasing, equipment-supplier relationships and Equipment Lifecycle. These integrations are on the unreleased milestone branch. Refer to [Role Permissions](Role-Permissions.md), [Optional Features](Optional-Features.md) and [Staff Directory Foundation](Staff-Directory-Foundation.md) for their established contracts.
 
 The Docker version of Caffoot Lite is a small web application, not a collection of separate services. A browser opens the application's HTTPS page; the Python server serves that page and processes its requests; SQLite stores the shared inventory and account details. A Portainer stack or Docker Compose configuration starts the same application.
 

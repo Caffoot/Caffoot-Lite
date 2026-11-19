@@ -1,12 +1,20 @@
 # Milestone 01 Development Handover — v2.2 Target
 
-## Stage 4 Batch 4.2 Draft — 18 November 2026
+## Current Milestone Checkpoint — 19 November 2026
+
+**Published release:** v2.1. **Unreleased integration branch:** `milestone-1`, verified at **`c1b5f8008e8ba56840d9790e3ba1c7e91ad35e0b`** (schema 24). Stages 1–3 are development-accepted/integrated, retaining deferred manual/native requirements. **Stage 4 development and integration are complete and owner-signed-off**: Batches 4.1–4.4 issues #410–#413, merged PRs [#414](https://github.com/Caffoot/Caffoot-Lite/pull/414), [#415](https://github.com/Caffoot/Caffoot-Lite/pull/415), [#416](https://github.com/Caffoot/Caffoot-Lite/pull/416) and [#418](https://github.com/Caffoot/Caffoot-Lite/pull/418). The [19 November Stage 4 formal sign-off](https://github.com/Caffoot/Caffoot-Lite/issues/369#issuecomment-7007760294) records owner acceptance, final-head workflows and genuine application captures. The independently approved UK date/device-label corrections were integrated into the final Stage 4.4 branch before merge.
+
+**Next planned work:** [Stage 5 master #419](https://github.com/Caffoot/Caffoot-Lite/issues/419) has **four frozen owner-approved HTML designs** and the agreed individually gated sequence [5.1 #420](https://github.com/Caffoot/Caffoot-Lite/issues/420) (foundation), [5.2 #421](https://github.com/Caffoot/Caffoot-Lite/issues/421) (IT Service Desk), [5.3 #422](https://github.com/Caffoot/Caffoot-Lite/issues/422) (My/Department Tickets), [5.4 #423](https://github.com/Caffoot/Caffoot-Lite/issues/423) (Settings/reporting), [5.5 #424](https://github.com/Caffoot/Caffoot-Lite/issues/424) (email templates/branding) and [5.6 #425](https://github.com/Caffoot/Caffoot-Lite/issues/425) (notifications/integration). **Stage 5 application development is not authorised**, including Batch 5.1. Staff Member versus IT Staff ticket access, historical handover privacy and the frozen design/scope have already been approved. Do not reopen those decisions, invent features or begin development because this handover was updated. Each batch and each merge requires separate owner approval. Read #419 and its latest linked owner decisions before Codex work.
+
+**Outstanding:** Stage 6 cross-stage verification, compatibility/legacy import, Pi/native Safari/manual checks, actual supported upgrades and complete-volume backup/restore, plus final independent milestone acceptance and v2.2 release/publication approval. None is completed by Stage 4 sign-off. Draft v2.2 user/admin guides and actual screenshot evidence retain their own acceptance limits. All older sections below are dated historical checkpoints; their 'pending', 'draft', schema and branch statements describe the period when written, not current integration status. See [Development Status](../development-guide/Development-Status.md) and [documentation plan #366](https://github.com/Caffoot/Caffoot-Lite/issues/366).
+
+## Historical Stage 4 Batch 4.2 Draft — 18 November 2026
 
 Batch 4.1 was merged to `milestone-1` at `ea6e86c15e207d32795641b52685ae1ec6a828df`. The separately authorised Batch 4.2 adds company-owned Supplier Issues, the independent Issue Category catalogue, the live Purchasing Dashboard and sidebar navigation. The runtime checkpoint is `4055b8e612c262b461baf60954be84668d46ba79` (schema 22). The branch is `feat/stage-4-batch-4-2`. [Owner-approved scope](https://github.com/Caffoot/Caffoot-Lite/issues/411) · [Draft PR #415](https://github.com/Caffoot/Caffoot-Lite/pull/415)
 
 The [Batch 4.2 evidence](evidence/stage-4-batch-42/README.md) records the local checks and application captures. The [v2.2 draft user and administrator instructions](../how-tos/features-and-instructions/v2.2-draft/Supplier-Issues-and-Purchasing.md) explain access, retention, correction and handover. Full Ready For Review checks and owner acceptance remain pending. Batch 4.3 equipment integration and Batch 4.4 lifecycle require their own development authorisation.
 
-## Current Integration And Documentation — 17 November 2026
+## Historical Integration And Documentation — 17 November 2026
 
 Verified `milestone-1` HEAD: **`753b3266893987addb11406ef8303adb03c3c112`**, matching the supplied starting checkpoint; schema 20. Stage 1 and Stage 2 are accepted. Stage 3 Batches 3.1–3.12 are merged, including circulation, registration/reissue, associations/direct handovers, corrections and IT Assets Overview/Low Stock reporting. Issue Equipment confirmation is merged via PR #393; dashboard via #398; subsequent focused corrections through #406 are also integrated. [Development Status](../development-guide/Development-Status.md) records exact merge checkpoints. Earlier statements that these features are awaiting implementation or merge describe historical branches only.
 
@@ -434,8 +442,8 @@ deployment, publication, `main` or permanent-archive change.
 - [x] Agree target version v2.2; distinguish from published v2.1
 - [x] Stage 1 — accepted and merged (PR #358); documented real Pi and isolated restore evidence
 - [x] Stage 2 — optional-feature foundation (issue #238), accepted through PR #376
-- [ ] Stage 3 — People, Assets and equipment handovers (#232, #352, #292)
-- [ ] Stage 4 — Suppliers and lifecycle (#349, #286)
+- [x] Stage 3 — People, Assets and equipment handovers (#232, #352, #292): development integrated/accepted; deferred native/manual checks remain
+- [x] Stage 4 — Suppliers and lifecycle (#349, #286): development completed, owner-accepted and merged via PRs #414–#416 and #418; Stage 6/manual checks separate
 - [ ] Stage 5 — Service Desk and notifications (#233, #355)
 - [ ] Stage 6 — fixes, integrated verification and milestone-wide acceptance (#347, plus cross-feature checks)
 - [ ] Draft and verify v2.2 release notes, installation/upgrade/rollback guidance, source-compatible examples and screenshots based on delivered work
