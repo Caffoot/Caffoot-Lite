@@ -1,4 +1,5 @@
 # One-off verification for stacked draft PR #428 ONLY.
+# Focused rerun: verify aria-invalid preservation and untouched/invalid stock Cancel.
 # The exact branch and path filters cause this to run only when THIS file is
 # initially committed (or explicitly edited) on the PR #428 branch.
 # Remove this temporary workflow before merging PR #428 into PR #418.
