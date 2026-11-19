@@ -37,6 +37,7 @@ jobs:
       - name: Run focused Equipment Lifecycle backend tests
         run: python -m unittest discover -s tests -p 'test_equipment_lifecycle.py' -v
       - name: Install isolated Chromium testing tools
+        id: browser_tools
         run: |
           npm install --prefix "$RUNNER_TEMP/pr428-browser" --no-save --no-package-lock --no-audit --no-fund playwright@1.56.1
           "$RUNNER_TEMP/pr428-browser/node_modules/.bin/playwright" install --with-deps chromium
@@ -56,6 +57,7 @@ jobs:
           if-no-files-found: ignore
           retention-days: 14
       - name: Run actual Stock Intake journey and capture corrected UI
+        if: ${{ !cancelled() && steps.browser_tools.outcome == 'success' }}
         env:
           NODE_PATH: ${{ runner.temp }}/pr428-browser/node_modules
           CAFFOOT_STOCK_OUTPUT: ${{ runner.temp }}/pr428-stock
