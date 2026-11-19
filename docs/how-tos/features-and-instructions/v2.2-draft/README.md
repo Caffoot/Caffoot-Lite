@@ -1,6 +1,6 @@
 # Draft v2.2 User And Administrator Guides
 
-> **Draft v2.2 — Unreleased.** The Stage 1–3 guides describe `milestone-1` at `753b3266893987addb11406ef8303adb03c3c112` (schema 20), verified on 17 November 2026. Use the [published v2.1 guides](../README.md) for the current release. These drafts are not installation, upgrade or restore instructions.
+> **Draft v2.2 — Unreleased.** Current `milestone-1` integration is verified at `c1b5f8008e8ba56840d9790e3ba1c7e91ad35e0b` (schema 24), with Stages 1–4 development-complete/owner-accepted as of 19 November 2026. Some individual guides retain dated historical draft-review references; the [current Development Status](../../../development-guide/Development-Status.md) takes precedence. Use the [published v2.1 guides](../README.md) for the current release. These drafts are not production installation, upgrade or restore instructions.
 
 Caffoot Lite brings accounts, Staff Members, Departments, Devices and optional IT Assets together so your team can record who holds equipment, what is physically in stock and what is ready to issue. These guides explain workflows for ordinary users, IT technicians and administrators, including Suppliers and Equipment Lifecycle in Stage 4. Examples use fictional people, organisations and equipment.
 
@@ -66,7 +66,7 @@ For a new delivery, follow Receive Stock → check/readiness → Issue Equipment
 | Use Purchasing, file or correct Issues, hand them over between contacts and manage Issue Categories | [Supplier Issues And Purchasing](Supplier-Issues-and-Purchasing.md) |
 | Record, correct or review Supplier associations on Devices and stock receipts | [Equipment Supplier Integration](Equipment-Supplier-Integration.md) |
 
-Suppliers starts switched off and uses its own section permissions. Supplier Management and Supplier Issues are integrated on the development branch. Batch 4.3 adds equipment associations and the Supplier Equipment view in schema 23 on [draft PR #416](https://github.com/Caffoot/Caffoot-Lite/pull/416).
+Suppliers starts switched off and uses its own section permissions. Supplier Management, Supplier Issues/Purchasing and Equipment Supplier Integration are owner-accepted and integrated on the unreleased development branch through merged PRs #414–#416. The Supplier Equipment view and schema 23 work are part of that integration, not a remaining draft PR.
 
 ## Equipment Lifecycle
 
@@ -74,11 +74,11 @@ Suppliers starts switched off and uses its own section permissions. Supplier Man
 | --- | --- |
 | Record dates, review Dashboard warnings, configure warning periods and lifespans, archive or restore types | [Equipment Lifecycle](Equipment-Lifecycle.md) |
 
-Equipment Lifecycle is independently optional and starts switched off. The guide describes Batch 4.4 on the draft development branch.
+Equipment Lifecycle is independently optional and starts switched off. Stage 4.4 is owner-accepted and merged via PR #418 into the unreleased development branch; these instructions remain draft v2.2, not published v2.1 features.
 
 ## Publication And Acceptance
 
-Stage 1 and Stage 2 are accepted. Stage 3 Batches 3.1–3.12 and subsequent focused corrections are merged on the development branch. This does not establish completed milestone or release acceptance. Batch 3.4 manual/native acceptance, broader native Safari/private-installation evidence and Stage 6 compatibility/full upgrade/restore acceptance remain deferred. The Batch 4.3 integrated application and instructions await independent product-owner review. Service Desk and later milestone stages remain separate work.
+Stages 1–4 are development-complete, owner-accepted and integrated into `milestone-1`; this does **not** establish full milestone, native/manual or release acceptance. Stage 5's four frozen HTML designs and six approved planning batches #420–#425 are recorded in [#419](https://github.com/Caffoot/Caffoot-Lite/issues/419), but no Stage 5 implementation has been authorised. Batch 3.4 manual/native acceptance, broader Raspberry Pi/native Safari/private-installation evidence and Stage 6 compatibility/full upgrade/restore acceptance remain deferred. v2.2 is not released.
 
 Images used here are genuine application captures with an identified approval source and captions describing their scope. Functional HTML previews are retained as development references, never presented as application screenshots. Missing or outdated images and remaining wording discrepancies are listed in the [documentation review record](../../../development-guide/Stage-1-3-Documentation-Review.md).
 
