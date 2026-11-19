@@ -12,6 +12,13 @@
   const displayStockType=name=>name==='Server - Physical'?'Server':name==='Server - Virtual'?'Virtual Machine':name;
   function canRead(){return !!config?.canRead();}
   function canEdit(){return !!config?.canEdit();}
+  // Preserve the browser-local calendar day; avoid locale-dependent native input defaults.
+  function stockTodayIso(){
+    const today=new Date();
+    return String(today.getFullYear()).padStart(4,'0')+'-'+
+      String(today.getMonth()+1).padStart(2,'0')+'-'+
+      String(today.getDate()).padStart(2,'0');
+  }
   function stockLabel(item){return [item.manufacturer,item.model].filter(Boolean).join(' ')||item.name;}
   function stockNotice(title,message){return `<div class="card card-padded"><h3>${safe(title)}</h3><p class="sub" role="status">${safe(message)}</p></div>`;}
   function stockButton(label,action,id='',primary=false){return `<button type="button" class="btn${primary?' primary':''}" data-stock-action="${action}" data-id="${safe(id)}">${label}</button>`;}
@@ -57,7 +64,7 @@
       ${stockField('Serial Number (Optional)','serialNumber','text','','maxlength="200"')}
       ${stockField('Asset Tag (Optional)','assetTag','text','','maxlength="200"')}</div></fieldset>`;
     const receipt=`<div class="staff-fields">${stockField('Quantity Received','quantity','number','1','required min="1" max="9007199254740991" step="1"')}
-      ${stockField('Date Received','receivedOn','date',new Date().toLocaleDateString('en-CA'),'required')}
+      ${stockField('Date Received','receivedOn','date',stockTodayIso(),'required')}
       ${stockField('Supplier (Optional)','supplier','text','','maxlength="200"')}
       <div class="preview-form-field"><label for="stock-notes">Receipt Notes (Optional)</label><textarea class="input" name="notes" id="stock-notes" maxlength="2000"></textarea></div></div>
       <div class="divider"></div><h3>Receipt &amp; Condition Checks</h3><p class="formhint">All received units are physically held. Only explicitly checked units become Ready To Issue. Brand-new equipment does not need a data wipe.</p>
@@ -500,7 +507,7 @@
     const content=`<div class="staff-fields">${deviceField}
       ${stockSelect(handover?'Recipient Type':'Assign To','recipientKind',[['staff','Staff Member'],['department','Department']], '',stockContext.recipientKind||'staff')}
       ${handover?stockSelect('Find A Recipient','recipientId',[['','Select A Staff Member']], 'required'):stockField('Find A Recipient','recipientSearch','search','','maxlength="100"')+stockSelect('Staff Member Or Department','recipientId',[['','Select An Eligible Recipient']], 'required')}
-      ${stockField(handover?'Date Reassigned':'Date Issued','issuedOn','date',new Date().toLocaleDateString('en-CA'),'required')}</div>${checks}${stockNote(handover?'Reassignment Note (Optional)':'Issue Note (Optional)','issueNote')}`;
+      ${stockField(handover?'Date Reassigned':'Date Issued','issuedOn','date',stockTodayIso(),'required')}</div>${checks}${stockNote(handover?'Reassignment Note (Optional)':'Issue Note (Optional)','issueNote')}`;
     return stockWorkflowForm('reissue',handover?'Reassignment Details':'Reissue Existing Device',handover?'The current holder stays recorded until this complete handover succeeds.':'Issue one genuinely held, prepared Device while preserving its identity and all previous assignments.',content,
       handover?'<p>This Device goes directly to its new holder. It is not being returned to the storeroom. Associated equipment must already be resolved.</p>':'<p>Only unassigned registered Devices recorded as Ready To Issue are eligible. A successful assignment reduces Physically Held and Ready To Issue by one. Device Status, configuration, network and rack details stay as recorded.</p>',handover?'Confirm Ready And Reassign':'Reissue Existing Device');
   }
@@ -520,7 +527,7 @@
     const recipient=association?`<p class="formhint">Issued To: <strong>${safe(association.recipientLabel)}</strong>. Equipment is linked to this Device only when you save.</p>`:`${stockSelect('Assign To','recipientKind',[['staff','Staff Member'],['department','Department']], '',stockContext.recipientKind||'staff')}${stockField('Find A Recipient','recipientSearch','search','','maxlength="100"')}${stockSelect('Staff Member Or Department','recipientId',[['','Select An Eligible Recipient']], 'required')}`;
     const methods=association?`${stockSelect('Add Equipment From','associationMethod',[['new','Issue And Associate'],['existing','Associate Already Issued Equipment']])}${recipient}<fieldset id="stock-association-existing" hidden disabled>${stockSelect('Already Issued Equipment','existingIssue',(stockContext.existingIssues||[]).map(issue=>[issue.id,stockExistingIssueLabel(issue)]).concat((stockContext.existingIssues||[]).length?[]:[['','No Eligible Issued Equipment']]),'required')}<p class="formhint">The entire outstanding original issue is linked. Stock is not issued or deducted again.</p></fieldset>`:'';
     const content=`${methods}<fieldset id="stock-association-new"><div class="staff-fields">${stockSelect('Ready Equipment','issueItem',choices.length?choices:[['','No Stock Items']], 'required',stockContext.stockItemId)}${stockField('Quantity To Issue','issueQuantity','number','1','required min="1" step="1"')}
-      ${association?'':recipient}${stockField('Date Issued','issuedOn','date',new Date().toLocaleDateString('en-CA'),'required')}</div>
+      ${association?'':recipient}${stockField('Date Issued','issuedOn','date',stockTodayIso(),'required')}</div>
       <div id="stock-issue-unit-choices"></div>${stockNote('Issue Note (Optional)','issueNote')}</fieldset><p class="formhint" id="stock-issue-validation" role="status"></p>`;
     return stockWorkflowForm('issue',association?'Add Equipment':'Issue Equipment',association?'Use Ready stock or equipment already issued to this Device’s current holder.':'Choose ready stock and an eligible recipient. Individual equipment keeps its existing identity.',content,
       '<div id="stock-issue-availability" aria-live="polite"></div><p class="formhint">Awaiting, issued and written-off equipment cannot be issued. No managed Device is created by this form.</p>',association?'Add Equipment':'Issue Equipment');
@@ -564,7 +571,7 @@
     if(!canEdit())return stockNotice('Read Only','IT Assets Edit is required to return equipment.');
     const unassigned=stockContext.returnSource?.startsWith('unassigned-device:'),sources=stockReturnSources(),choices=sources.map(source=>[source.key,source.unassignedDevice?source.name:source.name+' · '+source.recipientLabel+' · '+source.outstanding+' Outstanding']);
     const content=`${stockSelect(unassigned?'Device Being Returned':'Select Issued Equipment','returnSource',choices.length?choices:[['',unassigned?'Device No Longer Eligible':'No Outstanding Equipment']], unassigned?'required disabled':'required',stockContext.returnSource)}<div class="preview-details-actions"><div id="stock-original-issue"></div><span id="stock-return-correction" hidden>${stockButton('Correct Movement','correct-return-movement')}</span></div><p class="formhint" id="stock-return-refresh" role="status"></p><div class="staff-fields">
-      ${stockField('Date Returned','returnedOn','date',new Date().toLocaleDateString('en-CA'),'required')}${stockField('Quantity Returned','quantityReturned','number','1','required min="1" step="1"')}
+      ${stockField('Date Returned','returnedOn','date',stockTodayIso(),'required')}${stockField('Quantity Returned','quantityReturned','number','1','required min="1" step="1"')}
       ${stockField('Cleaned &amp; Checked — Ready To Issue','readyReturnQuantity','number','0','required min="0" step="1"')}${stockField('Damaged — Write Off','writeOffReturnQuantity','number','0','required min="0" step="1"')}</div>
       <label class="stock-check"><input type="checkbox" name="cleanedWorking"><span data-stock-working-label>Cleaned And Checked Working</span></label><label class="stock-check" data-stock-wipe><input type="checkbox" name="dataPreparationConfirmed"><span data-stock-data-label>Data Wiped / Reset</span></label>
       <p class="formhint" data-stock-preparation-note>Only equipment that passes the applicable checks can become Ready.</p>${stockField('Damaged / Write-Off Reason','writeOffReason','text','','maxlength="2000"')}${stockNote('Return Note (Optional)','returnNote')}`;
@@ -578,7 +585,7 @@
       ...(config.canEditDevices()?deviceChoices.filter(device=>!device.states.written_off).map(device=>['device:'+device.deviceId,device.name+' · Existing Device']):[])];
     const selected=stockContext.deviceId?'device:'+stockContext.deviceId:stockContext.issueEntryId?'issue:'+stockContext.issueEntryId:stockContext.stockItemId?'item:'+stockContext.stockItemId:null;
     const content=`${stockSelect('Equipment To Write Off','writeOffTarget',choices.length?choices:[['','No Eligible Equipment']], 'required',selected)}<div class="staff-fields">${stockSelect('Current State','writeOffState',[['','Select Equipment']],'required')}
-      ${stockField('Quantity To Write Off','writeOffQuantity','number','1','required min="1" step="1"')}${stockField('Date Written Off','writtenOffOn','date',new Date().toLocaleDateString('en-CA'),'required')}
+      ${stockField('Quantity To Write Off','writeOffQuantity','number','1','required min="1" step="1"')}${stockField('Date Written Off','writtenOffOn','date',stockTodayIso(),'required')}
       ${stockField('Write-Off Reason','writeOffReason','text','','required maxlength="2000"')}</div><div id="stock-writeoff-unit-choices"></div>${stockNote('Write-Off Note (Optional)','writeOffNote')}
       <p class="formhint">This is a permanent historical action. The original equipment and holder history are retained. Other accessories are not written off automatically.</p>`;
     return stockWorkflowForm('writeoff','Write Off Equipment','Record the actual equipment and a reason. Missing issued equipment is written off without a return to stock.',content,
@@ -598,7 +605,7 @@
     const requirements=stockPreparationRequirement(item,registered),individual=registered||item.trackingMode==='individual';
     const picks=!registered&&individual?units.map(unit=>`<label class="stock-check"><input type="checkbox" name="prepareUnitIds" value="${safe(unit.id)}">${safe(unit.serialNumber||unit.assetTag||'Individual Unit '+unit.id.slice(0,8))}</label>`).join(''):'';
     const form=`<form id="stock-preparation-form" class="preview-aligned-form" data-stock-cancellable="true" data-id="${safe(registered?item.stockUnitId:item.id)}" data-registered="${registered}" data-version="${safe(item.version)}" data-available="${available}">
-      <p class="formhint">${available} Awaiting Preparation. Confirm only the equipment actually checked.</p>${picks}<div class="staff-fields">${stockField('Quantity Newly Checked &amp; Ready','prepareQuantity','number',registered?'1':individual?'0':'1',`required min="1" max="${available}" step="1" ${individual?'readonly':''}`)}${stockField('Date Checked','checkedOn','date',new Date().toLocaleDateString('en-CA'),'required')}</div>
+      <p class="formhint">${available} Awaiting Preparation. Confirm only the equipment actually checked.</p>${picks}<div class="staff-fields">${stockField('Quantity Newly Checked &amp; Ready','prepareQuantity','number',registered?'1':individual?'0':'1',`required min="1" max="${available}" step="1" ${individual?'readonly':''}`)}${stockField('Date Checked','checkedOn','date',stockTodayIso(),'required')}</div>
       <label class="stock-check"><input type="checkbox" name="cleanedWorking" required>${safe(requirements.workingCheckLabel)}</label>${requirements.dataConfirmationRequired?'<label class="stock-check"><input type="checkbox" name="dataPreparationConfirmed" required>'+safe(requirements.dataCheckLabel)+'</label>':''}
       ${item.category==='Printer'?'<p class="formhint">A factory reset is not required for every Printer. Confirm applicable data clearing before Ready.</p>':''}${stockNote('Preparation Note (Optional)','preparationNote')}<p class="formhint" data-stock-feedback role="alert"></p><div class="stock-form-actions">${stockButton('Cancel','cancel-stock')}<button class="btn btn-primary" type="submit">Mark Ready To Issue</button></div></form>`;
     return stockCard('Prepare Returned Equipment','Preparation preserves the physical total and original return history.',form);
