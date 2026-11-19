@@ -317,6 +317,12 @@ with sqlite3.connect(sys.argv[1]) as db:
           body.scrollTop+=section.getBoundingClientRect().top-body.getBoundingClientRect().top-8;
         });
         await take('device-edit',theme);
+        await fields.getByRole('button', {name:'Choose Purchase Date from calendar'}).click();
+        const calendar = page.getByRole('dialog', {name:'Choose Purchase Date (DD/MM/YYYY)'});
+        await calendar.waitFor();
+        await take('device-edit-calendar',theme);
+        await page.keyboard.press('Escape');
+        await calendar.waitFor({state:'hidden'});
         await settings(page);
         await take('settings',theme,true);
         await manager(page);
