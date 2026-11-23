@@ -186,13 +186,13 @@ async function run(){
   assert.deepEqual(await page.locator('#sidebar .nav-item[data-tab]').evaluateAll(buttons=>
     buttons.map(button=>[button.dataset.tab,button.querySelector('.nav-text').textContent.trim()])), [
       ['dashboard','IT'],['devices','Devices'],['it-assets','IT Assets'],['ipam','IPAM'],['racks','Network Racks'],
-      ['staff','Staff Members'],['departments','Departments'],['users','Permissions'],
+      ['service-desk','Service Desk'],['staff','Staff Members'],['departments','Departments'],['users','Permissions'],
       ['purchasing','Purchasing'],['suppliers','Suppliers'],['audit','Audit Trail'],['equipment','My Equipment'],['settings','Settings & Data']
-    ], 'The shared sidebar must contain exactly the thirteen approved navigation destinations');
+    ], 'The shared sidebar must contain exactly the fourteen approved navigation destinations');
   assert.equal(await page.locator('#sidebar [data-tab="suppliers"]').isVisible(),false,
     'Default-off Suppliers must remain hidden until the feature and access are enabled');
   assert.deepEqual(await page.locator('#nav-group-it .nav-item[data-tab] .nav-text').allTextContents(),
-    ['Devices','IT Assets','IPAM','Network Racks']);
+    ['Devices','IT Assets','IPAM','Network Racks','Service Desk']);
   assert.equal(await page.locator('#sidebar [data-tab="it-assets"]').isVisible(),false,
     'Default-off IT Assets must remain hidden while existing IT sections stay enabled');
   assert.deepEqual(await page.locator('#sidebar [data-nav-group="staff"] .nav-item[data-tab] .nav-text').allTextContents(),
