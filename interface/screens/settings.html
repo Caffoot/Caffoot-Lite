@@ -24,6 +24,7 @@
 <nav aria-label="Settings and Data Sections" class="subnav" role="tablist">
 <button aria-selected="true" class="active" data-tab="data" data-action="select-settings-tab" role="tab" type="button"><svg fill="none" stroke="currentColor" viewbox="0 0 24 24"><use href="#i-database"></use></svg> Data &amp; Backups</button>
 <button aria-selected="false" data-tab="email" data-action="select-settings-tab" role="tab" type="button"><svg fill="none" stroke="currentColor" viewbox="0 0 24 24"><use href="#i-mail"></use></svg> Email Settings</button>
+<button id="settings-email-templates-tab" aria-selected="false" data-tab="email-templates" data-action="select-settings-tab" role="tab" type="button"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><use href="#i-mail"></use></svg> Email Templates</button>
 <button aria-selected="false" data-tab="maintenance" data-action="select-settings-tab" role="tab" type="button"><svg fill="none" stroke="currentColor" viewbox="0 0 24 24"><use href="#i-tool"></use></svg> System Maintenance</button>
 <button aria-selected="false" data-tab="features" data-action="select-settings-tab" role="tab" type="button"><svg fill="none" stroke="currentColor" viewbox="0 0 24 24"><use href="#i-grid"></use></svg> Optional Features</button>
 <button id="settings-service-desk-tab" aria-selected="false" data-tab="service-desk" data-action="select-settings-tab" role="tab" type="button"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><use href="#i-tool"></use></svg> Service Desk</button>
@@ -127,6 +128,95 @@
 </div>
 <p id="optional-feature-feedback" class="muted-note" role="status">Loading feature settings…</p>
 </section>
+
+<section class="account-panel email-template-settings" data-section="email-templates" role="tabpanel" aria-labelledby="settings-email-templates-tab" hidden>
+ <p id="email-template-loading" role="status">Loading Email Templates…</p>
+ <button id="email-template-retry" class="btn btn-outline" type="button" hidden>Try Again</button>
+ <div id="email-template-workspace" hidden>
+  <div class="intro-note" role="note"><span class="info-icon" aria-hidden="true">ⓘ</span><div>Manage account and Service Desk email wording and shared branding. Service Desk templates are available for editing and sample tests.</div></div>
+ <nav class="email-tabs" role="tablist" aria-label="Email template settings sections">
+  <button type="button" class="email-tab" role="tab" aria-selected="true" data-email-tab="templates" id="email-editor-tab" aria-controls="email-template-pane" tabindex="0"><span aria-hidden="true">✉</span> Email Templates</button>
+  <button type="button" class="email-tab" role="tab" aria-selected="false" data-email-tab="branding" id="email-branding-tab" aria-controls="email-branding-pane" tabindex="-1"><span aria-hidden="true">▣</span> Company Branding</button>
+ </nav>
+ <section id="email-template-pane" class="email-pane" role="tabpanel" aria-labelledby="email-editor-tab">
+  <div class="sub-head"><div><h2>Email Templates</h2><p>Select a notification to edit its subject and message. Saving a draft does not change the currently published email.</p></div><span class="small-meta">Administrator Only</span></div>
+  <div class="editor-layout">
+   <aside class="template-list-panel" aria-label="Template types">
+    <div class="template-list-head"><h3>Notification Templates</h3><p>Service Desk and account emails</p></div>
+    <div id="template-list" class="template-list-body"></div>
+    <div class="template-list-bottom">Restore Default loads the original wording for the selected template.</div>
+   </aside>
+   <div class="editor-and-preview">
+    <section class="email-panel" aria-label="Visual email template editor">
+     <div class="editor-top"><h3 id="selected-template-title"></h3><span id="template-status" class="chip-status"></span></div>
+     <div class="editor-desc"><b>Notification:</b> <span id="selected-template-event"></span><br><b>Recipient:</b> <span id="selected-template-recipient"></span></div>
+     <div class="subject-row"><label for="email-subject">Email Subject <span class="required">*</span></label><input id="email-subject" class="form-control" maxlength="240" autocomplete="off" spellcheck="true"></div>
+     <div class="body-label" id="body-editor-label">Email Body</div>
+     <div class="editor-tools" role="group" aria-label="Visual Formatting">
+      <button type="button" class="tool-button" data-format="bold" title="Bold" aria-label="Bold"><b>B</b></button>
+      <button type="button" class="tool-button" data-format="italic" title="Italic" aria-label="Italic"><i>I</i></button>
+      <button type="button" class="tool-button" data-format="underline" title="Underline" aria-label="Underline"><u>U</u></button>
+      <div class="tool-separator" aria-hidden="true"></div>
+      <button type="button" class="tool-button" data-format="insertUnorderedList" title="Bullet List" aria-label="Bullet List">☷</button>
+      <button type="button" class="tool-button" id="insert-link" title="Insert Link" aria-label="Insert Link" aria-haspopup="dialog">🔗</button>
+      <div class="tool-separator" aria-hidden="true"></div>
+      <select class="insert-menu" id="insert-menu" aria-label="Insert Placeholder"><option value="">＋ Insert Placeholder…</option></select>
+     </div>
+     <div id="rich-editor" class="rich-editor" contenteditable="true" role="textbox" aria-multiline="true" aria-labelledby="body-editor-label" spellcheck="true"></div>
+     <div class="editor-under"><span>Format text without writing HTML.</span><span>Save as Draft before publishing.</span></div>
+     <div class="vars-heading"><h4>Available Variables <span aria-hidden="true">{{variable}}</span></h4><span id="variable-count"></span></div>
+     <p class="vars-intro">These are the placeholders available for <b>this template</b>. Select <b>Insert</b> to add one at the current editing position, or <b>Copy</b> to use it yourself.</p>
+     <div id="variable-list" class="vars-list"></div>
+     <div class="editor-actionbar"><div class="action-info" id="draft-message" aria-live="polite">Published templates remain active while you work on a draft.</div><button type="button" class="btn btn-outline" id="restore-default">Restore Default</button><button type="button" class="btn btn-outline" id="save-draft">Save as Draft</button><button type="button" class="btn btn-primary" id="publish" disabled>Publish</button></div>
+     <div class="test-result" id="editor-feedback" role="status" aria-live="polite"></div>
+    </section>
+    <aside class="email-panel preview-col" aria-label="Sample email preview">
+     <div class="editor-top"><h3>Live Email Preview</h3><span class="chip-status">Sample Only</span></div>
+     <p class="panel-sub">See how the selected wording looks with shared company branding and fictional values.</p>
+     <div class="preview-shell">
+      <div class="email-meta"><div class="meta-line"><b>To</b><span id="preview-to">employee@example.invalid</span></div><div class="meta-line"><b>Subject</b><span id="preview-subject"></span></div></div>
+      <div id="preview-email" class="mail-paper"></div>
+      <p id="email-preview-feedback" class="test-result" role="status" hidden></p>
+     </div>
+     <p class="preview-note">The preview uses fictional data. Caffoot Lite adds required details automatically.</p>
+     <div class="test-controls"><label for="test-email-address">Send Test Email To</label><input id="test-email-address" class="form-control" type="email" required placeholder="admin@example.com" maxlength="254" autocomplete="off"><button type="button" id="send-test" class="btn btn-outline"><span aria-hidden="true">✉</span> Send Test Email</button><div class="test-result" id="test-result" aria-live="polite">Test emails use fictional sample values and your saved SMTP settings.</div></div>
+    </aside>
+   </div>
+  </div>
+ </section>
+ <section id="email-branding-pane" class="email-pane" role="tabpanel" aria-labelledby="email-branding-tab" hidden>
+  <div class="sub-head"><div><h2>Company Branding</h2><p>Configure company details once and use them consistently in every supported email template.</p></div><span class="small-meta">Shared Across All Templates</span></div>
+  <div class="brand-layout">
+   <section class="email-panel brand-panel" aria-label="Company branding editor">
+    <h3>Organisation Identity</h3><p class="panel-sub">Set the company name, colours, logo and footer used in outgoing emails.</p>
+    <div class="brand-form">
+     <div class="brand-field"><label for="company-name">Company Name <span class="required">*</span></label><input class="form-control" id="company-name" maxlength="80"></div>
+     <div class="brand-row">
+      <div class="brand-field"><label for="brand-primary">Primary Colour</label><div class="brand-colour-wrap"><input id="brand-primary" type="color" value="#213d56"><code id="primary-code">#213D56</code></div></div>
+      <div class="brand-field"><label for="brand-accent">Accent Colour</label><div class="brand-colour-wrap"><input id="brand-accent" type="color" value="#ed8532"><code id="accent-code">#ED8532</code></div></div>
+     </div>
+     <div class="brand-field"><label for="logo-upload">Company Logo <span style="font-weight:500;color:var(--muted)">(Optional)</span></label><div class="upload-box"><div class="upload-icon">▧</div><div><b id="logo-label">No Logo Uploaded</b><p>PNG or JPEG · Up to 2 MB · Automatically scaled without distortion</p></div><button class="btn btn-outline" type="button" id="choose-logo">Upload Logo</button><input type="file" id="logo-upload" accept="image/png,image/jpeg,.png,.jpg,.jpeg" aria-label="Upload PNG or JPEG company logo"></div><div style="margin-top:9px;display:flex;gap:10px;align-items:center"><button type="button" class="btn btn-tiny btn-outline" id="remove-logo" disabled>Remove Logo</button><span class="brand-note">Without a logo, the company name appears as the email heading.</span></div></div>
+     <div class="brand-field"><label for="brand-footer">Email Footer</label><textarea class="form-control" rows="4" id="brand-footer" maxlength="2000"></textarea><p class="helper">Shared footer for all supported notifications. Template wording stays separate.</p></div>
+     <div class="brand-preview-actions"><span class="brand-note" id="branding-feedback" role="status" aria-live="polite">Changes appear in the preview before you save.</span><button class="btn btn-primary" id="save-branding" type="button">Save Company Branding</button></div>
+    </div>
+   </section>
+   <aside class="email-panel" aria-label="Company branding preview"><div class="editor-top"><h3>Shared Branding Preview</h3><span class="chip-status">Sample Only</span></div><p class="panel-sub">See your branding on a fictional support email.</p><div class="preview-shell brand-preview-mock"><div class="email-meta"><div class="meta-line"><b>To</b><span>employee@example.invalid</span></div><div class="meta-line"><b>Subject</b><span>Sample Caffoot notification</span></div></div><div id="branding-preview-email" class="mail-paper"></div></div><p class="preview-note">Branding is shared across templates. Restoring an individual template default does not reset these settings.</p></aside>
+  </div>
+ </section>
+ </div>
+ <dialog class="email-link-dialog" aria-labelledby="email-link-title">
+  <h3 id="email-link-title">Insert Link</h3>
+  <p>Select words in the message to use as the link text, or enter an address to use as the text.</p>
+  <label for="email-link-address">Link Address</label>
+  <input id="email-link-address" class="form-control" type="text" inputmode="url" maxlength="2048" placeholder="https://example.invalid/help" autocomplete="off">
+  <p id="email-link-feedback" class="test-result error" role="alert"></p>
+  <div class="email-link-actions">
+   <button type="button" class="btn btn-outline" id="email-link-cancel">Cancel</button>
+   <button type="button" class="btn btn-primary" id="email-link-confirm">Insert Link</button>
+  </div>
+ </dialog>
+</section>
+
 <section class="account-panel service-desk-settings" data-section="service-desk" role="tabpanel" aria-labelledby="settings-service-desk-tab" hidden>
   <div class="panel-heading"><div><h2>Service Desk Settings</h2><p>Manage working hours, excluded dates and the shared category list.</p></div></div>
   <div class="note"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><use href="#i-info"/></svg>

@@ -7695,6 +7695,7 @@ function openIpModal(ip) {
           const importButton=root.querySelector('[data-action="next-import-pick"]');
           if(importButton)importButton.disabled=!nextImportAllowed;
           if(activeSettingsTab==='features')void nextOptionalFeaturesBridge?.hydrate(root);
+          if(activeSettingsTab==='email-templates')void window.caffootEmailTemplates.hydrate(root);
           if(activeSettingsTab==='service-desk')void window.caffootServiceDesk.hydrateSettings(root);
           if(activeSettingsTab==='email'){
             syncSmtpForm(root);
@@ -11424,8 +11425,10 @@ void (async () => {
       void openLifecycleSettings(target).catch(error=>showToast(error.message,'error'));
     }else if(action==='close-lifecycle-settings'){
       leaveLifecycleSettings?.();
-    }else if(action==='select-settings-tab'&&['data','email','maintenance','features','service-desk'].includes(target.dataset.tab)){
+    }else if(action==='select-settings-tab'&&['data','email','email-templates','maintenance','features','service-desk'].includes(target.dataset.tab)){
       if(leaveLifecycleSettings&&!leaveLifecycleSettings())return;
+      if(target.dataset.tab===activeSettingsTab)return;
+      if(activeSettingsTab==='email-templates'&&!window.caffootEmailTemplates.canLeave())return;
       activeSettingsTab=target.dataset.tab;
       renderContent();
     }else if(action==='settings-screen-copy'){
@@ -11542,6 +11545,7 @@ void (async () => {
     sessionMfaEnrolled=!!session.mfa_enrolled;
     sessionMfaRemovalEligible=session.mfa_removal_eligible===true;
     sessionCanEnterInventory=session.can_enter_inventory===true;
+    window.caffootEmailTemplates.configure(csrfToken);
     window.caffootServiceDesk.configure({
       csrf:csrfToken,canRead:()=>!!permissions['Service Desk'],canEdit:()=>!!editPermissions['Service Desk'],
       canUseEmployee:()=>sessionCanUseMyTickets,

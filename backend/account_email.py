@@ -12,11 +12,14 @@ from pathlib import Path
 import stat
 import tempfile
 import secrets
+import sqlite3
 import threading
 import time
 
 from .accounts import hash_password, verify_password
 from .audit_events import record_actor_event
+from .email_template_catalogue import account_security_text
+from .email_templates import render_account_email
 from .login_throttle import LoginThrottle
 from .mfa import verify_code
 from .role_policy import evaluate_role_policy
@@ -30,14 +33,24 @@ MAIL_CAPACITY = threading.BoundedSemaphore(16)
 REQUEST_MESSAGE = "If recovery is available, instructions will be emailed. Otherwise, contact your Caffoot Lite administrator."
 
 
-def queue_email(path, recipient, subject, body):
+def queue_email(path, recipient, subject, body, *, database_path=None, template_id=None, display_name=""):
     """Queue a bounded delivery; never log message bodies or delivery exceptions."""
     if not MAIL_CAPACITY.acquire(blocking=False):
         return False
 
     def deliver():
         try:
-            send_account_email(path, recipient, subject, body)
+            mail = None
+            if database_path is not None:
+                try:
+                    mail, logo = render_account_email(database_path, template_id, body, display_name)
+                except (sqlite3.Error, ValueError, OSError):
+                    # A settings read failure must not prevent delivery of the existing security message.
+                    pass
+            if mail is None:
+                send_account_email(path, recipient, subject, body)
+            else:
+                send_account_email(path, recipient, mail['subject'], mail['text'], html=mail['html'], logo=logo)
         except Exception:
             # Account operations remain valid even when delivery is unavailable.
             pass
@@ -212,7 +225,7 @@ _NOTICE_LOCK = threading.Lock()
 _NOTICE_NEXT = {}
 
 
-def notify_security_change(path, recipients):
+def notify_security_change(path, recipients, *, database_path=None):
     """Report queue admission only; delivery remains optional and untracked."""
     result = {"queued": 0, "coalesced": 0, "notQueued": 0}
     for address in recipients:
@@ -228,10 +241,8 @@ def notify_security_change(path, recipients):
             _NOTICE_NEXT[address] = now + 60
         try:
             queued = queue_email(path, address, "Caffoot Lite account security notice",
-                    "An important account, password, email, MFA, role or permission change occurred. "
-                    "Active sessions may have ended and MFA may be required before continuing. "
-                    "Sign in to your Caffoot Lite installation to review its protected Audit Trail. "
-                    "Contact your administrator if you did not expect this change.")
+                                 account_security_text("account-security-notice"),
+                                 database_path=database_path, template_id="account-security-notice")
         except Exception:
             queued = False
         result["queued" if queued else "notQueued"] += 1
@@ -256,7 +267,8 @@ def role_change_notifications(connection, path, account_ids):
         result["recipientCount"] = len(recipients)
         result["smtpConfigured"] = public_settings(path)["configured"]
         if result["smtpConfigured"] and recipients:
-            result.update(notify_security_change(path, recipients))
+            result.update(notify_security_change(path, recipients,
+                                                 database_path=connection.execute("PRAGMA database_list").fetchone()[2]))
     except Exception:
         # Notification configuration, queue and mail failures cannot undo access.
         result["notQueued"] = result["recipientCount"]

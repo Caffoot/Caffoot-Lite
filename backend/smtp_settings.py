@@ -15,6 +15,8 @@ import stat
 import tempfile
 import threading
 import time
+from email.errors import HeaderParseError
+from email.headerregistry import Address
 from email.message import EmailMessage
 from email.utils import formataddr
 from pathlib import Path
@@ -180,49 +182,47 @@ def _rate_limit_test():
         _NEXT_TEST_AT = now + TEST_INTERVAL_SECONDS
 
 
-def send_test_email(path, recipient):
-    """Send only an administrator-initiated test, with a strict timeout and cooldown."""
+def send_test_email(path, recipient, *, subject="Caffoot Lite SMTP test",
+                    body="This is a test message from your Caffoot Lite installation.", html=None, logo=None):
+    """Send an administrator's test with the existing SMTP timeout and cooldown."""
     recipient = _validate_address(recipient, "test email recipient address")
+    try:
+        recipient = Address(addr_spec=recipient).addr_spec
+    except (HeaderParseError, ValueError, IndexError):
+        raise ValueError("Enter a valid test email recipient address") from None
     with SMTP_LOCK:
         config = _read_private(path)
     if config is None:
         raise ValueError("Configure SMTP before sending a test email")
     _rate_limit_test()
-    mail = EmailMessage()
-    mail["Subject"] = "Caffoot Lite SMTP test"
-    mail["From"] = formataddr((config["fromName"], config["fromEmail"]))
-    mail["To"] = recipient
-    mail.set_content("This is a test message from your Caffoot Lite installation.")
-    context = ssl.create_default_context()
-    if config["security"] == "ssl":
-        smtp = smtplib.SMTP_SSL(config["host"], config["port"],
-                               timeout=MAIL_TIMEOUT_SECONDS, context=context)
-    else:
-        smtp = smtplib.SMTP(config["host"], config["port"],
-                           timeout=MAIL_TIMEOUT_SECONDS)
-    with smtp:
-        smtp.ehlo()
-        if config["security"] == "starttls":
-            smtp.starttls(context=context)
-            smtp.ehlo()
-        if config["authenticate"]:
-            smtp.login(config["username"], config["password"])
-        smtp.send_message(mail)
+    deliver_email(config, recipient, subject, body, html=html, logo=logo)
     return {"status": "sent"}
 
 
-def send_account_email(path, recipient, subject, body):
+def send_account_email(path, recipient, subject, body, *, html=None, logo=None):
     """Deliver an approved account message without exposing SMTP errors to users."""
     recipient = _validate_address(recipient, "recipient address")
     with SMTP_LOCK:
         config = _read_private(path)
     if config is None:
         return False
+    deliver_email(config, recipient, subject, body, html=html, logo=logo)
+    return True
+
+
+def deliver_email(config, recipient, subject, body, *, html=None, logo=None):
+    """Use the configured sender and embed the logo inside the HTML alternative."""
     mail = EmailMessage()
     mail["Subject"] = subject
     mail["From"] = formataddr((config["fromName"], config["fromEmail"]))
     mail["To"] = recipient
     mail.set_content(body)
+    if html:
+        mail.add_alternative(html, subtype="html")
+        if logo:
+            mail.get_body(preferencelist=("html",)).add_related(
+                logo["data"], maintype="image", subtype=logo["mime"].split("/", 1)[1],
+                cid="<company-logo>", disposition="inline")
     context = ssl.create_default_context()
     if config["security"] == "ssl":
         smtp = smtplib.SMTP_SSL(config["host"], config["port"],
@@ -236,5 +236,4 @@ def send_account_email(path, recipient, subject, body):
             smtp.ehlo()
         if config["authenticate"]:
             smtp.login(config["username"], config["password"])
-        smtp.send_message(mail)
-    return True
+        smtp.send_message(mail, from_addr=config["fromEmail"], to_addrs=[recipient])

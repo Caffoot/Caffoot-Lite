@@ -41,7 +41,7 @@ class ServiceDeskSchemaTests(unittest.TestCase):
         self.connection.execute("INSERT INTO device_lifecycle(device_id,purchase_date) VALUES('host','2026-11-20')")
         self.connection.commit()
         schema.initialise_database(self.connection)
-        self.assertEqual(self.connection.execute('SELECT max(version) FROM schema_migrations').fetchone(), (27,))
+        self.assertEqual(self.connection.execute('SELECT max(version) FROM schema_migrations').fetchone(), (28,))
         self.assertEqual(self.connection.execute('SELECT name FROM service_desk_categories ORDER BY id').fetchall(),
                          [(name,) for name in DEFAULT_TICKET_CATEGORIES])
         ticket = insert_ticket(self.connection)
