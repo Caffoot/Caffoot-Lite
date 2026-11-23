@@ -3,7 +3,11 @@ import base64
 from concurrent.futures import ThreadPoolExecutor
 import http.client
 import json
+from queue import Queue
+import smtplib
+import socketserver
 import sqlite3
+import threading
 import unittest
 from unittest.mock import patch
 
@@ -14,6 +18,7 @@ from backend.http_security import COOKIE_NAME
 from backend.inventory import reconstruct_inventory
 from backend.normalisation_pipeline import PUBLISHED_DEFAULTS
 from backend.schema import initialise_database
+from backend.smtp_settings import config_path, save_settings
 from backend.service_desk_calendar import DEFAULT_WORKING_HOURS, activate_deployment_timezone
 from backend.service_desk_schema import (DEFAULT_TICKET_CATEGORIES, OTHER_TICKET_CATEGORY_ID,
                                          SOFTWARE_TICKET_CATEGORY_ID)
@@ -25,6 +30,7 @@ from backend.stock_intake import receive_stock, stock_item
 import test_device_assignments_http as fixture
 from test_device_handovers import handover_payload
 from test_staff_directory_http import ORIGIN
+from test_email_templates_http import LocalMailReceiver
 from test_import_review import fixture as legacy_export
 from test_stock_circulation import issue_payload, return_payload
 from test_stock_corrections import correction_payload
@@ -86,6 +92,242 @@ class ServiceDeskHttpTests(unittest.TestCase):
                        headers={'Origin': ORIGIN, 'Cookie': COOKIE_NAME + '=' + self.tokens[actor]})
         response = client.getresponse()
         return response.status, response.read(), response.getheader('Cache-Control')
+
+    def capture_ticket_mail(self, *, support_email='it-support@example.test', defer=False):
+        receiver = socketserver.ThreadingTCPServer(('127.0.0.1', 0), LocalMailReceiver)
+        receiver.messages = Queue()
+        thread = threading.Thread(target=receiver.serve_forever, daemon=True)
+        thread.start()
+        self.addCleanup(thread.join)
+        self.addCleanup(receiver.server_close)
+        self.addCleanup(receiver.shutdown)
+        self.mail_settings = dict(host='127.0.0.1', port=receiver.server_address[1], security='none',
+                                  authenticate=False, username='', password='', fromName='Fictional Support',
+                                  fromEmail='sender@example.test', insecureConfirmed=True, itSupportEmail=support_email)
+        save_settings(config_path(self.path), self.mail_settings)
+        with sqlite3.connect(self.path) as connection:
+            connection.executemany("""
+                INSERT INTO account_profiles(account_id,email,email_verified) VALUES(?,?,1)
+            """, [(actor, f'account-{actor}@example.test') for actor in range(1, 7)])
+        self.mail_jobs = []
+        submit = self.mail_jobs.append if defer else lambda job: job()
+        worker = patch('backend.account_email.MAIL_EXECUTOR.submit', side_effect=submit)
+        worker.start()
+        self.addCleanup(worker.stop)
+        if defer:
+            self.addCleanup(self.finish_mail_jobs)
+        self.mail = receiver.messages
+
+    def finish_mail_jobs(self):
+        while self.mail_jobs:
+            self.mail_jobs.pop(0)()
+
+    def ticket_mail(self, recipient, ticket, scope, *contains, excludes=()):
+        mail = self.mail.get_nowait()
+        text = mail.get_body(preferencelist=('plain',)).get_content()
+        html = mail.get_body(preferencelist=('html',)).get_content()
+        page = 'inventory' if scope == 'it' else 'account'
+        link = f'{ORIGIN}/{page}?ticket={scope}-{ticket}'
+        self.assertEqual(mail['To'].addresses[0].addr_spec, recipient)
+        self.assertEqual(len(mail['To'].addresses), 1)
+        self.assertIsNone(mail['Cc'])
+        self.assertIsNone(mail['Bcc'])
+        self.assertEqual(list(mail.iter_attachments()), [])
+        self.assertIn(f'SD-{ticket:04d}', text)
+        self.assertIn(link, text)
+        self.assertIn(f'href="{link}"', html)
+        self.assertIn('Required Notification Details', html)
+        for content in contains:
+            self.assertIn(content, text)
+        for content in excludes:
+            self.assertNotIn(content, text)
+            self.assertNotIn(content, html)
+            self.assertNotIn(content, str(mail['Subject']))
+        return mail
+
+    def test_created_mail_scope_device_and_asset_published_wording_and_sign_in(self):
+        self.capture_ticket_mail()
+        self.assign_device()
+        templates = '/api/settings/email-templates'
+        draft = dict(id='ticket-created', revision=0, subject='Support intake {{ticket_number}}',
+                     body='<p>Review this request.</p>')
+        self.assertEqual(self.request(templates, method='POST', payload=dict(draft, action='draft'))[0], 200)
+        forbidden = ('private subject', 'private description', 'private-file.txt', 'Laptop', 'account-4')
+        private = dict(subject='private subject', description='private description',
+                       attachments=[{'filename': 'private-file.txt', 'contents': base64.b64encode(b'private').decode()}])
+        personal = self.create(**private)
+        first = self.ticket_mail('it-support@example.test', personal, 'it', 'Status: Open', excludes=forbidden)
+        self.assertEqual(str(first['Subject']), f'New support ticket SD-{personal:04d}')
+        self.assertEqual(self.request(templates, method='POST',
+                                      payload={'id': draft['id'], 'action': 'publish', 'revision': 1})[0], 200)
+        self.hand_over('department', 'dept')
+        department = self.create('department', **private)
+        second = self.ticket_mail('it-support@example.test', department, 'it', 'Status: Open', excludes=forbidden)
+        self.assertEqual(str(second['Subject']), f'Support intake SD-{department:04d}')
+        self.create('it', actor=1)
+        with sqlite3.connect(self.path) as connection:
+            connection.execute('PRAGMA foreign_keys=ON')
+            connection.execute("UPDATE organisation_features SET enabled=1 WHERE feature='it_assets'")
+            connection.commit()
+            receipt = dict(receipt_payload(), quantity=2, readyQuantity=2,
+                           checks={'itemsChecked': True, 'conditionChecked': True})
+            asset = receive_stock(connection, 1, self.tokens[1], receipt)['stockItemId']
+            for scope, kind, recipient in (('personal', 'staff', 'person'), ('department', 'department', 'dept')):
+                issue_stock(connection, 1, self.tokens[1],
+                            issue_payload(connection, asset, recipientKind=kind, recipientId=recipient))
+                issue = next(row for row in stock_issue_records(connection)
+                             if row['departmentId' if kind == 'department' else 'staffId'] == recipient)
+                fields = dict(equipmentKind='stockItem', equipmentId=asset, stockIssueId=issue['id'])
+                ticket = self.create(scope, **fields)
+                self.ticket_mail('it-support@example.test', ticket, 'it', 'Status: Open', excludes=('Fictional Display',))
+                self.create('it', actor=1, **fields)
+        self.assertTrue(self.mail.empty())
+        for scope, page in (('it', 'inventory'), ('department', 'account')):
+            client = http.client.HTTPConnection('127.0.0.1', self.server.server_port)
+            self.addCleanup(client.close)
+            client.request('GET', f'/{page}?ticket={scope}-{department}')
+            response = client.getresponse()
+            self.assertEqual(response.status, 303)
+            self.assertEqual(response.getheader('Location'), f'/setup?ticket={scope}-{department}#sign-in-required')
+            self.assertNotIn(b'private subject', response.read())
+        self.assertEqual(self.request(self.ticket_path('it', f'/{department}'), actor=None)[0], 401)
+        self.assertEqual(self.request(self.ticket_path('it', f'/{department}'), actor=4)[0], 403)
+        self.assertEqual(self.request(self.ticket_path('it', f'/{department}'), actor=6)[0], 401)
+
+    def test_ticket_mail_events_and_forbidden_events(self):
+        self.capture_ticket_mail(support_email='')
+        self.assign_device()
+        ticket = self.create()
+        self.assertTrue(self.mail.empty())
+        reply = self.save('personal', ticket, 'messages', {'body': 'In the unassigned queue'}, actor=4)
+        self.assertEqual(reply[0], 200)
+        self.assertEqual(self.request(self.ticket_path('it', f'/{ticket}/messages'))[1]['messages'][0]['body'],
+                         'In the unassigned queue')
+        self.assertTrue(self.mail.empty())
+        self.assertEqual(self.save('it', ticket, 'assign', {'technicianId': 1})[0], 200)
+        self.assertTrue(self.mail.empty())
+        self.assertEqual(self.save('it', ticket, 'assign',
+                                   {'technicianId': 2, 'reason': 'Sickness', 'explanation': 'Private staffing'})[0], 200)
+        self.ticket_mail('account-2@example.test', ticket, 'it', 'Laptop', excludes=('Private staffing', 'Sickness'))
+        other_assignment = self.create('it', actor=1)
+        self.assertEqual(self.save('it', other_assignment, 'assign', {'technicianId': 2})[0], 200)
+        self.ticket_mail('account-2@example.test', other_assignment, 'it', 'Laptop')
+        reply = self.save('personal', ticket, 'messages', {'body': 'The fault persists'}, actor=4)
+        self.assertEqual(reply[0], 200)
+        self.ticket_mail('account-2@example.test', ticket, 'it', 'The fault persists')
+        self.assertEqual(self.save('personal', ticket, f'messages/{reply[1]["id"]}',
+                                   {'body': 'Edited reply'}, actor=4)[0], 200)
+        self.assertEqual(self.save('it', ticket, 'messages', {'body': 'Private IT note'})[0], 200)
+        self.assertTrue(self.mail.empty())
+        self.assertEqual(self.save('it', ticket, 'messages',
+                                   {'body': '<b>Public update</b>', 'employeeVisible': True})[0], 200)
+        visible = self.ticket_mail('account-4@example.test', ticket, 'personal', '<b>Public update</b>',
+                                   excludes=('Private IT note',))
+        self.assertIn('&lt;b&gt;Public update&lt;/b&gt;', visible.get_body(preferencelist=('html',)).get_content())
+        self.assertEqual(self.save('it', ticket, 'hold',
+                                   {'reason': 'Waiting for Parts', 'explanation': 'Private vendor detail'})[0], 200)
+        self.ticket_mail('account-4@example.test', ticket, 'personal', 'Waiting for Parts', 'Status: On Hold',
+                         excludes=('Private vendor detail',))
+        self.assertEqual(self.save('it', ticket, 'resume', {})[0], 200)
+        self.assertTrue(self.mail.empty())
+        self.assertEqual(self.save('it', ticket, 'hold', {'reason': 'Waiting for User',
+                                   'explanation': 'Please confirm the port', 'employeeVisible': True})[0], 200)
+        self.ticket_mail('account-4@example.test', ticket, 'personal', 'Waiting for User', 'Please confirm the port')
+        self.assertEqual(self.save('it', ticket, 'resume', {})[0], 200)
+        self.assertEqual(self.save('it', ticket, 'close', {'resolutionNote': ''})[0], 400)
+        self.assertTrue(self.mail.empty())
+        self.assertEqual(self.save('it', ticket, 'close', {'resolutionNote': 'Replaced cable'})[0], 200)
+        self.ticket_mail('account-4@example.test', ticket, 'personal', 'Status: Closed', 'Replaced cable')
+        self.assertEqual(self.save('personal', ticket, 'reopen', {}, actor=4)[0], 200)
+        self.ticket_mail('account-2@example.test', ticket, 'it', 'Open (Reopened)')
+        self.assertEqual(self.save('it', ticket, 'close', {'resolutionNote': 'Reseated cable'})[0], 200)
+        self.ticket_mail('account-4@example.test', ticket, 'personal', 'Reseated cable')
+        with sqlite3.connect(self.path) as connection:
+            connection.execute('UPDATE accounts SET active=0 WHERE id=2')
+        self.assertEqual(self.save('it', ticket, 'reopen', {})[0], 200)
+        self.assertEqual(self.request(self.ticket_path('it', f'/{ticket}'))[1]['technicianId'], 2)
+        self.assertTrue(self.mail.empty())
+
+    def test_department_mail_rechecks_live_membership_custody_and_verified_addresses(self):
+        self.capture_ticket_mail(support_email='', defer=True)
+        self.assign_device()
+        previous = self.create()
+        self.hand_over('department', 'dept')
+        department = self.create('department')
+        self.finish_mail_jobs()
+        with sqlite3.connect(self.path) as connection:
+            connection.execute("UPDATE staff_members SET department_id='dept' WHERE id='colleague'")
+            for account in range(7, 11):
+                connection.execute("INSERT INTO accounts(id,username,password_hash,active) VALUES(?,?,?,?)",
+                                   (account, str(account), 'fixture', int(account != 10)))
+                connection.execute("INSERT INTO account_profiles(account_id,email,email_verified) VALUES(?,?,?)",
+                                   (account, f'account-{account}@example.test', int(account != 9)))
+                connection.execute("""
+                    INSERT INTO staff_members(id,first_name,last_name,account_id,department_id,active)
+                    VALUES(?,?,'Example',?,'dept',?)
+                """, (str(account), str(account), account, int(account != 8)))
+        update = {'body': 'Shared update', 'employeeVisible': True}
+        self.assertEqual(self.save('it', previous, 'messages', update)[0], 200)
+        self.assertEqual(self.save('it', department, 'messages', update)[0], 200)
+        self.finish_mail_jobs()
+        for recipient in ('account-4@example.test', 'account-5@example.test', 'account-7@example.test'):
+            others = {'account-4@example.test', 'account-5@example.test', 'account-7@example.test'} - {recipient}
+            self.ticket_mail(recipient, department, 'department', 'Shared update', excludes=others)
+        self.assertTrue(self.mail.empty())
+        self.assertEqual(self.save('it', department, 'hold', {'reason': 'Other'})[0], 200)
+        with sqlite3.connect(self.path) as connection:
+            connection.execute("UPDATE staff_members SET department_id='other' WHERE id='colleague'")
+            connection.execute('UPDATE account_profiles SET email_verified=0 WHERE account_id=7')
+        self.finish_mail_jobs()
+        self.ticket_mail('account-4@example.test', department, 'department', 'Status: On Hold', 'Reason: Other')
+        self.assertTrue(self.mail.empty())
+        self.assert_ticket_hidden('department', department, 5)
+        self.assertEqual(self.save('it', department, 'resume', {})[0], 200)
+        self.assertEqual(self.save('it', department, 'close', {'resolutionNote': 'Shared fix'})[0], 200)
+        self.finish_mail_jobs()
+        self.ticket_mail('account-4@example.test', department, 'department', 'Shared fix')
+        self.assertEqual(self.save('it', department, 'reopen', {})[0], 200)
+        self.assertEqual(self.save('it', department, 'messages', update)[0], 200)
+        self.hand_over('department', 'other')
+        self.finish_mail_jobs()
+        self.assertTrue(self.mail.empty())
+        self.assert_ticket_hidden('department', department, 4)
+        self.assert_ticket_hidden('department', department, 5)
+
+    def test_ticket_mail_only_after_commit_and_smtp_failure_is_optional(self):
+        self.capture_ticket_mail(defer=True)
+        self.assign_device()
+        for actor, payload, headers, expected in (
+            (5, CREATE, {}, 404),
+            (4, dict(CREATE, sendEmail=False), {}, 400),
+            (4, CREATE, {'X-CSRF-Token': ''}, 403),
+        ):
+            self.assertEqual(self.request(self.ticket_path('personal'), actor=actor, method='POST',
+                                          payload=payload, headers=headers)[0], expected)
+        with sqlite3.connect(self.path) as connection:
+            connection.execute("""CREATE TABLE fixture_reject_commit (
+                                account_id REFERENCES accounts(id) DEFERRABLE INITIALLY DEFERRED)""")
+            connection.execute("""CREATE TRIGGER fixture_reject_ticket AFTER INSERT ON service_desk_events
+                                WHEN NEW.kind='Created' BEGIN INSERT INTO fixture_reject_commit VALUES(-1); END""")
+        self.assertEqual(self.request(self.ticket_path('personal'), actor=4, method='POST', payload=CREATE)[0], 503)
+        self.assertFalse(self.mail_jobs)
+        with sqlite3.connect(self.path) as connection:
+            self.assertEqual(connection.execute('SELECT count(*) FROM service_desk_tickets').fetchone()[0], 0)
+            connection.execute('DROP TRIGGER fixture_reject_ticket')
+        with patch('backend.service_desk_email.deliver_email', side_effect=smtplib.SMTPDataError(451, b'Test')) as smtp:
+            ticket = self.create()
+            self.assertEqual(len(self.mail_jobs), 1)
+            self.finish_mail_jobs()
+            smtp.assert_called_once()
+        self.assertEqual(self.request(self.ticket_path('personal', f'/{ticket}'), actor=4)[1]['status'], 'Open')
+        with patch('backend.account_email.MAIL_CAPACITY.acquire', return_value=False):
+            queued_out = self.create()
+        self.assertEqual(self.request(self.ticket_path('personal', f'/{queued_out}'), actor=4)[1]['status'], 'Open')
+        self.assertFalse(self.mail_jobs)
+        config_path(self.path).unlink()
+        self.create()
+        self.finish_mail_jobs()
+        self.assertTrue(self.mail.empty())
 
     def assert_ticket_hidden(self, scope, ticket_id, actor):
         for resource in ('', '/history', '/messages', '/attachments/1'):

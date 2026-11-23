@@ -33,26 +33,16 @@ MAIL_CAPACITY = threading.BoundedSemaphore(16)
 REQUEST_MESSAGE = "If recovery is available, instructions will be emailed. Otherwise, contact your Caffoot Lite administrator."
 
 
-def queue_email(path, recipient, subject, body, *, database_path=None, template_id=None, display_name=""):
-    """Queue a bounded delivery; never log message bodies or delivery exceptions."""
+def queue_mail_task(send):
+    """Use the shared bounded queue without logging recipients or message content."""
     if not MAIL_CAPACITY.acquire(blocking=False):
         return False
 
     def deliver():
         try:
-            mail = None
-            if database_path is not None:
-                try:
-                    mail, logo = render_account_email(database_path, template_id, body, display_name)
-                except (sqlite3.Error, ValueError, OSError):
-                    # A settings read failure must not prevent delivery of the existing security message.
-                    pass
-            if mail is None:
-                send_account_email(path, recipient, subject, body)
-            else:
-                send_account_email(path, recipient, mail['subject'], mail['text'], html=mail['html'], logo=logo)
+            send()
         except Exception:
-            # Account operations remain valid even when delivery is unavailable.
+            # The originating operation remains valid when delivery is unavailable.
             pass
         finally:
             MAIL_CAPACITY.release()
@@ -63,6 +53,24 @@ def queue_email(path, recipient, subject, body, *, database_path=None, template_
         MAIL_CAPACITY.release()
         return False
     return True
+
+
+def queue_email(path, recipient, subject, body, *, database_path=None, template_id=None, display_name=""):
+    """Queue an account message with the established plain-text security fallback."""
+    def send():
+        mail = None
+        if database_path is not None:
+            try:
+                mail, logo = render_account_email(database_path, template_id, body, display_name)
+            except (sqlite3.Error, ValueError, OSError):
+                # A settings read failure must not prevent delivery of the existing security message.
+                pass
+        if mail is None:
+            send_account_email(path, recipient, subject, body)
+        else:
+            send_account_email(path, recipient, mail['subject'], mail['text'], html=mail['html'], logo=logo)
+
+    return queue_mail_task(send)
 
 
 def email_proof_secret(connection, *, create=False):

@@ -31,8 +31,13 @@ async function showSession(){
  const r=await fetch('/api/session',{cache:'no-store'});
  if(!r.ok)return false;
  const session=await r.json();csrfToken=session.csrf_token;
+ const ticket=/^\?ticket=(it|personal|department)-[1-9]\d{0,18}$/.exec(window.location.search);
+ if(ticket && ticket[1]!=='it'){
+  window.location.replace('/account'+ticket[0]);
+  return true;
+ }
  if(session.can_enter_workspace || session.can_enter_inventory){
-  window.location.replace('/inventory');
+  window.location.replace('/inventory'+(ticket?.[0]||''));
   return true;
  }
  window.location.replace('/account');return true;
@@ -86,10 +91,10 @@ function display(){
   heading.textContent='Your Session Has Ended';
   $('message').replaceChildren(heading,document.createElement('br'),
    document.createTextNode('Your session has ended. Please sign in again to continue using Caffoot Lite.'));
-  history.replaceState(null,'','/setup');
+  history.replaceState(null,'','/setup'+window.location.search);
  }else if(mode==='login' && window.location.hash==='#sign-in-required'){
   $('message').textContent='Please sign in to continue using Caffoot Lite.';
-  history.replaceState(null,'','/setup');
+  history.replaceState(null,'','/setup'+window.location.search);
  }
  if(window.location.hash==='#mfa-removed'){
   $('message').style.color='#166534';$('message').textContent='MFA removed. All sessions have ended. Sign in again.';

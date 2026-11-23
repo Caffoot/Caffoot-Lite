@@ -226,6 +226,7 @@ def send_account_email(path, recipient, subject, body, *, html=None, logo=None):
 
 def deliver_email(config, recipient, subject, body, *, html=None, logo=None):
     """Use the configured sender and embed the logo inside the HTML alternative."""
+    recipient = _single_address(recipient, "recipient address")
     mail = EmailMessage()
     mail["Subject"] = subject
     mail["From"] = formataddr((config["fromName"], config["fromEmail"]))

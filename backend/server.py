@@ -41,6 +41,7 @@ from .service_desk import (read_ticket, read_ticket_assignment_choices, read_tic
                            read_ticket_categories, read_ticket_equipment_choices, read_ticket_list,
                            read_ticket_software_choices, require_ticket, save_ticket_request)
 from .service_desk_access import linked_ticket_staff, ticket_scope_filter
+from .service_desk_email import queue_ticket_email
 from .service_desk_calendar import activate_deployment_timezone
 from .service_desk_settings import read_service_desk_settings, save_service_desk_settings
 from .service_desk_reporting import read_service_desk_report, save_report_period
@@ -96,6 +97,7 @@ TICKET_ROUTE = re.compile(
     r'/api/service-desk/(personal|department|it)/(tickets|categories|equipment|software|report)'
     r'(?:/([1-9][0-9]{0,18})(?:/([a-z]+)(?:/([1-9][0-9]{0,18}))?)?)?'
 )
+TICKET_EMAIL_QUERY = re.compile(r'ticket=(it|personal|department)-([1-9][0-9]{0,18})')
 MAX_IMPORT_BYTES = 10 * 1024 * 1024
 ASSET_ROOT = Path(__file__).resolve().parent.parent / "assets"
 PUBLIC_ASSETS = {"favicon.ico": "image/x-icon",
@@ -160,7 +162,11 @@ class Handler(BaseHTTPRequestHandler):
         super().end_headers()
 
     def do_GET(self):
-        path = urlsplit(self.path).path
+        parsed = urlsplit(self.path)
+        path = parsed.path
+        ticket_link = TICKET_EMAIL_QUERY.fullmatch(parsed.query)
+        if ticket_link and int(ticket_link[2]) > 2**63 - 1:
+            ticket_link = None
         if path.startswith('/api/service-desk/'):
             self.handle_service_desk_request()
             return
@@ -231,7 +237,7 @@ class Handler(BaseHTTPRequestHandler):
             self.end_headers()
             self.wfile.write(data)
             return
-        if self.path in ("/", "/setup"):
+        if self.path in ("/", "/setup") or (path == "/setup" and ticket_link):
             body = (Path(__file__).resolve().parent.parent / "setup.html").read_bytes()
             self.send_response(200)
             self.send_header("Content-Type", "text/html; charset=utf-8")
@@ -241,14 +247,16 @@ class Handler(BaseHTTPRequestHandler):
             self.end_headers()
             self.wfile.write(body)
             return
-        if self.path in ("/inventory", "/inventory?rack-print=same-tab", "/account"):
+        ticket_page = ticket_link and path == ("/inventory" if ticket_link[1] == "it" else "/account")
+        if self.path in ("/inventory", "/inventory?rack-print=same-tab", "/account") or ticket_page:
             with connect() as connection:
                 account_id = authenticated_account(connection, self.headers.get("Cookie"))
                 if account_id is None:
                     # Only protected browser documents navigate to the existing
                     # sign-in screen. API clients retain their JSON 401/403.
-                    destination = ("/setup#session-ended" if self.headers.get("Cookie")
-                                   else "/setup#sign-in-required")
+                    sign_in = "session-ended" if self.headers.get("Cookie") else "sign-in-required"
+                    query = "?" + parsed.query if ticket_page else ""
+                    destination = f"/setup{query}#{sign_in}"
                     self.send_response(303)
                     self.send_header("Location", destination)
                     self.send_header("Content-Length", "0")
@@ -256,7 +264,7 @@ class Handler(BaseHTTPRequestHandler):
                     self.send_header("X-Content-Type-Options", "nosniff")
                     self.end_headers()
                     return
-                if self.path != "/account" and not evaluate_role_policy(connection, account_id).is_admin and not any(can_access(connection, account_id, section)
+                if path != "/account" and not evaluate_role_policy(connection, account_id).is_admin and not any(can_access(connection, account_id, section)
                            for section in ("Devices", "IPAM", "Racks", "Staff Members", "Departments", "IT Assets", "Suppliers")):
                     self.respond(403, {"error": "forbidden"})
                     return
@@ -1051,6 +1059,11 @@ class Handler(BaseHTTPRequestHandler):
         except sqlite3.Error:
             self.respond(503, {'error': 'Cannot save or retrieve the ticket.'})
         else:
+            if not reading and collection == 'tickets':
+                # The transaction context has committed before any notification can run.
+                notification = result.pop('notification', None)
+                if notification is not None:
+                    queue_ticket_email(DB_PATH, PUBLIC_ORIGIN, ticket_id or result['id'], notification)
             if reading and resource == 'attachments':
                 filename, contents = result
                 self.send_response(200)
