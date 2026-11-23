@@ -115,7 +115,7 @@ Devices-only handover needs Devices Edit. A Device with recorded stock history a
 My Equipment is for a person signing in with a login linked to their Staff record. It does not require or grant general inventory or directory rights.
 
 1. Sign in using your own linked login.
-2. Open **My Equipment** in the personal sidebar.
+2. Open **My Equipment** at the top of the sidebar, beneath **Workspace** on desktop.
 3. Read **Assigned to Me** for Devices and outstanding IT Assets assigned directly to you.
 4. Read **Shared with My Department** for equipment assigned to your current Department. Viewing it does not make you the personal holder.
 5. Report an incorrect item or quantity to an authorised IT user, using its name and the relevant facts. This personal screen has no Issue, Return, Reassign or Write Off controls.

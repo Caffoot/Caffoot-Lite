@@ -30,7 +30,7 @@ If the form reports a problem, correct the highlighted or named field and submit
 
 ## Find And Review Your Tickets
 
-1. Select **My Tickets** in the personal sidebar. The **My Tickets** tab shows tickets for your current personal equipment assignments. Switch to **Department Tickets** for equipment shared with your current Department. A shared-equipment ticket stays in the Department tab, including when you raised it yourself.
+1. Select **My Tickets** directly below **My Equipment** at the top of the sidebar. The **My Tickets** tab shows tickets for your current personal equipment assignments. Switch to **Department Tickets** for equipment shared with your current Department. A shared-equipment ticket stays in the Department tab, including when you raised it yourself.
 2. Each tab starts with **Open** selected. Choose **Open**, **In Progress** or **On Hold** in **Current Tickets** to change the status filter. The cards show totals for the selected tab even when a search or equipment filter narrows the list. Choose **Closed** or **All Tickets** from **Ticket Status** for other views.
 3. In **Search Tickets**, enter a ticket number, subject, requester or equipment name. Choose an item under **Device / Asset** to narrow the list. **Clear Filters** clears both fields, shows **All Tickets** and resets **Sort By** to **Updated · Newest**.
 4. Use **Sort By** to choose the newest or oldest update first, or the highest ticket number first. Use **Previous** and **Next** when there are multiple pages. If the table is wider than your screen, scroll it sideways to reach **Actions**.
