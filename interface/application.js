@@ -7649,7 +7649,7 @@ function openIpModal(ip) {
           if(!form)return;
           const s=smtpSettings;
           if(s){
-            for(const key of ['host','port','security','authenticate','username','fromName','fromEmail','insecureConfirmed']){
+            for(const key of ['host','port','security','authenticate','username','fromName','fromEmail','insecureConfirmed','itSupportEmail']){
               const input=form.elements.namedItem(key);
               if(!input)continue;
               if(input.type==='checkbox')input.checked=!!s[key];
@@ -9354,6 +9354,7 @@ void (async () => {
       if(area&&!permissions[area])return true;
     }
     if (readOnlyActions.has(action)) return false;
+    if (action === 'reset-smtp-settings') return !sessionIsAdmin;
     if (['open-device-modal','duplicate-device','duplicate-device-from-details'].includes(action))
       return !editPermissions.Devices;
     if (action === 'open-subnet-modal'||action==='open-multiple-subnets') return !editPermissions.IPAM;
@@ -9668,6 +9669,21 @@ void (async () => {
     return location.pathname==='/account'?'account':inventorySectionAccess()?'dashboard':
       sessionDirectoryPermissions.staffMembers?.read?'staff':sessionDirectoryPermissions.departments?.read?'departments':
       permissions['IT Assets']?'it-assets':permissions.Suppliers?'suppliers':sessionIsAdmin?'settings':'account';
+  }
+  function openEmailTicket() {
+    const link = /^\?ticket=(it|personal|department)-([1-9]\d{0,18})$/.exec(location.search);
+    if (!link) return false;
+    const [, scope, id] = link;
+    const technician = scope === 'it';
+    const tab = technician ? 'service-desk' : 'my-tickets';
+    if (technician ? !permissions['Service Desk'] : !sessionCanUseMyTickets) {
+      showToast('You do not have access to this ticket.', 'error');
+      return false;
+    }
+    history.replaceState(null, '', location.pathname + '#' + tab);
+    switchTab(tab, true);
+    window.caffootServiceDesk.openLinkedTicket(id, scope);
+    return true;
   }
   function workspaceHashTab() {
     if (sessionCanUseMyTickets && location.hash === '#my-tickets') return 'my-tickets';
@@ -11468,6 +11484,7 @@ void (async () => {
           password:String(data.get('password')||''),
           fromName:String(data.get('fromName')||''),
           fromEmail:String(data.get('fromEmail')||''),
+          itSupportEmail:String(data.get('itSupportEmail')||''),
           insecureConfirmed:form.elements.namedItem('insecureConfirmed').checked
         });
         smtpSettings=result;
@@ -11618,8 +11635,8 @@ void (async () => {
       await window.caffootStaffDirectory.refresh();
     // Hide only the browser-backup actions excluded from the server application by issue #215.
     document.querySelectorAll('[data-action="settings-backup"],[data-action="export-data"],[data-action="export-backup"]').forEach(el=>el.hidden=true);
-    switchTab(workspaceHashTab() || landingTab(),true);
     document.getElementById('app').inert=false;
+    if (!openEmailTicket()) switchTab(workspaceHashTab() || landingTab(),true);
     document.getElementById('app').setAttribute('aria-busy','false');
   }catch(error){
     const container=document.getElementById('main-content');

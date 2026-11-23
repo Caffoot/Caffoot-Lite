@@ -1180,6 +1180,10 @@ window.caffootServiceDesk = (() => {
         render: renderTicketQueue,
         renderEmployee: renderEmployeeTicketQueue,
         hydrateQueue: hydrateTicketQueue,
+        openLinkedTicket: (id, scope) => {
+            if (scope === 'department') void employeeQueueRefresh?.select(scope);
+            void openTicketDetails(id, undefined, scope);
+        },
         hydrateSettings: hydrateServiceDeskSettings,
         equipmentPanel: renderTicketEquipmentPanel,
         hydrateEquipment: hydrateTicketEquipment,

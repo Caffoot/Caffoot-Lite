@@ -194,6 +194,20 @@ class SMTPHttpTests(unittest.TestCase):
         self.assertFalse(result["authenticate"])
         self.assertFalse(result["passwordConfigured"])
 
+    def test_optional_support_address_validates_one_mailbox_and_preserves_legacy_settings(self):
+        path = config_path(self.path)
+        path.write_text(json.dumps(settings()), encoding="utf-8")
+        path.chmod(0o600)
+        self.assertEqual(public_settings(path)["itSupportEmail"], "")
+        address = "it-support@example.test"
+        self.assertEqual(self.save(dict(settings(), itSupportEmail=address))[1]["itSupportEmail"], address)
+        self.assertEqual(self.save()[1]["itSupportEmail"], address)
+        for invalid in ("a@example.test,b@example.test", "Team <it@example.test>",
+                        "it@example.test\n", "it..support@example.test", None):
+            self.assertEqual(self.save(dict(settings(), itSupportEmail=invalid))[0], 400)
+        self.assertEqual(public_settings(path)["itSupportEmail"], address)
+        self.assertEqual(self.save(dict(settings(), itSupportEmail=""))[1]["itSupportEmail"], "")
+
     def test_test_email_uses_tls_and_never_discloses_credentials(self):
         FakeSMTP.calls = []
         FakeSMTP.message = None

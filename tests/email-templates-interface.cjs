@@ -10,6 +10,8 @@ const {chromium} = require('playwright');
 const root = path.resolve(__dirname, '..');
 const temporary = fs.mkdtempSync(path.join(os.tmpdir(), 'caffoot-email-templates-'));
 const screenshots = process.env.CAFFOOT_EMAIL_TEMPLATE_SCREENSHOTS;
+const notificationScreenshots = process.env.CAFFOOT_TICKET_NOTIFICATION_SCREENSHOTS;
+const ticketCreatedScreenshots = process.env.CAFFOOT_TICKET_CREATED_SCREENSHOTS || notificationScreenshots;
 let server;
 let browser;
 
@@ -25,7 +27,12 @@ async function startEmailTemplateServer() {
     const seed = spawnSync('python3', ['-c', `
 import sqlite3
 import sys
+import json
+from backend.accounts import hash_password
+from backend.device_assignments import assign_devices
 from backend.schema import initialise_database
+from backend.service_desk import create_ticket
+from backend.service_desk_calendar import utc_timestamp
 from backend.sessions import _digest
 
 with sqlite3.connect(sys.argv[1]) as connection:
@@ -37,6 +44,20 @@ with sqlite3.connect(sys.argv[1]) as connection:
     connection.execute("UPDATE organisation_features SET enabled=1 WHERE feature='devices'")
     connection.execute("INSERT INTO account_permission_overrides VALUES(2,'Devices','read')")
     connection.execute("INSERT INTO account_permission_overrides VALUES(2,'Service Desk','edit')")
+    connection.execute("INSERT INTO accounts(id,username,password_hash) VALUES(4,'Casey Employee',?)",
+                       (hash_password('Fictional Support Password'),))
+    connection.execute("INSERT INTO departments(id,name) VALUES('office','Reception')")
+    connection.execute("INSERT INTO staff_members(id,account_id,first_name,last_name,department_id) "
+                       "VALUES('casey',4,'Casey','Rowan','office')")
+    record = {'id': 'printer', 'name': 'Reception Printer', 'type': 'Printer'}
+    connection.execute('INSERT INTO inventory_devices(id,name,record_json,ordinal) VALUES(?,?,?,0)',
+                       ('printer', 'Reception Printer', json.dumps(record)))
+    connection.commit()
+    assign_devices(connection, 1, '1'*64, dict(recipientKind='department', recipientId='office',
+                   devices=[dict(id='printer', revision=0)]))
+    create_ticket(connection, (4, 'Casey Employee'), 'department',
+                  dict(equipmentKind='device', equipmentId='printer', categoryId=9, subject='Printer leaves streaks',
+                       description='A grey streak appears on each test page.'), utc_timestamp(), ())
 `, database], {cwd: root, encoding: 'utf8'});
     assert.equal(seed.status, 0, seed.stderr);
     const log = path.join(temporary, 'server.log');
@@ -87,18 +108,76 @@ async function openEmailTemplates(page) {
     await page.locator('#preview-email .mail-hero').waitFor();
 }
 
-async function captureEmailScreen(page, name) {
+async function captureEmailScreen(page, name, directory = screenshots, fullPage = true) {
     assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1),
         name + ' has horizontal overflow');
-    if (!screenshots) return;
-    fs.mkdirSync(screenshots, {recursive: true});
+    if (!directory) return;
+    fs.mkdirSync(directory, {recursive: true});
     await page.evaluate(() => {
         document.activeElement?.blur();
         // Smooth scrolling can still move sticky panels during a full-page capture.
         window.scrollTo({left: 0, top: 0, behavior: 'instant'});
     });
     await page.waitForFunction(() => scrollY === 0 && document.scrollingElement.scrollTop === 0);
-    await page.screenshot({path: path.join(screenshots, name + '.png'), fullPage: true, animations: 'disabled'});
+    await page.screenshot({path: path.join(directory, name + '.png'), fullPage, animations: 'disabled'});
+}
+
+async function verifyTicketNotificationSettings(instance) {
+    for (const [theme, mobile] of [['light', false], ['dark', false], ['light', true], ['dark', true]]) {
+        const {page, context, errors} = await openEmailWorkspace(instance, {theme, mobile});
+        const mode = (mobile ? 'mobile' : 'desktop') + '-' + theme;
+        await page.locator('#next-settings-nav').click();
+        await page.getByRole('tab', {name: 'Email Settings', exact: true}).click();
+        const supportEmail = page.getByRole('textbox', {name: 'IT Support Email Address'});
+        const saveSettings = page.getByRole('button', {name: 'Save Email Settings'});
+        await supportEmail.waitFor();
+        if (mode === 'desktop-light') {
+            await page.getByRole('textbox', {name: 'SMTP server address'}).fill('mail.example.invalid');
+            await page.getByRole('spinbutton', {name: 'SMTP port'}).fill('587');
+            await page.locator('label.toggle:has(#smtp-auth)').click();
+            await page.getByRole('textbox', {name: 'From Email Address'}).fill('caffoot@example.invalid');
+            await supportEmail.fill('it-support@example.invalid');
+            await saveSettings.click();
+            await page.getByText('Outgoing email settings saved.', {exact: true}).waitFor();
+            await supportEmail.fill('discard@example.invalid');
+            await page.getByRole('button', {name: 'Discard Changes'}).click();
+        }
+        await page.waitForFunction(() =>
+            document.querySelector('input[name="itSupportEmail"]')?.value === 'it-support@example.invalid');
+        if (ticketCreatedScreenshots) {
+            await page.waitForFunction(() => getComputedStyle(document.getElementById('toast')).opacity === '0');
+        }
+        if (notificationScreenshots) await captureEmailScreen(page, 'email-settings-' + mode, notificationScreenshots);
+        await page.locator('#settings-email-templates-tab').click();
+        await page.getByRole('button', {name: /Ticket Created/}).click();
+        const preview = page.locator('#preview-email');
+        await preview.getByText('Open', {exact: true}).waitFor();
+        assert.equal(await page.locator('.var-row').count(), 3);
+        assert.equal(await preview.getByText('Open Ticket in Caffoot Lite').getAttribute('href'), null);
+        if (ticketCreatedScreenshots) await captureEmailScreen(page, 'ticket-created-' + mode, ticketCreatedScreenshots);
+        assert.deepEqual(errors, []);
+        await context.close();
+    }
+
+    const technician = await openEmailWorkspace(instance, {actor: 2});
+    await technician.page.goto(instance.base + '/inventory?ticket=it-1');
+    await technician.page.getByRole('heading', {name: 'SD-0001 — Printer leaves streaks'}).waitFor();
+    if (notificationScreenshots) await captureEmailScreen(technician.page, 'technician-email-link', notificationScreenshots, false);
+    assert.deepEqual(technician.errors, []);
+    await technician.context.close();
+
+    const employee = await browser.newContext({ignoreHTTPSErrors: true, viewport:{width:1440,height:960}});
+    const page = await employee.newPage();
+    await page.goto(instance.base + '/account?ticket=department-1');
+    await page.getByText('Please sign in to continue using Caffoot Lite.').waitFor();
+    await page.locator('#username').fill('Casey Employee');
+    await page.locator('#password').fill('Fictional Support Password');
+    await page.locator('#submit').click();
+    await page.getByRole('heading', {name: 'SD-0001 — Printer leaves streaks'}).waitFor();
+    assert.equal(await page.getByRole('tab', {name: 'Department Tickets'}).getAttribute('aria-selected'), 'true');
+    assert.equal((await employee.request.get(instance.base + '/api/service-desk/it/tickets/1')).status(), 403);
+    if (notificationScreenshots) await captureEmailScreen(page, 'department-email-link', notificationScreenshots, false);
+    await employee.close();
 }
 
 async function fictionalCompanyLogo(page) {
@@ -126,10 +205,25 @@ async function runEmailTemplateBrowserChecks() {
     browser = await chromium.launch({headless: true});
     const {page, context, errors} = await openEmailWorkspace(instance);
     await openEmailTemplates(page);
-    assert.equal(await page.locator('.template-option').count(), 9);
+    assert.equal(await page.locator('.template-option').count(), 10);
     assert.equal(await page.locator('.var-row').count(), 6);
     assert.equal(await page.getByRole('group', {name: 'Visual Formatting'}).getByRole('button').count(), 5);
     await captureEmailScreen(page, 'templates-desktop-light');
+    for (const [template, recipient] of [
+        ['Ticket Created', 'Configured IT support mailbox'],
+        ['Ticket Assigned', 'Assigned IT technician'],
+        ['Employee Reply', 'Assigned IT technician'],
+        ['Ticket Reopened', 'Assigned IT technician'],
+        ['Ticket On Hold', 'Authorised employee'],
+        ['Ticket Update', 'Authorised employee'],
+        ['Email Verification', 'Authorised account recipient'],
+        ['Password Recovery', 'Authorised account recipient'],
+        ['Account Security Notice', 'Authorised account recipient'],
+        ['Ticket Closed', 'Authorised employee'],
+    ]) {
+        await page.locator('.template-option').filter({has: page.getByText(template, {exact: true})}).click();
+        assert.equal(await page.locator('#selected-template-recipient').textContent(), recipient, template);
+    }
 
     const subject = page.getByLabel('Email Subject');
     const draft = page.getByRole('button', {name: 'Save as Draft'});
@@ -161,8 +255,9 @@ async function runEmailTemplateBrowserChecks() {
     await dialog.getByRole('alert').getByText('Enter a valid HTTPS link.').waitFor();
     await dialog.getByLabel('Link Address').fill('https://support.example.invalid/help');
     await dialog.getByRole('button', {name: 'Insert Link', exact: true}).click();
-    await page.locator('#preview-email a').getByText('https://support.example.invalid/help').waitFor();
-    assert.equal(await page.locator('#preview-email a').getAttribute('href'), null);
+    const sampleLink = page.locator('#preview-email a').filter({hasText: 'https://support.example.invalid/help'});
+    await sampleLink.waitFor();
+    assert.equal(await sampleLink.getAttribute('href'), null);
     assert.ok(await publish.isDisabled());
     await draft.click();
     await page.getByText('Saved Draft Ready', {exact: true}).waitFor();
@@ -245,6 +340,8 @@ async function runEmailTemplateBrowserChecks() {
         assert.deepEqual(view.errors, []);
         await view.context.close();
     }
+    await verifyTicketNotificationSettings(instance);
+    console.log('Service Desk email settings, template and authenticated link browser checks passed.');
     console.log('Email Templates browser checks passed.');
 }
 

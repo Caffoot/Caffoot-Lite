@@ -1,6 +1,14 @@
 # Milestone 01 Development Handover — v2.2 Target
 
-## Email Templates And Company Branding — 23 November 2026
+## Service Desk Notifications — 23 November 2026
+
+Stage 5.6 implements the seven authorised Service Desk notifications in [PR #442](https://github.com/Caffoot/Caffoot-Lite/pull/442) against `milestone-1`. It starts from `e708c2f5069ec5ff1a429e66bb1cc0d0769e36f3`, after owner acceptance of Stages 5.1–5.5. The private SMTP settings file accepts one optional IT support mailbox and remains readable when the field is absent in older settings. The existing central editor has ten templates. Schema 28 is sufficient. [Owner authorisation](https://github.com/Caffoot/Caffoot-Lite/issues/425#issuecomment-7109456682)
+
+Ticket events enter the existing bounded queue after commit, and use the published wording and existing SMTP sender. Employee recipients are checked against the live assignment and ticket permissions at delivery, with separate messages for current eligible Department members. Each link requires the recipient to sign in and pass the relevant ticket API checks. A missing destination or mail failure leaves the saved ticket available in the queue. [Administrator instructions](../how-tos/features-and-instructions/v2.2-draft/Service-Desk-Administration.md#configure-the-it-support-mailbox) · [Employee instructions](../how-tos/features-and-instructions/v2.2-draft/Service-Desk-Tickets.md#follow-service-desk-emails) · [Application captures and provenance](evidence/service-desk-notifications/README.md)
+
+The focused integrated backend run passed 203 tests, including loopback SMTP and the notification matrix. The Chromium notification and reporting tests and the local Docker Compose restart/recreate check passed. Final-head GitHub workflows run through Ready for Review. Independent review, owner visual acceptance and explicit merge approval remain pending. Raspberry Pi, native Safari, complete upgrade and restore acceptance and v2.2 publication remain separate gates.
+
+## Historical Email Templates And Company Branding — 23 November 2026
 
 [PR #441](https://github.com/Caffoot/Caffoot-Lite/pull/441) targets `milestone-1` from `7b651af631b18e68da4160d1e29ef1a957c8f7cc`, after owner acceptance of Batch 5.4. Administrators can edit and preview nine email templates, save drafts, publish and load the default wording for a single template. Shared branding and the managed logo are stored with the database in schema 28. Email verification, password recovery and account security notices use the published wording plus their required server-controlled content. The six Service Desk templates are available for editing and sample tests. Ticket event delivery is planned for Batch 5.6. [Scope and authorisation](https://github.com/Caffoot/Caffoot-Lite/issues/424#issuecomment-7107322049)
 

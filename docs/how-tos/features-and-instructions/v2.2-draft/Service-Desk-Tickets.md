@@ -24,6 +24,8 @@ For examples of directly assigned and shared equipment, see [Device Assignments 
 
 If the form reports a problem, correct the highlighted or named field and submit again. If the file is rejected, use the correct file format or remove it. If a Device, assignment or software choice changed while you had the form open, reopen the form to load its current choices. A failed save leaves the ticket and its attachment unsaved.
 
+Keep the reference shown after you submit. A new personal or Department request can alert the configured IT mailbox. The confirmation means the request was saved. You can look it up in Caffoot Lite whether or not an email arrived.
+
 ![Create Ticket showing a Laptop and Microsoft Teams selected under Affected Software.](../../../development-handovers/evidence/employee-service-desk/create-ticket-desktop-light.png)
 
 *The optional software picker uses the selected computer’s recorded applications.* [Capture details](../../../development-handovers/evidence/employee-service-desk/README.md)
@@ -53,6 +55,18 @@ For Department tickets, other authorised current members can read your replies a
 
 *Updates shows the shared conversation and the reply form for an active ticket.* [Capture details](../../../development-handovers/evidence/employee-service-desk/README.md)
 
+## Follow Service Desk Emails
+
+1. Check that the email address in **My Account** is correct and verified. Use the account linked to your active Staff record. [Account email and security](../Users-Permissions-and-MFA.md)
+2. When IT adds an update marked visible, puts a ticket **On Hold** or **Closes** it, you may receive an email with the permitted update, hold reason or resolution. For shared equipment, the email goes separately to each eligible current Department member. Your colleague’s address stays private.
+3. Select **Open Ticket in Caffoot Lite**. Sign in and complete any required authenticator step. The link opens the permitted ticket view. Use **Updates** to see the conversation and download any file you can access there.
+4. If the link no longer opens the ticket, check you signed in with the right account. You can also go to **My Tickets**, choose the personal or Department tab and use **Clear Filters** to find the reference. If your Department or the equipment assignment has changed, ask IT to review the original ticket.
+5. When you reply, Caffoot Lite can alert the current technician. If the ticket is unassigned, your reply is saved for the shared IT queue. Reopening can alert the retained technician. To check whether an action was recorded, look at the conversation or history.
+
+![A Department ticket opened from an email link after the employee signs in.](../../../development-handovers/evidence/service-desk-notifications/department-email-link.png)
+
+*A signed-in Department member sees the ticket in the Department Tickets view. Access follows the current equipment assignment and membership.* [Capture details](../../../development-handovers/evidence/service-desk-notifications/README.md)
+
 ## Who Can See A Ticket?
 
 | Equipment assignment | Employee ticket visibility |
@@ -81,6 +95,7 @@ A ticket begins **Open**, with **Medium** priority and **Unassigned** technician
 - **The equipment is missing from My Equipment.** Ask IT to check the genuine equipment assignment and confirm which Staff Member and Department are linked to your account. A disabled equipment feature can temporarily hide its records.
 - **A colleague can see a shared ticket that you cannot.** Ask IT to check your current Department membership and the equipment's assignment. The ticket may belong to a previous equipment assignment.
 - **An attachment is unavailable.** A download follows the visibility of its message and your current access to the ticket. Ask IT to check the conversation if you still need the file.
+- **A ticket is in Caffoot Lite but email is missing.** Check your verified address and junk folder. Keep using the ticket to track replies and status. Ask IT to check delivery if you expected an employee-visible update, hold or closure email.
 - **The equipment was returned or moved.** Earlier conversations stay available to authorised IT. A new problem under an eligible new assignment can have its own ticket.
 - **A ticket you expect is missing from the list.** Check the two tabs and select **Clear Filters**. Open is the default status. If it is still missing, ask IT to check the equipment’s assignment history.
 - **Affected Software is missing or an application is unavailable.** The field appears for the Software / Applications category on a Laptop or Desktop. Your administrator may have renamed that category. It uses the Device’s recorded applications. You can choose **Other / Not Listed** or leave the field blank.

@@ -2,7 +2,7 @@
 
 > **Draft v2.2 — Unreleased.** These instructions describe the Email Templates settings in the v2.2 development application. For the published release, see the [v2.1 Settings guide](../Settings-and-Change-History.md).
 
-Use **Email Templates** to change the words and formatting in Caffoot Lite account emails. Use **Company Branding** to give supported emails a shared company name, colours, footer and optional logo. Six Service Desk templates are also available for editing and sample testing. Ticket events do not send email in this development batch.
+Use **Email Templates** to change the words and formatting in seven Service Desk notifications and three account and security emails. Use **Company Branding** to give supported emails a shared company name, colours, footer and optional logo. [Approved Service Desk events and recipients](Service-Desk-Administration.md#check-which-service-desk-emails-are-sent)
 
 ## Open Email Templates
 
@@ -49,6 +49,7 @@ A variable is a token in double braces. For example, `{{ticket_number}}` becomes
 | Ticket Assigned | `{{technician_name}}`, `{{ticket_number}}`, `{{device_name}}`, `{{ticket_link}}` |
 | Employee Reply | `{{technician_name}}`, `{{ticket_number}}`, `{{employee_reply}}`, `{{ticket_link}}` |
 | Ticket Reopened | `{{technician_name}}`, `{{ticket_number}}`, `{{device_name}}`, `{{ticket_link}}` |
+| Ticket Created | `{{ticket_number}}`, `{{ticket_status}}`, `{{ticket_link}}` |
 | Email Verification | `{{company_name}}`, `{{recipient_name}}` |
 | Password Recovery | `{{company_name}}`, `{{recipient_name}}` |
 | Account Security Notice | `{{company_name}}` |
@@ -61,7 +62,7 @@ A variable is a token in double braces. For example, `{{ticket_number}}` becomes
 
 ## Save A Draft And Publish
 
-1. After editing, check **Unsaved Changes** and preview your wording. Choose **Save as Draft**. The saved version replaces the previous draft for this template. The currently published wording continues to be used for eligible account emails.
+1. After editing, check **Unsaved Changes** and preview your wording. Choose **Save as Draft**. The saved version replaces the previous draft for this template. The currently published wording continues to be used for eligible account and Service Desk emails.
 2. **Saved Draft Ready** means a draft is stored. You can reopen this template later to continue editing. A draft can be incomplete. Fill in both **Email Subject** and **Email Body**, and save again, to enable **Publish**.
 3. Review the sample and, if you can, send a test email. Choose **Publish** when you want Caffoot Lite to use this wording. It becomes the published version, and the saved draft is cleared.
 4. Look for **Published** or **Published Default**. **Published Default** means the built-in wording is active. If another administrator changes the template while you are editing it, the app rejects your stale save or publish. Reopen Email Templates, check their changes and apply yours again if needed.
@@ -70,6 +71,17 @@ A variable is a token in double braces. For example, `{{ticket_number}}` becomes
 ![Saved Draft Ready on Ticket Closed, with the Publish button enabled and the sample subject updated.](../../../development-handovers/evidence/email-templates-branding/saved-draft-desktop-light.png)
 
 *The draft is saved and visible to administrators. Publish applies the reviewed wording.*
+
+## Edit And Publish Ticket Created
+
+1. Sign in as an administrator and go to **Settings & Data → Email Templates → Ticket Created**. **Live Email Preview** uses the fictional reference `SD-0048` and shows the ticket’s **Open** status.
+2. Edit **Email Subject** and **Email Body**. For example, use `New IT request {{ticket_number}}` as the subject and ask the recipient to review the ticket in Caffoot Lite. The three available variables are **Ticket Number**, **Ticket Status** and **Secure Ticket Link**. The protected section includes all three details even if the surrounding wording omits the variables.
+3. Choose **Save as Draft** and review the preview. If you need a mail-client check, send a fictional test using **Send Test Email To**. The sample address and reference are for review. To test a real alert, use the [mailbox verification steps](Service-Desk-Administration.md#configure-the-it-support-mailbox).
+4. Choose **Publish**, then check that **Published** or **Published Default** appears. To abandon unsaved changes, select another template and confirm that you want to discard the edits. To switch back to the built-in wording, load **Restore Default**, save the draft and publish it.
+
+![Ticket Created selected in Email Templates, showing its three variables and protected Open status and ticket link.](../../../development-handovers/evidence/service-desk-notifications/ticket-created-desktop-light.png)
+
+*The existing editor shows the fictional preview alongside the published wording. The live alert uses the real ticket reference and the authenticated IT ticket route.* [Capture details](../../../development-handovers/evidence/service-desk-notifications/README.md)
 
 ## Restore One Template To Its Default
 

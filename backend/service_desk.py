@@ -1,4 +1,5 @@
 """Read and change a ticket within one authenticated database transaction."""
+from dataclasses import dataclass, field
 import json
 
 from backend.permissions import can_access
@@ -34,6 +35,13 @@ TICKET_SUMMARY = f"""
     (SELECT username FROM accounts WHERE id=ticket.technician_id) AS technician,
     ticket.created_at AS createdAt, ticket.updated_at AS updatedAt
 """
+
+
+@dataclass(frozen=True)
+class TicketNotification:
+    template_id: str
+    values: dict = field(default_factory=dict)
+    technician_id: int | None = None
 
 
 def ticket_rows(cursor):
@@ -414,6 +422,8 @@ def change_ticket_lifecycle(connection, ticket_id, action, payload, ticket, acto
                                      'reason': reason, 'explanation': explanation})
         if status == 'Open':
             record_ticket_event(connection, ticket_id, 'Status Changed', actor, at, before=status, status='In Progress')
+        if target_id != actor[0]:
+            return TicketNotification('ticket-assigned', technician_id=target_id)
     elif action == 'hold':
         reason = payload.get('reason')
         visible = payload.get('employeeVisible', False)
@@ -428,6 +438,9 @@ def change_ticket_lifecycle(connection, ticket_id, action, payload, ticket, acto
                             before=status, status='On Hold', reason=reason,
                             private={'explanation': explanation} if explanation and not visible else None,
                             **({'explanation': explanation} if visible and explanation else {}))
+        return TicketNotification('ticket-hold', {
+            'ticket_status': 'On Hold', 'hold_reason': reason, 'hold_explanation': explanation if visible else '',
+        })
     elif action == 'resume':
         if status != 'On Hold':
             raise FileExistsError('The ticket is not On Hold.')
@@ -447,6 +460,7 @@ def change_ticket_lifecycle(connection, ticket_id, action, payload, ticket, acto
               (ticket_id,closed_event_id,resolution_message_id,resolution_working_seconds) VALUES(?,?,?,?)
         """, (ticket_id, event_id, message_id, seconds))
         connection.execute("UPDATE service_desk_tickets SET status='Closed' WHERE id=?", (ticket_id,))
+        return TicketNotification('ticket-closed', {'ticket_status': 'Closed', 'resolution_note': note})
     elif action == 'reopen':
         if status != 'Closed':
             raise FileExistsError('Only Closed tickets can be reopened.')
@@ -457,6 +471,8 @@ def change_ticket_lifecycle(connection, ticket_id, action, payload, ticket, acto
         if cursor.rowcount != 1:
             raise FileExistsError('The ticket closure history needs review before reopening.')
         connection.execute("UPDATE service_desk_tickets SET status='Open' WHERE id=?", (ticket_id,))
+        if technician_id is not None:
+            return TicketNotification('ticket-reopened', technician_id=technician_id)
     elif action == 'priority':
         new_priority = payload.get('priority')
         if new_priority not in PRIORITIES:
@@ -507,8 +523,12 @@ def save_ticket_request(connection, actor_id, scope, payload, *, ticket_id=None,
     actor = (actor_id, actor_name[0])
     at = utc_timestamp()
     if ticket_id is None:
-        return {'id': create_ticket(connection, actor, scope, payload, at, attachments)}
+        result = {'id': create_ticket(connection, actor, scope, payload, at, attachments)}
+        if scope in ('personal', 'department'):
+            result['notification'] = TicketNotification('ticket-created', {'ticket_status': 'Open'})
+        return result
     ticket = require_ticket(connection, actor_id, scope, ticket_id, edit=True)
+    notification = None
     if action == 'attachments':
         if scope != 'it' or payload:
             raise PermissionError('Attachment removal requires an authorised technician.')
@@ -518,6 +538,12 @@ def save_ticket_request(connection, actor_id, scope, payload, *, ticket_id=None,
         result = {'id': save_ticket_message(connection, ticket_id, message_id, scope, payload, actor, at, ticket[1])}
         if attachments:
             insert_ticket_attachments(connection, ticket_id, result['id'], attachments)
+        if message_id is None:
+            if scope == 'it' and payload.get('employeeVisible') is True:
+                notification = TicketNotification('ticket-update', {'visible_update': payload['body'].strip()})
+            elif scope != 'it' and ticket[3] is not None:
+                notification = TicketNotification('ticket-reply', {'employee_reply': payload['body'].strip()},
+                                                  technician_id=ticket[3])
     else:
         if 'expectedUpdatedAt' in payload and scope == 'it':
             payload = payload.copy()
@@ -528,7 +554,9 @@ def save_ticket_request(connection, actor_id, scope, payload, *, ticket_id=None,
                 raise FileExistsError('This ticket has changed. Review the latest details before trying again.')
         if scope != 'it' and action != 'reopen':
             raise PermissionError('This action requires an authorised technician.')
-        change_ticket_lifecycle(connection, ticket_id, action, payload, ticket, actor, at)
+        notification = change_ticket_lifecycle(connection, ticket_id, action, payload, ticket, actor, at)
         result = {'id': ticket_id}
     connection.execute('UPDATE service_desk_tickets SET updated_at=? WHERE id=?', (at, ticket_id))
+    if notification is not None:
+        result['notification'] = notification
     return result

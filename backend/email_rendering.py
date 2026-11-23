@@ -189,6 +189,10 @@ def render_email(template, wording, branding, values, details, *, logo_source=No
     else:
         text = escape(details[0][1]).replace('\n', '<br>') if details else ''
         locked = f'<div style="margin-top:6px">{text}</div>'
+    ticket_link = variables.get('ticket_link')
+    if safe_email_url(ticket_link):
+        href = '' if preview else f' href="{escape(ticket_link, quote=True)}"'
+        locked += f'<div style="margin-top:6px"><a{href}>Open Ticket in Caffoot Lite</a></div>'
     locked_html = (
         '<div class="mail-mandatory" style="margin:0 22px 19px;padding:12px 14px;background:#f3f6f8;'
         f'border:1px solid #e2eaf0;border-radius:8px;font-size:10.6px">'
@@ -206,5 +210,7 @@ def render_email(template, wording, branding, values, details, *, logo_source=No
         f'<strong>{escape(name)}</strong><br>{safe_footer}</div></div>'
     )
     required = '\n'.join(f'{label}: {value}' if label else value for label, value in details)
+    if safe_email_url(ticket_link):
+        required += '\nSecure Ticket Link: ' + ticket_link
     plain = '\n\n'.join(part for part in (body_text, required, name, footer) if part)
     return {'subject': subject, 'html': html, 'text': plain}

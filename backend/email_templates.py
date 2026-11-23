@@ -191,19 +191,28 @@ def sample_email(connection, actor, payload, *, complete=False):
     wording = validate_email_wording(template, payload['subject'], payload['body'], complete=complete)
     branding = read_email_branding(connection)
     logo = branding['logo']
-    values = {**FICTIONAL_VALUES, 'company_name': branding['name'],
-              'ticket_status': 'On Hold' if template_id == 'ticket-hold' else 'Closed'}
     if template['group'] == 'account':
-        details = [('', account_security_text(template_id, FICTIONAL_CODE))]
+        values = {**FICTIONAL_VALUES, 'company_name': branding['name']}
+        mail = render_email(template, wording, branding, values,
+                            [('', account_security_text(template_id, FICTIONAL_CODE))],
+                            logo_source='cid:company-logo', preview=not complete)
     else:
-        details = [(label, values[key]) for label, key in template['locked']]
-        if template_id == 'ticket-reopened':
-            details.append(('Status', 'Open (Reopened)'))
-    mail = render_email(template, wording, branding, values, details,
-                        logo_source='cid:company-logo', preview=not complete)
+        statuses = {'ticket-created': 'Open', 'ticket-hold': 'On Hold', 'ticket-closed': 'Closed'}
+        values = {**FICTIONAL_VALUES, 'ticket_status': statuses.get(template_id, '')}
+        mail = render_ticket_email(template_id, wording, branding, values, preview=not complete)
     if not complete:
         mail['brandingRevision'] = branding['revision']
     return mail, logo
+
+
+def render_ticket_email(template_id, wording, branding, values, *, preview=False):
+    template = TEMPLATES[template_id]
+    details = [(label, values.get(key, '')) for label, key in template['locked']
+               if values.get(key)]
+    if template_id == 'ticket-reopened':
+        details.append(('Status', 'Open (Reopened)'))
+    return render_email(template, wording, branding, values, details,
+                        logo_source='cid:company-logo', preview=preview)
 
 
 def sample_email_branding(connection, actor, payload):
