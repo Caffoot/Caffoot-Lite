@@ -76,9 +76,18 @@ Suppliers starts switched off and uses its own section permissions. Supplier Man
 
 Equipment Lifecycle is independently optional and starts switched off. Stage 4.4 is owner-accepted and merged via PR #418 into the unreleased development branch; these instructions remain draft v2.2, not published v2.1 features.
 
+## Service Desk Foundation
+
+| Task | Guide |
+| --- | --- |
+| Check who can see personal and Department equipment tickets | [Service Desk Tickets](Service-Desk-Tickets.md) |
+| Grant technician access, understand handover privacy, protect ticket-linked inventory and use Clean Start | [Administer Service Desk Access And Data](Service-Desk-Administration.md) |
+
+Batch 5.1 is under review in [PR #437](https://github.com/Caffoot/Caffoot-Lite/pull/437). The ticket screens will be documented alongside their later implementation batches.
+
 ## Publication And Acceptance
 
-Stages 1–4 are development-complete, owner-accepted and integrated into `milestone-1`; this does **not** establish full milestone, native/manual or release acceptance. Stage 5's four frozen HTML designs and six approved planning batches #420–#425 are recorded in [#419](https://github.com/Caffoot/Caffoot-Lite/issues/419), but no Stage 5 implementation has been authorised. Batch 3.4 manual/native acceptance, broader Raspberry Pi/native Safari/private-installation evidence and Stage 6 compatibility/full upgrade/restore acceptance remain deferred. v2.2 is not released.
+Stages 1–4 are development-complete, owner-accepted and integrated into `milestone-1`; this does **not** establish full milestone, native/manual or release acceptance. Stage 5's four frozen HTML designs and six approved planning batches #420–#425 are recorded in [#419](https://github.com/Caffoot/Caffoot-Lite/issues/419), and Batch 5.1 has separate development authorisation. Later batches await their individual approvals. Batch 3.4 manual/native acceptance, broader Raspberry Pi/native Safari/private-installation evidence and Stage 6 compatibility/full upgrade/restore acceptance remain deferred. v2.2 is not released.
 
 Images used here are genuine application captures with an identified approval source and captions describing their scope. Functional HTML previews are retained as development references, never presented as application screenshots. Missing or outdated images and remaining wording discrepancies are listed in the [documentation review record](../../../development-guide/Stage-1-3-Documentation-Review.md).
 

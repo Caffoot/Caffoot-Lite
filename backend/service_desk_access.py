@@ -8,7 +8,6 @@ EQUIPMENT_COLUMNS = {
     'stockUnit': ('it_asset_stock_units', 'stock_unit_id', 'IT Assets'),
     'stockItem': ('it_asset_stock_items', 'stock_item_id', 'IT Assets'),
 }
-TICKET_SCOPES = ('personal', 'department', 'it')
 
 # Each movement is committed as one operation. A return or correction that
 # leaves zero outstanding ends access to that period's conversations, even

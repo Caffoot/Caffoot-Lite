@@ -42,9 +42,12 @@ module.exports=async({page,context,catalogue,confirmedAction,confirm,screenshot,
  assert.match(await modal.innerText(),/Individual overrides take precedence/);
  assert.deepEqual(await modal.locator('.access-grid [data-next-user-permission]').evaluateAll(selects=>selects.map(item=>item.dataset.section)),['Devices','IPAM','Racks','Staff Members','Departments','IT Assets','Suppliers','Service Desk']);
  assert.equal(await modal.getByLabel('Service Desk',{exact:true}).inputValue(),'');
+ await modal.getByLabel('Service Desk',{exact:true}).scrollIntoViewIfNeeded();
  await screenshot(page,'it-staff-dave-1440');
  await page.setViewportSize({width:390,height:844});
- assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));await screenshot(page,'it-staff-dave-390');
+ assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
+ await modal.getByLabel('Service Desk',{exact:true}).scrollIntoViewIfNeeded();
+ await screenshot(page,'it-staff-dave-390');
  await page.setViewportSize({width:1440,height:950});
  await page.locator('[data-action="users-close-editor"]').first().click();
  async function editor(){
@@ -95,4 +98,29 @@ module.exports=async({page,context,catalogue,confirmedAction,confirm,screenshot,
  assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
  await screenshot(page,'clean-start-390');
  await checked(page,'Clean Start discloses ticket and attachment removal in the existing confirmation');
+
+ await page.evaluate(()=>{
+  localStorage.setItem('caffoot_theme_preference','dark');
+  caffootApplyTheme();
+ });
+ await page.locator('html.dark').waitFor();
+ await screenshot(page,'clean-start-dark-390');
+ await page.setViewportSize({width:1440,height:950});
+ await screenshot(page,'clean-start-dark-1440');
+
+ await page.goto(address+'/inventory#users');
+ await manageUser('dave');
+ await modal.getByLabel('Service Desk',{exact:true}).scrollIntoViewIfNeeded();
+ await screenshot(page,'it-staff-dave-dark-1440');
+ await page.setViewportSize({width:390,height:844});
+ await modal.getByLabel('Service Desk',{exact:true}).scrollIntoViewIfNeeded();
+ await screenshot(page,'it-staff-dave-dark-390');
+
+ await page.setViewportSize({width:1440,height:950});
+ await page.locator('[data-action="users-close-editor"]').first().click();
+ await page.evaluate(()=>{
+  localStorage.setItem('caffoot_theme_preference','light');
+  caffootApplyTheme();
+ });
+ await page.locator('[data-action="select-users-section"][data-tab="roles"]').click();
 };

@@ -327,3 +327,29 @@ class ServiceDeskHttpTests(unittest.TestCase):
         with sqlite3.connect(self.path) as connection:
             self.assertEqual(tuple(connection.iterdump()), before)
         self.assertEqual(self.request(self.ticket_path('personal', f'/{ticket}'), actor=4)[0], 200)
+
+    def test_individual_asset_and_stock_backed_device_use_canonical_identities(self):
+        with sqlite3.connect(self.path) as connection:
+            connection.execute('PRAGMA foreign_keys=ON')
+            connection.execute("UPDATE organisation_features SET enabled=1 WHERE feature='it_assets'")
+            registered = connection.execute("""INSERT INTO it_asset_stock_units(device_id)
+                VALUES('device') RETURNING id""").fetchone()[0]
+            connection.commit()
+            receipt = dict(receipt_payload(), quantity=1, readyQuantity=1,
+                           checks={'itemsChecked': True, 'conditionChecked': True})
+            receipt['item']['trackingMode'] = 'individual'
+            asset = receive_stock(connection, 1, self.tokens[1], receipt)['stockItemId']
+            unit = stock_item(connection, asset)['units'][0]['id']
+            issue_stock(connection, 1, self.tokens[1], issue_payload(connection, asset, stockUnitIds=[unit]))
+        for equipment_kind, equipment_id in (('stockUnit', registered), ('stockItem', asset)):
+            self.assertEqual(self.request(self.ticket_path('it'), method='POST',
+                payload=dict(CREATE, equipmentKind=equipment_kind, equipmentId=equipment_id))[0], 404)
+        device_ticket = self.create('it', actor=1)
+        asset_ticket = self.create(equipmentKind='stockUnit', equipmentId=unit)
+        with sqlite3.connect(self.path) as connection:
+            self.assertEqual(connection.execute("""SELECT device_id,stock_unit_id,stock_item_id
+                FROM service_desk_tickets ORDER BY id""").fetchall(), [('device', None, None), (None, unit, None)])
+            connection.execute("UPDATE organisation_features SET enabled=0 WHERE feature='it_assets'")
+        self.assert_ticket_hidden('personal', asset_ticket, 4)
+        self.assert_ticket_hidden('it', asset_ticket, 1)
+        self.assertEqual(self.request(self.ticket_path('it', f'/{device_ticket}'))[0], 200)
