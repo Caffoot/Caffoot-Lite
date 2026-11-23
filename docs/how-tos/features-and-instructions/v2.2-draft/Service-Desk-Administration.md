@@ -1,6 +1,6 @@
 # Administer The Service Desk
 
-> **Draft v2.2 — Unreleased.** This guide covers access to the employee **My Tickets** and **Department Tickets** views, the authorised **IT → Service Desk** queue, support calendar, categories, reporting and the effect of equipment changes on stored tickets and files.
+> **Draft v2.2 — Unreleased.** This guide covers employee and technician access, ticket email, the support calendar, categories, reporting and the effect of equipment changes on stored tickets and files.
 
 ## Verify Employee Access
 
@@ -39,6 +39,43 @@ Ordinary Staff use equipment-scoped access through their Staff account link. The
 4. To remove the grant, review their role and individual override, preview and confirm the change. To revoke account access, use the established account controls. Refresh any open screen and confirm that a saved ticket URL or download link now follows the new permissions.
 
 When troubleshooting, check the effective role and individual override, account status, MFA, the equipment feature switch and the equipment section’s Read access. The Service Desk uses the existing permission model and the Devices and IT Assets switches.
+
+## Configure The IT Support Mailbox
+
+The **Ticket Created** email alerts IT when someone raises a request for their own or their Department’s assigned Device or IT Asset. It contains the ticket reference, its initial **Open** status and a link to the authorised IT ticket view. The description, attachments and request subject stay inside Caffoot Lite.
+
+1. Sign in as an administrator with your authenticator. Open **Settings & Data → Email Settings**.
+2. Under **Outgoing Email Settings**, enter the **Server Address**, **Port**, **Connection Security**, SMTP authentication details and **Sender Identity** supplied by your mail administrator. Keep credentials private. If you are editing an existing installation and the SMTP username stays the same, leave **Password** blank to keep the saved password. Select the TLS option your provider requires. [SMTP fields and security](../Settings-and-Change-History.md#email-and-the-audit-trail)
+3. Under **Service Desk Notifications**, enter one mailbox in **IT Support Email Address**. For example, use `it-support@example.invalid` for a shared mailbox, or enter the address of the administrator who checks new requests. Give the people who monitor a shared mailbox their own authorised Caffoot Lite accounts. Enter the address alone, without a display name or a list of mailboxes.
+4. Select **Save Email Settings**. If the address is rejected, correct it and save again. **Discard Changes** reloads the last saved settings. To stop **Ticket Created** mail, clear the address and save. The other approved events use their own eligible recipients.
+5. Under **Send A Test Email**, enter your IT mailbox in **Recipient Email Address** and select **Send Test Email**. Check the mailbox and its junk folder. A successful connection test means your mail server accepted the test for sending. It can still take time to reach the mailbox. Wait at least 30 seconds between tests.
+6. Use the [Ticket Created template instructions](Email-Templates-and-Company-Branding.md#edit-and-publish-ticket-created) to review or publish the wording. In a test installation with a mailbox you control, have a Staff Member create one ticket for a personal item and one for a shared Department item. Check the references in the IT mailbox and open each link with an authorised technician account. Creating a ticket from **IT → Service Desk** creates a queue entry without that alert.
+
+![Email Settings with an example IT Support Email Address beneath Sender Identity.](../../../development-handovers/evidence/service-desk-notifications/email-settings-desktop-light.png)
+
+*The mailbox field uses the existing outgoing email configuration and Save Email Settings button.* [Capture details](../../../development-handovers/evidence/service-desk-notifications/README.md)
+
+## Check Which Service Desk Emails Are Sent
+
+| Event | Recipient and content |
+| --- | --- |
+| Staff Member creates a personal or Department ticket | The configured IT support mailbox receives the reference, initial Open status and the secure IT link. |
+| A technician assigns or reassigns to a colleague | The receiving technician gets the reference, equipment and secure link. Self-assignment and the move to In Progress generate no separate email. |
+| An employee adds a reply | The currently assigned technician receives the reply and secure link. For an unassigned ticket, the reply stays in the shared IT queue. |
+| IT adds an employee-visible update | The currently authorised employee audience receives the update and secure link. An internal note or edit of an existing message generates no email. |
+| IT places a ticket On Hold | The currently authorised employee audience receives the selected reason and any deliberately employee-visible explanation. Resume generates no email. |
+| IT closes a ticket | The currently authorised employee audience receives the required resolution note and secure link. |
+| An employee or technician reopens a ticket | The retained technician receives the reopening alert if still eligible. The ticket returns to Open and remains in the shared queue even if that technician is unavailable. |
+
+Employee and technician recipients need an active account, a verified email address and current ticket access. Employee access also requires an active linked Staff Member record and the current equipment assignment. For Department equipment, Caffoot Lite sends a separate email to each eligible current member. Previous equipment assignments and former Department memberships give no access. The mail contains a ticket link, and readers must complete sign-in and any required MFA. Ticket files remain inside the protected ticket.
+
+## Troubleshoot Missing Ticket Email
+
+1. Find the ticket in **IT → Service Desk → Ticket Queue**. Use **All Tickets** and search for the reference. A ticket or action can be saved even when the mailbox is blank, SMTP is unavailable or the email queue is full. Use the queue to review tickets even if you normally rely on mail alerts.
+2. Match the action to the table above. Check the saved **IT Support Email Address** for a new Staff Member ticket. For a technician alert, check who was assigned at the time of the action and whether the technician still has ticket access. A later reassignment can make a queued reply or reopening alert obsolete. For an employee update, check that the message was deliberately marked visible and that the recipient still belongs to the active assignment.
+3. For account-based recipients, ask them to check and verify their address in **My Account**. Check their Staff record link, active account, Department membership, equipment assignment and effective permissions as applicable. [Employee access checks](#verify-employee-access)
+4. Send an SMTP test and check the destination’s junk folder, filtering and delivery records. If the preview looks right but a live message uses older wording, check the template’s **Published** state. **Saved Draft Ready** means the current draft still needs publishing.
+5. A successful ticket operation confirms its database save. Live alerts use a bounded background queue and have no per-ticket inbox receipt or automatic resend. After correcting an email problem, check affected tickets in the queue and use a new authorised test ticket or action to verify future delivery.
 
 ## Configure Working Hours
 

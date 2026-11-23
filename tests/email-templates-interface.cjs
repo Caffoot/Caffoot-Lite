@@ -144,7 +144,7 @@ async function verifyTicketNotificationSettings(instance) {
         await page.waitForFunction(() =>
             document.querySelector('input[name="itSupportEmail"]')?.value === 'it-support@example.invalid');
         if (notificationScreenshots) {
-            await page.getByText('Unsaved email settings discarded.', {exact: true}).waitFor({state:'hidden'});
+            await page.waitForFunction(() => getComputedStyle(document.getElementById('toast')).opacity === '0');
             await captureEmailScreen(page, 'email-settings-' + mode, notificationScreenshots);
         }
         await page.locator('#settings-email-templates-tab').click();
