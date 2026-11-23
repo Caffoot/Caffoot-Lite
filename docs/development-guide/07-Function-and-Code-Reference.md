@@ -22,6 +22,9 @@ For the full source-pinned list of named declarations, owning bridge methods and
 | --- | --- | --- |
 | [`backend/server.py`](../../backend/server.py) | `Handler.do_GET`, `Handler.do_POST`, `Handler.handle_import`, `main` | HTTPS entry point and request routing |
 | [`backend/history_permissions.py`](../../backend/history_permissions.py) | `visible_change_history`, `visible_subnet_batch_reason` | Both inventory history responses; essential administrator events independent of optional features, with hidden-inventory filtering and existing association redaction; see [administrator audit history](04-Authentication-and-Permissions.md#administrator-audit-history) |
+| [`backend/service_desk.py`](../../backend/service_desk.py) | `read_ticket_list`, `read_ticket_attachment`, `save_ticket_request` | Transactional ticket storage and employee/IT projections |
+| [`backend/service_desk_access.py`](../../backend/service_desk_access.py) | `ticket_scope_filter`, `ticket_equipment_for_creation` | Effective permissions, current custody and the assignment privacy boundary |
+| [`backend/service_desk_schema.py`](../../backend/service_desk_schema.py) | `migrate_service_desk` | Schema 25 ticket, history and attachment relationships. See [Service Desk Foundation](Service-Desk-Foundation.md). |
 | [`backend/schema.py`](../../backend/schema.py) | `SCHEMA_VERSION`, `initialise_database` | SQLite definitions and migrations |
 | [`backend/device_handovers.py`](../../backend/device_handovers.py) | `device_handover_context`, `reassign_device` | Atomic prepared direct reassignment, Devices-only operation and registered custody without a receipt; see [the approved sequence](Direct-Handover-Decision.md) |
 | [`backend/handover_schema.py`](../../backend/handover_schema.py) | `migrate_device_handovers`, `validate_device_handovers` | Schema 19 audited canonical closure/successor links and narrowly guarded stock custody |

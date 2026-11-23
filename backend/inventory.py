@@ -6,6 +6,8 @@ Account and security tables are not part of an inventory import."""
 import json
 import sqlite3
 
+from .service_desk_schema import has_service_desk_storage
+
 COLLECTIONS = {
     "devices": "inventory_devices",
     "subnets": "inventory_subnets",
@@ -210,20 +212,60 @@ def preview_inventory_counts(candidate, current):
     return {"backup": backup, "current": current_counts}
 
 
-def _write_detached(connection: sqlite3.Connection, data):
-    """Low-level staging writer. Caller MUST complete full source validation.
+def retain_ticket_devices(connection, records):
+    """Keep existing Device rows where replacing them would break a ticket."""
+    if not has_service_desk_storage(connection):
+        return set()
+    linked = dict(connection.execute("""
+        SELECT device.id,device.record_json FROM inventory_devices device
+        WHERE EXISTS(SELECT 1 FROM service_desk_tickets ticket WHERE ticket.device_id=device.id)
+    """))
+    if not linked:
+        return set()
+    retained = set()
+    for record in records:
+        identity = record.get('id')
+        if not isinstance(identity, str) or identity not in linked:
+            continue
+        if identity in retained or json.loads(linked[identity]) != record:
+            raise ImportRejected('The import must preserve the existing records for Devices with protected history.')
+        retained.add(identity)
+    if retained != linked.keys():
+        raise ImportRejected('The import would remove Devices with protected history. No inventory was changed.')
+    return retained
 
-    Do not call on a production database until published import review,
-    normalisation and integrity validation are implemented.
-    """
-    for table in (*COLLECTIONS.values(), "inventory_ip_allocations", "inventory_settings"):
-        connection.execute("DELETE FROM " + table)
+
+def _write_detached(connection: sqlite3.Connection, data):
+    """Replace validated inventory inside the caller's transaction."""
+    retained_devices = retain_ticket_devices(connection, data.get('devices', []))
+    if retained_devices:
+        connection.execute("""
+            DELETE FROM inventory_devices WHERE NOT EXISTS(
+                SELECT 1 FROM service_desk_tickets WHERE device_id=inventory_devices.id)
+        """)
+        # Give retained rows temporary positions so imports can reorder them.
+        # The existing names, identities and revision numbers stay intact.
+        first_position = connection.execute(
+            'SELECT min(0,coalesce(min(ordinal),0)) FROM inventory_devices'
+        ).fetchone()[0]
+        connection.executemany('UPDATE inventory_devices SET ordinal=? WHERE id=?',
+                               ((first_position-index, identity)
+                                for index, identity in enumerate(sorted(retained_devices), start=1)))
+        connection.execute('DELETE FROM device_edit_reservations')
+    else:
+        connection.execute('DELETE FROM inventory_devices')
+    for table in (*COLLECTIONS.values(), 'inventory_ip_allocations', 'inventory_settings'):
+        if table != 'inventory_devices':
+            connection.execute('DELETE FROM ' + table)
     for name, table in COLLECTIONS.items():
         for ordinal, record in enumerate(data.get(name, [])):
             identifier = record.get("id")
             if not isinstance(identifier, str) or not identifier:
                 raise ImportRejected("Missing ID in " + name)
             if name == "devices":
+                if identifier in retained_devices:
+                    connection.execute('UPDATE inventory_devices SET ordinal=? WHERE id=?', (ordinal, identifier))
+                    continue
                 device_name = record.get("name")
                 if not isinstance(device_name, str) or not device_name:
                     raise ImportRejected("Missing device name")

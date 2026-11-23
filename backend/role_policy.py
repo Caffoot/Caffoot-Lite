@@ -2,7 +2,8 @@
 from dataclasses import dataclass
 
 STAFF_ROLE_KEY = "staff_member"
-SECTIONS = ("Devices", "IPAM", "Racks", "Staff Members", "Departments", "IT Assets", "Suppliers")
+SERVICE_DESK_SECTION = "Service Desk"
+SECTIONS = ("Devices", "IPAM", "Racks", "Staff Members", "Departments", "IT Assets", "Suppliers", SERVICE_DESK_SECTION)
 LEVELS = ("read", "edit")
 
 

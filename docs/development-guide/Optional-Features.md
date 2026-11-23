@@ -10,7 +10,7 @@ Schema 13 adds `organisation_features`, separate from `inventory_settings`. Sche
 
 A database with no application tables before initialisation starts with all optional features off. An existing database upgrading to schema 13 starts with Devices, IPAM and Network Racks on, even if its inventory is empty. Schema 16 preserves those saved choices and always adds IT Assets off. Suppliers and Equipment Lifecycle stay off. The migrations seed once, in the existing schema transaction. Restart and later upgrades retain choices.
 
-Inventory imports and Clean Start replace inventory settings, but never this table. Existing whole-database backup/restore includes it; there is no separate backup mechanism. No toggle changes inventory records, roles, grants or sessions. Successful transitions append attributable history with the previous and new boolean; repeated unchanged values add no event. Existing inventory history retention rules still apply.
+Inventory imports replace inventory settings. Clean Start also clears operational module data and restores standard catalogues. Both retain the choices in this table. Existing whole-database backup/restore includes it; there is no separate backup mechanism. No toggle changes inventory records, roles, grants or sessions. Successful transitions append attributable history with the previous and new boolean; repeated unchanged values add no event. Existing inventory history retention rules still apply.
 
 ## Administrator API
 

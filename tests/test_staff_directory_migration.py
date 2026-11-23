@@ -242,14 +242,25 @@ class StaffDirectoryMigrationTests(unittest.TestCase):
         self.db.rollback()
         self.assertEqual(self.db.execute('SELECT username FROM accounts WHERE id=5').fetchone(), ('profile-missing',))
 
-    def test_existing_inventory_import_and_clean_start_retain_directory(self):
+    def test_import_retains_directory_and_clean_start_clears_operational_staff_data(self):
         schema.initialise_database(self.db)
         enable_inventory_features(self.db)
         self.db.execute("INSERT INTO departments(id,name) VALUES('dept','Production')")
-        self.db.execute("UPDATE staff_members SET department_id='dept' WHERE account_id=3")
+        self.db.execute("UPDATE staff_members SET department_id='dept',first_name='Directory name',"
+                        "job_title='Manager',telephone='000',location='Office',active=0 WHERE account_id=3")
+        self.db.execute("INSERT INTO staff_members(id,department_id) VALUES('no-login','dept')")
         self.db.commit()
         directory = {table: self.rows(table) for table in ('staff_members', 'departments')}
         stage_inventory(self.db, inspect_export(json.dumps(fixture()).encode()))
         self.assertEqual({table: self.rows(table) for table in directory}, directory)
         reset_inventory(self.db, 1)
-        self.assertEqual({table: self.rows(table) for table in directory}, directory)
+        self.assertEqual(self.rows('departments'), [])
+        self.assertEqual(
+            {(row[0], row[-1]) for row in self.rows('staff_members')},
+            {(row[0], row[-1]) for row in directory['staff_members'] if row[-1] is not None},
+        )
+        self.assertEqual(self.db.execute("""
+            SELECT first_name,last_name,email,department_id,job_title,telephone,location,active
+            FROM staff_members WHERE account_id=3
+        """).fetchone(), ('Alex', 'Example', 'alex@example.test', None, '', '', '', 0))
+        self.assertEqual(self.db.execute('PRAGMA foreign_key_check').fetchall(), [])

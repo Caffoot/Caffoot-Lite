@@ -268,6 +268,24 @@ class HistoryPermissionProjectionTests(unittest.TestCase):
                          ["Unassociated stock", "owner"])
         self.assertNotIn("PRIVATE", json.dumps(result))
 
+    def test_stock_only_reader_cannot_reclassify_pre_reset_movement_using_reused_id(self):
+        self.db.execute("CREATE TABLE it_asset_stock_units (id INTEGER PRIMARY KEY, device_id TEXT)")
+        self.db.execute("CREATE TABLE it_asset_stock_entries (movement_id INTEGER, stock_unit_id INTEGER)")
+        self.db.execute("INSERT INTO it_asset_stock_entries VALUES(7,NULL)")
+        before = {"changes": [{"kind": "IT Assets", "label": "Historical Device movement",
+                               "after": {"movementId": 7}}]}
+        reset = {"changes": [], "reason": "Clean inventory reset", "operationalReset": True}
+        after = {"changes": [{"kind": "IT Assets", "label": "Current quantity movement",
+                              "after": {"movementId": 7}}]}
+        self.db.executemany("INSERT INTO inventory_change_history(record_json) VALUES(?)",
+                           ((json.dumps(event),) for event in (before, reset, after)))
+        self.allowed = {"IT Assets": True}
+        self.assertEqual([event["changes"][0]["label"] for event in visible_change_history(self.db, 2)],
+                         ["Current quantity movement"])
+        self.allowed["Devices"] = True
+        self.assertEqual([event["changes"][0]["label"] for event in visible_change_history(self.db, 2)],
+                         ["Historical Device movement", "Current quantity movement"])
+
     def test_revocation_and_no_read_permission(self):
         self.add("Device")
         self.assertEqual(len(visible_change_history(self.db, 2)), 1)

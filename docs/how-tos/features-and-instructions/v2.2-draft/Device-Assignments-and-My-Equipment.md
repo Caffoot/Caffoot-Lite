@@ -82,7 +82,7 @@ In Device Details → **Assigned To**, **Current Assignment** shows the present 
 
 Staff Details shows a person's current equipment and corresponding history. Department Details → Equipment shows directly Department-owned equipment, excluding members' personal assignments. With independent IT Assets access, genuine stock movements appear alongside the original relationships. Hidden stock information must not be interpreted as an absence of stock history.
 
-Devices with assignment history are protected against destructive deletion and inventory replacement/reset that would remove those relationships. Retain the original Device and use its authorised lifecycle workflows.
+Devices with assignment history are protected against ordinary deletion and inventory replacements that would remove those relationships. The administrator’s separate Clean Start operation clears those records and their history along with the rest of the operational data. [Clean Start](Service-Desk-Administration.md#clear-operational-data-with-clean-start)
 
 ## Physical Return, Reissue And Direct Handover
 

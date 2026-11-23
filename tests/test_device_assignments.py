@@ -201,9 +201,11 @@ class DeviceAssignmentTests(unittest.TestCase):
                 self.allocate(('one', 'two'))
         self.assertEqual(before, self.snapshot())
 
-    def test_delete_and_inventory_reset_retain_assignment_history(self):
+    def test_clean_start_clears_assignments_while_delete_and_import_protect_them(self):
         from backend.device_saves import delete_reserved_device
+        from backend.inventory import reconstruct_inventory, stage_inventory
         from backend.reset_inventory import reset_inventory
+
         self.allocate()
         self.db.execute("INSERT INTO device_edit_reservations VALUES('one',1,9999999999,0)")
         self.db.commit()
@@ -211,9 +213,14 @@ class DeviceAssignmentTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'assignment history'):
             delete_reserved_device(self.db, 1, 'one', 0)
         self.assertEqual(before, self.snapshot())
+        candidate = dict(reconstruct_inventory(self.db), devices=[])
         with self.assertRaises(sqlite3.IntegrityError):
-            reset_inventory(self.db, 1)
+            stage_inventory(self.db, candidate)
         self.assertEqual(before, self.snapshot())
+        reset_inventory(self.db, 1)
+        self.assertFalse(self.db.execute('SELECT 1 FROM device_assignments').fetchone())
+        self.assertEqual(reconstruct_inventory(self.db)['devices'], [])
+        self.assertEqual(self.db.execute('PRAGMA foreign_key_check').fetchall(), [])
 
     def test_waiting_allocation_rechecks_session_and_permission(self):
         for statement in ("DELETE FROM account_sessions WHERE account_id=2",
