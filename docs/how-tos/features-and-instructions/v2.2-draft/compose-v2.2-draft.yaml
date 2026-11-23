@@ -2,7 +2,7 @@
 services:
   caffoot-lite:
     build:
-      context: .
+      context: ../../../..
       dockerfile: Dockerfile
     environment:
       # Set your organisation's IANA time zone. "Europe/London" is a UK example only.

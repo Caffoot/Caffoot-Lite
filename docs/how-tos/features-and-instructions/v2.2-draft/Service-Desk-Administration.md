@@ -1,6 +1,6 @@
-# Administer Service Desk Access And Data
+# Administer The Service Desk
 
-> **Draft v2.2 — Unreleased.** This guide covers access to the employee **My Tickets** and **Department Tickets** views, the authorised **IT → Service Desk** queue, and the effect of equipment changes on stored tickets and files.
+> **Draft v2.2 — Unreleased.** This guide covers access to the employee **My Tickets** and **Department Tickets** views, the authorised **IT → Service Desk** queue, support calendar, categories, reporting and the effect of equipment changes on stored tickets and files.
 
 ## Verify Employee Access
 
@@ -39,6 +39,59 @@ Ordinary Staff use equipment-scoped access through their Staff account link. The
 4. To remove the grant, review their role and individual override, preview and confirm the change. To revoke account access, use the established account controls. Refresh any open screen and confirm that a saved ticket URL or download link now follows the new permissions.
 
 When troubleshooting, check the effective role and individual override, account status, MFA, the equipment feature switch and the equipment section’s Read access. The Service Desk uses the existing permission model and the Devices and IT Assets switches.
+
+## Configure Working Hours
+
+Use an administrator account with its authenticator to open **Settings & Data → Service Desk**. The settings apply across the installation. Set a valid deployment time zone so the calendar can be interpreted in the support team’s local time. [Portainer and Compose time zone instructions](Service-Desk-Time-Zone.md)
+
+New installations start with **Monday to Friday 09:00–17:00**, **Saturday and Sunday closed** and an empty **Excluded Dates** list.
+
+1. Open **Working Hours** and find the day in **Weekly Support Schedule**. Tick the day’s **Open** checkbox if it should contribute working time. Untick it to mark the day **Closed**.
+2. For each open day enter a **Start Time** and a later **End Time** on the same day. Each day has one continuous period. For example, change Wednesday to 08:30–16:30 while leaving the other days at their current times.
+3. Check **Weekly Schedule Preview** and the installation time zone. Choose **Save Working Hours** to save. A rejected time needs correcting before you can save. Choose **Cancel** to restore the last saved schedule. If another administrator has saved changes while the form was open, reopen **Service Desk** settings and review their schedule before trying again.
+4. Check the saved values by reopening the settings. Administrators can look in **Audit Trail** for the person and effective time of the save.
+
+![Weekly Support Schedule and schedule preview in the draft application.](../../../development-handovers/evidence/service-desk-reporting/working-hours-desktop-light.png)
+
+*An administrator can open or close each day independently and preview the schedule before saving.* [Capture details](../../../development-handovers/evidence/service-desk-reporting/README.md)
+
+The calendar measures eligible resolution time. People with access to their equipment can submit tickets outside working hours, on closed days and on excluded dates. [Employee ticket instructions](Service-Desk-Tickets.md#raise-a-support-request)
+
+## Add Or Remove An Excluded Date
+
+Use **Excluded Dates** for holidays, training days and other one-off closures. A date applies to the entire local date in the installation time zone. For a closure lasting several days, add each date separately.
+
+1. Open **Settings & Data → Service Desk → Excluded Dates**.
+2. Under **Add Excluded Date**, choose the **Excluded Date**, enter a short **Reason** such as *Christmas shutdown*, then choose **Add Excluded Date**. Check the date and reason in **Registered Excluded Dates**. Each date can appear once.
+3. To remove a date, choose **Remove** on its row. Review **Remove Excluded Date** and choose **Remove Date** to confirm or **Cancel** to keep the date. Check the list after saving.
+
+![An excluded Christmas shutdown date listed with its reason and Remove action.](../../../development-handovers/evidence/service-desk-reporting/excluded-dates-desktop-light.png)
+
+*Registered dates appear in chronological order and each retains its reason.* [Capture details](../../../development-handovers/evidence/service-desk-reporting/README.md)
+
+## Manage Ticket Categories
+
+1. Open **Settings & Data → Service Desk → Ticket Categories**. In **Add Ticket Category**, enter a **Category Name** such as *Remote Access Support* and choose **Add Category**.
+2. Find the category under **Existing Ticket Categories**. Choose **Rename**, edit **Category Name** and choose **Save Category**. Choose **Cancel** to discard the edit. Names must be unique, ignoring case, including hidden categories.
+3. Choose **Hide** and confirm **Hide Category** to withdraw a choice from ticket forms. To bring it back, choose **Restore** and confirm **Restore Category**. Cancelling leaves the category’s current visibility in place.
+4. Open **Create Ticket** to check the active choices. They are alphabetical with **Other / Not Listed** always available at the end. That fixed category cannot be renamed or hidden.
+
+![The Ticket Categories settings page with alphabetical entries and Rename and Hide actions.](../../../development-handovers/evidence/service-desk-reporting/ticket-categories-desktop-light.png)
+
+*Category management affects the shared list used by employees and IT. Existing tickets retain the labels recorded for them.* [Capture details](../../../development-handovers/evidence/service-desk-reporting/README.md)
+
+A renamed category keeps its identity. Earlier ticket classifications and their labels stay available, including when an administrator hides a category. Only an authorised technician can correct a submitted ticket’s category. When a correction makes **Affected Software** inapplicable, the prior selection is kept in the ticket history and the active field is cleared. [Correct ticket details](Service-Desk-Tickets.md#review-and-correct-ticket-details)
+
+## Understand Working-Time Measurements
+
+Each resolution attempt runs from ticket creation or reopening to the following closure. Time counts inside open working hours in the installation time zone. Excluded dates and portions of **On Hold** intervals that overlap working hours are deducted. Closing stores the attempt’s measurement. Reopening starts a fresh attempt under the same ticket number.
+
+- **A change during a ticket.** A ticket opens at 10:00 while hours are 09:00–17:00. At 13:00 an administrator saves 08:00–18:00. It closes at 18:00, with no hold or exclusion. The original hours contribute 3 hours before 13:00. The new hours contribute 5 hours after 13:00. The measured total is **8 hours**. Adding or removing an excluded date during a ticket follows the same prospective rule.
+- **A ticket goes On Hold.** A ticket opens at 10:00, is on hold from 11:00 to 14:00, and closes at 16:00 on a 09:00–17:00 working day. The counted parts are 10:00–11:00 and 14:00–16:00, for **3 hours**.
+- **The clocks change.** Using `Europe/London` as a UK example, Sunday hours of 01:00–03:00 count **1 elapsed hour** during the March clock change and **3** during the October clock change. A Sunday window of 01:30–02:30 counts **30 minutes** in March and **90 minutes** in October. Spring skips nonexistent local time. Autumn counts each real occurrence of the repeated local time.
+- **The time zone is corrected.** The app records the actual time it applies the new deployment setting at startup. Valid earlier periods and existing completed measurements are retained. If an attempt spans time without a known valid zone, its complete duration is unavailable. The administrator sees a time zone warning while the zone is missing or invalid. [Restore reporting](Service-Desk-Time-Zone.md)
+
+For reporting periods, attribution and display examples, see [Read Service Desk Activity](Service-Desk-Tickets.md#read-service-desk-activity).
 
 ## Handle Ticket Files And History
 

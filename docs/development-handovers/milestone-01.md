@@ -1,6 +1,16 @@
 # Milestone 01 Development Handover — v2.2 Target
 
-## Employee Service Desk Development — 23 November 2026
+## Service Desk Settings And Reporting — 23 November 2026
+
+Batch 5.4 started from the verified `milestone-1` head `4600ec7bf6a0751af02fbcf003b7f299547cdfd9` after owner acceptance and merge of Batches 5.1–5.3. The feature branch targets unreleased v2.2 in [PR #440](https://github.com/Caffoot/Caffoot-Lite/pull/440). [Owner authorisation and acceptance criteria](https://github.com/Caffoot/Caffoot-Lite/issues/423)
+
+The administrator can save Working Hours, manage Excluded Dates and add, rename, hide or restore Ticket Categories. Schema 27 keeps the support calendar and its applied IANA rules in SQLite. Each closure retains the measured working time for its own attempt. Open attempts use the settings effective for each elapsed interval. The combined dashboard uses real events and actual actors, with live workload totals and per-technician reporting preferences. The owner agreed that period-based activity shows as unavailable while deployment `TZ` is missing or invalid.
+
+The first pushed checkpoint is `1578b36`. The tested implementation and screenshot source is `d831694484eb1b00b535e11bb4da2b6acdf9b75e`. The focused Python run passed 60 tests. The HTTPS Chromium journey passed, with desktop and mobile light and dark captures. The local Docker build, schema and time zone packaging checks and both draft Compose example configurations passed. [Screenshots and checks](evidence/service-desk-reporting/README.md) · [Draft administrator instructions](../how-tos/features-and-instructions/v2.2-draft/Service-Desk-Administration.md) · [Reporting instructions](../how-tos/features-and-instructions/v2.2-draft/Service-Desk-Tickets.md#read-service-desk-activity) · [Portainer and Compose time zone instructions](../how-tos/features-and-instructions/v2.2-draft/Service-Desk-Time-Zone.md)
+
+Final-head CI runs through Ready For Review. Independent owner visual acceptance and separate merge approval are pending. Native Safari, Raspberry Pi and full milestone upgrade, backup and restore acceptance remain separate gates. Batches 5.5–5.6, Stage 6 and #431 remain outside the authorisation for this work.
+
+## Historical Employee Service Desk Development — 23 November 2026
 
 Batch 5.3 started from `milestone-1` at `d477256bd5ac12aa8f485deda7fa3b9d3fc69172`, after owner acceptance and merge of the Service Desk foundation and technician queue. The employee screens are in [PR #439](https://github.com/Caffoot/Caffoot-Lite/pull/439) for review. [Owner authorisation](https://github.com/Caffoot/Caffoot-Lite/issues/422#issuecomment-7101297069)
 
@@ -10,7 +20,7 @@ The backend checkpoint is `c368eb4d8ba2ac1dc4c84b15b8ee01dd0dad9ef2`. The employ
 
 The owner approved moving **My Equipment**, then **My Tickets**, directly beneath **Workspace** and above the departmental groups. The corrected sidebar was checked in expanded and collapsed desktop layouts and on mobile. [Owner decision](https://github.com/Caffoot/Caffoot-Lite/pull/439#issuecomment-7102788616) · [Refreshed screenshots and focused checks](evidence/employee-service-desk/README.md#navigation-correction-checks)
 
-Final-head hosted CI, independent product-owner visual acceptance and separate merge approval are outstanding. Broader native checks, full milestone upgrade and restore, and publication retain their separate gates. Batches 5.4–5.6 and Stage 6 await separate development authorisation.
+Batch 5.3 subsequently passed final-head CI, received independent owner visual acceptance and was merged with separate approval. Broader native checks, full milestone upgrades and restore, and publication retain their separate gates. [Stage 5.3 acceptance](https://github.com/Caffoot/Caffoot-Lite/issues/422#issuecomment-7103488704)
 
 ## Historical IT Service Desk Development — 23 November 2026
 

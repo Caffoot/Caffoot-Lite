@@ -82,13 +82,15 @@ Equipment Lifecycle is independently optional and starts switched off. Stage 4.4
 | --- | --- |
 | Raise, find, reply to and reopen tickets for personal and Department equipment | [Employee ticket instructions](Service-Desk-Tickets.md#raise-a-support-request) |
 | Use the IT queue, record tickets, handle technician actions and attachments, and understand equipment privacy | [Service Desk Tickets](Service-Desk-Tickets.md) |
-| Grant technician access, understand handover privacy, protect ticket-linked inventory and use Clean Start | [Administer Service Desk Access And Data](Service-Desk-Administration.md) |
+| Grant technician access, configure Working Hours, Excluded Dates and Ticket Categories, and protect ticket-linked records | [Administer The Service Desk](Service-Desk-Administration.md) |
+| Set or correct the Service Desk time zone in Portainer or Docker Compose | [Set The Service Desk Time Zone](Service-Desk-Time-Zone.md) |
+| Read workload, change reporting periods and understand technician attribution | [Read Service Desk Activity](Service-Desk-Tickets.md#read-service-desk-activity) |
 
-The schema 25 foundation and IT Service Desk are integrated in [PR #437](https://github.com/Caffoot/Caffoot-Lite/pull/437) and [PR #438](https://github.com/Caffoot/Caffoot-Lite/pull/438). Employee ticket workflows and schema 26 are in [PR #439](https://github.com/Caffoot/Caffoot-Lite/pull/439) for development review.
+The schema 25 foundation and IT Service Desk are integrated in [PR #437](https://github.com/Caffoot/Caffoot-Lite/pull/437) and [PR #438](https://github.com/Caffoot/Caffoot-Lite/pull/438). Employee ticket workflows and schema 26 are integrated through [PR #439](https://github.com/Caffoot/Caffoot-Lite/pull/439). Service Desk settings, working time and reporting are in [PR #440](https://github.com/Caffoot/Caffoot-Lite/pull/440) for development review.
 
 ## Publication And Acceptance
 
-Stages 1–4 are development-complete, owner-accepted and integrated into `milestone-1`. Stage 5’s frozen HTML designs and six batches are recorded in [#419](https://github.com/Caffoot/Caffoot-Lite/issues/419). Batch 5.3 has development authorisation and awaits visual acceptance and separate merge approval. Batches 5.4–5.6 await individual development authorisation. Batch 3.4 manual/native acceptance, broader Raspberry Pi/native Safari/private-installation evidence and Stage 6 compatibility, full upgrade and restore acceptance remain deferred. v2.2 is unreleased.
+Stages 1–4 are development-complete, owner-accepted and integrated into `milestone-1`. Stage 5’s frozen HTML designs and six batches are recorded in [#419](https://github.com/Caffoot/Caffoot-Lite/issues/419). Batches 5.1–5.3 are accepted and integrated. Batch 5.4 is in owner review, with independent visual acceptance and separate merge approval pending. Batches 5.5–5.6 await individual development authorisation. Batch 3.4 manual/native acceptance, broader Raspberry Pi/native Safari/private-installation evidence and Stage 6 compatibility, full upgrade and restore acceptance remain deferred. v2.2 is unreleased.
 
 Images used here are genuine application captures with an identified approval source and captions describing their scope. Functional HTML previews are retained as development references, never presented as application screenshots. Missing or outdated images and remaining wording discrepancies are listed in the [documentation review record](../../../development-guide/Stage-1-3-Documentation-Review.md).
 

@@ -4,7 +4,9 @@
 
 Caffoot Lite **v2.1 remains the published release**, at tagged source `c3237114108cad9f7d4e57657b6aed5e0091a5ef` (schema 10). Use the [published user guides](../how-tos/features-and-instructions/README.md) and [installation instructions](../../INSTALLATION.md) for that release.
 
-The verified starting point for Batch 5.3 is `milestone-1` at **`d477256bd5ac12aa8f485deda7fa3b9d3fc69172`**, schema **25**. The owner accepted the Service Desk foundation and IT Service Desk, which were merged through PRs #437 and #438. The owner separately authorised the employee ticket work on 23 November. PR #439 contains the employee views and compatible schema 26 migration for review. [Owner authorisation](https://github.com/Caffoot/Caffoot-Lite/issues/422#issuecomment-7101297069) · [Employee tickets PR](https://github.com/Caffoot/Caffoot-Lite/pull/439) · [Draft v2.2 guides](../how-tos/features-and-instructions/v2.2-draft/README.md)
+The owner accepted and merged Service Desk Batches 5.1–5.3 through [PRs #437](https://github.com/Caffoot/Caffoot-Lite/pull/437), [#438](https://github.com/Caffoot/Caffoot-Lite/pull/438) and [#439](https://github.com/Caffoot/Caffoot-Lite/pull/439). The verified `milestone-1` integration head for Batch 5.4 is `4600ec7bf6a0751af02fbcf003b7f299547cdfd9`, schema 26. [Stage 5.3 acceptance](https://github.com/Caffoot/Caffoot-Lite/issues/422#issuecomment-7103488704)
+
+Batch 5.4 adds the administrator support calendar, category management and live Service Desk reporting in schema 27 on its review branch. The draft guides and actual application evidence accompany the review. [Authorisation and scope](https://github.com/Caffoot/Caffoot-Lite/issues/423) · [PR #440](https://github.com/Caffoot/Caffoot-Lite/pull/440) · [Draft v2.2 guides](../how-tos/features-and-instructions/v2.2-draft/README.md)
 
 ### Stage 3 Development Integration — Historical Merge Ledger
 
@@ -32,7 +34,7 @@ The verified starting point for Batch 5.3 is `milestone-1` at **`d477256bd5ac12a
 
 Staff Members and Departments are core and independently permissioned. IT Assets is independently optional and defaults off on fresh installations. Schema 20 adds IT Assets Edit to the built-in IT Staff role default while preserving existing accounts' configured access with compatibility overrides; it does not automatically add new ordinary accounts to IT Staff.
 
-**Still deferred** are Batch 3.4 manual/native acceptance, broader native Raspberry Pi/Safari and private-installation checks, private legacy-data verification, and Stage 6 cross-stage security and compatibility, supported upgrade and complete-volume backup/restore acceptance. Batches 5.4–5.6 await separate development authorisation. Batch 5.3 awaits final-head CI, independent owner visual acceptance and separate merge approval. [Stage 5 plan](https://github.com/Caffoot/Caffoot-Lite/issues/419)
+**Still deferred** are Batch 3.4 manual/native acceptance, broader native Raspberry Pi/Safari and private-installation checks, private legacy-data verification, and Stage 6 cross-stage security and compatibility, supported upgrade and complete-volume backup/restore acceptance. Batch 5.4 awaits final-head CI, independent owner visual acceptance and separate merge approval. Batches 5.5–5.6 await separate development authorisation. [Stage 5 plan](https://github.com/Caffoot/Caffoot-Lite/issues/419)
 
 The [documentation review record](Stage-1-3-Documentation-Review.md) lists sources, screenshot approvals, wording discrepancies and remaining documentation acceptance. The [active handover](../development-handovers/milestone-01.md) preserves implementation evidence.
 
