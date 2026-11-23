@@ -26,8 +26,10 @@ The whole multi-Device request either commits with attributable audit events or
 rolls back. After waiting for the SQLite write lock, the operation rechecks its
 session, MFA-dependent effective rights, current recipients and Device state.
 
-History cannot be deleted or rewritten. Device/recipient foreign keys block
-unsafe deletion, including bulk inventory replacement/reset. Department archive,
+Ordinary equipment operations retain assignment history. Device and recipient
+foreign keys protect referenced records from deletion and legacy inventory replacement.
+The administrator’s separate Clean Start operation clears operational records together.
+Department archive,
 reactivation and Staff inactivation retain outstanding allocations. Account
 removal retains its attribution snapshot and clears only the existing Staff
 login link. The general Device audit records recipient IDs rather than names

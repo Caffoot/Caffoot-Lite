@@ -1,0 +1,7 @@
+{
+  "checks": [
+    "IT Staff defaults, deliberate Service Desk grants, retained overrides and mandatory MFA passed",
+    "Clean Start discloses ticket and attachment removal in the existing confirmation"
+  ],
+  "errors": []
+}

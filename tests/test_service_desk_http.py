@@ -381,6 +381,8 @@ class ServiceDeskHttpTests(unittest.TestCase):
             'supplier_issue_updates',
         )
         with sqlite3.connect(self.path) as connection:
+            connection.execute("UPDATE organisation_features SET enabled=0 WHERE feature IN "
+                               "('it_assets','suppliers','equipment_lifecycle')")
             attachment = connection.execute("""INSERT INTO service_desk_attachments(ticket_id,message_id,filename,contents)
                 VALUES(?,?,'private.txt',?)""", (ticket, message, b'Unpublished attachment contents')).lastrowid
             connection.execute("""CREATE TRIGGER reject_clean_start BEFORE INSERT ON inventory_settings
@@ -439,6 +441,7 @@ class ServiceDeskHttpTests(unittest.TestCase):
             device = dict(id='fresh', name='Fresh Device')
             connection.execute("INSERT INTO inventory_devices VALUES('fresh','Fresh Device',?,0,0)",
                                (json.dumps(device),))
+            connection.execute("UPDATE organisation_features SET enabled=1 WHERE feature='it_assets'")
             connection.commit()
             self.assertIn('stockItemId', receive_stock(connection, 1, self.tokens[1], receipt_payload()))
             initialise_database(connection)

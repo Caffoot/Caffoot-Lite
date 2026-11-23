@@ -38,20 +38,28 @@ Internal notes and the attachments to them stay within IT. If a previously retur
 
 Use the normal legacy export review and confirmation steps. A supported inventory import operates on inventory records. Recovery of Service Desk data uses the database or volume backup. [Inventory And Migration](../../../development-guide/05-Inventory-and-Migration.md)
 
-## Clear Ticket Data With Clean Start
+## Clear Operational Data With Clean Start
 
-Clean Start is a destructive operation for an administrator starting a fresh operational inventory. Use a disposable installation for practice. Before using it on an installation you need to keep, make and verify your database or volume backup.
+Clean Start returns Caffoot Lite to an empty operational starting point. Before using it on an installation you need to keep, make and verify your database or volume backup. Use a disposable installation for practice.
 
 1. Sign in as an administrator using MFA. The existing requirement for enabled **Devices**, **IPAM** and **Racks** with Edit access still applies.
 2. Open **Settings & Data → System Maintenance**. In **Danger Zone**, select **Review Clear System**.
-3. Read the confirmation, including the warning about removing all Service Desk tickets, conversations, attachments and ticket history. Choose **Cancel** to leave the data in place.
-4. Choose **OK** only when you intend to clear the installation's operational inventory and tickets. After a successful reset, review the refreshed inventory and the reset entry in central **Change History**.
+3. Read the confirmation and the backup guidance. Choose **Cancel** to leave the data in place.
+4. Choose **OK** only when you intend to remove the installation's operational records. After a successful reset, review the empty inventory and the reset entry in central **Change History**.
 
-Clean Start removes tickets in every status, replies, internal notes, stored attachment contents, assignment and status events, and closure and reopening records. The database applies the ticket cleanup and inventory reset together. User accounts, authentication records and central Change History are retained. The new central reset entry records the action without copying private ticket contents. Category definitions remain available, and new tickets can be raised once eligible equipment is in place.
+| Area | What Clean Start clears |
+| --- | --- |
+| Devices, Racks and IPAM | Devices, rack contents, subnets, VLANs and IP allocations. |
+| IT Assets and equipment custody | Stock, stock units, movements and corrections, assignments, returns, handovers and equipment associations. |
+| Staff and Departments | Departments, membership, operational Staff details and directory entries without a login. Linked Staff identities and their existing eligibility are retained for sign-in accounts. Their names and email are restored from the retained account profile. |
+| Suppliers, Purchasing and lifecycle | Suppliers, locations, contacts, notes, issues and updates, equipment and receipt associations, and per-Device lifecycle records. |
+| Service Desk | Tickets in every status, replies, internal notes, stored attachments, status and assignment events, and all closure and reopening attempts. |
 
-If existing equipment history prevents inventory clearance, the reset reports the problem and rolls back ticket cleanup as well. A failed save leaves the previous records available. Seek help with the existing equipment history instead of deleting dependent records to force a reset. [Device Assignments And My Equipment](Device-Assignments-and-My-Equipment.md)
+The reset restores the standard inventory options, category lists and lifecycle defaults. User accounts, roles, permission overrides, sign-in safeguards, Optional Features choices and central **Change History** are retained. The central reset entry records the action without copying ticket contents.
 
-![System Maintenance shows the existing Review Clear System button and warns that all Service Desk ticket data will be cleared.](../../../development-handovers/evidence/service-desk-foundation/clean-start-1440.png)
+The reset is one database operation, including attachments. An error rolls back the entire operation. Equipment assignments and returns are part of the reset. Ordinary deletion and legacy inventory import continue to protect referenced equipment. [Device Assignments And My Equipment](Device-Assignments-and-My-Equipment.md)
+
+![System Maintenance shows Review Clear System with an explanation that the operation clears operational records and restores default catalogues.](../../../development-handovers/evidence/service-desk-foundation/clean-start-1440.png)
 
 *System Maintenance shows the reset scope before you open the confirmation.* [Capture details](../../../development-handovers/evidence/service-desk-foundation/README.md)
 
@@ -62,6 +70,6 @@ If existing equipment history prevents inventory clearance, the reset reports th
 | Technician has Service Desk permission but cannot see an equipment ticket | Confirm the account is active, the required MFA is enrolled, and the equipment section is enabled with effective Read access. |
 | Staff Member cannot see a personal or shared ticket | Verify their linked Staff record, current Department, current equipment assignment and the equipment feature. Inspect the ticket under technician access before assuming it was removed. |
 | A ticket appears in IT history only after an equipment move | The ticket may belong to an ended assignment. Current assignment access starts with eligible tickets for that assignment. |
-| Clean Start is rejected | Review the confirmation and administrator permissions first. If the message refers to equipment history, the reset and ticket cleanup both rolled back. |
+| Clean Start is rejected | Review the confirmation and administrator permissions first. If the reset reports a database error, the operational records are still available. |
 
 For employee-facing explanations, see [Service Desk Tickets](Service-Desk-Tickets.md). For source and test coverage, see [Service Desk Foundation](../../../development-guide/Service-Desk-Foundation.md).

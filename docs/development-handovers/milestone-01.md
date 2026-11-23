@@ -1,6 +1,12 @@
 # Milestone 01 Development Handover — v2.2 Target
 
-## Service Desk Foundation Review — 23 November 2026
+## Clean Start Correction — 23 November 2026
+
+The owner reconfirmed that Clean Start clears all operational records, including saved assignment and stock history. It retains accounts, sign-in safeguards, account-linked Staff identity and eligibility, Optional Features choices and central Change History. The [administrator guide](../how-tos/features-and-instructions/v2.2-draft/Service-Desk-Administration.md#clear-operational-data-with-clean-start) records the affected modules and reset defaults.
+
+Checkpoint `75aa4d5cacf32a8f0906368f904f890b2d8d01af` restores compatibility with earlier SQLite schemas. Checkpoint `b148067a18b9581488bf48abd41c225c9cbc33c8` implements the operational reset and narrows the Settings byte comparison to the authorised warning. The focused run passed 76 checks, and all four reset tests passed after adding the final relationship check and restart verification. [Updated visual evidence](evidence/service-desk-foundation/README.md) · [PR #437 and final verification](https://github.com/Caffoot/Caffoot-Lite/pull/437)
+
+## Historical Service Desk Foundation Checkpoint — 23 November 2026
 
 Batch 5.1 has separate owner authorisation. [PR #437](https://github.com/Caffoot/Caffoot-Lite/pull/437) targets `milestone-1` from `8120c72054211217c3d0df8a27702da478d78e50`. The development branch adds schema 25, equipment-linked ticket history, the protected employee and technician API, compatible legacy import safeguards and transactional Clean Start for ticket records and attachments.
 

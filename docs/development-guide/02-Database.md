@@ -93,8 +93,9 @@ The container mount is the persistence boundary. Back up and restore the deploye
 
 Schema 15 adds [Device Assignments](Device-Assignments.md) without changing any
 existing records or inferring stock/readiness. Referenced Devices and recipients
-cannot be deleted. Whole-inventory replacement and Clean Start are also blocked
-where they would remove referenced Devices.
+are protected from ordinary deletion. Legacy inventory replacement is also blocked
+where it would remove referenced Devices. Clean Start clears the operational records
+and their dependencies within a single authorised transaction.
 
 ## Service Desk Ticket Storage
 
