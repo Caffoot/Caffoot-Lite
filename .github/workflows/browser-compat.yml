@@ -6,6 +6,7 @@ on:
     paths:
       - "interface/**"
       - "tests/browser-compat.cjs"
+      - "tests/email-templates-interface.cjs"
       - "tests/service-desk-reporting-interface.cjs"
       - "tests/fixtures/service_desk_reporting.py"
       - "tests/session-expiry-interface.cjs"
@@ -41,6 +42,7 @@ on:
     paths:
       - "interface/**"
       - "tests/browser-compat.cjs"
+      - "tests/email-templates-interface.cjs"
       - "tests/service-desk-reporting-interface.cjs"
       - "tests/fixtures/service_desk_reporting.py"
       - "tests/session-expiry-interface.cjs"
@@ -96,6 +98,10 @@ jobs:
         run: |
           npm install --prefix "$RUNNER_TEMP/caffoot-browser-tests" --no-save --no-package-lock --no-audit --no-fund playwright@1.56.1 axe-core@4.14.0
           "$RUNNER_TEMP/caffoot-browser-tests/node_modules/.bin/playwright" install --with-deps chromium
+      - name: Check Email Templates and Company Branding in Chromium
+        env:
+          NODE_PATH: ${{ runner.temp }}/caffoot-browser-tests/node_modules
+        run: node tests/email-templates-interface.cjs
       - name: Check Service Desk settings and reporting in Chromium
         env:
           NODE_PATH: ${{ runner.temp }}/caffoot-browser-tests/node_modules

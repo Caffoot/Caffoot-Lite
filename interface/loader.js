@@ -62,13 +62,14 @@ async function initialiseInterface() {
             interfaceTemplates.set(match[1], match[2]);
         }
     }
-    const designs = ['dashboard','my-account','settings','device-details','devices','device-inventory','device-management','ipam','racks','users','audit-trail','staff','equipment','stock','suppliers','dashboard-lifecycle','settings-lifecycle','device-details-lifecycle','device-management-lifecycle','service-desk'];
+    const designs = ['dashboard','my-account','settings','device-details','devices','device-inventory','device-management','ipam','racks','users','audit-trail','staff','equipment','stock','suppliers','dashboard-lifecycle','settings-lifecycle','device-details-lifecycle','device-management-lifecycle','service-desk','settings-email-templates'];
     await Promise.all(designs.map(async name => {
         interfaceStyles.set(name, await loadInterfaceText('styles/' + name + '.css'));
     }));
     // Preserve the exact pinned v2.1 stylesheets and append only approved Batch 4.4 rules.
     for(const name of ['dashboard','settings','device-details','device-management'])
         interfaceStyles.set(name, interfaceStyles.get(name) + interfaceStyles.get(name + '-lifecycle'));
+    interfaceStyles.set('settings', interfaceStyles.get('settings') + interfaceStyles.get('settings-email-templates'));
     interfaceStyles.set('service-desk-queue', interfaceStyles.get('device-inventory'));
     const serviceDeskStyle = document.createElement('style');
     serviceDeskStyle.textContent = interfaceStyles.get('service-desk');
@@ -120,7 +121,13 @@ async function initialiseInterface() {
                             const serviceDeskScript = document.createElement('script');
                             serviceDeskScript.src = '/interface/service-desk.js';
                             serviceDeskScript.onerror = showInterfaceLoadError;
-                            serviceDeskScript.onload = loadApplication;
+                            serviceDeskScript.onload = () => {
+                                const emailTemplatesScript = document.createElement('script');
+                                emailTemplatesScript.src = '/interface/email-templates.js';
+                                emailTemplatesScript.onerror = showInterfaceLoadError;
+                                emailTemplatesScript.onload = loadApplication;
+                                document.body.append(emailTemplatesScript);
+                            };
                             document.body.append(serviceDeskScript);
                         };
                         document.body.append(ukDatesScript);

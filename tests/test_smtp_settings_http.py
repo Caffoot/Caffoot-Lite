@@ -58,7 +58,7 @@ class FakeSMTP:
     def login(self, username, password):
         FakeSMTP.calls.append(("login", username, password))
 
-    def send_message(self, message):
+    def send_message(self, message, *, from_addr, to_addrs):
         FakeSMTP.message = message
         FakeSMTP.calls.append(("send_message",))
 

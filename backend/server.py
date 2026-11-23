@@ -29,6 +29,10 @@ from .device_stock import (device_stock_sources, register_stock_device,
                            reissue_device_choices, reissue_stock_device)
 from .stock_circulation import (issue_stock, read_stock_issues, stock_recipients,
                               return_stock, prepare_stock, write_off_stock, stock_movement_history)
+from .email_template_catalogue import TEMPLATES, account_security_text
+from .email_templates import (MAX_BRANDING_REQUEST_BYTES, mutate_email_templates, read_email_templates,
+                              sample_email, sample_email_branding)
+from .permissions import _admin
 from .smtp_settings import (config_path as smtp_config_path, public_settings as smtp_public_settings,
                             save_settings as save_smtp_settings, send_test_email)
 from .device_catalogue import change_device_catalogue
@@ -171,6 +175,9 @@ class Handler(BaseHTTPRequestHandler):
             return
         if self.path.startswith(("/api/staff-members", "/api/departments")):
             self.handle_directory_request()
+            return
+        if self.path == "/api/settings/email-templates":
+            self.handle_email_templates()
             return
         if self.path in ("/api/settings/features", "/api/settings/lifecycle", "/api/settings/service-desk"):
             self.handle_feature_settings()
@@ -559,6 +566,9 @@ class Handler(BaseHTTPRequestHandler):
         if self.path.startswith(("/api/staff-members", "/api/departments")):
             self.handle_directory_request()
             return
+        if self.path == "/api/settings/email-templates":
+            self.handle_email_templates()
+            return
         if self.path in ("/api/settings/features", "/api/settings/lifecycle", "/api/settings/service-desk"):
             self.handle_feature_settings()
             return
@@ -661,7 +671,7 @@ class Handler(BaseHTTPRequestHandler):
                     self.respond(401, {"error": "invalid credentials or MFA request"})
                     return
             THROTTLE.succeeded(peer, username)
-            notify_security_change(smtp_config_path(DB_PATH), recipients)
+            notify_security_change(smtp_config_path(DB_PATH), recipients, database_path=DB_PATH)
             self.respond(200, {"status": "mfa enrolled"})
             return
         if self.path in ("/api/setup", "/api/setup/mfa", "/api/setup/mfa-secret"):
@@ -725,7 +735,8 @@ class Handler(BaseHTTPRequestHandler):
             if not THROTTLE.allowed(self.client_address[0], payload["username"]):
                 with connect() as connection:
                     if record_blocked_sign_in(connection, self.client_address[0], payload["username"]):
-                        notify_security_change(smtp_config_path(DB_PATH), security_recipients(connection, administrators=True))
+                        notify_security_change(smtp_config_path(DB_PATH), security_recipients(connection, administrators=True),
+                                               database_path=DB_PATH)
                 self.respond(401, {"error": "Sign-in is temporarily limited after repeated attempts. Please wait and try again."})
                 return
             self.respond(401, {"error": "invalid credentials"})
@@ -1260,6 +1271,62 @@ class Handler(BaseHTTPRequestHandler):
         except (ValueError, TypeError, sqlite3.IntegrityError) as exc:
             self.respond(400, {"error": str(exc)})
 
+    def handle_email_templates(self):
+        """Protect template administration with the existing settings request proofs."""
+        origin = self.headers.get("Origin")
+        if (self.headers.get("Sec-Fetch-Site") == "cross-site"
+                or ((origin is not None or self.command == "POST")
+                    and (not PUBLIC_ORIGIN or not require_same_origin(origin, PUBLIC_ORIGIN)))):
+            self.respond(403, {"error": "forbidden"})
+            return
+        try:
+            cookie = self.headers.get("Cookie")
+            with connect() as connection:
+                if self.command == "GET":
+                    connection.execute("BEGIN")
+                    actor = authenticated_account(connection, cookie)
+                    if actor is None:
+                        self.respond(401, {"error": "unauthorised"})
+                        return
+                    self.respond(200, read_email_templates(connection, actor))
+                    return
+                actor = authorised_mutation(connection, cookie, origin, PUBLIC_ORIGIN, self.headers.get("X-CSRF-Token"))
+                if actor is None:
+                    raise PermissionError("Verified administrator session required")
+                _admin(connection, actor)
+                length = self.headers.get("Content-Length", "")
+                if len(length) > 8 or not length.isdecimal() or not 0 < int(length) <= MAX_BRANDING_REQUEST_BYTES:
+                    raise ValueError("Invalid request size")
+                if self.headers.get("Content-Type", "").split(";")[0].strip().lower() != "application/json":
+                    self.respond(415, {"error": "JSON required"})
+                    return
+                payload = json.loads(self.rfile.read(int(length)), object_pairs_hook=unique_feature_fields)
+                action = payload.get("action") if isinstance(payload, dict) else None
+                if action in ("preview", "test", "branding-preview"):
+                    connection.execute("BEGIN")
+                    if authorised_mutation(connection, cookie, origin, PUBLIC_ORIGIN,
+                                           self.headers.get("X-CSRF-Token")) != actor:
+                        raise PermissionError("Verified administrator session required")
+                    if action == "branding-preview":
+                        result = sample_email_branding(connection, actor, payload)
+                    else:
+                        result, logo = sample_email(connection, actor, payload, complete=action == "test")
+                else:
+                    result = mutate_email_templates(connection, actor, read_session_cookie(cookie), payload)
+            if action == "test":
+                result = send_test_email(smtp_config_path(DB_PATH), payload["recipient"],
+                                         subject="[Test] " + result["subject"], body=result["text"],
+                                         html=result["html"], logo=logo)
+            self.respond(200, result)
+        except PermissionError:
+            self.respond(403, {"error": "forbidden"})
+        except FileExistsError as exc:
+            self.respond(409, {"error": str(exc)})
+        except (ValueError, TypeError, RecursionError) as exc:
+            self.respond(400, {"error": str(exc)})
+        except (OSError, smtplib.SMTPException, sqlite3.Error):
+            self.respond(503, {"error": "Email settings or delivery are temporarily unavailable. Check Email Settings."})
+
     def handle_role_change(self):
         """Require the existing request safeguards before preview or confirmation."""
         if not PUBLIC_ORIGIN or not require_same_origin(self.headers.get("Origin"), PUBLIC_ORIGIN):
@@ -1699,7 +1766,7 @@ class Handler(BaseHTTPRequestHandler):
         if security_change:
             with connect() as connection:
                 connection.execute("DELETE FROM account_email_proofs WHERE account_id=?", (payload.get("userId", actor),))
-            notify_security_change(smtp_config_path(DB_PATH), notice_recipients)
+            notify_security_change(smtp_config_path(DB_PATH), notice_recipients, database_path=DB_PATH)
         self.respond(200, result, cookie=clear_session_cookie()
                      if self.path == "/api/account/mfa/remove" else None)
 
@@ -1758,12 +1825,14 @@ class Handler(BaseHTTPRequestHandler):
                     connection.commit()
                     if proof:
                         token, recipient, challenge_id = proof
-                        queue_email(smtp_config_path(DB_PATH), recipient,
-                                    "Caffoot Lite email verification" if private else "Caffoot Lite password recovery",
-                                    ("Confirm email ownership" if private else "Recover your password") +
-                                    " by entering this single-use code in your Caffoot Lite installation:\n\n" + token +
-                                    "\n\nIt expires in 15 minutes. Required authenticator protection still applies. "
-                                    "If you did not request this, ignore this message.")
+                        template_id = "email-verification" if private else "password-recovery"
+                        profile = connection.execute(
+                            "SELECT display_name FROM account_profiles WHERE account_id=? AND email=?",
+                            (actor, recipient)
+                        ).fetchone()
+                        queue_email(smtp_config_path(DB_PATH), recipient, TEMPLATES[template_id]["subject"],
+                                    account_security_text(template_id, token), database_path=DB_PATH,
+                                    template_id=template_id, display_name=profile[0] if profile else "")
                     self.respond(200, {"message": REQUEST_MESSAGE, "challengeId": proof[2] if proof else secrets.token_hex(32)})
                     return
                 target = confirm_email_proof(connection, payload["token"], "verify" if private else "recover",
@@ -1771,7 +1840,7 @@ class Handler(BaseHTTPRequestHandler):
                                              password=payload["password"], mfa_code=payload.get("mfa_code"))
                 recipients = security_recipients(connection, target)
                 recipients.update(security_recipients(connection, administrators=True))
-            notify_security_change(smtp_config_path(DB_PATH), recipients)
+            notify_security_change(smtp_config_path(DB_PATH), recipients, database_path=DB_PATH)
             self.respond(200, {"status": "Email verified" if private else "Password updated; sign in with your authenticator if required"})
         except (ValueError, TypeError):
             self.respond(400, {"error": "Invalid or expired confirmation"})

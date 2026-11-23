@@ -5,6 +5,7 @@ changes apply immediately without a schema migration or history rewrite.
 """
 import json
 
+from .email_templates import EMAIL_SETTINGS_AUDIT_REASONS
 from .equipment_lifecycle import DEVICE_AUDIT_REASON, FIRST_SERVICE_AUDIT_REASON, SETTINGS_AUDIT_REASON
 from .equipment_suppliers import SUPPLIER_AUDIT_REASON
 from .permissions import can_access, feature_enabled
@@ -96,7 +97,8 @@ def visible_change_history(connection, account_id):
                 and not feature_enabled(connection, "Suppliers")):
             continue
         reason = event.get('reason') if isinstance(event, dict) else None
-        if reason in (CALENDAR_AUDIT_REASON, CATEGORY_AUDIT_REASON):
+        if reason in (CALENDAR_AUDIT_REASON, CATEGORY_AUDIT_REASON) or (
+                isinstance(reason, str) and reason in EMAIL_SETTINGS_AUDIT_REASONS):
             if is_admin:
                 history.append(event)
             continue
