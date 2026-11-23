@@ -6,6 +6,8 @@
 
 The first backend checkpoint is `86f409c`. The integrated implementation and focused tests are at `6f5e08cf52d4092abb7fe817541728d5a2956f6d`, followed by the responsive checks and visual checkpoint at `165b22927639057cbf9bb4e6cd58c405f9cd6223`. The focused local run passed 62 Python checks. The HTTPS Chromium journey and local Docker build and packaging smoke check passed. The [application screenshots and verification record](evidence/it-service-desk/README.md) include the frozen source and Device Details comparison. [Draft technician instructions](../how-tos/features-and-instructions/v2.2-draft/Service-Desk-Tickets.md) · [Draft administrator instructions](../how-tos/features-and-instructions/v2.2-draft/Service-Desk-Administration.md)
 
+The owner’s review correction moves Device-linked tickets to the **Tickets** tab and restores that tab and its current page on return. The Roles browser check now targets the Service Desk field inside its form. [Review decision](https://github.com/Caffoot/Caffoot-Lite/issues/421#issuecomment-7096963836) · [Updated screenshots and checks](evidence/it-service-desk/README.md#device-details-tickets-review)
+
 Hosted CI and independent owner visual review are the final review handoff. Native Raspberry Pi and Safari, full milestone upgrade and restore, and publication acceptance retain their separate gates.
 
 ## Clean Start Correction — 23 November 2026

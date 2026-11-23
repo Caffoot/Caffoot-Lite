@@ -1,6 +1,6 @@
 # IT Service Desk Application Evidence
 
-Captured on 23 November 2026 from the integrated, unreleased v2.2 application at `165b22927639057cbf9bb4e6cd58c405f9cd6223`. The server ran over local HTTPS with a disposable SQLite schema 25 database. Chromium 155.0.8059.79 rendered 1440 × 950 desktop and 390 × 844 mobile viewports. The account names, equipment and support conversations are fictional test data. Tickets, updates, status changes and attachments in these recordings went through the application’s live routes.
+The initial evidence was captured on 23 November 2026 from the integrated, unreleased v2.2 application at `165b22927639057cbf9bb4e6cd58c405f9cd6223`. The server ran over local HTTPS with a disposable SQLite schema 25 database. Chromium 155.0.8059.79 rendered 1440 × 950 desktop and 390 × 844 mobile viewports. The account names, equipment and support conversations are fictional test data. Tickets, updates, status changes and attachments in these recordings went through the application’s live routes.
 
 ## Screenshots
 
@@ -14,7 +14,7 @@ Captured on 23 November 2026 from the integrated, unreleased v2.2 application at
 | Ticket Updates | [Desktop light](updates-desktop-light.png) | [Mobile dark](updates-mobile-dark.png) |
 | Ticket History | [Desktop light](history-desktop-light.png) | |
 | Create Ticket | [Desktop light](create-desktop-light.png) | |
-| Linked Tickets in Device Details | [Desktop light](device-linked-tickets-desktop-light.png) | |
+| Device Details Tickets tab | [Desktop light](device-linked-tickets-desktop-light.png) | [Mobile dark](device-linked-tickets-mobile-dark.png) |
 | Linked Tickets in Stock Item Details | [Desktop light](asset-linked-tickets-desktop-light.png) | |
 
 ## Design Comparison
@@ -22,6 +22,12 @@ Captured on 23 November 2026 from the integrated, unreleased v2.2 application at
 Compared the integrated page and modal with the frozen Design 01 HTML at branch revision `2dbfbd8aebdcd7237845c7ea559f52548e5600de`, blob `d578afc2a907a4b0f7c438210aaeb2e39bf69b35`. The queue uses its three workload shortcuts, Open default, four filters and eight columns. Ticket Details retains Overview, Updates and History, the three Overview panels and the status-specific action footer. The application uses its shared navigation and Device Details presentation. The approved small classification controls sit inside Ticket Information. The period-based activity sections are assigned to Batch 5.4. [Frozen Design 01](https://github.com/Caffoot/Caffoot-Lite/blob/2dbfbd8aebdcd7237845c7ea559f52548e5600de/future-design/stage-5-previews/01-service-desk-it.html) · [Approved classification controls](https://github.com/Caffoot/Caffoot-Lite/issues/421#issuecomment-7095991698)
 
 The desktop capture of Device Details shows the shared modal header, tabs, panels and footer. On the 390-pixel viewport, the ticket table has its own horizontal scroll area and the ticket actions remain within the modal width. The final visual decision belongs to the product owner. [Device Details capture](device-linked-tickets-desktop-light.png) · [Mobile Ticket Details capture](overview-mobile-dark.png)
+
+## Device Details Tickets Review
+
+The replacement Device Details captures were taken on 23 November 2026 from the corrected HTTPS application at `100ed1393854b204c225991abea978ff56b7353b`, using Chromium and fictional SQLite data. The 1440 × 950 desktop light and 390 × 844 mobile dark views both show **Tickets** selected and the linked ticket available. [Owner review decision](https://github.com/Caffoot/Caffoot-Lite/issues/421#issuecomment-7096963836)
+
+The focused Chromium Roles and Device Details checks passed. They verified the Service Desk grant in the role form, the existing Overview and tabs, keyboard activation and return focus. A separate Chromium check confirmed the linked list returns to its second page, Device users without Service Desk access lack the tab, and Stock Item Details still displays its linked tickets. The 12 focused Python HTTP and interface tests passed.
 
 ## Local Verification
 

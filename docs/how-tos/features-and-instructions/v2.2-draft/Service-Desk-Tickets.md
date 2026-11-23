@@ -120,8 +120,8 @@ Files must be genuine PNG, JPEG, PDF, TXT, DOCX or XLSX. Each file may be up to 
 
 ## Find A Ticket From Equipment
 
-- In **IT → Devices → Device Inventory**, open the Device and look for **Linked Tickets** in **Overview**. Select the ticket to open its details. Closing the ticket returns you to the Device.
+- In **IT → Devices → Device Inventory**, open the Device and select the **Tickets** tab. Select a linked ticket to open its details. Closing the ticket returns you to the same page of the Device’s **Tickets** tab.
 - In **IT → IT Assets → Stock Inventory**, open the stock item and find **Linked Tickets** in **Stock Item Details**. Individually tracked stock can show tickets for its non-Device units. For equipment registered as a Device, use the Device’s own details.
-- If you have equipment access but lack Service Desk Read, the linked-ticket panel is hidden. If the panel is empty, check the canonical equipment record before asking an administrator to review access.
+- The Device **Tickets** tab and stock item **Linked Tickets** section require Service Desk Read as well as access to the equipment. If the list is empty, check the equipment record before asking an administrator to review access.
 
 The [administrator guide](Service-Desk-Administration.md) covers access, historical privacy and retention.
