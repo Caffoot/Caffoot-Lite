@@ -1,10 +1,10 @@
 # Published And Development Versions
 
-## Current Integration — 19 November 2026
+## Current Integration — 23 November 2026
 
 Caffoot Lite **v2.1 remains the published release**, at tagged source `c3237114108cad9f7d4e57657b6aed5e0091a5ef` (schema 10). Use the [published user guides](../how-tos/features-and-instructions/README.md) and [installation instructions](../../INSTALLATION.md) for that release.
 
-The verified `milestone-1` HEAD is **`c1b5f8008e8ba56840d9790e3ba1c7e91ad35e0b`**, schema **24**. Stages 1–3 have been development-accepted and integrated with their documented deferred manual/native checks; Stage 4 has completed all four owner-accepted development batches and their merges. This records verified integration and recorded sign-off, **not** a new application test, Stage 6 completion or v2.2 release. Earlier stage-specific source checkpoints below remain historical and are not today's HEAD. See [formal Stage 4 sign-off](https://github.com/Caffoot/Caffoot-Lite/issues/369#issuecomment-7007760294) and the [draft v2.2 user guides](../how-tos/features-and-instructions/v2.2-draft/README.md).
+The verified `milestone-1` HEAD for IT Service Desk development is **`d2b7ead0027ba3579ea96c865a3a4b6cb63037a2`**, schema **25**. The owner accepted the Service Desk foundation and it is integrated through PR #437. The owner separately authorised the IT Service Desk in Batch 5.2. The change is in PR #438 against `milestone-1` and remains subject to independent review and merge approval. Stages 1–4 are development-accepted and integrated with deferred native and manual checks. [Owner authorisation](https://github.com/Caffoot/Caffoot-Lite/issues/421#issuecomment-7096011586) · [IT Service Desk PR](https://github.com/Caffoot/Caffoot-Lite/pull/438) · [Draft v2.2 guides](../how-tos/features-and-instructions/v2.2-draft/README.md)
 
 ### Stage 3 Development Integration — Historical Merge Ledger
 
@@ -32,7 +32,7 @@ The verified `milestone-1` HEAD is **`c1b5f8008e8ba56840d9790e3ba1c7e91ad35e0b`*
 
 Staff Members and Departments are core and independently permissioned. IT Assets is independently optional and defaults off on fresh installations. Schema 20 adds IT Assets Edit to the built-in IT Staff role default while preserving existing accounts' configured access with compatibility overrides; it does not automatically add new ordinary accounts to IT Staff.
 
-**Still deferred:** Batch 3.4 manual/native acceptance, broader native Raspberry Pi/Safari and private-installation checks, private legacy-data verification, and Stage 6 cross-stage security/compatibility, supported upgrade and complete-volume backup/restore acceptance. These are not marked passed by Stage 4's hosted CI. Stage 5 has four frozen, approved HTML designs and the six-batch plan [#419–#425](https://github.com/Caffoot/Caffoot-Lite/issues/419), and Batch 5.1 is separately authorised and under review in [PR #437](https://github.com/Caffoot/Caffoot-Lite/pull/437). Separate owner approval is required for each development batch, PR merge, final milestone merge, release and deployment. No v2.2 image, production upgrade procedure or publication is implied.
+**Still deferred:** Batch 3.4 manual/native acceptance, broader native Raspberry Pi/Safari and private-installation checks, private legacy-data verification, and Stage 6 cross-stage security/compatibility, supported upgrade and complete-volume backup/restore acceptance. These are not marked passed by Stage 4's hosted CI. Stage 5 has four frozen, approved HTML designs and the six-batch plan [#419–#425](https://github.com/Caffoot/Caffoot-Lite/issues/419), and the integrated foundation and IT Service Desk received separate authorisations. Batches 5.3–5.6 still await their individual authorisations. Separate owner approval is required for each development batch, PR merge, final milestone merge, release and deployment. No v2.2 image, production upgrade procedure or publication is implied.
 
 The [documentation review record](Stage-1-3-Documentation-Review.md) lists sources, screenshot approvals, wording discrepancies and remaining documentation acceptance. The [active handover](../development-handovers/milestone-01.md) preserves implementation evidence.
 

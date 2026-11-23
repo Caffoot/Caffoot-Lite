@@ -57,8 +57,9 @@ module.exports=async({page,context,catalogue,confirmedAction,confirm,screenshot,
   assert.equal(await page.locator('[data-role-command="delete"]').count(),0);
  }
  await editor();
- assert.equal(await page.getByLabel('Service Desk',{exact:true}).inputValue(),'');
- await page.getByLabel('Service Desk',{exact:true}).selectOption('read');
+ const serviceDeskGrant=page.locator('#role-definition-form').getByLabel('Service Desk',{exact:true});
+ assert.equal(await serviceDeskGrant.inputValue(),'');
+ await serviceDeskGrant.selectOption('read');
  await page.locator('#role-grant-Devices').selectOption('read');await page.locator('#role-grant-Racks').selectOption('');
  await screenshot(page,'it-staff-editor-1440');
  await page.locator('[form="role-definition-form"]').click();await page.locator('[data-role-command="confirm"]').waitFor();await confirm(page);
@@ -126,5 +127,46 @@ module.exports=async({page,context,catalogue,confirmedAction,confirm,screenshot,
   localStorage.setItem('caffoot_theme_preference','light');
   caffootApplyTheme();
  });
+ const inventory=await context.request.get(address+'/api/inventory/state');
+ assert.equal(inventory.status(),200);
+ const device=(await inventory.json()).devices.find(device=>device.type==='Desktop');
+ assert.ok(device,'The Device Tickets check needs a fixture desktop');
+ const ticketResponse=await context.request.post(address+'/api/service-desk/it/tickets',{headers,data:{
+  equipmentKind:'device',equipmentId:device.id,categoryId:5,subject:'Shared drive will not connect',
+  description:'The shared drive disconnects during the morning sign-in.'
+ }});
+ assert.equal(ticketResponse.status(),201,await ticketResponse.text());
+
+ await page.locator('#sidebar [data-action="tab-devices"]').click();
+ await page.locator('[data-action="select-device-section"][data-tab="inventory"]').click();
+ await page.locator('[data-action="view-device"][data-id="'+device.id+'"]').first().click();
+ const details=page.locator('.device-details-dialog');
+ await details.waitFor();
+ const tickets=details.getByRole('tab',{name:'Tickets',exact:true});
+ assert.deepEqual((await details.getByRole('tab').allTextContents()).slice(0,6),
+  ['Overview','Hardware','Network','Software','Location','Assigned To']);
+ assert.equal(await details.getByRole('tab',{name:'Overview',exact:true}).getAttribute('aria-selected'),'true');
+ assert.equal(await details.locator('#device-details-panel-overview .service-desk-equipment').count(),0);
+ await tickets.focus();
+ await tickets.press('Enter');
+ const panel=details.getByRole('tabpanel',{name:'Tickets',exact:true});
+ const linkedTicket=panel.getByRole('button',{name:/Shared drive will not connect/});
+ await linkedTicket.waitFor();
+ await screenshot(page,'device-tickets-1440');
+ await page.setViewportSize({width:390,height:844});
+ await page.evaluate(()=>{localStorage.setItem('caffoot_theme_preference','dark');caffootApplyTheme();});
+ await screenshot(page,'device-tickets-dark-390');
+ assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
+ await linkedTicket.click();
+ await page.locator('.service-desk-dialog').getByRole('heading',{name:'Ticket Information'}).waitFor();
+ await page.keyboard.press('Escape');
+ await linkedTicket.waitFor();
+ assert.equal(await tickets.getAttribute('aria-selected'),'true');
+ assert.ok(await tickets.evaluate(tab=>document.activeElement===tab));
+ await page.keyboard.press('Escape');
+ await page.setViewportSize({width:1440,height:950});
+ await page.evaluate(()=>{localStorage.setItem('caffoot_theme_preference','light');caffootApplyTheme();});
+ await checked(page,'Device Details opens linked tickets on the dedicated tab and restores that tab on return');
+ await page.locator('#sidebar [data-action="tab-users"]').click();
  await page.locator('[data-action="select-users-section"][data-tab="roles"]').click();
 };

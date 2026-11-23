@@ -4,7 +4,9 @@ import json
 
 from backend.permissions import can_access
 from backend.role_policy import SERVICE_DESK_SECTION
-from backend.service_desk_access import ticket_equipment_for_creation, ticket_scope_filter
+from backend.service_desk_access import EQUIPMENT_COLUMNS, ticket_equipment_for_creation, ticket_scope_filter
+from backend.service_desk_attachments import insert_ticket_attachments
+from backend.stock_circulation import stock_issue_records
 
 STATUSES = ('Open', 'In Progress', 'On Hold', 'Closed')
 PRIORITIES = ('Low', 'Medium', 'High')
@@ -66,31 +68,129 @@ def read_ticket_categories(connection, actor_id, scope):
     """))}
 
 
-def read_ticket_list(connection, actor_id, scope, *, status=None, search='', limit=50, offset=0):
+def read_ticket_list(connection, actor_id, scope, *, status=None, search='', limit=50, offset=0,
+                     priority=None, assignment=None, technician=None, sort=None,
+                     equipment_kind=None, equipment_id=None):
     allowed, values = ticket_scope_filter(connection, actor_id, scope)
     search = ticket_text(search, 'Search', 200, required=False)
     if status is not None and status not in STATUSES:
         raise ValueError('Invalid ticket status.')
     if not 1 <= limit <= 100 or not 0 <= offset <= 1_000_000:
         raise ValueError('Invalid ticket page.')
+    orders = {'newest': 'ticket.updated_at DESC,ticket.id DESC',
+              'oldest': 'ticket.updated_at,ticket.id', 'ticket': 'ticket.id DESC'}
+    if scope != 'it' and any(value is not None for value in
+                             (priority, assignment, technician, sort, equipment_kind, equipment_id)):
+        raise ValueError('Invalid ticket list parameters.')
+    if priority is not None and priority not in PRIORITIES:
+        raise ValueError('Invalid ticket priority.')
+    if assignment not in (None, 'mine', 'unassigned') or (sort is not None and sort not in orders):
+        raise ValueError('Invalid ticket assignment or sort.')
+    if (equipment_kind is None) != (equipment_id is None):
+        raise ValueError('Select a Device or IT Asset.')
+    if equipment_kind is not None:
+        if equipment_kind not in EQUIPMENT_COLUMNS or not 0 < len(equipment_id) <= 200:
+            raise ValueError('Select a Device or IT Asset.')
+        if equipment_kind == 'stockItem':
+            allowed += ''' AND (ticket.stock_item_id=? OR ticket.stock_unit_id IN (
+                SELECT id FROM it_asset_stock_units WHERE stock_item_id=? AND device_id IS NULL))'''
+            values += (equipment_id, equipment_id)
+        else:
+            allowed += f' AND ticket.{EQUIPMENT_COLUMNS[equipment_kind][1]}=?'
+            values += (equipment_id,)
+    # Workload totals use equipment access but stay independent of queue filters.
+    scoped = allowed
+    scoped_values = values
     if search:
         pattern = '%' + search.replace('!', '!!').replace('%', '!%').replace('_', '!_') + '%'
-        allowed += f""" AND (ticket.subject LIKE ? ESCAPE '!' OR CAST(ticket.id AS TEXT)=?
-                              OR {TICKET_EQUIPMENT_LABEL} LIKE ? ESCAPE '!')"""
-        values += (pattern, search, pattern)
+        if scope == 'it':
+            allowed += f""" AND (ticket.subject LIKE ? ESCAPE '!' OR CAST(ticket.id AS TEXT)=?
+                OR printf('SD-%04d',ticket.id) LIKE ? ESCAPE '!' OR {TICKET_EQUIPMENT_LABEL} LIKE ? ESCAPE '!'
+                OR ticket.employee_label LIKE ? ESCAPE '!' OR ticket.created_by_label LIKE ? ESCAPE '!'
+                OR ticket.category_label LIKE ? ESCAPE '!' OR EXISTS (
+                    SELECT 1 FROM accounts WHERE id=ticket.technician_id AND username LIKE ? ESCAPE '!'))"""
+            values += (pattern, search, pattern, pattern, pattern, pattern, pattern, pattern)
+        else:
+            allowed += f""" AND (ticket.subject LIKE ? ESCAPE '!' OR CAST(ticket.id AS TEXT)=?
+                                  OR {TICKET_EQUIPMENT_LABEL} LIKE ? ESCAPE '!')"""
+            values += (pattern, search, pattern)
     counts = dict.fromkeys(STATUSES, 0)
     counts.update(connection.execute(
         'SELECT ticket.status,count(*) FROM service_desk_tickets ticket WHERE ' + allowed + ' GROUP BY ticket.status',
         values,
     ))
-    if status is not None:
-        allowed += ' AND ticket.status=?'
-        values += (status,)
+    for column, value in (('status', status), ('priority', priority), ('technician_id', technician),
+                          ('technician_id', actor_id if assignment == 'mine' else None)):
+        if value is not None:
+            allowed += f' AND ticket.{column}=?'
+            values += (value,)
+    if assignment == 'unassigned':
+        allowed += ' AND ticket.technician_id IS NULL'
     tickets = ticket_rows(connection.execute(f"""
         SELECT {TICKET_SUMMARY} FROM service_desk_tickets ticket WHERE {allowed}
-        ORDER BY ticket.updated_at DESC,ticket.id DESC LIMIT ? OFFSET ?
+        ORDER BY {orders[sort or 'newest']} LIMIT ? OFFSET ?
     """, (*values, limit, offset)))
-    return {'tickets': tickets, 'counts': counts}
+    result = {'tickets': tickets, 'counts': counts}
+    if scope == 'it':
+        workload_counts = dict.fromkeys(STATUSES, 0)
+        workload_counts.update(connection.execute(
+            'SELECT ticket.status,count(*) FROM service_desk_tickets ticket WHERE ' + scoped + ' GROUP BY ticket.status',
+            scoped_values,
+        ))
+        result['workloadCounts'] = workload_counts
+        result['filteredTotal'] = connection.execute(
+            'SELECT count(*) FROM service_desk_tickets ticket WHERE ' + allowed, values).fetchone()[0]
+        result['technicians'] = ticket_rows(connection.execute(f"""
+            SELECT DISTINCT accounts.id,accounts.username AS name
+            FROM service_desk_tickets ticket JOIN accounts ON accounts.id=ticket.technician_id
+            WHERE {scoped} ORDER BY accounts.username COLLATE NOCASE, accounts.id
+        """, scoped_values))
+    return result
+
+
+def read_ticket_equipment_choices(connection, actor_id):
+    """Offer only canonical equipment and identify separate outstanding stock issues."""
+    ticket_scope_filter(connection, actor_id, 'it', edit=True)
+    choices = []
+    if can_access(connection, actor_id, 'Devices'):
+        choices.extend({'kind': 'device', 'id': identity, 'label': name or identity}
+                       for identity, name in connection.execute('SELECT id,name FROM inventory_devices'))
+    if can_access(connection, actor_id, 'IT Assets'):
+        issues = {}
+        for issue in stock_issue_records(connection):
+            if issue['outstanding'] > 0 and issue['deviceAssignmentId'] is None:
+                identity = issue['stockUnitId'] or issue['stockItemId']
+                issues.setdefault(identity, []).append(issue)
+        assets = connection.execute("""
+            SELECT 'stockItem',id,name FROM it_asset_stock_items WHERE tracking_mode='quantity'
+            UNION ALL
+            SELECT 'stockUnit',unit.id,item.name||coalesce(' · '||unit.asset_tag,'')
+                   ||coalesce(' · '||unit.serial_number,'')
+            FROM it_asset_stock_units unit JOIN it_asset_stock_items item ON item.id=unit.stock_item_id
+            WHERE unit.device_id IS NULL
+        """)
+        for kind, identity, name in assets:
+            current = issues.get(identity, [])
+            if current:
+                choices.extend({'kind': kind, 'id': identity,
+                                'label': f"{name} · {issue['recipientLabel']} (Issue {issue['id']})",
+                                'stockIssueId': issue['id']} for issue in current)
+            else:
+                choices.append({'kind': kind, 'id': identity, 'label': name})
+    return {'equipment': sorted(choices, key=lambda choice: (choice['label'].casefold(), choice['id']))}
+
+
+def read_ticket_assignment_choices(connection, actor_id, ticket_id):
+    """Use the same eligibility check as assignment and omit the current assignee."""
+    ticket = require_ticket(connection, actor_id, 'it', ticket_id, edit=True)
+    accounts = connection.execute('SELECT id,username FROM accounts WHERE active=1 ORDER BY username COLLATE NOCASE')
+    return {'technicians': [{'id': identity, 'name': name} for identity, name in accounts
+                            if identity != ticket[3] and eligible_ticket_technician(connection, identity, ticket[7])]}
+
+
+def eligible_ticket_technician(connection, identity, equipment_section):
+    return (can_access(connection, identity, SERVICE_DESK_SECTION, edit=True)
+            and can_access(connection, identity, equipment_section))
 
 
 def require_ticket(connection, actor_id, scope, ticket_id, *, edit=False):
@@ -107,13 +207,17 @@ def require_ticket(connection, actor_id, scope, ticket_id, *, edit=False):
 
 
 def read_ticket(connection, actor_id, scope, ticket_id, resource=None):
-    require_ticket(connection, actor_id, scope, ticket_id)
+    access = require_ticket(connection, actor_id, scope, ticket_id)
     visibility = '' if scope == 'it' else ' AND employee_visible=1'
     if resource == 'messages':
         messages = ticket_rows(connection.execute("""
             SELECT id,kind,body,actor_label AS author,created_at AS createdAt,
-                   edited_at AS editedAt,employee_visible AS employeeVisible
-            FROM service_desk_messages WHERE ticket_id=?""" + visibility + ' ORDER BY id', (ticket_id,)))
+                   edited_at AS editedAt,employee_visible AS employeeVisible,
+                   (actor_id=? AND kind<>'Resolution Note' AND NOT EXISTS (
+                       SELECT 1 FROM service_desk_events event WHERE event.ticket_id=service_desk_messages.ticket_id
+                       AND event.kind='Created' AND json_extract(event.details,'$.attachmentMessageId')=service_desk_messages.id
+                   )) AS editable
+            FROM service_desk_messages WHERE ticket_id=?""" + visibility + ' ORDER BY id', (actor_id, ticket_id)))
         attachments = ticket_rows(connection.execute("""
             SELECT attachment.id,attachment.message_id AS messageId,attachment.filename,
                    length(attachment.contents) AS size
@@ -141,6 +245,9 @@ def read_ticket(connection, actor_id, scope, ticket_id, resource=None):
     ticket, = ticket_rows(connection.execute(f"""
         SELECT {TICKET_SUMMARY},ticket.description FROM service_desk_tickets ticket WHERE ticket.id=?
     """, (ticket_id,)))
+    if scope == 'it':
+        ticket.update(technicianId=access[3], statusBeforeHold=access[2],
+                      canEdit=can_access(connection, actor_id, SERVICE_DESK_SECTION, edit=True))
     return ticket
 
 
@@ -172,7 +279,7 @@ def insert_ticket_message(connection, ticket_id, kind, body, actor, at, visible)
     """, (ticket_id, kind, body, *actor, at, visible)).lastrowid
 
 
-def create_ticket(connection, actor, scope, payload, at):
+def create_ticket(connection, actor, scope, payload, at, attachments):
     required = {'equipmentKind', 'equipmentId', 'categoryId', 'subject', 'description'}
     if not required <= payload.keys() or payload.keys() - (required | {'stockIssueId'}):
         raise ValueError('Select equipment and a category, and enter a subject and description.')
@@ -192,8 +299,15 @@ def create_ticket(connection, actor, scope, payload, at):
             subject,description,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)
     """, (payload['equipmentId'], assignment_id, issue_id, movement_id, *actor, employee_id,
           employee[0] if employee else None, category_id, category, subject, description, at, at)).lastrowid
+    initial_files = {}
+    if attachments:
+        # Initial files are part of the original request and share its verified audience.
+        message_id = insert_ticket_message(connection, ticket_id, 'IT Update',
+                                           'Attachments Submitted With Ticket', actor, at, True)
+        insert_ticket_attachments(connection, ticket_id, message_id, attachments)
+        initial_files['attachmentMessageId'] = message_id
     record_ticket_event(connection, ticket_id, 'Created', actor, at, status='Open',
-                        categoryId=category_id, category=category)
+                        categoryId=category_id, category=category, **initial_files)
     return ticket_id
 
 
@@ -207,6 +321,9 @@ def save_ticket_message(connection, ticket_id, message_id, scope, payload, actor
             SELECT body,employee_visible FROM service_desk_messages
             WHERE ticket_id=? AND id=? AND actor_id=? AND kind<>'Resolution Note'
               AND (? OR employee_visible=1)
+              AND NOT EXISTS (SELECT 1 FROM service_desk_events event
+                  WHERE event.ticket_id=service_desk_messages.ticket_id AND event.kind='Created'
+                  AND json_extract(event.details,'$.attachmentMessageId')=service_desk_messages.id)
         """, (ticket_id, message_id, actor[0], scope == 'it')).fetchone()
         if message is None:
             raise LookupError('Message not found.')
@@ -246,8 +363,7 @@ def change_ticket_lifecycle(connection, ticket_id, action, payload, ticket, acto
         reason = payload.get('reason')
         explanation = ticket_text(payload.get('explanation', ''), 'Explanation', 2000, required=False)
         if (type(target_id) is not int or not 0 < target_id <= 2**63 - 1 or target_id == technician_id
-                or not can_access(connection, target_id, SERVICE_DESK_SECTION, edit=True)
-                or not can_access(connection, target_id, section)):
+                or not eligible_ticket_technician(connection, target_id, section)):
             raise ValueError('Select an eligible technician.')
         if status not in ('Open', 'In Progress'):
             raise FileExistsError('Only Open or In Progress tickets can be assigned.')
@@ -323,7 +439,25 @@ def change_ticket_lifecycle(connection, ticket_id, action, payload, ticket, acto
                                 previousCategory=category, categoryId=new_category_id, category=new_category)
 
 
-def save_ticket_request(connection, actor_id, scope, payload, *, ticket_id=None, action=None, message_id=None):
+def remove_ticket_attachment(connection, ticket_id, attachment_id, actor, at):
+    """Remove the file and retain its attributed change with the parent message."""
+    row = connection.execute("""
+        SELECT attachment.message_id,attachment.filename,message.employee_visible
+        FROM service_desk_attachments attachment JOIN service_desk_messages message
+          ON message.ticket_id=attachment.ticket_id AND message.id=attachment.message_id
+        WHERE attachment.ticket_id=? AND attachment.id=?
+    """, (ticket_id, attachment_id)).fetchone()
+    if row is None:
+        raise LookupError('Attachment not found.')
+    message_id, filename, visible = row
+    connection.execute('DELETE FROM service_desk_attachments WHERE ticket_id=? AND id=?',
+                       (ticket_id, attachment_id))
+    record_ticket_event(connection, ticket_id, 'Message Edited', actor, at, visible=visible,
+                        messageId=message_id, removedAttachmentId=attachment_id, filename=filename)
+
+
+def save_ticket_request(connection, actor_id, scope, payload, *, ticket_id=None, action=None,
+                        message_id=None, attachments=()):
     """Write a ticket and its history as one operation under the caller's lock."""
     if not connection.in_transaction:
         raise RuntimeError('Ticket writes require an active transaction')
@@ -335,11 +469,25 @@ def save_ticket_request(connection, actor_id, scope, payload, *, ticket_id=None,
     actor = (actor_id, actor_name[0])
     at = datetime.now(timezone.utc).isoformat(timespec='microseconds').replace('+00:00', 'Z')
     if ticket_id is None:
-        return {'id': create_ticket(connection, actor, scope, payload, at)}
+        return {'id': create_ticket(connection, actor, scope, payload, at, attachments)}
     ticket = require_ticket(connection, actor_id, scope, ticket_id, edit=True)
-    if action == 'messages':
+    if action == 'attachments':
+        if scope != 'it' or payload:
+            raise PermissionError('Attachment removal requires an authorised technician.')
+        remove_ticket_attachment(connection, ticket_id, message_id, actor, at)
+        result = {'id': message_id}
+    elif action == 'messages':
         result = {'id': save_ticket_message(connection, ticket_id, message_id, scope, payload, actor, at, ticket[1])}
+        if attachments:
+            insert_ticket_attachments(connection, ticket_id, result['id'], attachments)
     else:
+        if 'expectedUpdatedAt' in payload and scope == 'it':
+            payload = payload.copy()
+            expected = payload.pop('expectedUpdatedAt')
+            current = connection.execute('SELECT updated_at FROM service_desk_tickets WHERE id=?',
+                                         (ticket_id,)).fetchone()[0]
+            if current != expected:
+                raise FileExistsError('This ticket has changed. Review the latest details before trying again.')
         if scope != 'it' and (action != 'reopen' or ticket[0] != actor_id):
             raise PermissionError('This action requires an authorised technician or the ticket author.')
         change_ticket_lifecycle(connection, ticket_id, action, payload, ticket, actor, at)
