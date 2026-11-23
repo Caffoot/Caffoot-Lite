@@ -9,7 +9,7 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     CAFFOOT_PORT=8080
 
 # A private build may supply its proxy CA without storing it in the image.
-RUN --mount=type=secret,id=proxy_ca,target=/etc/ssl/cert.pem apk add --no-cache openssl
+RUN --mount=type=secret,id=proxy_ca,target=/etc/ssl/cert.pem apk add --no-cache openssl tzdata
 
 WORKDIR /opt/caffoot
 COPY backend/ ./backend/

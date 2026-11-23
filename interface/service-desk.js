@@ -331,7 +331,7 @@ window.caffootServiceDesk = (() => {
         currentDialog = dialog;
         try {
             const scope = employee ? 'personal' : 'it';
-            const [{equipment}, {categories}, shared] = await Promise.all([requestTickets('equipment', undefined, undefined, scope),
+            const [{equipment}, {categories, softwareCategoryId}, shared] = await Promise.all([requestTickets('equipment', undefined, undefined, scope),
                 requestTickets('categories', undefined, undefined, scope),
                 employee ? requestTickets('equipment', undefined, undefined, 'department') : null]);
             if (!ticketDialogActive(dialog)) return;
@@ -371,10 +371,9 @@ window.caffootServiceDesk = (() => {
             if (linkedEquipment && selected === -1) showTicketError(dialog, 'This equipment is no longer available for a new ticket.');
             if (employee) {
                 const form = body.querySelector('form');
-                const softwareCategory = categories.find(entry => entry.name === 'Software / Applications');
                 form.addEventListener('change', event => {
                     if (['equipment','categoryId'].includes(event.target.name))
-                        void updateTicketSoftware(dialog, form, softwareCategory?.id);
+                        void updateTicketSoftware(dialog, form, softwareCategoryId);
                 });
             }
         } catch (error) {

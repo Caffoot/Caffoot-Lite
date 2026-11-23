@@ -1,5 +1,4 @@
 """Read and change a ticket within one authenticated database transaction."""
-from datetime import datetime, timezone
 import json
 
 from backend.permissions import can_access
@@ -7,8 +6,10 @@ from backend.role_policy import SERVICE_DESK_SECTION
 from backend.service_desk_access import (EQUIPMENT_COLUMNS, employee_ticket_equipment,
                                         ticket_equipment_for_creation, ticket_scope_filter)
 from backend.service_desk_attachments import insert_ticket_attachments
+from backend.service_desk_calendar import measure_resolution_attempt, utc_timestamp
+from backend.service_desk_schema import OTHER_TICKET_CATEGORY_ID, SOFTWARE_TICKET_CATEGORY_ID
 from backend.stock_circulation import stock_issue_records
-from backend.ticket_software import SOFTWARE_TICKET_CATEGORY, ticket_software_choices
+from backend.ticket_software import ticket_software_choices
 
 STATUSES = ('Open', 'In Progress', 'On Hold', 'Closed')
 PRIORITIES = ('Low', 'Medium', 'High')
@@ -64,14 +65,11 @@ def ticket_category(connection, category_id):
 
 def read_ticket_categories(connection, actor_id, scope):
     ticket_scope_filter(connection, actor_id, scope)
-    return {'categories': ticket_rows(connection.execute("""
-        SELECT id,name FROM service_desk_categories WHERE hidden=0
-        ORDER BY CASE
-            WHEN name='Other / Not Listed' THEN 3
-            WHEN ? AND name='Email / Sending & Receiving Issues' THEN 2
-            WHEN ? AND name='LAN / Shared Drive Issues' THEN 1
-            ELSE 0 END, name COLLATE NOCASE, id
-    """, (scope != 'it', scope != 'it')))}
+    categories = ticket_rows(connection.execute(
+        'SELECT id,name FROM service_desk_categories WHERE hidden=0'
+    ))
+    categories.sort(key=lambda category: (category['id'] == OTHER_TICKET_CATEGORY_ID, category['name'].casefold()))
+    return {'categories': categories, 'softwareCategoryId': SOFTWARE_TICKET_CATEGORY_ID}
 
 
 def read_ticket_list(connection, actor_id, scope, *, status=None, search='', limit=50, offset=0,
@@ -316,7 +314,7 @@ def create_ticket(connection, actor, scope, payload, at, attachments):
     software = payload.get('affectedSoftware')
     affected_software = None
     if software is not None and software != '':
-        if not isinstance(software, str) or category != SOFTWARE_TICKET_CATEGORY or column != 'device_id':
+        if not isinstance(software, str) or category_id != SOFTWARE_TICKET_CATEGORY_ID or column != 'device_id':
             raise ValueError('Affected Software applies to Software / Applications tickets on a Laptop or Desktop.')
         choices = ticket_software_choices(connection, payload['equipmentId'])
         affected_software = next((choice['label'] for choice in choices if choice['key'] == software), None)
@@ -443,9 +441,11 @@ def change_ticket_lifecycle(connection, ticket_id, action, payload, ticket, acto
         message_id = insert_ticket_message(connection, ticket_id, 'Resolution Note', note, actor, at, True)
         event_id = record_ticket_event(connection, ticket_id, 'Closed', actor, at,
                                        before=status, status='Closed', messageId=message_id)
+        seconds = measure_resolution_attempt(connection, ticket_id, event_id, at)
         connection.execute("""
-            INSERT INTO service_desk_closures(ticket_id,closed_event_id,resolution_message_id) VALUES(?,?,?)
-        """, (ticket_id, event_id, message_id))
+            INSERT INTO service_desk_closures
+              (ticket_id,closed_event_id,resolution_message_id,resolution_working_seconds) VALUES(?,?,?,?)
+        """, (ticket_id, event_id, message_id, seconds))
         connection.execute("UPDATE service_desk_tickets SET status='Closed' WHERE id=?", (ticket_id,))
     elif action == 'reopen':
         if status != 'Closed':
@@ -468,7 +468,7 @@ def change_ticket_lifecycle(connection, ticket_id, action, payload, ticket, acto
         new_category_id = payload.get('categoryId')
         new_category = ticket_category(connection, new_category_id)
         if new_category_id != category_id:
-            software = affected_software if new_category == SOFTWARE_TICKET_CATEGORY else None
+            software = affected_software if new_category_id == SOFTWARE_TICKET_CATEGORY_ID else None
             connection.execute("""
                 UPDATE service_desk_tickets SET category_id=?,category_label=?,affected_software=? WHERE id=?
             """, (new_category_id, new_category, software, ticket_id))
@@ -505,7 +505,7 @@ def save_ticket_request(connection, actor_id, scope, payload, *, ticket_id=None,
     if actor_name is None:
         raise PermissionError('Active account required.')
     actor = (actor_id, actor_name[0])
-    at = datetime.now(timezone.utc).isoformat(timespec='microseconds').replace('+00:00', 'Z')
+    at = utc_timestamp()
     if ticket_id is None:
         return {'id': create_ticket(connection, actor, scope, payload, at, attachments)}
     ticket = require_ticket(connection, actor_id, scope, ticket_id, edit=True)

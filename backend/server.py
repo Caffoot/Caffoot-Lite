@@ -37,6 +37,7 @@ from .service_desk import (read_ticket, read_ticket_assignment_choices, read_tic
                            read_ticket_categories, read_ticket_equipment_choices, read_ticket_list,
                            read_ticket_software_choices, require_ticket, save_ticket_request)
 from .service_desk_access import linked_ticket_staff, ticket_scope_filter
+from .service_desk_calendar import activate_deployment_timezone
 from .service_desk_attachments import MAX_RETAINED_TICKET_BYTES, validate_ticket_attachments
 from .ipam_repair import apply_ipam_repairs
 from .audit_events import record_actor_event
@@ -1902,6 +1903,9 @@ def main():
     context = ensure_certificate(TLS_DIR, TLS_NAMES)
     server = ThreadingHTTPServer((HOST, PORT), Handler)
     server.socket = context.wrap_socket(server.socket, server_side=True)
+    # Apply the installed timezone immediately before the server accepts requests.
+    with connect() as connection:
+        activate_deployment_timezone(connection, os.environ.get('TZ'))
     server.serve_forever()
 
 

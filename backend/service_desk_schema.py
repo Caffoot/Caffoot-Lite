@@ -16,6 +16,9 @@ DEFAULT_TICKET_CATEGORIES = (
     'Other / Not Listed',
 )
 
+SOFTWARE_TICKET_CATEGORY_ID = DEFAULT_TICKET_CATEGORIES.index('Software / Applications') + 1
+OTHER_TICKET_CATEGORY_ID = len(DEFAULT_TICKET_CATEGORIES)
+
 SERVICE_DESK_SCHEMA = """
 CREATE TABLE service_desk_categories (
     id INTEGER PRIMARY KEY,
@@ -149,3 +152,30 @@ def migrate_service_desk(connection):
 def migrate_ticket_software(connection):
     """Keep the software label as it was when the request was raised."""
     connection.execute('ALTER TABLE service_desk_tickets ADD COLUMN affected_software TEXT')
+
+
+def migrate_service_desk_reporting(connection):
+    """Retain applied calendars and completed measurements in existing data."""
+    connection.execute("""
+        CREATE TABLE service_desk_calendars (
+            id INTEGER PRIMARY KEY,
+            effective_at TEXT NOT NULL,
+            working_hours TEXT NOT NULL CHECK(json_type(working_hours)='array'),
+            excluded_dates TEXT NOT NULL CHECK(json_type(excluded_dates)='object'),
+            timezone_name TEXT,
+            timezone_rules BLOB,
+            saved_by INTEGER,
+            CHECK((timezone_name IS NULL)=(timezone_rules IS NULL))
+        )
+    """)
+    connection.execute("""
+        CREATE TRIGGER service_desk_closure_measurement_immutable
+        BEFORE UPDATE OF resolution_working_seconds ON service_desk_closures
+        WHEN NEW.resolution_working_seconds IS NOT OLD.resolution_working_seconds
+        BEGIN
+            SELECT RAISE(ABORT,'Completed ticket measurements cannot be changed');
+        END
+    """)
+    connection.execute("""
+        CREATE INDEX service_desk_events_reporting ON service_desk_events(happened_at,kind)
+    """)

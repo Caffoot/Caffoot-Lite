@@ -180,9 +180,9 @@ class ServiceDeskHttpTests(unittest.TestCase):
         self.assertEqual(self.request(SERVICE_DESK + '/department/software?deviceId=device', actor=4)[0], 404)
         self.assertEqual(self.request(SERVICE_DESK + '/personal/software?deviceId=missing', actor=4)[0], 404)
         categories = self.request(SERVICE_DESK + '/personal/categories', actor=4)[1]['categories']
-        self.assertEqual([entry['name'] for entry in categories[-3:]], [
-            'LAN / Shared Drive Issues', 'Email / Sending & Receiving Issues', 'Other / Not Listed',
-        ])
+        names = [entry['name'] for entry in categories]
+        self.assertEqual(names[:-1], sorted(names[:-1], key=str.casefold))
+        self.assertEqual(names[-1], 'Other / Not Listed')
         category = next(entry['id'] for entry in categories if entry['name'] == 'Software / Applications')
         for fields in ({'categoryId': ''}, {'subject': ' '}, {'description': ' '},
                        {'affectedSoftware': 'other'}, {'categoryId': category, 'affectedSoftware': 'Microsoft Teams'},
