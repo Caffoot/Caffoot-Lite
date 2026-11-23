@@ -11,6 +11,7 @@ const root = path.resolve(__dirname, '..');
 const temporary = fs.mkdtempSync(path.join(os.tmpdir(), 'caffoot-email-templates-'));
 const screenshots = process.env.CAFFOOT_EMAIL_TEMPLATE_SCREENSHOTS;
 const notificationScreenshots = process.env.CAFFOOT_TICKET_NOTIFICATION_SCREENSHOTS;
+const ticketCreatedScreenshots = process.env.CAFFOOT_TICKET_CREATED_SCREENSHOTS || notificationScreenshots;
 let server;
 let browser;
 
@@ -143,17 +144,17 @@ async function verifyTicketNotificationSettings(instance) {
         }
         await page.waitForFunction(() =>
             document.querySelector('input[name="itSupportEmail"]')?.value === 'it-support@example.invalid');
-        if (notificationScreenshots) {
+        if (ticketCreatedScreenshots) {
             await page.waitForFunction(() => getComputedStyle(document.getElementById('toast')).opacity === '0');
-            await captureEmailScreen(page, 'email-settings-' + mode, notificationScreenshots);
         }
+        if (notificationScreenshots) await captureEmailScreen(page, 'email-settings-' + mode, notificationScreenshots);
         await page.locator('#settings-email-templates-tab').click();
         await page.getByRole('button', {name: /Ticket Created/}).click();
         const preview = page.locator('#preview-email');
         await preview.getByText('Open', {exact: true}).waitFor();
         assert.equal(await page.locator('.var-row').count(), 3);
         assert.equal(await preview.getByText('Open Ticket in Caffoot Lite').getAttribute('href'), null);
-        if (notificationScreenshots) await captureEmailScreen(page, 'ticket-created-' + mode, notificationScreenshots);
+        if (ticketCreatedScreenshots) await captureEmailScreen(page, 'ticket-created-' + mode, ticketCreatedScreenshots);
         assert.deepEqual(errors, []);
         await context.close();
     }
@@ -208,6 +209,21 @@ async function runEmailTemplateBrowserChecks() {
     assert.equal(await page.locator('.var-row').count(), 6);
     assert.equal(await page.getByRole('group', {name: 'Visual Formatting'}).getByRole('button').count(), 5);
     await captureEmailScreen(page, 'templates-desktop-light');
+    for (const [template, recipient] of [
+        ['Ticket Created', 'Configured IT support mailbox'],
+        ['Ticket Assigned', 'Assigned IT technician'],
+        ['Employee Reply', 'Assigned IT technician'],
+        ['Ticket Reopened', 'Assigned IT technician'],
+        ['Ticket On Hold', 'Authorised employee'],
+        ['Ticket Update', 'Authorised employee'],
+        ['Email Verification', 'Authorised account recipient'],
+        ['Password Recovery', 'Authorised account recipient'],
+        ['Account Security Notice', 'Authorised account recipient'],
+        ['Ticket Closed', 'Authorised employee'],
+    ]) {
+        await page.locator('.template-option').filter({has: page.getByText(template, {exact: true})}).click();
+        assert.equal(await page.locator('#selected-template-recipient').textContent(), recipient, template);
+    }
 
     const subject = page.getByLabel('Email Subject');
     const draft = page.getByRole('button', {name: 'Save as Draft'});

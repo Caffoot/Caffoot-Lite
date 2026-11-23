@@ -279,7 +279,8 @@ window.caffootEmailTemplates = (() => {
             caret = undefined;
             byId('selected-template-title').textContent = selected.name;
             byId('selected-template-event').textContent = selected.event;
-            byId('selected-template-recipient').textContent = selected.group === 'account' ? 'Authorised account recipient'
+            byId('selected-template-recipient').textContent = selected.id === 'ticket-created' ? 'Configured IT support mailbox'
+                : selected.group === 'account' ? 'Authorised account recipient'
                 : selected.to.startsWith('technician') ? 'Assigned IT technician' : 'Authorised employee';
             setEmailFeedback(editorFeedback);
             setEmailFeedback(testResult, defaultTestMessage);
