@@ -94,8 +94,10 @@ async function captureEmailScreen(page, name) {
     fs.mkdirSync(screenshots, {recursive: true});
     await page.evaluate(() => {
         document.activeElement?.blur();
-        window.scrollTo(0, 0);
+        // Smooth scrolling can still move sticky panels during a full-page capture.
+        window.scrollTo({left: 0, top: 0, behavior: 'instant'});
     });
+    await page.waitForFunction(() => scrollY === 0 && document.scrollingElement.scrollTop === 0);
     await page.screenshot({path: path.join(screenshots, name + '.png'), fullPage: true, animations: 'disabled'});
 }
 

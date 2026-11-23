@@ -2,6 +2,12 @@
 
 Captured on 23 November 2026 from the integrated draft v2.2 application at [`4a684152cb4a178309728ef29efcc18a5fdeac59`](https://github.com/Caffoot/Caffoot-Lite/commit/4a684152cb4a178309728ef29efcc18a5fdeac59). The starting integration commit was [`7b651af631b18e68da4160d1e29ef1a957c8f7cc`](https://github.com/Caffoot/Caffoot-Lite/commit/7b651af631b18e68da4160d1e29ef1a957c8f7cc). Playwright 1.56.1 drove headless Chromium 155.0.8059.79 over local HTTPS against a disposable SQLite schema 28 installation. Desktop and mobile used 1440 × 960 and 390 × 844 CSS-pixel viewports. The PNGs show the full page at each width, including content reached by scrolling. Accounts, ticket examples, company details and the Maplebrook logo are fictional. [Browser test and fixture](../../../../tests/email-templates-interface.cjs)
 
+## Desktop Capture Correction
+
+The six desktop images for the saved draft, Ticket On Hold variables, all three account templates and the uploaded logo were recaptured on 23 November 2026. The application source was the same as in [the previous PR head](https://github.com/Caffoot/Caffoot-Lite/commit/25c4ad169ab52361bc0cf25e23a582873756f491). The browser, viewport, fixture and local HTTPS setup described above were used again. The other eight images retain their original provenance. [Owner review](https://github.com/Caffoot/Caffoot-Lite/pull/441#issuecomment-7108360524)
+
+In the live 1440 × 960 Chromium viewport, the sidebar began at the top and the template list, editor and preview all began 469 px below it. At a 650 px scroll offset, the sidebar, list and preview sat at their intended viewport offsets of 0, 17 and 16 px. Scrolling back to the top restored their starting positions. The old capture could begin during the smooth scroll back to the top, which displaced sticky panels in the full-page image. The capture helper now scrolls immediately and waits for the window and document scroll offsets to reach zero before taking the screenshot. [Browser capture helper](../../../../tests/email-templates-interface.cjs)
+
 ## Integrated Screenshots
 
 | Screen | Desktop light | Desktop dark | Mobile light | Mobile dark |
