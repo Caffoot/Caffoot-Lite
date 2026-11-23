@@ -35,8 +35,8 @@ from .device_catalogue import change_device_catalogue
 from .reset_inventory import reset_inventory
 from .service_desk import (read_ticket, read_ticket_assignment_choices, read_ticket_attachment,
                            read_ticket_categories, read_ticket_equipment_choices, read_ticket_list,
-                           require_ticket, save_ticket_request)
-from .service_desk_access import ticket_scope_filter
+                           read_ticket_software_choices, require_ticket, save_ticket_request)
+from .service_desk_access import linked_ticket_staff, ticket_scope_filter
 from .service_desk_attachments import MAX_RETAINED_TICKET_BYTES, validate_ticket_attachments
 from .ipam_repair import apply_ipam_repairs
 from .audit_events import record_actor_event
@@ -86,7 +86,7 @@ MAX_LOGIN_BYTES = 4096
 MAX_TICKET_REQUEST_BYTES = 128 * 1024
 MAX_TICKET_UPLOAD_REQUEST_BYTES = (MAX_RETAINED_TICKET_BYTES * 4 // 3) + 2_000_000
 TICKET_ROUTE = re.compile(
-    r'/api/service-desk/(personal|department|it)/(tickets|categories|equipment)'
+    r'/api/service-desk/(personal|department|it)/(tickets|categories|equipment|software)'
     r'(?:/([1-9][0-9]{0,18})(?:/([a-z]+)(?:/([1-9][0-9]{0,18}))?)?)?'
 )
 MAX_IMPORT_BYTES = 10 * 1024 * 1024
@@ -102,7 +102,8 @@ INTERFACE_ROOT = Path(__file__).resolve().parent.parent / "interface"
 INTERFACE_FILES = {
     "/interface/" + str(path.relative_to(INTERFACE_ROOT)): path
     for path in INTERFACE_ROOT.rglob("*")
-    if path.is_file() and path.suffix in (".html", ".css", ".js")
+    if path.is_file() and (path.suffix in (".html", ".css", ".js")
+                           or path == INTERFACE_ROOT / "installed-software-catalogue.json")
 }
 
 IMPORT_DRAFTS = ImportDrafts()
@@ -196,7 +197,7 @@ class Handler(BaseHTTPRequestHandler):
             path = INTERFACE_FILES[self.path]
             body = path.read_bytes()
             content_type = {".html": "text/html", ".css": "text/css",
-                            ".js": "application/javascript"}[path.suffix]
+                            ".js": "application/javascript", ".json": "application/json"}[path.suffix]
             self.send_response(200)
             self.send_header("Content-Type", content_type + "; charset=utf-8")
             self.send_header("Content-Length", str(len(body)))
@@ -520,6 +521,8 @@ class Handler(BaseHTTPRequestHandler):
                         and any(can_access(connection, account_id, section) for section in ("Devices", "IT Assets"))
                         for access in ('read', 'edit')
                     },
+                    "can_use_my_tickets": linked_ticket_staff(connection, account_id) is not None
+                    and any(feature_enabled(connection, section) for section in ("Devices", "IT Assets")),
                     "suppliers_enabled": feature_enabled(connection, "Suppliers"),
                     "supplier_permissions": {"read": can_access(connection, account_id, "Suppliers"),
                                              "edit": can_access(connection, account_id, "Suppliers", edit=True)},
@@ -909,7 +912,7 @@ class Handler(BaseHTTPRequestHandler):
         reading = self.command == 'GET'
         if (max(ticket_id or 0, child_id or 0) > 2**63 - 1
                 or (collection != 'tickets' and (ticket_id or not reading))
-                or (collection == 'equipment' and scope != 'it')
+                or (collection == 'software' and scope == 'it')
                 or (reading and resource not in (None, 'messages', 'history', 'attachments', 'technicians'))
                 or (resource == 'technicians' and scope != 'it')
                 or (reading and bool(child_id) != (resource == 'attachments'))
@@ -938,10 +941,14 @@ class Handler(BaseHTTPRequestHandler):
                     if actor_id is None:
                         raise PermissionError()
                     if ticket_id:
-                        require_ticket(connection, actor_id, scope, ticket_id, edit=True)
+                        ticket = require_ticket(connection, actor_id, scope, ticket_id, edit=True)
+                        if scope != 'it' and resource == 'messages' and child_id is None and ticket[1] == 'Closed':
+                            raise FileExistsError('Reopen the ticket before adding an employee-visible reply.')
                     else:
                         ticket_scope_filter(connection, actor_id, scope, edit=True)
-                accepts_files = scope == 'it' and (ticket_id is None or (resource == 'messages' and child_id is None))
+                        if scope != 'it' and linked_ticket_staff(connection, actor_id) is None:
+                            raise LookupError('Equipment not found.')
+                accepts_files = ticket_id is None or (resource == 'messages' and child_id is None)
                 maximum = MAX_TICKET_UPLOAD_REQUEST_BYTES if accepts_files else MAX_TICKET_REQUEST_BYTES
                 length = self.headers.get('Content-Length', '')
                 if not re.fullmatch(r'[0-9]{1,9}', length) or not 0 < int(length) <= maximum:
@@ -970,9 +977,9 @@ class Handler(BaseHTTPRequestHandler):
                     return
                 if reading and collection == 'tickets' and ticket_id is None:
                     parameters = parse_qs(parsed.query, keep_blank_values=True, max_num_fields=10)
-                    fields = {'status', 'search', 'limit', 'offset'}
+                    fields = {'status', 'search', 'limit', 'offset', 'sort', 'equipmentKind', 'equipmentId'}
                     if scope == 'it':
-                        fields.update(('priority', 'assignment', 'technician', 'sort', 'equipmentKind', 'equipmentId'))
+                        fields.update(('priority', 'assignment', 'technician'))
                     if set(parameters) - fields or any(len(value) != 1 for value in parameters.values()):
                         raise ValueError('Invalid ticket list parameters.')
                     filters = {key: value[0] for key, value in parameters.items()}
@@ -985,12 +992,17 @@ class Handler(BaseHTTPRequestHandler):
                         if source in filters:
                             filters[target] = filters.pop(source)
                     result = read_ticket_list(connection, actor_id, scope, **filters)
+                elif collection == 'software':
+                    parameters = parse_qs(parsed.query, keep_blank_values=True, max_num_fields=1)
+                    if set(parameters) != {'deviceId'} or len(parameters['deviceId']) != 1:
+                        raise ValueError('Select a Device.')
+                    result = read_ticket_software_choices(connection, actor_id, scope, parameters['deviceId'][0])
                 elif parsed.query:
                     raise ValueError('This ticket request does not accept query parameters.')
                 elif collection == 'categories':
                     result = read_ticket_categories(connection, actor_id, scope)
                 elif collection == 'equipment':
-                    result = read_ticket_equipment_choices(connection, actor_id)
+                    result = read_ticket_equipment_choices(connection, actor_id, scope)
                 elif reading and resource == 'technicians':
                     result = read_ticket_assignment_choices(connection, actor_id, ticket_id)
                 elif reading and resource == 'attachments':

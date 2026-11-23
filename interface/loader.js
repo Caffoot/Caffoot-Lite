@@ -48,9 +48,14 @@ async function loadInterfaceText(path) {
     if (!response.ok) throw new Error('Unable to load the interface. Please sign in again.');
     return response.text();
 }
+let installedSoftwareCatalogue;
 async function initialiseInterface() {
     const screenNames = ['audit-trail','dashboard','migration','my-account','users','settings','racks','ipam','device-management','device-details','devices','device-inventory','service-desk','shared'];
-    const files = await Promise.all(screenNames.map(name => loadInterfaceText('screens/' + name + '.html')));
+    const [catalogueText, ...files] = await Promise.all([
+        loadInterfaceText('installed-software-catalogue.json'),
+        ...screenNames.map(name => loadInterfaceText('screens/' + name + '.html'))
+    ]);
+    installedSoftwareCatalogue = JSON.parse(catalogueText);
     for (const text of files) {
         for (const match of text.matchAll(/<!-- interface-template:([^ ]+) -->([\s\S]*?)<!-- \/interface-template -->/g)) {
             if (interfaceTemplates.has(match[1])) throw new Error('Duplicate interface template: ' + match[1]);

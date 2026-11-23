@@ -144,3 +144,8 @@ def migrate_service_desk(connection):
         'INSERT INTO service_desk_categories(id,name) VALUES(?,?)',
         enumerate(DEFAULT_TICKET_CATEGORIES, start=1),
     )
+
+
+def migrate_ticket_software(connection):
+    """Keep the software label as it was when the request was raised."""
+    connection.execute('ALTER TABLE service_desk_tickets ADD COLUMN affected_software TEXT')
