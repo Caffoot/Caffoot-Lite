@@ -80,14 +80,15 @@ Equipment Lifecycle is independently optional and starts switched off. Stage 4.4
 
 | Task | Guide |
 | --- | --- |
+| Raise, find, reply to and reopen tickets for personal and Department equipment | [Employee ticket instructions](Service-Desk-Tickets.md#raise-a-support-request) |
 | Use the IT queue, record tickets, handle technician actions and attachments, and understand equipment privacy | [Service Desk Tickets](Service-Desk-Tickets.md) |
 | Grant technician access, understand handover privacy, protect ticket-linked inventory and use Clean Start | [Administer Service Desk Access And Data](Service-Desk-Administration.md) |
 
-The schema 25 foundation is integrated via [PR #437](https://github.com/Caffoot/Caffoot-Lite/pull/437). The IT Service Desk is in development review in [PR #438](https://github.com/Caffoot/Caffoot-Lite/pull/438).
+The schema 25 foundation and IT Service Desk are integrated in [PR #437](https://github.com/Caffoot/Caffoot-Lite/pull/437) and [PR #438](https://github.com/Caffoot/Caffoot-Lite/pull/438). Employee ticket workflows and schema 26 are in [PR #439](https://github.com/Caffoot/Caffoot-Lite/pull/439) for development review.
 
 ## Publication And Acceptance
 
-Stages 1–4 are development-complete, owner-accepted and integrated into `milestone-1`; this does **not** establish full milestone, native/manual or release acceptance. Stage 5's four frozen HTML designs and six approved planning batches #420–#425 are recorded in [#419](https://github.com/Caffoot/Caffoot-Lite/issues/419), and the schema foundation and IT Service Desk each received separate development authorisation. Batches 5.3–5.6 await their individual approvals. Batch 3.4 manual/native acceptance, broader Raspberry Pi/native Safari/private-installation evidence and Stage 6 compatibility/full upgrade/restore acceptance remain deferred. v2.2 is not released.
+Stages 1–4 are development-complete, owner-accepted and integrated into `milestone-1`. Stage 5’s frozen HTML designs and six batches are recorded in [#419](https://github.com/Caffoot/Caffoot-Lite/issues/419). Batch 5.3 has development authorisation and awaits visual acceptance and separate merge approval. Batches 5.4–5.6 await individual development authorisation. Batch 3.4 manual/native acceptance, broader Raspberry Pi/native Safari/private-installation evidence and Stage 6 compatibility, full upgrade and restore acceptance remain deferred. v2.2 is unreleased.
 
 Images used here are genuine application captures with an identified approval source and captions describing their scope. Functional HTML previews are retained as development references, never presented as application screenshots. Missing or outdated images and remaining wording discrepancies are listed in the [documentation review record](../../../development-guide/Stage-1-3-Documentation-Review.md).
 

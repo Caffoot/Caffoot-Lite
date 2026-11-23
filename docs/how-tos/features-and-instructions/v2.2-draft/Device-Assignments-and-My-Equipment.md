@@ -108,7 +108,7 @@ Return Equipment also supports eligible previously deployed physical Devices tha
 
 The old holder stays recorded until the complete save succeeds. Cancellation or rejection leaves that holder unchanged. Successful handover retains identity and saves checks, dates, actors and old/new relationships together. It creates no storeroom receipt, held-stock increase or fictional Ready stock.
 
-Devices-only handover needs Devices Edit. A Device with recorded stock history also requires IT Assets enabled and IT Assets Edit. Use [Associated Equipment And Direct Handover](Associated-Equipment.md#reassign-a-workstation-directly) for the full missing-accessory scenario and recovery guidance. [Correct Movement](IT-Assets-Correct-Movement.md) handles eligible stock-recording mistakes separately. Service Desk remains later work; assignment actions do not create tickets.
+Devices-only handover needs Devices Edit. A Device with recorded stock history also requires IT Assets enabled and IT Assets Edit. Use [Associated Equipment And Direct Handover](Associated-Equipment.md#reassign-a-workstation-directly) for the full missing-accessory scenario and recovery guidance. [Correct Movement](IT-Assets-Correct-Movement.md) handles eligible stock-recording mistakes separately. A new holder can raise a separate ticket after a valid assignment. [Ticket privacy after handover](Service-Desk-Administration.md#what-happens-to-service-desk-tickets-when-equipment-changes-hands)
 
 ## My Equipment
 
@@ -119,6 +119,11 @@ My Equipment is for a person signing in with a login linked to their Staff recor
 3. Read **Assigned to Me** for Devices and outstanding IT Assets assigned directly to you.
 4. Read **Shared with My Department** for equipment assigned to your current Department. Viewing it does not make you the personal holder.
 5. Report an incorrect item or quantity to an authorised IT user, using its name and the relevant facts. This personal screen has no Issue, Return, Reassign or Write Off controls.
+6. To ask IT for help with listed equipment, select **Report A Problem** on the item. Confirm the preselected **Device / Asset**, then complete **Ticket Category**, **Subject** and **Description**. Add a permitted file if helpful. Select **Create Ticket** to save, or **Cancel** to return to My Equipment. Follow the saved reference in **My Tickets** for personal equipment or **Department Tickets** for shared equipment. [Full ticket instructions](Service-Desk-Tickets.md#raise-a-support-request)
+
+![My Equipment with Report A Problem on personal and Department-shared Devices.](../../../development-handovers/evidence/employee-service-desk/my-equipment-desktop-light.png)
+
+*The action opens Create Ticket with the equipment already selected.* [Capture details](../../../development-handovers/evidence/employee-service-desk/README.md)
 
 ![My Equipment in dark mode showing a fictional person's three outstanding mice separately from one Department-shared dock](../../../development-handovers/evidence/stock-circulation/screenshots/my-equipment-dark-1440.png)
 

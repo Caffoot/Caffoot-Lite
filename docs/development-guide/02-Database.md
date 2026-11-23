@@ -1,6 +1,6 @@
 # 02 — SQLite database
 
-> **Current source checkpoint — 19 November 2026:** `milestone-1` is verified at `c1b5f8008e8ba56840d9790e3ba1c7e91ad35e0b` (schema **24**) after development/owner acceptance of Stages 1–4, including Stage 4 Suppliers/Purchasing and Equipment Lifecycle migrations. Stage 5's ticket schema is **not implemented or authorised**. Published v2.1 remains schema 10; no v2.2 upgrade/restore or deployment is approved. [Development Status](Development-Status.md) is the current integration authority; the later numbered schema notes below are dated historical checkpoints, not instructions to apply a schema manually.
+> **Integration checkpoint — 23 November 2026.** `milestone-1` at `d477256bd5ac12aa8f485deda7fa3b9d3fc69172` contains schema **25** after the accepted Service Desk foundation and technician queue. The Batch 5.3 review branch adds schema **26** for the optional affected software field. Published v2.1 uses schema 10. [Development Status](Development-Status.md) records the integration and outstanding release gates.
 
 > **Historical Batch 3.12 review branch:** Schema 20 updates the built-in IT Staff default and preserves existing account levels through compatibility overrides. No stock tables or journal entries are migrated. See [dashboard and upgrade contract](IT-Assets-Dashboard.md). Earlier dated checkpoints below retain their historical scope.
 
@@ -100,3 +100,5 @@ and their dependencies within a single authorised transaction.
 ## Service Desk Ticket Storage
 
 Schema 25 adds `service_desk_categories`, `service_desk_tickets`, `service_desk_events`, `service_desk_messages`, `service_desk_attachments` and `service_desk_closures`. Equipment foreign keys retain the canonical record. The original assignment remains linked to the ticket, and Clean Start removes each ticket and its dependent records in the inventory transaction. See [Service Desk Foundation](Service-Desk-Foundation.md).
+
+Schema 26 adds the nullable `affected_software` label to `service_desk_tickets`. Existing tickets retain their contents and start with an empty software field. Employee ticket creation validates the optional selection against the authorised Laptop or Desktop. Category corrections record the previous software and category in attributed ticket history before clearing a selection that no longer applies. [Service Desk Foundation](Service-Desk-Foundation.md#employee-tickets)
