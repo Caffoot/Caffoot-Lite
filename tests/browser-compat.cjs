@@ -529,11 +529,11 @@ async function run(){
   assert.ok(await page.getByRole('heading',{name:'Settings & Data',exact:true}).isVisible(),
     'Settings & Data must use the owner-approved Draft 02 page');
   const settingsTabs=page.locator('.settings-screen .subnav [data-action="select-settings-tab"]');
-  assert.equal(await settingsTabs.count(),4,
-    'Keep the original three Settings tabs and append only the approved Optional Features tab');
-  for(const tab of ['data','email','maintenance','features']){
+  assert.equal(await settingsTabs.count(),5,
+    'Keep the four existing Settings tabs and add only the approved Service Desk tab');
+  for(const tab of ['data','email','maintenance','features','service-desk']){
     assert.equal(await page.locator('.settings-screen .subnav [data-action="select-settings-tab"][data-tab="'+tab+'"]').count(),1,
-      'Settings & Data must retain the original tabs and approved fourth tab: '+tab);
+      'Settings & Data must retain the existing tabs and the approved Service Desk tab: '+tab);
   }
   assert.ok(await page.getByRole('heading',{name:'Import Existing Inventory',exact:true}).isVisible(),
     'The approved Import Existing Inventory panel must remain');
