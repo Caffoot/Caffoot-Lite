@@ -9724,6 +9724,7 @@ void (async () => {
       if (receipt) window.caffootStockIntake.prepareReceipt(receipt[1]);
     }
     originalSwitchTab(tab);
+    if (tab === 'my-tickets') window.scrollTo({top:0, behavior:'instant'});
     if (isSupplierPage(tab)) window.caffootSuppliers.enter(tab, fromRoute);
     applyAllowedControls();
   };
