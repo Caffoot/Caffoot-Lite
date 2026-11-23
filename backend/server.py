@@ -33,8 +33,11 @@ from .smtp_settings import (config_path as smtp_config_path, public_settings as 
                             save_settings as save_smtp_settings, send_test_email)
 from .device_catalogue import change_device_catalogue
 from .reset_inventory import reset_inventory
-from .service_desk import (read_ticket, read_ticket_attachment, read_ticket_categories,
-                           read_ticket_list, save_ticket_request)
+from .service_desk import (read_ticket, read_ticket_assignment_choices, read_ticket_attachment,
+                           read_ticket_categories, read_ticket_equipment_choices, read_ticket_list,
+                           require_ticket, save_ticket_request)
+from .service_desk_access import ticket_scope_filter
+from .service_desk_attachments import MAX_RETAINED_TICKET_BYTES, validate_ticket_attachments
 from .ipam_repair import apply_ipam_repairs
 from .audit_events import record_actor_event
 from .account_email import (MAIL_REQUESTS, REQUEST_MESSAGE, issue_email_proof,
@@ -81,8 +84,9 @@ PORT = 8080  # Fixed internal port; Compose publishes the configurable host port
 PUBLIC_ORIGIN = os.environ.get("CAFFOOT_WEB_ADDRESS", "")
 MAX_LOGIN_BYTES = 4096
 MAX_TICKET_REQUEST_BYTES = 128 * 1024
+MAX_TICKET_UPLOAD_REQUEST_BYTES = (MAX_RETAINED_TICKET_BYTES * 4 // 3) + 2_000_000
 TICKET_ROUTE = re.compile(
-    r'/api/service-desk/(personal|department|it)/(tickets|categories)'
+    r'/api/service-desk/(personal|department|it)/(tickets|categories|equipment)'
     r'(?:/([1-9][0-9]{0,18})(?:/([a-z]+)(?:/([1-9][0-9]{0,18}))?)?)?'
 )
 MAX_IMPORT_BYTES = 10 * 1024 * 1024
@@ -511,6 +515,11 @@ class Handler(BaseHTTPRequestHandler):
                         can_access(connection, account_id, section)
                         for section in ("Devices", "IPAM", "Racks", "Staff Members", "Departments", "IT Assets", "Suppliers")
                     ),
+                    "service_desk_permissions": {
+                        access: can_access(connection, account_id, "Service Desk", edit=access == 'edit')
+                        and any(can_access(connection, account_id, section) for section in ("Devices", "IT Assets"))
+                        for access in ('read', 'edit')
+                    },
                     "suppliers_enabled": feature_enabled(connection, "Suppliers"),
                     "supplier_permissions": {"read": can_access(connection, account_id, "Suppliers"),
                                              "edit": can_access(connection, account_id, "Suppliers", edit=True)},
@@ -899,12 +908,15 @@ class Handler(BaseHTTPRequestHandler):
         child_id = int(child_id) if child_id else None
         reading = self.command == 'GET'
         if (max(ticket_id or 0, child_id or 0) > 2**63 - 1
-                or (collection == 'categories' and (ticket_id or not reading))
-                or (reading and resource not in (None, 'messages', 'history', 'attachments'))
+                or (collection != 'tickets' and (ticket_id or not reading))
+                or (collection == 'equipment' and scope != 'it')
+                or (reading and resource not in (None, 'messages', 'history', 'attachments', 'technicians'))
+                or (resource == 'technicians' and scope != 'it')
                 or (reading and bool(child_id) != (resource == 'attachments'))
                 or (not reading and ticket_id and resource not in
-                    ('messages', 'assign', 'hold', 'resume', 'close', 'reopen', 'priority', 'category'))
-                or (not reading and child_id and resource != 'messages')):
+                    ('messages', 'assign', 'hold', 'resume', 'close', 'reopen', 'priority', 'category', 'attachments'))
+                or (not reading and child_id and resource not in ('messages', 'attachments'))
+                or (resource == 'attachments' and (child_id is None or (not reading and scope != 'it')))):
             self.respond(404, {'error': 'not found'})
             return
         origin = self.headers.get('Origin')
@@ -914,46 +926,83 @@ class Handler(BaseHTTPRequestHandler):
             self.respond(403, {'error': 'forbidden'})
             return
         try:
+            cookie = self.headers.get('Cookie')
+            csrf = self.headers.get('X-CSRF-Token')
+            attachments = ()
+            if not reading:
+                # Check access before receiving a potentially large upload. Repeat
+                # the checks under the write lock in case access changed meanwhile.
+                with connect() as connection:
+                    connection.execute('BEGIN')
+                    actor_id = authorised_mutation(connection, cookie, origin, PUBLIC_ORIGIN, csrf)
+                    if actor_id is None:
+                        raise PermissionError()
+                    if ticket_id:
+                        require_ticket(connection, actor_id, scope, ticket_id, edit=True)
+                    else:
+                        ticket_scope_filter(connection, actor_id, scope, edit=True)
+                accepts_files = scope == 'it' and (ticket_id is None or (resource == 'messages' and child_id is None))
+                maximum = MAX_TICKET_UPLOAD_REQUEST_BYTES if accepts_files else MAX_TICKET_REQUEST_BYTES
+                length = self.headers.get('Content-Length', '')
+                if not re.fullmatch(r'[0-9]{1,9}', length) or not 0 < int(length) <= maximum:
+                    raise ValueError('Invalid ticket request size.')
+                if self.headers.get('Content-Type', '').split(';')[0].strip().lower() != 'application/json':
+                    self.respond(415, {'error': 'JSON required'})
+                    return
+                self.connection.settimeout(30)
+                raw = self.rfile.read(int(length))
+                if len(raw) != int(length):
+                    raise ValueError('Incomplete ticket request.')
+                payload = json.loads(raw.decode('utf-8'), object_pairs_hook=unique_directory_fields)
+                del raw
+                if not isinstance(payload, dict):
+                    raise ValueError('Send a JSON object.')
+                if accepts_files and 'attachments' in payload:
+                    attachments = validate_ticket_attachments(payload.pop('attachments'))
+                elif int(length) > MAX_TICKET_REQUEST_BYTES:
+                    raise ValueError('Invalid ticket request size.')
             with connect() as connection:
                 connection.execute('BEGIN' if reading else 'BEGIN IMMEDIATE')
-                cookie = self.headers.get('Cookie')
                 actor_id = (authenticated_account(connection, cookie) if reading else
-                            authorised_mutation(connection, cookie, origin, PUBLIC_ORIGIN,
-                                                self.headers.get('X-CSRF-Token')))
+                            authorised_mutation(connection, cookie, origin, PUBLIC_ORIGIN, csrf))
                 if actor_id is None:
                     self.respond(401 if reading else 403, {'error': 'unauthorised'})
                     return
                 if reading and collection == 'tickets' and ticket_id is None:
-                    parameters = parse_qs(parsed.query, keep_blank_values=True, max_num_fields=4)
-                    if (set(parameters) - {'status', 'search', 'limit', 'offset'}
-                            or any(len(value) != 1 for value in parameters.values())):
+                    parameters = parse_qs(parsed.query, keep_blank_values=True, max_num_fields=10)
+                    fields = {'status', 'search', 'limit', 'offset'}
+                    if scope == 'it':
+                        fields.update(('priority', 'assignment', 'technician', 'sort', 'equipmentKind', 'equipmentId'))
+                    if set(parameters) - fields or any(len(value) != 1 for value in parameters.values()):
                         raise ValueError('Invalid ticket list parameters.')
                     filters = {key: value[0] for key, value in parameters.items()}
-                    for key in ('limit', 'offset'):
+                    for key in ('limit', 'offset', 'technician'):
                         if key in filters:
-                            if not re.fullmatch(r'[0-9]{1,7}', filters[key]):
-                                raise ValueError('Invalid ticket page.')
+                            if not re.fullmatch(r'[0-9]{1,19}', filters[key]) or int(filters[key]) > 2**63 - 1:
+                                raise ValueError('Invalid ticket page or technician.')
                             filters[key] = int(filters[key])
+                    for source, target in (('equipmentKind', 'equipment_kind'), ('equipmentId', 'equipment_id')):
+                        if source in filters:
+                            filters[target] = filters.pop(source)
                     result = read_ticket_list(connection, actor_id, scope, **filters)
                 elif parsed.query:
                     raise ValueError('This ticket request does not accept query parameters.')
                 elif collection == 'categories':
                     result = read_ticket_categories(connection, actor_id, scope)
+                elif collection == 'equipment':
+                    result = read_ticket_equipment_choices(connection, actor_id)
+                elif reading and resource == 'technicians':
+                    result = read_ticket_assignment_choices(connection, actor_id, ticket_id)
                 elif reading and resource == 'attachments':
                     result = read_ticket_attachment(connection, actor_id, scope, ticket_id, child_id)
                 elif reading:
                     result = read_ticket(connection, actor_id, scope, ticket_id, resource)
                 else:
-                    length = self.headers.get('Content-Length', '')
-                    if not re.fullmatch(r'[0-9]{1,6}', length) or not 0 < int(length) <= MAX_TICKET_REQUEST_BYTES:
-                        raise ValueError('Invalid ticket request size.')
-                    if self.headers.get('Content-Type', '').split(';')[0].strip().lower() != 'application/json':
-                        self.respond(415, {'error': 'JSON required'})
-                        return
-                    raw = self.rfile.read(int(length))
-                    payload = json.loads(raw.decode('utf-8'), object_pairs_hook=unique_directory_fields)
-                    result = save_ticket_request(connection, actor_id, scope, payload,
-                                                 ticket_id=ticket_id, action=resource, message_id=child_id)
+                    result = save_ticket_request(connection, actor_id, scope, payload, ticket_id=ticket_id,
+                                                 action=resource, message_id=child_id, attachments=attachments)
+        except TimeoutError:
+            self.close_connection = True
+            self.respond(408, {'error': 'The ticket upload timed out.'})
         except PermissionError:
             self.respond(403, {'error': 'forbidden'})
         except LookupError as exc:
@@ -962,7 +1011,7 @@ class Handler(BaseHTTPRequestHandler):
             self.respond(409, {'error': str(exc)})
         except (UnicodeError, json.JSONDecodeError):
             self.respond(400, {'error': 'Invalid JSON request.'})
-        except (ValueError, TypeError) as exc:
+        except (ValueError, TypeError, RecursionError) as exc:
             self.respond(400, {'error': str(exc)})
         except sqlite3.Error:
             self.respond(503, {'error': 'Cannot save or retrieve the ticket.'})
