@@ -172,7 +172,8 @@ window.caffootServiceDesk = (() => {
 
     function renderTicketEquipmentPanel(kind, id) {
         if (!config?.canRead()) return '';
-        return `<section class="device-review-panel full service-desk-equipment" tabindex="-1" data-ticket-equipment-kind="${kind}" data-ticket-equipment-id="${escapeHtml(id)}">
+        const panelClass = kind === 'device' ? 'device-review-panel full' : 'card card-padded';
+        return `<section class="${panelClass} service-desk-equipment" tabindex="-1" data-ticket-equipment-kind="${kind}" data-ticket-equipment-id="${escapeHtml(id)}">
           <h3>Linked Tickets</h3><div data-ticket-equipment-results aria-live="polite">Loading Tickets…</div>
         </section>`;
     }
@@ -190,11 +191,11 @@ window.caffootServiceDesk = (() => {
                     const {tickets, filteredTotal} = await requestTickets('tickets?' + query);
                     if (!panel.isConnected) return;
                     result.innerHTML = tickets.length ? `<ul>${tickets.map(ticket => `<li>
-                      <button type="button" class="device-review-smallbtn" data-ticket-open="${ticket.id}">${ticketNumber(ticket.id)} · ${escapeHtml(ticket.subject)}</button>
+                      <button type="button" class="btn btn-small btn-outline" data-ticket-open="${ticket.id}">${ticketNumber(ticket.id)} · ${escapeHtml(ticket.subject)}</button>
                       ${ticketTag(ticket.status)}</li>`).join('')}</ul>
                       ${filteredTotal > 10 ? `<div class="service-desk-pagination">
-                        <button type="button" class="device-review-smallbtn" data-linked-page="-1" ${linkedPages.offset === 0 ? 'disabled' : ''}>Previous</button>
-                        <button type="button" class="device-review-smallbtn" data-linked-page="1" ${linkedPages.offset + 10 >= filteredTotal ? 'disabled' : ''}>Next</button>
+                        <button type="button" class="btn btn-small btn-outline" data-linked-page="-1" ${linkedPages.offset === 0 ? 'disabled' : ''}>Previous</button>
+                        <button type="button" class="btn btn-small btn-outline" data-linked-page="1" ${linkedPages.offset + 10 >= filteredTotal ? 'disabled' : ''}>Next</button>
                       </div>` : ''}` : 'No linked tickets.';
                 } catch (error) {
                     if (error.status === 403 || error.status === 404) panel.hidden = true;
