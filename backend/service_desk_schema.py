@@ -63,6 +63,7 @@ CREATE TABLE service_desk_events (
     happened_at TEXT NOT NULL,
     employee_visible INTEGER NOT NULL CHECK(employee_visible IN (0,1)),
     details TEXT NOT NULL CHECK(json_valid(details) AND json_type(details)='object'),
+    private_details TEXT NOT NULL DEFAULT '{}' CHECK(json_valid(private_details) AND json_type(private_details)='object'),
     UNIQUE(ticket_id,id)
 );
 CREATE TABLE service_desk_messages (

@@ -5,7 +5,7 @@ protection before passing the actor identity to administrative operations."""
 from backend.accounts import hash_password
 from backend.audit_events import record_actor_event
 from backend.profiles import validate_profile_details
-from backend.role_policy import assign_staff_member, evaluate_role_policy, LEVELS
+from backend.role_policy import assign_staff_member, evaluate_role_policy, LEVELS, SERVICE_DESK_SECTION
 from backend.staff_identity import link_account_staff
 
 
@@ -92,7 +92,7 @@ def can_access(connection, account_id, section, *, edit=False):
 
 def feature_enabled(connection, section):
     """Unknown or missing organisation choices deny access, including for admins."""
-    if section in ("Staff Members", "Departments"):
+    if section in ("Staff Members", "Departments", SERVICE_DESK_SECTION):
         return True
     feature = {"Devices": "devices", "IPAM": "ipam", "Racks": "racks",
                "IT Assets": "it_assets", "Suppliers": "suppliers",

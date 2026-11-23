@@ -10720,7 +10720,7 @@ void (async () => {
   let users = null;
   let activeUserEditorId = null;
   let roleCatalogue=[];
-  const roleSections=['Devices','IPAM','Racks','Staff Members','Departments','IT Assets','Suppliers'];
+  const roleSections=['Devices','IPAM','Racks','Staff Members','Departments','IT Assets','Suppliers','Service Desk'];
   const roleLayers=[];
   function permissionLabel(level){
     return ({read:'Read',edit:'Edit',deny:'No Access'})[level]||'No Access';
@@ -10794,7 +10794,7 @@ void (async () => {
     const role=roleCatalogue.find(entry=>entry.id===roleId);
     if(role?.roleKey==='staff_member')return;
     const grants=role?.grants||{};
-    const body='<form id="role-definition-form"><div class="field"><label for="role-name">Role Name</label><input class="input" id="role-name" name="name" required maxlength="80" '+(role?.isBuiltin?'readonly ':'')+'value="'+escapeHtml(role?.name||'')+'"></div><label class="role-membership"><input type="checkbox" name="enabled" '+(!role||role.enabled?'checked':'')+' '+(!role?'disabled':'')+'>Enabled</label><p class="formhint">Enabled additional roles require MFA. Built-in names are protected; custom role renaming retains assignments.</p><div class="access-grid">'+roleSections.map(section=>'<div class="access-option"><label for="role-grant-'+section+'">'+section+'</label><select class="input" id="role-grant-'+section+'" name="'+section+'">'+[['','No Access'],['read','Read'],['edit','Edit']].map(([value,label])=>'<option value="'+value+'" '+((grants[section]||'')===value?'selected':'')+'>'+label+'</option>').join('')+'</select></div>').join('')+'</div></form>';
+    const body='<form id="role-definition-form"><div class="field"><label for="role-name">Role Name</label><input class="input" id="role-name" name="name" required maxlength="80" '+(role?.isBuiltin?'readonly ':'')+'value="'+escapeHtml(role?.name||'')+'"></div><label class="role-membership"><input type="checkbox" name="enabled" '+(!role||role.enabled?'checked':'')+' '+(!role?'disabled':'')+'>Enabled</label><p class="formhint">Enabled additional roles require MFA. Built-in names are protected; custom role renaming retains assignments.</p><div class="access-grid">'+roleSections.map(section=>'<div class="access-option"><label for="role-grant-'+(section==='Service Desk'?'service-desk':section)+'">'+section+'</label><select class="input" id="role-grant-'+(section==='Service Desk'?'service-desk':section)+'" name="'+section+'">'+[['','No Access'],['read','Read'],['edit','Edit']].map(([value,label])=>'<option value="'+value+'" '+((grants[section]||'')===value?'selected':'')+'>'+label+'</option>').join('')+'</select></div>').join('')+'</div></form>';
     const layer=openRoleLayer(role?'Manage '+role.name:'Create Role','New roles start unassigned. Administrator status is managed separately.',body,(role&&!role.isBuiltin?'<button class="btn danger" type="button" data-role-command="delete" data-role-id="'+role.id+'">Delete Role</button>':'')+'<button type="submit" form="role-definition-form" class="btn primary">Review Changes</button>');
     layer.roleId=role?.id;layer.roleKey='custom_'+crypto.randomUUID().replaceAll('-','');
     layer.querySelector('#role-name').focus();
@@ -10933,7 +10933,8 @@ void (async () => {
       const own=editingUser.username.toLowerCase()===signedInUsername.toLowerCase();
       const permissionControls=roleSections.map(section=>{
         const rights=editingUser.accessDetails.sections[section];
-        return renderInterfaceTemplate("users/permission-controls-1",[section,section,section,editingUser.id,section,own||editingUser.isAdmin?'disabled':'',[[null,'Inherit'],['deny','No Access'],['read','Read'],['edit','Edit']].map(([value,label])=>'<option value="'+(value===null?'':value)+'" '+(rights.override===value?'selected':'')+'>'+label+'</option>').join(''),permissionLabel(rights.inherited),permissionLabel(rights.effective)+(rights.featureEnabled===false?' · Feature Disabled':'')]);
+        const sectionId=section==='Service Desk'?'service-desk':section;
+        return renderInterfaceTemplate("users/permission-controls-1",[sectionId,section,sectionId,editingUser.id,section,own||editingUser.isAdmin?'disabled':'',[[null,'Inherit'],['deny','No Access'],['read','Read'],['edit','Edit']].map(([value,label])=>'<option value="'+(value===null?'':value)+'" '+(rights.override===value?'selected':'')+'>'+label+'</option>').join(''),permissionLabel(rights.inherited),permissionLabel(rights.effective)+(rights.featureEnabled===false?' · Feature Disabled':'')]);
       }).join('');
       const operation=(kind,label)=>`<button type="button" class="btn ${kind==='delete'?'danger':''}" data-next-user-operation="${kind}" data-user-id="${editingUser.id}" ${own?'disabled':''}>${label}</button>`;
       const profile=editingUser.profile||{};

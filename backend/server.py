@@ -9,7 +9,7 @@ import smtplib
 import ssl
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
-from urllib.parse import urlsplit, parse_qs
+from urllib.parse import urlsplit, parse_qs, quote
 
 from .device_saves import UNCHANGED_SUPPLIER, DeviceIdentityConflict, create_device, delete_reserved_device, save_reserved_device
 from .ipam_linking import link_device_to_ipam, unique_link_fields
@@ -33,6 +33,8 @@ from .smtp_settings import (config_path as smtp_config_path, public_settings as 
                             save_settings as save_smtp_settings, send_test_email)
 from .device_catalogue import change_device_catalogue
 from .reset_inventory import reset_inventory
+from .service_desk import (read_ticket, read_ticket_attachment, read_ticket_categories,
+                           read_ticket_list, save_ticket_request)
 from .ipam_repair import apply_ipam_repairs
 from .audit_events import record_actor_event
 from .account_email import (MAIL_REQUESTS, REQUEST_MESSAGE, issue_email_proof,
@@ -78,6 +80,11 @@ HOST = os.environ.get("CAFFOOT_HOST", "0.0.0.0")
 PORT = 8080  # Fixed internal port; Compose publishes the configurable host port.
 PUBLIC_ORIGIN = os.environ.get("CAFFOOT_WEB_ADDRESS", "")
 MAX_LOGIN_BYTES = 4096
+MAX_TICKET_REQUEST_BYTES = 128 * 1024
+TICKET_ROUTE = re.compile(
+    r'/api/service-desk/(personal|department|it)/(tickets|categories)'
+    r'(?:/([1-9][0-9]{0,18})(?:/([a-z]+)(?:/([1-9][0-9]{0,18}))?)?)?'
+)
 MAX_IMPORT_BYTES = 10 * 1024 * 1024
 ASSET_ROOT = Path(__file__).resolve().parent.parent / "assets"
 PUBLIC_ASSETS = {"favicon.ico": "image/x-icon",
@@ -142,6 +149,9 @@ class Handler(BaseHTTPRequestHandler):
 
     def do_GET(self):
         path = urlsplit(self.path).path
+        if path.startswith('/api/service-desk/'):
+            self.handle_service_desk_request()
+            return
         if path == "/api/suppliers" or path.startswith("/api/suppliers/"):
             self.handle_supplier_request()
             return
@@ -519,6 +529,9 @@ class Handler(BaseHTTPRequestHandler):
 
     def do_POST(self):
         path = urlsplit(self.path).path
+        if path.startswith('/api/service-desk/'):
+            self.handle_service_desk_request()
+            return
         if path == "/api/suppliers" or path.startswith("/api/suppliers/"):
             self.handle_supplier_request()
             return
@@ -873,6 +886,99 @@ class Handler(BaseHTTPRequestHandler):
             self.respond(409, {'error': 'Stock balance or identity conflict; reload the item before retrying'})
         except (ValueError, TypeError, UnicodeError) as exc:
             self.respond(400, {'error': str(exc)})
+
+    def handle_service_desk_request(self):
+        """Keep every ticket route behind one session and audience check."""
+        parsed = urlsplit(self.path)
+        match = TICKET_ROUTE.fullmatch(parsed.path)
+        if not match:
+            self.respond(404, {'error': 'not found'})
+            return
+        scope, collection, ticket_id, resource, child_id = match.groups()
+        ticket_id = int(ticket_id) if ticket_id else None
+        child_id = int(child_id) if child_id else None
+        reading = self.command == 'GET'
+        if (max(ticket_id or 0, child_id or 0) > 2**63 - 1
+                or (collection == 'categories' and (ticket_id or not reading))
+                or (reading and resource not in (None, 'messages', 'history', 'attachments'))
+                or (reading and bool(child_id) != (resource == 'attachments'))
+                or (not reading and ticket_id and resource not in
+                    ('messages', 'assign', 'hold', 'resume', 'close', 'reopen', 'priority', 'category'))
+                or (not reading and child_id and resource != 'messages')):
+            self.respond(404, {'error': 'not found'})
+            return
+        origin = self.headers.get('Origin')
+        if (self.headers.get('Sec-Fetch-Site') == 'cross-site'
+                or ((origin is not None or not reading)
+                    and (not PUBLIC_ORIGIN or not require_same_origin(origin, PUBLIC_ORIGIN)))):
+            self.respond(403, {'error': 'forbidden'})
+            return
+        try:
+            with connect() as connection:
+                connection.execute('BEGIN' if reading else 'BEGIN IMMEDIATE')
+                cookie = self.headers.get('Cookie')
+                actor_id = (authenticated_account(connection, cookie) if reading else
+                            authorised_mutation(connection, cookie, origin, PUBLIC_ORIGIN,
+                                                self.headers.get('X-CSRF-Token')))
+                if actor_id is None:
+                    self.respond(401 if reading else 403, {'error': 'unauthorised'})
+                    return
+                if reading and collection == 'tickets' and ticket_id is None:
+                    parameters = parse_qs(parsed.query, keep_blank_values=True, max_num_fields=4)
+                    if (set(parameters) - {'status', 'search', 'limit', 'offset'}
+                            or any(len(value) != 1 for value in parameters.values())):
+                        raise ValueError('Invalid ticket list parameters.')
+                    filters = {key: value[0] for key, value in parameters.items()}
+                    for key in ('limit', 'offset'):
+                        if key in filters:
+                            if not re.fullmatch(r'[0-9]{1,7}', filters[key]):
+                                raise ValueError('Invalid ticket page.')
+                            filters[key] = int(filters[key])
+                    result = read_ticket_list(connection, actor_id, scope, **filters)
+                elif parsed.query:
+                    raise ValueError('This ticket request does not accept query parameters.')
+                elif collection == 'categories':
+                    result = read_ticket_categories(connection, actor_id, scope)
+                elif reading and resource == 'attachments':
+                    result = read_ticket_attachment(connection, actor_id, scope, ticket_id, child_id)
+                elif reading:
+                    result = read_ticket(connection, actor_id, scope, ticket_id, resource)
+                else:
+                    length = self.headers.get('Content-Length', '')
+                    if not re.fullmatch(r'[0-9]{1,6}', length) or not 0 < int(length) <= MAX_TICKET_REQUEST_BYTES:
+                        raise ValueError('Invalid ticket request size.')
+                    if self.headers.get('Content-Type', '').split(';')[0].strip().lower() != 'application/json':
+                        self.respond(415, {'error': 'JSON required'})
+                        return
+                    raw = self.rfile.read(int(length))
+                    payload = json.loads(raw.decode('utf-8'), object_pairs_hook=unique_directory_fields)
+                    result = save_ticket_request(connection, actor_id, scope, payload,
+                                                 ticket_id=ticket_id, action=resource, message_id=child_id)
+        except PermissionError:
+            self.respond(403, {'error': 'forbidden'})
+        except LookupError as exc:
+            self.respond(404, {'error': str(exc)})
+        except FileExistsError as exc:
+            self.respond(409, {'error': str(exc)})
+        except (UnicodeError, json.JSONDecodeError):
+            self.respond(400, {'error': 'Invalid JSON request.'})
+        except (ValueError, TypeError) as exc:
+            self.respond(400, {'error': str(exc)})
+        except sqlite3.Error:
+            self.respond(503, {'error': 'Cannot save or retrieve the ticket.'})
+        else:
+            if reading and resource == 'attachments':
+                filename, contents = result
+                self.send_response(200)
+                self.send_header('Content-Type', 'application/octet-stream')
+                self.send_header('Content-Disposition', "attachment; filename*=UTF-8''" + quote(filename, safe=''))
+                self.send_header('Content-Length', str(len(contents)))
+                self.send_header('Cache-Control', 'no-store')
+                self.send_header('X-Content-Type-Options', 'nosniff')
+                self.end_headers()
+                self.wfile.write(contents)
+            else:
+                self.respond(200 if reading or ticket_id else 201, result)
 
     def handle_equipment_request(self):
         """Show only permitted equipment and verify the signed-in user before saving."""
