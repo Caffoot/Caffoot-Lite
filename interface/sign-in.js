@@ -197,12 +197,27 @@ for(const id of ['recovery-request-form','recovery-confirm-form']){
   event.preventDefault();
   const form=event.target,button=form.querySelector('button[type="submit"]');
   if(button.disabled)return;
-  const version=++recoveryRequestVersion,requesting=id==='recovery-request-form';
+  const requesting=id==='recovery-request-form';
+  if(!requesting){
+   const {password,confirmPassword}=form.elements;
+   if(!password.value||!confirmPassword.value){
+    showRecoveryFeedback('Enter and confirm your new password.',password.value?confirmPassword:password);
+    return;
+   }
+   if(password.value!==confirmPassword.value){
+    showRecoveryFeedback('The new passwords do not match.',confirmPassword);
+    return;
+   }
+  }
+  const version=++recoveryRequestVersion;
   button.disabled=true;form.setAttribute('aria-busy','true');$('recovery-resend').disabled=true;
   showRecoveryFeedback(requesting?'Requesting recovery instructions…':'Checking your recovery code…');
   try{
    const payload=Object.fromEntries(new FormData(form));
-   if(!requesting){payload.challengeId=recoveryChallengeId;payload.token=payload.token.trim();}
+   if(!requesting){
+    delete payload.confirmPassword;
+    payload.challengeId=recoveryChallengeId;payload.token=payload.token.trim();
+   }
    const result=await request(requesting?'/api/recovery/request':'/api/recovery/confirm',payload);
    if(version!==recoveryRequestVersion)return;
    if(requesting){
