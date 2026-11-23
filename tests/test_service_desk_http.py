@@ -153,6 +153,121 @@ class ServiceDeskHttpTests(unittest.TestCase):
         self.assertEqual(self.request(self.ticket_path('personal', f'/{newest}'), actor=4)[0], 200)
         self.assertEqual(self.request(self.ticket_path('it'))[1]['counts']['Open'], 4)
 
+    def test_employee_choices_filters_and_affected_software(self):
+        self.assign_device()
+        with sqlite3.connect(self.path) as connection:
+            device = json.loads(connection.execute(
+                "SELECT record_json FROM inventory_devices WHERE id='device'").fetchone()[0])
+            device.update(MicrosoftOffice=True, catalogSoftware_google_chrome=True, typeDetails={
+                'catalogSoftware_google_chrome': False, 'catalogSoftware_microsoft_teams': True,
+                'customSoftware_drawing': True, 'serverService_Hypervisor': True,
+            })
+            connection.execute("UPDATE inventory_devices SET record_json=? WHERE id='device'", (json.dumps(device),))
+            connection.execute("INSERT INTO inventory_settings(key,value_json) VALUES('installedSoftware',?)",
+                               (json.dumps([{'key': 'customSoftware_drawing', 'label': 'Drawing Studio'}]),))
+        equipment = SERVICE_DESK + '/personal/equipment'
+        self.assertEqual(self.request(equipment, actor=4)[1]['equipment'],
+                         [{'id':'device', 'kind':'device', 'label':'Laptop', 'type':'Laptop'}])
+        self.assertEqual(self.request(SERVICE_DESK + '/department/equipment', actor=4)[1]['equipment'], [])
+        self.assertEqual(self.request(equipment, actor=5)[1]['equipment'], [])
+        self.assertEqual(self.request(equipment + '?staffId=person', actor=4)[0], 400)
+        software = SERVICE_DESK + '/personal/software?deviceId=device'
+        status, choices, _ = self.request(software, actor=4)
+        self.assertEqual(status, 200)
+        self.assertEqual([choice['key'] for choice in choices['software']],
+                         ['customSoftware_drawing', 'MicrosoftOffice', 'catalogSoftware_microsoft_teams', 'other'])
+        self.assertEqual(self.request(software, actor=5)[0], 404)
+        self.assertEqual(self.request(SERVICE_DESK + '/department/software?deviceId=device', actor=4)[0], 404)
+        self.assertEqual(self.request(SERVICE_DESK + '/personal/software?deviceId=missing', actor=4)[0], 404)
+        categories = self.request(SERVICE_DESK + '/personal/categories', actor=4)[1]['categories']
+        self.assertEqual([entry['name'] for entry in categories[-3:]], [
+            'LAN / Shared Drive Issues', 'Email / Sending & Receiving Issues', 'Other / Not Listed',
+        ])
+        category = next(entry['id'] for entry in categories if entry['name'] == 'Software / Applications')
+        for fields in ({'categoryId': ''}, {'subject': ' '}, {'description': ' '},
+                       {'affectedSoftware': 'other'}, {'categoryId': category, 'affectedSoftware': 'Microsoft Teams'},
+                       {'categoryId': category, 'affectedSoftware': 'catalogSoftware_google_chrome'},
+                       {'categoryId': category, 'affectedSoftware': True}):
+            self.assertEqual(self.request(self.ticket_path('personal'), method='POST', actor=4,
+                                          payload=dict(CREATE, **fields))[0], 400, fields)
+        first = self.create(categoryId=category, affectedSoftware='customSoftware_drawing')
+        second = self.create(categoryId=category, affectedSoftware='other')
+        blank = self.create(categoryId=category)
+        for ticket, expected in ((first, 'Drawing Studio'), (second, 'Other / Not Listed'), (blank, None)):
+            for scope, actor in (('personal', 4), ('it', 2)):
+                detail = self.request(self.ticket_path(scope, f'/{ticket}'), actor=actor)[1]
+                self.assertEqual(detail['affectedSoftware'], expected)
+        self.assertEqual(self.save('personal', first, 'category', {'categoryId': 5}, actor=4)[0], 403)
+        self.assertEqual(self.save('it', first, 'category', {'categoryId': 5}, actor=2)[0], 200)
+        detail = self.request(self.ticket_path('personal', f'/{first}'), actor=4)[1]
+        self.assertIsNone(detail['affectedSoftware'])
+        events = self.request(self.ticket_path('personal', f'/{first}/history'), actor=4)[1]['history']
+        self.assertEqual(events[0]['details']['affectedSoftware'], 'Drawing Studio')
+        self.assertEqual(events[-1]['details']['previousAffectedSoftware'], 'Drawing Studio')
+        self.assertEqual(events[-1]['details']['previousCategory'], 'Software / Applications')
+        self.assertEqual(events[-1]['author'], 'account-2')
+        other = self.create('it', actor=2, subject='Another assigned request')
+        for sort, expected in (('oldest', [second, blank, first, other]),
+                               ('newest', [other, first, blank, second]), ('ticket', [other, blank, second, first])):
+            result = self.request(self.ticket_path('personal', f'?sort={sort}&status=Open'), actor=4)[1]
+            self.assertEqual([ticket['id'] for ticket in result['tickets']], expected)
+            self.assertEqual(result['filteredTotal'], 4)
+        result = self.request(self.ticket_path('personal', f'?search=SD-{first:04}&equipmentKind=device&equipmentId=device'),
+                              actor=4)[1]
+        self.assertEqual([ticket['id'] for ticket in result['tickets']], [first])
+        self.assertEqual(result['workloadCounts']['Open'], 4)
+        self.assertEqual(self.request(self.ticket_path('personal', '?assignment=mine'), actor=4)[0], 400)
+        self.assertEqual(self.request(self.ticket_path('personal', '?sort=invalid'), actor=4)[0], 400)
+        self.assertEqual(self.save('it', other, 'close', {'resolutionNote': 'Checked'})[0], 200)
+        self.assertEqual(self.save('personal', other, 'reopen', {}, actor=4)[0], 200)
+        with sqlite3.connect(self.path) as connection:
+            connection.execute("UPDATE organisation_features SET enabled=0 WHERE feature='devices'")
+        self.assertEqual(self.request(equipment, actor=4)[1]['equipment'], [])
+        self.assertEqual(self.request(software, actor=4)[0], 404)
+
+    def test_employee_non_author_reopen_and_attachment_permissions(self):
+        self.assign_device('department', 'dept')
+        file = {'filename': 'details.txt', 'contents': base64.b64encode(b'Employee-visible details').decode()}
+        wrong_file = {'filename': 'details.pdf', 'contents': file['contents']}
+        path = self.ticket_path('department')
+        self.assertEqual(self.request(path, method='POST', actor=4,
+                                      payload=dict(CREATE, attachments=[wrong_file]))[0], 400)
+        ticket = self.create('department', attachments=[file])
+        linked_by_it = self.create('it', actor=2, subject='IT-created shared request')
+        self.assert_ticket_hidden('personal', ticket, 4)
+        self.assert_ticket_hidden('personal', linked_by_it, 4)
+        self.assertEqual(self.save('it', ticket, 'assign', {'technicianId': 2})[0], 200)
+        for target in (ticket, linked_by_it):
+            self.assertEqual(self.save('it', target, 'close', {'resolutionNote': 'Checked'})[0], 200)
+            self.assertEqual(self.save('department', target, 'reopen', {}, actor=5)[0], 404)
+        with sqlite3.connect(self.path) as connection:
+            connection.execute("UPDATE staff_members SET department_id='dept' WHERE id='colleague'")
+        reply = {'body': 'The issue is still occurring.', 'attachments': [file]}
+        self.assertEqual(self.save('department', ticket, 'messages', reply, actor=5)[0], 409)
+        for target in (ticket, linked_by_it):
+            self.assertEqual(self.save('department', target, 'reopen', {}, actor=5)[0], 200)
+            self.assertEqual(self.save('department', target, 'reopen', {}, actor=5)[0], 409)
+        self.assertEqual(self.save('department', ticket, 'messages', dict(reply, employeeVisible=False), actor=5)[0], 400)
+        self.assertEqual(self.save('department', ticket, 'messages', dict(reply, attachments=[wrong_file]), actor=5)[0], 400)
+        self.assertEqual(self.save('department', ticket, 'messages', reply, actor=5)[0], 200)
+        updates = self.request(path + f'/{ticket}/messages', actor=5)[1]
+        self.assertEqual(len(updates['attachments']), 2)
+        attachment = updates['attachments'][-1]['id']
+        self.assertEqual(self.download('department', ticket, attachment, 5)[:2], (200, b'Employee-visible details'))
+        self.assertEqual(self.save('department', ticket, f'attachments/{attachment}', {}, actor=5)[0], 404)
+        detail = self.request(path + f'/{ticket}', actor=5)[1]
+        self.assertEqual(detail['status'], 'Open')
+        self.assertIsNotNone(detail['technician'])
+        history = self.request(self.ticket_path('it', f'/{ticket}/history'))[1]
+        self.assertIsNotNone(history['closureAttempts'][0]['reopenedEventId'])
+        with sqlite3.connect(self.path) as connection:
+            connection.execute("UPDATE staff_members SET department_id='other' WHERE id='colleague'")
+        self.assertEqual(self.download('department', ticket, attachment, 5)[0], 404)
+        self.hand_over('staff', 'person')
+        self.assertEqual(self.download('department', ticket, attachment, 4)[0], 404)
+        self.assertEqual(self.download('it', ticket, attachment, 2)[0], 200)
+        self.assertEqual(self.save('personal', ticket, 'reopen', {}, actor=4)[0], 404)
+
     def test_internal_history_attachments_and_closure_attempts(self):
         self.assign_device()
         ticket = self.create()
@@ -597,11 +712,16 @@ class ServiceDeskHttpTests(unittest.TestCase):
             asset = receive_stock(connection, 1, self.tokens[1], receipt)['stockItemId']
             unit = stock_item(connection, asset)['units'][0]['id']
             issue_stock(connection, 1, self.tokens[1], issue_payload(connection, asset, stockUnitIds=[unit]))
+            issue_id = stock_issue_records(connection)[0]['id']
+        equipment = SERVICE_DESK + '/personal/equipment'
+        choice, = self.request(equipment, actor=4)[1]['equipment']
+        self.assertEqual((choice['kind'], choice['id'], choice['stockIssueId']), ('stockUnit', unit, issue_id))
+        self.assertEqual(self.request(equipment, actor=5)[1]['equipment'], [])
         for equipment_kind, equipment_id in (('stockUnit', registered), ('stockItem', asset)):
             self.assertEqual(self.request(self.ticket_path('it'), method='POST',
                 payload=dict(CREATE, equipmentKind=equipment_kind, equipmentId=equipment_id))[0], 404)
         device_ticket = self.create('it', actor=1)
-        asset_ticket = self.create(equipmentKind='stockUnit', equipmentId=unit)
+        asset_ticket = self.create(equipmentKind='stockUnit', equipmentId=unit, stockIssueId=issue_id)
         with sqlite3.connect(self.path) as connection:
             self.assertEqual(connection.execute("""SELECT device_id,stock_unit_id,stock_item_id
                 FROM service_desk_tickets ORDER BY id""").fetchall(), [('device', None, None), (None, unit, None)])

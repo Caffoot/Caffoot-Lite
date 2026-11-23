@@ -52,11 +52,70 @@
   </section>
 </div>
 <!-- /interface-template -->
+<!-- interface-template:service-desk/employee-queue -->
+<div class="service-desk-page employee-tickets" data-employee-scope="personal">
+  <header class="header service-desk-page-head">
+    <div>
+      <p class="device-review-eyebrow">My Workspace / My Tickets</p>
+      <h1>My Tickets</h1>
+      <p>View and follow IT support requests for your equipment and Department.</p>
+    </div>
+    <button type="button" class="btn btn-primary" data-employee-ticket-create>＋ Create Ticket</button>
+  </header>
+  <nav class="employee-ticket-tabs" role="tablist" aria-label="Ticket Ownership">
+    <button id="employee-personal-tickets-tab" class="employee-ticket-tab" role="tab" aria-controls="employee-ticket-panel" aria-selected="true" type="button" data-ticket-scope="personal">My Tickets</button>
+    <button id="employee-department-tickets-tab" class="employee-ticket-tab" role="tab" aria-controls="employee-ticket-panel" aria-selected="false" tabindex="-1" type="button" data-ticket-scope="department">Department Tickets</button>
+  </nav>
+  <div id="employee-ticket-panel" role="tabpanel" aria-labelledby="employee-personal-tickets-tab">
+    <div class="employee-ticket-context" data-ticket-context aria-live="polite"></div>
+    <section aria-labelledby="employee-current-tickets-heading">
+      <div class="service-desk-workload-heading">
+        <div><h2 id="employee-current-tickets-heading">Current Tickets</h2><p>Select a status to filter the list below.</p></div>
+        <span data-ticket-scope-caption></span>
+      </div>
+      <div class="service-desk-workload" data-ticket-workload></div>
+    </section>
+    <section class="employee-ticket-list">
+      <form class="device-toolbar" id="employee-ticket-filters" role="search" aria-label="Filter Tickets">
+        <div class="device-toolbar-head">
+          <div><h2>Search &amp; Filter Tickets</h2><p>Find your support requests by ticket number, subject or linked equipment.</p></div>
+          <button type="reset" class="btn btn-outline">Clear Filters</button>
+        </div>
+        <div>
+          <label class="device-search-label" for="employee-ticket-search">Search Tickets</label>
+          <div class="device-search-wrap">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="10" cy="10" r="6"/><path d="m15 15 5 5"/></svg>
+            <input class="device-search" id="employee-ticket-search" name="search" type="search" maxlength="200" autocomplete="off" placeholder="Search by ticket number, subject, requester or Device / Asset">
+          </div>
+        </div>
+        <div class="device-filters">
+          <label class="device-filter">Ticket Status<select name="status"><option value="">All Tickets</option>{{slot:0}}</select></label>
+          <label class="device-filter">Device / Asset<select name="equipment"><option value="">All Equipment</option></select></label>
+        </div>
+      </form>
+      <div class="device-results-head">
+        <div><h2 data-ticket-list-heading>My Ticket List</h2><p data-ticket-count aria-live="polite">Loading Tickets…</p></div>
+        <div class="result-actions"><label class="device-filter service-desk-sort">Sort By<select name="sort" form="employee-ticket-filters"><option value="newest">Updated · Newest</option><option value="oldest">Updated · Oldest</option><option value="ticket">Ticket Number</option></select></label></div>
+      </div>
+      <div class="device-table-card"><div class="device-table-scroll" tabindex="0" role="region" aria-label="Ticket List">
+        <table class="device-table">
+          <thead><tr><th scope="col">Ticket</th><th scope="col">Requester</th><th scope="col">Device / Asset</th><th scope="col">Priority</th><th scope="col">Status</th><th scope="col">Assigned To</th><th scope="col">Actions</th></tr></thead>
+          <tbody data-ticket-rows></tbody>
+        </table>
+      </div></div>
+      <div class="service-desk-pagination" data-ticket-pagination hidden>
+        <button class="btn btn-outline" type="button" data-ticket-page="-1">Previous</button>
+        <button class="btn btn-outline" type="button" data-ticket-page="1">Next</button>
+      </div>
+    </section>
+  </div>
+</div>
+<!-- /interface-template -->
 <!-- interface-template:service-desk/dialog -->
 <section class="device-review-dialog service-desk-dialog">
   <header class="device-review-head">
     <div class="device-review-headline">
-      <div><p class="device-review-eyebrow">Service Desk · {{slot:0}}</p><h2>{{slot:1}}</h2><p class="device-review-sub" data-ticket-subtitle>{{slot:2}}</p></div>
+      <div><p class="device-review-eyebrow">{{slot:3}} · {{slot:0}}</p><h2>{{slot:1}}</h2><p class="device-review-sub" data-ticket-subtitle>{{slot:2}}</p></div>
       <button class="device-review-close" type="button" data-ticket-dismiss aria-label="Close Ticket Window">×</button>
     </div>
     <nav class="device-review-tabs" data-ticket-tabs role="tablist" aria-label="Ticket Details" hidden></nav>

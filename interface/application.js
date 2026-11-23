@@ -1201,6 +1201,7 @@ function hierarchyValidateTypes(subnets) {
                 staff: 'Staff Members',
                 departments: 'Departments',
                 equipment: 'My Equipment',
+                'my-tickets': 'My Tickets',
                 account: 'My Account'
             };
             document.getElementById('page-title').textContent = titles[tabId];
@@ -1304,7 +1305,8 @@ function hierarchyValidateTypes(subnets) {
             const previousStrips=container.dataset.renderedTab===currentTab
                 ? [...container.querySelectorAll('.subnav,.tabs,.audit-tabs,.intelligence-tabs')].map(strip=>strip.scrollLeft) : [];
             const deviceDesign=activeDeviceDetailsTab==='overview'?'devices':activeDeviceDetailsTab==='inventory'?'device-inventory':'device-management';
-            const design = {devices:deviceDesign, audit:'audit-trail', account:'my-account',equipment:'my-account','service-desk':'service-desk-queue'}[currentTab] || currentTab;
+            const design = {devices:deviceDesign, audit:'audit-trail', account:'my-account',equipment:'my-account',
+                'service-desk':'service-desk-queue','my-tickets':'service-desk-queue'}[currentTab] || currentTab;
             document.getElementById('interface-page-style').textContent = interfaceStyles.get(design);
             // replace the view once, avoiding an extra DOM teardown.
             let html = '';
@@ -1315,6 +1317,7 @@ function hierarchyValidateTypes(subnets) {
             else if (currentTab === 'audit') html = renderAuditHTML();
             else if (currentTab === 'users') html = nextRenderUsers();
             else if (currentTab === 'service-desk') html = window.caffootServiceDesk.render();
+            else if (currentTab === 'my-tickets') html = window.caffootServiceDesk.renderEmployee();
             else if (['suppliers','purchasing'].includes(currentTab)) html = window.caffootSuppliers.render();
             else if (currentTab === 'it-assets') {
                 window.caffootStockIntake.enter();
@@ -1336,7 +1339,7 @@ function hierarchyValidateTypes(subnets) {
                 window.caffootStockIntake.hydrate();
                 window.caffootServiceDesk.hydrateEquipment(container);
             }
-            if (currentTab === 'service-desk') window.caffootServiceDesk.hydrateQueue(container);
+            if (['service-desk','my-tickets'].includes(currentTab)) window.caffootServiceDesk.hydrateQueue(container);
             if (currentTab === 'dashboard') window.caffootLifecycle.bindDashboard(
                 container.querySelector('#dashboard-panel-lifecycle'), lifecycleDashboard, id=>{
                     if(!equipmentLifecycle || !lifecycleDeviceDates.has(id))return;
@@ -2433,7 +2436,7 @@ function hierarchyValidateTypes(subnets) {
             const hidden=hiddenRows?renderInterfaceTemplate("device-management/source-hidden",['Hidden Built-in Models',hiddenRows]):'';
             return renderInterfaceTemplate("device-management/source-models",[items.length,items.filter(item=>item.devices>0).length,items.filter(item=>item.sources.has('Custom')).length,rows,`${items.length} models shown`,options(makers),options(types,true),'',0,hidden]);
         }
-        const builtInSoftwareSuggestions = [{"name":"Microsoft 365 Apps","types":["Desktop","Laptop","Tablet"],"platformContexts":["mac-desktop","windows-desktop"]},{"name":"LibreOffice","types":["Desktop","Laptop","Tablet"],"platformContexts":["linux-desktop","mac-desktop","windows-desktop"]},{"name":"Google Chrome","types":["Desktop","Laptop","Tablet"],"platformContexts":["linux-desktop","mac-desktop","windows-desktop"]},{"name":"Mozilla Firefox","types":["Desktop","Laptop","Tablet"],"platformContexts":["linux-desktop","mac-desktop","windows-desktop"]},{"name":"Microsoft Edge","types":["Desktop","Laptop","Tablet"],"platformContexts":["windows-desktop"]},{"name":"Adobe Acrobat Reader","types":["Desktop","Laptop","Tablet"],"platformContexts":[]},{"name":"Microsoft Teams","types":["Desktop","Laptop","Tablet"],"platformContexts":["mac-desktop","windows-desktop"]},{"name":"Zoom Workplace","types":["Desktop","Laptop","Tablet"],"platformContexts":["mac-desktop","windows-desktop"]},{"name":"7-Zip","types":["Desktop","Laptop","Tablet"],"platformContexts":["windows-desktop"]},{"name":"VLC media player","types":["Desktop","Laptop","Tablet"],"platformContexts":["linux-desktop","mac-desktop","windows-desktop"]},{"name":"Bitwarden","types":["Desktop","Laptop","Tablet"],"platformContexts":["linux-desktop","mac-desktop","windows-desktop"]},{"name":"KeePassXC","types":["Desktop","Laptop","Tablet"],"platformContexts":["linux-desktop","mac-desktop","windows-desktop"]},{"name":"Microsoft Defender for Endpoint","types":["Desktop","Laptop","Tablet","Server - Physical","Server - Virtual"],"platformContexts":["linux-desktop","linux-server","mac-desktop","windows-desktop","windows-server"]},{"name":"CrowdStrike Falcon Sensor","types":["Desktop","Laptop","Tablet","Server - Physical","Server - Virtual"],"platformContexts":["linux-desktop","linux-server","mac-desktop","windows-desktop","windows-server"]},{"name":"SentinelOne Agent","types":["Desktop","Laptop","Tablet","Server - Physical","Server - Virtual"],"platformContexts":["linux-desktop","linux-server","mac-desktop","windows-desktop","windows-server"]},{"name":"Tailscale","types":["Desktop","Laptop","Tablet","Server - Physical","Server - Virtual","Firewall","Router","Layer 3 Switch","Wireless Access Point","Access Point","Wireless LAN Controller","NAS"],"platformContexts":["linux-desktop","linux-server","mac-desktop","nas-apps","openwrt","windows-desktop","windows-server"]},{"name":"OpenVPN Connect","types":["Desktop","Laptop","Tablet"],"platformContexts":[]},{"name":"WireGuard","types":["Desktop","Laptop","Tablet","Server - Physical","Server - Virtual","Firewall","Router","Layer 3 Switch","Wireless Access Point","Access Point","Wireless LAN Controller"],"platformContexts":["linux-desktop","linux-server","openwrt"]},{"name":"AnyDesk","types":["Desktop","Laptop","Tablet"],"platformContexts":[]},{"name":"RustDesk","types":["Desktop","Laptop","Tablet"],"platformContexts":[]},{"name":"TeamViewer","types":["Desktop","Laptop","Tablet"],"platformContexts":[]},{"name":"Microsoft Remote Desktop","types":["Desktop","Laptop","Tablet"],"platformContexts":[]},{"name":"Zabbix Agent","types":["Desktop","Laptop","Tablet","Server - Physical","Server - Virtual","Firewall","Router","Layer 3 Switch","Switch"],"platformContexts":["linux-desktop","linux-server","mac-desktop","windows-desktop","windows-server"]},{"name":"NinjaOne Agent","types":["Desktop","Laptop","Tablet","Server - Physical","Server - Virtual"],"platformContexts":["mac-desktop","windows-desktop","windows-server"]},{"name":"PDQ Connect","types":["Desktop","Laptop","Tablet","Server - Physical","Server - Virtual"],"platformContexts":["windows-desktop","windows-server"]},{"name":"Visual Studio Code","types":["Desktop","Laptop","Tablet"],"platformContexts":["linux-desktop","mac-desktop","windows-desktop"]},{"name":"Git","types":["Desktop","Laptop","Server - Physical","Server - Virtual","Tablet"],"platformContexts":["linux-desktop","linux-server","mac-desktop","windows-desktop","windows-server"]},{"name":"PowerShell 7","types":["Desktop","Laptop","Server - Physical","Server - Virtual","Tablet"],"platformContexts":["windows-desktop","windows-server"]},{"name":"PuTTY","types":["Desktop","Laptop"],"platformContexts":[]},{"name":"WinSCP","types":["Desktop","Laptop","Tablet"],"platformContexts":["windows-desktop"]},{"name":"Wireshark","types":["Desktop","Laptop"],"platformContexts":[]},{"name":"Docker Desktop","types":["Desktop","Laptop"],"platformContexts":[]},{"name":"VMware Workstation","types":["Desktop","Laptop"],"platformContexts":[]},{"name":"VirtualBox","types":["Desktop","Laptop"],"platformContexts":[]},{"name":"Notepad++","types":["Desktop","Laptop","Tablet"],"platformContexts":["windows-desktop"]},{"name":"Python","types":["Desktop","Laptop","Server - Physical","Server - Virtual"],"platformContexts":[]},{"name":"Java Runtime","types":["Desktop","Laptop"],"platformContexts":[]},{"name":"Node.js","types":["Desktop","Laptop"],"platformContexts":[]},{"name":"Microsoft Power BI Desktop","types":["Desktop","Laptop","Tablet"],"platformContexts":["windows-desktop"]},{"name":"AutoCAD","types":["Desktop","Laptop"],"platformContexts":[]},{"name":"Docker Engine","types":["Server - Physical","Server - Virtual"],"platformContexts":["linux-server"]},{"name":"Podman","types":["Server - Physical","Server - Virtual"],"platformContexts":["linux-server"]},{"name":"Kubernetes","types":["Server - Physical","Server - Virtual"],"platformContexts":["linux-server"]},{"name":"containerd","types":["Server - Physical","Server - Virtual"],"platformContexts":["linux-server"]},{"name":"Nginx","types":["Server - Physical","Server - Virtual"],"platformContexts":["linux-server"]},{"name":"Apache HTTP Server","types":["Server - Physical","Server - Virtual"],"platformContexts":["linux-server"]},{"name":"IIS","types":["Server - Physical","Server - Virtual"],"platformContexts":["windows-server"]},{"name":"PostgreSQL","types":["Server - Physical","Server - Virtual"],"platformContexts":["linux-server","windows-server"]},{"name":"MariaDB","types":["Server - Physical","Server - Virtual"],"platformContexts":["linux-server","windows-server"]},{"name":"MySQL Server","types":["Server - Physical","Server - Virtual"],"platformContexts":["linux-server","windows-server"]},{"name":"Microsoft SQL Server","types":["Server - Physical","Server - Virtual"],"platformContexts":["windows-server"]},{"name":"Redis","types":["Server - Physical","Server - Virtual"],"platformContexts":["linux-server"]},{"name":"RabbitMQ","types":["Server - Physical","Server - Virtual"],"platformContexts":["linux-server"]},{"name":"Prometheus","types":["Server - Physical","Server - Virtual"],"platformContexts":["linux-server"]},{"name":"Grafana","types":["Server - Physical","Server - Virtual"],"platformContexts":["linux-server"]},{"name":"Zabbix Server","types":["Server - Physical","Server - Virtual"],"platformContexts":["linux-server"]},{"name":"Wazuh Agent","types":["Server - Physical","Server - Virtual","Firewall","Router","Layer 3 Switch"],"platformContexts":["linux-server","opnsense","windows-server"]},{"name":"Veeam Agent","types":["Server - Physical","Server - Virtual","NAS"],"platformContexts":["windows-server"]},{"name":"Restic","types":["Server - Physical","Server - Virtual","NAS"],"platformContexts":["linux-server"]},{"name":"BorgBackup","types":["Server - Physical","Server - Virtual","NAS"],"platformContexts":["linux-server"]},{"name":"OpenSSH Server","types":["Server - Physical","Server - Virtual"],"platformContexts":["linux-server"]},{"name":"Ansible","types":["Server - Physical","Server - Virtual"],"platformContexts":["linux-server"]},{"name":"Terraform","types":["Server - Physical","Server - Virtual"],"platformContexts":["linux-server"]},{"name":"HashiCorp Vault","types":["Server - Physical","Server - Virtual"],"platformContexts":["linux-server"]},{"name":"VMware ESXi","types":["Server - Physical"],"platformContexts":[]},{"name":"Proxmox VE","types":["Server - Physical"],"platformContexts":[]},{"name":"Microsoft Hyper-V","types":["Server - Physical"],"platformContexts":[]},{"name":"Dell OpenManage","types":["Server - Physical"],"platformContexts":[]},{"name":"HPE iLO Management","types":["Server - Physical"],"platformContexts":[]},{"name":"IPMItool","types":["Server - Physical"],"platformContexts":[]},{"name":"TrueNAS SCALE","types":["Server - Physical","NAS"],"platformContexts":[]},{"name":"Ubuntu Server","types":["Server - Physical","Server - Virtual"],"platformContexts":[]},{"name":"Windows Server","types":["Server - Physical","Server - Virtual"],"platformContexts":[]},{"name":"VMware Tools","types":["Server - Virtual"],"platformContexts":[]},{"name":"QEMU Guest Agent","types":["Server - Virtual"],"platformContexts":[]},{"name":"Hyper-V Integration Services","types":["Server - Virtual"],"platformContexts":[]},{"name":"cloud-init","types":["Server - Virtual"],"platformContexts":[]},{"name":"Synology DSM","types":["NAS"],"platformContexts":[]},{"name":"QNAP QTS","types":["NAS"],"platformContexts":[]},{"name":"OpenMediaVault","types":["NAS"],"platformContexts":[]},{"name":"rsync","types":["NAS"],"platformContexts":[]},{"name":"Syncthing","types":["NAS","Server - Physical","Server - Virtual"],"platformContexts":["nas-apps"]},{"name":"pfSense","types":["Firewall","Router","Layer 3 Switch"],"platformContexts":[]},{"name":"OPNsense","types":["Firewall","Router","Layer 3 Switch"],"platformContexts":[]},{"name":"FortiOS","types":["Firewall","Router","Layer 3 Switch"],"platformContexts":[]},{"name":"Cisco IOS XE","types":["Firewall","Router","Layer 3 Switch"],"platformContexts":[]},{"name":"MikroTik RouterOS","types":["Firewall","Router","Layer 3 Switch","Switch"],"platformContexts":[]},{"name":"VyOS","types":["Firewall","Router","Layer 3 Switch"],"platformContexts":[]},{"name":"OpenWrt","types":["Firewall","Router","Layer 3 Switch","Wireless Access Point","Access Point","Wireless LAN Controller"],"platformContexts":[]},{"name":"OpenVPN","types":["Firewall","Router","Layer 3 Switch"],"platformContexts":[]},{"name":"Cisco IOS","types":["Switch"],"platformContexts":[]},{"name":"Cisco NX-OS","types":["Switch"],"platformContexts":[]},{"name":"Aruba AOS-CX","types":["Switch"],"platformContexts":[]},{"name":"UniFi Network","types":["Switch","Wireless Access Point","Access Point","Wireless LAN Controller","Server - Physical","Server - Virtual","Firewall","Router"],"platformContexts":["linux-server","unifi-console","windows-server"]},{"name":"Aruba Instant On","types":["Wireless Access Point","Access Point","Wireless LAN Controller"],"platformContexts":[]},{"name":"ArubaOS","types":["Wireless Access Point","Access Point","Wireless LAN Controller"],"platformContexts":[]},{"name":"Cisco Catalyst Center","types":["Wireless Access Point","Access Point","Wireless LAN Controller"],"platformContexts":[]},{"name":"TP-Link Omada Controller","types":["Wireless Access Point","Access Point","Wireless LAN Controller","Server - Physical","Server - Virtual"],"platformContexts":["linux-server","windows-server"]},{"name":"HP Universal Print Driver","types":["Printer"],"platformContexts":[]},{"name":"Brother Printer Driver","types":["Printer"],"platformContexts":[]},{"name":"Canon Printer Driver","types":["Printer"],"platformContexts":[]},{"name":"Epson Printer Driver","types":["Printer"],"platformContexts":[]},{"name":"PaperCut MF","types":["Printer"],"platformContexts":[]},{"name":"Microsoft Intune Company Portal","types":["Tablet"],"platformContexts":[]},{"name":"Jamf Self Service","types":["Tablet"],"platformContexts":[]},{"name":"Microsoft Authenticator","types":["Tablet"],"platformContexts":[]},{"name":"Google Authenticator","types":["Tablet"],"platformContexts":[]},{"name":"Snort","types":["Firewall","Router","Layer 3 Switch"],"platformContexts":["pfsense"]},{"name":"Suricata","types":["Firewall","Router","Layer 3 Switch"],"platformContexts":["pfsense"]},{"name":"pfBlockerNG","types":["Firewall","Router","Layer 3 Switch"],"platformContexts":["pfsense"]},{"name":"HAProxy","types":["Firewall","Router","Layer 3 Switch"],"platformContexts":["opnsense","pfsense"]},{"name":"ACME","types":["Firewall","Router","Layer 3 Switch"],"platformContexts":["pfsense"]},{"name":"FRR","types":["Firewall","Router","Layer 3 Switch"],"platformContexts":["opnsense","pfsense"]},{"name":"FreeRADIUS","types":["Firewall","Router","Layer 3 Switch"],"platformContexts":["opnsense","pfsense"]},{"name":"NUT","types":["Firewall","Router","Layer 3 Switch"],"platformContexts":["pfsense"]},{"name":"ACME Client","types":["Firewall","Router","Layer 3 Switch"],"platformContexts":["opnsense"]},{"name":"Caddy","types":["Firewall","Router","Layer 3 Switch"],"platformContexts":["opnsense"]},{"name":"CrowdSec","types":["Firewall","Router","Layer 3 Switch"],"platformContexts":["opnsense"]},{"name":"Nginx plugin","types":["Firewall","Router","Layer 3 Switch"],"platformContexts":["opnsense"]},{"name":"SQM / LuCI SQM","types":["Firewall","Router","Layer 3 Switch","Wireless Access Point","Access Point","Wireless LAN Controller"],"platformContexts":["openwrt"]},{"name":"adblock","types":["Firewall","Router","Layer 3 Switch","Wireless Access Point","Access Point","Wireless LAN Controller"],"platformContexts":["openwrt"]},{"name":"mwan3","types":["Firewall","Router","Layer 3 Switch","Wireless Access Point","Access Point","Wireless LAN Controller"],"platformContexts":["openwrt"]},{"name":"UniFi Protect","types":["Firewall","Router","Wireless LAN Controller"],"platformContexts":["unifi-console"]},{"name":"UniFi Access","types":["Firewall","Router","Wireless LAN Controller"],"platformContexts":["unifi-console"]},{"name":"UniFi Talk","types":["Firewall","Router","Wireless LAN Controller"],"platformContexts":["unifi-console"]},{"name":"UniFi Connect","types":["Firewall","Router","Wireless LAN Controller"],"platformContexts":["unifi-console"]},{"name":"UniFi InnerSpace","types":["Firewall","Router","Wireless LAN Controller"],"platformContexts":["unifi-console"]},{"name":"Synology Drive Server","types":["NAS","Server - Physical","Server - Virtual"],"platformContexts":["synology"]},{"name":"Active Backup for Business","types":["NAS","Server - Physical","Server - Virtual"],"platformContexts":["synology"]},{"name":"Hyper Backup","types":["NAS","Server - Physical","Server - Virtual"],"platformContexts":["synology"]},{"name":"Surveillance Station","types":["NAS","Server - Physical","Server - Virtual"],"platformContexts":["synology"]},{"name":"Container Manager","types":["NAS","Server - Physical","Server - Virtual"],"platformContexts":["synology"]},{"name":"HBS 3","types":["NAS","Server - Physical","Server - Virtual"],"platformContexts":["qnap"]},{"name":"Container Station","types":["NAS","Server - Physical","Server - Virtual"],"platformContexts":["qnap"]},{"name":"Virtualization Station","types":["NAS","Server - Physical","Server - Virtual"],"platformContexts":["qnap"]},{"name":"Qsync Central","types":["NAS","Server - Physical","Server - Virtual"],"platformContexts":["qnap"]},{"name":"Plex","types":["NAS","Server - Physical","Server - Virtual"],"platformContexts":["nas-apps"]},{"name":"Jellyfin","types":["NAS","Server - Physical","Server - Virtual"],"platformContexts":["nas-apps"]},{"name":"Nextcloud","types":["NAS","Server - Physical","Server - Virtual"],"platformContexts":["nas-apps"]},{"name":"Immich","types":["NAS","Server - Physical","Server - Virtual"],"platformContexts":["nas-apps"]},{"name":"PaperCut embedded","types":["Printer"],"platformContexts":["printer"]}];
+        const builtInSoftwareSuggestions = installedSoftwareCatalogue.suggestions;
         function openSoftwareCatalogueEditor(key='') {
             const entry=getConfiguredSoftwareCatalogueEntries().find(x=>x.key===key)||builtInSoftwareSuggestions.filter(x=>createBuiltInSoftwareCatalogueKey(x.name)===key).map(x=>({key,label:x.name,deviceTypes:x.types}))[0];
             if(key&&!entry)return;
@@ -5262,7 +5265,7 @@ function openIpModal(ip) {
             }
         }
         // Desktop, laptop and tablet software is managed independently of server functions.
-        const legacySoftwareFieldKeys = ['Swan','MicrosoftOffice','Planet','SpindleSoftware','Preactor','RedLionApp','SalesBase','HelpDesk','ProductionITHelpDeskDashboards','PDA','TMS','PhoneBook','EasyLabel'];
+        const legacySoftwareFieldKeys = Object.keys(installedSoftwareCatalogue.legacyLabels);
         function getConfiguredSoftwareCatalogueEntries() {
             return Array.isArray(appState.installedSoftware) ? appState.installedSoftware : [];
         }
@@ -5391,7 +5394,7 @@ function openIpModal(ip) {
         function getDeviceSoftwareCatalogueEntries(device=null,values={}) {
             const entries=getConfiguredSoftwareCatalogueEntries().map(item=>({...item}));
             for(const seed of builtInSoftwareSuggestions){const key=createBuiltInSoftwareCatalogueKey(seed.name);if(!entries.some(item=>item.key===key))entries.push({key,label:seed.name,deviceTypes:seed.types,builtin:true});}
-            for(const key of legacySoftwareFieldKeys)if(!entries.some(item=>item.key===key))entries.push({key,label:deviceDetailFieldLabels[key]||key});
+            for(const key of legacySoftwareFieldKeys)if(!entries.some(item=>item.key===key))entries.push({key,label:installedSoftwareCatalogue.legacyLabels[key]});
             for(const key of new Set([...Object.keys(device||{}),...Object.keys(values)])){
                 if(/^(catalogSoftware_|customSoftware_)/.test(key)&&!entries.some(item=>item.key===key))entries.push({key,label:key.replace(/^(catalogSoftware_|customSoftware_)/,'').replace(/_/g,' ')});
             }
@@ -9067,6 +9070,7 @@ function openIpModal(ip) {
                 case 'sidebar-users-list': activeUsersTab='list'; switchTab('users'); break;
                 case 'sidebar-users-add': activeUsersTab='add'; switchTab('users'); break;
                 case 'tab-equipment': switchTab('equipment'); break;
+                case 'tab-my-tickets': switchTab('my-tickets'); break;
                 case 'tab-account': activeAccountSection='overview'; switchTab('account'); break;
                 case 'select-account-section': if (['overview','security','help','about'].includes(target.dataset.section)) { activeAccountSection=target.dataset.section; switchTab('account'); } break;
                 case 'choose-backup-import': document.getElementById('import-file')?.click(); break;
@@ -9195,6 +9199,7 @@ void (async () => {
   let sessionSupplierPermissions = {read:false,edit:false};
   let suppliersEnabled = false;
   let sessionServiceDeskPermissions = {read:false,edit:false};
+  let sessionCanUseMyTickets = false;
   const inventorySectionAccess = () => ['Devices','IPAM','Racks'].some(key=>permissions[key]);
   function addDirectoryAccess(){
     permissions['Staff Members']=!!sessionDirectoryPermissions.staffMembers?.read;
@@ -9213,7 +9218,10 @@ void (async () => {
       : section === 'receipts' && !!editPermissions['IT Assets']);
   }
   function canSubmitServiceDeskForm(form) {
-    return !!editPermissions['Service Desk'] && !!form?.matches('form[data-ticket-form]');
+    if (!form?.matches('form[data-ticket-form]')) return false;
+    return form.closest('.employee-ticket-dialog')
+      ? sessionCanUseMyTickets && ['create','messages','reopen'].includes(form.dataset.ticketForm)
+      : !!editPermissions['Service Desk'];
   }
   function canSubmitSupplierForm(form) {
     if (!form?.matches('form[data-supplier-form]')) return false;
@@ -9247,6 +9255,7 @@ void (async () => {
     sessionSupplierPermissions=session.supplier_permissions||{read:false,edit:false};
     suppliersEnabled=session.suppliers_enabled===true;
     sessionServiceDeskPermissions=session.service_desk_permissions||{read:false,edit:false};
+    sessionCanUseMyTickets=session.can_use_my_tickets===true;
     addDirectoryAccess();
     window.caffootStockIntake.clear();
     applyAllowedControls();
@@ -9368,9 +9377,12 @@ void (async () => {
   function applyAllowedControls() {
     const stockControls=document.getElementById('device-stock-controls');
     if(stockControls)stockControls.hidden=!editPermissions.Devices||!editPermissions['IT Assets'];
+    const accountTickets=document.querySelector('[data-account-my-tickets]');
+    if(accountTickets)accountTickets.hidden=!sessionCanUseMyTickets;
     document.querySelectorAll('#sidebar [data-tab]').forEach(button=>{
       const area=section[button.dataset.tab];
       if(area)button.hidden=!permissions[area];
+      if(button.dataset.tab==='my-tickets')button.hidden=!sessionCanUseMyTickets;
       if(['dashboard','audit'].includes(button.dataset.tab))button.hidden=!inventorySectionAccess();
     });
     document.querySelectorAll('#sidebar [data-nav-group]').forEach(group=>{
@@ -9655,6 +9667,7 @@ void (async () => {
       permissions['IT Assets']?'it-assets':permissions.Suppliers?'suppliers':sessionIsAdmin?'settings':'account';
   }
   function workspaceHashTab() {
+    if (sessionCanUseMyTickets && location.hash === '#my-tickets') return 'my-tickets';
     if (location.pathname!=='/inventory') return '';
     if (permissions['Service Desk'] && location.hash === '#service-desk') return 'service-desk';
     if (permissions.Suppliers && supplierHash.test(location.hash)) return 'suppliers';
@@ -9678,7 +9691,8 @@ void (async () => {
     return canOpen ? legacyDestination : '';
   }
   switchTab = function(tab, fromRoute = false) {
-    if ((!sessionCanEnterInventory && !['account','equipment','staff','departments','it-assets','suppliers','purchasing','service-desk'].includes(tab) && !(sessionIsAdmin && ['users','settings'].includes(tab))) || (['dashboard','audit'].includes(tab) && !inventorySectionAccess()) || ((tab === 'users' || tab === 'settings') && !sessionIsAdmin) ||
+    if ((tab === 'my-tickets' && !sessionCanUseMyTickets) ||
+        (!sessionCanEnterInventory && !['account','equipment','staff','departments','it-assets','suppliers','purchasing','service-desk','my-tickets'].includes(tab) && !(sessionIsAdmin && ['users','settings'].includes(tab))) || (['dashboard','audit'].includes(tab) && !inventorySectionAccess()) || ((tab === 'users' || tab === 'settings') && !sessionIsAdmin) ||
         (section[tab] && !permissions[section[tab]])) {
       showToast('You do not have access to this section.', 'error');
       return;
@@ -9695,6 +9709,10 @@ void (async () => {
       setDepartmentExpanded('it', true);
       if (!fromRoute && location.hash !== '#service-desk') history.pushState(null, '', '#service-desk');
     }
+    if (currentTab === 'my-tickets' && currentTab !== tab && location.hash === '#my-tickets' && !fromRoute)
+      history.replaceState(null, '', location.pathname + location.search);
+    if (tab === 'my-tickets' && !fromRoute && location.hash !== '#my-tickets')
+      history.pushState(null, '', '#my-tickets');
     if (tab === 'dashboard' && !fromRoute) {
       setDepartmentExpanded('it',true);
       if (location.hash !== '#dashboard') history.pushState(null, '', '#dashboard');
@@ -9706,11 +9724,12 @@ void (async () => {
       if (receipt) window.caffootStockIntake.prepareReceipt(receipt[1]);
     }
     originalSwitchTab(tab);
+    if (tab === 'my-tickets') window.scrollTo({top:0, behavior:'instant'});
     if (isSupplierPage(tab)) window.caffootSuppliers.enter(tab, fromRoute);
     applyAllowedControls();
   };
   window.addEventListener('popstate', () => {
-    const tab = workspaceHashTab() || ((isSupplierPage(currentTab) || currentTab === 'service-desk') ? landingTab() : '');
+    const tab = workspaceHashTab() || ((isSupplierPage(currentTab) || ['service-desk','my-tickets'].includes(currentTab)) ? landingTab() : '');
     if (!tab) return;
     const navigate = () => switchTab(tab, true);
     if (document.querySelector('#modal-container:not(.hidden) [data-supplier-dialog], #modal-container:not(.hidden) .service-desk-dialog')) closeModal(false, navigate);
@@ -11490,7 +11509,7 @@ void (async () => {
         (editPermissions['Staff Members'] && event.target.matches('#staff-record-form')) ||
         (editPermissions.Departments && event.target.matches('#staff-department-form')) ||
         canSubmitSupplierForm(event.target) || canSubmitServiceDeskForm(event.target) ||
-        event.target.id === 'ticket-queue-filters' ||
+        ['ticket-queue-filters','employee-ticket-filters'].includes(event.target.id) ||
         (editPermissions['IT Assets'] && event.target.matches('#stock-receipt-form,#stock-readiness-form,#stock-issue-form,#stock-return-form,#stock-writeoff-form,#stock-preparation-form,#stock-reissue-form,#stock-correction-form')) ||
         (editPermissions.Devices && event.target.matches('form[data-device-form="true"],#equipment-assignment-form,#stock-reissue-form[data-direct-handover]')) ||
         (editPermissions.IPAM && event.target.matches('form[data-form-action="ip"],form[data-form-action="bulk-ip"],form[data-form-action="subnet"],form[data-ipam-subnet-creation]')) ||
@@ -11512,6 +11531,7 @@ void (async () => {
     sessionSupplierPermissions=session.supplier_permissions||sessionSupplierPermissions;
     suppliersEnabled=session.suppliers_enabled===true;
     sessionServiceDeskPermissions=session.service_desk_permissions||{read:false,edit:false};
+    sessionCanUseMyTickets=session.can_use_my_tickets===true;
     addDirectoryAccess();
     sessionIsAdmin=!!session.is_admin;
     sessionAssignedRoles=session.assigned_roles||[];
@@ -11522,6 +11542,7 @@ void (async () => {
     sessionCanEnterInventory=session.can_enter_inventory===true;
     window.caffootServiceDesk.configure({
       csrf:csrfToken,canRead:()=>!!permissions['Service Desk'],canEdit:()=>!!editPermissions['Service Desk'],
+      canUseEmployee:()=>sessionCanUseMyTickets,
       openModal:openDeviceReviewModal,closeModal:()=>closeModal(true),
       notify:(message,type)=>showToast(message,type),
       restoreDevice:(id,offset)=>{

@@ -41,7 +41,7 @@ class ServiceDeskSchemaTests(unittest.TestCase):
         self.connection.execute("INSERT INTO device_lifecycle(device_id,purchase_date) VALUES('host','2026-11-20')")
         self.connection.commit()
         schema.initialise_database(self.connection)
-        self.assertEqual(self.connection.execute('SELECT max(version) FROM schema_migrations').fetchone(), (25,))
+        self.assertEqual(self.connection.execute('SELECT max(version) FROM schema_migrations').fetchone(), (26,))
         self.assertEqual(self.connection.execute('SELECT name FROM service_desk_categories ORDER BY id').fetchall(),
                          [(name,) for name in DEFAULT_TICKET_CATEGORIES])
         ticket = insert_ticket(self.connection)
@@ -53,6 +53,25 @@ class ServiceDeskSchemaTests(unittest.TestCase):
         self.assertEqual(self.connection.execute(
             'SELECT status,priority,technician_id,category_label FROM service_desk_tickets WHERE id=?',
             (ticket,)).fetchone(), ('Open', 'Medium', None, DEFAULT_TICKET_CATEGORIES[0]))
+        self.assertFalse(self.connection.execute('PRAGMA foreign_key_check').fetchall())
+
+    def test_software_upgrade_preserves_existing_tickets_and_history(self):
+        with patch.object(schema, 'SCHEMA_VERSION', 25):
+            schema.initialise_database(self.connection)
+        ticket = insert_ticket(self.connection)
+        self.connection.execute("""
+            INSERT INTO service_desk_events(ticket_id,kind,actor_id,actor_label,happened_at,
+                                             employee_visible,details)
+            VALUES(?, 'Created', 1, 'Technician', '2026-11-23', 1, '{}')
+        """, (ticket,))
+        self.connection.commit()
+        schema.initialise_database(self.connection)
+        self.assertEqual(self.connection.execute(
+            'SELECT id,category_label,affected_software FROM service_desk_tickets'
+        ).fetchone(), (ticket, DEFAULT_TICKET_CATEGORIES[0], None))
+        self.assertEqual(self.connection.execute(
+            'SELECT ticket_id,kind,actor_label FROM service_desk_events'
+        ).fetchone(), (ticket, 'Created', 'Technician'))
         self.assertFalse(self.connection.execute('PRAGMA foreign_key_check').fetchall())
 
     def test_failed_upgrade_rolls_back_tables_and_version(self):

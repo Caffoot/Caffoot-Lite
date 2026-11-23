@@ -112,6 +112,34 @@ html.dark .service-desk-visibility[data-internal="true"] { background: #543c2b; 
     content: ""; position: absolute; left: -.36rem; top: .56rem; width: .6rem; height: .6rem;
     border-radius: 50%; border: 2px solid #db792f; background: var(--white);
 }
+.employee-ticket-tabs {
+    display: flex; gap: 1.45rem; border-bottom: 1px solid var(--line);
+    margin-top: 1.5rem; overflow-x: auto;
+}
+.employee-ticket-tab {
+    border: 0; border-bottom: 3px solid transparent; background: transparent; color: var(--muted);
+    padding: .75rem .25rem .85rem; font: inherit; font-weight: 750; white-space: nowrap;
+}
+.employee-ticket-tab[aria-selected="true"] { border-bottom-color: #ed8532; color: var(--heading); }
+.employee-ticket-context {
+    margin-top: 1.15rem; padding: .8rem 1rem; border: 1px solid var(--line);
+    border-radius: 12px; background: var(--soft); color: var(--ink); font-size: .78rem;
+    line-height: 1.6; overflow-wrap: anywhere;
+}
+.employee-tickets .service-desk-page-head { align-items: flex-start; }
+.employee-tickets .service-desk-page-head .device-review-eyebrow {
+    font-size: .68rem; font-weight: 800; letter-spacing: .12em; text-transform: uppercase;
+}
+.employee-tickets .employee-ticket-list { margin-top: 1.65rem; }
+.employee-tickets .device-filters { grid-template-columns: repeat(2,minmax(0,1fr)); }
+.employee-tickets .device-table { min-width: 1000px; }
+.employee-ticket-create-fields { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: .85rem; }
+html.dark .employee-ticket-dialog { border-color: var(--line); }
+.employee-ticket-dialog .service-desk-message:first-of-type { border-left: 3px solid #ed8532; }
+.employee-ticket-dialog .service-desk-files li { border: 0; padding: 0; }
+.employee-ticket-dialog .service-desk-files a {
+    padding: .35rem .6rem; border: 1px solid var(--line); border-radius: .4rem; background: var(--white);
+}
 @media (max-width: 1020px) { .service-desk-page .device-filters { grid-template-columns: repeat(2,minmax(0,1fr)); } }
 @media (max-width: 700px) {
     .service-desk-dialog { max-height: 100dvh; height: 100dvh; }
@@ -119,6 +147,12 @@ html.dark .service-desk-visibility[data-internal="true"] { background: #543c2b; 
     .service-desk-workload { gap: .5rem; }
     .service-desk-workload-card { padding: .65rem .45rem; }
     .service-desk-workload-card > strong { font-size: 1.4rem; }
+    #modal-content .employee-ticket-dialog {
+        width: calc(100% - 14px); height: calc(100dvh - 14px); max-height: calc(100dvh - 14px);
+        border-radius: 13px;
+    }
+    #modal-content .employee-ticket-dialog .device-review-footer { justify-content: flex-end; }
+    #modal-content .employee-ticket-dialog .device-review-footer .btn { flex: 0 1 auto; }
 }
 @media (max-width: 460px) {
     .service-desk-stat-head { font-size: .65rem; min-height: 1.35rem; }
@@ -128,4 +162,10 @@ html.dark .service-desk-visibility[data-internal="true"] { background: #543c2b; 
     .service-desk-dialog .device-review-footer .btn {
         flex: 0 1 auto; min-width: max-content; padding-inline: .62rem; font-size: .66rem;
     }
+    .employee-ticket-tabs { gap: 1rem; }
+    .employee-ticket-context { padding: .7rem; }
+    .employee-tickets .service-desk-workload-heading { flex-direction: column; align-items: flex-start; gap: .25rem; }
+    .employee-tickets .service-desk-workload-heading > span { white-space: normal; }
+    .employee-tickets .service-desk-stat-head { overflow-wrap: anywhere; }
+    .employee-tickets .device-filters, .employee-ticket-create-fields { grid-template-columns: 1fr; gap: .2rem; }
 }

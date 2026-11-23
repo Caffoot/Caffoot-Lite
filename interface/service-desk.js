@@ -1,7 +1,7 @@
 // Connect the Service Desk screens to the same access checks used by ticket history.
 window.caffootServiceDesk = (() => {
     'use strict';
-    const apiRoot = '/api/service-desk/it/';
+    const apiRoot = '/api/service-desk/';
     const statuses = ['Open', 'In Progress', 'On Hold', 'Closed'];
     const priorities = ['Low', 'Medium', 'High'];
     const holdReasons = ['Waiting for User', 'Waiting for Supplier', 'Waiting for Parts', 'Other'];
@@ -13,10 +13,10 @@ window.caffootServiceDesk = (() => {
     const maximumRetainedBytes = 100000000;
     const fileFormats = '.png,.jpg,.jpeg,.pdf,.txt,.docx,.xlsx';
     const dates = new Intl.DateTimeFormat('en-GB', {dateStyle:'medium', timeStyle:'short'});
-    let config, currentDialog, queueRefresh;
+    let config, currentDialog, queueRefresh, employeeQueueRefresh;
 
-    async function requestTickets(path, payload, signal) {
-        const response = await fetch(apiRoot + path, {
+    async function requestTickets(path, payload, signal, scope = 'it') {
+        const response = await fetch(apiRoot + scope + '/' + path, {
             cache:'no-store', signal,
             ...(payload === undefined ? {} : {method:'POST', headers:{
                 'Content-Type':'application/json', 'X-CSRF-Token':config.csrf
@@ -59,23 +59,34 @@ window.caffootServiceDesk = (() => {
         ]);
     }
 
-    function renderTicketRows(tickets) {
+    function renderEmployeeTicketQueue() {
+        return renderInterfaceTemplate('service-desk/employee-queue', [ticketOptions(statuses, 'Open')]);
+    }
+
+    function renderTicketRows(tickets, scope) {
+        const employee = scope !== 'it';
+        const assignment = scope === 'personal' ? 'Assigned to Me' : 'Shared with My Department';
         return tickets.map(ticket => `<tr>
           <td><button class="device-name" type="button" data-ticket-open="${ticket.id}">${ticketNumber(ticket.id)}</button><div class="device-detail">${escapeHtml(ticket.subject)}</div></td>
-          <td>${escapeHtml(ticket.employee || ticket.author)}</td><td>${escapeHtml(ticket.equipmentLabel || ticket.equipmentId)}</td>
+          <td>${escapeHtml(ticket.employee || ticket.author)}</td><td>${escapeHtml(ticket.equipmentLabel || ticket.equipmentId)}
+            ${employee ? `<div class="device-detail">${assignment}</div>` : ''}</td>
           <td>${ticketTag(ticket.priority)}</td><td>${ticketTag(ticket.status)}</td>
-          <td>${escapeHtml(ticket.technician || 'Unassigned')}</td><td>${ticketDate(ticket.updatedAt)}</td>
-          <td><button class="btn btn-small btn-outline" type="button" data-ticket-open="${ticket.id}" aria-label="Open Details For ${ticketNumber(ticket.id)}">Open Details</button></td>
-        </tr>`).join('') || '<tr><td colspan="8" class="service-desk-empty">No tickets match the selected filters.</td></tr>';
+          <td>${escapeHtml(ticket.technician || 'Unassigned')}</td>${employee ? '' : '<td>' + ticketDate(ticket.updatedAt) + '</td>'}
+          <td><button class="btn btn-small btn-outline" type="button" data-ticket-open="${ticket.id}" aria-label="Open Details For ${ticketNumber(ticket.id)}">${employee ? 'Open' : 'Open Details'}</button></td>
+        </tr>`).join('') || `<tr><td colspan="${employee ? 7 : 8}" class="service-desk-empty">No tickets match the selected filters.</td></tr>`;
     }
 
     function hydrateTicketQueue(container) {
         const page = container.querySelector('.service-desk-page');
-        const filters = page.querySelector('#ticket-queue-filters');
+        const employee = page.classList.contains('employee-tickets');
+        const filters = page.querySelector('form[role="search"]');
         const counts = page.querySelector('[data-ticket-workload]');
         const rows = page.querySelector('[data-ticket-rows]');
         const count = page.querySelector('[data-ticket-count]');
         const pagination = page.querySelector('[data-ticket-pagination]');
+        const shortcuts = ['Awaiting IT attention', 'Being worked on', 'Waiting for the next step'];
+        const shortcutIcons = ['i-box', 'i-tool', 'i-history'];
+        let scope = employee ? 'personal' : 'it';
         let offset = 0, pendingSearch, request;
         async function refreshQueue() {
             if (!page.isConnected) return;
@@ -85,33 +96,45 @@ window.caffootServiceDesk = (() => {
             const signal = request.signal;
             const params = new URLSearchParams();
             for (const [key, value] of new FormData(filters)) {
-                if (value) params.set(key, value);
+                if (!value) continue;
+                if (key === 'equipment') {
+                    const [kind, id] = JSON.parse(value);
+                    params.set('equipmentKind', kind);
+                    params.set('equipmentId', id);
+                } else params.set(key, value);
             }
             params.set('offset', offset);
             page.setAttribute('aria-busy', 'true');
             try {
-                const data = await requestTickets('tickets?' + params, undefined, signal);
+                const data = await requestTickets('tickets?' + params, undefined, signal, scope);
                 if (signal.aborted || !page.isConnected) return;
                 if (offset > 0 && !data.tickets.length) {
                     offset = Math.max(0, offset - pageSize);
                     void refreshQueue();
                     return;
                 }
-                const technician = filters.elements.technician;
-                const selected = technician.value;
-                const choices = data.technicians.map(entry => [entry.id, entry.name]);
-                if (selected && !choices.some(([id]) => String(id) === selected)) {
-                    choices.push([selected, technician.selectedOptions[0].textContent]);
+                if (!employee) {
+                    const technician = filters.elements.technician;
+                    const selected = technician.value;
+                    const choices = data.technicians.map(entry => [entry.id, entry.name]);
+                    if (selected && !choices.some(([id]) => String(id) === selected)) {
+                        choices.push([selected, technician.selectedOptions[0].textContent]);
+                    }
+                    technician.innerHTML = ticketOptions([['', 'All Technicians'], ...choices], selected);
                 }
-                technician.innerHTML = ticketOptions([['', 'All Technicians'], ...choices], selected);
                 counts.innerHTML = statuses.slice(0, 3).map((status, index) => `
                     <button type="button" class="service-desk-workload-card" data-workload-status="${status}" aria-pressed="${status === filters.elements.status.value}">
-                        <span class="service-desk-stat-head">${status}<span aria-hidden="true">${['◫','⚒','Ⅱ'][index]}</span></span>
-                        <strong>${data.workloadCounts[status]}</strong><small>View Matching Tickets →</small>
+                        <span class="service-desk-stat-head">${status}<span aria-hidden="true">${employee
+                            ? `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><use href="#${shortcutIcons[index]}"/></svg>`
+                            : ['◫','⚒','Ⅱ'][index]}</span></span>
+                        <strong>${data.workloadCounts[status]}</strong><small>${employee ? shortcuts[index] : 'View Matching Tickets →'}</small>
                     </button>`).join('');
-                rows.innerHTML = renderTicketRows(data.tickets);
+                rows.innerHTML = renderTicketRows(data.tickets, scope);
                 const first = data.tickets.length ? offset + 1 : 0;
-                count.textContent = `Showing ${first}–${offset + data.tickets.length} of ${data.filteredTotal} Tickets`;
+                const total = Object.values(data.workloadCounts).reduce((sum, value) => sum + value, 0);
+                count.textContent = employee && data.filteredTotal <= pageSize
+                    ? `Showing ${data.tickets.length} of ${total} Tickets`
+                    : `Showing ${first}–${offset + data.tickets.length} of ${data.filteredTotal} Tickets`;
                 pagination.hidden = data.filteredTotal <= pageSize;
                 pagination.querySelector('[data-ticket-page="-1"]').disabled = offset === 0;
                 pagination.querySelector('[data-ticket-page="1"]').disabled = offset + pageSize >= data.filteredTotal;
@@ -121,7 +144,7 @@ window.caffootServiceDesk = (() => {
                 rows.replaceChildren();
                 pagination.hidden = true;
                 count.textContent = error.message;
-                if (error.status === 403) page.querySelector('[data-ticket-create]').hidden = true;
+                if (error.status === 403) page.querySelector('[data-ticket-create],[data-employee-ticket-create]').hidden = true;
             } finally {
                 if (!signal.aborted) page.removeAttribute('aria-busy');
             }
@@ -134,15 +157,16 @@ window.caffootServiceDesk = (() => {
             event.preventDefault();
             changeTicketFilters();
         });
-        function resetTicketFilters() {
-            for (const field of ['search','priority','assignment','technician']) filters.elements[field].value = '';
-            filters.elements.status.value = 'Open';
+        function resetTicketFilters(status = 'Open') {
+            const fields = employee ? ['search','equipment'] : ['search','priority','assignment','technician'];
+            for (const field of fields) filters.elements[field].value = '';
+            filters.elements.status.value = status;
             filters.elements.sort.value = 'newest';
             changeTicketFilters();
         }
         filters.addEventListener('reset', event => {
             event.preventDefault();
-            resetTicketFilters();
+            resetTicketFilters(employee ? '' : 'Open');
         });
         page.addEventListener('change', event => {
             if (event.target.form === filters && event.target.name !== 'search') changeTicketFilters();
@@ -157,17 +181,84 @@ window.caffootServiceDesk = (() => {
             const navigation = event.target.closest('[data-ticket-page]');
             if (shortcut) {
                 filters.elements.status.value = shortcut.dataset.workloadStatus;
-                filters.elements.assignment.value = '';
+                if (!employee) filters.elements.assignment.value = '';
                 changeTicketFilters();
-                page.querySelector('#service-desk-queue').scrollIntoView({block:'start'});
-                filters.elements.status.focus({preventScroll:true});
+                if (!employee) {
+                    page.querySelector('#service-desk-queue').scrollIntoView({block:'start'});
+                    filters.elements.status.focus({preventScroll:true});
+                }
             } else if (navigation) {
                 offset += Number(navigation.dataset.ticketPage) * pageSize;
                 void refreshQueue();
             }
         });
-        queueRefresh = {refresh:refreshQueue, reset:resetTicketFilters};
-        void refreshQueue();
+        if (!employee) {
+            queueRefresh = {refresh:refreshQueue, reset:resetTicketFilters};
+            void refreshQueue();
+            return;
+        }
+        const scopeTabs = [...page.querySelectorAll('[data-ticket-scope]')];
+        const context = page.querySelector('[data-ticket-context]');
+        const caption = page.querySelector('[data-ticket-scope-caption]');
+        const panel = page.querySelector('[role="tabpanel"]');
+        let equipmentRequest;
+        async function selectEmployeeScope(next, focus = false) {
+            if (!page.isConnected) return;
+            scope = next;
+            page.dataset.employeeScope = next;
+            const department = next === 'department';
+            for (const tab of scopeTabs) {
+                const selected = tab.dataset.ticketScope === next;
+                tab.setAttribute('aria-selected', selected);
+                tab.tabIndex = selected ? 0 : -1;
+                if (selected) {
+                    panel.setAttribute('aria-labelledby', tab.id);
+                    if (focus) tab.focus();
+                }
+            }
+            page.querySelector('[data-ticket-list-heading]').textContent = department ? 'Department Ticket List' : 'My Ticket List';
+            caption.textContent = department ? 'Shared Equipment' : 'Personally Assigned Equipment';
+            context.textContent = department ? 'Tickets for equipment shared with your current Department.'
+                : 'Tickets linked to equipment assigned to you, including tickets created by IT Support for it.';
+            counts.replaceChildren();
+            rows.replaceChildren();
+            count.textContent = 'Loading Tickets…';
+            pagination.hidden = true;
+            filters.elements.equipment.innerHTML = ticketOptions([['', 'All Equipment']]);
+            resetTicketFilters();
+            equipmentRequest?.abort();
+            equipmentRequest = new AbortController();
+            const signal = equipmentRequest.signal;
+            try {
+                const result = await requestTickets('equipment', undefined, signal, next);
+                if (signal.aborted || !page.isConnected) return;
+                if (department) {
+                    caption.textContent = result.department ? result.department + ' · Shared Equipment' : 'Shared Equipment';
+                    context.textContent = result.department
+                        ? `Current members of ${result.department} can view permitted conversations for shared equipment, including requests raised by colleagues.`
+                        : 'Your Staff record has no current Department.';
+                }
+                const choices = new Map();
+                for (const item of result.equipment) {
+                    const key = JSON.stringify([item.kind, item.id]);
+                    choices.set(key, item.label.replace(/ · Issue \d+$/, ''));
+                }
+                filters.elements.equipment.innerHTML = ticketOptions([['', 'All Equipment'], ...choices]);
+            } catch (error) {
+                if (!signal.aborted && page.isConnected) context.textContent = error.message;
+            }
+        }
+        for (const tab of scopeTabs) {
+            tab.addEventListener('click', () => void selectEmployeeScope(tab.dataset.ticketScope));
+            tab.addEventListener('keydown', event => {
+                if (!['ArrowLeft','ArrowRight','Home','End'].includes(event.key)) return;
+                event.preventDefault();
+                const index = event.key === 'Home' ? 0 : event.key === 'End' ? 1 : 1 - scopeTabs.indexOf(tab);
+                void selectEmployeeScope(scopeTabs[index].dataset.ticketScope, true);
+            });
+        }
+        employeeQueueRefresh = {refresh:refreshQueue, select:selectEmployeeScope};
+        void selectEmployeeScope(scope);
     }
 
     function renderTicketEquipmentPanel(kind, id) {
@@ -214,8 +305,10 @@ window.caffootServiceDesk = (() => {
         }
     }
 
-    function openTicketWindow(eyebrow, title, subtitle = '') {
-        config.openModal(renderInterfaceTemplate('service-desk/dialog', [eyebrow, escapeHtml(title), escapeHtml(subtitle)]));
+    function openTicketWindow(eyebrow, title, subtitle = '', employee = false) {
+        config.openModal(renderInterfaceTemplate('service-desk/dialog', [
+            eyebrow, escapeHtml(title), escapeHtml(subtitle), employee ? 'My Workspace' : 'Service Desk'
+        ]));
         return document.querySelector('.service-desk-dialog');
     }
 
@@ -229,33 +322,61 @@ window.caffootServiceDesk = (() => {
         return dialog === currentDialog && dialog.root.isConnected;
     }
 
-    async function openCreateTicket() {
-        if (!config.canEdit()) return;
-        const dialog = {root:openTicketWindow('Create Ticket', 'Create Ticket', 'Record a problem, maintenance task or support request.')};
+    async function openCreateTicket(employee = false, linkedEquipment = null) {
+        if (!(employee ? config.canUseEmployee() : config.canEdit())) return;
+        const subtitle = employee ? 'Report a problem with equipment assigned to you or shared with your Department.'
+            : 'Record a problem, maintenance task or support request.';
+        const dialog = {employee, equipment:[], root:openTicketWindow('Create Ticket', 'Create Ticket', subtitle, employee)};
+        dialog.root.classList.toggle('employee-ticket-dialog', employee);
         currentDialog = dialog;
         try {
-            const [{equipment}, {categories}] = await Promise.all([
-                requestTickets('equipment'), requestTickets('categories')
-            ]);
+            const scope = employee ? 'personal' : 'it';
+            const [{equipment}, {categories}, shared] = await Promise.all([requestTickets('equipment', undefined, undefined, scope),
+                requestTickets('categories', undefined, undefined, scope),
+                employee ? requestTickets('equipment', undefined, undefined, 'department') : null]);
             if (!ticketDialogActive(dialog)) return;
-            dialog.equipment = equipment;
-            dialog.root.querySelector('[data-ticket-body]').innerHTML = `<form id="service-desk-create-form" data-ticket-form="create">
+            dialog.equipment = employee ? [
+                ...equipment.map(item => ({...item, scope:'personal', label:item.label + ' · Assigned to Me'})),
+                ...shared.equipment.map(item => ({...item, scope:'department', label:item.label + ' · Shared with ' + shared.department}))
+            ] : equipment;
+            const choices = dialog.equipment;
+            const selected = linkedEquipment ? choices.findIndex(item => item.scope === linkedEquipment.scope
+                && (linkedEquipment.asset ? 'stock-issue-' + item.stockIssueId : item.id) === linkedEquipment.id) : -1;
+            const equipmentField = `<label class="service-desk-field">Device / Asset <span aria-hidden="true">*</span><select name="equipment" required>
+                ${ticketOptions([['','Select a Device / Asset…'], ...choices.map((entry,index) => [index,entry.label])], selected)}</select></label>`;
+            const categoryField = `<label class="service-desk-field">Ticket Category <span aria-hidden="true">*</span><select name="categoryId" required>
+                ${ticketOptions([['','Select a Category…'], ...categories.map(entry => [entry.id, entry.name])])}</select></label>`;
+            const equipmentHelp = choices.length ? '' : `<p>${employee
+                ? 'No equipment is available. Ask IT to check your personal or Department assignment.'
+                : 'No authorised equipment is available. Add or check the equipment record before creating a ticket.'}</p>`;
+            const body = dialog.root.querySelector('[data-ticket-body]');
+            body.innerHTML = `<form id="service-desk-create-form" data-ticket-form="create">
               <div class="device-review-grid"><section class="device-review-panel full">
-              <h3>New Support Ticket</h3><p>All Service Desk tickets are associated with an existing Device or IT Asset.</p>
-              <label class="service-desk-field">Device / Asset <span aria-hidden="true">*</span><select name="equipment" required>
-                ${ticketOptions([['','Select a Device / Asset…'], ...equipment.map((entry,index) => [index,entry.label])])}</select></label>
-              <p>Employee access follows the equipment’s verified assignment.</p>
-              ${equipment.length ? '' : '<p>No authorised equipment is available. Add or check the equipment record before creating a ticket.</p>'}
-              <label class="service-desk-field">Ticket Category <span aria-hidden="true">*</span><select name="categoryId" required>
-                ${ticketOptions([['','Select a Category…'], ...categories.map(entry => [entry.id, entry.name])])}</select></label>
-              <label class="service-desk-field">Subject <span aria-hidden="true">*</span><input name="subject" maxlength="200" required placeholder="Briefly describe the issue"></label>
-              <label class="service-desk-field">Description <span aria-hidden="true">*</span><textarea name="description" maxlength="16000" rows="5" required placeholder="Describe the issue or work required…"></textarea></label>
-              ${ticketFileInput()}
-              <p class="service-desk-info">New tickets start Open · Medium Priority · Unassigned.</p>
+              <h3>${employee ? 'New Support Request' : 'New Support Ticket'}</h3>
+              <p>${employee ? 'Select the affected equipment and describe the problem.' : 'All Service Desk tickets are associated with an existing Device or IT Asset.'}</p>
+              ${employee ? '<div class="employee-ticket-create-fields">' + equipmentField + categoryField + '</div>' + equipmentHelp
+                  : equipmentField + '<p>Employee access follows the equipment’s verified assignment.</p>' + equipmentHelp + categoryField}
+              ${employee ? `<div data-ticket-software-field hidden>
+                  <label class="service-desk-field">Affected Software (Optional)<select name="affectedSoftware" disabled></select></label>
+                  <p data-ticket-software-help aria-live="polite"></p>
+                </div>` : ''}
+              <label class="service-desk-field">Subject <span aria-hidden="true">*</span><input name="subject" maxlength="${employee ? 120 : 200}" required placeholder="Briefly describe the issue"></label>
+              <label class="service-desk-field">Description <span aria-hidden="true">*</span><textarea name="description" maxlength="${employee ? 3000 : 16000}" rows="5" required placeholder="Describe the issue or work required…"></textarea></label>
+              ${ticketFileInput(employee)}
+              <p class="service-desk-info">New tickets start <strong>Open</strong> · <strong>Medium Priority</strong> · <strong>Unassigned</strong>.</p>
               </section></div></form>`;
             dialog.root.querySelector('[data-ticket-footer]').innerHTML = `
               <button type="button" class="btn btn-outline" data-ticket-dismiss>Cancel</button>
-              <button type="submit" class="btn btn-primary" form="service-desk-create-form" ${equipment.length ? '' : 'disabled'}>Create Ticket</button>`;
+              <button type="submit" class="btn btn-primary" form="service-desk-create-form" ${choices.length ? '' : 'disabled'}>Create Ticket</button>`;
+            if (linkedEquipment && selected === -1) showTicketError(dialog, 'This equipment is no longer available for a new ticket.');
+            if (employee) {
+                const form = body.querySelector('form');
+                const softwareCategory = categories.find(entry => entry.name === 'Software / Applications');
+                form.addEventListener('change', event => {
+                    if (['equipment','categoryId'].includes(event.target.name))
+                        void updateTicketSoftware(dialog, form, softwareCategory?.id);
+                });
+            }
         } catch (error) {
             if (ticketDialogActive(dialog)) {
                 dialog.root.querySelector('[data-ticket-body]').replaceChildren();
@@ -264,20 +385,50 @@ window.caffootServiceDesk = (() => {
         }
     }
 
-    async function openTicketDetails(id, source) {
-        const dialog = {id, tab:'Overview', root:openTicketWindow('Ticket Details', ticketNumber(id)), source};
+    async function updateTicketSoftware(dialog, form, categoryId) {
+        dialog.softwareRequest?.abort();
+        const select = form.elements.affectedSoftware;
+        const field = select.closest('[data-ticket-software-field]');
+        const help = field.querySelector('[data-ticket-software-help]');
+        const equipment = form.elements.equipment.value;
+        const item = equipment === '' ? null : dialog.equipment[Number(equipment)];
+        field.hidden = !(item?.kind === 'device' && ['Laptop', 'Desktop'].includes(item.type) &&
+            Number(form.elements.categoryId.value) === categoryId);
+        select.disabled = true;
+        select.innerHTML = ticketOptions([['','Select Software…']]);
+        if (field.hidden) return;
+        dialog.softwareRequest = new AbortController();
+        const signal = dialog.softwareRequest.signal;
+        help.textContent = 'Loading recorded software…';
+        try {
+            const {software} = await requestTickets('software?' + new URLSearchParams({deviceId:item.id}), undefined, signal, item.scope);
+            if (!ticketDialogActive(dialog) || signal.aborted) return;
+            select.innerHTML = ticketOptions([['','Select Software…'], ...software.map(entry => [entry.key, entry.label])]);
+            select.disabled = false;
+            help.textContent = 'Choose software recorded on this Device or Other / Not Listed.';
+        } catch (error) {
+            if (ticketDialogActive(dialog) && !signal.aborted) help.textContent = error.message;
+        }
+    }
+
+    async function openTicketDetails(id, source, scope = 'it') {
+        const employee = scope !== 'it';
+        const dialog = {id, scope, employee, tab:'Overview', root:openTicketWindow('Ticket Details', ticketNumber(id), '', employee), source};
+        dialog.root.classList.toggle('employee-ticket-dialog', employee);
         currentDialog = dialog;
         await refreshTicketDetails(dialog);
     }
 
     async function refreshTicketDetails(dialog) {
         try {
-            const ticket = await requestTickets('tickets/' + dialog.id);
+            const ticket = await requestTickets('tickets/' + dialog.id, undefined, undefined, dialog.scope);
             if (!ticketDialogActive(dialog)) return;
             dialog.ticket = ticket;
             dialog.root.querySelector('h2').textContent = ticketNumber(ticket.id) + ' — ' + ticket.subject;
-            dialog.root.querySelector('[data-ticket-subtitle]').textContent =
-                `${ticket.equipmentLabel || ticket.equipmentId} · Requester: ${ticket.employee || ticket.author} · ${ticket.status} · ${ticket.priority} Priority`;
+            const equipment = ticket.equipmentLabel || ticket.equipmentId;
+            dialog.root.querySelector('[data-ticket-subtitle]').textContent = dialog.employee
+                ? `${equipment} · ${ticket.status} · ${ticket.technician || 'Unassigned'}`
+                : `${equipment} · Requester: ${ticket.employee || ticket.author} · ${ticket.status} · ${ticket.priority} Priority`;
             await showTicketTab(dialog);
         } catch (error) {
             if (ticketDialogActive(dialog)) {
@@ -300,6 +451,7 @@ window.caffootServiceDesk = (() => {
             <dl class="device-review-facts">
               ${ticketFact('Ticket Number', ticketNumber(ticket.id))}${ticketFact('Status', ticket.status)}
               ${ticketFact('Ticket Category', ticket.category, edit('category', 'Ticket Category'))}
+              ${ticket.affectedSoftware ? ticketFact('Affected Software', ticket.affectedSoftware) : ''}
               ${ticketFact('Priority', ticket.priority, edit('priority', 'Priority'))}
               ${ticketFact('Assigned Technician', ticket.technician || 'Unassigned')}${ticketFact('Last Updated', ticketDate(ticket.updatedAt))}
             </dl><div data-ticket-classification></div></section>
@@ -311,26 +463,68 @@ window.caffootServiceDesk = (() => {
           </div>`;
     }
 
-    function ticketFileInput() {
-        return `<label class="service-desk-field">Attachments (Optional)<input name="attachments" type="file" multiple accept="${fileFormats}"></label>
+    function renderEmployeeTicketOverview(ticket, scope, statusDetails) {
+        const notice = ticket.status === 'On Hold' && statusDetails?.reason
+            ? `<section class="device-review-panel full"><h3>On Hold</h3><p>Reason <strong>${escapeHtml(statusDetails.reason)}</strong></p>
+                ${statusDetails.explanation ? `<p class="service-desk-message-text">${escapeHtml(statusDetails.explanation)}</p>` : ''}</section>`
+            : ticket.status === 'Closed' && statusDetails?.body
+                ? `<section class="device-review-panel full"><h3>Resolution Note</h3><p class="service-desk-message-text">${escapeHtml(statusDetails.body)}</p></section>`
+                : '';
+        return `<div class="device-review-grid">
+          <section class="device-review-panel"><h3>Ticket Information</h3><p>Current status and the people involved in your support request.</p>
+            <dl class="device-review-facts">
+              ${ticketFact('Ticket Number', ticketNumber(ticket.id))}${ticketFact('Requester', ticket.employee || ticket.author)}
+              ${ticketFact('Status', ticket.status)}${ticketFact('Priority', ticket.priority)}
+              ${ticketFact('Assigned To', ticket.technician || 'Unassigned')}${ticketFact('Category', ticket.category)}
+              ${ticket.affectedSoftware ? ticketFact('Affected Software', ticket.affectedSoftware) : ''}
+            </dl></section>
+          <section class="device-review-panel"><h3>Linked Equipment</h3><p>Each ticket remains linked to its original Device or IT Asset.</p>
+            <dl class="device-review-facts">${ticketFact('Device / Asset', ticket.equipmentLabel || ticket.equipmentId)}
+              ${ticketFact('Assignment', scope === 'personal' ? 'Assigned to Me' : 'Shared with My Department')}
+              ${ticketFact('Equipment Type', ticket.equipmentType || '—')}${ticketFact('Last Updated', ticketDate(ticket.updatedAt))}
+            </dl></section>
+          <section class="device-review-panel full"><h3>Reported Problem</h3><p class="service-desk-message-text">${escapeHtml(ticket.description)}</p></section>
+          ${notice}</div>`;
+    }
+
+    function ticketFileInput(employee = false) {
+        return `<label class="service-desk-field">${employee ? 'Attachment' : 'Attachments'} (Optional)<input name="attachments" type="file" ${employee ? '' : 'multiple'} accept="${fileFormats}"></label>
           <p>PNG, JPEG, PDF, TXT, DOCX or XLSX. Up to 10 MB per file and 100 MB retained per ticket.</p>`;
     }
 
-    function renderTicketUpdates(ticket, messages, attachments) {
-        const entries = messages.map(message => {
+    function renderTicketUpdates(ticket, messages, attachments, scope) {
+        const employee = scope !== 'it';
+        const conversation = employee ? [
+            {author:ticket.author, kind:'Original Request', body:ticket.description, createdAt:ticket.createdAt}, ...messages
+        ] : messages;
+        const entries = conversation.map(message => {
             const files = attachments.filter(attachment => attachment.messageId === message.id);
+            const label = employee || message.kind === 'Resolution Note' ? ' · ' + message.kind : '';
             return `<article class="service-desk-message">
-              <div class="service-desk-message-head"><div><strong>${escapeHtml(message.author)}${message.kind === 'Resolution Note' ? ' · Resolution Note' : ''}</strong>
+              <div class="service-desk-message-head"><div><strong>${escapeHtml(message.author + label)}</strong>
               <small>${ticketDate(message.createdAt)}${message.editedAt ? ' · Edited (Audited)' : ''}</small></div>
               ${ticket.canEdit && message.editable ? `<button type="button" class="device-review-smallbtn" data-ticket-edit-message="${message.id}">Edit</button>` : ''}</div>
               <p class="service-desk-message-text">${escapeHtml(message.body)}</p>
-              <div class="service-desk-visibility" data-internal="${!message.employeeVisible}">${message.employeeVisible ? '◉ Employee Visible' : '▣ Internal · IT Only'}</div>
+              ${employee ? '' : `<div class="service-desk-visibility" data-internal="${!message.employeeVisible}">${message.employeeVisible ? '◉ Employee Visible' : '▣ Internal · IT Only'}</div>`}
               ${files.length ? `<ul class="service-desk-files">${files.map(file => `<li>
-                <a href="${apiRoot}tickets/${ticket.id}/attachments/${file.id}" download="${escapeHtml(file.filename)}">${escapeHtml(file.filename)}</a>
+                <a href="${apiRoot}${scope}/tickets/${ticket.id}/attachments/${file.id}" download="${escapeHtml(file.filename)}">${escapeHtml(file.filename)}</a>
                 ${ticket.canEdit ? `<button type="button" class="device-review-smallbtn" data-ticket-remove-file="${file.id}" aria-label="Remove ${escapeHtml(file.filename)}">Remove</button>` : ''}
                 </li>`).join('')}</ul>` : ''}
             </article>`;
         }).join('');
+        if (employee) {
+            return `<div class="device-review-grid"><section class="device-review-panel full">
+              <h3>Ticket Conversation</h3><p>Updates shared with you and other currently authorised Department members, where applicable.</p>
+              ${entries}
+              ${ticket.status === 'Closed' ? '<p class="service-desk-info">Select <strong>Reopen Ticket</strong> before sending a reply or adding an attachment.</p>'
+                : `<form data-ticket-form="messages">
+                    <label class="service-desk-field">Reply To IT <span aria-hidden="true">*</span>
+                    <textarea name="body" rows="4" maxlength="3000" required placeholder="Write your message to the IT team…"></textarea></label>
+                    ${ticketFileInput(true)}
+                    <div class="service-desk-form-actions"><button type="submit" class="btn btn-primary">Send Reply</button></div>
+                  </form>`}
+              </section></div>`;
+        }
         return `<div class="device-review-grid">
           <section class="device-review-panel full"><h3>Ticket Updates</h3><p>Chronological employee replies and technician notes, with permitted visibility.</p>
             ${entries || '<p>No updates have been added to this ticket yet.</p>'}</section>
@@ -347,14 +541,16 @@ window.caffootServiceDesk = (() => {
     function ticketHistoryText(event) {
         const details = event.details;
         switch (event.kind) {
-            case 'Created': return 'Created the ticket as Open, Medium and Unassigned.';
+            case 'Created': return 'Created the ticket as Open, Medium and Unassigned.'
+                + (details.affectedSoftware ? ' Affected software was ' + details.affectedSoftware + '.' : '');
             case 'Status Changed':
                 return `Changed status from ${details.before} to ${details.status}.${details.reason ? ' Reason: ' + details.reason + '.' : ''}${details.explanation ? ' Explanation: ' + details.explanation : ''}`;
             case 'Assignment Changed':
                 return details.previousTechnician ? `Reassigned the ticket from ${details.previousTechnician} to ${details.technician}. Reason (IT Only): ${details.reason}.${details.explanation ? ' Explanation: ' + details.explanation : ''}`
                     : `Assigned the ticket to ${details.technician}.`;
             case 'Priority Changed': return `Changed priority from ${details.before} to ${details.priority}.`;
-            case 'Category Changed': return `Changed category from ${details.previousCategory} to ${details.category}.`;
+            case 'Category Changed': return `Changed category from ${details.previousCategory} to ${details.category}.`
+                + (details.previousAffectedSoftware ? ' Affected software was ' + details.previousAffectedSoftware + '.' : '');
             case 'Closed': return 'Closed the ticket with an employee-visible Resolution Note.';
             case 'Reopened': return 'Reopened the ticket as Open and retained its previous assignee and closure history.';
             case 'Message Added': return 'Added a ticket update.';
@@ -365,9 +561,10 @@ window.caffootServiceDesk = (() => {
         }
     }
 
-    function renderTicketHistory(history) {
+    function renderTicketHistory(history, employee) {
         return `<div class="device-review-grid"><section class="device-review-panel full"><h3>Ticket History</h3>
-          <p>Audit of ticket lifecycle changes, including technician attribution and timestamps.</p>
+          <p>${employee ? 'See who raised the ticket and when its status or other details changed.'
+            : 'Audit of ticket lifecycle changes, including technician attribution and timestamps.'}</p>
           <ol class="service-desk-timeline">${history.map(event => `<li><strong>${escapeHtml(event.author)}</strong> ${escapeHtml(ticketHistoryText(event))}
           <small>${ticketDate(event.at)}</small></li>`).join('')}</ol></section></div>`;
     }
@@ -392,13 +589,17 @@ window.caffootServiceDesk = (() => {
           id="ticket-tab-${name.toLowerCase()}" aria-controls="service-desk-tab-panel" data-ticket-tab="${name}"
           tabindex="${name === tab ? 0 : -1}" aria-selected="${name === tab}">${name}</button>`).join('');
         if (focusTab) nav.querySelector('[aria-selected="true"]').focus();
-        root.querySelector('[data-ticket-footer]').innerHTML = '<button type="button" class="btn btn-outline" data-ticket-dismiss>Close</button>'
-          + ticketActions(ticket).map(([action, label]) => `<button type="button" class="btn ${action === 'close' ? 'btn-primary' : 'btn-outline'}" data-ticket-start="${action}">${label}</button>`).join('');
+        const close = `<button type="button" class="btn btn-outline" data-ticket-dismiss>${dialog.employee ? 'Close Window' : 'Close'}</button>`;
+        const employeeAction = ticket.status === 'Closed'
+            ? '<form id="reopen-employee-ticket" data-ticket-form="reopen"></form><button type="submit" form="reopen-employee-ticket" class="btn btn-primary">Reopen Ticket</button>'
+            : tab !== 'Updates' ? '<button type="button" class="btn btn-primary" data-ticket-reply>Reply To IT</button>' : '';
+        root.querySelector('[data-ticket-footer]').innerHTML = close + (dialog.employee ? employeeAction
+            : ticketActions(ticket).map(([action, label]) => `<button type="button" class="btn ${action === 'close' ? 'btn-primary' : 'btn-outline'}" data-ticket-start="${action}">${label}</button>`).join(''));
         body.id = 'service-desk-tab-panel';
         body.setAttribute('role', 'tabpanel');
         body.setAttribute('aria-labelledby', 'ticket-tab-' + tab.toLowerCase());
         body.scrollTop = 0;
-        if (tab === 'Overview') {
+        if (tab === 'Overview' && !dialog.employee) {
             body.innerHTML = renderTicketOverview(ticket);
             return;
         }
@@ -406,10 +607,25 @@ window.caffootServiceDesk = (() => {
         const load = Symbol();
         dialog.tabLoad = load;
         try {
-            const data = await requestTickets(`tickets/${dialog.id}/${tab === 'Updates' ? 'messages' : 'history'}`);
+            const path = 'tickets/' + dialog.id + '/';
+            if (tab === 'Overview') {
+                let statusDetails;
+                if (ticket.status === 'On Hold') {
+                    const {history} = await requestTickets(path + 'history', undefined, undefined, dialog.scope);
+                    statusDetails = history.findLast(event => event.kind === 'Status Changed' && event.details.status === 'On Hold')?.details;
+                } else if (ticket.status === 'Closed') {
+                    const {messages} = await requestTickets(path + 'messages', undefined, undefined, dialog.scope);
+                    statusDetails = messages.findLast(message => message.kind === 'Resolution Note');
+                }
+                if (ticketDialogActive(dialog) && tab === dialog.tab && load === dialog.tabLoad && !dialog.action)
+                    body.innerHTML = renderEmployeeTicketOverview(ticket, dialog.scope, statusDetails);
+                return;
+            }
+            const data = await requestTickets(path + (tab === 'Updates' ? 'messages' : 'history'), undefined, undefined, dialog.scope);
             if (!ticketDialogActive(dialog) || tab !== dialog.tab || load !== dialog.tabLoad || dialog.action) return;
             if (tab === 'Updates') dialog.updates = data;
-            body.innerHTML = tab === 'Updates' ? renderTicketUpdates(ticket, data.messages, data.attachments) : renderTicketHistory(data.history);
+            body.innerHTML = tab === 'Updates' ? renderTicketUpdates(ticket, data.messages, data.attachments, dialog.scope)
+                : renderTicketHistory(data.history, dialog.employee);
         } catch (error) {
             if (ticketDialogActive(dialog) && dialog.tab === tab && load === dialog.tabLoad && !dialog.action) {
                 body.replaceChildren();
@@ -544,11 +760,15 @@ window.caffootServiceDesk = (() => {
         showTicketError(dialog);
         try {
             let path = 'tickets', payload = {};
+            let scope = dialog.scope || 'it';
             if (action === 'create') {
-                const selected = dialog.equipment[Number(data.get('equipment'))];
+                const selected = data.get('equipment') === '' ? null : dialog.equipment[Number(data.get('equipment'))];
+                if (!selected) throw new Error('Select a Device or IT Asset.');
+                if (dialog.employee) scope = selected.scope;
                 payload = {equipmentId:selected.id, equipmentKind:selected.kind, categoryId:Number(data.get('categoryId')),
                     subject:data.get('subject'), description:data.get('description'), ...await ticketAttachmentPayload(form.elements.attachments)};
                 if (selected.stockIssueId) payload.stockIssueId = selected.stockIssueId;
+                if (dialog.employee && data.get('affectedSoftware')) payload.affectedSoftware = data.get('affectedSoftware');
             } else {
                 path += '/' + dialog.id + '/';
                 const subresource = action === 'edit-message' ? 'messages/' + dialog.action.id
@@ -560,24 +780,25 @@ window.caffootServiceDesk = (() => {
                         : key === 'employeeVisible' ? true : value;
                 }
                 if (action === 'messages') Object.assign(payload, await ticketAttachmentPayload(form.elements.attachments));
-                else if (action !== 'edit-message' && action !== 'remove-file') payload.expectedUpdatedAt = dialog.ticket.updatedAt;
+                else if (!dialog.employee && action !== 'edit-message' && action !== 'remove-file') payload.expectedUpdatedAt = dialog.ticket.updatedAt;
             }
-            const result = await requestTickets(path, payload);
+            const result = await requestTickets(path, payload, undefined, scope);
             dialog.root.dataset.saving = 'false';
             if (!ticketDialogActive(dialog)) return;
             if (action === 'create') {
-                queueRefresh?.reset();
+                if (dialog.employee) void employeeQueueRefresh?.select(scope);
+                else queueRefresh?.reset();
                 config.closeModal();
                 config.notify(ticketNumber(result.id) + ' created.', 'success');
                 return;
             }
-            void queueRefresh?.refresh();
+            void (dialog.employee ? employeeQueueRefresh : queueRefresh)?.refresh();
             dialog.source?.dispatchEvent(new Event('ticket-refresh'));
             await refreshTicketDetails(dialog);
-            config.notify('Ticket updated.', 'success');
+            config.notify(dialog.employee ? (action === 'reopen' ? 'Ticket reopened.' : 'Reply sent.') : 'Ticket updated.', 'success');
         } catch (error) {
             if (ticketDialogActive(dialog)) {
-                if (error.status === 409 || error.status === 403 || error.status === 404) await refreshTicketDetails(dialog);
+                if (dialog.id && [409,403,404].includes(error.status)) await refreshTicketDetails(dialog);
                 showTicketError(dialog, error.message);
             }
         } finally {
@@ -590,11 +811,19 @@ window.caffootServiceDesk = (() => {
         const trigger = event.target.closest('button');
         if (!trigger || !config) return;
         if (trigger.matches('[data-ticket-create]')) return void openCreateTicket();
+        if (trigger.matches('[data-employee-ticket-create]')) return void openCreateTicket(true);
+        if (trigger.matches('[data-ticket-report-equipment]')) return void openCreateTicket(true, {
+            id:trigger.dataset.ticketReportEquipment, scope:trigger.dataset.equipmentScope, asset:trigger.hasAttribute('data-ticket-report-asset')
+        });
         if (trigger.matches('[data-ticket-open]')) return void openTicketDetails(Number(trigger.dataset.ticketOpen),
-            trigger.closest('[data-ticket-equipment-kind]'));
+            trigger.closest('[data-ticket-equipment-kind]'), trigger.closest('[data-employee-scope]')?.dataset.employeeScope);
         const dialog = currentDialog;
         if (!dialog || !dialog.root.contains(trigger) || dialog.root.dataset.saving === 'true') return;
         if (trigger.matches('[data-ticket-dismiss]')) config.closeModal();
+        else if (trigger.matches('[data-ticket-reply]')) {
+            dialog.tab = 'Updates';
+            void showTicketTab(dialog, true);
+        }
         else if (trigger.matches('[data-ticket-tab]')) {
             dialog.tab = trigger.dataset.ticketTab;
             void showTicketTab(dialog, true);
@@ -629,6 +858,7 @@ window.caffootServiceDesk = (() => {
 
     function closeTicketDialog(restoreSource) {
         const source = currentDialog?.source;
+        currentDialog?.softwareRequest?.abort();
         currentDialog = null;
         if (restoreSource && source?.dataset.ticketEquipmentKind === 'device') {
             config.restoreDevice(source.dataset.ticketEquipmentId, source.dataset.ticketEquipmentOffset);
@@ -640,7 +870,9 @@ window.caffootServiceDesk = (() => {
     return {
         configure: options => { config = options; },
         canRead: () => !!config?.canRead(),
+        canUseEmployee: () => !!config?.canUseEmployee(),
         render: renderTicketQueue,
+        renderEmployee: renderEmployeeTicketQueue,
         hydrateQueue: hydrateTicketQueue,
         equipmentPanel: renderTicketEquipmentPanel,
         hydrateEquipment: hydrateTicketEquipment,

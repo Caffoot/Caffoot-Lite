@@ -1,6 +1,6 @@
 # Service Desk Foundation
 
-Batch 5.1 introduces one equipment-linked ticket model in schema 25 and applies the approved employee and technician access rules at the HTTPS boundary. Batch 5.2 connects the foundation to the **IT → Service Desk** queue, ticket details and file workflows. Employee screens, reporting, category administration, templates and notifications have their own later batches. [Batch 5.1](https://github.com/Caffoot/Caffoot-Lite/issues/420)
+Batch 5.1 introduced the equipment-linked ticket model in schema 25 and applied employee and technician access rules at the HTTPS boundary. Batch 5.2 connected the foundation to **IT → Service Desk**. Batch 5.3 adds **My Tickets** and **Department Tickets** and uses schema 26 to store the optional affected application. [Foundation](https://github.com/Caffoot/Caffoot-Lite/issues/420) · [Employee ticket specification](https://github.com/Caffoot/Caffoot-Lite/issues/422)
 
 ## Storage And Transactions
 
@@ -26,7 +26,15 @@ The scoped equipment endpoint provides canonical choices for authorised creation
 
 Ticket creation and new IT updates accept an optional `attachments` list of filenames and base64 file contents. Original report files use a message in the verified employee audience. Files on subsequent updates inherit the message’s employee-visible flag, which defaults to internal for IT. The HTTP handler checks the session, origin, CSRF and current permission before reading a large request and checks permission again under the write lock. Validation checks names, decoded bytes and actual file structures. ZIP-based Office files are checked for the expected package and document type and bounded expansion. Attachments remain SQLite blobs. The message, files and event commit together, and the retained byte sum is checked under that lock.
 
-Attachment access checks the ticket and its parent message before returning a non-cacheable, forced download. Removal uses the same edit scope and creates an attributed event with its parent message’s visibility. A removed file ID stays expired for that ticket when a new upload arrives. Ticket relations, attachment storage and Clean Start continue to use schema 25. [HTTP handler](../../backend/server.py) · [Ticket operations](../../backend/service_desk.py) · [Content checks and retained quota](../../backend/service_desk_attachments.py)
+Attachment access checks the ticket and its parent message before returning a non-cacheable, forced download. Removal uses the same edit scope and creates an attributed event with its parent message’s visibility. A removed file ID stays expired for that ticket when a new upload arrives. [HTTP handler](../../backend/server.py) · [Ticket operations](../../backend/service_desk.py) · [Content checks and retained quota](../../backend/service_desk_attachments.py)
+
+## Employee Tickets
+
+The application mounts frozen Design 02 in the shared shell. The queue and details requests use the personal or Department scope. An equipment list, filtered total, status shortcut and download each apply that scope on the server. The seven-column projection shows equipment names, the requester and their technician assignment. The employee dialogue uses the same ticket window and only requests employee-visible updates and history.
+
+The scoped equipment picker returns current canonical Devices and outstanding stock issues. **Report A Problem** uses the same form with a choice preselected. Each submission validates the equipment, enabled feature, current identity, Department membership and exact stock issue inside the ticket transaction. The server stores files on the initial report or reply using the existing validation and quota. It checks Closed status again under the write lock. Any current authorised employee may explicitly reopen a visible Closed ticket, including one raised by IT. The reopen links to the existing closure event and preserves the assignee and ticket number.
+
+The scoped software picker checks the Device assignment before reading installed application flags. The built-in source and legacy labels are shared with Device Details. The server accepts a recorded application key or **Other / Not Listed** on Software / Applications tickets for Laptops and Desktops. It stores the selected label alongside the ticket and in the creation event. An incompatible IT category correction clears the current field and writes the previous category and software to the attributed category event in the same transaction. Existing ticket rows receive an empty field when migrating to schema 26. [Software choice reader](../../backend/ticket_software.py) · [Application evidence](../development-handovers/evidence/employee-service-desk/README.md)
 
 ## Inventory Replacement And Clean Start
 

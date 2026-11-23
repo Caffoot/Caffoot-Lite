@@ -1,6 +1,18 @@
 # Milestone 01 Development Handover — v2.2 Target
 
-## IT Service Desk Development — 23 November 2026
+## Employee Service Desk Development — 23 November 2026
+
+Batch 5.3 started from `milestone-1` at `d477256bd5ac12aa8f485deda7fa3b9d3fc69172`, after owner acceptance and merge of the Service Desk foundation and technician queue. The employee screens are in [PR #439](https://github.com/Caffoot/Caffoot-Lite/pull/439) for review. [Owner authorisation](https://github.com/Caffoot/Caffoot-Lite/issues/422#issuecomment-7101297069)
+
+**My Tickets** and **Department Tickets** use the current verified equipment assignment to govern every read and write. The shared modal provides employee-safe Overview, Updates and History, and **Report A Problem** in My Equipment opens the same Create Ticket form with the item selected. The schema 26 upgrade adds only the optional affected software label. Current authorised employees can reopen eligible Closed tickets while retaining the ticket identity, technician and closure history. [Employee instructions](../how-tos/features-and-instructions/v2.2-draft/Service-Desk-Tickets.md) · [Administrator guidance](../how-tos/features-and-instructions/v2.2-draft/Service-Desk-Administration.md)
+
+The backend checkpoint is `c368eb4d8ba2ac1dc4c84b15b8ee01dd0dad9ef2`. The employee workspace checkpoint is `c0d18483649640dd760fc37a2b39a86753211e12`. The mobile navigation and original capture source is `86ad4c5c994190aceb4bcbe1b15973e1fc814fb5`. The verification record includes 64 focused Python tests, the live employee and technician Chromium journeys and the local Docker packaging and schema smoke check. [Original feature checks](evidence/employee-service-desk/README.md#original-feature-checks)
+
+The owner approved moving **My Equipment**, then **My Tickets**, directly beneath **Workspace** and above the departmental groups. The corrected sidebar was checked in expanded and collapsed desktop layouts and on mobile. [Owner decision](https://github.com/Caffoot/Caffoot-Lite/pull/439#issuecomment-7102788616) · [Refreshed screenshots and focused checks](evidence/employee-service-desk/README.md#navigation-correction-checks)
+
+Final-head hosted CI, independent product-owner visual acceptance and separate merge approval are outstanding. Broader native checks, full milestone upgrade and restore, and publication retain their separate gates. Batches 5.4–5.6 and Stage 6 await separate development authorisation.
+
+## Historical IT Service Desk Development — 23 November 2026
 
 [PR #438](https://github.com/Caffoot/Caffoot-Lite/pull/438) targets `milestone-1` at `d2b7ead0027ba3579ea96c865a3a4b6cb63037a2`, using the integrated schema 25 foundation. The application includes authorised Current Workload and Ticket Queue views, Create Ticket, the Overview, Updates and History dialogue, technician actions, attachment handling and Device and IT Asset links. The [approved classification controls](https://github.com/Caffoot/Caffoot-Lite/issues/421#issuecomment-7095991698) are inside Ticket Information. Period-based reporting remains with Batch 5.4.
 

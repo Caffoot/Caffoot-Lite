@@ -124,3 +124,37 @@ def ticket_equipment_for_creation(connection, actor_id, scope, kind, equipment_i
     if employee_id is None and scope != 'it':
         employee_id = staff[0]
     return column, assignment_id, issue_id, movement_id, employee_id
+
+
+def employee_ticket_equipment(connection, actor_id, scope):
+    """List only current equipment for this personal or Department audience."""
+    ticket_scope_filter(connection, actor_id, scope)
+    staff = linked_ticket_staff(connection, actor_id)
+    if not staff or (scope == 'department' and staff[1] is None):
+        return {'equipment': [], 'department': None}
+    recipient = 'staff_id' if scope == 'personal' else 'department_id'
+    identity = staff[0] if scope == 'personal' else staff[1]
+    choices = []
+    department = None
+    if scope == 'department':
+        department = connection.execute('SELECT name FROM departments WHERE id=?', (identity,)).fetchone()
+    if feature_enabled(connection, 'Devices'):
+        choices.extend(
+            {'kind': 'device', 'id': device_id, 'label': label, 'type': device_type or ''}
+            for device_id, label, device_type in connection.execute(f"""
+                SELECT d.id,d.name,json_extract(d.record_json,'$.type')
+                FROM device_assignments a JOIN inventory_devices d ON d.id=a.device_id
+                WHERE a.ended_at IS NULL AND a.{recipient}=?
+            """, (identity,))
+        )
+    if feature_enabled(connection, 'IT Assets'):
+        for issue in stock_issue_records(connection, **{recipient: identity}):
+            if issue['outstanding'] <= 0 or issue['deviceAssignmentId'] is not None:
+                continue
+            unit = issue['stockUnitId']
+            specification = issue['specification']
+            choices.append({'kind': 'stockUnit' if unit else 'stockItem',
+                            'id': unit or issue['stockItemId'], 'stockIssueId': issue['id'],
+                            'label': f"{issue['name']} · Issue {issue['id']}", 'type': specification.get('category', '')})
+    return {'equipment': sorted(choices, key=lambda choice: (choice['label'].casefold(), choice['id'])),
+            'department': department[0] if department else None}

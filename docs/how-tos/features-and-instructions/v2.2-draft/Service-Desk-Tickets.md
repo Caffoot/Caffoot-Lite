@@ -1,17 +1,57 @@
 # Service Desk Tickets
 
-> **Draft v2.2 — Unreleased.** Use **IT → Service Desk** to handle support requests if you have technician access. Staff without technician access can check their equipment in **My Equipment** and contact their organisation’s IT team. The employee ticket screens are planned for a later batch.
+> **Draft v2.2 — Unreleased.** Use **My Tickets** to raise and follow requests for equipment assigned to you or your Department. Technicians use **IT → Service Desk**. For technician steps, go to [Find Tickets In The IT Queue](#find-tickets-in-the-it-queue).
 
 ## Check Which Equipment Is Assigned To You
 
 A service ticket records a problem or a piece of support work on an existing Device or IT Asset. A laptop might be assigned directly to you, while a shared printer might be assigned to your Department.
 
-1. Sign in with the account linked to your Staff Member record. Complete any MFA that your account requires.
+1. Sign in with the account linked to your active Staff Member record. Complete any multi-factor authentication (MFA) that your account requires. An enabled Devices or IT Assets feature is needed for the corresponding equipment. [Access and feature checks](Service-Desk-Administration.md#verify-employee-access)
 2. Open **My Equipment**. Check **Assigned to Me** for your own equipment and **Shared with My Department** for equipment held by your current Department.
 3. Check that the item in the list is the one you use. If it is missing, ask IT to check its assignment, your Staff account link and your Department membership. IT can arrange a genuine assignment if appropriate.
-4. Follow your organisation’s existing procedure for contacting IT. Include the equipment name and a short description of the problem.
+4. Choose **Report A Problem** on the equipment row, or open **My Tickets → Create Ticket** and select the equipment there. Both open the same form. If you started in **My Equipment**, check the preselected item.
 
 For examples of directly assigned and shared equipment, see [Device Assignments And My Equipment](Device-Assignments-and-My-Equipment.md) and [Departments And Shared Equipment](Departments-and-Shared-Equipment.md).
+
+## Raise A Support Request
+
+1. Select the affected **Device / Asset**. The choices identify equipment assigned to you and equipment shared with your current Department. If you have several issues of the same IT Asset, check the issue shown in the picker. Ask IT to check your assignment if the correct equipment is missing.
+2. Select one **Ticket Category**. It starts empty. Choose **Other / Not Listed** if the list has no suitable category. **LAN / Shared Drive Issues**, **Email / Sending & Receiving Issues** and **Other / Not Listed** are at the end.
+3. If you choose **Software / Applications** for a Laptop or Desktop, **Affected Software (Optional)** appears. Select an application recorded on that Device, choose **Other / Not Listed** for an unlisted application, or leave it blank. You can name an unlisted application in the description. This selection is saved with the ticket.
+4. Enter a **Subject** of up to 120 characters, such as *Teams calls drop after waking*. In **Description**, use up to 3,000 characters to explain what you expected, what actually happened and which steps bring the problem back.
+5. Use **Attachment (Optional)** if a file will help IT. The form accepts PNG, JPG/JPEG, PDF, TXT, DOCX or XLSX. Each file can be up to **10 MB**, with **100 MB retained across the ticket**. For shared equipment, current Department members with access to the ticket can read the original report and download its attachment.
+6. Select **Create Ticket**. The confirmation gives you a ticket number such as `SD-0006`. The ticket starts **Open**, **Medium** priority and **Unassigned**. Look in **My Tickets** for personal equipment or **Department Tickets** for shared equipment. **Cancel** or **Close Ticket Window** discards the form.
+
+If the form reports a problem, correct the highlighted or named field and submit again. If the file is rejected, use the correct file format or remove it. If a Device, assignment or software choice changed while you had the form open, reopen the form to load its current choices. A failed save leaves the ticket and its attachment unsaved.
+
+![Create Ticket showing a Laptop and Microsoft Teams selected under Affected Software.](../../../development-handovers/evidence/employee-service-desk/create-ticket-desktop-light.png)
+
+*The optional software picker uses the selected computer’s recorded applications.* [Capture details](../../../development-handovers/evidence/employee-service-desk/README.md)
+
+## Find And Review Your Tickets
+
+1. Select **My Tickets** directly below **My Equipment** at the top of the sidebar. The **My Tickets** tab shows tickets for your current personal equipment assignments. Switch to **Department Tickets** for equipment shared with your current Department. A shared-equipment ticket stays in the Department tab, including when you raised it yourself.
+2. Each tab starts with **Open** selected. Choose **Open**, **In Progress** or **On Hold** in **Current Tickets** to change the status filter. The cards show totals for the selected tab even when a search or equipment filter narrows the list. Choose **Closed** or **All Tickets** from **Ticket Status** for other views.
+3. In **Search Tickets**, enter a ticket number, subject, requester or equipment name. Choose an item under **Device / Asset** to narrow the list. **Clear Filters** clears both fields, shows **All Tickets** and resets **Sort By** to **Updated · Newest**.
+4. Use **Sort By** to choose the newest or oldest update first, or the highest ticket number first. Use **Previous** and **Next** when there are multiple pages. If the table is wider than your screen, scroll it sideways to reach **Actions**.
+5. Select a ticket number or **Open**. **Overview** shows the reported problem, equipment, requester, status, category, priority and technician. It also shows the affected software if recorded, the reason for an On Hold ticket and the resolution note for a Closed ticket. **Updates** shows the conversation and permitted files. **History** shows the people and dates behind the employee-visible changes. Select **Close Window** to return to the list.
+
+![Department Tickets in Purchasing showing the status cards and the seven-column ticket list.](../../../development-handovers/evidence/employee-service-desk/department-tickets-desktop-light.png)
+
+*Department Tickets shows requests for Purchasing’s current shared equipment.* [Capture details](../../../development-handovers/evidence/employee-service-desk/README.md)
+
+## Reply To IT Or Reopen A Ticket
+
+1. Open **Ticket Details → Updates**, or choose **Reply To IT** from **Overview** or **History** on an active ticket.
+2. Enter your reply under **Reply To IT**. Write up to 3,000 characters. For example, *The printer still leaves a grey mark after replacing the toner*. Add a permitted file using **Attachment (Optional)** if it helps. Select **Send Reply** to add the message to the conversation.
+3. Choose an attachment’s filename in **Updates** to download it. A link can stop working if the file is removed, you leave the Department or the equipment changes hands.
+4. If the ticket is **Closed** and the issue returns, select **Reopen Ticket** in the details footer before replying or adding a file. Any employee who can currently access the ticket through the applicable personal or Department assignment can do this, including for a colleague’s or IT’s ticket. It returns to **Open** with the same ticket number and technician. Previous replies, resolution notes and closure history stay with it.
+
+For Department tickets, other authorised current members can read your replies and download their attachments. Employee replies are shared with the ticket’s audience. If **Send Reply** is rejected because the ticket has since closed, review its current details and reopen it before retrying. If a file is rejected, choose a valid file or send the reply without it.
+
+![Ticket Conversation with a shared technician reply and an employee Reply To IT field.](../../../development-handovers/evidence/employee-service-desk/ticket-updates-desktop-light.png)
+
+*Updates shows the shared conversation and the reply form for an active ticket.* [Capture details](../../../development-handovers/evidence/employee-service-desk/README.md)
 
 ## Who Can See A Ticket?
 
@@ -36,14 +76,14 @@ A ticket begins **Open**, with **Medium** priority and **Unassigned** technician
 | **On Hold** | IT has recorded why work is paused. The employee-visible reason may help you understand what is needed. |
 | **Closed** | IT has recorded a resolution note. Each closure is kept with its own date and technician. |
 
-The reply facility uses the current ticket's audience. For a Department ticket, write replies with your current Department colleagues as well as IT in mind. A Closed ticket must be reopened before adding a new employee reply. The employee who raised it can reopen it while they still have access. An authorised technician can also reopen it.
-
 ## When Equipment Or A Ticket Is Missing
 
 - **The equipment is missing from My Equipment.** Ask IT to check the genuine equipment assignment and confirm which Staff Member and Department are linked to your account. A disabled equipment feature can temporarily hide its records.
 - **A colleague can see a shared ticket that you cannot.** Ask IT to check your current Department membership and the equipment's assignment. The ticket may belong to a previous equipment assignment.
 - **An attachment is unavailable.** A download follows the visibility of its message and your current access to the ticket. Ask IT to check the conversation if you still need the file.
 - **The equipment was returned or moved.** Earlier conversations stay available to authorised IT. A new problem under an eligible new assignment can have its own ticket.
+- **A ticket you expect is missing from the list.** Check the two tabs and select **Clear Filters**. Open is the default status. If it is still missing, ask IT to check the equipment’s assignment history.
+- **Affected Software is missing or an application is unavailable.** The field appears for Software / Applications on a Laptop or Desktop. It uses the Device’s recorded applications. You can choose **Other / Not Listed** or leave the field blank.
 
 ## Find Tickets In The IT Queue
 
@@ -80,7 +120,7 @@ If the equipment disappears or the category is unavailable, reopen the form and 
 
 1. Open a ticket. **Overview** shows its status, category, priority, technician, linked equipment, requester and original problem.
 2. With **Service Desk Edit**, choose **Edit** beside **Ticket Category** or **Priority** in **Ticket Information**. Select an available category or **Low**, **Medium** or **High**.
-3. Choose **Save** to record the correction in **History**. **Cancel** leaves the saved classification in place.
+3. Choose **Save** to record the correction in **History**. **Cancel** leaves the saved classification in place. Changing a software ticket to a category where its software selection does not apply clears the current **Affected Software** field. The original category and software label remain in the attributed history.
 4. Open **Updates** for the conversation and **History** for attributed changes. Use **Close** or Escape to dismiss the details window.
 
 If a colleague changes the ticket while a technician action is open, the application reloads the current details and shows a conflict message. Review the latest status or classification before trying again.
