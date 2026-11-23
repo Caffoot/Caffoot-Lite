@@ -187,8 +187,9 @@ async function run(){
     buttons.map(button=>[button.dataset.tab,button.querySelector('.nav-text').textContent.trim()])), [
       ['dashboard','IT'],['devices','Devices'],['it-assets','IT Assets'],['ipam','IPAM'],['racks','Network Racks'],
       ['service-desk','Service Desk'],['staff','Staff Members'],['departments','Departments'],['users','Permissions'],
-      ['purchasing','Purchasing'],['suppliers','Suppliers'],['audit','Audit Trail'],['equipment','My Equipment'],['settings','Settings & Data']
-    ], 'The shared sidebar must contain exactly the fourteen approved navigation destinations');
+      ['purchasing','Purchasing'],['suppliers','Suppliers'],['audit','Audit Trail'],['equipment','My Equipment'],
+      ['my-tickets','My Tickets'],['settings','Settings & Data']
+    ], 'The shared sidebar must contain each approved navigation destination exactly once');
   assert.equal(await page.locator('#sidebar [data-tab="suppliers"]').isVisible(),false,
     'Default-off Suppliers must remain hidden until the feature and access are enabled');
   assert.deepEqual(await page.locator('#nav-group-it .nav-item[data-tab] .nav-text').allTextContents(),
@@ -609,8 +610,8 @@ async function run(){
   assert.equal(await page.locator('#profile-username').getAttribute('readonly'),'',
     'Username is never editable in personal details');
   assert.equal(await page.locator('.account-screen .subnav [data-section="overview"]').getAttribute('aria-selected'),'true');
-  assert.ok(await page.locator('.account-screen .future-compact').count()===2,
-    'My Devices and My Tickets remain plainly marked Planned');
+  assert.deepEqual(await page.locator('.account-screen .future-compact h3').allTextContents(), ['My Devices'],
+    'The approved My Tickets shortcut replaces its planned feature card');
   await page.locator('[data-action="select-account-section"][data-section="security"]').first().click();
   await page.locator('#next-account-password-form').waitFor();
   assert.ok(await page.getByText('Security At A Glance',{exact:true}).isVisible());

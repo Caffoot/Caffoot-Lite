@@ -218,6 +218,8 @@ class ServiceDeskHttpTests(unittest.TestCase):
         self.assertEqual(result['workloadCounts']['Open'], 4)
         self.assertEqual(self.request(self.ticket_path('personal', '?assignment=mine'), actor=4)[0], 400)
         self.assertEqual(self.request(self.ticket_path('personal', '?sort=invalid'), actor=4)[0], 400)
+        self.assertEqual(self.save('it', other, 'close', {'resolutionNote': 'Checked'})[0], 200)
+        self.assertEqual(self.save('personal', other, 'reopen', {}, actor=4)[0], 200)
         with sqlite3.connect(self.path) as connection:
             connection.execute("UPDATE organisation_features SET enabled=0 WHERE feature='devices'")
         self.assertEqual(self.request(equipment, actor=4)[1]['equipment'], [])
@@ -710,11 +712,16 @@ class ServiceDeskHttpTests(unittest.TestCase):
             asset = receive_stock(connection, 1, self.tokens[1], receipt)['stockItemId']
             unit = stock_item(connection, asset)['units'][0]['id']
             issue_stock(connection, 1, self.tokens[1], issue_payload(connection, asset, stockUnitIds=[unit]))
+            issue_id = stock_issue_records(connection)[0]['id']
+        equipment = SERVICE_DESK + '/personal/equipment'
+        choice, = self.request(equipment, actor=4)[1]['equipment']
+        self.assertEqual((choice['kind'], choice['id'], choice['stockIssueId']), ('stockUnit', unit, issue_id))
+        self.assertEqual(self.request(equipment, actor=5)[1]['equipment'], [])
         for equipment_kind, equipment_id in (('stockUnit', registered), ('stockItem', asset)):
             self.assertEqual(self.request(self.ticket_path('it'), method='POST',
                 payload=dict(CREATE, equipmentKind=equipment_kind, equipmentId=equipment_id))[0], 404)
         device_ticket = self.create('it', actor=1)
-        asset_ticket = self.create(equipmentKind='stockUnit', equipmentId=unit)
+        asset_ticket = self.create(equipmentKind='stockUnit', equipmentId=unit, stockIssueId=issue_id)
         with sqlite3.connect(self.path) as connection:
             self.assertEqual(connection.execute("""SELECT device_id,stock_unit_id,stock_item_id
                 FROM service_desk_tickets ORDER BY id""").fetchall(), [('device', None, None), (None, unit, None)])

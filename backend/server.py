@@ -946,8 +946,10 @@ class Handler(BaseHTTPRequestHandler):
                             raise FileExistsError('Reopen the ticket before adding an employee-visible reply.')
                     else:
                         ticket_scope_filter(connection, actor_id, scope, edit=True)
-                        if scope != 'it' and linked_ticket_staff(connection, actor_id) is None:
-                            raise LookupError('Equipment not found.')
+                        if scope != 'it':
+                            staff = linked_ticket_staff(connection, actor_id)
+                            if not staff or (scope == 'department' and staff[1] is None):
+                                raise LookupError('Equipment not found.')
                 accepts_files = ticket_id is None or (resource == 'messages' and child_id is None)
                 maximum = MAX_TICKET_UPLOAD_REQUEST_BYTES if accepts_files else MAX_TICKET_REQUEST_BYTES
                 length = self.headers.get('Content-Length', '')

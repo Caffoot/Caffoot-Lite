@@ -78,12 +78,19 @@
   async function loadMyEquipment(container){
     const personal=container.querySelector('[data-personal-equipment]'),shared=container.querySelector('[data-shared-equipment]');
     if(!personal||!shared)return;
-    const list=(items,empty)=>items.length?items.map(item=>`<div class="info-row"><b>${escapeHtml(item.name)}</b><span>${escapeHtml([item.type,item.manufacturer,item.model,item.quantity?'Quantity: '+item.quantity:''].filter(Boolean).join(' · '))}<br>Assigned: ${escapeHtml(dateLabel(item.assignedAt))}</span></div>`).join(''):'<p>'+empty+'</p>';
+    const list = (items, empty, scope) => items.length ? items.map(item => `<div class="info-row">
+      <b>${escapeHtml(item.name)}</b>
+      <span>${escapeHtml([item.type,item.manufacturer,item.model,item.quantity?'Quantity: '+item.quantity:''].filter(Boolean).join(' · '))}<br>Assigned: ${escapeHtml(dateLabel(item.assignedAt))}</span>
+      ${window.caffootServiceDesk.canUseEmployee() ? `<button type="button" class="btn btn-small btn-outline"
+        data-ticket-report-equipment="${escapeHtml(item.id)}" data-equipment-scope="${scope}"
+        ${item.equipmentKind === 'IT Asset' ? 'data-ticket-report-asset' : ''}
+        aria-label="Report A Problem With ${escapeHtml(item.name)}">Report A Problem</button>` : ''}
+      </div>`).join('') : '<p>' + empty + '</p>';
     try{
       const result=await request('/api/my-equipment');
       if(!personal.isConnected)return;
-      personal.innerHTML=list(result.assignedToMe,'No equipment is currently assigned to you.');
-      shared.innerHTML=list(result.sharedWithMyDepartment,'No shared equipment is currently available for your Department.');
+      personal.innerHTML=list(result.assignedToMe,'No equipment is currently assigned to you.','personal');
+      shared.innerHTML=list(result.sharedWithMyDepartment,'No shared equipment is currently available for your Department.','department');
     }catch(error){if(personal.isConnected){personal.textContent=error.message;shared.textContent=error.message;}}
   }
   function hydrate(container){

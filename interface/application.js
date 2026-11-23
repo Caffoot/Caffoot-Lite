@@ -1201,6 +1201,7 @@ function hierarchyValidateTypes(subnets) {
                 staff: 'Staff Members',
                 departments: 'Departments',
                 equipment: 'My Equipment',
+                'my-tickets': 'My Tickets',
                 account: 'My Account'
             };
             document.getElementById('page-title').textContent = titles[tabId];
@@ -1304,7 +1305,8 @@ function hierarchyValidateTypes(subnets) {
             const previousStrips=container.dataset.renderedTab===currentTab
                 ? [...container.querySelectorAll('.subnav,.tabs,.audit-tabs,.intelligence-tabs')].map(strip=>strip.scrollLeft) : [];
             const deviceDesign=activeDeviceDetailsTab==='overview'?'devices':activeDeviceDetailsTab==='inventory'?'device-inventory':'device-management';
-            const design = {devices:deviceDesign, audit:'audit-trail', account:'my-account',equipment:'my-account','service-desk':'service-desk-queue'}[currentTab] || currentTab;
+            const design = {devices:deviceDesign, audit:'audit-trail', account:'my-account',equipment:'my-account',
+                'service-desk':'service-desk-queue','my-tickets':'service-desk-queue'}[currentTab] || currentTab;
             document.getElementById('interface-page-style').textContent = interfaceStyles.get(design);
             // replace the view once, avoiding an extra DOM teardown.
             let html = '';
@@ -1315,6 +1317,7 @@ function hierarchyValidateTypes(subnets) {
             else if (currentTab === 'audit') html = renderAuditHTML();
             else if (currentTab === 'users') html = nextRenderUsers();
             else if (currentTab === 'service-desk') html = window.caffootServiceDesk.render();
+            else if (currentTab === 'my-tickets') html = window.caffootServiceDesk.renderEmployee();
             else if (['suppliers','purchasing'].includes(currentTab)) html = window.caffootSuppliers.render();
             else if (currentTab === 'it-assets') {
                 window.caffootStockIntake.enter();
@@ -1336,7 +1339,7 @@ function hierarchyValidateTypes(subnets) {
                 window.caffootStockIntake.hydrate();
                 window.caffootServiceDesk.hydrateEquipment(container);
             }
-            if (currentTab === 'service-desk') window.caffootServiceDesk.hydrateQueue(container);
+            if (['service-desk','my-tickets'].includes(currentTab)) window.caffootServiceDesk.hydrateQueue(container);
             if (currentTab === 'dashboard') window.caffootLifecycle.bindDashboard(
                 container.querySelector('#dashboard-panel-lifecycle'), lifecycleDashboard, id=>{
                     if(!equipmentLifecycle || !lifecycleDeviceDates.has(id))return;
@@ -9067,6 +9070,7 @@ function openIpModal(ip) {
                 case 'sidebar-users-list': activeUsersTab='list'; switchTab('users'); break;
                 case 'sidebar-users-add': activeUsersTab='add'; switchTab('users'); break;
                 case 'tab-equipment': switchTab('equipment'); break;
+                case 'tab-my-tickets': switchTab('my-tickets'); break;
                 case 'tab-account': activeAccountSection='overview'; switchTab('account'); break;
                 case 'select-account-section': if (['overview','security','help','about'].includes(target.dataset.section)) { activeAccountSection=target.dataset.section; switchTab('account'); } break;
                 case 'choose-backup-import': document.getElementById('import-file')?.click(); break;
@@ -9195,6 +9199,7 @@ void (async () => {
   let sessionSupplierPermissions = {read:false,edit:false};
   let suppliersEnabled = false;
   let sessionServiceDeskPermissions = {read:false,edit:false};
+  let sessionCanUseMyTickets = false;
   const inventorySectionAccess = () => ['Devices','IPAM','Racks'].some(key=>permissions[key]);
   function addDirectoryAccess(){
     permissions['Staff Members']=!!sessionDirectoryPermissions.staffMembers?.read;
@@ -9213,7 +9218,10 @@ void (async () => {
       : section === 'receipts' && !!editPermissions['IT Assets']);
   }
   function canSubmitServiceDeskForm(form) {
-    return !!editPermissions['Service Desk'] && !!form?.matches('form[data-ticket-form]');
+    if (!form?.matches('form[data-ticket-form]')) return false;
+    return form.closest('.employee-ticket-dialog')
+      ? sessionCanUseMyTickets && ['create','messages','reopen'].includes(form.dataset.ticketForm)
+      : !!editPermissions['Service Desk'];
   }
   function canSubmitSupplierForm(form) {
     if (!form?.matches('form[data-supplier-form]')) return false;
@@ -9247,6 +9255,7 @@ void (async () => {
     sessionSupplierPermissions=session.supplier_permissions||{read:false,edit:false};
     suppliersEnabled=session.suppliers_enabled===true;
     sessionServiceDeskPermissions=session.service_desk_permissions||{read:false,edit:false};
+    sessionCanUseMyTickets=session.can_use_my_tickets===true;
     addDirectoryAccess();
     window.caffootStockIntake.clear();
     applyAllowedControls();
@@ -9368,9 +9377,12 @@ void (async () => {
   function applyAllowedControls() {
     const stockControls=document.getElementById('device-stock-controls');
     if(stockControls)stockControls.hidden=!editPermissions.Devices||!editPermissions['IT Assets'];
+    const accountTickets=document.querySelector('[data-account-my-tickets]');
+    if(accountTickets)accountTickets.hidden=!sessionCanUseMyTickets;
     document.querySelectorAll('#sidebar [data-tab]').forEach(button=>{
       const area=section[button.dataset.tab];
       if(area)button.hidden=!permissions[area];
+      if(button.dataset.tab==='my-tickets')button.hidden=!sessionCanUseMyTickets;
       if(['dashboard','audit'].includes(button.dataset.tab))button.hidden=!inventorySectionAccess();
     });
     document.querySelectorAll('#sidebar [data-nav-group]').forEach(group=>{
@@ -9655,6 +9667,7 @@ void (async () => {
       permissions['IT Assets']?'it-assets':permissions.Suppliers?'suppliers':sessionIsAdmin?'settings':'account';
   }
   function workspaceHashTab() {
+    if (sessionCanUseMyTickets && location.hash === '#my-tickets') return 'my-tickets';
     if (location.pathname!=='/inventory') return '';
     if (permissions['Service Desk'] && location.hash === '#service-desk') return 'service-desk';
     if (permissions.Suppliers && supplierHash.test(location.hash)) return 'suppliers';
@@ -9678,7 +9691,8 @@ void (async () => {
     return canOpen ? legacyDestination : '';
   }
   switchTab = function(tab, fromRoute = false) {
-    if ((!sessionCanEnterInventory && !['account','equipment','staff','departments','it-assets','suppliers','purchasing','service-desk'].includes(tab) && !(sessionIsAdmin && ['users','settings'].includes(tab))) || (['dashboard','audit'].includes(tab) && !inventorySectionAccess()) || ((tab === 'users' || tab === 'settings') && !sessionIsAdmin) ||
+    if ((tab === 'my-tickets' && !sessionCanUseMyTickets) ||
+        (!sessionCanEnterInventory && !['account','equipment','staff','departments','it-assets','suppliers','purchasing','service-desk','my-tickets'].includes(tab) && !(sessionIsAdmin && ['users','settings'].includes(tab))) || (['dashboard','audit'].includes(tab) && !inventorySectionAccess()) || ((tab === 'users' || tab === 'settings') && !sessionIsAdmin) ||
         (section[tab] && !permissions[section[tab]])) {
       showToast('You do not have access to this section.', 'error');
       return;
@@ -9695,6 +9709,10 @@ void (async () => {
       setDepartmentExpanded('it', true);
       if (!fromRoute && location.hash !== '#service-desk') history.pushState(null, '', '#service-desk');
     }
+    if (currentTab === 'my-tickets' && currentTab !== tab && location.hash === '#my-tickets' && !fromRoute)
+      history.replaceState(null, '', location.pathname + location.search);
+    if (tab === 'my-tickets' && !fromRoute && location.hash !== '#my-tickets')
+      history.pushState(null, '', '#my-tickets');
     if (tab === 'dashboard' && !fromRoute) {
       setDepartmentExpanded('it',true);
       if (location.hash !== '#dashboard') history.pushState(null, '', '#dashboard');
@@ -9710,7 +9728,7 @@ void (async () => {
     applyAllowedControls();
   };
   window.addEventListener('popstate', () => {
-    const tab = workspaceHashTab() || ((isSupplierPage(currentTab) || currentTab === 'service-desk') ? landingTab() : '');
+    const tab = workspaceHashTab() || ((isSupplierPage(currentTab) || ['service-desk','my-tickets'].includes(currentTab)) ? landingTab() : '');
     if (!tab) return;
     const navigate = () => switchTab(tab, true);
     if (document.querySelector('#modal-container:not(.hidden) [data-supplier-dialog], #modal-container:not(.hidden) .service-desk-dialog')) closeModal(false, navigate);
@@ -11490,7 +11508,7 @@ void (async () => {
         (editPermissions['Staff Members'] && event.target.matches('#staff-record-form')) ||
         (editPermissions.Departments && event.target.matches('#staff-department-form')) ||
         canSubmitSupplierForm(event.target) || canSubmitServiceDeskForm(event.target) ||
-        event.target.id === 'ticket-queue-filters' ||
+        ['ticket-queue-filters','employee-ticket-filters'].includes(event.target.id) ||
         (editPermissions['IT Assets'] && event.target.matches('#stock-receipt-form,#stock-readiness-form,#stock-issue-form,#stock-return-form,#stock-writeoff-form,#stock-preparation-form,#stock-reissue-form,#stock-correction-form')) ||
         (editPermissions.Devices && event.target.matches('form[data-device-form="true"],#equipment-assignment-form,#stock-reissue-form[data-direct-handover]')) ||
         (editPermissions.IPAM && event.target.matches('form[data-form-action="ip"],form[data-form-action="bulk-ip"],form[data-form-action="subnet"],form[data-ipam-subnet-creation]')) ||
@@ -11512,6 +11530,7 @@ void (async () => {
     sessionSupplierPermissions=session.supplier_permissions||sessionSupplierPermissions;
     suppliersEnabled=session.suppliers_enabled===true;
     sessionServiceDeskPermissions=session.service_desk_permissions||{read:false,edit:false};
+    sessionCanUseMyTickets=session.can_use_my_tickets===true;
     addDirectoryAccess();
     sessionIsAdmin=!!session.is_admin;
     sessionAssignedRoles=session.assigned_roles||[];
@@ -11522,6 +11541,7 @@ void (async () => {
     sessionCanEnterInventory=session.can_enter_inventory===true;
     window.caffootServiceDesk.configure({
       csrf:csrfToken,canRead:()=>!!permissions['Service Desk'],canEdit:()=>!!editPermissions['Service Desk'],
+      canUseEmployee:()=>sessionCanUseMyTickets,
       openModal:openDeviceReviewModal,closeModal:()=>closeModal(true),
       notify:(message,type)=>showToast(message,type),
       restoreDevice:(id,offset)=>{

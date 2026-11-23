@@ -153,10 +153,8 @@ def employee_ticket_equipment(connection, actor_id, scope):
                 continue
             unit = issue['stockUnitId']
             specification = issue['specification']
-            label = ' · '.join(filter(None, (issue['name'], specification.get('assetTag'),
-                                             specification.get('serialNumber'), f"Issue {issue['id']}")))
             choices.append({'kind': 'stockUnit' if unit else 'stockItem',
                             'id': unit or issue['stockItemId'], 'stockIssueId': issue['id'],
-                            'label': label, 'type': specification.get('category', '')})
+                            'label': f"{issue['name']} · Issue {issue['id']}", 'type': specification.get('category', '')})
     return {'equipment': sorted(choices, key=lambda choice: (choice['label'].casefold(), choice['id'])),
             'department': department[0] if department else None}
