@@ -49,8 +49,10 @@
 <p id="recovery-message" class="small" role="status" aria-live="polite" aria-atomic="true" tabindex="-1"></p>
 <form id="recovery-confirm-form" hidden aria-describedby="recovery-guidance recovery-message"><fieldset id="recovery-reset-fields" disabled><legend class="visually-hidden">Reset Your Password</legend><div class="form-fields">
 <label class="field">Recovery Code (8 Digits)<input name="token" maxlength="8" pattern="[0-9]{8}" inputmode="numeric" autocomplete="one-time-code" spellcheck="false" required></label>
+<div class="recovery-password-fields">
 <label class="field">New Password<input name="password" type="password" autocomplete="new-password" required></label>
 <label class="field">Confirm New Password<input name="confirmPassword" type="password" autocomplete="new-password" aria-describedby="recovery-message" required></label>
+</div>
 <label class="field">Authenticator Code (If Enrolled)<input name="mfa_code" inputmode="numeric" maxlength="6" autocomplete="one-time-code"></label>
 </div><button class="primary" type="submit">Recover Password</button></fieldset></form>
 <button id="recovery-resend" class="secondary" type="button" hidden>Request Another Code</button>
