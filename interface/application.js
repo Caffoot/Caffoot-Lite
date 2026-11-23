@@ -7649,7 +7649,7 @@ function openIpModal(ip) {
           if(!form)return;
           const s=smtpSettings;
           if(s){
-            for(const key of ['host','port','security','authenticate','username','fromName','fromEmail','insecureConfirmed']){
+            for(const key of ['host','port','security','authenticate','username','fromName','fromEmail','insecureConfirmed','itSupportEmail']){
               const input=form.elements.namedItem(key);
               if(!input)continue;
               if(input.type==='checkbox')input.checked=!!s[key];
@@ -11468,6 +11468,7 @@ void (async () => {
           password:String(data.get('password')||''),
           fromName:String(data.get('fromName')||''),
           fromEmail:String(data.get('fromEmail')||''),
+          itSupportEmail:String(data.get('itSupportEmail')||''),
           insecureConfirmed:form.elements.namedItem('insecureConfirmed').checked
         });
         smtpSettings=result;

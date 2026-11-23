@@ -44,6 +44,7 @@ EXACT_CATALOGUE = {
     'ticket-assigned': 'technician_name ticket_number device_name ticket_link',
     'ticket-reply': 'technician_name ticket_number employee_reply ticket_link',
     'ticket-reopened': 'technician_name ticket_number device_name ticket_link',
+    'ticket-created': 'ticket_number ticket_status ticket_link',
     VERIFY: 'company_name recipient_name',
     'password-recovery': 'company_name recipient_name',
     'account-security-notice': 'company_name',
@@ -162,7 +163,7 @@ class EmailTemplateHttpTests(unittest.TestCase):
         self.assertEqual({t['id']: ' '.join(v['key'] for v in t['variables']) for t in result['templates']},
                          EXACT_CATALOGUE)
         locked = ['Resolution', 'Waiting for Parts', 'replacement charger', 'Laptop-017', 'working well',
-                  'Open (Reopened)', '15 minutes', '15 minutes', 'Audit Trail']
+                  'Open (Reopened)', 'Status: Open', '15 minutes', '15 minutes', 'Audit Trail']
         for template, detail in zip(result['templates'], locked):
             sample = self.post(action='preview', id=template['id'], **template['default'])
             self.assertIn(detail, sample['text'])

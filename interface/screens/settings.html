@@ -94,8 +94,13 @@
 <label class="setting-field">From Name <input placeholder="Caffoot Lite" name="fromName" maxlength="120" type="text"/></label>
 <label class="setting-field">From Email Address <input placeholder="caffoot@example.com" name="fromEmail" maxlength="254" required type="email"/></label>
 </div>
+<div class="divider"></div>
+<div class="mini-section">Service Desk Notifications</div>
+<div class="form-grid smtp-fields">
+<label class="setting-field full">IT Support Email Address <input placeholder="it-support@example.com" name="itSupportEmail" maxlength="254" type="email" aria-describedby="it-support-email-help"/></label>
+</div>
+<p class="muted-note" id="it-support-email-help">Use one shared IT mailbox or an individual administrator’s address. Leave blank to skip new-ticket emails. Staff can still create tickets.</p>
 <div class="form-actions"><button class="btn btn-outline" data-action="reset-smtp-settings" type="button">Discard Changes</button><button class="btn btn-primary" type="submit">Save Email Settings</button></div>
-<p class="muted-note preview-note">SMTP is optional. It does not enable notifications or account recovery on its own.</p>
 </form>
 </div>
 </div>
@@ -106,8 +111,8 @@
 <form id="smtp-test-form"><label class="setting-field">Recipient Email Address <input aria-label="Test email recipient address" name="recipient" required maxlength="254" placeholder="you@example.com" type="email"/></label><button class="btn btn-outline full-button" type="submit">Send Test Email</button></form>
 <p class="muted-note">Send a test only after saving your settings. This action contacts the configured mail server; tests are rate-limited.</p>
 </div>
-<div class="card card-padded"><div class="card-head"><span class="iconwrap orange"><svg fill="none" stroke="currentColor" viewbox="0 0 24 24"><use href="#i-info"></use></svg></span><div><h3>Email Is Optional</h3><p class="sub">The application works without SMTP.</p></div></div><div class="divider"></div><p class="card-copy">Caffoot Lite must still install, sign in and manage infrastructure without an email server. Configuring SMTP does not, by itself, turn on notifications or password recovery.</p></div>
-<div class="card card-padded"><div class="card-head"><span class="iconwrap"><svg fill="none" stroke="currentColor" viewbox="0 0 24 24"><use href="#i-info"></use></svg></span><div><h3>Email Capabilities</h3><p class="sub">Account recovery and security notices require verified email addresses.</p></div></div><div class="divider"></div><div class="future-item">Password Recovery <span>Verified Email Required</span></div><div class="future-item">Administrator Notifications <span>Verified Administrators</span></div><div class="future-item">Audit &amp; Report Delivery <span>Future</span></div><div class="future-item">Service Desk &amp; Tickets <span>Future</span></div><p class="muted-note">Recovery and account-security notices are available when email is configured. Audit delivery and tickets remain planned.</p></div>
+<div class="card card-padded"><div class="card-head"><span class="iconwrap orange"><svg fill="none" stroke="currentColor" viewbox="0 0 24 24"><use href="#i-info"></use></svg></span><div><h3>Email Is Optional</h3><p class="sub">The application works without SMTP.</p></div></div><div class="divider"></div><p class="card-copy">Caffoot Lite can still manage inventory and Service Desk tickets when email is unavailable.</p></div>
+<div class="card card-padded"><div class="card-head"><span class="iconwrap"><svg fill="none" stroke="currentColor" viewbox="0 0 24 24"><use href="#i-info"></use></svg></span><div><h3>Email Capabilities</h3><p class="sub">Account recovery and security notices require verified email addresses.</p></div></div><div class="divider"></div><div class="future-item">Password Recovery <span>Verified Email Required</span></div><div class="future-item">Administrator Notifications <span>Verified Administrators</span></div><div class="future-item">Audit &amp; Report Delivery <span>Future</span></div><div class="future-item">Service Desk &amp; Tickets <span>Configured SMTP Required</span></div></div>
 </div>
 </div>
 </section>

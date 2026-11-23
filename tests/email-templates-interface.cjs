@@ -126,7 +126,7 @@ async function runEmailTemplateBrowserChecks() {
     browser = await chromium.launch({headless: true});
     const {page, context, errors} = await openEmailWorkspace(instance);
     await openEmailTemplates(page);
-    assert.equal(await page.locator('.template-option').count(), 9);
+    assert.equal(await page.locator('.template-option').count(), 10);
     assert.equal(await page.locator('.var-row').count(), 6);
     assert.equal(await page.getByRole('group', {name: 'Visual Formatting'}).getByRole('button').count(), 5);
     await captureEmailScreen(page, 'templates-desktop-light');

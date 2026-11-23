@@ -31,9 +31,10 @@ _DEFAULTS = {
     "host": "", "port": 587, "security": "starttls",
     "authenticate": True, "username": "", "password": "",
     "fromName": "Caffoot Lite", "fromEmail": "",
-    "insecureConfirmed": False,
+    "insecureConfirmed": False, "itSupportEmail": "",
 }
 _EDITABLE_FIELDS = frozenset(_DEFAULTS)
+_LEGACY_FIELDS = _EDITABLE_FIELDS - {"itSupportEmail"}
 _SAFE_HOST = re.compile(r"^[a-zA-Z0-9.-]+$", re.ASCII)
 _EMAIL = re.compile(r"^[^\s@<>\x00-\x1f\x7f]+@[^\s@<>\x00-\x1f\x7f]+\.[^\s@<>\x00-\x1f\x7f]+$")
 
@@ -54,20 +55,24 @@ def _read_private(path):
         raise OSError("Invalid SMTP settings file size")
     with path.open("r", encoding="utf-8") as source:
         settings = json.load(source)
-    if not isinstance(settings, dict) or set(settings) != _EDITABLE_FIELDS:
+    if not isinstance(settings, dict) or settings.keys() not in (_EDITABLE_FIELDS, _LEGACY_FIELDS):
         raise OSError("Invalid SMTP settings file")
-    return settings
+    return {"itSupportEmail": "", **settings}
 
 
 def public_settings(path):
-    with SMTP_LOCK:
-        saved = _read_private(path)
+    saved = read_delivery_settings(path)
     value = saved or _DEFAULTS
     return {
         "configured": saved is not None,
         **{key: value[key] for key in value if key != "password"},
         "passwordConfigured": bool(value.get("password")),
     }
+
+
+def read_delivery_settings(path):
+    with SMTP_LOCK:
+        return _read_private(path)
 
 
 def _check_text(value, label, maximum, *, required=False):
@@ -87,6 +92,14 @@ def _validate_address(value, name):
     return address
 
 
+def _single_address(value, label):
+    address = _validate_address(value, label)
+    try:
+        return Address(addr_spec=address).addr_spec
+    except (HeaderParseError, ValueError, IndexError):
+        raise ValueError("Enter a valid " + label) from None
+
+
 def _validate_host(value):
     host = _check_text(value, "SMTP server address", 253, required=True)
     try:
@@ -103,7 +116,7 @@ def _validate_host(value):
 
 
 def _validate(payload, existing):
-    if not isinstance(payload, dict) or set(payload) != _EDITABLE_FIELDS:
+    if not isinstance(payload, dict) or payload.keys() not in (_EDITABLE_FIELDS, _LEGACY_FIELDS):
         raise ValueError("Invalid SMTP configuration")
     host = _validate_host(payload["host"])
     port = payload["port"]
@@ -138,11 +151,18 @@ def _validate(payload, existing):
         password = ""
     from_name = _check_text(payload["fromName"], "sender name", 120)
     from_email = _validate_address(payload["fromEmail"], "sender email address")
+    support_email = _check_text(
+        payload.get("itSupportEmail", (existing or _DEFAULTS)["itSupportEmail"]),
+        "IT support email address", 254,
+    )
+    if support_email:
+        support_email = _single_address(support_email, "IT support email address")
     return {
         "host": host, "port": port, "security": security,
         "authenticate": authenticate, "username": username,
         "password": password, "fromName": from_name,
         "fromEmail": from_email, "insecureConfirmed": insecure if security == "none" else False,
+        "itSupportEmail": support_email,
     }
 
 
@@ -185,13 +205,8 @@ def _rate_limit_test():
 def send_test_email(path, recipient, *, subject="Caffoot Lite SMTP test",
                     body="This is a test message from your Caffoot Lite installation.", html=None, logo=None):
     """Send an administrator's test with the existing SMTP timeout and cooldown."""
-    recipient = _validate_address(recipient, "test email recipient address")
-    try:
-        recipient = Address(addr_spec=recipient).addr_spec
-    except (HeaderParseError, ValueError, IndexError):
-        raise ValueError("Enter a valid test email recipient address") from None
-    with SMTP_LOCK:
-        config = _read_private(path)
+    recipient = _single_address(recipient, "test email recipient address")
+    config = read_delivery_settings(path)
     if config is None:
         raise ValueError("Configure SMTP before sending a test email")
     _rate_limit_test()
@@ -202,8 +217,7 @@ def send_test_email(path, recipient, *, subject="Caffoot Lite SMTP test",
 def send_account_email(path, recipient, subject, body, *, html=None, logo=None):
     """Deliver an approved account message without exposing SMTP errors to users."""
     recipient = _validate_address(recipient, "recipient address")
-    with SMTP_LOCK:
-        config = _read_private(path)
+    config = read_delivery_settings(path)
     if config is None:
         return False
     deliver_email(config, recipient, subject, body, html=html, logo=logo)

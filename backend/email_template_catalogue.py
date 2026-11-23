@@ -137,6 +137,20 @@ TEMPLATES = {
         'variables': ('technician_name', 'ticket_number', 'device_name', 'ticket_link'),
         'locked': (('Ticket', 'ticket_number'), ('Equipment', 'device_name')),
     },
+    'ticket-created': {
+        'group': 'service',
+        'name': 'Ticket Created',
+        'hint': 'IT support · Staff Member created a ticket',
+        'to': 'it-support@example.invalid',
+        'event': 'IT support mailbox when a Staff Member creates a personal or Department ticket',
+        'subject': 'New support ticket {{ticket_number}}',
+        'body': (
+            '<p>A Staff Member has raised support ticket <strong>{{ticket_number}}</strong>.</p>'
+            '<p>Sign in to Caffoot Lite to review it in IT Service Desk.</p>'
+        ),
+        'variables': ('ticket_number', 'ticket_status', 'ticket_link'),
+        'locked': (('Ticket', 'ticket_number'), ('Status', 'ticket_status')),
+    },
     'email-verification': {
         'group': 'account',
         'name': 'Email Verification',
