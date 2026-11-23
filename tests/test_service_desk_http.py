@@ -160,6 +160,9 @@ class ServiceDeskHttpTests(unittest.TestCase):
         private = self.save('it', ticket, 'messages', {'body': 'Internal IT note'})[1]['id']
         public = self.save('it', ticket, 'messages',
                            {'body': 'Public update', 'employeeVisible': True})[1]['id']
+        self.assertEqual(self.save('it', ticket, f'messages/{private}', {'body':'Internal note corrected'},
+                                   actor=2)[0], 404)
+        self.assertEqual(self.save('it', ticket, f'messages/{private}', {'body':'Internal note corrected'})[0], 200)
         with sqlite3.connect(self.path) as connection:
             connection.execute('PRAGMA foreign_keys=ON')
             ids = [connection.execute("""INSERT INTO service_desk_attachments(ticket_id,message_id,filename,contents)
@@ -185,6 +188,12 @@ class ServiceDeskHttpTests(unittest.TestCase):
         history = self.request(self.ticket_path('it', f'/{ticket}/history'), actor=2)[1]
         self.assertEqual(len(history['closureAttempts']), 2)
         self.assertTrue(all(attempt['reopenedEventId'] for attempt in history['closureAttempts']))
+        corrections = [event['details'] for event in history['history'] if event['kind'] == 'Message Edited']
+        self.assertEqual(corrections, [{'messageId':private,'previousBody':'Internal IT note'}])
+        self.assertEqual(self.save('it', ticket, 'hold', {'reason':'Waiting for User',
+            'explanation':'Please confirm a time to call.', 'employeeVisible':True})[0], 200)
+        visible_history = self.request(self.ticket_path('personal', f'/{ticket}/history'), actor=4)[1]
+        self.assertEqual(visible_history['history'][-1]['details']['explanation'], 'Please confirm a time to call.')
         self.assertEqual([event['author'] for event in history['history'] if event['kind'] == 'Closed'],
                          ['account-2', 'account-2'])
         self.assertEqual([event['author'] for event in history['history'] if event['kind'] == 'Reopened'],

@@ -1,6 +1,6 @@
 # Administer Service Desk Access And Data
 
-> **Draft v2.2 — Unreleased.** Batch 5.1 provides ticket storage and access rules, the **Service Desk** row in the existing permission controls and the updated **Clean Start** confirmation. Technician and employee ticket screens will arrive in their own batches.
+> **Draft v2.2 — Unreleased.** Batch 5.1 provides ticket storage and access rules, the **Service Desk** row in the existing permission controls and the updated **Clean Start** confirmation. The IT Service Desk is available for development review. The employee ticket screens are planned for a later batch.
 
 ## Give A Technician Access
 
@@ -16,6 +16,28 @@ Ordinary Staff use equipment-scoped access through their Staff account link. The
 ![Service Desk permission in the existing Manage User access controls, with Inherit and effective No Access shown for an example account.](../../../development-handovers/evidence/service-desk-foundation/it-staff-dave-1440.png)
 
 *The Service Desk permission uses the existing per-account controls. Captured from the draft v2.2 application with fictional data.* [Capture details](../../../development-handovers/evidence/service-desk-foundation/README.md)
+
+## Verify A Technician’s Access
+
+1. Ask the technician to sign in with their own account and open **IT → Service Desk**. With at least one authorised equipment section they should see **Current Workload** and **Ticket Queue**. The queue begins with Open tickets.
+2. With **Read**, check that the technician can open **Overview**, **Updates** and **History** and download an authorised attachment. **Create Ticket** and the edit and technician action controls require **Edit**.
+3. With **Edit**, open a ticket for the equipment section they support. Confirm they appear as an eligible technician in **Assign Ticket** for that section, unless they are already the assignee. A technician who can support Device tickets may have different permissions for IT Asset tickets.
+4. To remove the grant, review their role and individual override, preview and confirm the change. To revoke account access, use the established account controls. Refresh any open screen and confirm that a saved ticket URL or download link now follows the new permissions.
+
+When troubleshooting, check the effective role and individual override, account status, MFA, the equipment feature switch and the equipment section’s Read access. The Service Desk uses the existing permission model and the Devices and IT Assets switches.
+
+## Handle Ticket Files And History
+
+1. Tell technicians to check the audience before attaching files. Files on the original report follow the verified equipment assignment. The **Updates** composer starts internal, and files inherit each update’s visibility.
+2. Select a filename in **Ticket Details → Updates** to download it. The server rechecks the signed-in account, equipment access, ticket scope and parent message on every request. A saved link does not grant access.
+3. With Service Desk Edit, choose **Remove** beside an attachment and confirm **Remove Attachment**. The file is removed from the ticket’s retained quota. The attributed removal appears in the ticket’s **History**, under the visibility of the parent message. A file already downloaded or captured in a backup can still exist in that copy.
+4. Use the organisation’s rules for offline handling and backups. Files are stored with the database. Caffoot Lite checks file contents and sizes and serves them as downloads. Malware scanning is scheduled outside this milestone.
+
+Up to 10 MB is allowed per file and 100 MB retained per ticket. If two technicians upload at the same time and their combined files would exceed the limit, only the first update that fits is saved. The rejected technician can retry after reducing the selection or after an authorised removal. [Technician instructions](Service-Desk-Tickets.md#add-a-note-share-an-update-or-manage-files)
+
+![The draft Service Desk Ticket History showing attributed lifecycle and attachment changes.](../../../development-handovers/evidence/it-service-desk/history-desktop-light.png)
+
+*The integrated Ticket History records the author, time and action. Internal history remains within authorised IT access.* [Capture details](../../../development-handovers/evidence/it-service-desk/README.md)
 
 ## What Happens To Service Desk Tickets When Equipment Changes Hands
 

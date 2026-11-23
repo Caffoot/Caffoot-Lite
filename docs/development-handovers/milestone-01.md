@@ -1,5 +1,13 @@
 # Milestone 01 Development Handover — v2.2 Target
 
+## IT Service Desk Development — 23 November 2026
+
+[PR #438](https://github.com/Caffoot/Caffoot-Lite/pull/438) targets `milestone-1` at `d2b7ead0027ba3579ea96c865a3a4b6cb63037a2`, using the integrated schema 25 foundation. The application includes authorised Current Workload and Ticket Queue views, Create Ticket, the Overview, Updates and History dialogue, technician actions, attachment handling and Device and IT Asset links. The [approved classification controls](https://github.com/Caffoot/Caffoot-Lite/issues/421#issuecomment-7095991698) are inside Ticket Information. Period-based reporting remains with Batch 5.4.
+
+The first backend checkpoint is `86f409c`. The integrated implementation and focused tests are at `6f5e08cf52d4092abb7fe817541728d5a2956f6d`, followed by the responsive checks and visual checkpoint at `165b22927639057cbf9bb4e6cd58c405f9cd6223`. The focused local run passed 62 Python checks. The HTTPS Chromium journey and local Docker build and packaging smoke check passed. The [application screenshots and verification record](evidence/it-service-desk/README.md) include the frozen source and Device Details comparison. [Draft technician instructions](../how-tos/features-and-instructions/v2.2-draft/Service-Desk-Tickets.md) · [Draft administrator instructions](../how-tos/features-and-instructions/v2.2-draft/Service-Desk-Administration.md)
+
+Hosted CI and independent owner visual review are the final review handoff. Native Raspberry Pi and Safari, full milestone upgrade and restore, and publication acceptance retain their separate gates.
+
 ## Clean Start Correction — 23 November 2026
 
 The owner reconfirmed that Clean Start clears all operational records, including saved assignment and stock history. It retains accounts, sign-in safeguards, account-linked Staff identity and eligibility, Optional Features choices and central Change History. The [administrator guide](../how-tos/features-and-instructions/v2.2-draft/Service-Desk-Administration.md#clear-operational-data-with-clean-start) records the affected modules and reset defaults.
