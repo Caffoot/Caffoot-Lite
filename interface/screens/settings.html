@@ -26,6 +26,7 @@
 <button aria-selected="false" data-tab="email" data-action="select-settings-tab" role="tab" type="button"><svg fill="none" stroke="currentColor" viewbox="0 0 24 24"><use href="#i-mail"></use></svg> Email Settings</button>
 <button aria-selected="false" data-tab="maintenance" data-action="select-settings-tab" role="tab" type="button"><svg fill="none" stroke="currentColor" viewbox="0 0 24 24"><use href="#i-tool"></use></svg> System Maintenance</button>
 <button aria-selected="false" data-tab="features" data-action="select-settings-tab" role="tab" type="button"><svg fill="none" stroke="currentColor" viewbox="0 0 24 24"><use href="#i-grid"></use></svg> Optional Features</button>
+<button id="settings-service-desk-tab" aria-selected="false" data-tab="service-desk" data-action="select-settings-tab" role="tab" type="button"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><use href="#i-tool"></use></svg> Service Desk</button>
 </nav>
 <section class="account-panel active" data-section="data" role="tabpanel">
 <div class="settings-grid">
@@ -125,6 +126,90 @@
 <h3 class="section-title">Additional Features</h3><div id="optional-feature-additional" class="feature-grid"></div>
 </div>
 <p id="optional-feature-feedback" class="muted-note" role="status">Loading feature settings…</p>
+</section>
+<section class="account-panel service-desk-settings" data-section="service-desk" role="tabpanel" aria-labelledby="settings-service-desk-tab" hidden>
+  <div class="panel-heading"><div><h2>Service Desk Settings</h2><p>Manage working hours, excluded dates and the shared category list.</p></div></div>
+  <div class="note"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><use href="#i-info"/></svg>
+    <span><strong>Working-Time Reporting.</strong> The support calendar measures eligible time for ticket resolution. People can submit tickets at any time.</span></div>
+  <p class="service-desk-report-notice" role="status" data-support-timezone hidden></p>
+  <p data-support-feedback role="status">Loading Service Desk settings…</p>
+  <div data-support-settings hidden>
+    <nav class="subnav" role="tablist" aria-label="Service Desk Settings">
+      <button type="button" role="tab" id="support-hours-tab" aria-controls="support-hours" aria-selected="true" class="active" data-support-tab>◷ Working Hours</button>
+      <button type="button" role="tab" id="support-dates-tab" aria-controls="support-dates" aria-selected="false" tabindex="-1" data-support-tab>▣ Excluded Dates</button>
+      <button type="button" role="tab" id="support-categories-tab" aria-controls="support-categories" aria-selected="false" tabindex="-1" data-support-tab>☷ Ticket Categories</button>
+    </nav>
+    <section id="support-hours" role="tabpanel" aria-labelledby="support-hours-tab">
+      <div class="panel-heading"><div><h2>Working Hours</h2><p>Configure one continuous working period for each enabled day.</p></div></div>
+      <div class="support-hours-layout">
+        <form class="card card-padded" data-support-form="working-hours">
+          <h3>Weekly Support Schedule</h3><p class="card-copy">Choose the days your IT team normally operates and enter a period for each open day.</p>
+          <div class="support-day support-day-heading" aria-hidden="true"><span>Day</span><span>Availability</span><span>Start Time</span><span>End Time</span></div>
+          <div data-support-week></div>
+          <div class="service-desk-form-actions">
+            <button type="reset" class="btn btn-outline">Cancel</button><button type="submit" class="btn btn-primary">Save Working Hours</button>
+          </div>
+        </form>
+        <aside class="card card-padded support-schedule-rules">
+          <h3>How Working Time Is Measured</h3>
+          <dl>
+            <dt>Scheduled Hours Only</dt><dd>Count time inside each enabled day’s working period.</dd>
+            <dt>Excluded Dates</dt><dd>Skip dates when your support team is closed.</dd>
+            <dt>On Hold Intervals</dt><dd>Deduct the parts of recorded On Hold intervals that overlap working time.</dd>
+            <dt>Historical Accuracy</dt><dd>Calendar changes apply from the time you save them. Completed measurements are retained.</dd>
+          </dl>
+          <div class="support-summary"><h3>Weekly Schedule Preview</h3><dl data-support-summary></dl></div>
+          <p class="card-copy" data-support-timezone-description></p>
+        </aside>
+      </div>
+    </section>
+    <section id="support-dates" role="tabpanel" aria-labelledby="support-dates-tab" hidden>
+      <div class="panel-heading"><div><h2>Excluded Dates</h2><p>Exclude holidays, training days or company shutdowns from eligible working time.</p></div></div>
+      <div class="card card-padded">
+        <h3>Add Excluded Date</h3><p class="card-copy">Enter a date and reason. People can still submit tickets on that date.</p>
+        <form class="support-add-form" data-support-form="add-date">
+          <label class="service-desk-field">Excluded Date<input type="date" name="date" required></label>
+          <label class="service-desk-field">Reason<input type="text" name="reason" maxlength="100" required></label>
+          <button type="submit" class="btn btn-primary">Add Excluded Date</button>
+        </form>
+      </div>
+      <div class="card card-padded support-list">
+        <h3>Registered Excluded Dates</h3><p class="card-copy">Dates are shown in chronological order.</p>
+        <table class="device-table" role="table"><thead><tr><th scope="col">Date</th><th scope="col">Reason</th><th scope="col">Actions</th></tr></thead>
+          <tbody data-support-exclusions></tbody>
+        </table>
+      </div>
+      <p class="note">Adding or removing an excluded date applies from the time of the change. Earlier measured time is retained.</p>
+    </section>
+    <section id="support-categories" role="tabpanel" aria-labelledby="support-categories-tab" hidden>
+      <div class="panel-heading"><div><h2>Ticket Categories</h2><p>Manage the single shared category list used when creating tickets.</p></div></div>
+      <div class="card card-padded">
+        <h3>Add Ticket Category</h3><p class="card-copy">New categories appear alphabetically. Other / Not Listed is always available last.</p>
+        <form class="support-add-form" data-support-form="add-category">
+          <label class="service-desk-field">Category Name<input type="text" name="name" maxlength="90" required></label>
+          <button type="submit" class="btn btn-primary">Add Category</button>
+        </form>
+      </div>
+      <div class="card card-padded support-list">
+        <h3>Existing Ticket Categories</h3><p class="card-copy">Rename, hide or restore categories while preserving existing ticket classifications.</p>
+        <table class="device-table" role="table"><thead><tr><th scope="col">Category Name</th><th scope="col">Status</th><th scope="col">Actions</th></tr></thead>
+          <tbody data-support-categories></tbody>
+        </table>
+      </div>
+      <p class="note">Only authorised IT staff can change a ticket’s category after submission.</p>
+    </section>
+    <dialog class="card card-padded support-settings-dialog" aria-labelledby="support-dialog-title">
+      <form data-support-confirm>
+        <h3 id="support-dialog-title"></h3>
+        <p class="card-copy" data-support-confirm-description></p>
+        <label class="service-desk-field" data-support-rename hidden>Category Name<input type="text" name="name" maxlength="90"></label>
+        <p data-support-confirm-error role="alert" hidden></p>
+        <div class="service-desk-form-actions"><button type="button" class="btn btn-outline" data-support-cancel>Cancel</button>
+          <button type="submit" class="btn btn-primary" data-support-confirm-button></button>
+        </div>
+      </form>
+    </dialog>
+  </div>
 </section>
 <footer class="footer"><span>Caffoot Lite · Infrastructure, Simplified.</span><span>Settings &amp; Data · Caffoot Lite</span></footer>
 </main></div><!-- /interface-template -->

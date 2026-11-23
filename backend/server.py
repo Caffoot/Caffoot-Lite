@@ -37,6 +37,9 @@ from .service_desk import (read_ticket, read_ticket_assignment_choices, read_tic
                            read_ticket_categories, read_ticket_equipment_choices, read_ticket_list,
                            read_ticket_software_choices, require_ticket, save_ticket_request)
 from .service_desk_access import linked_ticket_staff, ticket_scope_filter
+from .service_desk_calendar import activate_deployment_timezone
+from .service_desk_settings import read_service_desk_settings, save_service_desk_settings
+from .service_desk_reporting import read_service_desk_report, save_report_period
 from .service_desk_attachments import MAX_RETAINED_TICKET_BYTES, validate_ticket_attachments
 from .ipam_repair import apply_ipam_repairs
 from .audit_events import record_actor_event
@@ -86,7 +89,7 @@ MAX_LOGIN_BYTES = 4096
 MAX_TICKET_REQUEST_BYTES = 128 * 1024
 MAX_TICKET_UPLOAD_REQUEST_BYTES = (MAX_RETAINED_TICKET_BYTES * 4 // 3) + 2_000_000
 TICKET_ROUTE = re.compile(
-    r'/api/service-desk/(personal|department|it)/(tickets|categories|equipment|software)'
+    r'/api/service-desk/(personal|department|it)/(tickets|categories|equipment|software|report)'
     r'(?:/([1-9][0-9]{0,18})(?:/([a-z]+)(?:/([1-9][0-9]{0,18}))?)?)?'
 )
 MAX_IMPORT_BYTES = 10 * 1024 * 1024
@@ -169,7 +172,7 @@ class Handler(BaseHTTPRequestHandler):
         if self.path.startswith(("/api/staff-members", "/api/departments")):
             self.handle_directory_request()
             return
-        if self.path in ("/api/settings/features", "/api/settings/lifecycle"):
+        if self.path in ("/api/settings/features", "/api/settings/lifecycle", "/api/settings/service-desk"):
             self.handle_feature_settings()
             return
         if self.path in ("/interface/sign-in.js", "/interface/styles/sign-in.css",
@@ -556,7 +559,7 @@ class Handler(BaseHTTPRequestHandler):
         if self.path.startswith(("/api/staff-members", "/api/departments")):
             self.handle_directory_request()
             return
-        if self.path in ("/api/settings/features", "/api/settings/lifecycle"):
+        if self.path in ("/api/settings/features", "/api/settings/lifecycle", "/api/settings/service-desk"):
             self.handle_feature_settings()
             return
         if self.path in ("/api/users/roles/preview", "/api/users/roles/confirm",
@@ -911,7 +914,9 @@ class Handler(BaseHTTPRequestHandler):
         child_id = int(child_id) if child_id else None
         reading = self.command == 'GET'
         if (max(ticket_id or 0, child_id or 0) > 2**63 - 1
-                or (collection != 'tickets' and (ticket_id or not reading))
+                or (collection != 'tickets' and ticket_id)
+                or (collection not in ('tickets', 'report') and not reading)
+                or (collection == 'report' and scope != 'it')
                 or (collection == 'software' and scope == 'it')
                 or (reading and resource not in (None, 'messages', 'history', 'attachments', 'technicians'))
                 or (resource == 'technicians' and scope != 'it')
@@ -945,12 +950,13 @@ class Handler(BaseHTTPRequestHandler):
                         if scope != 'it' and resource == 'messages' and child_id is None and ticket[1] == 'Closed':
                             raise FileExistsError('Reopen the ticket before adding an employee-visible reply.')
                     else:
-                        ticket_scope_filter(connection, actor_id, scope, edit=True)
+                        ticket_scope_filter(connection, actor_id, scope, edit=collection != 'report')
                         if scope != 'it':
                             staff = linked_ticket_staff(connection, actor_id)
                             if not staff or (scope == 'department' and staff[1] is None):
                                 raise LookupError('Equipment not found.')
-                accepts_files = ticket_id is None or (resource == 'messages' and child_id is None)
+                accepts_files = collection == 'tickets' and (
+                    ticket_id is None or (resource == 'messages' and child_id is None))
                 maximum = MAX_TICKET_UPLOAD_REQUEST_BYTES if accepts_files else MAX_TICKET_REQUEST_BYTES
                 length = self.headers.get('Content-Length', '')
                 if not re.fullmatch(r'[0-9]{1,9}', length) or not 0 < int(length) <= maximum:
@@ -1001,6 +1007,10 @@ class Handler(BaseHTTPRequestHandler):
                     result = read_ticket_software_choices(connection, actor_id, scope, parameters['deviceId'][0])
                 elif parsed.query:
                     raise ValueError('This ticket request does not accept query parameters.')
+                elif collection == 'report':
+                    if not reading:
+                        save_report_period(connection, actor_id, payload)
+                    result = read_service_desk_report(connection, actor_id)
                 elif collection == 'categories':
                     result = read_ticket_categories(connection, actor_id, scope)
                 elif collection == 'equipment':
@@ -1041,7 +1051,7 @@ class Handler(BaseHTTPRequestHandler):
                 self.end_headers()
                 self.wfile.write(contents)
             else:
-                self.respond(200 if reading or ticket_id else 201, result)
+                self.respond(200 if reading or ticket_id or collection == 'report' else 201, result)
 
     def handle_equipment_request(self):
         """Show only permitted equipment and verify the signed-in user before saving."""
@@ -1203,7 +1213,12 @@ class Handler(BaseHTTPRequestHandler):
 
     def handle_feature_settings(self):
         """Use existing session and request proofs for organisation settings."""
-        lifecycle = self.path == "/api/settings/lifecycle"
+        settings = self.path.rsplit("/", 1)[-1]
+        read, save, key, limit = {
+            "features": (read_feature_settings, save_feature_setting, "features", MAX_LOGIN_BYTES),
+            "lifecycle": (read_lifecycle_settings, save_lifecycle_settings, "lifecycle", MAX_IMPORT_BYTES),
+            "service-desk": (read_service_desk_settings, save_service_desk_settings, "serviceDesk", MAX_LOGIN_BYTES),
+        }[settings]
         origin = self.headers.get("Origin")
         if (self.headers.get("Sec-Fetch-Site") == "cross-site"
                 or (origin is not None and (not PUBLIC_ORIGIN
@@ -1220,10 +1235,7 @@ class Handler(BaseHTTPRequestHandler):
                     if actor is None:
                         self.respond(401, {"error": "unauthorised"})
                         return
-                    if lifecycle:
-                        self.respond(200, {"lifecycle": read_lifecycle_settings(connection, actor)})
-                    else:
-                        self.respond(200, {"features": read_feature_settings(connection, actor)})
+                    self.respond(200, {key: read(connection, actor)})
                     return
                 actor = authorised_mutation(
                     connection, cookie, origin, PUBLIC_ORIGIN,
@@ -1233,16 +1245,14 @@ class Handler(BaseHTTPRequestHandler):
                     raise PermissionError("Verified session required")
                 read_feature_settings(connection, actor)
                 length = self.headers.get("Content-Length", "")
-                limit = MAX_IMPORT_BYTES if lifecycle else MAX_LOGIN_BYTES
                 if not length.isdecimal() or not 0 < int(length) <= limit:
                     raise ValueError("Invalid request size")
                 if self.headers.get("Content-Type", "").split(";")[0].strip().lower() != "application/json":
                     self.respond(415, {"error": "JSON required"})
                     return
                 payload = json.loads(self.rfile.read(int(length)), object_pairs_hook=unique_feature_fields)
-                save = save_lifecycle_settings if lifecycle else save_feature_setting
                 result = save(connection, actor, read_session_cookie(cookie), payload)
-            self.respond(200, {"lifecycle" if lifecycle else "features": result})
+            self.respond(200, {key: result})
         except PermissionError:
             self.respond(403, {"error": "forbidden"})
         except FileExistsError as exc:
@@ -1902,6 +1912,9 @@ def main():
     context = ensure_certificate(TLS_DIR, TLS_NAMES)
     server = ThreadingHTTPServer((HOST, PORT), Handler)
     server.socket = context.wrap_socket(server.socket, server_side=True)
+    # Apply the installed timezone immediately before the server accepts requests.
+    with connect() as connection:
+        activate_deployment_timezone(connection, os.environ.get('TZ'))
     server.serve_forever()
 
 

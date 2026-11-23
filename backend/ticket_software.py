@@ -4,7 +4,6 @@ from pathlib import Path
 import re
 
 
-SOFTWARE_TICKET_CATEGORY = 'Software / Applications'
 OTHER_SOFTWARE_KEY = 'other'
 OTHER_SOFTWARE_LABEL = 'Other / Not Listed'
 SOFTWARE_CATALOGUE = Path(__file__).resolve().parent.parent / 'interface' / 'installed-software-catalogue.json'

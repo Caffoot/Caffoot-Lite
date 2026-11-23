@@ -1,6 +1,6 @@
 # Service Desk Tickets
 
-> **Draft v2.2 — Unreleased.** Use **My Tickets** to raise and follow requests for equipment assigned to you or your Department. Technicians use **IT → Service Desk**. For technician steps, go to [Find Tickets In The IT Queue](#find-tickets-in-the-it-queue).
+> **Draft v2.2 — Unreleased.** Use **My Tickets** to raise and follow requests for equipment assigned to you or your Department. Technicians use **IT → Service Desk**. See [Find Tickets In The IT Queue](#find-tickets-in-the-it-queue) and [Read Service Desk Activity](#read-service-desk-activity).
 
 ## Check Which Equipment Is Assigned To You
 
@@ -83,7 +83,7 @@ A ticket begins **Open**, with **Medium** priority and **Unassigned** technician
 - **An attachment is unavailable.** A download follows the visibility of its message and your current access to the ticket. Ask IT to check the conversation if you still need the file.
 - **The equipment was returned or moved.** Earlier conversations stay available to authorised IT. A new problem under an eligible new assignment can have its own ticket.
 - **A ticket you expect is missing from the list.** Check the two tabs and select **Clear Filters**. Open is the default status. If it is still missing, ask IT to check the equipment’s assignment history.
-- **Affected Software is missing or an application is unavailable.** The field appears for Software / Applications on a Laptop or Desktop. It uses the Device’s recorded applications. You can choose **Other / Not Listed** or leave the field blank.
+- **Affected Software is missing or an application is unavailable.** The field appears for the Software / Applications category on a Laptop or Desktop. Your administrator may have renamed that category. It uses the Device’s recorded applications. You can choose **Other / Not Listed** or leave the field blank.
 
 ## Find Tickets In The IT Queue
 
@@ -95,9 +95,26 @@ Sign in with **Service Desk Read** or **Edit**. You also need Read access to **D
 4. Use **Sort By** to order the results by newest update, oldest update or descending ticket number. Use **Previous** and **Next** when the results span more than one page. On a narrow screen, scroll the table horizontally to reach all eight columns.
 5. Select a ticket number or **Open Details**. **Clear Filters** restores the default Open queue and newest-first sort.
 
-![The draft v2.2 Service Desk with workload totals and the desktop Ticket Queue.](../../../development-handovers/evidence/it-service-desk/queue-desktop-light.png)
+## Read Service Desk Activity
 
-*Current Workload and the Open Ticket Queue, shown with fictional equipment and support requests in the draft application.* [Capture details](../../../development-handovers/evidence/it-service-desk/README.md)
+With authorised **Service Desk** and equipment access, open **IT → Service Desk**. The reports and queue each follow your effective equipment permissions. If you can read Devices only, the activity figures cover Device tickets.
+
+1. Use **Current Workload** for live **Open**, **In Progress** and **On Hold** totals. Select a card to filter the **Ticket Queue**. Changing the reporting period leaves these workload totals at their current live values.
+2. Under **Service Desk Activity**, choose **Today**, **Last 7 Days**, **Last 30 Days**, **This Month**, **This Year** or **Custom Date Range** in **Reporting Period**. The first visit uses **This Month**. The app remembers each technician’s selection and last valid custom dates. The rolling periods include today and the preceding 6 or 29 calendar days.
+3. For **Custom Date Range**, enter both **From** and **To**. Both dates are included, and **To** must be on or after **From**. The figures update when both dates are valid. Reporting dates follow the installation time zone.
+4. Read **Tickets Created**, **Closure Events**, **Tickets Reopened** and **Average Resolution Time**. Then read **Technician Activity** for **Work Started** and **Tickets Closed** in the same period.
+
+![The integrated Service Desk dashboard showing current workload, activity totals, technician activity and the queue.](../../../development-handovers/evidence/service-desk-reporting/dashboard-desktop-light.png)
+
+*The reporting period applies to Service Desk Activity and Technician Activity. Current Workload remains live.* [Capture details](../../../development-handovers/evidence/service-desk-reporting/README.md)
+
+### What The Figures Count
+
+- **Tickets Created** counts each ticket on its creation date. **Closure Events** counts each resolution attempt that actually closed during the period. **Tickets Reopened** counts each actual reopening on its own reopening date. For example, if one ticket is created, closed, reopened, closed and reopened again within a period, the figures are **1 ticket created**, **2 closure events** and **2 reopenings**. The ticket retains one number.
+- **Work Started** records the actual technician who wrote the first new IT support update in the attempt, whether internal or employee-visible. A closure with its required visible resolution note can be the first genuine action. Assignment, an automatic move to In Progress, a priority or category change, a hold or resume, and reopening by itself add no Work Started count. After reopening, the next genuine action can begin that attempt’s work.
+- **Tickets Closed** records the actual technician who closed the attempt. For example, Alex assigns a ticket to Sam, Sam writes the first support update, and Dave closes it. Alex has **0 / 0**, Sam **1 / 0**, and Dave **0 / 1** for **Work Started / Tickets Closed**. If Sam closes a fresh attempt with a resolution note and no earlier support update, Sam records **1 / 1** for that attempt.
+- **Average Resolution Time** uses the eligible working time of attempts whose closures fall within the period. With no closures, it shows **—** while counts continue to show their values, including **0**. A genuine zero working-time measurement appears as **0h 0m**. If a closure lacks a complete measurement, the average shows **—** with an explanation. The closure still counts.
+- When the installation time zone is missing or invalid, period reports show an unavailable message. Ticket operations and **Current Workload** continue. Ask your administrator to [configure the installation time zone](Service-Desk-Time-Zone.md). After correction, activity counts are available again. Time spent in attempts with unknown time zone history remains unmeasured. [Working-time examples](Service-Desk-Administration.md#understand-working-time-measurements)
 
 ## Create An Equipment Ticket
 
