@@ -1,6 +1,14 @@
 # Milestone 01 Development Handover — v2.2 Target
 
-## Service Desk Settings And Reporting — 23 November 2026
+## Email Templates And Company Branding — 23 November 2026
+
+[PR #441](https://github.com/Caffoot/Caffoot-Lite/pull/441) targets `milestone-1` from `7b651af631b18e68da4160d1e29ef1a957c8f7cc`, after owner acceptance of Batch 5.4. Administrators can edit and preview nine email templates, save drafts, publish and load the default wording for a single template. Shared branding and the managed logo are stored with the database in schema 28. Email verification, password recovery and account security notices use the published wording plus their required server-controlled content. The six Service Desk templates are available for editing and sample tests. Ticket event delivery is planned for Batch 5.6. [Scope and authorisation](https://github.com/Caffoot/Caffoot-Lite/issues/424#issuecomment-7107322049)
+
+The existing Email Settings, SMTP credentials and sender stay in their current locations. A loopback SMTP receiver accepted the fictional test message and the real account flows exercised by the tests. The focused backend checks and integrated Chromium test passed. [Draft administrator guide](../how-tos/features-and-instructions/v2.2-draft/Email-Templates-and-Company-Branding.md) · [Screenshots, Design 04 comparison and verification](evidence/email-templates-branding/README.md)
+
+Pending acceptance includes independent visual approval, final-head CI review and separate product-owner merge approval. Native Safari, Raspberry Pi, full upgrade, backup/restore and release acceptance are deferred.
+
+## Historical Service Desk Settings And Reporting — 23 November 2026
 
 Batch 5.4 started from the verified `milestone-1` head `4600ec7bf6a0751af02fbcf003b7f299547cdfd9` after owner acceptance and merge of Batches 5.1–5.3. The feature branch targets unreleased v2.2 in [PR #440](https://github.com/Caffoot/Caffoot-Lite/pull/440). [Owner authorisation and acceptance criteria](https://github.com/Caffoot/Caffoot-Lite/issues/423)
 
