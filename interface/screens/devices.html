@@ -176,6 +176,10 @@
 
 <!-- interface-template:devices/open-device-detail-view-6 --><button type="button" data-action="navigate-to-device-rack" data-id="{{slot:0}}" class="btn btn-outline device-details-secondary-action"><i class="fa-solid fa-server" aria-hidden="true"></i>View in rack</button><!-- /interface-template -->
 
+<!-- interface-template:devices/device-tickets-panel --><div id="device-details-panel-tickets" role="tabpanel" aria-labelledby="device-details-tab-tickets" class="device-details-panel device-review-grid" hidden>
+                        {{slot:0}}
+                    </div><!-- /interface-template -->
+
 <!-- interface-template:devices/open-device-detail-view-7 --><div class="device-details-dialog device-review-dialog">
                 <header class="device-review-head">
                   <div class="device-review-headline">
@@ -212,6 +216,7 @@
                     <div id="device-details-panel-assigned" role="tabpanel" aria-labelledby="device-details-tab-assigned" class="device-details-panel device-review-grid" hidden><p role="status">Loading assignment…</p></div>
                     <div id="device-details-panel-associated" role="tabpanel" aria-labelledby="device-details-tab-associated" class="device-details-panel device-review-grid" hidden><p role="status">Loading associated equipment…</p></div>
                     {{slot:18}}
+                    {{slot:23}}
                 </div>
                 <footer class="device-details-action-footer device-review-footer">
                     <button type="button" data-action="duplicate-device-from-details" data-id="{{slot:19}}" class="btn btn-outline device-details-secondary-action"><i class="fa-solid fa-copy" aria-hidden="true"></i>Duplicate</button>

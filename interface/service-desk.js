@@ -184,7 +184,7 @@ window.caffootServiceDesk = (() => {
             const result = panel.querySelector('[data-ticket-equipment-results]');
             const query = new URLSearchParams({equipmentKind:panel.dataset.ticketEquipmentKind,
                 equipmentId:panel.dataset.ticketEquipmentId, limit:10});
-            const linkedPages = {offset:0};
+            const linkedPages = {offset:Number(panel.dataset.ticketEquipmentOffset || 0)};
             async function refreshEquipmentTickets() {
                 query.set('offset', linkedPages.offset);
                 try {
@@ -206,6 +206,7 @@ window.caffootServiceDesk = (() => {
                 const navigation = event.target.closest('[data-linked-page]');
                 if (!navigation) return;
                 linkedPages.offset += Number(navigation.dataset.linkedPage) * 10;
+                panel.dataset.ticketEquipmentOffset = String(linkedPages.offset);
                 void refreshEquipmentTickets();
             });
             panel.addEventListener('ticket-refresh', () => void refreshEquipmentTickets());
@@ -630,7 +631,7 @@ window.caffootServiceDesk = (() => {
         const source = currentDialog?.source;
         currentDialog = null;
         if (restoreSource && source?.dataset.ticketEquipmentKind === 'device') {
-            config.restoreDevice(source.dataset.ticketEquipmentId);
+            config.restoreDevice(source.dataset.ticketEquipmentId, source.dataset.ticketEquipmentOffset);
         } else if (restoreSource) {
             source?.dispatchEvent(new Event('ticket-refresh'));
         }
