@@ -1,6 +1,7 @@
-"""Approved Clean Start: reset only central inventory, not user accounts."""
+"""Apply Clean Start to inventory and Service Desk data in one transaction."""
 import copy
 import json
+import sqlite3
 from .audit_events import attribute_event
 from datetime import datetime, timezone
 
@@ -11,7 +12,7 @@ from .permissions import can_access
 
 
 def reset_inventory(connection, account_id):
-    """Published Clean Start inventory defaults and Change History, atomically."""
+    """Reset operational data and retain accounts and central Change History."""
     if not all(can_access(connection, account_id, section, edit=True)
                for section in ("Devices", "IPAM", "Racks")):
         raise PermissionError("All inventory section edit permissions required")
@@ -53,9 +54,20 @@ def reset_inventory(connection, account_id):
                     "label": "Managed list", "fields": []
                 })
 
-        # Keep existing Change History and accounts: published reset records one event.
+        # The ticket and attachment bytes are in SQLite, so a failed inventory
+        # reset restores them too. Overwrite any pages freed by this deletion.
+        connection.execute('PRAGMA secure_delete=ON')
+        removed_tickets = connection.execute('DELETE FROM service_desk_tickets').rowcount
+        if removed_tickets:
+            changes.insert(0, {'action': 'Deleted', 'kind': 'Service Desk',
+                               'label': 'Service Desk ticket data', 'fields': []})
         connection.execute("DELETE FROM device_edit_reservations")
-        _write_detached(connection, clean)
+        try:
+            _write_detached(connection, clean)
+        except sqlite3.IntegrityError as error:
+            if str(error) == 'FOREIGN KEY constraint failed':
+                raise ValueError('Existing equipment history prevents Clean Start. No data was cleared.') from error
+            raise
         event = {
             "at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
             "reason": "Clean inventory reset",

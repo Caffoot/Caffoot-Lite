@@ -40,8 +40,8 @@ module.exports=async({page,context,catalogue,confirmedAction,confirm,screenshot,
  await manageUser('dave');
  const modal=page.locator('.users-management-modal');
  assert.match(await modal.innerText(),/Individual overrides take precedence/);
- assert.equal(await modal.locator('.access-grid').evaluate(element=>element.children.length),7,'Six existing permission cards plus Suppliers');
- assert.deepEqual(await modal.locator('.access-grid [data-next-user-permission]').evaluateAll(selects=>selects.map(item=>item.dataset.section)),['Devices','IPAM','Racks','Staff Members','Departments','IT Assets','Suppliers']);
+ assert.deepEqual(await modal.locator('.access-grid [data-next-user-permission]').evaluateAll(selects=>selects.map(item=>item.dataset.section)),['Devices','IPAM','Racks','Staff Members','Departments','IT Assets','Suppliers','Service Desk']);
+ assert.equal(await modal.getByLabel('Service Desk',{exact:true}).inputValue(),'');
  await screenshot(page,'it-staff-dave-1440');
  await page.setViewportSize({width:390,height:844});
  assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));await screenshot(page,'it-staff-dave-390');
@@ -53,18 +53,21 @@ module.exports=async({page,context,catalogue,confirmedAction,confirm,screenshot,
   assert.equal(await page.locator('#role-name').getAttribute('readonly'),'');
   assert.equal(await page.locator('[data-role-command="delete"]').count(),0);
  }
- await editor();await page.locator('#role-grant-Devices').selectOption('read');await page.locator('#role-grant-Racks').selectOption('');
+ await editor();
+ assert.equal(await page.getByLabel('Service Desk',{exact:true}).inputValue(),'');
+ await page.getByLabel('Service Desk',{exact:true}).selectOption('read');
+ await page.locator('#role-grant-Devices').selectOption('read');await page.locator('#role-grant-Racks').selectOption('');
  await screenshot(page,'it-staff-editor-1440');
  await page.locator('[form="role-definition-form"]').click();await page.locator('[data-role-command="confirm"]').waitFor();await confirm(page);
- data=await catalogue(context);assert.deepEqual(data.users.find(user=>user.id===accounts.tim).permissions,{Devices:'read',IPAM:'edit','IT Assets':'edit'});
- assert.deepEqual(data.users.find(user=>user.id===accounts.dave).permissions,{Devices:'read',IPAM:'edit',Racks:'read','IT Assets':'edit'});
+ data=await catalogue(context);assert.deepEqual(data.users.find(user=>user.id===accounts.tim).permissions,{Devices:'read',IPAM:'edit','IT Assets':'edit','Service Desk':'read'});
+ assert.deepEqual(data.users.find(user=>user.id===accounts.dave).permissions,{Devices:'read',IPAM:'edit',Racks:'read','IT Assets':'edit','Service Desk':'read'});
  await editor();await page.locator('#role-definition-form [name="enabled"]').uncheck();
  await page.locator('[form="role-definition-form"]').click();await page.locator('[data-role-command="confirm"]').waitFor();await confirm(page);
  data=await catalogue(context);assert.equal(data.roles.find(item=>item.id===role.id).enabled,false);
  assert.deepEqual(data.users.find(user=>user.id===accounts.tim).permissions,{});
  assert.ok(data.users.find(user=>user.id===accounts.tim).accessDetails.roles.some(item=>item.id===role.id&&!item.enabled));
  await editor();await page.locator('#role-definition-form [name="enabled"]').check();
- for(const section of ['Devices','IPAM','Racks','IT Assets'])await page.locator('#role-definition-form select[name="'+section+'"]').selectOption('');
+ for(const section of ['Devices','IPAM','Racks','IT Assets','Service Desk'])await page.locator('#role-definition-form select[name="'+section+'"]').selectOption('');
  await page.locator('[form="role-definition-form"]').click();await page.locator('[data-role-command="confirm"]').waitFor();await confirm(page);
  assert.equal((await catalogue(context)).users.find(user=>user.id===accounts.tim).accessDetails.mfaMandatory,true);
  for(const action of [{type:'role.delete',roleId:role.id},{type:'role.update',roleId:role.id,name:'Renamed',enabled:true,grants:{}}]){
@@ -74,5 +77,22 @@ module.exports=async({page,context,catalogue,confirmedAction,confirm,screenshot,
  assert.ok(!(await catalogue(context)).users.find(user=>user.id===accounts.tim).accessDetails.roles.some(item=>item.id===role.id));
  await confirmedAction(context,{type:'role.update',roleId:role.id,name:'IT Staff',enabled:true,grants:{Devices:'edit',IPAM:'edit',Racks:'edit','IT Assets':'edit'}});
  await page.reload({waitUntil:'networkidle'});await page.locator('.users-live').waitFor();await page.locator('[data-action="select-users-section"][data-tab="roles"]').click();
- await checked(page,'IT Staff defaults, manual membership, protected identity, editable grants/status, retained overrides, mandatory MFA and unchanged Manage User cards passed');
+ await checked(page,'IT Staff defaults, deliberate Service Desk grants, retained overrides and mandatory MFA passed');
+
+ await page.locator('#sidebar [data-action="tab-settings"]').click();
+ await page.locator('.settings-screen .subnav [data-tab="maintenance"]').click();
+ const cleanStart=page.getByRole('button',{name:'Review Clear System'});
+ assert.equal(await cleanStart.isEnabled(),true);
+ await screenshot(page,'clean-start-1440');
+ const confirmation=new Promise(resolve=>page.once('dialog',async dialog=>{
+  const message=dialog.message();
+  await dialog.dismiss();
+  resolve(message);
+ }));
+ await cleanStart.click();
+ assert.match(await confirmation,/All Service Desk tickets, conversations, attachments and ticket history will be removed/);
+ await page.setViewportSize({width:390,height:844});
+ assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
+ await screenshot(page,'clean-start-390');
+ await checked(page,'Clean Start discloses ticket and attachment removal in the existing confirmation');
 };

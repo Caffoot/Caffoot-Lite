@@ -7785,6 +7785,7 @@ function openIpModal(ip) {
                 'Current inventory: ' + summary,
                 '',
                 'ALL inventory, IPAM records, managed server options and software options will be replaced.',
+                'All Service Desk tickets, conversations, attachments and ticket history will be removed.',
                 '',
                 'Database backup and restoration are handled by your Docker or volume backup application.',
                 '',

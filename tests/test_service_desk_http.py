@@ -11,6 +11,7 @@ from backend.stock_intake import receive_stock, stock_item
 import test_device_assignments_http as fixture
 from test_device_handovers import handover_payload
 from test_staff_directory_http import ORIGIN
+from test_import_review import fixture as legacy_export
 from test_stock_circulation import issue_payload, return_payload
 from test_stock_corrections import correction_payload
 from test_stock_intake import receipt_payload
@@ -212,3 +213,117 @@ class ServiceDeskHttpTests(unittest.TestCase):
         self.assertEqual([row['id'] for row in listing['tickets']], [new_ticket])
         old_messages = self.request(self.ticket_path('it', f'/{ticket}/messages'))[1]
         self.assertEqual(old_messages['messages'][0]['body'], 'Previous context')
+
+    def test_device_deletion_and_compatible_inventory_replacement(self):
+        export = legacy_export()
+        export['caffootBackup'] = {
+            'format': 'caffoot-inventory', 'schemaVersion': 1, 'app': 'Caffoot Lite',
+            'appVersion': '1.3.3', 'exportedAt': '2026-11-20T12:00:00Z',
+        }
+
+        def replace_inventory(candidate, expected):
+            status, result, _ = self.request('/api/import/preview', method='POST',
+                raw=json.dumps(candidate).encode(), headers={'Content-Type': 'application/octet-stream'})
+            self.assertEqual(status, 200, result)
+            status, result, _ = self.request('/api/import/confirm', method='POST',
+                payload={'draftId': result['draftId'], 'replacementConfirmed': True})
+            self.assertEqual(status, expected, result)
+            return result
+
+        replace_inventory(export, 200)
+        identity = export['devices'][0]['id']
+        ticket = self.create('it', actor=1, equipmentId=identity)
+        with sqlite3.connect(self.path) as connection:
+            connection.execute("UPDATE inventory_devices SET revision=3 WHERE id=?", (identity,))
+            unlinked = dict(id='spare', name='Spare equipment', type='Laptop', status='Active')
+            connection.execute("INSERT INTO inventory_devices VALUES('spare','Spare equipment',?,0,1)",
+                               (json.dumps(unlinked),))
+
+        for device_id, expected in ((identity, 400), ('spare', 200)):
+            status, result, _ = self.request('/api/devices/edit/start', method='POST', payload={'deviceId': device_id})
+            self.assertEqual(status, 200, result)
+            status, result, _ = self.request('/api/devices/delete', method='POST',
+                                             payload={'deviceId': device_id, 'revision': result['revision']})
+            self.assertEqual(status, expected, result)
+            if expected == 400:
+                self.assertIn('protected history', result['error'])
+
+        replacement_device = dict(id='replacement', name='Replacement', type='Desktop',
+                                  mountType='Desktop', primaryIp='')
+        with sqlite3.connect(self.path) as connection:
+            before = tuple(connection.iterdump())
+        rejected = replace_inventory(dict(export, devices=[replacement_device], ipAllocations={}), 400)
+        self.assertIn('protected history', rejected['error'])
+        changed = replace_inventory(dict(export, devices=[dict(export['devices'][0], name='Different')]), 400)
+        self.assertIn('protected history', changed['error'])
+        with sqlite3.connect(self.path) as connection:
+            self.assertEqual(tuple(connection.iterdump()), before)
+        replace_inventory(dict(export, devices=[replacement_device, export['devices'][0]]), 200)
+        with sqlite3.connect(self.path) as connection:
+            self.assertEqual(connection.execute(
+                'SELECT id,revision,ordinal FROM inventory_devices ORDER BY ordinal'
+            ).fetchall(), [('replacement', 0, 0), (identity, 3, 1)])
+            self.assertEqual(connection.execute('PRAGMA foreign_key_check').fetchall(), [])
+        self.assertEqual(self.request(self.ticket_path('it', f'/{ticket}'))[1]['equipmentId'], identity)
+
+    def test_clean_start_blobs_history_and_accounts_follow_one_transaction(self):
+        ticket = self.create('it', actor=1)
+        message = self.save('it', ticket, 'messages', {'body': 'Private ticket content'})[1]['id']
+        self.assertEqual(self.save('it', ticket, 'close', {'resolutionNote': 'Checked'})[0], 200)
+        self.assertEqual(self.save('it', ticket, 'reopen', {})[0], 200)
+        self.assertEqual(self.save('it', ticket, 'close', {'resolutionNote': 'Checked again'})[0], 200)
+        tables = ('accounts', 'account_sessions', 'roles', 'account_permission_overrides', 'staff_members',
+                  'service_desk_categories', 'organisation_features', 'suppliers', 'it_asset_stock_items')
+        with sqlite3.connect(self.path) as connection:
+            attachment = connection.execute("""INSERT INTO service_desk_attachments(ticket_id,message_id,filename,contents)
+                VALUES(?,?,'private.txt',?)""", (ticket, message, b'Unpublished attachment contents')).lastrowid
+            connection.execute("INSERT INTO suppliers(name,name_key,website,description) VALUES('Parts','parts','','')")
+            connection.execute("""INSERT INTO it_asset_stock_items(name,category,tracking_mode)
+                                VALUES('Cables','Accessories','quantity')""")
+            connection.execute("INSERT INTO inventory_change_history(record_json) VALUES(?)",
+                               (json.dumps({'reason': 'Prior history', 'changes': []}),))
+            connection.execute("""CREATE TRIGGER reject_clean_start BEFORE INSERT ON inventory_settings
+                                  BEGIN SELECT RAISE(ABORT,'A reset write failed'); END""")
+            connection.commit()
+            retained = {table: connection.execute(f'SELECT * FROM {table}').fetchall() for table in tables}
+            before = tuple(connection.iterdump())
+        reset = '/api/inventory/reset'
+        for actor in (None, 2, 4, 6):
+            self.assertEqual(self.request(reset, method='POST', actor=actor, payload={'confirmed': True})[0], 403)
+        self.assertEqual(self.request(reset, method='POST', payload={'confirmed': False})[0], 400)
+        self.assertEqual(self.request(reset, method='POST', payload={'confirmed': True},
+                                      headers={'X-CSRF-Token': ''})[0], 403)
+        self.assertEqual(self.request(reset, method='POST', payload={'confirmed': True})[0], 400)
+        with sqlite3.connect(self.path) as connection:
+            self.assertEqual(tuple(connection.iterdump()), before)
+            connection.execute('DROP TRIGGER reject_clean_start')
+        self.assertEqual(self.download('it', ticket, attachment, 1)[0], 200)
+        self.assertEqual(self.request(reset, method='POST', payload={'confirmed': True})[0], 200)
+        self.assertEqual(self.download('it', ticket, attachment, 1)[0], 404)
+        with sqlite3.connect(self.path) as connection:
+            for table in ('tickets', 'events', 'messages', 'attachments', 'closures'):
+                self.assertEqual(connection.execute(f'SELECT count(*) FROM service_desk_{table}').fetchone(), (0,))
+            for table, rows in retained.items():
+                self.assertEqual(connection.execute(f'SELECT * FROM {table}').fetchall(), rows)
+            events = [json.loads(row[0]) for row in connection.execute(
+                'SELECT record_json FROM inventory_change_history ORDER BY id')]
+            self.assertEqual([event['reason'] for event in events], ['Prior history', 'Clean inventory reset'])
+            self.assertEqual(events[-1]['changes'][0]['label'], 'Service Desk ticket data')
+            self.assertNotIn('Private ticket content', json.dumps(events))
+            self.assertEqual(connection.execute('PRAGMA foreign_key_check').fetchall(), [])
+            device = dict(id='fresh', name='Fresh Device')
+            connection.execute("INSERT INTO inventory_devices VALUES('fresh','Fresh Device',?,0,0)",
+                               (json.dumps(device),))
+        self.assertGreater(self.create('it', actor=1, equipmentId='fresh'), ticket)
+
+    def test_clean_start_does_not_remove_existing_assignment_dependencies(self):
+        self.assign_device()
+        ticket = self.create()
+        with sqlite3.connect(self.path) as connection:
+            before = tuple(connection.iterdump())
+        status, result, _ = self.request('/api/inventory/reset', method='POST', payload={'confirmed': True})
+        self.assertEqual(status, 400)
+        self.assertIn('Existing equipment history prevents Clean Start', result['error'])
+        with sqlite3.connect(self.path) as connection:
+            self.assertEqual(tuple(connection.iterdump()), before)
+        self.assertEqual(self.request(self.ticket_path('personal', f'/{ticket}'), actor=4)[0], 200)
