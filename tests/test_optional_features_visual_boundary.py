@@ -18,8 +18,8 @@ class OptionalFeaturesVisualBoundaryTests(unittest.TestCase):
         old=baseline_text('interface/screens/settings.html')
         new=(ROOT/'interface/screens/settings.html').read_text()
         prior_warning = 'Review the protected confirmation steps before clearing inventory and managed options.'
-        approved_warning = ('Review the protected confirmation steps before clearing inventory, managed options '
-                            'and all Service Desk ticket data.')
+        approved_warning = ('Review the protected confirmation steps before clearing operational records '
+                            'and restoring default catalogues.')
         self.assertEqual(old.count(prior_warning), 1)
         old = old.replace(prior_warning, approved_warning)
         for name in ('data','email','maintenance'):

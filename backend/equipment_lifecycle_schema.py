@@ -3,6 +3,18 @@ from .equipment_lifecycle import DEFAULT_LIFESPANS
 from .stock_schema import LIFECYCLE_FEATURE_TABLE_SQL, stock_schema_statements, validate_feature_table
 
 
+def seed_equipment_lifecycle_defaults(connection):
+    """Create the initial warning periods and equipment lifespan catalogue."""
+    connection.execute("""
+        INSERT INTO equipment_lifecycle_settings(singleton,warranty_days,replacement_days)
+        VALUES(1,90,90)
+    """)
+    connection.executemany(
+        "INSERT INTO equipment_lifecycle_types(name,years,original_name) VALUES(?,?,?)",
+        ((name, years, name) for name, years in DEFAULT_LIFESPANS.items()),
+    )
+
+
 def migrate_equipment_lifecycle(connection):
     choices = validate_feature_table(connection, upgraded=True, lifecycle=False)
     ddl = """
@@ -12,8 +24,6 @@ def migrate_equipment_lifecycle(connection):
         replacement_days INTEGER NOT NULL CHECK(replacement_days BETWEEN 0 AND 3650),
         revision INTEGER NOT NULL DEFAULT 0 CHECK(revision>=0)
     );
-    INSERT INTO equipment_lifecycle_settings(singleton,warranty_days,replacement_days)
-    VALUES(1,90,90);
     CREATE TABLE equipment_lifecycle_types (
         id INTEGER PRIMARY KEY,
         name TEXT NOT NULL UNIQUE,
@@ -36,9 +46,6 @@ def migrate_equipment_lifecycle(connection):
     connection.execute("ALTER TABLE organisation_features_next RENAME TO organisation_features")
     for statement in stock_schema_statements(ddl):
         connection.execute(statement)
-    connection.executemany(
-        "INSERT INTO equipment_lifecycle_types(name,years,original_name) VALUES(?,?,?)",
-        ((name, years, name) for name, years in DEFAULT_LIFESPANS.items()),
-    )
+    seed_equipment_lifecycle_defaults(connection)
     if validate_feature_table(connection, upgraded=True, lifecycle=True) != choices:
         raise RuntimeError("Equipment Lifecycle upgrade changed existing feature choices")

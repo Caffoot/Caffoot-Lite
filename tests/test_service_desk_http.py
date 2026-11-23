@@ -4,8 +4,16 @@ import json
 import sqlite3
 import unittest
 
+from backend.equipment_associations import add_associated_equipment
+from backend.equipment_lifecycle import DEFAULT_LIFESPANS
 from backend.http_security import COOKIE_NAME
-from backend.stock_circulation import issue_stock, return_stock, stock_issue_records
+from backend.inventory import reconstruct_inventory
+from backend.normalisation_pipeline import PUBLISHED_DEFAULTS
+from backend.schema import initialise_database
+from backend.service_desk_schema import DEFAULT_TICKET_CATEGORIES
+from backend.supplier_issue_schema import INITIAL_ISSUE_CATEGORIES
+from backend.supplier_schema import INITIAL_CATEGORIES
+from backend.stock_circulation import issue_stock, legacy_device_issue, return_stock, stock_issue_records
 from backend.stock_corrections import save_stock_correction
 from backend.stock_intake import receive_stock, stock_item
 import test_device_assignments_http as fixture
@@ -266,26 +274,126 @@ class ServiceDeskHttpTests(unittest.TestCase):
             self.assertEqual(connection.execute('PRAGMA foreign_key_check').fetchall(), [])
         self.assertEqual(self.request(self.ticket_path('it', f'/{ticket}'))[1]['equipmentId'], identity)
 
-    def test_clean_start_blobs_history_and_accounts_follow_one_transaction(self):
-        ticket = self.create('it', actor=1)
+    def populate_reset_fixture(self):
+        with sqlite3.connect(self.path) as connection:
+            connection.execute("UPDATE organisation_features SET enabled=1 WHERE feature IN "
+                               "('it_assets','suppliers','equipment_lifecycle')")
+            returned = dict(id='returned', name='Returned Laptop', type='Laptop', status='Active')
+            connection.execute('INSERT INTO inventory_devices VALUES(?,?,?,0,1)',
+                               ('returned', returned['name'], json.dumps(returned)))
+        self.assign_device()
+        self.hand_over('department', 'dept')
+        status, result, _ = self.request('/api/equipment/assignments', method='POST', payload={
+            'recipientKind': 'staff', 'recipientId': 'person', 'devices': [{'id': 'returned', 'revision': 0}],
+        })
+        self.assertEqual(status, 200, result)
+
+        with sqlite3.connect(self.path) as connection:
+            connection.execute('PRAGMA foreign_keys=ON')
+            assignment_id = connection.execute(
+                "SELECT id FROM device_assignments WHERE device_id='returned'").fetchone()[0]
+            source = legacy_device_issue(connection, assignment_id)
+            physical_return = return_payload(source)
+            physical_return['deviceAssignmentId'] = physical_return.pop('issueEntryId')
+            return_stock(connection, 1, self.tokens[1], physical_return)
+            receipt = dict(receipt_payload(), quantity=4, readyQuantity=4,
+                           checks={'itemsChecked': True, 'conditionChecked': True})
+            asset = receive_stock(connection, 1, self.tokens[1], receipt)['stockItemId']
+            issue_stock(connection, 1, self.tokens[1], issue_payload(
+                connection, asset, quantity=3, recipientKind='department', recipientId='dept',
+            ))
+            issue = stock_issue_records(connection)[0]
+            return_stock(connection, 1, self.tokens[1], return_payload(issue, quantityReturned=2))
+            stock_return = connection.execute("""
+                SELECT id FROM it_asset_stock_entries WHERE source_issue_entry_id=?
+            """, (issue['id'],)).fetchone()[0]
+            save_stock_correction(connection, 1, self.tokens[1], correction_payload(connection, stock_return, 1))
+            issue = stock_issue_records(connection)[0]
+            identity, revision = connection.execute("""
+                SELECT assignment.id,device.revision FROM device_assignments assignment
+                JOIN inventory_devices device ON device.id=assignment.device_id
+                WHERE assignment.device_id='device' AND assignment.ended_at IS NULL
+            """).fetchone()
+            add_associated_equipment(connection, 1, self.tokens[1], {
+                'operationId': 'clean-start-associate-equipment', 'deviceId': 'device',
+                'deviceRevision': revision, 'deviceAssignmentId': identity,
+                'issueEntryId': issue['id'], 'version': issue['version'],
+            })
+            connection.executescript("""
+                INSERT INTO inventory_racks VALUES('rack','{"id":"rack","name":"Equipment Rack"}',0);
+                INSERT INTO inventory_rack_accessories VALUES('shelf','rack','{"id":"shelf","rackId":"rack"}',0);
+                INSERT INTO inventory_subnets VALUES('subnet','{"id":"subnet","cidr":"192.0.2.0/24"}',0);
+                INSERT INTO inventory_vlans VALUES('vlan','{"id":"vlan","name":"Network"}',0);
+                INSERT INTO inventory_ip_allocations VALUES('192.0.2.10','{}');
+                INSERT INTO suppliers(id,name,name_key,website,description) VALUES(1,'Parts','parts','','');
+                INSERT INTO supplier_locations(id,supplier_id,name,address,city,postcode,country)
+                    VALUES(1,1,'Main','','','','');
+                INSERT INTO supplier_contacts(id,supplier_id,name,role,phones,emails,profiles,company_wide)
+                    VALUES(1,1,'Contact','','[]','[]','[]',0);
+                INSERT INTO supplier_contact_locations VALUES(1,1,1);
+                INSERT INTO supplier_category_assignments VALUES(1,1);
+                INSERT INTO supplier_notes(supplier_id,contact_id,body,created_by,created_label,created_at)
+                    VALUES(1,1,'Supplier note',1,'Administrator','2026-11-23');
+                INSERT INTO supplier_issues(id,supplier_id,category_id,title,description,created_by,created_label,
+                                            created_at,updated_at)
+                    VALUES(1,1,1,'Delayed order','Purchasing history',1,'Administrator','2026-11-23','2026-11-23');
+                INSERT INTO supplier_issue_contacts VALUES(1,1,1);
+                INSERT INTO supplier_issue_updates(issue_id,body,created_by,created_label,created_at)
+                    VALUES(1,'Supplier reply',1,'Administrator','2026-11-23');
+                INSERT INTO device_suppliers(device_id,supplier_id) VALUES('device',1);
+                INSERT INTO receipt_suppliers(receipt_id,supplier_id)
+                    SELECT id,1 FROM it_asset_stock_movements WHERE kind='received';
+                INSERT INTO device_lifecycle(device_id,purchase_date) VALUES('device','2026-11-20');
+                UPDATE equipment_lifecycle_settings SET warranty_days=20,replacement_days=30;
+                UPDATE equipment_lifecycle_types SET years=10,archived=1 WHERE id=1;
+                UPDATE service_desk_categories SET hidden=1 WHERE id=1;
+                UPDATE supplier_categories SET archived=1 WHERE id=1;
+                UPDATE supplier_issue_categories SET archived=1 WHERE id=1;
+                INSERT INTO staff_members(id,first_name,department_id) VALUES('unlinked','Jordan','dept');
+                INSERT INTO account_profiles(account_id,first_name,last_name,display_name,email,email_verified)
+                    VALUES(4,'Alex','Example','Alex E','alex@example.test',1);
+                INSERT INTO account_email_proofs(token_hash,account_id,purpose,email,expires_at,challenge_id,attempts)
+                    VALUES('fixture-proof',4,'verify','alex@example.test',9999999999,'fixture-challenge',2);
+                INSERT INTO account_email_attempts(account_id,purpose,attempted_at) VALUES(4,'verify',1);
+            """)
+
+    def test_clean_start_clears_all_operational_modules_and_rolls_back_on_failure(self):
+        self.populate_reset_fixture()
+        ticket = self.create('department')
+        reply = self.save('department', ticket, 'messages', {'body': 'Staff reply'}, actor=4)[1]['id']
+        self.assertTrue(reply)
         message = self.save('it', ticket, 'messages', {'body': 'Private ticket content'})[1]['id']
         self.assertEqual(self.save('it', ticket, 'close', {'resolutionNote': 'Checked'})[0], 200)
         self.assertEqual(self.save('it', ticket, 'reopen', {})[0], 200)
         self.assertEqual(self.save('it', ticket, 'close', {'resolutionNote': 'Checked again'})[0], 200)
-        tables = ('accounts', 'account_sessions', 'roles', 'account_permission_overrides', 'staff_members',
-                  'service_desk_categories', 'organisation_features', 'suppliers', 'it_asset_stock_items')
+        retained_tables = ('accounts', 'account_profiles', 'account_sessions', 'account_email_proofs',
+                           'account_email_attempts', 'roles', 'role_grants', 'account_roles',
+                           'account_permission_overrides', 'organisation_features')
+        cleared_tables = (
+            'service_desk_tickets', 'service_desk_events', 'service_desk_messages',
+            'service_desk_attachments', 'service_desk_closures', 'inventory_devices', 'inventory_racks',
+            'inventory_rack_accessories', 'inventory_subnets', 'inventory_vlans', 'inventory_ip_allocations',
+            'device_assignments', 'device_equipment_associations',
+            'it_asset_stock_items', 'it_asset_stock_units', 'it_asset_stock_movements', 'it_asset_stock_entries',
+            'departments', 'device_lifecycle', 'device_suppliers', 'receipt_suppliers', 'suppliers',
+            'supplier_supply_history', 'supplier_locations', 'supplier_contacts', 'supplier_contact_locations',
+            'supplier_category_assignments', 'supplier_notes', 'supplier_issues', 'supplier_issue_contacts',
+            'supplier_issue_updates',
+        )
         with sqlite3.connect(self.path) as connection:
             attachment = connection.execute("""INSERT INTO service_desk_attachments(ticket_id,message_id,filename,contents)
                 VALUES(?,?,'private.txt',?)""", (ticket, message, b'Unpublished attachment contents')).lastrowid
-            connection.execute("INSERT INTO suppliers(name,name_key,website,description) VALUES('Parts','parts','','')")
-            connection.execute("""INSERT INTO it_asset_stock_items(name,category,tracking_mode)
-                                VALUES('Cables','Accessories','quantity')""")
-            connection.execute("INSERT INTO inventory_change_history(record_json) VALUES(?)",
-                               (json.dumps({'reason': 'Prior history', 'changes': []}),))
             connection.execute("""CREATE TRIGGER reject_clean_start BEFORE INSERT ON inventory_settings
                                   BEGIN SELECT RAISE(ABORT,'A reset write failed'); END""")
             connection.commit()
-            retained = {table: connection.execute(f'SELECT * FROM {table}').fetchall() for table in tables}
+            for table in cleared_tables:
+                self.assertTrue(connection.execute(f'SELECT 1 FROM {table}').fetchone(), table)
+            retained = {table: connection.execute(f'SELECT * FROM {table}').fetchall()
+                        for table in retained_tables}
+            guard_definitions = dict(connection.execute("SELECT name,sql FROM sqlite_schema WHERE type='trigger' "
+                                                       "AND name<>'reject_clean_start'"))
+            earlier_events = connection.execute(
+                'SELECT id,record_json FROM inventory_change_history ORDER BY id').fetchall()
             before = tuple(connection.iterdump())
         reset = '/api/inventory/reset'
         for actor in (None, 2, 4, 6):
@@ -301,32 +409,40 @@ class ServiceDeskHttpTests(unittest.TestCase):
         self.assertEqual(self.request(reset, method='POST', payload={'confirmed': True})[0], 200)
         self.assertEqual(self.download('it', ticket, attachment, 1)[0], 404)
         with sqlite3.connect(self.path) as connection:
-            for table in ('tickets', 'events', 'messages', 'attachments', 'closures'):
-                self.assertEqual(connection.execute(f'SELECT count(*) FROM service_desk_{table}').fetchone(), (0,))
+            connection.execute('PRAGMA foreign_keys=ON')
+            for table in cleared_tables:
+                self.assertFalse(connection.execute(f'SELECT 1 FROM {table}').fetchone(), table)
             for table, rows in retained.items():
                 self.assertEqual(connection.execute(f'SELECT * FROM {table}').fetchall(), rows)
-            events = [json.loads(row[0]) for row in connection.execute(
-                'SELECT record_json FROM inventory_change_history ORDER BY id')]
-            self.assertEqual([event['reason'] for event in events], ['Prior history', 'Clean inventory reset'])
-            self.assertEqual(events[-1]['changes'][0]['label'], 'Service Desk ticket data')
-            self.assertNotIn('Private ticket content', json.dumps(events))
+            self.assertEqual(dict(connection.execute("SELECT name,sql FROM sqlite_schema WHERE type='trigger'")),
+                             guard_definitions)
+            self.assertEqual(connection.execute('SELECT account_id,department_id FROM staff_members '
+                                                'ORDER BY account_id').fetchall(), [(4, None), (5, None)])
+            self.assertEqual(reconstruct_inventory(connection),
+                             dict(PUBLISHED_DEFAULTS, managedOptionsCleared=True, stateVersion=3))
+            for table, defaults in (('service_desk_categories', DEFAULT_TICKET_CATEGORIES),
+                                    ('supplier_categories', INITIAL_CATEGORIES),
+                                    ('supplier_issue_categories', INITIAL_ISSUE_CATEGORIES)):
+                self.assertEqual(connection.execute(f'SELECT name FROM {table} ORDER BY id').fetchall(),
+                                 [(name,) for name in defaults])
+            self.assertEqual(connection.execute("SELECT warranty_days,replacement_days,revision "
+                                                "FROM equipment_lifecycle_settings").fetchone(), (90, 90, 0))
+            self.assertEqual(dict(connection.execute("SELECT name,years FROM equipment_lifecycle_types")),
+                             DEFAULT_LIFESPANS)
+            events = connection.execute('SELECT id,record_json FROM inventory_change_history ORDER BY id').fetchall()
+            self.assertEqual(events[:-1], earlier_events)
+            reset_event = json.loads(events[-1][1])
+            self.assertEqual(reset_event['reason'], 'Clean inventory reset')
+            self.assertEqual(reset_event['changes'][0]['label'], 'Service Desk ticket data')
+            self.assertNotIn('Private ticket content', json.dumps(reset_event))
             self.assertEqual(connection.execute('PRAGMA foreign_key_check').fetchall(), [])
             device = dict(id='fresh', name='Fresh Device')
             connection.execute("INSERT INTO inventory_devices VALUES('fresh','Fresh Device',?,0,0)",
                                (json.dumps(device),))
+            connection.commit()
+            self.assertIn('stockItemId', receive_stock(connection, 1, self.tokens[1], receipt_payload()))
+            initialise_database(connection)
         self.assertGreater(self.create('it', actor=1, equipmentId='fresh'), ticket)
-
-    def test_clean_start_does_not_remove_existing_assignment_dependencies(self):
-        self.assign_device()
-        ticket = self.create()
-        with sqlite3.connect(self.path) as connection:
-            before = tuple(connection.iterdump())
-        status, result, _ = self.request('/api/inventory/reset', method='POST', payload={'confirmed': True})
-        self.assertEqual(status, 400)
-        self.assertIn('Existing equipment history prevents Clean Start', result['error'])
-        with sqlite3.connect(self.path) as connection:
-            self.assertEqual(tuple(connection.iterdump()), before)
-        self.assertEqual(self.request(self.ticket_path('personal', f'/{ticket}'), actor=4)[0], 200)
 
     def test_individual_asset_and_stock_backed_device_use_canonical_identities(self):
         with sqlite3.connect(self.path) as connection:

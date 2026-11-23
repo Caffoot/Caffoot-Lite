@@ -80,9 +80,16 @@ def visible_change_history(connection, account_id):
         return []
     complete_history = is_admin and all(sections[section] for section in ("Devices", "IPAM", "Racks"))
 
+    last_operational_reset = 0
+    if sections['IT Assets'] and not sections['Devices']:
+        last_operational_reset = connection.execute("""
+            SELECT coalesce(max(id),0) FROM inventory_change_history
+            WHERE json_type(record_json,'$.operationalReset')='true'
+              AND json_extract(record_json,'$.reason')='Clean inventory reset'
+        """).fetchone()[0]
     history = []
-    for (raw,) in connection.execute(
-            "SELECT record_json FROM inventory_change_history ORDER BY id"):
+    for event_id, raw in connection.execute(
+            "SELECT id,record_json FROM inventory_change_history ORDER BY id"):
         event = json.loads(raw)
         if (isinstance(event, dict) and event.get("reason") == SUPPLIER_AUDIT_REASON
                 and not feature_enabled(connection, "Suppliers")):
@@ -126,10 +133,16 @@ def visible_change_history(connection, account_id):
                 if kind=='IT Assets' and not sections['Devices']:
                     after=change.get('after') if isinstance(change.get('after'),dict) else {}
                     movement=after.get('movementId',after.get('closureMovementId'))
-                    if after.get('deviceId') is not None or (type(movement) is int and connection.execute(
-                            'SELECT 1 FROM it_asset_stock_entries e JOIN it_asset_stock_units u ON u.id=e.stock_unit_id '
-                            'WHERE e.movement_id=? AND u.device_id IS NOT NULL LIMIT 1',(movement,)).fetchone()):
+                    if after.get('deviceId') is not None:
                         continue
+                    if type(movement) is int:
+                        # The old ledger can no longer prove that the movement
+                        # was independent of Devices. A reused ID cannot do so.
+                        if event_id < last_operational_reset or connection.execute(
+                                'SELECT 1 FROM it_asset_stock_entries e JOIN it_asset_stock_units u ON u.id=e.stock_unit_id '
+                                'WHERE e.movement_id=? AND u.device_id IS NOT NULL LIMIT 1', (movement,),
+                        ).fetchone():
+                            continue
                 # Never forward unrecognised historical payload properties.
                 fields = change.get("fields")
                 changes.append({

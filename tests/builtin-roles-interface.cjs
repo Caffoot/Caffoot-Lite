@@ -93,7 +93,11 @@ module.exports=async({page,context,catalogue,confirmedAction,confirm,screenshot,
   resolve(message);
  }));
  await cleanStart.click();
- assert.match(await confirmation,/All Service Desk tickets, conversations, attachments and ticket history will be removed/);
+ const resetWarning=await confirmation;
+ assert.match(resetWarning,/All operational records will be removed/);
+ assert.match(resetWarning,/All Service Desk tickets, conversations, attachments and ticket history will be removed/);
+ assert.match(resetWarning,/User accounts, sign-in safeguards and central Change History will be kept/);
+ assert.match(resetWarning,/Database backup and restoration are handled by your Docker or volume backup application/);
  await page.setViewportSize({width:390,height:844});
  assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
  await screenshot(page,'clean-start-390');
