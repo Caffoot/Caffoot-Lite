@@ -17,6 +17,11 @@ class OptionalFeaturesVisualBoundaryTests(unittest.TestCase):
     def test_existing_settings_panels_and_tab_buttons_are_byte_preserved(self):
         old=baseline_text('interface/screens/settings.html')
         new=(ROOT/'interface/screens/settings.html').read_text()
+        prior_warning = 'Review the protected confirmation steps before clearing inventory and managed options.'
+        approved_warning = ('Review the protected confirmation steps before clearing inventory, managed options '
+                            'and all Service Desk ticket data.')
+        self.assertEqual(old.count(prior_warning), 1)
+        old = old.replace(prior_warning, approved_warning)
         for name in ('data','email','maintenance'):
             panel=r'<section class="account-panel[^\"]*" data-section="'+name+r'" role="tabpanel">[\s\S]*?</section>'
             button=r'<button[^>]+data-tab="'+name+r'"[^>]*>[\s\S]*?</button>'

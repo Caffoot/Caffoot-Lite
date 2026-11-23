@@ -124,6 +124,13 @@ END;
 """
 
 
+def has_service_desk_storage(connection):
+    """Check for the ticket table when opening an earlier database schema."""
+    return connection.execute(
+        "SELECT 1 FROM sqlite_schema WHERE type='table' AND name='service_desk_tickets'"
+    ).fetchone() is not None
+
+
 def migrate_service_desk(connection):
     """Create the ticket tables within the existing versioned transaction."""
     # Old versions ignored unknown sections. A stray grant must never start

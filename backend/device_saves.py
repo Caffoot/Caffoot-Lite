@@ -14,6 +14,7 @@ from .equipment_suppliers import device_supplier_values, write_device_supplier
 from .inventory import reconstruct_inventory
 from .normalisation_validation import validate_normalisation_devices
 from .permissions import can_access, feature_enabled
+from .service_desk_schema import has_service_desk_storage
 from .rack_validation import find_rack_import_conflicts
 
 
@@ -400,7 +401,9 @@ def delete_reserved_device(connection, account_id, device_id, revision, related_
             raise ValueError("Device edit reservation is no longer valid")
         if row[1] != revision or reservation[2] != revision:
             raise ValueError("Device has changed since editing began")
-        if connection.execute('SELECT 1 FROM service_desk_tickets WHERE device_id=? LIMIT 1', (device_id,)).fetchone():
+        if has_service_desk_storage(connection) and connection.execute(
+                'SELECT 1 FROM service_desk_tickets WHERE device_id=? LIMIT 1', (device_id,),
+        ).fetchone():
             raise ValueError('This Device has protected history and cannot be deleted.')
         if connection.execute('SELECT 1 FROM device_assignments WHERE device_id=? LIMIT 1', (device_id,)).fetchone():
             raise ValueError('Device has assignment history and cannot be deleted')

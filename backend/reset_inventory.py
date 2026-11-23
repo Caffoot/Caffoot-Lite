@@ -9,6 +9,7 @@ from .application_integrity import validate_detached_application_state
 from .inventory import _write_detached, reconstruct_inventory
 from .normalisation_pipeline import PUBLISHED_DEFAULTS
 from .permissions import can_access
+from .service_desk_schema import has_service_desk_storage
 
 
 def reset_inventory(connection, account_id):
@@ -57,7 +58,8 @@ def reset_inventory(connection, account_id):
         # The ticket and attachment bytes are in SQLite, so a failed inventory
         # reset restores them too. Overwrite any pages freed by this deletion.
         connection.execute('PRAGMA secure_delete=ON')
-        removed_tickets = connection.execute('DELETE FROM service_desk_tickets').rowcount
+        removed_tickets = (connection.execute('DELETE FROM service_desk_tickets').rowcount
+                           if has_service_desk_storage(connection) else 0)
         if removed_tickets:
             changes.insert(0, {'action': 'Deleted', 'kind': 'Service Desk',
                                'label': 'Service Desk ticket data', 'fields': []})

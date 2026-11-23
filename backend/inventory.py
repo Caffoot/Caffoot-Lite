@@ -6,6 +6,8 @@ Account and security tables are not part of an inventory import."""
 import json
 import sqlite3
 
+from .service_desk_schema import has_service_desk_storage
+
 COLLECTIONS = {
     "devices": "inventory_devices",
     "subnets": "inventory_subnets",
@@ -212,6 +214,8 @@ def preview_inventory_counts(candidate, current):
 
 def retain_ticket_devices(connection, records):
     """Keep existing Device rows where replacing them would break a ticket."""
+    if not has_service_desk_storage(connection):
+        return set()
     linked = dict(connection.execute("""
         SELECT device.id,device.record_json FROM inventory_devices device
         WHERE EXISTS(SELECT 1 FROM service_desk_tickets ticket WHERE ticket.device_id=device.id)
