@@ -1,8 +1,11 @@
-"""Check the live Service Desk boundary without exposing ticket screens."""
+"""Check the live Service Desk workflows and ticket access boundary."""
+import base64
+from concurrent.futures import ThreadPoolExecutor
 import http.client
 import json
 import sqlite3
 import unittest
+from unittest.mock import patch
 
 from backend.equipment_associations import add_associated_equipment
 from backend.equipment_lifecycle import DEFAULT_LIFESPANS
@@ -187,6 +190,131 @@ class ServiceDeskHttpTests(unittest.TestCase):
         self.assertEqual([event['author'] for event in history['history'] if event['kind'] == 'Reopened'],
                          ['account-4', 'account-4'])
         self.assertIn('Internal assignment reason', json.dumps(history))
+
+    def test_queue_filters_classification_and_stale_actions(self):
+        self.assign_device()
+        first = self.create('it', actor=2, subject='Drive unavailable')
+        second = self.create('it', actor=2, subject='Printer unavailable')
+        self.assertEqual(self.save('it', second, 'assign', {'technicianId': 2})[0], 200)
+        detail_path = self.ticket_path('it', f'/{first}')
+        detail = self.request(detail_path, actor=2)[1]
+        self.assertTrue(detail['canEdit'])
+        self.assertFalse(self.request(detail_path, actor=3)[1]['canEdit'])
+        self.assertEqual(self.save('it', first, 'priority', {'priority':'High'}, actor=3)[0], 403)
+        self.assertEqual(self.save('personal', first, 'category', {'categoryId':1}, actor=4)[0], 403)
+        self.assertEqual(self.save('it', first, 'category', {'categoryId':0})[0], 400)
+        self.assertEqual(self.save('it', first, 'priority', {'priority':'Urgent'})[0], 400)
+        for action, payload in (('priority', {'priority':'High'}), ('category', {'categoryId':1})):
+            self.assertEqual(self.save('it', first, action, payload)[0], 200)
+        status, queue, _ = self.request(self.ticket_path('it',
+            '?search=SD-0001&status=Open&priority=High&assignment=unassigned&sort=oldest'), actor=2)
+        self.assertEqual(status, 200)
+        self.assertEqual([row['id'] for row in queue['tickets']], [first])
+        self.assertEqual(queue['filteredTotal'], 1)
+        self.assertEqual(queue['workloadCounts']['Open'], 1)
+        self.assertEqual(queue['workloadCounts']['In Progress'], 1)
+        status, queue, _ = self.request(self.ticket_path('it', '?assignment=mine&technician=2'), actor=2)
+        self.assertEqual(status, 200)
+        self.assertEqual([row['id'] for row in queue['tickets']], [second])
+        status, queue, _ = self.request(self.ticket_path('it', '?search=Alex%20Example&equipmentKind=device&equipmentId=device'))
+        self.assertEqual(status, 200)
+        self.assertEqual(queue['filteredTotal'], 2)
+        self.assertEqual(self.request(detail_path + '/technicians', actor=3)[0], 403)
+        self.assertNotIn(2, [entry['id'] for entry in self.request(
+            self.ticket_path('it', f'/{second}/technicians'))[1]['technicians']])
+        self.assertEqual(self.request(SERVICE_DESK + '/it/equipment', actor=3)[0], 403)
+        self.assertEqual(self.request(SERVICE_DESK + '/it/equipment', actor=2)[1]['equipment'][0]['id'], 'device')
+        latest = self.request(detail_path)[1]['updatedAt']
+        with ThreadPoolExecutor(2) as workers:
+            def place_on_hold(actor):
+                return self.save('it', first, 'hold', {'reason':'Waiting for Parts',
+                    'expectedUpdatedAt':latest}, actor=actor)[0]
+            self.assertEqual(sorted(workers.map(place_on_hold, (1, 2))), [200, 409])
+        self.assertEqual(self.request(detail_path)[1]['statusBeforeHold'], 'Open')
+        self.assertEqual(self.save('it', first, 'resume', {})[0], 200)
+        self.assertEqual(self.request(detail_path)[1]['status'], 'Open')
+        self.assertEqual(self.save('it', first, 'close', {'resolutionNote':'  '})[0], 400)
+        history = self.request(detail_path + '/history')[1]['history']
+        self.assertEqual([event['kind'] for event in history],
+                         ['Created','Priority Changed','Category Changed','Status Changed','Status Changed'])
+
+    def test_uploaded_attachments_visibility_removal_and_revocation(self):
+        self.assign_device()
+        initial_file = {'filename':'check-équipement.txt','contents':base64.b64encode(b'Equipment report').decode()}
+        ticket = self.create('it', actor=2, attachments=[initial_file])
+        path = self.ticket_path('it', f'/{ticket}')
+        messages = self.request(path + '/messages')[1]
+        original, = messages['attachments']
+        original_id = original['id']
+        self.assertFalse(messages['messages'][0]['editable'])
+        self.assertEqual(self.download('personal', ticket, original_id, 4)[1], b'Equipment report')
+        private_path = self.ticket_path('it', f'/{ticket}/messages')
+        internal_file = {'filename':'technician-only.txt','contents':base64.b64encode(b'Internal analysis').decode()}
+        update = {'body':'Technician analysis', 'attachments':[internal_file]}
+        for actor, headers in ((None, {}), (3, {}), (4, {}), (2, {'X-CSRF-Token':''}),
+                               (2, {'Origin':'https://elsewhere.example'})):
+            self.assertEqual(self.request(private_path, method='POST', actor=actor,
+                                          payload=update, headers=headers)[0], 403)
+        self.assertEqual(self.request(private_path, method='POST', actor=2, payload=update)[0], 200)
+        private = self.request(path + '/messages')[1]['attachments'][-1]
+        self.assertEqual(self.download('personal', ticket, private['id'], 4)[0], 404)
+        client = http.client.HTTPConnection('127.0.0.1', self.server.server_port)
+        self.addCleanup(client.close)
+        client.request('GET', path + f"/attachments/{private['id']}",
+                       headers={'Cookie':COOKIE_NAME + '=' + self.tokens[2]})
+        response = client.getresponse()
+        self.assertEqual(response.status, 200)
+        self.assertEqual(response.getheader('Content-Type'), 'application/octet-stream')
+        self.assertEqual(response.getheader('X-Content-Type-Options'), 'nosniff')
+        self.assertTrue(response.getheader('Content-Disposition').startswith('attachment;'))
+        self.assertEqual(response.read(), b'Internal analysis')
+        for actor in (None, 3, 4):
+            self.assertEqual(self.save('it', ticket, f"attachments/{private['id']}", {}, actor=actor)[0], 403)
+        self.assertEqual(self.save('it', ticket, f"attachments/{private['id']}", {}, actor=2)[0], 200)
+        self.assertEqual(self.save('it', ticket, f"attachments/{private['id']}", {}, actor=2)[0], 404)
+        self.assertEqual(self.request(private_path, method='POST', actor=2, payload=update)[0], 200)
+        self.assertEqual(self.download('it', ticket, private['id'], 2)[0], 404)
+        private_events = self.request(path + '/history')[1]['history']
+        self.assertEqual([event['author'] for event in private_events
+                          if event['details'].get('removedAttachmentId') == private['id']], ['account-2'])
+        self.assertNotIn('technician-only.txt', json.dumps(self.request(
+            self.ticket_path('personal', f'/{ticket}/history'), actor=4)[1]))
+        self.hand_over('department', 'dept')
+        self.assertEqual(self.download('personal', ticket, original_id, 4)[0], 404)
+        self.assertEqual(self.download('it', ticket, original_id, 2)[0], 200)
+        with sqlite3.connect(self.path) as connection:
+            connection.execute('UPDATE accounts SET active=0 WHERE id=2')
+        self.assertEqual(self.download('it', ticket, original_id, 2)[0], 401)
+        self.assertEqual(self.request(private_path, method='POST', actor=2, payload=update)[0], 403)
+
+    def test_upload_validation_and_simultaneous_retained_limit(self):
+        good = {'filename':'notes.txt','contents':base64.b64encode(b'New attachment').decode()}
+        create_path = self.ticket_path('it')
+        for bad in (dict(good, filename='../notes.txt'), dict(good, filename='notes.pdf'),
+                    dict(good, contents='invalid base64'), dict(good, filename='notes.exe')):
+            self.assertEqual(self.request(create_path, method='POST',
+                payload=dict(CREATE, attachments=[good, bad]))[0], 400)
+        self.assertEqual(self.request(create_path)[1]['tickets'], [])
+        ticket = self.create('it', actor=2, attachments=[good])
+        message_path = self.ticket_path('it', f'/{ticket}/messages')
+        frozen_files = self.request(message_path)[1]['attachments']
+        # Lower the allowance so two real requests can exercise the write lock without large fixtures.
+        with patch('backend.service_desk_attachments.MAX_RETAINED_TICKET_BYTES', 28):
+            with ThreadPoolExecutor(2) as workers:
+                def upload(actor):
+                    return self.request(message_path, method='POST', actor=actor,
+                                        payload={'body':'Concurrent update','attachments':[good]})[0]
+                self.assertEqual(sorted(workers.map(upload, (1, 2))), [200, 400])
+            with ThreadPoolExecutor(2) as workers:
+                def add_note(actor):
+                    return self.request(message_path, method='POST', actor=actor,
+                                        payload={'body':'Independent technician note'})[0]
+                self.assertEqual(list(workers.map(add_note, (1, 2))), [200, 200])
+            data = self.request(message_path)[1]
+            self.assertEqual(len(data['attachments']), 2)
+            self.assertEqual(len(data['messages']), 4)
+            self.assertEqual(self.save('it', ticket, f"attachments/{frozen_files[0]['id']}", {})[0], 200)
+            self.assertEqual(upload(2), 200)
 
     def test_stock_correction_cannot_reopen_prior_ticket_visibility(self):
         with sqlite3.connect(self.path) as connection:

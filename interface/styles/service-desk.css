@@ -1,0 +1,126 @@
+/* Service Desk uses the Device Inventory toolbar and the shared Device Details window. */
+.service-desk-page { min-width: 0; }
+.service-desk-page-head { justify-content: space-between; align-items: flex-end; }
+.service-desk-page-head .device-review-eyebrow { color: #ab5316; margin-bottom: .4rem; }
+.service-desk-page-head h1 { overflow-wrap: anywhere; }
+.service-desk-page-head > .btn { flex: 0 0 auto; }
+.service-desk-workload-heading {
+    display: flex; justify-content: space-between; align-items: end;
+    gap: .75rem; margin: 1.6rem 0 .85rem;
+}
+.service-desk-workload-heading h2 { margin: 0; font-size: 1.15rem; color: var(--heading); }
+.service-desk-workload-heading p,
+.service-desk-workload-heading > span { margin: .25rem 0 0; font-size: .75rem; color: var(--muted); }
+.service-desk-workload { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: .9rem; }
+.service-desk-workload-card {
+    display: flex; flex-direction: column; gap: .55rem; text-align: left; min-width: 0;
+    background: var(--white); color: var(--ink); border: 1px solid var(--line);
+    border-radius: 15px; padding: 1rem; box-shadow: var(--shadow);
+}
+.service-desk-workload-card:hover, .service-desk-workload-card[aria-pressed="true"] { border-color: #ed8532; }
+.service-desk-workload-card:focus-visible { outline: 2px solid #ed8532; outline-offset: 3px; }
+.service-desk-stat-head {
+    display: flex; align-items: center; justify-content: space-between; gap: .3rem; width: 100%;
+    font-size: .75rem; font-weight: 750; color: var(--muted);
+}
+.service-desk-stat-head > span {
+    display: grid; place-items: center; flex: 0 0 1.9rem; height: 1.9rem;
+    border-radius: .55rem; background: #fff0e5; color: #ab5316;
+}
+.service-desk-workload-card > strong { font-size: 1.85rem; line-height: 1.1; color: var(--heading); }
+.service-desk-workload-card > small { font-size: .67rem; color: var(--muted); }
+.service-desk-page #service-desk-queue { margin-top: 1.65rem; scroll-margin-top: 1rem; }
+.service-desk-page .device-filters { grid-template-columns: repeat(4,minmax(0,1fr)); }
+.service-desk-page .device-filters select { min-width: 0; }
+.service-desk-page .device-table { min-width: 850px; }
+.service-desk-page .device-table :is(th,td):last-child { text-align: right; }
+.service-desk-page .device-table td.service-desk-empty { padding: 2rem 1rem; text-align: center; }
+.service-desk-sort { display: flex; gap: .6rem; align-items: center; white-space: nowrap; }
+.service-desk-sort select { width: auto; min-width: 145px; margin-top: 0; }
+.service-desk-pagination { display: flex; gap: .65rem; justify-content: flex-end; margin-top: .65rem; }
+.service-desk-tag {
+    display: inline-block; border-radius: 99rem; padding: .25rem .55rem;
+    background: #e8eff6; color: #345773; white-space: nowrap; font-size: .7rem; font-weight: 750;
+}
+.service-desk-tag[data-ticket-tag="Open"] { background: #e5f0fc; color: #245984; }
+.service-desk-tag[data-ticket-tag="In Progress"], .service-desk-tag[data-ticket-tag="Low"] { background: #e6f4ed; color: #216f51; }
+.service-desk-tag[data-ticket-tag="On Hold"] { background: #fcefe4; color: #86501f; }
+.service-desk-tag[data-ticket-tag="High"] { background: #fae9e8; color: #983d40; }
+.service-desk-tag[data-ticket-tag="Medium"] { background: #faf1dd; color: #755415; }
+html.dark .service-desk-page-head .device-review-eyebrow { color: #ffad72; }
+html.dark .service-desk-stat-head > span { background: #553b2a; color: #ffc69b; }
+html.dark .service-desk-tag { background: #344557; color: #c8d8e8; }
+html.dark .service-desk-tag[data-ticket-tag="Open"] { background: #29475e; color: #acd7ff; }
+html.dark .service-desk-tag[data-ticket-tag="In Progress"], html.dark .service-desk-tag[data-ticket-tag="Low"] { background: #254a3e; color: #a8f0c9; }
+html.dark .service-desk-tag[data-ticket-tag="On Hold"] { background: #543c2b; color: #f3c28e; }
+html.dark .service-desk-tag[data-ticket-tag="High"] { background: #553537; color: #f5b7b7; }
+html.dark .service-desk-tag[data-ticket-tag="Medium"] { background: #55472d; color: #f0d5a5; }
+.service-desk-dialog { height: auto; max-height: min(870px,calc(100dvh - 40px)); }
+.service-desk-dialog .device-review-headline h2 { overflow-wrap: anywhere; }
+.service-desk-dialog .device-review-tabs[hidden], .service-desk-pagination[hidden] { display: none; }
+.service-desk-dialog .device-review-smallbtn { margin-inline-start: .2rem; }
+.service-desk-dialog [data-ticket-edit-field] { min-height: 0; padding: .25rem .5rem; }
+.service-desk-field { display: block; margin: .85rem 0 .45rem; font-size: .78rem; font-weight: 700; }
+.service-desk-field > span { color: #ac4b1a; }
+.service-desk-field :is(select,input,textarea) {
+    display: block; width: 100%; min-width: 0; margin-top: .4rem; padding: .55rem .7rem;
+    border: 1px solid var(--line); border-radius: .5rem; color: var(--ink); background: var(--white); font: inherit; font-weight: 400;
+}
+.service-desk-field textarea { resize: vertical; }
+.service-desk-form-actions { display: flex; justify-content: flex-end; gap: .55rem; margin-top: .8rem; flex-wrap: wrap; }
+.service-desk-classification { padding-top: .5rem; border-top: 1px solid var(--line); }
+.service-desk-action, .service-desk-dialog .device-review-panel .service-desk-info {
+    border-color: var(--line); background: var(--soft); color: var(--ink);
+}
+.service-desk-dialog .device-review-panel .service-desk-info {
+    border: 1px solid var(--line); padding: .65rem; border-radius: .5rem; margin-top: .95rem;
+}
+.service-desk-error {
+    margin: 0; padding: .75rem 1.35rem; border-top: 1px solid var(--line);
+    background: var(--white); color: #a23837; overflow-wrap: anywhere;
+}
+html.dark .service-desk-error { color: #ffb7b3; }
+.service-desk-message {
+    background: var(--soft); border: 1px solid var(--line); border-radius: .65rem;
+    margin: .65rem 0; padding: .8rem; overflow-wrap: anywhere;
+}
+.service-desk-message-head { display: flex; align-items: start; justify-content: space-between; gap: .6rem; margin-bottom: .55rem; }
+.service-desk-message-head small, .service-desk-timeline small { display: block; color: var(--muted); margin-top: .2rem; }
+.service-desk-dialog .device-review-panel .service-desk-message-text { white-space: pre-wrap; overflow-wrap: anywhere; color: var(--ink); font-size: .8rem; }
+.service-desk-visibility {
+    display: inline-block; padding: .25rem .5rem; border-radius: 99rem;
+    background: #e6f4ed; color: #21634b; font-size: .68rem; font-weight: 750;
+}
+.service-desk-visibility[data-internal="true"] { background: #faefdf; color: #795022; }
+html.dark .service-desk-visibility { background: #254a3e; color: #a8f0c9; }
+html.dark .service-desk-visibility[data-internal="true"] { background: #543c2b; color: #f3c28e; }
+.service-desk-files, .service-desk-equipment ul { list-style: none; margin: .6rem 0 0; padding: 0; }
+.service-desk-files li, .service-desk-equipment li {
+    display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap;
+    gap: .4rem; padding: .4rem 0; border-top: 1px solid var(--line); overflow-wrap: anywhere;
+}
+.service-desk-files a { color: var(--ink); text-decoration: underline; }
+.service-desk-timeline { list-style: none; margin: .45rem 0 0; padding: 0; }
+.service-desk-timeline li {
+    padding: .35rem .3rem .8rem 1.05rem; margin-left: .3rem;
+    border-left: 2px solid var(--line); position: relative; overflow-wrap: anywhere; white-space: pre-wrap;
+}
+.service-desk-timeline li::before {
+    content: ""; position: absolute; left: -.36rem; top: .56rem; width: .6rem; height: .6rem;
+    border-radius: 50%; border: 2px solid #db792f; background: var(--white);
+}
+@media (max-width: 1020px) { .service-desk-page .device-filters { grid-template-columns: repeat(2,minmax(0,1fr)); } }
+@media (max-width: 700px) {
+    .service-desk-dialog { max-height: 100dvh; height: 100dvh; }
+    .service-desk-page-head { align-items: stretch; }
+    .service-desk-workload { gap: .5rem; }
+    .service-desk-workload-card { padding: .65rem .45rem; }
+    .service-desk-workload-card > strong { font-size: 1.4rem; }
+}
+@media (max-width: 460px) {
+    .service-desk-stat-head { font-size: .65rem; min-height: 1.35rem; }
+    .service-desk-stat-head > span { display: none; }
+    .service-desk-page .device-filters { grid-template-columns: 1fr; }
+    .service-desk-workload-heading > span { white-space: nowrap; }
+    .service-desk-dialog .device-review-footer .btn { min-width: 0; padding-inline: .65rem; }
+}

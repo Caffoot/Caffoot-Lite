@@ -1,0 +1,68 @@
+<!-- interface-template:service-desk/queue -->
+<div class="service-desk-page">
+  <header class="header service-desk-page-head">
+    <div>
+      <p class="device-review-eyebrow">IT / Service Desk</p>
+      <h1>Service Desk</h1>
+      <p>View support workload, follow ticket activity and manage requests across the IT team.</p>
+    </div>
+    <button type="button" class="btn btn-primary" data-ticket-create {{slot:0}}>＋ Create Ticket</button>
+  </header>
+  <section aria-labelledby="service-desk-workload-heading">
+    <div class="service-desk-workload-heading">
+      <div><h2 id="service-desk-workload-heading">Current Workload</h2><p>Live outstanding ticket totals. Select a card to filter the Ticket Queue.</p></div>
+      <span>Current Totals</span>
+    </div>
+    <div class="service-desk-workload" data-ticket-workload></div>
+  </section>
+  <section id="service-desk-queue">
+    <form class="device-toolbar" id="ticket-queue-filters" role="search" aria-label="Filter Tickets">
+      <div class="device-toolbar-head">
+        <div><h2>Search &amp; Filter Tickets</h2><p>Narrow the list by ticket, status, priority or assigned technician.</p></div>
+        <button type="reset" class="btn btn-outline">Clear Filters</button>
+      </div>
+      <div>
+        <label class="device-search-label" for="service-desk-search">Search Tickets</label>
+        <div class="device-search-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="10" cy="10" r="6"/><path d="m15 15 5 5"/></svg>
+          <input class="device-search" id="service-desk-search" name="search" type="search" maxlength="200" autocomplete="off" placeholder="Search by number, subject, person or Device / Asset">
+        </div>
+      </div>
+      <div class="device-filters">
+        <label class="device-filter">Status<select name="status"><option value="">All Tickets</option>{{slot:1}}</select></label>
+        <label class="device-filter">Priority<select name="priority"><option value="">All Priorities</option>{{slot:2}}</select></label>
+        <label class="device-filter">Assignment<select name="assignment"><option value="">All Assignments</option><option value="mine">Assigned To Me</option><option value="unassigned">Unassigned</option></select></label>
+        <label class="device-filter">Assigned Technician<select name="technician"><option value="">All Technicians</option></select></label>
+      </div>
+    </form>
+    <div class="device-results-head">
+      <div><h2>Ticket Queue</h2><p data-ticket-count aria-live="polite">Loading Tickets…</p></div>
+      <div class="result-actions"><label class="device-filter service-desk-sort">Sort By<select name="sort" form="ticket-queue-filters"><option value="newest">Updated · Newest</option><option value="oldest">Updated · Oldest</option><option value="ticket">Ticket Number</option></select></label></div>
+    </div>
+    <div class="device-table-card"><div class="device-table-scroll" tabindex="0" role="region" aria-label="Ticket Queue">
+      <table class="device-table">
+        <thead><tr><th scope="col">Ticket</th><th scope="col">Requester</th><th scope="col">Device / Asset</th><th scope="col">Priority</th><th scope="col">Status</th><th scope="col">Assigned To</th><th scope="col">Updated</th><th scope="col">Actions</th></tr></thead>
+        <tbody data-ticket-rows></tbody>
+      </table>
+    </div></div>
+    <div class="service-desk-pagination" data-ticket-pagination hidden>
+      <button class="btn btn-outline" type="button" data-ticket-page="-1">Previous</button>
+      <button class="btn btn-outline" type="button" data-ticket-page="1">Next</button>
+    </div>
+  </section>
+</div>
+<!-- /interface-template -->
+<!-- interface-template:service-desk/dialog -->
+<section class="device-review-dialog service-desk-dialog">
+  <header class="device-review-head">
+    <div class="device-review-headline">
+      <div><p class="device-review-eyebrow">Service Desk · {{slot:0}}</p><h2>{{slot:1}}</h2><p class="device-review-sub" data-ticket-subtitle>{{slot:2}}</p></div>
+      <button class="device-review-close" type="button" data-ticket-dismiss aria-label="Close Ticket Window">×</button>
+    </div>
+    <nav class="device-review-tabs" data-ticket-tabs role="tablist" aria-label="Ticket Details" hidden></nav>
+  </header>
+  <div class="device-review-body" data-ticket-body><p role="status">Loading…</p></div>
+  <p class="service-desk-error" data-ticket-error role="alert" hidden></p>
+  <footer class="device-review-footer" data-ticket-footer><button type="button" class="btn btn-outline" data-ticket-dismiss>Close</button></footer>
+</section>
+<!-- /interface-template -->

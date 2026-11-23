@@ -91,8 +91,13 @@ def read_ticket_list(connection, actor_id, scope, *, status=None, search='', lim
     if equipment_kind is not None:
         if equipment_kind not in EQUIPMENT_COLUMNS or not 0 < len(equipment_id) <= 200:
             raise ValueError('Select a Device or IT Asset.')
-        allowed += f' AND ticket.{EQUIPMENT_COLUMNS[equipment_kind][1]}=?'
-        values += (equipment_id,)
+        if equipment_kind == 'stockItem':
+            allowed += ''' AND (ticket.stock_item_id=? OR ticket.stock_unit_id IN (
+                SELECT id FROM it_asset_stock_units WHERE stock_item_id=? AND device_id IS NULL))'''
+            values += (equipment_id, equipment_id)
+        else:
+            allowed += f' AND ticket.{EQUIPMENT_COLUMNS[equipment_kind][1]}=?'
+            values += (equipment_id,)
     # Workload totals use equipment access but stay independent of queue filters.
     scoped = allowed
     scoped_values = values
