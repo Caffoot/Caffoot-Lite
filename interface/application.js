@@ -7695,6 +7695,7 @@ function openIpModal(ip) {
           const importButton=root.querySelector('[data-action="next-import-pick"]');
           if(importButton)importButton.disabled=!nextImportAllowed;
           if(activeSettingsTab==='features')void nextOptionalFeaturesBridge?.hydrate(root);
+          if(activeSettingsTab==='service-desk')void window.caffootServiceDesk.hydrateSettings(root);
           if(activeSettingsTab==='email'){
             syncSmtpForm(root);
             if(!smtpLoaded&&!smtpLoading)void loadSmtpSettings();
@@ -9218,6 +9219,7 @@ void (async () => {
       : section === 'receipts' && !!editPermissions['IT Assets']);
   }
   function canSubmitServiceDeskForm(form) {
+    if (form?.matches('form[data-support-form],form[data-support-confirm]')) return sessionIsAdmin;
     if (!form?.matches('form[data-ticket-form]')) return false;
     return form.closest('.employee-ticket-dialog')
       ? sessionCanUseMyTickets && ['create','messages','reopen'].includes(form.dataset.ticketForm)
@@ -11422,7 +11424,7 @@ void (async () => {
       void openLifecycleSettings(target).catch(error=>showToast(error.message,'error'));
     }else if(action==='close-lifecycle-settings'){
       leaveLifecycleSettings?.();
-    }else if(action==='select-settings-tab'&&['data','email','maintenance','features'].includes(target.dataset.tab)){
+    }else if(action==='select-settings-tab'&&['data','email','maintenance','features','service-desk'].includes(target.dataset.tab)){
       if(leaveLifecycleSettings&&!leaveLifecycleSettings())return;
       activeSettingsTab=target.dataset.tab;
       renderContent();

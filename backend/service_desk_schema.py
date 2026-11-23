@@ -179,3 +179,12 @@ def migrate_service_desk_reporting(connection):
     connection.execute("""
         CREATE INDEX service_desk_events_reporting ON service_desk_events(happened_at,kind)
     """)
+
+    connection.execute("""
+        CREATE TABLE service_desk_report_preferences (
+            account_id INTEGER PRIMARY KEY REFERENCES accounts(id) ON DELETE CASCADE,
+            period TEXT NOT NULL,
+            start_date TEXT,
+            end_date TEXT
+        )
+    """)

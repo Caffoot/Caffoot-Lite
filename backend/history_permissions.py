@@ -8,6 +8,7 @@ import json
 from .equipment_lifecycle import DEVICE_AUDIT_REASON, FIRST_SERVICE_AUDIT_REASON, SETTINGS_AUDIT_REASON
 from .equipment_suppliers import SUPPLIER_AUDIT_REASON
 from .permissions import can_access, feature_enabled
+from .service_desk_settings import CALENDAR_AUDIT_REASON, CATEGORY_AUDIT_REASON
 from .subnet_validation import parse_hierarchy_cidr
 
 # Categories emitted by the established inventory writers, including the
@@ -95,6 +96,10 @@ def visible_change_history(connection, account_id):
                 and not feature_enabled(connection, "Suppliers")):
             continue
         reason = event.get('reason') if isinstance(event, dict) else None
+        if reason in (CALENDAR_AUDIT_REASON, CATEGORY_AUDIT_REASON):
+            if is_admin:
+                history.append(event)
+            continue
         if reason == SETTINGS_AUDIT_REASON:
             if is_admin and feature_enabled(connection, 'Equipment Lifecycle'):
                 history.append(event)

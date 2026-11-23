@@ -91,6 +91,14 @@ class ServiceDeskCalendarTests(unittest.TestCase):
             ('Europe/London', 1, {}), ('America/New_York', None, {}),
         ])
 
+    def test_hold_across_midnight_and_weekend_deducts_only_the_overlap(self):
+        self.activate('Europe/London', '2026-11-27T09:00:00')
+        ticket = self.ticket('2026-11-27T16:30:00')
+        for timestamp, status in (('2026-11-27T16:45:00', 'On Hold'), ('2026-11-30T09:30:00', 'Open')):
+            record_ticket_event(self.connection, ticket, 'Status Changed', self.actor,
+                                utc_timestamp(instant(timestamp)), status=status)
+        self.assertEqual(self.close(ticket, '2026-11-30T10:30:00'), 75 * 60)
+
     def test_unknown_timezone_is_not_backfilled_after_recovery(self):
         self.activate(None, '2026-11-23T08:00:00')
         ticket = self.ticket('2026-11-23T09:00:00')

@@ -9,11 +9,14 @@ from unittest.mock import patch
 
 from backend.equipment_associations import add_associated_equipment
 from backend.equipment_lifecycle import DEFAULT_LIFESPANS
+from backend.history_permissions import visible_change_history
 from backend.http_security import COOKIE_NAME
 from backend.inventory import reconstruct_inventory
 from backend.normalisation_pipeline import PUBLISHED_DEFAULTS
 from backend.schema import initialise_database
-from backend.service_desk_schema import DEFAULT_TICKET_CATEGORIES
+from backend.service_desk_calendar import DEFAULT_WORKING_HOURS, activate_deployment_timezone
+from backend.service_desk_schema import (DEFAULT_TICKET_CATEGORIES, OTHER_TICKET_CATEGORY_ID,
+                                         SOFTWARE_TICKET_CATEGORY_ID)
 from backend.supplier_issue_schema import INITIAL_ISSUE_CATEGORIES
 from backend.supplier_schema import INITIAL_CATEGORIES
 from backend.stock_circulation import issue_stock, legacy_device_issue, return_stock, stock_issue_records
@@ -92,6 +95,154 @@ class ServiceDeskHttpTests(unittest.TestCase):
         self.assertEqual(search['tickets'], [])
         self.assertEqual(sum(search['counts'].values()), 0)
         self.assertEqual(self.save(scope, ticket_id, 'messages', {'body': 'Not permitted'}, actor=actor)[0], 404)
+
+    def test_admin_calendar_changes_are_validated_audited_and_prospective(self):
+        settings = '/api/settings/service-desk'
+        self.assertEqual(self.request(settings, actor=None)[0], 401)
+        for actor in (2, 3, 4, 6):
+            self.assertEqual(self.request(settings, actor=actor)[0], 401 if actor == 6 else 403)
+            self.assertEqual(self.request(settings, method='POST', actor=actor, payload={})[0], 403)
+        for header in ({'X-CSRF-Token': ''}, {'Origin': 'https://outside.example'}):
+            self.assertEqual(self.request(settings, method='POST', payload={}, headers=header)[0], 403)
+        with sqlite3.connect(self.path) as connection:
+            activate_deployment_timezone(connection, 'Europe/London')
+        initial = self.request(settings)[1]['serviceDesk']
+        self.assertEqual(initial['timezone'], 'Europe/London')
+        self.assertEqual(initial['excludedDates'], [])
+        self.assertEqual(initial['workingHours'], DEFAULT_WORKING_HOURS)
+        working = initial['workingHours']
+        working[0]['end'] = '09:00'
+        payload = {'action': 'working-hours', 'calendarRevision': initial['calendarRevision'],
+                   'workingHours': working}
+        self.assertEqual(self.request(settings, method='POST', payload=payload)[0], 400)
+        working[0]['end'] = '18:00'
+        self.assertEqual(self.request(settings, method='POST', payload=payload)[0], 200)
+        self.assertEqual(self.request(settings, method='POST', payload=payload)[0], 409)
+        exclusion = {'action': 'add-date', 'date': '2026-02-30', 'reason': 'Team training'}
+        self.assertEqual(self.request(settings, method='POST', payload=exclusion)[0], 400)
+        exclusion['date'] = '2026-12-21'
+        self.assertEqual(self.request(settings, method='POST', payload=exclusion)[0], 200)
+        self.assertEqual(self.request(settings, method='POST', payload=exclusion)[0], 400)
+        self.assertEqual(self.request(settings, method='POST',
+                                      payload={'action': 'remove-date', 'date': exclusion['date']})[0], 200)
+        self.assertEqual(self.request(settings)[1]['serviceDesk']['excludedDates'], [])
+        with sqlite3.connect(self.path) as connection:
+            rows = connection.execute("""
+                SELECT effective_at,saved_by,timezone_name FROM service_desk_calendars ORDER BY id
+            """).fetchall()
+            audit = [json.loads(row[0]) for row in connection.execute('SELECT record_json FROM inventory_change_history')]
+            self.assertEqual(visible_change_history(connection, 1), audit)
+            self.assertEqual(visible_change_history(connection, 2), [])
+        self.assertEqual([row[1] for row in rows], [None, 1, 1, 1])
+        self.assertEqual([row[2] for row in rows], ['Europe/London'] * 4)
+        self.assertEqual([event['changes'][0]['after']['effectiveAt'] for event in audit], [row[0] for row in rows[1:]])
+        self.assertEqual({event['actorId'] for event in audit}, {1})
+
+    def test_category_management_preserves_labels_identity_and_software_selection(self):
+        settings = '/api/settings/service-desk'
+        self.assign_device()
+        original = self.create('personal', categoryId=SOFTWARE_TICKET_CATEGORY_ID, affectedSoftware='other')
+        rename = {'action': 'rename-category', 'id': SOFTWARE_TICKET_CATEGORY_ID,
+                  'name': 'Applications', 'previousName': 'Software / Applications'}
+        self.assertEqual(self.request(settings, method='POST', payload=rename)[0], 200)
+        revised = self.create('personal', categoryId=SOFTWARE_TICKET_CATEGORY_ID, affectedSoftware='other')
+        self.assertEqual(self.request(settings, method='POST',
+                                      payload={'action': 'add-category', 'name': 'applications'})[0], 400)
+        self.assertEqual(self.request(settings, method='POST', payload={'action': 'add-category', 'name': 'VPN'})[0], 200)
+        self.assertEqual(self.request(settings, method='POST',
+                                      payload={'action': 'hide-category', 'id': OTHER_TICKET_CATEGORY_ID})[0], 400)
+        visibility = {'action': 'hide-category', 'id': SOFTWARE_TICKET_CATEGORY_ID}
+        self.assertEqual(self.request(settings, method='POST', payload=visibility)[0], 200)
+        for scope, actor in (('personal', 4), ('it', 2)):
+            categories = self.request(f'{SERVICE_DESK}/{scope}/categories', actor=actor)[1]
+            self.assertNotIn(SOFTWARE_TICKET_CATEGORY_ID, [entry['id'] for entry in categories['categories']])
+            self.assertEqual(categories['categories'][-1]['id'], OTHER_TICKET_CATEGORY_ID)
+        rejected = dict(CREATE, categoryId=SOFTWARE_TICKET_CATEGORY_ID)
+        self.assertEqual(self.request(self.ticket_path('personal'), method='POST', actor=4, payload=rejected)[0], 400)
+        self.assertEqual(self.request(settings, method='POST', payload=dict(visibility, action='restore-category'))[0], 200)
+        for ticket, label in ((original, 'Software / Applications'), (revised, 'Applications')):
+            detail = self.request(self.ticket_path('personal', f'/{ticket}'), actor=4)[1]
+            self.assertEqual((detail['categoryId'], detail['category'], detail['affectedSoftware']),
+                             (SOFTWARE_TICKET_CATEGORY_ID, label, 'Other / Not Listed'))
+        self.assertEqual(self.save('it', original, 'category', {'categoryId': 5})[0], 200)
+        change = self.request(self.ticket_path('it', f'/{original}/history'))[1]['history'][-1]['details']
+        self.assertEqual(change['previousAffectedSoftware'], 'Other / Not Listed')
+
+    def test_reporting_uses_actual_actors_separate_attempts_and_local_event_dates(self):
+        report = f'{SERVICE_DESK}/it/report'
+        with sqlite3.connect(self.path) as connection:
+            connection.execute("UPDATE account_permission_overrides SET level='edit' WHERE account_id=3 AND section='Service Desk'")
+            connection.executemany('UPDATE accounts SET username=? WHERE id=?', [('Alex', 1), ('Sam', 2), ('Dave', 3)])
+        with sqlite3.connect(self.path) as connection:
+            activate_deployment_timezone(connection, 'Europe/London', at='2026-06-01T00:00:00.000000Z')
+        self.assertEqual(self.request(report, actor=4)[0], 403)
+        self.assertEqual(self.request(report, method='POST', actor=4, payload={'period': 'today'})[0], 403)
+        self.assertEqual(self.request(report, actor=2)[1]['preference']['period'], 'this-month')
+        day = {'period': 'custom', 'from': '2026-06-15', 'to': '2026-06-15'}
+        with patch('backend.service_desk.utc_timestamp', return_value='2026-06-14T23:00:00.000000Z'):
+            ticket = self.create('it', actor=1)
+        with patch('backend.service_desk.utc_timestamp', return_value='2026-06-15T09:00:00.000000Z'):
+            self.assertEqual(self.save('it', ticket, 'assign', {'technicianId': 2})[0], 200)
+        current = self.request(report, method='POST', payload=day)[1]
+        self.assertEqual(current['counts'], {'created': 1, 'closed': 0, 'reopened': 0})
+        self.assertIsNone(current['averageSeconds'])
+        self.assertFalse(current['durationUnavailable'])
+        self.assertTrue(all(person['started'] == 0 for person in current['technicians']))
+        for at, action, payload, actor in (
+            ('09:15:00', 'messages', {'body': 'I reproduced the fault.'}, 2),
+            ('09:30:00', 'messages', {'body': 'We have a workaround.', 'employeeVisible': True}, 3),
+            ('10:00:00', 'close', {'resolutionNote': 'Fixed.'}, 3),
+            ('10:30:00', 'messages', {'body': 'Internal follow-up.'}, 1),
+            ('11:00:00', 'reopen', {}, 1),
+            ('12:00:00', 'close', {'resolutionNote': 'Fixed again.'}, 2),
+            ('22:59:59', 'reopen', {}, 1),
+        ):
+            with patch('backend.service_desk.utc_timestamp', return_value=f'2026-06-15T{at}.000000Z'):
+                self.assertEqual(self.save('it', ticket, action, payload, actor=actor)[0], 200)
+        current = self.request(report)[1]
+        self.assertEqual(current['counts'], {'created': 1, 'closed': 2, 'reopened': 2})
+        self.assertEqual({person['name']: (person['started'], person['closed']) for person in current['technicians']},
+                         {'Alex': (0, 0), 'Sam': (2, 1), 'Dave': (0, 1)})
+        self.assertEqual(current['averageSeconds'], (7200 + 3600) / 2)
+        self.assertEqual(self.request(self.ticket_path('it', f'/{ticket}'))[1]['technician'], 'Sam')
+        self.assertEqual(self.request(report, actor=2)[1]['preference']['period'], 'this-month')
+        self.request(report, method='POST', payload={'period': 'today'})
+        self.assertEqual(self.request(report)[1]['preference'], dict(day, period='today'))
+        with patch('backend.service_desk.utc_timestamp', return_value='2026-06-15T23:00:00.000000Z'):
+            self.assertEqual(self.save('it', ticket, 'close', {'resolutionNote': 'Final fix.'}, actor=2)[0], 200)
+        next_day = self.request(report, method='POST', payload=dict(day, **{'from':'2026-06-16', 'to':'2026-06-16'}))[1]
+        self.assertEqual(next_day['counts'], {'created': 0, 'closed': 1, 'reopened': 0})
+        self.assertEqual(next_day['averageSeconds'], 0)
+
+    def test_timezone_recovery_keeps_incomplete_closures_out_of_average(self):
+        report = f'{SERVICE_DESK}/it/report'
+        day = {'period': 'custom', 'from': '2026-06-15', 'to': '2026-06-15'}
+        with sqlite3.connect(self.path) as connection:
+            activate_deployment_timezone(connection, 'Invalid/Zone', at='2026-06-15T08:00:00.000000Z')
+        missing = self.request(report, method='POST', payload=day)[1]
+        self.assertFalse(missing['available'])
+        self.assertTrue(missing['timezoneWarning'])
+        non_admin = self.request(report, actor=2)[1]
+        self.assertFalse(non_admin['available'])
+        self.assertFalse(non_admin['timezoneWarning'])
+        with patch('backend.service_desk.utc_timestamp', return_value='2026-06-15T09:00:00.000000Z'):
+            first = self.create('it', actor=1)
+            self.assertEqual(self.save('it', first, 'close', {'resolutionNote': 'Fixed.'})[0], 200)
+        with sqlite3.connect(self.path) as connection:
+            activate_deployment_timezone(connection, 'Europe/London', at='2026-06-15T10:00:00.000000Z')
+        with patch('backend.service_desk.utc_timestamp', return_value='2026-06-15T11:00:00.000000Z'):
+            second = self.create('it', actor=1)
+            self.assertEqual(self.save('it', second, 'close', {'resolutionNote': 'Fixed.'})[0], 200)
+        recovered = self.request(report)[1]
+        self.assertTrue(recovered['available'])
+        self.assertTrue(recovered['durationUnavailable'])
+        self.assertEqual(recovered['counts'], {'created': 2, 'closed': 2, 'reopened': 0})
+        self.assertIsNone(recovered['averageSeconds'])
+        self.assertEqual(self.request(report, method='POST', actor=1, payload=dict(day, **{'to': '2026-06-14'}))[0], 400)
+        self.assertEqual(self.request(report, method='POST', actor=1, payload=dict(day, **{'unapproved': True}))[0], 400)
+        with sqlite3.connect(self.path) as connection:
+            connection.execute("UPDATE organisation_features SET enabled=0 WHERE feature='devices'")
+        self.assertEqual(self.request(report)[1]['counts'], {'created': 0, 'closed': 0, 'reopened': 0})
 
     def test_creation_and_effective_technician_permissions(self):
         self.assertEqual(self.request(self.ticket_path('personal'), method='POST', actor=4, payload=CREATE)[0], 404)

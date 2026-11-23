@@ -15,6 +15,38 @@
     </div>
     <div class="service-desk-workload" data-ticket-workload></div>
   </section>
+  <section class="service-desk-report" aria-labelledby="service-desk-activity-heading">
+    <div class="service-desk-workload-heading">
+      <div><h2 id="service-desk-activity-heading">Service Desk Activity</h2><p>Support activity for the selected reporting period.</p></div>
+      <label class="device-filter">Reporting Period
+        <select data-report-period disabled>
+          <option value="today">Today</option><option value="last-7-days">Last 7 Days</option>
+          <option value="last-30-days">Last 30 Days</option><option value="this-month" selected>This Month</option>
+          <option value="this-year">This Year</option><option value="custom">Custom Date Range</option>
+        </select>
+      </label>
+    </div>
+    <div class="service-desk-report-dates" data-report-dates hidden>
+      <label class="service-desk-field">From<input type="date" name="from" required></label>
+      <label class="service-desk-field">To<input type="date" name="to" required></label>
+    </div>
+    <p class="service-desk-report-notice" role="status" data-report-notice>Loading activity…</p>
+    <div class="service-desk-report-metrics">
+      <div class="service-desk-workload-card"><span class="service-desk-stat-head">Tickets Created<span aria-hidden="true">＋</span></span><strong data-report-metric="created">—</strong></div>
+      <div class="service-desk-workload-card"><span class="service-desk-stat-head">Closure Events<span aria-hidden="true">✓</span></span><strong data-report-metric="closed">—</strong></div>
+      <div class="service-desk-workload-card"><span class="service-desk-stat-head">Tickets Reopened<span aria-hidden="true">↺</span></span><strong data-report-metric="reopened">—</strong></div>
+      <div class="service-desk-workload-card"><span class="service-desk-stat-head">Average Resolution Time<span aria-hidden="true">◷</span></span><strong data-report-metric="average">—</strong></div>
+    </div>
+    <div class="service-desk-workload-heading">
+      <div><h2 id="service-desk-technician-heading">Technician Activity</h2><p>Work started and closure events for the selected period.</p></div>
+    </div>
+    <div class="device-table-card service-desk-activity-table">
+      <table class="device-table" aria-labelledby="service-desk-technician-heading">
+        <thead><tr><th scope="col">Technician</th><th scope="col">Work Started</th><th scope="col">Tickets Closed</th></tr></thead>
+        <tbody data-report-technicians></tbody>
+      </table>
+    </div>
+  </section>
   <section id="service-desk-queue">
     <form class="device-toolbar" id="ticket-queue-filters" role="search" aria-label="Filter Tickets">
       <div class="device-toolbar-head">

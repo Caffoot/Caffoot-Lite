@@ -14,7 +14,7 @@ DEFAULT_WORKING_HOURS = [
 
 
 def utc_timestamp(instant=None):
-    return (instant or datetime.now(UTC)).isoformat(timespec='microseconds').replace('+00:00', 'Z')
+    return (instant or datetime.now(UTC)).astimezone(UTC).isoformat(timespec='microseconds').replace('+00:00', 'Z')
 
 
 def read_deployment_timezone(name):

@@ -169,3 +169,90 @@ html.dark .employee-ticket-dialog { border-color: var(--line); }
     .employee-tickets .service-desk-stat-head { overflow-wrap: anywhere; }
     .employee-tickets .device-filters, .employee-ticket-create-fields { grid-template-columns: 1fr; gap: .2rem; }
 }
+
+.service-desk-report .device-filter { min-width: 11rem; }
+.service-desk-report-dates,
+.service-desk-report-metrics { display: grid; gap: .9rem; }
+.service-desk-report-dates[hidden] { display: none; }
+.service-desk-report-dates { grid-template-columns: repeat(2, minmax(0, 1fr)); margin-bottom: .85rem; }
+.service-desk-report-metrics { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.service-desk-report-metrics .service-desk-workload-card:hover { border-color: var(--line); }
+.service-desk-report-notice { color: var(--ink); background: var(--soft); border: 1px solid var(--line); border-radius: .65rem; padding: .7rem .85rem; margin-bottom: .85rem; }
+.service-desk-page .service-desk-activity-table .device-table { min-width: 0; }
+.service-desk-activity-table .device-table tr > :is(th,td):nth-child(n+2) { text-align: center; }
+.service-desk-activity-table .device-table tbody th { font-weight: 700; overflow-wrap: anywhere; text-transform: none; }
+.service-desk-activity-table td[colspan] { text-align: center; }
+
+@media (max-width: 760px) {
+    .service-desk-report-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .service-desk-report .service-desk-workload-heading { align-items: flex-start; flex-wrap: wrap; }
+    .service-desk-report .device-filter { flex: 1 1 11rem; }
+    .service-desk-activity-table .device-table { table-layout: fixed; width: 100%; }
+    .service-desk-activity-table .device-table :is(th,td) { white-space: normal; padding-inline: .5rem; }
+    .service-desk-activity-table .device-table th:first-child { width: 40%; }
+}
+
+.service-desk-settings .panel-heading { margin-block: 1.1rem .8rem; }
+.service-desk-settings .subnav { margin-top: .8rem; }
+.service-desk-settings [data-support-feedback] { color: var(--ink); }
+.service-desk-settings [data-support-feedback][data-error="true"],
+.service-desk-settings [data-support-confirm-error] { color: #a23837; }
+html.dark .service-desk-settings [data-error="true"],
+html.dark .service-desk-settings [data-support-confirm-error] { color: #ffb7b3; }
+.support-hours-layout { display: grid; grid-template-columns: minmax(0, 1.85fr) minmax(0, 1fr); gap: 1rem; align-items: start; }
+.support-day { display: grid; grid-template-columns: minmax(5rem, 1fr) repeat(3,minmax(0, 1fr)); gap: .45rem; align-items: center; border-top: 1px solid var(--line); padding: .45rem 0; }
+.support-day-heading { font-size: .75rem; font-weight: 700; color: var(--muted); background: var(--soft); }
+.support-day-heading span:first-child { padding-inline-start: .4rem; }
+.support-day .service-desk-field { margin: 0; min-width: 0; }
+.support-day .service-desk-field input { margin: 0; }
+.support-day input:disabled { opacity: .6; }
+.support-availability { display: flex; align-items: center; gap: .35rem; font-size: .75rem; }
+.support-availability input { accent-color: #d46621; }
+.support-schedule-rules dl { margin-block: .8rem; }
+.support-schedule-rules dt { color: var(--heading); font-weight: 700; }
+.support-schedule-rules dd { margin: .25rem 0 .8rem; color: var(--muted); font-size: .8rem; }
+.support-schedule-rules [data-support-timezone-description] { background: var(--soft); padding: .7rem; border-radius: .55rem; }
+.support-summary { border-top: 1px solid var(--line); padding-top: .75rem; }
+.support-summary dl { display: grid; grid-template-columns: 1fr 1fr; gap: .5rem; font-size: .8rem; }
+.support-summary dd { margin: 0; text-align: right; }
+.support-add-form { display: flex; align-items: end; gap: .85rem; flex-wrap: wrap; margin-top: .65rem; }
+.support-add-form .service-desk-field { flex: 1 1 9rem; margin: 0; }
+.support-list { margin-top: 1rem; }
+.support-list .device-table { width: 100%; min-width: 0; margin-top: .65rem; border-collapse: collapse; }
+
+.support-list .device-table :is(th,td) { overflow-wrap: anywhere; white-space: normal; text-align: left; padding: .65rem .45rem; border-bottom: 1px solid var(--line); }
+.support-list thead { color: var(--muted); font-size: .75rem; background: var(--soft); }
+.support-list tbody { color: var(--ink); font-size: .85rem; }
+.support-list .device-table tbody tr:last-child :is(th,td) { border-bottom: 0; }
+.support-list .device-table tbody th { text-transform: none; }
+.support-list .device-table :is(th,td):last-child { text-align: right; }
+.support-list-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: .35rem; }
+.service-desk-settings .note {
+    display: flex; align-items: start; gap: .65rem; margin: 1rem 0;
+    background: var(--soft); border: 1px solid var(--line); border-radius: .7rem;
+    padding: .75rem .85rem; color: var(--ink); font-size: .8rem; line-height: 1.45;
+}
+.service-desk-settings .note svg { flex: 0 0 18px; width: 18px; height: 18px; }
+.support-settings-dialog { margin: auto; width: min(29rem, calc(100% - 2rem)); color: var(--ink); background: var(--white); }
+.support-settings-dialog::backdrop { background: rgb(12 23 36 / 62%); }
+
+@media (max-width: 900px) {
+    .support-hours-layout { grid-template-columns: 1fr; }
+}
+@media (max-width: 520px) {
+    .service-desk-settings .subnav { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .3rem; }
+    .service-desk-settings .subnav button { white-space: normal; justify-content: center; font-size: .7rem; padding-inline: .15rem; }
+    .support-day { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .support-day-heading { display: none; }
+    .support-day .support-time-label { position: static; width: auto; height: auto; clip: auto; overflow: visible; white-space: normal; color: var(--muted); }
+    .support-availability { justify-content: flex-end; }
+    .support-list thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+    .support-list .device-table,
+    .support-list .device-table tbody { display: block; }
+    .support-list .device-table tbody tr { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: .45rem; padding: .7rem 0; border-top: 1px solid var(--line); }
+    .support-list .device-table tbody :is(th,td) { padding: 0; border: 0; }
+    .support-list tbody td:last-child { grid-column: 1 / -1; }
+    .support-list .device-table [data-support-categories] td:last-child { text-align: left; }
+    .support-list .device-table [data-support-categories] .support-list-actions { justify-content: start; }
+    .support-list .device-table [data-support-exclusions] tr { grid-template-columns: auto minmax(0, 1fr); }
+}

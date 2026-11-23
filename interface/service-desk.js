@@ -15,8 +15,8 @@ window.caffootServiceDesk = (() => {
     const dates = new Intl.DateTimeFormat('en-GB', {dateStyle:'medium', timeStyle:'short'});
     let config, currentDialog, queueRefresh, employeeQueueRefresh;
 
-    async function requestTickets(path, payload, signal, scope = 'it') {
-        const response = await fetch(apiRoot + scope + '/' + path, {
+    async function requestServiceDesk(path, payload, signal) {
+        const response = await fetch(path, {
             cache:'no-store', signal,
             ...(payload === undefined ? {} : {method:'POST', headers:{
                 'Content-Type':'application/json', 'X-CSRF-Token':config.csrf
@@ -32,6 +32,10 @@ window.caffootServiceDesk = (() => {
             throw error;
         }
         return response.json();
+    }
+
+    function requestTickets(path, payload, signal, scope = 'it') {
+        return requestServiceDesk(apiRoot + scope + '/' + path, payload, signal);
     }
 
     function ticketNumber(id) {
@@ -74,6 +78,305 @@ window.caffootServiceDesk = (() => {
           <td>${escapeHtml(ticket.technician || 'Unassigned')}</td>${employee ? '' : '<td>' + ticketDate(ticket.updatedAt) + '</td>'}
           <td><button class="btn btn-small btn-outline" type="button" data-ticket-open="${ticket.id}" aria-label="Open Details For ${ticketNumber(ticket.id)}">${employee ? 'Open' : 'Open Details'}</button></td>
         </tr>`).join('') || `<tr><td colspan="${employee ? 7 : 8}" class="service-desk-empty">No tickets match the selected filters.</td></tr>`;
+    }
+
+    const supportWeekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+
+    function renderSupportWeek(form, hours) {
+        form.querySelector('[data-support-week]').innerHTML = hours.map((day, index) => {
+            const name = supportWeekdays[index];
+            return `<div class="support-day" data-support-day>
+                <strong>${name}</strong>
+                <label class="support-availability"><input type="checkbox" name="enabled" aria-label="${name} Open" ${day.enabled ? 'checked' : ''}>
+                    <span data-support-availability></span></label>
+                <label class="service-desk-field"><span class="sr-only support-time-label">Start Time</span>
+                    <input type="time" name="start" aria-label="${name} Start Time" value="${escapeHtml(day.start)}" required></label>
+                <label class="service-desk-field"><span class="sr-only support-time-label">End Time</span>
+                    <input type="time" name="end" aria-label="${name} End Time" value="${escapeHtml(day.end)}" required></label>
+            </div>`;
+        }).join('');
+    }
+
+    function readSupportWeek(form, summary) {
+        const schedule = [...form.querySelectorAll('[data-support-day]')].map(row => {
+            const enabled = row.querySelector('[name="enabled"]').checked;
+            const start = row.querySelector('[name="start"]');
+            const end = row.querySelector('[name="end"]');
+            row.querySelector('[data-support-availability]').textContent = enabled ? 'Open' : 'Closed';
+            start.disabled = end.disabled = !enabled;
+            end.setCustomValidity(enabled && start.value && end.value && start.value >= end.value
+                ? 'Enter an end time later than the start time.' : '');
+            return {enabled, start:start.value, end:end.value};
+        });
+        summary.innerHTML = schedule.map((day, index) => `<dt>${supportWeekdays[index]}</dt>
+            <dd>${day.enabled ? `${escapeHtml(day.start || '—')}–${escapeHtml(day.end || '—')}` : 'Closed'}</dd>`).join('');
+        return schedule;
+    }
+
+    function renderSupportLists(section, settings) {
+        const exclusions = section.querySelector('[data-support-exclusions]');
+        exclusions.innerHTML = settings.excludedDates.map(entry => {
+            const label = entry.date.split('-').reverse().join('/');
+            return `<tr><th scope="row">${escapeHtml(label)}</th><td>${escapeHtml(entry.reason)}</td>
+                <td><button class="btn btn-small btn-outline" type="button" data-support-action="remove-date"
+                    data-date="${escapeHtml(entry.date)}" aria-label="Remove Excluded Date ${escapeHtml(label)}">Remove</button></td></tr>`;
+        }).join('') || '<tr><td colspan="3">No excluded dates have been added.</td></tr>';
+        section.querySelector('[data-support-categories]').innerHTML = settings.categories.map(category => {
+            const fixed = category.id === settings.fixedCategoryId;
+            const visibility = category.hidden ? 'Restore' : 'Hide';
+            return `<tr><th scope="row">${escapeHtml(category.name)}</th><td><span class="service-desk-visibility" data-internal="${Boolean(category.hidden)}">${category.hidden ? 'Hidden' : 'Active'}</span></td>
+                <td><div class="support-list-actions">${fixed ? 'Fixed' : `
+                    <button type="button" class="btn btn-small btn-outline" data-support-action="rename-category"
+                        data-id="${category.id}" aria-label="Rename ${escapeHtml(category.name)}">Rename</button>
+                    <button type="button" class="btn btn-small btn-outline" data-support-action="${visibility.toLowerCase()}-category"
+                        data-id="${category.id}" aria-label="${visibility} ${escapeHtml(category.name)}">${visibility}</button>`}</div></td></tr>`;
+        }).join('');
+    }
+
+    function bindSupportTabs(section) {
+        const tabs = [...section.querySelectorAll('[data-support-tab]')];
+        function selectSupportTab(selected) {
+            tabs.forEach(tab => {
+                const active = tab === selected;
+                tab.tabIndex = active ? 0 : -1;
+                tab.classList.toggle('active', active);
+                tab.setAttribute('aria-selected', active);
+                section.querySelector('#' + tab.getAttribute('aria-controls')).hidden = !active;
+            });
+            selected.focus();
+        }
+        tabs.forEach((tab, index) => {
+            tab.addEventListener('click', () => selectSupportTab(tab));
+            tab.addEventListener('keydown', event => {
+                const next = {ArrowLeft:(index - 1 + tabs.length) % tabs.length, ArrowRight:(index + 1) % tabs.length,
+                    Home:0, End:tabs.length - 1}[event.key];
+                if (next === undefined) return;
+                event.preventDefault();
+                selectSupportTab(tabs[next]);
+            });
+        });
+    }
+
+    async function hydrateServiceDeskSettings(container) {
+        const section = container.querySelector('.service-desk-settings');
+        const feedback = section.querySelector('[data-support-feedback]');
+        const content = section.querySelector('[data-support-settings]');
+        const warning = section.querySelector('[data-support-timezone]');
+        const hoursForm = section.querySelector('[data-support-form="working-hours"]');
+        const summary = section.querySelector('[data-support-summary]');
+        const dialog = section.querySelector('dialog');
+        const rename = dialog.querySelector('[name="name"]');
+        const confirmError = dialog.querySelector('[data-support-confirm-error]');
+        const confirmButton = dialog.querySelector('[data-support-confirm-button]');
+        let settings, hoursRevision, saving = false, confirmation;
+
+        function showSupportFeedback(message, error = false) {
+            feedback.textContent = message;
+            feedback.dataset.error = String(error);
+            feedback.hidden = !message;
+        }
+
+        function updateSupportHours() {
+            renderSupportWeek(hoursForm, settings.workingHours);
+            readSupportWeek(hoursForm, summary);
+            hoursRevision = settings.calendarRevision;
+        }
+
+        async function saveSupportSettings(payload, message) {
+            if (saving) return false;
+            saving = true;
+            section.setAttribute('aria-busy', 'true');
+            showSupportFeedback('');
+            confirmError.hidden = true;
+            try {
+                const {serviceDesk} = await requestServiceDesk('/api/settings/service-desk', payload);
+                if (!section.isConnected) return false;
+                const hoursUnchanged = JSON.stringify(settings.workingHours) === JSON.stringify(serviceDesk.workingHours);
+                if (hoursUnchanged && hoursRevision === settings.calendarRevision) hoursRevision = serviceDesk.calendarRevision;
+                settings = serviceDesk;
+                if (payload.action === 'working-hours') updateSupportHours();
+                if (payload.action !== 'working-hours') renderSupportLists(section, settings);
+                showSupportFeedback(message);
+                return true;
+            } catch (error) {
+                if (dialog.open) {
+                    confirmError.textContent = error.message;
+                    confirmError.hidden = false;
+                } else {
+                    showSupportFeedback(error.message, true);
+                }
+                return false;
+            } finally {
+                saving = false;
+                section.removeAttribute('aria-busy');
+            }
+        }
+
+        try {
+            ({serviceDesk:settings} = await requestServiceDesk('/api/settings/service-desk'));
+        } catch (error) {
+            showSupportFeedback(error.message, true);
+            return;
+        }
+        if (!section.isConnected) return;
+        warning.hidden = Boolean(settings.timezone);
+        warning.textContent = 'Set a valid installation time zone (TZ) in your deployment and restart Caffoot Lite. Period reporting and working-time measurements are unavailable while TZ is missing or invalid. Ticket operations are available.';
+        section.querySelector('[data-support-timezone-description]').textContent = settings.timezone
+            ? `Installation Time Zone — ${settings.timezone}` : 'Installation Time Zone — Unavailable';
+        updateSupportHours();
+        renderSupportLists(section, settings);
+        bindSupportTabs(section);
+        showSupportFeedback('');
+        content.hidden = false;
+
+        hoursForm.addEventListener('input', () => readSupportWeek(hoursForm, summary));
+        hoursForm.addEventListener('reset', event => {
+            event.preventDefault();
+            if (saving) return;
+            updateSupportHours();
+            showSupportFeedback('Unsaved working hours discarded.');
+        });
+        section.addEventListener('submit', async event => {
+            const form = event.target;
+            if (!form.matches('[data-support-form]')) return;
+            event.preventDefault();
+            const action = form.dataset.supportForm;
+            if (action === 'working-hours') {
+                const workingHours = readSupportWeek(form, summary);
+                if (form.reportValidity()) {
+                    await saveSupportSettings({action, calendarRevision:hoursRevision, workingHours}, 'Working hours saved.');
+                }
+                return;
+            }
+            const payload = {action, ...Object.fromEntries(new FormData(form))};
+            if (await saveSupportSettings(payload, action === 'add-date' ? 'Excluded date added.' : 'Category added.')) {
+                form.reset();
+            }
+        });
+        section.addEventListener('click', event => {
+            const button = event.target.closest('[data-support-action]');
+            if (!button || saving) return;
+            const action = button.dataset.supportAction;
+            const category = settings.categories.find(item => item.id === Number(button.dataset.id));
+            const isRename = action === 'rename-category';
+            const [title, description, buttonLabel, success] = {
+                'remove-date':['Remove Excluded Date', 'The date will count towards working time from now on if it falls within Working Hours.', 'Remove Date', 'Excluded date removed.'],
+                'rename-category':['Rename Category', 'Existing tickets retain their recorded category label.', 'Save Category', 'Category renamed.'],
+                'hide-category':['Hide Category', 'The category will be removed from new ticket selections. Existing tickets retain it.', 'Hide Category', 'Category hidden.'],
+                'restore-category':['Restore Category', 'The category will appear in new ticket selections again.', 'Restore Category', 'Category restored.']
+            }[action];
+            confirmation = {action, category, date:button.dataset.date, success};
+            dialog.querySelector('h3').textContent = title;
+            dialog.querySelector('[data-support-confirm-description]').textContent = description;
+            rename.closest('label').hidden = !isRename;
+            rename.disabled = !isRename;
+            rename.required = isRename;
+            rename.value = isRename ? category.name : '';
+            confirmError.hidden = true;
+            confirmButton.textContent = buttonLabel;
+            dialog.showModal();
+            if (isRename) rename.select();
+        });
+        dialog.addEventListener('cancel', event => { if (saving) event.preventDefault(); });
+        dialog.querySelector('[data-support-cancel]').addEventListener('click', () => { if (!saving) dialog.close(); });
+        dialog.querySelector('form').addEventListener('submit', async event => {
+            event.preventDefault();
+            const {action, category, date, success} = confirmation;
+            const payload = category ? {action, id:category.id} : {action, date};
+            if (action === 'rename-category') Object.assign(payload, {name:rename.value, previousName:category.name});
+            if (await saveSupportSettings(payload, success)) {
+                dialog.close();
+                const nextAction = action === 'hide-category' ? 'restore-category' : action === 'restore-category' ? 'hide-category' : action;
+                const rowAction = category && section.querySelector(`[data-id="${category.id}"][data-support-action="${nextAction}"]`);
+                (rowAction || section.querySelector('[data-support-form="add-date"] input')).focus();
+            }
+        });
+    }
+
+    function renderReportActivity(report, values, rows, notice, message = '') {
+        const available = report?.available;
+        for (const key of ['created', 'closed', 'reopened']) {
+            values[key].textContent = available ? report.counts[key] : '—';
+        }
+        const minutes = available && report.averageSeconds !== null ? Math.floor(report.averageSeconds / 60) : null;
+        values.average.textContent = minutes === null ? '—' : `${Math.floor(minutes / 60)}h ${minutes % 60}m`;
+        notice.textContent = message || (report?.timezoneWarning
+            ? 'Reporting is unavailable. Set a valid installation time zone (TZ) in your deployment and restart Caffoot Lite.'
+            : report && !available ? 'Period reporting is unavailable until your administrator configures the installation time zone.'
+            : report?.durationUnavailable ? 'Average resolution time is unavailable because this period includes a closure without a complete working-time measurement.'
+            : '');
+        notice.hidden = !notice.textContent;
+        rows.innerHTML = available && report.technicians.length
+            ? report.technicians.map(person => `<tr><th scope="row">${escapeHtml(person.name)}</th>
+                <td>${person.started}</td><td>${person.closed}</td></tr>`).join('')
+            : `<tr><td colspan="3">${available ? 'No technicians are available.' : '—'}</td></tr>`;
+    }
+
+    function hydrateTicketReporting(page) {
+        const panel = page.querySelector('.service-desk-report');
+        const period = panel.querySelector('[data-report-period]');
+        const dates = panel.querySelector('[data-report-dates]');
+        const from = dates.querySelector('[name="from"]');
+        const to = dates.querySelector('[name="to"]');
+        const rows = panel.querySelector('[data-report-technicians]');
+        const notice = panel.querySelector('[data-report-notice]');
+        const values = Object.fromEntries([...panel.querySelectorAll('[data-report-metric]')]
+            .map(element => [element.dataset.reportMetric, element]));
+        let latest = 0, pending = Promise.resolve(), initialised = false, today;
+
+        function requestReport(payload) {
+            const version = ++latest;
+            panel.setAttribute('aria-busy', 'true');
+            pending = pending.then(async () => {
+                if (!page.isConnected) return;
+                try {
+                    const report = await requestTickets('report', payload);
+                    if (!page.isConnected || version !== latest) return;
+                    if (!initialised) {
+                        period.value = report.preference.period;
+                        from.value = report.preference.from || '';
+                        to.value = report.preference.to || '';
+                        dates.hidden = period.value !== 'custom';
+                        initialised = true;
+                    }
+                    today = report.today;
+                    renderReportActivity(report, values, rows, notice);
+                } catch (error) {
+                    if (page.isConnected && version === latest) {
+                        renderReportActivity(null, values, rows, notice, error.message);
+                    }
+                } finally {
+                    if (version === latest) {
+                        panel.removeAttribute('aria-busy');
+                        period.disabled = false;
+                    }
+                }
+            });
+        }
+
+        function selectReportPeriod() {
+            const custom = period.value === 'custom';
+            dates.hidden = !custom;
+            if (!custom) return requestReport({period: period.value});
+            if (!from.value && !to.value && today) {
+                from.value = today.slice(0, 8) + '01';
+                to.value = today;
+            }
+            if (!from.value || !to.value || from.value > to.value || !from.validity.valid || !to.validity.valid) {
+                ++latest;
+                panel.removeAttribute('aria-busy');
+                renderReportActivity(null, values, rows, notice, 'Choose a valid From and To date.');
+                return;
+            }
+            requestReport({period:'custom', from:from.value, to:to.value});
+        }
+
+        period.addEventListener('change', selectReportPeriod);
+        dates.addEventListener('change', selectReportPeriod);
+        requestReport();
+        return () => {
+            if (page.isConnected && (dates.hidden || (from.value && to.value && from.value <= to.value))) requestReport();
+        };
     }
 
     function hydrateTicketQueue(container) {
@@ -193,7 +496,7 @@ window.caffootServiceDesk = (() => {
             }
         });
         if (!employee) {
-            queueRefresh = {refresh:refreshQueue, reset:resetTicketFilters};
+            queueRefresh = {refresh:refreshQueue, reset:resetTicketFilters, report:hydrateTicketReporting(page)};
             void refreshQueue();
             return;
         }
@@ -786,12 +1089,16 @@ window.caffootServiceDesk = (() => {
             if (!ticketDialogActive(dialog)) return;
             if (action === 'create') {
                 if (dialog.employee) void employeeQueueRefresh?.select(scope);
-                else queueRefresh?.reset();
+                else {
+                    queueRefresh?.reset();
+                    queueRefresh?.report();
+                }
                 config.closeModal();
                 config.notify(ticketNumber(result.id) + ' created.', 'success');
                 return;
             }
             void (dialog.employee ? employeeQueueRefresh : queueRefresh)?.refresh();
+            if (!dialog.employee) queueRefresh?.report();
             dialog.source?.dispatchEvent(new Event('ticket-refresh'));
             await refreshTicketDetails(dialog);
             config.notify(dialog.employee ? (action === 'reopen' ? 'Ticket reopened.' : 'Reply sent.') : 'Ticket updated.', 'success');
@@ -873,6 +1180,7 @@ window.caffootServiceDesk = (() => {
         render: renderTicketQueue,
         renderEmployee: renderEmployeeTicketQueue,
         hydrateQueue: hydrateTicketQueue,
+        hydrateSettings: hydrateServiceDeskSettings,
         equipmentPanel: renderTicketEquipmentPanel,
         hydrateEquipment: hydrateTicketEquipment,
         closed: closeTicketDialog
