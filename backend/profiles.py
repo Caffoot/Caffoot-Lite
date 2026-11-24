@@ -68,8 +68,8 @@ def _profile_revision(connection, account_id, username, details, staff):
                 AND json_extract(c.value,'$.label')=? END)
         ORDER BY h.id DESC LIMIT 1
     """, (username,)).fetchone()
-    values = [account_id, [details[field] for field in FIELD_LIMITS],
-              staff, staff_history_revision(connection, staff['id']) if staff else None,
+    staff_revision = staff_history_revision(connection, staff['id'], shared_profile_only=True) if staff else None
+    values = [account_id, [details[field] for field in FIELD_LIMITS], staff, staff_revision,
               history[0] if history else None]
     return hashlib.sha256(json.dumps(values, ensure_ascii=False).encode('utf-8')).hexdigest()
 

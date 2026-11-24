@@ -81,6 +81,9 @@ the Staff route. Use My Account to change the address as its account owner.
 `revision`. The application sends it with the four established profile fields
 in `POST /api/account/profile` or inside `profile` in `POST /api/users/profile`.
 For a stale profile revision, the server returns 409 with `stale_profile_edit`.
+Only shared personal details and login link changes on the Staff side affect
+the account profile revision. Staff status and other directory-only edits
+still affect the Staff revision.
 Clients sending the original four-field payload retain the original API shape.
 The latest saved values and conflict rules still apply to those requests. A user
 attempting to change a conflicting field is directed to an administrator and

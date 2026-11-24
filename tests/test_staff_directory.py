@@ -355,6 +355,21 @@ class StaffDirectoryTests(unittest.TestCase):
         delete_user(self.db, 1, account)
         self.assertIsNone(read_staff_member(self.db, 1, staff['id'])['accountId'])
 
+    def test_directory_only_edits_keep_the_linked_profile_revision(self):
+        staff = self.staff(dict(firstName='Alex', lastName='Rivers',
+            login=dict(username='linked', password='test-password')))
+        account_id = staff['accountId']
+        original = read_profile(self.db, account_id)
+        self.staff({'active': False}, staff_id=staff['id'])
+        update = dict(firstName='Alex', lastName='Rivers', email='',
+                      jobTitle='Technician', active=True)
+        current = self.staff(update, staff_id=staff['id'])
+        self.assertNotEqual(current['revision'], staff['revision'])
+        self.assertEqual(read_profile(self.db, account_id), original)
+        values = {field: original[field] for field in ('firstName', 'lastName', 'email', 'revision')}
+        saved = save_profile(self.db, account_id, dict(values, displayName='Alex R'))
+        self.assertEqual(saved['displayName'], 'Alex R')
+
     def test_linked_writers_reject_stale_cross_screen_edits_and_roll_back(self):
         staff = self.staff(dict(firstName='Alex', lastName='Rivers', login=dict(username='linked', password='test-password')))
         account_id = staff['accountId']

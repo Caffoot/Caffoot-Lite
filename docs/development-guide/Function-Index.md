@@ -1367,10 +1367,10 @@ The account hydration/photo functions now have purpose-based callable bindings m
 | --- | ---: |
 | [`read_linked_staff`](../../backend/staff_identity.py#L6) | 6 |
 | [`staff_history_revision`](../../backend/staff_identity.py#L14) | 14 |
-| [`shared_profile_conflicts`](../../backend/staff_identity.py#L27) | 27 |
-| [`fill_shared_profile_blanks`](../../backend/staff_identity.py#L35) | 35 |
-| [`write_shared_staff_details`](../../backend/staff_identity.py#L44) | 44 |
-| [`link_account_staff`](../../backend/staff_identity.py#L51) | 51 |
+| [`shared_profile_conflicts`](../../backend/staff_identity.py#L31) | 31 |
+| [`fill_shared_profile_blanks`](../../backend/staff_identity.py#L39) | 39 |
+| [`write_shared_staff_details`](../../backend/staff_identity.py#L48) | 48 |
+| [`link_account_staff`](../../backend/staff_identity.py#L55) | 55 |
 
 ## backend/stock_circulation.py
 

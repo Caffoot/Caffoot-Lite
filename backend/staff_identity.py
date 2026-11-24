@@ -11,16 +11,20 @@ def read_linked_staff(connection, account_id):
     return dict(zip(('id', *SHARED_PROFILE_FIELDS), row)) if row else None
 
 
-def staff_history_revision(connection, staff_id):
-    # Keep changed-then-reverted edits stale, including synchronisation from My Account.
+def staff_history_revision(connection, staff_id, *, shared_profile_only=False):
+    # Account forms track shared Staff fields. Staff forms track the whole record.
     row = connection.execute("""
         SELECT h.id FROM inventory_change_history h
         WHERE EXISTS (SELECT 1 FROM json_each(h.record_json,'$.changes') c
             WHERE CASE WHEN c.type='object' THEN
                 json_extract(c.value,'$.kind')='Staff Member'
-                AND json_extract(c.value,'$.label')=? END)
+                AND json_extract(c.value,'$.label')=?
+                AND (NOT ? OR EXISTS (SELECT 1 FROM json_each(c.value,'$.fields') f
+                    WHERE f.type='text' AND f.value IN (
+                        'first_name','last_name','email',
+                        'First Name','Surname','Email Address','Caffoot Login'))) END)
         ORDER BY h.id DESC LIMIT 1
-    """, (staff_id,)).fetchone()
+    """, (staff_id, shared_profile_only)).fetchone()
     return row[0] if row else None
 
 

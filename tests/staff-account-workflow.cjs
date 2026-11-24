@@ -1,5 +1,6 @@
 // Reuse the Staff Members entry point in browser regressions for account controls.
 async function openStaffList(page) {
+ await page.locator('#app[aria-busy="false"]').waitFor();
  const close=page.locator('[data-staff-account-modal] [data-action="users-close-editor"]').first();
  if(await close.isVisible())await close.click();
  const list=page.locator('.preview-staff-directory');

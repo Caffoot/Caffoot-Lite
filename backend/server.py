@@ -1796,7 +1796,7 @@ class Handler(BaseHTTPRequestHandler):
         if security_change:
             with connect() as connection:
                 connection.execute("DELETE FROM account_email_proofs WHERE account_id=?", (payload.get("userId", actor),))
-        if notice_recipients:
+        if security_change or notice_recipients:
             notify_security_change(smtp_config_path(DB_PATH), notice_recipients, database_path=DB_PATH)
         self.respond(200, result, cookie=clear_session_cookie()
                      if self.path == "/api/account/mfa/remove" else None)
