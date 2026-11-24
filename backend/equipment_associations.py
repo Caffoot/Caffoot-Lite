@@ -63,12 +63,17 @@ def equipment_association_schema(connection):
         "(lower(name) GLOB 'device_equipment_associations*' OR tbl_name='device_equipment_associations')")}
 
 
-def validate_equipment_associations(connection):
+def validate_equipment_associations(connection, *, sharing=None):
     """Refuse an unexpected relationship or missing history protection."""
     expected = {}
     for statement in stock_schema_statements(EQUIPMENT_ASSOCIATION_SQL):
         name = re.match(r'CREATE (?:TABLE|INDEX|TRIGGER) (\w+)', statement)[1]
         expected[name] = normalise_schema_statement(statement)
+    if sharing is None:
+        sharing = connection.execute('SELECT 1 FROM schema_migrations WHERE version=29').fetchone() is not None
+    if sharing:
+        from backend.shared_device_schema import association_guard
+        expected['device_equipment_associations_insert_guard'] = normalise_schema_statement(association_guard())
     if equipment_association_schema(connection) != expected:
         raise RuntimeError('Unexpected equipment association schema; review required')
     if connection.execute('PRAGMA foreign_key_check').fetchone():

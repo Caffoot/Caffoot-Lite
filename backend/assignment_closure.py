@@ -81,11 +81,18 @@ def expected_assignment_schema(*, closed, handovers=False):
         return assignment_schema_objects(reference)
 
 
-def validate_assignment_closure(connection, *, handovers=None):
+def validate_assignment_closure(connection, *, handovers=None, sharing=None):
     """Reject missing or unexpected closure guards without changing records."""
     if handovers is None:
         handovers = connection.execute('SELECT 1 FROM schema_migrations WHERE version=19').fetchone() is not None
-    if assignment_schema_objects(connection) != expected_assignment_schema(closed=True, handovers=handovers):
+    if sharing is None:
+        sharing = connection.execute('SELECT 1 FROM schema_migrations WHERE version=29').fetchone() is not None
+    if sharing:
+        from backend.shared_device_schema import assignment_schema
+        expected = assignment_schema()
+    else:
+        expected = expected_assignment_schema(closed=True, handovers=handovers)
+    if assignment_schema_objects(connection) != expected:
         raise RuntimeError('Unexpected assignment closure schema; review required')
     if connection.execute('PRAGMA foreign_key_check').fetchone():
         raise RuntimeError('Assignment closure relationships failed verification')
