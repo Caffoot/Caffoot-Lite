@@ -5,7 +5,9 @@ review and final confirmation precede atomic inventory replacement."""
 from backend.import_review import (
     prepare_published_export_review, confirm_detached_import_review,
 )
-from backend.inventory import stage_inventory, reconstruct_inventory, preview_inventory_counts
+from backend.inventory import (
+    stage_inventory, reconstruct_inventory, preview_inventory_counts, retain_protected_devices,
+)
 from backend.request_auth import authorised_inventory_import
 
 
@@ -65,6 +67,9 @@ def preview_published_export(connection, raw_bytes, *,
             "approved": False,
             "persistenceAllowed": False,
         }
+    # Preview can explain conflicts as soon as the reviewed record is known.
+    # The write path independently checks current storage under its write lock.
+    retain_protected_devices(connection, review["candidate"]["devices"])
     return {
         "requiresAccessPointMountReview": False,
         "accessPointMountConflicts": review["accessPointMountConflicts"],

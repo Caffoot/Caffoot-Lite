@@ -877,6 +877,11 @@ class ServiceDeskHttpTests(unittest.TestCase):
         def replace_inventory(candidate, expected):
             status, result, _ = self.request('/api/import/preview', method='POST',
                 raw=json.dumps(candidate).encode(), headers={'Content-Type': 'application/octet-stream'})
+            if expected == 400:
+                self.assertEqual(status, expected, result)
+                self.assertEqual(result['code'], 'protected_devices')
+                self.assertNotIn('draftId', result)
+                return result
             self.assertEqual(status, 200, result)
             status, result, _ = self.request('/api/import/confirm', method='POST',
                 payload={'draftId': result['draftId'], 'replacementConfirmed': True})

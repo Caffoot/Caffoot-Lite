@@ -18,6 +18,7 @@ from .collection_saves import (change_inventory_record, remove_linked_rack_shelf
                                change_ipam_subnet_and_vlan_records,
                                delete_subnet_with_dependencies)
 from .settings_saves import save_inventory_setting
+from .inventory import ProtectedDeviceConflict
 from .inventory_projection import project_inventory_response
 from .equipment_lifecycle import UNCHANGED_LIFECYCLE, read_lifecycle_settings, save_lifecycle_settings
 from .equipment_suppliers import assign_equipment_supplier, read_supplier_choices
@@ -1963,6 +1964,9 @@ class Handler(BaseHTTPRequestHandler):
                     result = {"status": "imported"}
         except PermissionError:
             self.respond(403, {"error": "forbidden"})
+            return
+        except ProtectedDeviceConflict as exc:
+            self.respond(400, {"error": str(exc), "code": "protected_devices"})
             return
         except (ValueError, TypeError) as exc:
             self.respond(400, {"error": str(exc)})
