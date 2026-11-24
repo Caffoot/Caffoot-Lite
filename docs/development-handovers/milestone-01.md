@@ -1,5 +1,11 @@
 # Milestone 01 Development Handover — v2.2 Target
 
+## Stage 6.6 Staff Administration Finding — 24 November 2026
+
+The owner paused native acceptance after finding that linked Staff records with blank names were hard to identify and individual login administration was split across screens. PR #453 implements the approved Staff Members workflow and shares personal details across the existing links. Schema 29 is sufficient. The original acceptance evidence remains available. [Finding #452](https://github.com/Caffoot/Caffoot-Lite/issues/452) · [Implementation and local verification](https://github.com/Caffoot/Caffoot-Lite/pull/453)
+
+The local checks cover linked profile edits and conflicts, email proofs, persisted data after a restart and SQLite restore, role controls, MFA, existing assignments and genuine Chromium desktop and mobile captures in both themes. Stage 6.6 is paused pending independent owner visual review and native re-acceptance. [Staff guide](../how-tos/features-and-instructions/v2.2-draft/Staff-Members.md) · [Capture record](../how-tos/features-and-instructions/v2.2-draft/screenshots/staff-administration/README.md)
+
 ## Stage 6.5 Integrated Regression — 24 November 2026
 
 Stage 6.4 is owner-accepted and integrated. Stage 6.5 tested source revision `2380334970e1162ad6811f1703a91dcfc863b803` on `milestone-1`, schema 29, using fictional data and disposable application instances. The regression report records the new results, relevant earlier evidence and the remaining native, private-data, manual and release checks. [Stage 6.4 sign-off](https://github.com/Caffoot/Caffoot-Lite/issues/431#issuecomment-7132417522) · [Stage 6.5 report](evidence/stage-6-5/README.md) · [PR #448](https://github.com/Caffoot/Caffoot-Lite/pull/448)

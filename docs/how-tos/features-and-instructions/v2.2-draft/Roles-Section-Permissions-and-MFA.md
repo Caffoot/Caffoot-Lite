@@ -1,16 +1,16 @@
 # Roles, Section Permissions And MFA
 
-> **Draft v2.2 — Not Published / Not Production Guidance.** These instructions describe the implemented `milestone-1` source at `753b3266893987addb11406ef8303adb03c3c112` (schema 20). Use the [published v2.1 guides](../README.md) for existing production installations. This guide does not establish installation, upgrade, restore, release or deferred native/manual acceptance.
+> **Draft v2.2 — Unreleased.** This guide covers the Staff account workflow in [PR #453](https://github.com/Caffoot/Caffoot-Lite/pull/453). Use the [published v2.1 guides](../README.md) for released installations.
 
 [← Draft v2.2 Guides](README.md)
 
-Caffoot Lite separates a person's sign-in account from their Staff directory record and from their authority to view or change information. A receptionist may need only their own equipment list; a technician may edit Devices; an administrator manages accounts and organisation settings. Roles let an administrator reuse a set of permissions, while individual overrides provide deliberate exceptions for one person.
+Caffoot Lite links a person’s sign-in account to their Staff directory record. The account controls sign-in and access. The Staff record holds their Department, Staff status and equipment relationships. A receptionist may need only their own equipment list; a technician may edit Devices; an administrator manages accounts and organisation settings. Roles let an administrator reuse a set of permissions, while individual overrides provide deliberate exceptions for one person.
 
 MFA means **multi-factor authentication**: signing in with a password and a changing six-digit code from an authenticator app. In v2.2, wider Read access as well as Edit access requires MFA. An enabled additional role also requires MFA even when it grants no section access. Do not apply the published v2.1 read-only MFA rule to this development version.
 
 ## Before You Start
 
-To manage other accounts, sign in as an active **Administrator** with MFA enrolled. Open **Staff → Permissions**. Only authorised administrators can use this area; Staff Members Edit or Departments Edit does not grant account administration.
+To manage an individual account, sign in as an active **Administrator** with MFA enrolled and open **Staff → Staff Members**. Use **Staff → Permissions → Manage Roles** for reusable roles. Staff Members Edit and Departments Edit alone do not grant account administration.
 
 For your own settings, open **My Account**. You do not need general inventory permission to update your own profile, change your password, manage eligible MFA settings or use [My Equipment](Device-Assignments-and-My-Equipment.md). Keep your username, password and authenticator available before changing security settings.
 
@@ -22,7 +22,7 @@ A section is available only when the account is active, its MFA requirements are
 
 | Decision | What it controls | Where to review it |
 | --- | --- | --- |
-| Account status | Whether a person can sign in | **Staff → Permissions → User List → Manage** |
+| Account status | Whether a person can sign in | **Staff → Staff Members → Staff Details → Manage Permissions** |
 | Roles and individual permissions | Which sections the account may read or edit | **Manage Roles** and the account's **Assigned Roles** and section permission controls |
 | Optional Features | Whether the organisation uses an optional section | Administrator **Settings & Data → Optional Features** |
 
@@ -77,33 +77,40 @@ Fresh installations create IT Staff enabled but unassigned. Newly created ordina
 
 ## Create A Sign-In Account
 
-1. Open **Staff → Permissions → Add User**.
-2. Enter a unique **Username**, such as the fictional `alex.example`. Changing personal names later does not rename the sign-in identifier.
-3. Enter **Initial Password** and repeat it in **Confirm Initial Password**. Use a long, unique password and share it through a secure channel.
-4. Enter optional personal details where useful. Saving an email address does not verify its ownership or enable recovery by itself.
-5. Select **Create User**. A successful creation opens **User List**. The new ordinary account starts with Staff Member and no general section grants; it does not automatically receive IT Staff or Administrator status.
-6. Find the account and select **Manage** to review its roles and permissions. Grant only the access required, using the procedures below.
-7. Give the person their username and initial password privately. Ask them to change the password in My Account and complete any required authenticator enrolment.
+1. Open **Staff → Staff Members → + Add Staff Member** and enter the person’s name and any known contact details. To give an existing Staff Member a login, open their **Staff Details** and choose **Create Login**.
+2. Enable **Create Caffoot Login** if the switch is off. Enter a unique **Username**, such as the fictional `alex.example`.
+3. Enter **Initial Password** and repeat it in **Confirm Initial Password**. Use a long, unique password.
+4. Select **Save Staff Member**. Staff Details opens after the Staff record and login are saved together. The account starts with **Staff Member** and no general section grants.
+5. Select **Manage Permissions** to review the new account. Give the person their username and initial password through a secure channel. Ask them to change the password in My Account and complete any required authenticator enrolment.
 
-**Clear Form** discards unsaved creation entries. Mismatched passwords or rejected details do not create a partial account. If the username is already in use, confirm whether the intended person already has a login before trying another name. New account creation follows the maintained [Staff/account linking rules](Staff-Members.md).
+**Cancel** discards unsaved entries. If the username is in use or the passwords do not match, correct the issue in the Staff form. Check whether the person already has a login before creating one. See the full [Staff and login creation procedure](Staff-Members.md#create-and-link-an-optional-caffoot-login).
 
 ## Review An Account
 
-1. Open **Staff → Permissions → User List**.
-2. Use the user search and account-status or authenticator filters to locate the correct account. Check the username carefully when display names are similar.
-3. Read **Roles & Status**, **Authenticator** and **Effective Section Access**. **MFA Required · Setup Pending** means access has been configured but the person must complete enrolment before normal sign-in.
-4. Select **Manage**. Review the saved personal details, **Assigned Roles**, section choices and their **Inherited** and **Effective** summaries.
-5. Check for **Feature Disabled** beside a section. A valid grant can remain configured while its organisation switch prevents use.
+1. Open **Staff → Staff Members** and enter the sign-in username in **Find A Staff Member**.
+2. Select **View Details** and check **Caffoot Login** for the username, account status, authenticator state and assigned roles.
+3. Select **Manage Permissions** under **Assigned Roles**. Confirm the read-only **Sign-in Username** and review **Assigned Roles** and the **Inherited**, **Override** and **Effective** values under **Section permissions**.
+4. Check for **Feature Disabled** beside any relevant section. A valid grant can be saved while an organisation switch prevents the section from being used. **MFA Required · Setup Pending** means the person needs to complete enrolment before normal sign-in.
+5. Use **Done**, **Close** or Escape to return to the same Staff Details.
 
-The signed-in administrator's own row uses **View** and protected controls. Use **My Account** for your own personal and security settings. Arrange for the affected person to sign in and confirm their authorised access; do not ask for their password to test it yourself.
+Your own administrator account has protected controls. Use **My Account** for your personal and security settings. Ask the affected person to sign in and confirm their access with their own credentials.
+
+![The Manage Permissions dialogue in desktop light mode with the read-only sign-in username and the existing personal details and role controls.](screenshots/staff-administration/manage-permissions-light-1440.png)
+
+*The account dialogue opened from Staff Details for fictional user taylor.cole.* [Desktop dark](screenshots/staff-administration/manage-permissions-dark-1440.png) · [Mobile light](screenshots/staff-administration/manage-permissions-light-390.png) · [Mobile dark](screenshots/staff-administration/manage-permissions-dark-390.png)
 
 ### Save Personal Details
 
-In the account editor, update the relevant **First Name**, **Last Name**, **Display Name** or **E-Mail Address**, then select **Save Personal Details**. These changes do not rename the username or grant section access. The owner must verify an email before it is eligible for recovery. Closing the editor discards unsaved profile typing, but does not undo changes already saved or confirmed.
+1. In **Manage Permissions**, check the read-only username. Update **First Name**, **Last Name**, **Display Name** or **E-Mail Address** as needed.
+2. Select **Save Personal Details**. First name, surname and email are shared with the linked Staff Member. Display name applies to the account only.
+3. If told to reconcile a saved difference, close the dialogue and use [Edit Staff Member](Staff-Members.md#resolve-a-difference-between-staff-and-account-details). If told the profile changed elsewhere, reopen **Manage Permissions**, review the latest values and try again.
+4. Ask the owner to verify a changed email in My Account before using password recovery. A changed account address clears prior verification and outstanding proofs. Saving the existing address retains them.
+
+Closing the dialogue discards unsaved profile typing. Changes you already saved or confirmed still apply.
 
 ## Assign Or Remove An Additional Role
 
-1. Open the correct account through **User List → Manage**.
+1. Open the correct account through **Staff Details → Manage Permissions**.
 2. Under **Assigned Roles**, select the role's checkbox to propose adding it, or clear it to propose removing it. Each checkbox change is reviewed separately.
 3. In **Review Access Change**, inspect the before/after roles, section inheritance, overrides, effective levels and MFA status.
 4. Check **Affected Accounts** and **Sessions To End**. Assigning or removing a membership ends that account's sessions, even when its effective rights would stay the same.
@@ -114,7 +121,7 @@ Staff Member cannot be removed. An additional role may be assigned before MFA en
 
 ## Set An Individual Section Override
 
-1. Open **User List → Manage** for the ordinary account.
+1. Open **Staff Details → Manage Permissions** for the ordinary account.
 2. Find the section and read its **Inherited** and **Effective** summaries.
 3. Choose **Inherit**, **No Access**, **Read** or **Edit** from that section's selector.
 4. Review the consequences in **Review Access Change**, including MFA and session effects. Changing the selector proposes a change; it is not the final save.
@@ -156,7 +163,7 @@ Notification feedback is separate from saving access. **Notices Queued** means a
 
 Account controls are separate from role previews. Check the account identity before selecting them: **Disable**, **Enable**, **Make Admin** and **Remove Admin** apply their own operation directly when selected. **Done** closes the editor; it is not a final save for these earlier actions.
 
-1. Open **Staff → Permissions → User List → Manage** for the person.
+1. Open **Staff → Staff Members → Staff Details → Manage Permissions** for the person.
 2. To stop sign-in while retaining the account, select **Disable**. This ends its sessions and prevents sign-in until re-enabled.
 3. To restore login eligibility, select **Enable**, then review the current roles, permissions and MFA requirements. Enabling does not remove those safeguards.
 4. To appoint an Administrator, first ensure the account has completed MFA enrolment, then select **Make Admin**. Appointment before confirmed MFA is rejected.
@@ -246,6 +253,7 @@ After signing in, reopen the record and check its saved state before trying the 
 
 | What you see | What to check |
 | --- | --- |
+| An account is missing from Permissions | Open Staff Members, search for the sign-in username, and use View Details → Manage Permissions. Permissions contains the overview and reusable roles. |
 | No inventory after account creation | New accounts have Staff Member only. Ask an administrator to review section grants and switches. Your own My Account and eligible My Equipment are separate. |
 | IT Staff shown, but one section remains Read or No Access | Review the override and current role definition. An access-preserving upgrade or deliberate exception may explain it. Remove an override only through an intentional reviewed change. |
 | Read configured, but sign-in requires an authenticator | Wider Read requires MFA in v2.2; any enabled additional role also makes it mandatory. Complete enrolment. |
