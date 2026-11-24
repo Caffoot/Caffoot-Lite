@@ -125,29 +125,31 @@
       "width": 1440,
       "height": 960,
       "theme": "light",
-      "sha256": "28eb98f266dd8b2451ca9d985f4d4edfc017f5b58bf8d43a04ddd841dc8c27c6",
-      "sourceRevision": "e3676087588e1f5c9f96f1a1012ee8841ff918ea"
+      "sha256": "13abfac23635d3ce2622214907975ecdee14fce31bb1c5a027be57737be5654e",
+      "sourceRevision": "5db6483cdf5c7811f53e50fd6235f2233ad6d24c"
     },
     "my-equipment-desktop-dark.png": {
       "width": 1440,
       "height": 960,
       "theme": "dark",
-      "sha256": "c64b1251af49a6a19d46f9d8df9d2f8eef53c839684f398bba8489949fe785a3",
-      "sourceRevision": "e3676087588e1f5c9f96f1a1012ee8841ff918ea"
+      "sha256": "36c55caece9450e43a9dbac113dfd5c2be6af8d0184a5e3641b9d4db01ba59eb",
+      "sourceRevision": "5db6483cdf5c7811f53e50fd6235f2233ad6d24c"
     },
     "my-equipment-mobile-light.png": {
       "width": 390,
       "height": 844,
       "theme": "light",
-      "sha256": "75f82069ee5acadcb373ffb83991c32fcd3290ee4fe21c8c6970696a5e76a26a",
-      "sourceRevision": "e3676087588e1f5c9f96f1a1012ee8841ff918ea"
+      "sha256": "3ea7f5dca40658fb7534b45d89b5fc4d6f59a0c96972f74ece12458244ab77d8",
+      "imageHeight": 958,
+      "sourceRevision": "5db6483cdf5c7811f53e50fd6235f2233ad6d24c"
     },
     "my-equipment-mobile-dark.png": {
       "width": 390,
       "height": 844,
       "theme": "dark",
-      "sha256": "a78bc8bc4925b949acd4b418cb2e6f6db7716158a9ad45b40871811381e6bfce",
-      "sourceRevision": "e3676087588e1f5c9f96f1a1012ee8841ff918ea"
+      "sha256": "acdc8f0ddafc691a3874c47b2f2883c72a7c263b114a17a4a8518712acc0a955",
+      "imageHeight": 958,
+      "sourceRevision": "5db6483cdf5c7811f53e50fd6235f2233ad6d24c"
     },
     "ticket-confidentiality-desktop-light.png": {
       "width": 1440,
@@ -271,6 +273,18 @@
       "backend/stock_circulation.py": "03333d205754c8298d57805bbc6428ad4f15c261013641e4174ef8ec5918a6fb",
       "backend/service_desk_access.py": "80d9dc6795e16cb05ed43f7e92e78545164acafec645e4226d54a5782009a668",
       "backend/service_desk.py": "a58e58e3fcaa55ce6d795ae23016082ff9887a623888674860d65207a1044e13"
+    }
+  },
+  "myEquipmentAlignmentRefresh": {
+    "sourceRevision": "5db6483cdf5c7811f53e50fd6235f2233ad6d24c",
+    "browser": "156.0.8078.79",
+    "capturedAt": "2026-11-24T12:43:26.743Z",
+    "origin": "https://127.0.0.1:46763",
+    "schema": 29,
+    "fixture": "The Sales employee has a personal laptop, two shared printers and a USB cable associated with the Main Office Printer.",
+    "sourceHashes": {
+      "interface/styles/equipment.css": "83cc0877130509cbbe987b0424550544e23d580300cee61322126a53dfa26211",
+      "tests/shared-devices-interface.cjs": "07f55c0fedb7bc4d523be377a5ec21acd68fa5ec54460a0afe0c6a5390e53d44"
     }
   }
 }
