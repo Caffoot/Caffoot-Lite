@@ -9,7 +9,8 @@ from backend.service_desk_access import (EQUIPMENT_COLUMNS, employee_ticket_equi
 from backend.service_desk_attachments import insert_ticket_attachments
 from backend.service_desk_calendar import measure_resolution_attempt, utc_timestamp
 from backend.service_desk_schema import OTHER_TICKET_CATEGORY_ID, SOFTWARE_TICKET_CATEGORY_ID
-from backend.stock_circulation import stock_issue_records
+from backend.shared_devices import current_departments
+from backend.stock_circulation import associated_issue_custodies, stock_issue_records
 from backend.ticket_software import ticket_software_choices
 
 STATUSES = ('Open', 'In Progress', 'On Hold', 'Closed')
@@ -168,15 +169,25 @@ def read_ticket_equipment_choices(connection, actor_id, scope='it'):
         return employee_ticket_equipment(connection, actor_id, scope)
     ticket_scope_filter(connection, actor_id, 'it', edit=True)
     choices = []
-    if can_access(connection, actor_id, 'Devices'):
+    device_access = can_access(connection, actor_id, 'Devices')
+    if device_access:
         choices.extend({'kind': 'device', 'id': identity, 'label': name or identity}
                        for identity, name in connection.execute('SELECT id,name FROM inventory_devices'))
     if can_access(connection, actor_id, 'IT Assets'):
         issues = {}
+        associated = associated_issue_custodies(connection)
         for issue in stock_issue_records(connection):
             if issue['outstanding'] > 0 and issue['deviceAssignmentId'] is None:
                 identity = issue['stockUnitId'] or issue['stockItemId']
-                issues.setdefault(identity, []).append(issue)
+                custody = associated.get(issue['id'])
+                label = issue['recipientLabel']
+                if custody:
+                    label = ''
+                    if device_access and custody['endedAt'] is None:
+                        label = (custody['label'] if custody['staffId'] is not None else
+                                 ', '.join(item['label'] for item in
+                                           current_departments(connection, custody['assignmentId'])))
+                issues.setdefault(identity, []).append((issue['id'], label))
         assets = connection.execute("""
             SELECT 'stockItem',id,name FROM it_asset_stock_items WHERE tracking_mode='quantity'
             UNION ALL
@@ -189,8 +200,8 @@ def read_ticket_equipment_choices(connection, actor_id, scope='it'):
             current = issues.get(identity, [])
             if current:
                 choices.extend({'kind': kind, 'id': identity,
-                                'label': f"{name} · {issue['recipientLabel']} (Issue {issue['id']})",
-                                'stockIssueId': issue['id']} for issue in current)
+                                'label': f'{name} · {label} (Issue {issue_id})' if label else f'{name} · Issue {issue_id}',
+                                'stockIssueId': issue_id} for issue_id, label in current)
             else:
                 choices.append({'kind': kind, 'id': identity, 'label': name})
     return {'equipment': sorted(choices, key=lambda choice: (choice['label'].casefold(), choice['id']))}
@@ -312,11 +323,12 @@ def insert_ticket_message(connection, ticket_id, kind, body, actor, at, visible)
 
 def create_ticket(connection, actor, scope, payload, at, attachments):
     required = {'equipmentKind', 'equipmentId', 'categoryId', 'subject', 'description'}
-    optional = {'stockIssueId'} if scope == 'it' else {'stockIssueId', 'affectedSoftware'}
+    optional = {'stockIssueId'} if scope == 'it' else {'stockIssueId', 'affectedSoftware', 'associationId'}
     if not required <= payload.keys() or payload.keys() - (required | optional):
         raise ValueError('Select equipment and a category, and enter a subject and description.')
-    column, assignment_id, issue_id, movement_id, employee_id = ticket_equipment_for_creation(
+    column, assignment_id, issue_id, movement_id, employee_id, association_id = ticket_equipment_for_creation(
         connection, actor[0], scope, payload['equipmentKind'], payload['equipmentId'], payload.get('stockIssueId'),
+        expected_association=payload.get('associationId'),
     )
     category_id = payload['categoryId']
     category = ticket_category(connection, category_id)
@@ -347,7 +359,8 @@ def create_ticket(connection, actor, scope, payload, at, attachments):
                                            'Attachments Submitted With Ticket', actor, at, True)
         insert_ticket_attachments(connection, ticket_id, message_id, attachments)
         initial_files['attachmentMessageId'] = message_id
-    record_ticket_event(connection, ticket_id, 'Created', actor, at, status='Open',
+    privacy = {'accessoryAssociationId': association_id} if association_id is not None else None
+    record_ticket_event(connection, ticket_id, 'Created', actor, at, status='Open', private=privacy,
                         categoryId=category_id, category=category, **initial_files,
                         **({'affectedSoftware': affected_software} if affected_software else {}))
     return ticket_id

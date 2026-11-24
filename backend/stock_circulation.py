@@ -117,6 +117,48 @@ def stock_issue_records(connection, *, staff_id=None, department_id=None):
     return result
 
 
+def associated_issue_custodies(connection):
+    """Find explicit associations, including those whose custody has ended."""
+    return {issue: dict(id=link, assignmentId=assignment, staffId=staff, endedAt=ended, label=label)
+            for issue, link, assignment, staff, ended, label in connection.execute("""
+        SELECT l.issue_entry_id,l.id,a.id,a.staff_id,a.ended_at,a.recipient_label
+        FROM device_equipment_associations l JOIN device_assignments a ON a.id=l.device_assignment_id
+    """)}
+
+
+def current_stock_issues(connection, *, staff_id=None, department_id=None, allow_associated):
+    """Project current holders without modifying original stock issue facts."""
+    associations = associated_issue_custodies(connection)
+    departments_by_assignment = {}
+    for issue in stock_issue_records(connection):
+        if issue['outstanding'] < 1 or issue['deviceAssignmentId'] is not None:
+            continue
+        custody = associations.get(issue['id'])
+        if custody is None:
+            if (staff_id is not None and issue['staffId'] == staff_id
+                    or department_id is not None and issue['departmentId'] == department_id):
+                yield issue
+            continue
+        if not allow_associated or custody['endedAt'] is not None:
+            continue
+        label = custody['label']
+        if staff_id is not None:
+            if custody['staffId'] != staff_id:
+                continue
+        else:
+            if department_id is None or custody['staffId'] is not None:
+                continue
+            assignment = custody['assignmentId']
+            if assignment not in departments_by_assignment:
+                departments_by_assignment[assignment] = {
+                    item['id']: item['label'] for item in current_departments(connection, assignment)}
+            departments = departments_by_assignment[assignment]
+            if department_id not in departments:
+                continue
+            label = ', '.join(departments.values())
+        yield {**issue, 'associationId': custody['id'], 'recipientLabel': label}
+
+
 def read_stock_issues(connection, actor):
     stock_access(connection,actor)
     from backend.device_stock import reissue_device_choices

@@ -143,7 +143,8 @@ def read_assignments(connection, actor_id, *, device_id=None, staff_id=None, dep
         from backend.device_handovers import device_handover_context
         result['handoverContext']=device_handover_context(connection,actor_id,device_id)
     if asset_access:
-        from backend.stock_circulation import stock_issue_records,stock_movement_history,canonical_device_choice
+        from backend.stock_circulation import (canonical_device_choice, current_stock_issues,
+                                               stock_issue_records, stock_movement_history)
         if device_id is not None:
             choice=canonical_device_choice(connection,device_id)
             from backend.device_stock import device_ready_for_reissue
@@ -171,7 +172,9 @@ def read_assignments(connection, actor_id, *, device_id=None, staff_id=None, dep
         else:
             assets=[issue for issue in stock_issue_records(connection,staff_id=staff_id,department_id=department_id)
                     if not issue['deviceAssignmentId']]
-            result.update(assetCurrent=[issue for issue in assets if issue['outstanding']>0],assetHistory=assets,
+            current_assets = list(current_stock_issues(connection, staff_id=staff_id,
+                                                       department_id=department_id, allow_associated=device_access))
+            result.update(assetCurrent=current_assets,assetHistory=assets,
                 assetMovements=stock_movement_history(connection,actor_id,staff_id=staff_id,department_id=department_id),
                 canIssueStock=can_access(connection,actor_id,'IT Assets',edit=True))
     return result
@@ -238,14 +241,13 @@ def my_equipment(connection, actor_id):
                 'assignedAt': assigned_at}
         result['assignedToMe' if staff_id == staff[0] else 'sharedWithMyDepartment'].append(safe)
     if feature_enabled(connection,'IT Assets'):
-        from backend.stock_circulation import stock_issue_records
+        from backend.stock_circulation import current_stock_issues
+        allow_associated = feature_enabled(connection, 'Devices')
         for key,filters in (('assignedToMe',{'staff_id':staff[0]}),
                             ('sharedWithMyDepartment',{'department_id':staff[1]})):
             if key=='sharedWithMyDepartment' and staff[1] is None:
                 continue
-            for issue in stock_issue_records(connection,**filters):
-                if issue['outstanding']<1 or issue['deviceAssignmentId']:
-                    continue
+            for issue in current_stock_issues(connection, allow_associated=allow_associated, **filters):
                 original=issue['specification']
                 result[key].append(dict(id='stock-issue-'+str(issue['id']),name=issue['name'],
                     type=original.get('category',''),manufacturer=original.get('manufacturer',''),

@@ -661,7 +661,7 @@ window.caffootServiceDesk = (() => {
                   : equipmentField + '<p>Employee access follows the equipment’s verified assignment.</p>' + equipmentHelp + categoryField}
               ${employee ? `<div class="device-review-warning service-desk-confidentiality" data-ticket-confidentiality role="status" hidden>
                   <strong>Department Ticket — Confidentiality Warning</strong>
-                  <p>This ticket, employee-visible replies and permitted attachments will be visible to authorised Staff Members in any Department currently or subsequently assigned to this Device.</p>
+                  <p data-ticket-confidentiality-audience></p>
                   <p><strong>Do not include or attach confidential, personal or sensitive information.</strong></p>
                 </div><div data-ticket-software-field hidden>
                   <label class="service-desk-field">Affected Software (Optional)<select name="affectedSoftware" disabled></select></label>
@@ -681,7 +681,13 @@ window.caffootServiceDesk = (() => {
                 const updateConfidentiality = () => {
                     const index = form.elements.equipment.value;
                     const item = index === '' ? null : dialog.equipment[Number(index)];
-                    form.querySelector('[data-ticket-confidentiality]').hidden = item?.scope !== 'department' || item.kind !== 'device';
+                    const warning = form.querySelector('[data-ticket-confidentiality]');
+                    warning.hidden = item?.scope !== 'department' || !(item.kind === 'device' || item.associationId);
+                    if (!warning.hidden) {
+                        const device = item.associationId ? 'the Device this equipment is associated with' : 'this Device';
+                        warning.querySelector('[data-ticket-confidentiality-audience]').textContent =
+                            'This ticket, employee-visible replies and permitted attachments will be visible to authorised Staff Members in any Department currently or subsequently assigned to ' + device + '.';
+                    }
                 };
                 updateConfidentiality();
                 form.addEventListener('change', event => {
@@ -1081,6 +1087,7 @@ window.caffootServiceDesk = (() => {
                 payload = {equipmentId:selected.id, equipmentKind:selected.kind, categoryId:Number(data.get('categoryId')),
                     subject:data.get('subject'), description:data.get('description'), ...await ticketAttachmentPayload(form.elements.attachments)};
                 if (selected.stockIssueId) payload.stockIssueId = selected.stockIssueId;
+                if (selected.associationId) payload.associationId = selected.associationId;
                 if (dialog.employee && data.get('affectedSoftware')) payload.affectedSoftware = data.get('affectedSoftware');
             } else {
                 path += '/' + dialog.id + '/';

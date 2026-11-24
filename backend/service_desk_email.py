@@ -8,6 +8,7 @@ from .account_email import queue_mail_task
 from .email_rendering import safe_email_url
 from .email_templates import email_template_state, read_email_branding, render_ticket_email
 from .service_desk import TICKET_EQUIPMENT_LABEL, require_ticket
+from .service_desk_access import TICKET_CUSTODY
 from .smtp_settings import config_path, deliver_email, read_delivery_settings
 
 
@@ -18,9 +19,9 @@ def queue_ticket_email(database_path, origin, ticket_id, notification):
 
 def department_device_members(connection, ticket_id):
     """Resolve the Department audience from the ticket's physical custody ID."""
-    assignment = connection.execute("""
+    assignment = connection.execute(f"""
         SELECT a.id,a.ended_at FROM service_desk_tickets ticket
-        JOIN device_assignments a ON a.id=ticket.device_assignment_id
+        JOIN device_assignments a ON a.id={TICKET_CUSTODY}
         WHERE ticket.id=? AND a.staff_id IS NULL
     """, (ticket_id,)).fetchone()
     if assignment is None:
@@ -51,15 +52,22 @@ def employee_audience(connection, ticket_id):
     members = department_device_members(connection, ticket_id)
     if members is not None:
         return 'department', [account for account, _ in members]
-    assignment = connection.execute("""
-        SELECT issue.department_id, ticket.employee_id
+    assignment = connection.execute(f"""
+        SELECT issue.department_id,ticket.employee_id,link.id,{TICKET_CUSTODY}
         FROM service_desk_tickets ticket
         LEFT JOIN it_asset_stock_entries issue ON issue.id=ticket.stock_issue_id
+        LEFT JOIN device_equipment_associations link ON link.issue_entry_id=issue.id
         WHERE ticket.id=?
     """, (ticket_id,)).fetchone()
     if assignment is None:
         return 'personal', []
-    department, employee = assignment
+    department, employee, link, custody = assignment
+    if link is not None:
+        if custody is None:
+            return 'personal', []
+        # Department custody was handled above. For personal custody the live
+        # ticket check below still requires both the link and stock period.
+        department = None
     if department is not None:
         accounts = connection.execute(
             'SELECT account_id FROM staff_members WHERE department_id=? AND active=1 AND account_id IS NOT NULL '
