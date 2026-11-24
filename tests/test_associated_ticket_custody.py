@@ -27,6 +27,7 @@ class AssociatedAccessoryVisibility(unittest.TestCase):
     save = fixture.SharedDeviceHttpTests.save
     ticket_path = fixture.SharedDeviceHttpTests.ticket_path
     assign_device = fixture.SharedDeviceHttpTests.assign_device
+    hand_over = fixture.SharedDeviceHttpTests.hand_over
     download = fixture.SharedDeviceHttpTests.download
     capture_ticket_mail = fixture.SharedDeviceHttpTests.capture_ticket_mail
     finish_mail_jobs = fixture.SharedDeviceHttpTests.finish_mail_jobs
@@ -302,3 +303,51 @@ class AssociatedAccessoryVisibility(unittest.TestCase):
         associations = self.get('/api/equipment/associations?deviceId=device')
         self.assertEqual(associations['current'], [])
         self.assertEqual(associations['history'][0]['id'], issued['associationIds'][0])
+
+    def test_new_physical_holder_can_report_an_accessory_without_inheriting_its_history(self):
+        self.begin()
+        self.assertEqual(self.manage(['dept', 'other'])[0], 200)
+        original_custody = self.allocated()['current'][0]['id']
+        item = self.receive('Monitor for the shared Device')
+        association = self.issue_to_current_custody(item)
+        with closing(sqlite3.connect(self.path)) as connection:
+            original_issue, = stock_issue_records(connection)
+        ticket = self.create('department', **self.accessory_fields(original_issue),
+                             associationId=association['associationIds'][0],
+                             attachments=self.attachment('Employee-visible fixture'))
+        visible, private = self.attachment_ids(ticket)
+        self.assert_ticket_scope(ticket, {ACCOUNTS, SALES}, visible, private)
+
+        self.post('/api/it-assets/return', return_payload(original_issue, quantityReturned=2))
+        self.hand_over('staff', 'colleague')
+        new_custody, = self.allocated()['current']
+        self.assertNotEqual(new_custody['id'], original_custody)
+        self.assertEqual(new_custody['staffId'], 'colleague')
+        reissued = self.issue_to_current_custody(item)
+        self.assertNotEqual(reissued['issueEntryIds'], association['issueEntryIds'])
+        with closing(sqlite3.connect(self.path)) as connection:
+            new_issue, returned_issue = stock_issue_records(connection)
+            self.assertEqual((returned_issue['id'], returned_issue['custodyRecipientId'],
+                              returned_issue['quantity'], returned_issue['outstanding']),
+                             (original_issue['id'], original_custody, 2, 0))
+            self.assertEqual((new_issue['staffId'], new_issue['outstanding']), ('colleague', 2))
+            self.assertEqual(stock_item(connection, item)['balances']['physicallyHeld'], 3)
+            before = tuple(connection.iterdump())
+
+        self.assert_ticket_scope(ticket, set(), visible, private)
+        self.assertEqual(self.save('department', ticket, 'messages', dict(body='Old ticket'), actor=SALES)[0], 404)
+        self.get(self.ticket_path('personal', f'/{ticket}'), SALES, 404)
+        self.post(self.ticket_path('personal'), self.create_fields(new_issue), actor=SALES, expected=409)
+        with closing(sqlite3.connect(self.path)) as connection:
+            self.assertEqual(tuple(connection.iterdump()), before)
+
+        picker = self.get('/api/service-desk/personal/equipment', SALES)['equipment']
+        accessory, = [choice for choice in picker if choice.get('stockIssueId') == new_issue['id']]
+        self.assertEqual(accessory['associationId'], reissued['associationIds'][0])
+        current_ticket = self.create('personal', actor=SALES, **self.accessory_fields(new_issue),
+                                     associationId=accessory['associationId'],
+                                     attachments=self.attachment('Current custody fixture'))
+        current_thread = self.get(self.ticket_path('personal', f'/{current_ticket}/messages'), SALES)
+        current_file, = current_thread['attachments']
+        self.assertEqual(self.download('personal', current_ticket, current_file['id'], SALES)[:2],
+                         (200, b'Current custody fixture'))
