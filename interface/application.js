@@ -7671,11 +7671,11 @@ function openIpModal(ip) {
           form.elements.namedItem('password').placeholder=s?.passwordConfigured?'Leave blank to keep the saved password':'Enter SMTP password';
           const status=root.querySelector('#smtp-config-status');
           if(status)status.textContent=!smtpLoaded?'Loading…':s?.configured?'Configured':smtpSettings?'Not Configured':'Unavailable';
-          const button=form.querySelector('button[type="submit"]');
-          if(button)button.disabled=!smtpLoaded||!smtpSettings;
+          form.querySelector('button[type="submit"]').disabled=!smtpLoaded||!s;
           const send=root.querySelector('#smtp-test-form button[type="submit"]');
           if(send)send.disabled=!s?.configured;
           updateSmtpFields(form);
+          if(!smtpLoaded||!s)form.querySelectorAll('input,select').forEach(field=>field.disabled=true);
         }
         function updateSmtpFields(form){
           if(!form)return;
