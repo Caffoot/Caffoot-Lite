@@ -157,6 +157,7 @@ module.exports=async({page,context,out})=>{
  assert.ok(await signIn.locator('#recovery-message').evaluate(el=>{const r=el.getBoundingClientRect();return r.top>=0&&r.bottom<=innerHeight;}));
  await signIn.locator('#recovery-back').click();releaseRequest();await pendingResponse;requestGate=null;
  assert.ok(await signIn.locator('#recovery-confirm-form').isHidden());
+ assert.ok(await signIn.locator('#form').isVisible());
  for(const [width,height] of [[1440,950],[1280,800],[900,800],[768,800],[730,800],[390,844],[320,700]])for(const dark of [false,true]){
   await signIn.setViewportSize({width,height});await signIn.goto(address+'/');await signIn.bringToFront();await signIn.locator('#auth-heading').filter({hasText:'Welcome Back'}).waitFor();
   await signIn.evaluate(dark=>{localStorage.setItem('caffoot_theme_preference',dark?'dark':'light');applySignInTheme();},dark);
@@ -165,15 +166,15 @@ module.exports=async({page,context,out})=>{
   assert.equal(await signIn.locator('.brand-tagline-detail').textContent(),'Your infrastructure. Your users. Your data.');
   assert.ok(await signIn.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
   const lines=await signIn.locator('.brand-tagline-detail').evaluate(el=>el.getBoundingClientRect().height/parseFloat(getComputedStyle(el).lineHeight));assert.equal(lines,1);
-  await signIn.getByText('Forgot Password?',{exact:true}).click();assert.ok(await signIn.locator('#recovery-confirm-form').isHidden());
+  await signIn.getByText('Forgot Password?',{exact:true}).click();assert.ok(await signIn.locator('#recovery-confirm-form').isHidden());assert.ok(await signIn.locator('#form').isHidden());
   await signIn.locator('#recovery-request-form input').fill('fictional-user');await signIn.locator('#recovery-request-form button').click();
-  await signIn.locator('#recovery-confirm-form').waitFor();assert.equal(await signIn.locator('#recovery-message').getAttribute('role'),'status');
+  await signIn.locator('#recovery-confirm-form').waitFor();assert.ok(await signIn.locator('#form').isHidden());assert.equal(await signIn.locator('#recovery-message').getAttribute('role'),'status');
   assert.ok(await signIn.locator('#recovery-message').evaluate(el=>{const r=el.getBoundingClientRect();return r.top>=0&&r.bottom<=innerHeight;}));
   assert.equal(await signIn.locator('#recovery-confirm-form input[name="token"]').evaluate(el=>el===document.activeElement),true);
   const recoveryCode=signIn.locator('#recovery-confirm-form input[name="token"]');
   assert.equal(await recoveryCode.getAttribute('maxlength'),'8');assert.equal(await recoveryCode.getAttribute('inputmode'),'numeric');
   await recoveryCode.evaluate(el=>{const clipboard=new DataTransfer();clipboard.setData('text',' 00001234\n');el.dispatchEvent(new ClipboardEvent('paste',{clipboardData:clipboard,bubbles:true,cancelable:true}));});
-  assert.equal(await recoveryCode.inputValue(),'00001234');await signIn.locator('#recovery-confirm-form input[name="password"]').fill('Fictional reset password');
+  assert.equal(await recoveryCode.inputValue(),'00001234');await signIn.locator('#recovery-confirm-form input[name="password"]').fill('Fictional reset password');await signIn.locator('#recovery-confirm-form input[name="confirmPassword"]').fill('Fictional reset password');
   await signIn.locator('#recovery-confirm-form button').click();await signIn.locator('#recovery-message').filter({hasText:'Invalid or expired'}).waitFor();
   await signIn.locator('#recovery-back').click();assert.ok(await signIn.locator('#recovery-confirm-form').isHidden());
   assert.equal(await signIn.locator('#recovery-confirm-form input[name="password"]').inputValue(),'');
@@ -190,7 +191,7 @@ module.exports=async({page,context,out})=>{
  requestFails=true;await signIn.getByText('Forgot Password?',{exact:true}).click();await signIn.locator('#recovery-request-form input').fill('fictional-user');await signIn.locator('#recovery-request-form button').click();await signIn.locator('#recovery-message').filter({hasText:'Service unavailable'}).waitFor();assert.ok(await signIn.locator('#recovery-confirm-form').isHidden());
  requestFails=false;await signIn.locator('#recovery-request-form button').click();await signIn.locator('#recovery-confirm-form').waitFor();
  await signIn.locator('#recovery-resend').click();assert.ok(await signIn.locator('#recovery-confirm-form').isHidden());await signIn.locator('#recovery-request-form button').click();await signIn.locator('#recovery-confirm-form').waitFor();
- resetFails=false;await signIn.locator('#recovery-confirm-form input[name="token"]').fill('00001234');await signIn.locator('#recovery-confirm-form input[name="password"]').fill('Fictional reset password');await signIn.locator('#recovery-confirm-form button').click();await signIn.locator('#recovery-message').filter({hasText:'Password updated'}).waitFor();assert.ok(await signIn.locator('#recovery-confirm-form').isHidden());assert.equal(await signIn.locator('#recovery-confirm-form input[name="password"]').inputValue(),'');
+ resetFails=false;await signIn.locator('#recovery-confirm-form input[name="token"]').fill('00001234');await signIn.locator('#recovery-confirm-form input[name="password"]').fill('Fictional reset password');await signIn.locator('#recovery-confirm-form input[name="confirmPassword"]').fill('Fictional reset password');await signIn.locator('#recovery-confirm-form button').click();await signIn.locator('#recovery-message').filter({hasText:'Password updated'}).waitFor();assert.ok(await signIn.locator('#recovery-confirm-form').isHidden());assert.equal(await signIn.locator('#recovery-confirm-form input[name="password"]').inputValue(),'');
  assert.ok(requests.every(payload=>Object.keys(payload).length===1&&'username' in payload));await publicContext.close();
  await page.bringToFront();
  for(const width of [1440,1280,390,320])for(const dark of [false,true]){

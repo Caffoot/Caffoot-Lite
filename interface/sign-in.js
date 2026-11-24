@@ -179,13 +179,21 @@ function resetRecoveryFlow(){
   $(id).reset();$(id).removeAttribute('aria-busy');$(id).querySelector('button[type="submit"]').disabled=false;
  }
  $('recovery-confirm-form').hidden=true;$('recovery-reset-fields').disabled=true;
- $('recovery-request-form').hidden=false;$('recovery-resend').hidden=true;
+ $('recovery-request-form').hidden=false;$('recovery-resend').hidden=true;$('recovery-resend').disabled=false;
+ $('recovery-heading').textContent='Request a Recovery Code';
+ $('recovery-guidance').hidden=false;$('recovery-reset-guidance').hidden=true;
  $('recovery-message').textContent='';
 }
 window.addEventListener('pagehide',resetRecoveryFlow);
-$('password-recovery').addEventListener('toggle',()=>{if(!$('password-recovery').open)resetRecoveryFlow();});
+$('password-recovery').addEventListener('toggle',()=>{
+ if($('password-recovery').open){
+  $('recovery-request-form').elements.username.focus();
+ }else{
+  resetRecoveryFlow();
+ }
+});
 $('recovery-back').addEventListener('click',()=>{
- resetRecoveryFlow();$('password-recovery').open=false;$('username').focus();
+ resetRecoveryFlow();$('password-recovery').open=false;$(mode==='login-mfa'?'code':'username').focus();
 });
 $('recovery-resend').addEventListener('click',()=>{
  const username=$('recovery-request-form').elements.username.value;
@@ -197,12 +205,27 @@ for(const id of ['recovery-request-form','recovery-confirm-form']){
   event.preventDefault();
   const form=event.target,button=form.querySelector('button[type="submit"]');
   if(button.disabled)return;
-  const version=++recoveryRequestVersion,requesting=id==='recovery-request-form';
+  const requesting=id==='recovery-request-form';
+  if(!requesting){
+   const {password,confirmPassword}=form.elements;
+   if(!password.value||!confirmPassword.value){
+    showRecoveryFeedback('Enter and confirm your new password.',password.value?confirmPassword:password);
+    return;
+   }
+   if(password.value!==confirmPassword.value){
+    showRecoveryFeedback('The new passwords do not match.',confirmPassword);
+    return;
+   }
+  }
+  const version=++recoveryRequestVersion;
   button.disabled=true;form.setAttribute('aria-busy','true');$('recovery-resend').disabled=true;
   showRecoveryFeedback(requesting?'Requesting recovery instructions…':'Checking your recovery code…');
   try{
    const payload=Object.fromEntries(new FormData(form));
-   if(!requesting){payload.challengeId=recoveryChallengeId;payload.token=payload.token.trim();}
+   if(!requesting){
+    delete payload.confirmPassword;
+    payload.challengeId=recoveryChallengeId;payload.token=payload.token.trim();
+   }
    const result=await request(requesting?'/api/recovery/request':'/api/recovery/confirm',payload);
    if(version!==recoveryRequestVersion)return;
    if(requesting){
@@ -211,9 +234,13 @@ for(const id of ['recovery-request-form','recovery-confirm-form']){
     $('recovery-request-form').hidden=true;
     $('recovery-confirm-form').hidden=false;$('recovery-reset-fields').disabled=false;
     $('recovery-resend').hidden=false;
+    $('recovery-heading').textContent='Reset Your Password';
+    $('recovery-guidance').hidden=true;$('recovery-reset-guidance').hidden=false;
     showRecoveryFeedback(result.message,$('recovery-confirm-form').elements.token);
    }else{
     form.reset();recoveryChallengeId='';form.hidden=true;$('recovery-reset-fields').disabled=true;$('recovery-resend').hidden=true;
+    $('recovery-heading').textContent='Password Updated';
+    $('recovery-reset-guidance').hidden=true;
     showRecoveryFeedback(result.status||result.message,$('recovery-back'));
    }
   }catch(error){

@@ -207,9 +207,32 @@ Typing values without submitting does not change the password. Follow the result
 3. Enter **Email Confirmation Code (8 Digits)**, retaining any leading zeroes, then select **Verify Email Address**.
 4. Check that the address shows **Verified**. Changing the saved address removes verification. **Cancel** clears verification password/code fields without verifying the address.
 
-On the sign-in page, **Forgot Password? → Request Recovery Code** uses your **Username**, not your email address. Recovery requires an active account, verified saved address and configured outgoing email. Its neutral response confirms neither eligibility nor delivery. Enter **Recovery Code (8 Digits)**, **New Password** and **Authenticator Code (If Enrolled)**, then select **Recover Password**. At this checkpoint the recovery form has one New Password field; do not expect the separate My Account confirmation control there.
+### Recover Your Password From Sign-In
 
-Codes work once and expire after 15 minutes. **Request Another Code** replaces the earlier code without resetting failed-attempt limits. Five failed confirmations can exhaust a challenge, and the rolling account limit can require a wait of up to 15 minutes. **Back To Sign In** clears the recovery form. A successful reset ends sessions and retains required authenticator protection. See [Account Recovery](../../../development-guide/Account-Recovery.md) for delivery troubleshooting and the separately authorised host recovery procedure; this guide does not establish a full private-installation recovery test.
+You need an active Caffoot Lite account, a verified email address saved to that account and outgoing email configured by your administrator. If you have enrolled an authenticator, keep it to hand. You can start recovery from the sign-in page without an active session.
+
+1. Select **Forgot Password?** on the sign-in page. **Request a Recovery Code** replaces the sign-in form. Enter your recovery **Username**, for example `recovery-owner`, and select **Request Recovery Code**. The same message appears for every request to protect account privacy.
+2. When **Reset Your Password** opens, check your verified mailbox and enter the emailed **Recovery Code (8 Digits)**, including any leading zeroes. Use the most recent code. Codes work once and expire after 15 minutes.
+3. Enter a long, unique **New Password** and repeat it exactly in **Confirm New Password**, including capital letters and any spaces. If you use a password manager, check that it filled both fields with the same generated password.
+4. If you have enrolled MFA, enter the current six-digit **Authenticator Code (If Enrolled)**. This is the code from your authenticator app.
+5. Select **Recover Password**. If the passwords differ, the form shows **The new passwords do not match.** and returns focus to **Confirm New Password**. Correct the entries and try again. A mismatch or empty field leaves your password and recovery challenge unchanged. The confirmation entry stays in the browser and is cleared with the new password when the form is reset.
+6. When Caffoot Lite reports that the password was updated, both password fields clear and your existing sessions end. Use **Back To Sign In** and sign in with the new password and your authenticator if required.
+
+![The Request a Recovery Code step on desktop with the recovery Username, Request Recovery Code and Back To Sign In.](screenshots/recovery-request-desktop.png)
+
+![The same code request step on a mobile-width screen.](screenshots/recovery-request-mobile.png)
+
+*Step 1 shows the recovery username and request action.*
+
+![The Reset Your Password step on desktop, with New Password and Confirm New Password side by side.](screenshots/recovery-reset-desktop.png)
+
+![The Reset Your Password step on a mobile-width screen, with Confirm New Password directly below New Password.](screenshots/recovery-reset-mobile.png)
+
+*Step 2 shows the neutral request response, code, password and authenticator fields, and recovery actions.* [Screenshot provenance](screenshots/Recovery-Provenance.md)
+
+Select **Back To Sign In** from either step to clear recovery and restore the original sign-in screen. **Request Another Code** clears the reset fields and takes you back to **Request a Recovery Code** with your username filled in. Making that request replaces the previous code and keeps the existing failed-attempt limits. Five failed confirmations can exhaust a challenge, and the rolling account limit can require a wait of up to 15 minutes.
+
+If no email arrives, check the junk folder and ask your administrator to check your verification and outgoing mail privately. The request message confirms neither eligibility nor delivery. If confirmation is rejected, check that the recovery code is current and that you used the correct authenticator. For delivery and administrator troubleshooting, see [Account Recovery](../../../development-guide/Account-Recovery.md).
 
 ## Sessions, Sign-Out And Unsaved Work
 

@@ -11215,7 +11215,9 @@ void (async () => {
     const id=form.id;
     if(!['next-account-password-form','next-account-mfa-start','next-account-mfa-confirm','account-mfa-removal-form','personal-details-form'].includes(id))return;
     event.preventDefault();event.stopImmediatePropagation();
-    const data=new FormData(form),submit=form.querySelector('button[type="submit"]');
+    const submit=Array.from(form.elements).find(control=>control.matches('button[type="submit"]'));
+    if(!submit)return;
+    const data=new FormData(form);
     submit.disabled=true;
     void (async()=>{
       if(id==='personal-details-form'){
