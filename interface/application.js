@@ -11211,9 +11211,9 @@ void (async () => {
           firstName:String(data.get('firstName')||''),
           lastName:String(data.get('lastName')||''),
           displayName:String(data.get('displayName')||''),
-          email:String(data.get('email')||'')
+          email:String(data.get('email')||''),
+          revision:form.dataset.revision||''
         };
-        if(form.dataset.revision)details.revision=form.dataset.revision;
         accountProfile=await postInventory('/api/account/profile',details);
         if(sessionDirectoryPermissions.staffMembers?.read)await window.caffootStaffDirectory.refresh(false);
         updateAccountHeaderPhoto();

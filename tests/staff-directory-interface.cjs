@@ -225,6 +225,27 @@ async function test(){
  // Use a saved mismatch representing existing independent profiles.
  const savedTaylor=(await (await context.request.get(address+'/api/staff-members?query=taylor.cole')).json()).staffMembers[0];
  py("import sqlite3,sys; db=sqlite3.connect(sys.argv[1]);db.execute('UPDATE account_profiles SET first_name=?,email=? WHERE account_id=?',('Tay', 'taylor.cole@example.test',int(sys.argv[2])));db.execute('UPDATE staff_members SET email=? WHERE account_id=?',('taylor@example.test',int(sys.argv[2])));db.commit()",[path.join(tmp,'inventory.sqlite3'),String(savedTaylor.accountId)]);
+ const selfContext=await browser.newContext({ignoreHTTPSErrors:true});
+ assert.equal((await selfContext.request.post(address+'/api/login',{headers:{Origin:address},data:{
+  username:'taylor.cole',password:'Fictional-Pass-2026!'
+ }})).status(),200);
+ const selfPage=await selfContext.newPage();
+ selfPage.on('pageerror',error=>errors.push(error.message));
+ await selfPage.goto(address+'/account');
+ await selfPage.locator('#app[aria-busy="false"]').waitFor();
+ const personalDetails=selfPage.locator('#personal-details-form');
+ async function saveOwnDetails(status){
+  const response=selfPage.waitForResponse(r=>r.url()===address+'/api/account/profile'&&r.request().method()==='POST');
+  await personalDetails.locator('[type="submit"]').click();
+  const result=await response;
+  assert.equal(result.status(),status,await result.text());
+  return result.json();
+ }
+ await personalDetails.locator('[name="firstName"]').fill('Taylor');
+ assert.match((await saveOwnDetails(400)).error,/Contact a Caffoot Lite administrator/);
+ await personalDetails.locator('[name="firstName"]').fill('Tay');
+ await personalDetails.locator('[name="displayName"]').fill('Tay C');
+ await saveOwnDetails(200);
  await page.getByRole('button',{name:'Edit Staff Member'}).click();
  await page.locator('#staff-resolve-firstName').waitFor();
  assert.match(await page.locator('#staff-saved-firstName').innerText(),/Staff: Taylor\s+Account: Tay/);
@@ -275,6 +296,14 @@ async function test(){
  }
  await page.locator('#sidebar [data-tab="users"]').click();
  assert.deepEqual(await page.locator('.section-page-header .tabs button').allTextContents(),['Overview','Manage Roles']);
+ await personalDetails.locator('[name="lastName"]').fill('Rivers');
+ assert.equal((await saveOwnDetails(409)).code,'stale_profile_edit');
+ await selfPage.reload();
+ await selfPage.locator('#app[aria-busy="false"]').waitFor();
+ await personalDetails.locator('[name="lastName"]').fill('Rivers');
+ await saveOwnDetails(200);
+ assert.equal((await (await context.request.get(address+'/api/staff-members/'+savedTaylor.id)).json()).staffMember.lastName,'Rivers');
+ await selfContext.close();
  const readOnly=await browser.newContext({ignoreHTTPSErrors:true,viewport:{width:390,height:844}});
  await readOnly.addCookies([{name:readerInfo.cookie,value:readerInfo.token,url:address,secure:true,httpOnly:true,sameSite:'Strict'}]);
  const limitedPage=await readOnly.newPage();

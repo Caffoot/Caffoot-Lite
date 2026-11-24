@@ -130,6 +130,9 @@ class StaffDirectoryHttpTests(unittest.TestCase):
             db.execute("INSERT INTO account_profiles(account_id,last_name,display_name,email,email_verified) VALUES(4,'Rivers','Alex R','verified@example.test',1)")
             db.execute("INSERT INTO account_email_proofs(token_hash,account_id,purpose,email,expires_at) VALUES('existing-proof',4,'recover','verified@example.test',9999999999)")
             db.execute("INSERT INTO staff_members(id,account_id,email) VALUES('staff-email',5,'contact@example.test')")
+        restored = self.path.with_name('restored.sqlite3')
+        with sqlite3.connect(self.path) as db, sqlite3.connect(restored) as backup:
+            db.backup(backup)
         from backend.server import initialise_database as initialise_server_database
         initialise_server_database()
         with sqlite3.connect(self.path) as db:
@@ -143,6 +146,10 @@ class StaffDirectoryHttpTests(unittest.TestCase):
             preserved = list(db.iterdump())
         initialise_server_database()
         with sqlite3.connect(self.path) as db:
+            self.assertEqual(list(db.iterdump()), preserved)
+        with patch('backend.server.DB_PATH', restored):
+            initialise_server_database()
+        with sqlite3.connect(restored) as db:
             self.assertEqual(list(db.iterdump()), preserved)
 
 
