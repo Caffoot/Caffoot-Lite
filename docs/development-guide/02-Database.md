@@ -1,6 +1,6 @@
 # 02 — SQLite database
 
-> **Integration checkpoint — 23 November 2026.** `milestone-1` at `d477256bd5ac12aa8f485deda7fa3b9d3fc69172` contains schema **25** after the accepted Service Desk foundation and technician queue. The Batch 5.3 review branch adds schema **26** for the optional affected software field. Published v2.1 uses schema 10. [Development Status](Development-Status.md) records the integration and outstanding release gates.
+> **Stage 6.2 integration checkpoint — 24 November 2026.** `milestone-1` at `2107de3668b08c5abdfdae6fe231a3114bbfc380` uses schema **28**. Published v2.1 uses schema **10**. The isolated upgrade reached schema 28 through normal application startup. [Development Status](Development-Status.md) · [Stage 6.2 evidence](../development-handovers/evidence/stage-6-2/README.md)
 
 > **Historical Batch 3.12 review branch:** Schema 20 updates the built-in IT Staff default and preserves existing account levels through compatibility overrides. No stock tables or journal entries are migrated. See [dashboard and upgrade contract](IT-Assets-Dashboard.md). Earlier dated checkpoints below retain their historical scope.
 
@@ -38,7 +38,7 @@ The exact definitions are in [`backend/schema.py`](../../backend/schema.py). The
 | Table | Primary key and relevant columns | What it contains |
 | --- | --- | --- |
 | `schema_migrations` | `version`, `applied_at` | Applied schema versions |
-| `organisation_features` | `feature`, Boolean `enabled` | Independent organisation choices; Suppliers/Lifecycle remain unavailable; IT Assets defaults off in schema 16 |
+| `organisation_features` | `feature`, Boolean `enabled` | Independent organisation choices. IT Assets, Suppliers and Equipment Lifecycle start disabled on upgrade from v2.1. |
 | `it_asset_stock_items` | text `id`, tracking mode, shared specifications, nullable `minimum_stock_level` | Stock catalogue; no opening balances |
 | `it_asset_stock_units` | text `id`, optional source item, unique optional canonical `device_id` | Permanent individual identities and Device stock links |
 | `it_asset_stock_movements` | numbered `id`, dates, actor snapshots, correction references | Immutable journal and separate specification audit records |
@@ -73,7 +73,7 @@ The `record_json`/`value_json` columns have SQLite JSON-validity checks. The sch
 
 `server.connect()` opens SQLite with foreign keys enabled and a busy timeout. Save modules such as [`device_saves.py`](../../backend/device_saves.py), [`ipam_saves.py`](../../backend/ipam_saves.py) and [`collection_saves.py`](../../backend/collection_saves.py) use `BEGIN IMMEDIATE` and commit or roll back their changes as one operation. The device writer checks the stored revision and reservation before committing.
 
-[`inventory.py`](../../backend/inventory.py) reconstructs the established inventory-shaped representation from the tables for validation/UI compatibility. Its `stage_inventory` replaces the **inventory** tables transactionally for an approved import; account and security tables are outside that replacement. Read [migration details](05-Inventory-and-Migration.md) before touching this path.
+[`inventory.py`](../../backend/inventory.py) reconstructs the established inventory-shaped representation from the tables for validation/UI compatibility. Its `stage_inventory` checks durable Device dependencies under the write lock. Identical protected rows retain their identities and revisions. A changed or missing protected Device rejects the whole replacement. Account and security rows are outside the transaction's replacement scope. [Migration details](05-Inventory-and-Migration.md)
 
 The database also holds Change History separately. Record-specific event behaviour is implemented by the related save operations; it is not an invitation to invent a new audit platform.
 

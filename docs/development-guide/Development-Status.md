@@ -1,8 +1,12 @@
 # Published And Development Versions
 
-## Current Integration — 23 November 2026
+## Current Integration — 24 November 2026
 
 Caffoot Lite **v2.1 remains the published release**, at tagged source `c3237114108cad9f7d4e57657b6aed5e0091a5ef` (schema 10). Use the [published user guides](../how-tos/features-and-instructions/README.md) and [installation instructions](../../INSTALLATION.md) for that release.
+
+The Stage 6.2 starting checkpoint is `milestone-1` at `2107de3668b08c5abdfdae6fe231a3114bbfc380` (unreleased v2.2, schema 28), after the Stage 5.1–5.6 merges. The isolated schema-10 → 28 upgrade passed there. The import protection correction is under review in [PR #445](https://github.com/Caffoot/Caffoot-Lite/pull/445). [Stage 6.2 evidence](../development-handovers/evidence/stage-6-2/README.md) · [Draft administrator guide](../how-tos/features-and-instructions/v2.2-draft/Legacy-Import-and-Docker-Upgrade.md)
+
+### Historical Stage 5.4 Checkpoint — 23 November 2026
 
 The owner accepted and merged Service Desk Batches 5.1–5.3 through [PRs #437](https://github.com/Caffoot/Caffoot-Lite/pull/437), [#438](https://github.com/Caffoot/Caffoot-Lite/pull/438) and [#439](https://github.com/Caffoot/Caffoot-Lite/pull/439). The verified `milestone-1` integration head for Batch 5.4 is `4600ec7bf6a0751af02fbcf003b7f299547cdfd9`, schema 26. [Stage 5.3 acceptance](https://github.com/Caffoot/Caffoot-Lite/issues/422#issuecomment-7103488704)
 
@@ -34,7 +38,7 @@ Batch 5.4 adds the administrator support calendar, category management and live 
 
 Staff Members and Departments are core and independently permissioned. IT Assets is independently optional and defaults off on fresh installations. Schema 20 adds IT Assets Edit to the built-in IT Staff role default while preserving existing accounts' configured access with compatibility overrides; it does not automatically add new ordinary accounts to IT Staff.
 
-**Still deferred** are Batch 3.4 manual/native acceptance, broader native Raspberry Pi/Safari and private-installation checks, private legacy-data verification, and Stage 6 cross-stage security and compatibility, supported upgrade and complete-volume backup/restore acceptance. Batch 5.4 awaits final-head CI, independent owner visual acceptance and separate merge approval. Batches 5.5–5.6 await separate development authorisation. [Stage 5 plan](https://github.com/Caffoot/Caffoot-Lite/issues/419)
+**Still deferred** are Batch 3.4 manual/native acceptance, broader native Raspberry Pi/Safari and private-installation checks, private legacy-data verification, cross-stage security and compatibility, and Stage 6.3 complete-volume recovery evidence. Stage 6.2 remains subject to independent and owner review. [Stage 6 plan](https://github.com/Caffoot/Caffoot-Lite/issues/351#issuecomment-7020041373)
 
 The [documentation review record](Stage-1-3-Documentation-Review.md) lists sources, screenshot approvals, wording discrepancies and remaining documentation acceptance. The [active handover](../development-handovers/milestone-01.md) preserves implementation evidence.
 
@@ -111,4 +115,4 @@ The [milestone tracker #351](https://github.com/Caffoot/Caffoot-Lite/issues/351)
 - For published installation, security and recovery, use the v2.1 guides. Preserve the entire persistent `/data` mount and matching image; JSON import is not a Docker backup.
 - For source maintenance, match the guide and tests to the exact branch/revision. [Role Permissions](Role-Permissions.md) describes the unreleased Stage 1 contract; [the historical rehearsal](Upgrade-And-Restore-Rehearsal.md) is not a current milestone upgrade procedure.
 - Use [Optional Features](Optional-Features.md), [Device Assignments](Device-Assignments.md) and [Stock Circulation](IT-Assets-Issue-Return-and-Write-Off.md) with their stated unreleased source revisions; historical checkpoint evidence retains its original scope.
-- Full completed-milestone legacy-import compatibility and complete-volume upgrade/restore verification belong to Stage 6. No public v2.2 image or tested production upgrade/rollback procedure is offered here.
+- [Stage 6.2](../development-handovers/evidence/stage-6-2/README.md) records the isolated upgrade and import checks. Stage 6.3 covers complete-volume restoration. The [v2.2 administrator procedure](../how-tos/features-and-instructions/v2.2-draft/Legacy-Import-and-Docker-Upgrade.md) is for review installations.

@@ -1,10 +1,14 @@
 # Draft v2.2 User And Administrator Guides
 
-> **Draft v2.2 — Unreleased.** Current `milestone-1` integration is verified at `c1b5f8008e8ba56840d9790e3ba1c7e91ad35e0b` (schema 24), with Stages 1–4 development-complete/owner-accepted as of 19 November 2026. Some individual guides retain dated historical draft-review references; the [current Development Status](../../../development-guide/Development-Status.md) takes precedence. Use the [published v2.1 guides](../README.md) for the current release. These drafts are not production installation, upgrade or restore instructions.
+> **Draft v2.2 — Unreleased.** The Stage 6.2 starting integration checkpoint is `2107de3668b08c5abdfdae6fe231a3114bbfc380` (schema 28), after the Stage 5.1–5.6 merges. The [Development Status](../../../development-guide/Development-Status.md) records the remaining checks. Use the [published v2.1 guides](https://github.com/Caffoot/Caffoot-Lite/tree/v2.1/docs/how-tos/features-and-instructions) for the current release.
 
 Caffoot Lite brings accounts, Staff Members, Departments, Devices and optional IT Assets together so your team can record who holds equipment, what is physically in stock and what is ready to issue. These guides explain workflows for ordinary users, IT technicians and administrators, including Suppliers and Equipment Lifecycle in Stage 4. Examples use fictional people, organisations and equipment.
 
 Start with the task you need to complete. Each feature guide explains its permissions, controls, numbered procedures, examples and recovery steps. A missing section may mean the feature is switched off or your account lacks permission; ask an administrator to check before creating duplicate records.
+
+## Import And Upgrade
+
+Use [Import Legacy Inventory Or Upgrade Docker](Legacy-Import-and-Docker-Upgrade.md) to review a standalone v1.3.3 export, understand protected Device conflicts, or rehearse a v2.1 Docker upgrade on an isolated copy.
 
 ## UK Date Entry And Calendar Controls
 
@@ -93,7 +97,7 @@ The foundation, IT queue and employee ticket workflows are integrated through [P
 
 ## Publication And Acceptance
 
-Stages 1–4 and Stage 5 batches 5.1–5.5 are owner-accepted and integrated into `milestone-1`. Stage 5.6 requires independent review, owner visual acceptance and separate merge approval. Batch 3.4 manual/native acceptance, broader Raspberry Pi/native Safari/private-installation evidence and Stage 6 compatibility, full upgrade and restore acceptance remain deferred. v2.2 is unreleased. [Stage 5 tracker](https://github.com/Caffoot/Caffoot-Lite/issues/419)
+Stages 1–5 are integrated into `milestone-1`. Stage 6.2 import protection and its draft guide are under review. Batch 3.4 manual/native acceptance, broader Raspberry Pi/native Safari and private-installation checks, and Stage 6.3 complete-volume restoration remain deferred. [Stage 6.2 evidence](../../../development-handovers/evidence/stage-6-2/README.md)
 
 Images used here are genuine application captures with an identified approval source and captions describing their scope. Functional HTML previews are retained as development references, never presented as application screenshots. Missing or outdated images and remaining wording discrepancies are listed in the [documentation review record](../../../development-guide/Stage-1-3-Documentation-Review.md).
 
