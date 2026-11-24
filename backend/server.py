@@ -54,7 +54,8 @@ from .account_email import (MAIL_REQUESTS, REQUEST_MESSAGE, issue_email_proof,
                             notify_security_change, record_blocked_sign_in,
                             role_change_notifications)
 from .profiles import (read_profile, save_profile, read_profile_photo,
-                       save_profile_photo, remove_profile_photo, MAX_PHOTO_BYTES)
+                       save_profile_photo, remove_profile_photo, reconcile_saved_staff_profiles,
+                       StaleProfileEdit, MAX_PHOTO_BYTES)
 from .schema import initialise_database as migrate_database
 from .accounts import bootstrap_first_admin, confirm_admin_mfa, verify_password, hash_password
 from .authentication import MFAEnrolmentRequired
@@ -153,6 +154,11 @@ def connect():
 def initialise_database():
     with connect() as connection:
         migrate_database(connection)
+        reconcile_saved_staff_profiles(connection)
+
+
+def profile_email_notice_recipients(connection, account_id):
+    return security_recipients(connection, account_id) | security_recipients(connection, administrators=True)
 
 
 class Handler(BaseHTTPRequestHandler):
@@ -293,6 +299,7 @@ class Handler(BaseHTTPRequestHandler):
             self.respond(200, {"setupRequired": not configured, "enrollmentPending": pending})
         elif self.path in ("/api/account/profile", "/api/account/photo"):
             with connect() as connection:
+                connection.execute("BEGIN")
                 account_id = authenticated_account(connection, self.headers.get("Cookie"))
                 if account_id is None:
                     self.respond(401, {"error": "unauthorised"})
@@ -334,6 +341,7 @@ class Handler(BaseHTTPRequestHandler):
                 self.respond(200, safe_settings)
         elif self.path == "/api/users":
             with connect() as connection:
+                connection.execute("BEGIN")
                 account_id = authenticated_account(connection, self.headers.get("Cookie"))
                 if account_id is None:
                     self.respond(401, {"error": "unauthorised"})
@@ -1189,6 +1197,7 @@ class Handler(BaseHTTPRequestHandler):
                 or (self.command == 'POST' and (not PUBLIC_ORIGIN or not require_same_origin(origin, PUBLIC_ORIGIN)))):
             self.respond(403, {'error': 'forbidden'})
             return
+        notice_recipients = set()
         try:
             with connect() as connection:
                 cookie = self.headers.get('Cookie')
@@ -1226,11 +1235,14 @@ class Handler(BaseHTTPRequestHandler):
                     payload = json.loads(self.rfile.read(int(length)), object_pairs_hook=unique_directory_fields)
                     if section == 'Staff Members':
                         result = save_staff_member(connection, actor, read_session_cookie(cookie), payload,
-                            staff_id=record_id, login_only=action == 'login')
+                            staff_id=record_id, login_only=action == 'login',
+                            on_email_change=lambda db, target: notice_recipients.update(profile_email_notice_recipients(db, target)))
                     else:
                         result = save_department(connection, actor, read_session_cookie(cookie), payload,
                             department_id=record_id, delete=action == 'delete')
             key = ('departments' if choices else ('staffMembers' if section == 'Staff Members' else 'departments')) if isinstance(result, list) else ('staffMember' if section == 'Staff Members' else 'department')
+            if notice_recipients:
+                notify_security_change(smtp_config_path(DB_PATH), notice_recipients, database_path=DB_PATH)
             self.respond(200, {key: result})
         except PermissionError:
             self.respond(403, {'error': 'forbidden'})
@@ -1407,8 +1419,8 @@ class Handler(BaseHTTPRequestHandler):
             return
         notice_recipients = set()
         security_change = self.path in (
-            "/api/account/profile", "/api/account/password", "/api/account/mfa/confirm", "/api/account/mfa/remove",
-            "/api/users/profile", "/api/users/active",
+            "/api/account/password", "/api/account/mfa/confirm", "/api/account/mfa/remove",
+            "/api/users/active",
             "/api/users/admin", "/api/users/create", "/api/users/delete")
         try:
             duplicate_check = {"/api/devices/ipam/link": unique_link_fields,
@@ -1428,22 +1440,15 @@ class Handler(BaseHTTPRequestHandler):
                     target = payload.get("userId", actor)
                     if type(target) is not int:
                         raise ValueError("Invalid user identifier")
-                    if self.path in ("/api/account/profile", "/api/users/profile"):
-                        prior = connection.execute("SELECT email FROM account_profiles WHERE account_id=?", (target,)).fetchone()
-                        details = payload.get("profile", payload)
-                        if not isinstance(details, dict) or not isinstance(details.get("email", ""), str):
-                            raise ValueError("Invalid profile details")
-                        if (prior[0] if prior else "") == details.get("email", "").strip():
-                            security_change = False
-                    notice_recipients = security_recipients(connection, target)
-                    notice_recipients.update(security_recipients(connection, administrators=True))
+                    notice_recipients = profile_email_notice_recipients(connection, target)
                 if self.path == "/api/inventory/reset" and not connection.execute(
                     "SELECT 1 FROM accounts WHERE id=? AND is_admin=1", (actor,)
                 ).fetchone():
                     self.respond(403, {"error": "forbidden"})
                     return
                 if self.path == "/api/account/profile":
-                    result = save_profile(connection, actor, payload)
+                    result = save_profile(connection, actor, payload,
+                        on_email_change=lambda db, target: notice_recipients.update(profile_email_notice_recipients(db, target)))
                 elif self.path == "/api/account/photo/remove":
                     if payload != {"remove": True}:
                         raise ValueError("Invalid photo removal request")
@@ -1742,7 +1747,8 @@ class Handler(BaseHTTPRequestHandler):
                     if administrator != (1, 1, 1):
                         raise PermissionError("Verified administrator required")
                     result = save_profile(connection, actor, payload["profile"],
-                                          target_id=payload["userId"])
+                        target_id=payload["userId"],
+                        on_email_change=lambda db, target: notice_recipients.update(profile_email_notice_recipients(db, target)))
                 else:
                     if type(payload.get("userId")) is not int:
                         raise ValueError("Invalid user identifier")
@@ -1767,6 +1773,9 @@ class Handler(BaseHTTPRequestHandler):
         except PermissionError:
             self.respond(403, {"error": "forbidden"})
             return
+        except StaleProfileEdit as exc:
+            self.respond(409, {"error": str(exc), "code": "stale_profile_edit"})
+            return
         except (ValueError, TypeError, sqlite3.IntegrityError) as exc:
             message = str(exc)
             # This fixed identity message contains no hidden record details.
@@ -1787,6 +1796,7 @@ class Handler(BaseHTTPRequestHandler):
         if security_change:
             with connect() as connection:
                 connection.execute("DELETE FROM account_email_proofs WHERE account_id=?", (payload.get("userId", actor),))
+        if security_change or notice_recipients:
             notify_security_change(smtp_config_path(DB_PATH), notice_recipients, database_path=DB_PATH)
         self.respond(200, result, cookie=clear_session_cookie()
                      if self.path == "/api/account/mfa/remove" else None)

@@ -1,7 +1,7 @@
 // Exercise configurable IT Staff through the existing approved role dialogs.
 const assert=require('node:assert/strict');
-module.exports=async({page,context,catalogue,confirmedAction,confirm,screenshot,checked})=>{
- const address='https://127.0.0.1:8080';
+const {openStaffAccount}=require('./staff-account-workflow.cjs');
+module.exports=async({page,context,address,catalogue,confirmedAction,confirm,screenshot,checked})=>{
  const session=await (await context.request.get(address+'/api/session')).json();
  const headers={Origin:address,'X-CSRF-Token':session.csrf_token};
  let data=await catalogue(context),role=data.roles.find(role=>role.roleKey==='it_staff');
@@ -14,15 +14,7 @@ module.exports=async({page,context,catalogue,confirmedAction,confirm,screenshot,
   const user=(await catalogue(context)).users.find(user=>user.username===name);accounts[name]=user.id;
   assert.equal(user.accessDetails.roles.length,1);assert.equal(user.accessDetails.roles[0].roleKey,'staff_member');
  }
- async function manageUser(name){
-  // Reload after fixture API writes; navigating to the same hash keeps cached users.
-  await page.reload({waitUntil:'networkidle'});await page.locator('.users-live').waitFor();
-  await page.locator('.section-page-header [data-action="select-users-section"][data-tab="list"]').click();
-  await page.locator('#users-live-list').waitFor();
-  assert.equal(await page.locator('[data-action="users-open-editor"][data-user-id="'+accounts[name]+'"]').count(),1,
-    JSON.stringify({name,id:accounts[name],rows:await page.locator('[data-users-row]').evaluateAll(rows=>rows.map(row=>({id:row.dataset.id,name:row.querySelector('.username')?.textContent,button:row.querySelector('button')?.outerHTML})))}));
-  await page.locator('[data-action="users-open-editor"][data-user-id="'+accounts[name]+'"]').click();
- }
+ async function manageUser(name){await openStaffAccount(page,name);}
  for(const name of ['dave','tim']){
   await manageUser(name);
   assert.equal(await page.locator('[data-role-membership="1"]').isDisabled(),true);
@@ -51,6 +43,7 @@ module.exports=async({page,context,catalogue,confirmedAction,confirm,screenshot,
  await page.setViewportSize({width:1440,height:950});
  await page.locator('[data-action="users-close-editor"]').first().click();
  async function editor(){
+  await page.locator('#sidebar [data-tab="users"]').click();
   await page.locator('[data-action="select-users-section"][data-tab="roles"]').click();
   await page.locator('[data-role-command="edit"][data-role-id="'+role.id+'"]').click();
   assert.equal(await page.locator('#role-name').getAttribute('readonly'),'');
@@ -78,9 +71,10 @@ module.exports=async({page,context,catalogue,confirmedAction,confirm,screenshot,
   assert.equal((await context.request.post(address+'/api/users/roles/preview',{headers,data:{action}})).status(),400);
  }
  await manageUser('tim');await page.locator('[data-role-membership="'+role.id+'"]').click();await page.locator('[data-role-command="confirm"]').waitFor();await confirm(page);
+ await page.locator('[data-action="users-close-editor"]').first().click();
  assert.ok(!(await catalogue(context)).users.find(user=>user.id===accounts.tim).accessDetails.roles.some(item=>item.id===role.id));
  await confirmedAction(context,{type:'role.update',roleId:role.id,name:'IT Staff',enabled:true,grants:{Devices:'edit',IPAM:'edit',Racks:'edit','IT Assets':'edit'}});
- await page.reload({waitUntil:'networkidle'});await page.locator('.users-live').waitFor();await page.locator('[data-action="select-users-section"][data-tab="roles"]').click();
+ await page.locator('#sidebar [data-tab="users"]').click();await page.locator('[data-action="select-users-section"][data-tab="roles"]').click();
  await checked(page,'IT Staff defaults, deliberate Service Desk grants, retained overrides and mandatory MFA passed');
 
  await page.locator('#sidebar [data-action="tab-settings"]').click();

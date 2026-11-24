@@ -1,3 +1,4 @@
+const {openStaffAccount}=require('./staff-account-workflow.cjs');
 // Focused rendered actions for the approved Batch 02; uses isolated visual fixtures.
 const assert=require('node:assert/strict'),path=require('node:path');
 module.exports=async({page,measure,results,out,width,theme})=>{
@@ -52,8 +53,7 @@ module.exports=async({page,measure,results,out,width,theme})=>{
   await go('audit');await page.evaluate(()=>{auditHistory=[{at:'2026-11-05T12:00:00Z',actor:'owner',outcome:'Succeeded',reason:'Visual fixture: device renamed',changes:[{kind:'Device',action:'Updated',label:'Hypervisor-01',fields:['name'],before:{name:'Previous Hypervisor'},after:{name:'Hypervisor-01'}}],omitted:0}];activeAuditTab='activity';renderContent();});
   await page.locator('[data-action="audit-view-detail"]').first().click();await capture('audit-event-detail');
   await page.locator('[data-action="audit-close-detail"]').click();
-  await go('users');await page.locator('.section-page-header .tabs [data-tab="list"]').click();
-  await page.locator('[data-action="users-open-editor"]').first().click();await capture('user-workspace');
+  await openStaffAccount(page,(await (await page.request.get(new URL('/api/session',page.url()).href)).json()).username);await capture('user-workspace');
   await page.locator('[data-action="users-close-editor"]').first().click();
   await go('settings');await page.locator('.settings-screen .subnav [data-tab="maintenance"]').click();
   const before=await page.evaluate(()=>JSON.stringify({devices:appState.devices,racks:appState.racks,subnets:appState.subnets}));
@@ -162,7 +162,7 @@ module.exports=async({page,measure,results,out,width,theme})=>{
  for(const section of ['inventory','accessories']){await page.locator('[data-action="select-rack-section"][data-section-tab="'+section+'"]').click();await capture('racks-'+section);}
  await page.evaluate(()=>{v13RackSection='inventory';selectedRackId=appState.racks[0].id;v13RackDetailOpen=true;renderContent();});await capture('rack-elevation');
  await page.evaluate(()=>openRackModal());await capture('rack-dialog',true);await page.evaluate(()=>closeModal(true));
- await go('users');await page.locator('.section-page-header .tabs [data-tab="list"]').click();await page.locator('[data-action="users-open-editor"]').first().click();await capture('user-workspace');
+ await openStaffAccount(page,(await (await page.request.get(new URL('/api/session',page.url()).href)).json()).username);await capture('user-workspace');
  assert.ok(await page.locator('.users-management-modal input:disabled').count()>0,'Own account protections remain disabled');
  await page.locator('[data-action="users-close-editor"]').first().click();
  // A portrait fixture is generated in memory, uploaded only to the isolated account.

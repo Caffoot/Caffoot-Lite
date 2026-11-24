@@ -24,10 +24,11 @@ the database write lock. Read responses use one database snapshot.
 
 Lists accept `query` (up to 100 characters), `limit` (1–100, default 100) and
 `offset` (0–1000000, default 0). Staff search matches a literal substring of the
-person's name or associated Department name, including archived Departments.
-It requires Staff Members Read only and returns the same Staff fields; it does
-not grant Departments directory access. Department search matches its name.
-SQL wildcards are escaped. Lists return `staffMembers` or `departments`; record operations
+person’s name or associated Department name, including archived Departments.
+An active, MFA-confirmed administrator can also search by linked sign-in username.
+Other directory readers search the directory fields only. The Staff route requires
+Staff Members Read. Department search matches its own names. The server escapes SQL
+wildcards before searching. Lists return `staffMembers` or `departments`; record operations
 return `staffMember` or `department`. No permanent Staff deletion exists.
 
 Staff fields are `firstName`, `lastName`, `email`, `departmentId`, `jobTitle`,
@@ -50,11 +51,52 @@ unsupported content types 415, denied writes 403 and unauthenticated reads 401.
 Duplicate identities/names, already-linked Staff and unsafe Department associations
 return a generic 409 without database or account details. Saved replies return 200.
 
-Staff responses include approved directory fields, stable ID and a saved `revision`. Only verified
-administrators also receive the nullable `accountId`; usernames, security fields,
-roles, MFA and account-profile details are never joined into Staff responses.
-Staff membership contains the Department ID, without exposing another section's
-list or account administration. Contact details are excluded from new audit events.
+Staff responses include directory fields, the stable Staff ID and a saved `revision`.
+Verified administrators also receive nullable `accountId` and linked `username`
+where available. A Staff record response can also include `profileConflicts` for
+those administrators. Each key is an affected field and the value contains the
+saved `staff` and `account` strings. Bulk list responses omit those values.
+Other Staff readers and equipment-recipient routes receive directory data only.
+Staff responses contain no MFA, verification, recovery or role state. Account
+controls continue to use the administrator-only account and role endpoints.
+
+## Linked Personal Details
+
+Issue [#452](https://github.com/Caffoot/Caffoot-Lite/issues/452) shares first name,
+surname and email across linked records. Start-up reconciles safe blanks on schema
+29 in one transaction. A missing name can be filled from either record. A saved
+account email can fill a blank Staff email. A Staff email facing a blank account
+email, or two different nonblank addresses, await an administrator’s decision.
+This also applies when restarting on a restored database.
+
+For an edit from Staff, send the normal `revision` and include `resolveProfile`
+only for the differences explicitly selected by the administrator. Supported keys
+are `firstName`, `lastName` and `email`, with `staff` or `account` choosing the
+corresponding saved value. Remaining differences are preserved, including during
+unrelated edits. Staff Editors can change linked names that are in agreement.
+Linked email and conflict resolution require the verified administrator check in
+the Staff route. Use My Account to change the address as its account owner.
+
+`GET /api/account/profile` and profiles in `GET /api/users` expose a profile
+`revision`. The application sends it with the four established profile fields
+in `POST /api/account/profile` or inside `profile` in `POST /api/users/profile`.
+For a stale profile revision, the server returns 409 with `stale_profile_edit`.
+Only shared personal details and login link changes on the Staff side affect
+the account profile revision. Staff status and other directory-only edits
+still affect the Staff revision.
+Clients sending the original four-field payload retain the original API shape.
+The latest saved values and conflict rules still apply to those requests. A user
+attempting to change a conflicting field is directed to an administrator and
+can save other fields by submitting the saved account value for that field.
+
+The save holds the same writer lock across both records and attributed audit
+metadata. Emails written to the account use the existing verification and recovery
+path. An actual address change resets verification, deletes outstanding proofs in
+the same transaction and uses the existing security notice behaviour. Keeping the
+account address retains its verification and proofs. Account status, roles, MFA,
+passwords, Staff status, Department and equipment relationships have their own
+controls. Audit metadata records the actor and fields without copying their values.
+
 
 ## Preventing Stale Staff Edits
 
@@ -72,9 +114,10 @@ or audit data. A missing or malformed revision returns 400. A stale revision ret
 Refresh the current details before editing again.” A rejected save changes no tables
 and produces no successful audit event.
 
-The revision hashes the Staff ID, all eight editable directory fields and the last
-existing Staff audit event ID for that record. This catches profile, Department and
-status changes, including a value changed back since a form was opened. It uses no
+The revision hashes the Staff ID, the eight editable directory fields and the
+latest Staff audit event for that record. This catches linked name and email
+updates, link changes, Department and status changes, including values changed
+back since a form was opened. It uses no
 new column or schema migration. Linked-account identifiers and security data are
 excluded; unrelated Staff records, account security and Department renaming do not
 invalidate a Staff form. The revision is a comparison value, never an access grant.
@@ -134,7 +177,7 @@ link or audit write rolls back the account and Staff changes together. Unique li
 and the write lock prevent duplicate accounts for one Staff record under concurrency.
 Existing account APIs and responses retain their contracts.
 
-Staff and account profile/status edits stay independent. Inactive Staff retain
+Staff status and login status are independently administered. Inactive Staff retain
 their login and records. Account deletion retains Staff through the accepted nullable
 link. Archived Departments retain current membership; unchanged archived membership
 can be retained during ordinary profile edits, but new membership is refused.
@@ -149,7 +192,7 @@ deletion check for their own current/historical relationships before adding them
 ## Checks
 
 `test_staff_directory.py` covers service validation, lifecycle, privacy, independent
-profiles/status, shared account creation, atomic failure and concurrent login creation.
+status, linked profiles, shared account creation, atomic failure and concurrent login creation.
 `test_staff_directory_http.py` exercises the real HTTP handler, session/CSRF/origin
 guards, duplicate fields, statuses, search, record privacy and administrator-only
 login creation. Queued writes test session/MFA/permission revocation and archived

@@ -1,6 +1,7 @@
 // Capture the pinned originals and live screens using only isolated demonstration data.
 const fs=require('fs'),path=require('path'),http=require('http'),{spawn,spawnSync}=require('child_process');
 const {chromium,firefox,webkit}=require('playwright');
+const {openStaffAccount}=require('./staff-account-workflow.cjs');
 const root=path.resolve(__dirname,'..'),out=process.env.CAFFOOT_VISUAL_OUTPUT||path.join(root,'work','acceptance');
 const tmp=fs.mkdtempSync(path.join(require('os').tmpdir(),'caffoot-visual-'));
 const approved=path.join(tmp,'approved');fs.mkdirSync(approved);
@@ -48,7 +49,6 @@ for(const value of ['General','Hardware','Software & Firmware','Networking','Not
 for(const [name,device] of [['device-editor-edit-general','Hypervisor-01'],['device-editor-virtual-general','App-VM-01']])items.push([name,'devices-details-forms-batch-04','devices','overview',{kind:'editor-existing',device}]);
 for(const value of ['addresses','manage'])items.push(['ipam-'+value,'ipam-draft-01','ipam',null,{kind:'page-tab',live:'.ipam-tab[data-view="'+value+'"]',reference:'.ipam-tab[data-view="'+value+'"]'}]);
 for(const value of ['equipment','settings'])items.push(['rack-'+value,'racks-draft-04','racks',null,{kind:'rack-tab',value}]);
-for(const value of ['list','add'])items.push(['users-'+value,'users-permissions-draft-02','users',null,{kind:'page-tab',live:'.section-page-header .tabs [data-tab="'+value+'"]',reference:'.tabs [data-tab="'+value+'"]'}]);
 for(const value of ['hardware','network','software','location','virtual-machines'])items.push(['details-'+value,'devices-details-forms-batch-04','devices','details',{kind:'details-tab',value}]);
 for(const value of ['ip','subnet','bulk'])items.push(['dialog-ipam-'+value,'ipam-draft-01','ipam',null,{kind:'ipam-dialog',value}]);
 for(const value of ['add','edit','correct','device','accessory','vertical'])items.push(['dialog-rack-'+value,'racks-draft-04','racks',null,{kind:'rack-dialog',value}]);
@@ -170,8 +170,7 @@ async function main(){
      await ref.evaluate(value=>showCatalogModal(value),extra.value);
     }
     if(extra?.kind==='user-workspace'){
-     await page.locator('.section-page-header .tabs [data-tab="list"]').click();
-     await page.locator('[data-action="users-open-editor"]').first().click();
+     await openStaffAccount(page,creds.username);
      await ref.evaluate(()=>{setTab('list');openModal(initialUsers[0]);});
     }
    }else{

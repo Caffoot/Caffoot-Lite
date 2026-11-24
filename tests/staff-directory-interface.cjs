@@ -7,7 +7,8 @@ const root=path.resolve(__dirname,'..');
 const tmp=fs.mkdtempSync(path.join(os.tmpdir(),'caffoot-staff-interface-'));
 const output=process.env.CAFFOOT_STAFF_OUTPUT||path.join(tmp,'screenshots');
 fs.mkdirSync(output,{recursive:true});
-const address='https://127.0.0.1:8080';
+const port=process.env.CAFFOOT_STAFF_PORT||'8080';
+const address='https://127.0.0.1:'+port;
 let browser,server;
 function py(code,args=[]){
  const p=spawnSync('python3',['-c',code,...args],{cwd:root,encoding:'utf8'});
@@ -33,7 +34,7 @@ async function test(){
   ' print(json.dumps({"cookie":COOKIE_NAME,"token":token}))'
  ].join('\n'),[path.join(tmp,'inventory.sqlite3'),creds.secret]));
  const log=fs.openSync(path.join(tmp,'server.log'),'w');
- server=spawn('python3',['-m','backend.server'],{cwd:root,stdio:['ignore',log,log],env:{
+ server=spawn('python3',['-c','from backend import server; import sys; server.PORT=int(sys.argv[1]); server.main()',port],{cwd:root,stdio:['ignore',log,log],env:{
   ...process.env,CAFFOOT_DB_PATH:path.join(tmp,'inventory.sqlite3'),
   CAFFOOT_TLS_DIR:path.join(tmp,'tls'),CAFFOOT_WEB_ADDRESS:address,
   CAFFOOT_SERVER_ADDRESS:'127.0.0.1',CAFFOOT_HOST:'127.0.0.1'
@@ -189,16 +190,120 @@ async function test(){
  assert.ok(await page.getByText('taylor.cole').count()>0);
  await page.screenshot({path:path.join(output,'staff-details-light-desktop.png'),fullPage:true});
  await page.locator('[data-staff-action="staff-edit"]').click();
+ await page.locator('#staff-record-form').waitFor();
  assert.equal(await page.locator('.staff-main-grid').evaluate(e=>getComputedStyle(e).gridTemplateColumns.split(' ').length),2);
  await page.setViewportSize({width:390,height:844});
  await page.screenshot({path:path.join(output,'staff-edit-light-mobile.png'),fullPage:true});
  await page.evaluate(()=>caffootSetTheme('dark'));
  await page.screenshot({path:path.join(output,'staff-edit-dark-mobile.png'),fullPage:true});
- await page.locator('#sidebar [data-tab="users"]').click();
- await page.locator('.section-page-header [data-action="select-users-section"][data-tab="list"]').click();
- await page.locator('[data-action="users-open-editor"]').last().click();
+ await page.locator('#staff-record-form [data-staff-action="staff-back"]').click();
+ await page.locator('#staff-directory-search').fill('taylor.cole');
+ const linkedRow=page.locator('[data-staff-id]').filter({has:page.getByText('Username: taylor.cole',{exact:true})});
+ assert.equal(await linkedRow.count(),1);
+ const sameLine=(children)=>Math.max(...children.map(child=>child.y))-Math.min(...children.map(child=>child.y))<2;
+ assert.ok(sameLine(await linkedRow.locator('.staff-list-status .badge').evaluateAll(items=>items.map(item=>({y:item.getBoundingClientRect().y})))));
+ assert.ok(sameLine(await linkedRow.locator('.actions .btn').evaluateAll(items=>items.map(item=>({y:item.getBoundingClientRect().y})))));
+ assert.ok(await page.locator('.users-list-table-scroll').evaluate(element=>element.scrollWidth>element.clientWidth));
+ await linkedRow.getByRole('button',{name:'View Details'}).click();
+ const manage=page.getByRole('button',{name:'Manage Permissions'});
+ assert.equal(await manage.locator('..').evaluate(element=>getComputedStyle(element).marginTop),'16px');
+ await manage.click();
+ const accountDialog=page.locator('[data-staff-account-modal] [role="dialog"]');
+ await accountDialog.waitFor();
+ assert.equal(await accountDialog.getByLabel('Sign-in Username').inputValue(),'taylor.cole');
+ assert.equal(await accountDialog.getByLabel('Sign-in Username').isEditable(),false);
  for(const section of ['Staff Members','Departments','IT Assets'])
-  assert.equal(await page.locator('[data-next-user-permission][data-section="'+section+'"]').count(),1);
+  assert.equal(await accountDialog.locator('[data-next-user-permission][data-section="'+section+'"]').count(),1);
+ assert.ok(await page.locator('.staff-live').evaluate(element=>element.inert));
+ await page.keyboard.press('Shift+Tab');
+ assert.equal(await page.evaluate(()=>document.activeElement.textContent.trim()),'Done');
+ await page.keyboard.press('Escape');
+ await accountDialog.waitFor({state:'detached'});
+ assert.ok(await manage.evaluate(element=>element===document.activeElement));
+ assert.equal(await page.getByRole('heading',{name:'Staff Details'}).count(),1);
+
+ // Use a saved mismatch representing existing independent profiles.
+ const savedTaylor=(await (await context.request.get(address+'/api/staff-members?query=taylor.cole')).json()).staffMembers[0];
+ py("import sqlite3,sys; db=sqlite3.connect(sys.argv[1]);db.execute('UPDATE account_profiles SET first_name=?,email=? WHERE account_id=?',('Tay', 'taylor.cole@example.test',int(sys.argv[2])));db.execute('UPDATE staff_members SET email=? WHERE account_id=?',('taylor@example.test',int(sys.argv[2])));db.commit()",[path.join(tmp,'inventory.sqlite3'),String(savedTaylor.accountId)]);
+ const selfContext=await browser.newContext({ignoreHTTPSErrors:true});
+ assert.equal((await selfContext.request.post(address+'/api/login',{headers:{Origin:address},data:{
+  username:'taylor.cole',password:'Fictional-Pass-2026!'
+ }})).status(),200);
+ const selfPage=await selfContext.newPage();
+ selfPage.on('pageerror',error=>errors.push(error.message));
+ await selfPage.goto(address+'/account');
+ await selfPage.locator('#app[aria-busy="false"]').waitFor();
+ const personalDetails=selfPage.locator('#personal-details-form');
+ async function saveOwnDetails(status){
+  const response=selfPage.waitForResponse(r=>r.url()===address+'/api/account/profile'&&r.request().method()==='POST');
+  await personalDetails.locator('[type="submit"]').click();
+  const result=await response;
+  assert.equal(result.status(),status,await result.text());
+  return result.json();
+ }
+ await personalDetails.locator('[name="firstName"]').fill('Taylor');
+ assert.match((await saveOwnDetails(400)).error,/Contact a Caffoot Lite administrator/);
+ await personalDetails.locator('[name="firstName"]').fill('Tay');
+ await personalDetails.locator('[name="displayName"]').fill('Tay C');
+ await saveOwnDetails(200);
+ await page.getByRole('button',{name:'Edit Staff Member'}).click();
+ await page.locator('#staff-resolve-firstName').waitFor();
+ assert.match(await page.locator('#staff-saved-firstName').innerText(),/Staff: Taylor\s+Account: Tay/);
+ assert.equal(await page.locator('#staff-resolve-firstName').inputValue(),'');
+ await page.waitForFunction(()=>document.getElementById('toast')?.classList.contains('opacity-0'));
+ await page.screenshot({path:path.join(output,'resolve-profile-dark-390.png'),fullPage:true});
+ await page.setViewportSize({width:1440,height:950});
+ await page.evaluate(()=>caffootSetTheme('light'));
+ await page.screenshot({path:path.join(output,'resolve-profile-light-1440.png'),fullPage:true});
+ await page.locator('#preview-location').fill('Workshop');
+ await page.locator('#staff-record-form [type="submit"]').click();
+ await manage.waitFor();
+ await page.getByRole('button',{name:'Edit Staff Member'}).click();
+ await page.locator('#staff-resolve-firstName').selectOption('account');
+ await page.locator('#staff-resolve-email').selectOption('account');
+ page.once('dialog',dialog=>dialog.dismiss());
+ await page.locator('#staff-record-form [type="submit"]').click();
+ assert.equal(await page.locator('#staff-resolve-firstName').inputValue(),'account');
+ page.once('dialog',dialog=>dialog.accept());
+ await page.locator('#staff-record-form [type="submit"]').click();
+ await manage.waitFor();
+ assert.equal((await (await context.request.get(address+'/api/staff-members/'+savedTaylor.id)).json()).staffMember.firstName,'Tay');
+ await page.getByRole('button',{name:'Edit Staff Member'}).click();
+ await page.locator('#preview-firstName').waitFor();
+ assert.equal(await page.locator('[id^="staff-resolve-"]').count(),0);
+ await page.locator('#staff-record-form [data-staff-action="staff-back"]').click();
+ await page.locator('#staff-directory-search').fill('taylor.cole');
+ await linkedRow.getByRole('button',{name:'View Details'}).click();
+ await page.waitForFunction(()=>document.getElementById('toast')?.classList.contains('opacity-0'));
+
+ // Capture the live list and existing account dialog in all four presentations.
+ for(const [width,height] of [[1440,950],[390,844]]){
+  for(const theme of ['light','dark']){
+   await page.setViewportSize({width,height});
+   await page.evaluate(value=>caffootSetTheme(value),theme);
+   await page.locator('[data-staff-action="staff-back"]').click();
+   await page.locator('#staff-directory-search').fill('');
+   assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
+   await page.screenshot({path:path.join(output,'unified-staff-'+theme+'-'+width+'.png'),fullPage:true});
+   await linkedRow.getByRole('button',{name:'View Details'}).click();
+   if(width===1440&&theme==='light')await page.screenshot({path:path.join(output,'staff-details-light-1440.png'),fullPage:true});
+   await manage.click();
+   await accountDialog.waitFor();
+   await page.screenshot({path:path.join(output,'manage-permissions-'+theme+'-'+width+'.png')});
+   await page.keyboard.press('Escape');
+   await accountDialog.waitFor({state:'detached'});
+  }
+ }
+ await page.locator('#sidebar [data-tab="users"]').click();
+ assert.deepEqual(await page.locator('.section-page-header .tabs button').allTextContents(),['Overview','Manage Roles']);
+ await personalDetails.locator('[name="lastName"]').fill('Rivers');
+ assert.equal((await saveOwnDetails(409)).code,'stale_profile_edit');
+ await selfPage.reload();
+ await selfPage.locator('#app[aria-busy="false"]').waitFor();
+ await personalDetails.locator('[name="lastName"]').fill('Rivers');
+ await saveOwnDetails(200);
+ assert.equal((await (await context.request.get(address+'/api/staff-members/'+savedTaylor.id)).json()).staffMember.lastName,'Rivers');
+ await selfContext.close();
  const readOnly=await browser.newContext({ignoreHTTPSErrors:true,viewport:{width:390,height:844}});
  await readOnly.addCookies([{name:readerInfo.cookie,value:readerInfo.token,url:address,secure:true,httpOnly:true,sameSite:'Strict'}]);
  const limitedPage=await readOnly.newPage();

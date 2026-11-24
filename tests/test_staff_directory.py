@@ -10,7 +10,7 @@ from unittest.mock import patch
 
 from backend.accounts import bootstrap_first_admin, verify_password
 from backend.permissions import create_user, delete_user, set_account_active
-from backend.profiles import save_profile
+from backend.profiles import read_profile, save_profile, StaleProfileEdit
 from backend.schema import initialise_database
 from backend.sessions import _digest
 from backend.staff_directory import (
@@ -175,7 +175,7 @@ class StaffDirectoryTests(unittest.TestCase):
             login=dict(username='linked', password='test-password')))
         self.staff()
         self.department(dict(name='Renamed', archived=True), department_id=department['id'])
-        save_profile(self.db, 1, dict(firstName='Account', lastName='', displayName='', email=''), original['accountId'])
+        save_profile(self.db, 1, dict(firstName='A', lastName='B', displayName='Account display name', email=''), original['accountId'])
         self.assertEqual(read_staff_member(self.db, 2, original['id'])['revision'], original['revision'])
         result = save_staff_member(self.db, 2, self.tokens[2],
             dict(jobTitle='Updated', revision=original['revision']), staff_id=original['id'])
@@ -336,7 +336,7 @@ class StaffDirectoryTests(unittest.TestCase):
         with self.assertRaises(sqlite3.IntegrityError):
             self.department({'name': 'production'})
 
-    def test_combined_login_uses_existing_security_and_independent_profiles(self):
+    def test_combined_login_shares_details_and_keeps_independent_status(self):
         staff = self.staff(dict(firstName='A', lastName='B', email='', login=dict(username='new', password='test-password')))
         account = staff['accountId']
         self.assertEqual(self.db.execute('SELECT count(*) FROM staff_members WHERE account_id=?', (account,)).fetchone(), (1,))
@@ -346,12 +346,53 @@ class StaffDirectoryTests(unittest.TestCase):
         self.assertEqual(self.db.execute('SELECT r.role_key FROM account_roles a JOIN roles r ON r.id=a.role_id WHERE a.account_id=?', (account,)).fetchall(), [('staff_member',)])
         self.assertEqual(self.db.execute('SELECT display_name,email_verified FROM account_profiles WHERE account_id=?', (account,)).fetchone(), ('', 0))
         save_profile(self.db, 1, dict(firstName='Account', lastName='', displayName='', email=''), account)
-        self.assertEqual(read_staff_member(self.db, 1, staff['id'])['firstName'], 'A')
+        self.assertEqual(read_staff_member(self.db, 1, staff['id'])['firstName'], 'Account')
+        self.assertEqual(read_staff_member(self.db, 1, staff['id'])['lastName'], '')
         self.staff({'firstName': 'Directory', 'active': False}, staff_id=staff['id'])
+        self.assertEqual(read_profile(self.db, 1, account)['firstName'], 'Directory')
         self.assertEqual(self.db.execute('SELECT active FROM accounts WHERE id=?', (account,)).fetchone(), (1,))
         set_account_active(self.db, 1, account, False)
         delete_user(self.db, 1, account)
         self.assertIsNone(read_staff_member(self.db, 1, staff['id'])['accountId'])
+
+    def test_directory_only_edits_keep_the_linked_profile_revision(self):
+        staff = self.staff(dict(firstName='Alex', lastName='Rivers',
+            login=dict(username='linked', password='test-password')))
+        account_id = staff['accountId']
+        original = read_profile(self.db, account_id)
+        self.staff({'active': False}, staff_id=staff['id'])
+        update = dict(firstName='Alex', lastName='Rivers', email='',
+                      jobTitle='Technician', active=True)
+        current = self.staff(update, staff_id=staff['id'])
+        self.assertNotEqual(current['revision'], staff['revision'])
+        self.assertEqual(read_profile(self.db, account_id), original)
+        values = {field: original[field] for field in ('firstName', 'lastName', 'email', 'revision')}
+        saved = save_profile(self.db, account_id, dict(values, displayName='Alex R'))
+        self.assertEqual(saved['displayName'], 'Alex R')
+
+    def test_linked_writers_reject_stale_cross_screen_edits_and_roll_back(self):
+        staff = self.staff(dict(firstName='Alex', lastName='Rivers', login=dict(username='linked', password='test-password')))
+        account_id = staff['accountId']
+        profile = read_profile(self.db, account_id)
+        profile_values = {field: profile[field] for field in ('firstName', 'lastName', 'email', 'displayName', 'revision')}
+        self.staff({'firstName': 'Alicia'}, staff_id=staff['id'])
+        self.staff({'firstName': 'Alex'}, staff_id=staff['id'])
+        before = self.snapshot()
+        with self.assertRaises(StaleProfileEdit):
+            save_profile(self.db, account_id, dict(profile_values, lastName='Lakes'))
+        self.assertEqual(before, self.snapshot())
+        profile_values['revision'] = read_profile(self.db, account_id)['revision']
+        current = read_staff_member(self.db, 1, staff['id'])
+        with patch('backend.profiles.record_actor_event', side_effect=RuntimeError('Audit failed')):
+            with self.assertRaisesRegex(RuntimeError, 'Audit failed'):
+                save_profile(self.db, account_id, dict(profile_values, lastName='Lakes'))
+            with self.assertRaisesRegex(RuntimeError, 'Audit failed'):
+                self.staff({'firstName': 'Alicia'}, staff_id=staff['id'])
+        self.assertEqual(before, self.snapshot())
+        save_profile(self.db, account_id, dict(profile_values, lastName='Lakes'))
+        with self.assertRaises(StaleStaffEdit):
+            self.staff(dict(active=False, revision=current['revision']), staff_id=staff['id'])
+        self.assertEqual(read_staff_member(self.db, 1, staff['id'])['lastName'], 'Lakes')
 
     def test_existing_staff_login_and_duplicate_prevention(self):
         staff = self.staff()

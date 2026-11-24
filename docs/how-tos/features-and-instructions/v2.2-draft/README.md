@@ -25,7 +25,8 @@ This is a change to how dates are **entered and shown**, not to the dates alread
 | Task | Guide |
 | --- | --- |
 | Understand Staff Member, IT Staff, shared roles and individual overrides | [Roles, Section Permissions And MFA](Roles-Section-Permissions-and-MFA.md) |
-| Add/manage accounts, enrol MFA or understand a session ending | [Roles, Section Permissions And MFA](Roles-Section-Permissions-and-MFA.md) |
+| Add a login, resolve linked profile differences or open Manage Permissions | [Staff Members](Staff-Members.md) |
+| Enrol MFA, recover a password or understand a session ending | [Roles, Section Permissions And MFA](Roles-Section-Permissions-and-MFA.md) |
 | Edit, preview, test and publish email wording or set shared branding | [Email Templates And Company Branding](Email-Templates-and-Company-Branding.md) |
 | Enable sections, preserve Rack information or record/link basic IPv4 addresses | [Optional Features, Basic IPv4 And Link To IPAM](Optional-Features-and-Link-To-IPAM.md) |
 

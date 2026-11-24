@@ -1,4 +1,55 @@
-"""Link new accounts to independent Staff identities inside the caller's save."""
+"""Link Staff identities and share approved profile fields in the caller's transaction."""
+
+SHARED_PROFILE_FIELDS = {'firstName': 'first_name', 'lastName': 'last_name', 'email': 'email'}
+
+
+def read_linked_staff(connection, account_id):
+    row = connection.execute(
+        'SELECT id,first_name,last_name,email FROM staff_members WHERE account_id=?',
+        (account_id,),
+    ).fetchone()
+    return dict(zip(('id', *SHARED_PROFILE_FIELDS), row)) if row else None
+
+
+def staff_history_revision(connection, staff_id, *, shared_profile_only=False):
+    # Account forms track shared Staff fields. Staff forms track the whole record.
+    row = connection.execute("""
+        SELECT h.id FROM inventory_change_history h
+        WHERE EXISTS (SELECT 1 FROM json_each(h.record_json,'$.changes') c
+            WHERE CASE WHEN c.type='object' THEN
+                json_extract(c.value,'$.kind')='Staff Member'
+                AND json_extract(c.value,'$.label')=?
+                AND (NOT ? OR EXISTS (SELECT 1 FROM json_each(c.value,'$.fields') f
+                    WHERE f.type='text' AND f.value IN (
+                        'first_name','last_name','email',
+                        'First Name','Surname','Email Address','Caffoot Login'))) END)
+        ORDER BY h.id DESC LIMIT 1
+    """, (staff_id, shared_profile_only)).fetchone()
+    return row[0] if row else None
+
+
+def shared_profile_conflicts(staff, account):
+    return {
+        field: {'staff': staff[field], 'account': account[field]}
+        for field in SHARED_PROFILE_FIELDS
+        if staff[field] and staff[field] != account[field] and (account[field] or field == 'email')
+    }
+
+
+def fill_shared_profile_blanks(staff, account):
+    """Copy a missing name either way, and a saved email to Staff only."""
+    for field in SHARED_PROFILE_FIELDS:
+        if not staff[field]:
+            staff[field] = account[field]
+        elif field != 'email' and not account[field]:
+            account[field] = staff[field]
+
+
+def write_shared_staff_details(connection, staff_id, details):
+    connection.execute(
+        'UPDATE staff_members SET first_name=?,last_name=?,email=? WHERE id=?',
+        (*[details[field] for field in SHARED_PROFILE_FIELDS], staff_id),
+    )
 
 
 def link_account_staff(connection, account_id, details=None, *, staff_id=None):

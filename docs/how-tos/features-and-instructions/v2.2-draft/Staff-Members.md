@@ -1,22 +1,22 @@
 # Staff Members
 
-> **Draft v2.2 — Unreleased.** This guide describes the implementation on `milestone-1` at `753b3266893987addb11406ef8303adb03c3c112`. It is for development review, not production installation, upgrade or restore. Use the [published v2.1 guides](../README.md) for the released application. Native/manual and release acceptance remain separate.
+> **Draft v2.2 — Unreleased.** This guide covers Unified Staff Administration in [PR #453](https://github.com/Caffoot/Caffoot-Lite/pull/453). Use the [published v2.1 guides](../README.md) for the released application.
 
-Staff Members is the directory of people who may hold equipment. Use it to record a person's contact details, Department and Staff status, then review their assigned equipment in one place. A person can hold equipment without a Caffoot login.
+Staff Members is the directory of people who may hold equipment. Use it to record a person’s contact details, Department and Staff status, review their assigned equipment and, with administrator access, manage their optional login and individual permissions. A person can hold equipment without a Caffoot login.
 
 | Record | Purpose |
 | --- | --- |
 | Staff Member directory record | The person, optional Department and equipment relationships. |
-| Caffoot login | The account used to sign in, with its own profile, password, MFA and access settings. |
+| Caffoot login | The account used to sign in, with a fixed sign-in username, password, MFA and access settings. |
 | Staff Member role | The baseline security role assigned to ordinary logins. It does not grant access to the Staff directory or general inventory. |
 
-The directory and account can be linked, but changing one does not silently rewrite the other. Department membership grants no application permissions.
+Linked records share first name, surname and email after any saved differences have been resolved. Staff status, Department and equipment belong to the Staff record. Sign-in status and security belong to the account. Department membership grants no application permissions.
 
 ## Before You Start
 
 - **Staff Members Read** permits directory viewing. **Staff Members Edit** permits adding people, changing their details and changing Staff status.
 - Staff Members and Departments are core sections, subject to permissions. They do not depend on the optional IT Assets switch and need not be populated to use Devices or IPAM.
-- Creating a login from a Staff record requires both Staff Members Edit and authorised administrator access. Directory editing rights alone do not permit account administration.
+- Creating a login, reviewing individual permissions or resolving linked profile differences requires an active administrator who has enrolled in MFA. Creating or resolving a difference from the Staff form also requires Staff Members Edit. A directory editor can change shared names and unlinked contact emails. Use an administrator or the account owner’s My Account for a linked email change.
 - Devices and IT Assets have independent rights and switches. Read access shows the corresponding equipment on Staff Details; Edit permits its authorised actions. See [Roles, Section Permissions And MFA](Roles-Section-Permissions-and-MFA.md).
 
 Collect known work details before starting. Do not enter passwords, recovery codes or other secrets in directory fields.
@@ -24,17 +24,19 @@ Collect known work details before starting. Do not enter passwords, recovery cod
 ## Find A Staff Member
 
 1. Expand **Staff** in the sidebar and choose **Staff Members**.
-2. Enter part of the person's name or Department in **Find A Staff Member**. This filters the directory, rather than searching equipment or account usernames.
+2. Enter part of the person’s name or Department in **Find A Staff Member**. Administrators can also enter part of the linked sign-in username.
 3. Use **Staff Status** to choose **All Statuses**, **Active** or **Inactive**. Clear the search and check All Statuses if a person seems missing.
-4. Choose **View Details** beside the correct person. Check their Department and known details where names are similar.
+4. Scroll the table sideways on a narrow screen to reach **View Details** and **Edit**. Choose **View Details** beside the correct person. If names are similar, check their Department and, if you are an administrator, their username.
 5. Read **Personal Details**, **Organisation** and, where authorised, **Caffoot Login**. Equipment panels require independent equipment access.
 6. Choose **Back To Staff Members** to return to the list.
 
-**No Department**, **No Email Recorded** and **Name Not Recorded** indicate missing details, not necessarily a broken record. Administrators see linked-login information; ordinary directory access does not reveal account security details.
+**No Department**, **No Email Recorded** and **Name Not Recorded** describe missing details. Administrators see linked usernames and **Linked Login** or **No Login** beside the Staff status. Account status, authenticator enrolment and assigned roles appear in the administrator’s Caffoot Login card.
 
-![Staff Details showing a fictional person's separate profile and login cards, outstanding equipment and assignment history](../../../development-handovers/evidence/stock-circulation/screenshots/staff-equipment-light-1440.png)
+![Staff Members in desktop light mode. Each row has adjacent login and Staff status badges and adjacent View Details and Edit buttons.](screenshots/staff-administration/unified-staff-light-1440.png)
 
-*Approved Batch 3.8 application capture with fictional data. Staff Details separates directory information, login management and equipment history. Equipment panels depend on your access. This historical capture does not illustrate later direct-handover controls.*
+*The Staff Members list with fictional records. The sign-in usernames distinguish the two records labelled Name Not Recorded.*
+
+[Desktop dark](screenshots/staff-administration/unified-staff-dark-1440.png) · [Mobile light](screenshots/staff-administration/unified-staff-light-390.png) · [Mobile dark](screenshots/staff-administration/unified-staff-dark-390.png)
 
 ## Add A Person Without A Login
 
@@ -49,7 +51,7 @@ Collect known work details before starting. Do not enter passwords, recovery cod
 | Field | What to enter or expect |
 | --- | --- |
 | First Name / Surname | The person's known name. Do not invent names from a username. |
-| Email Address | Optional valid contact address. This does not verify or change a linked account's email. |
+| Email Address | Optional valid contact address. When a login is created, the saved account address starts unverified. |
 | Department | One optional active Department, or **No Department**. Departments have no hierarchy. |
 | Job Title | Optional description such as Service Coordinator. It grants no security role. |
 | Telephone Number | Optional work contact number. |
@@ -68,32 +70,56 @@ The combined form reuses existing account security and links the login to the pe
 2. Review the Staff details. For an existing person, confirm this is the record holding their equipment.
 3. Enable **Create Caffoot Login** if the Create Login action has not already enabled it.
 4. Enter a unique **Username**, an **Initial Password** and the same value in **Confirm Initial Password**. Follow the existing [password rules](Roles-Section-Permissions-and-MFA.md).
-5. Review the **Staff Member** default-role explanation. Wider roles and individual overrides are managed separately in Permissions.
+5. Review the **Staff Member** default-role explanation. New logins start with the baseline role and have no general inventory access.
 6. Choose **Save Staff Member**. Staff changes, account creation and their link succeed together. A duplicate username, invalid password or rejected save leaves no unintended partial record/account/link.
-7. Check the linked account on Staff Details. Give the person their initial credentials securely and direct them to the [account and MFA instructions](Roles-Section-Permissions-and-MFA.md).
+7. Check the linked account on Staff Details. Select **Manage Permissions** whenever you need to review or change individual access. Give the person their initial credentials securely and direct them to the [account and MFA instructions](Roles-Section-Permissions-and-MFA.md).
 
-For an already linked record, **Manage Login In Permissions** opens the existing account-management screen. Use it for account status, roles, permission overrides and MFA. Staff editing alone never permits those actions.
+The **Caffoot Login** card shows **Username**, **Account Status**, **Authenticator** and **Assigned Roles**. Select **Manage Permissions** just below Assigned Roles to open the account dialogue. It displays the read-only **Sign-in Username**. Use it to review permissions or change the account’s status, role memberships and individual overrides. Close it with **Close**, **Done** or Escape to return to the same Staff Details. See the [account review procedure](Roles-Section-Permissions-and-MFA.md#review-an-account).
+
+![Staff Details in desktop light mode. The Caffoot Login card shows the username, account status, authenticator, assigned roles and Manage Permissions.](screenshots/staff-administration/staff-details-light-1440.png)
+
+*The Staff Details entry point for the fictional account taylor.cole.*
+
+If Service Desk is enabled, eligible linked users can work with permitted equipment in [My Tickets and Department Tickets](Service-Desk-Tickets.md). Wider IT Service Desk or inventory access requires the relevant section permissions.
 
 The Staff form offers no general merge or relink control for existing accounts. If an account is already linked to a different record, refer the discrepancy to an administrator; do not create a duplicate login or rewrite names to disguise the conflict.
 
 ### Existing Accounts And Migrated Details
 
-The Stage 3 implementation creates and links a Staff record for an existing account lacking one, copying available saved first name, surname and email. Unknown details and Department stay blank. Existing valid links and the original account's identity, password, MFA, status, roles and permissions are preserved. This describes implemented data handling, not a production-upgrade instruction.
+The earlier Staff upgrade links accounts that lacked a Staff record, copying available first name, surname and email. In the unified workflow, start-up fills any missing first name or surname from the corresponding saved value. It can also copy a saved account email into an empty Staff contact field. The original links, IDs, history, equipment and account security are preserved.
 
-An older account may appear as **Migrated Record · Details Blank**. Edit that existing linked record when accurate details become available. Migrated blank names can remain during an unrelated edit. Do not recreate an account or invent personal information to remove an empty label.
+A Staff email with a blank account email still needs an administrator’s decision before it can become an account address. Two different nonblank values also need a decision. A record with both names blank can stay **Name Not Recorded** until the correct details are known.
 
-## Edit Details And Recover From A Conflict
+## Edit Staff And Shared Personal Details
 
-1. Choose **Edit** in the directory, or **Staff Details → Edit Staff Member**.
-2. Change the intended directory fields. A Department change updates membership, not a person's equipment holder or a login profile.
-3. Choose **Save Staff Member** and check the saved details.
-4. If the Staff Member was changed elsewhere, review the message. Your unsaved fields remain available; repeatedly submitting the old form will not resolve the conflict.
-5. Note the edits still needed, then choose **Refresh Current Details**. Confirm the warning that this replaces unsaved details, including login fields, with the current saved values.
-6. Review the other person's changes, reapply only the required edits and save again.
+1. Choose **Edit** in the directory or **Edit Staff Member** on Staff Details.
+2. Change the intended fields. For a linked record, a new first name or surname updates both records. For example, changing fictional Alex Morgan’s surname to Rivers updates the Staff name and their personal details in My Account.
+3. Change an unlinked contact email with Staff Members Edit. For a linked account email, sign in as an authorised administrator or ask the account owner to change it in **My Account → Personal Details**. The account owner must verify a changed email to use it for password recovery.
+4. Choose **Save Staff Member** and check the saved Staff Details. **Cancel** or **Back To Staff Members** discards unsaved edits.
 
-The saved-version check prevents overwriting a newer edit. Refreshing also updates Department choices after another user changes their status. An existing archived membership can remain during an unrelated edit, but an archived Department cannot receive a new membership.
+Changing Department, Staff Status or other directory fields leaves login access alone. Account owners can edit shared names and email in **My Account → Personal Details → Save Personal Details**. Account display name and photo belong to My Account. The sign-in username stays fixed.
 
-Staff and linked-account profiles remain separate: changing a directory name, email or status does not silently change an account profile, verified email, password, roles or MFA.
+### Resolve A Difference Between Staff And Account Details
+
+1. As an authorised administrator, locate the person in **Staff Members** and choose **Edit**.
+2. For each **Resolve Difference** field, compare the saved **Staff** and **Account** values. Check the intended value with the person if it is unclear.
+3. Choose **Keep Staff Value** or **Keep Account Value** to use that saved value on both records. For a field you are not resolving, leave **Leave Both Values Unchanged** selected. You can still save unrelated edits.
+4. Select **Save Staff Member** and confirm the selections. Dismissing the confirmation preserves the form for review. Saving resolves the selected fields and opens Staff Details.
+5. If the account email changed, ask its owner to verify the saved address in My Account. Previous verification and outstanding verification or recovery codes are cleared. Choosing the existing account address preserves its verification status and outstanding codes.
+
+For example, the Staff record for fictional Taylor Cole might still show Taylor while the account shows Tay. After confirming the preferred name, choose **Keep Account Value** for First Name. Leave an unrelated email difference unresolved until Taylor confirms the address. If My Account asks the user to contact an administrator about a field, they can still save other personal details by leaving that field at its saved account value.
+
+![Edit Staff Member showing the two saved values for a first name and an email difference, with neither value selected.](screenshots/staff-administration/resolve-profile-light-1440.png)
+
+*Resolve Difference controls appear on the administrator’s Staff form for the fields that need a choice.* [Mobile dark](screenshots/staff-administration/resolve-profile-dark-390.png)
+
+### Recover From A Stale Edit
+
+1. Read the message when the Staff Member was changed elsewhere. Your entries and any selected resolutions stay in the form.
+2. Note the edits you still need, choose **Refresh Current Details**, then confirm that you want to replace your unsaved entries with the current saved values.
+3. Review the new values and Department choices, reapply the necessary changes and select any resolutions again before saving.
+
+An existing archived Department membership can be retained during an edit. An archived Department is unavailable for a new membership.
 
 ## Mark Inactive Or Reactivate
 
@@ -103,7 +129,7 @@ Staff status and account status are separate. Inactivating a leaver neither disa
 2. Choose **Mark Inactive**, read the prompt and confirm. Cancelling the prompt makes no change.
 3. Check the **Inactive** badge. The person is excluded from new equipment-recipient choices; outstanding assignments and original dates remain visible to authorised IT users.
 4. Resolve equipment through its actual [return/write-off](IT-Assets-Issue-Return-and-Write-Off.md) or [handover](Associated-Equipment.md#reassign-a-workstation-directly) workflow.
-5. If login access should end, an authorised administrator must disable the account separately in **Staff → Permissions**.
+5. If login access should end, an authorised administrator must open **Staff Details → Manage Permissions** and select **Disable** under **Account controls**.
 
 To restore eligibility, open the inactive person's Staff Details, choose **Reactivate** and confirm. This retains history and does not enable a disabled login. The Staff form's **Staff Status** also changes directory status when saved. The directory offers no permanent-delete action for Staff.
 
@@ -122,6 +148,7 @@ A linked person opens **My Equipment** for limited personal/shared information w
 | Problem | Check or recovery |
 | --- | --- |
 | Staff Members is absent | Ask an administrator to check Staff Members access. The baseline role or a directory record alone is insufficient. |
+| Manage Permissions is unavailable | Sign in as an active administrator with MFA, and check that the Staff Member has a linked login. |
 | Create Login is unavailable | Check administrator authority, Staff Members Edit and whether the record already has a login. |
 | The initial password is rejected | Follow the password rules, match both entries and check that the username is unused. Retry on the same Staff record. |
 | A Department is missing | Check whether it is archived; do not create a duplicate Department. |
@@ -136,6 +163,6 @@ A linked person opens **My Equipment** for limited personal/shared information w
 - [Device Assignments And My Equipment](Device-Assignments-and-My-Equipment.md)
 - [Issue, Return And Write Off](IT-Assets-Issue-Return-and-Write-Off.md)
 
-The reused image belongs to the [owner-approved Batch 3.8 application captures](https://github.com/Caffoot/Caffoot-Lite/pull/389#issuecomment-6908629303). Current approved Add/Edit and login-form illustrations remain documentation acceptance items; functional HTML previews are not screenshots. The Staff form retains an older hint saying returns are unavailable, although Return Equipment is implemented. Correcting that application hint requires separate application work.
+The illustrations were captured from the running v2.2 development application with fictional data. See the [capture record](screenshots/staff-administration/README.md) for dimensions, source revision and review status.
 
 [← Draft v2.2 Guides](README.md) · [Published v2.1 Guides](../README.md)

@@ -1,10 +1,13 @@
-"""Protected Staff and flat Department operations, separate from login profiles."""
+"""Protected Staff and Department operations, including linked personal details."""
 import hashlib
 import json
 
 from backend.audit_events import record_actor_event
 from backend.permissions import can_access, _admin, create_user_in_transaction
-from backend.profiles import validate_profile_details
+from backend.profiles import (FIELD_LABELS, read_personal_details, validate_profile_details,
+                              write_personal_details)
+from backend.staff_identity import (SHARED_PROFILE_FIELDS, fill_shared_profile_blanks,
+                                    shared_profile_conflicts, staff_history_revision)
 from backend.sessions import session_account
 
 STAFF_FIELDS = {
@@ -20,18 +23,17 @@ class StaleStaffEdit(FileExistsError):
 
 def _staff_revision(connection, record):
     """Identify the saved Staff values without including linked-account details."""
-    # Include the last Staff save so changing a value back still invalidates old forms.
-    history_id = connection.execute("""
-        SELECT h.id FROM inventory_change_history h
-        WHERE EXISTS (SELECT 1 FROM json_each(h.record_json,'$.changes') c
-            WHERE CASE WHEN c.type='object' THEN
-                json_extract(c.value,'$.kind')='Staff Member'
-                AND json_extract(c.value,'$.label')=? END)
-        ORDER BY h.id DESC LIMIT 1
-    """, (record['id'],)).fetchone()
     values = [record['id'], *[record[name] for name in STAFF_FIELDS],
-              record['departmentId'], bool(record['active']), history_id[0] if history_id else None]
+              record['departmentId'], bool(record['active']), staff_history_revision(connection, record['id'])]
     return hashlib.sha256(json.dumps(values, ensure_ascii=False).encode('utf-8')).hexdigest()
+
+
+def _is_administrator(connection, actor_id):
+    try:
+        _admin(connection, actor_id)
+    except PermissionError:
+        return False
+    return True
 
 
 def unique_directory_fields(pairs):
@@ -71,15 +73,20 @@ def _department_record(connection, department_id):
     return dict(id=row[0], name=row[1], archived=bool(row[2]))
 
 
-def read_staff_member(connection, actor_id, staff_id):
+def read_staff_member(connection, actor_id, staff_id, *, include_conflicts=True):
     require_directory_access(connection, actor_id, 'Staff Members')
     record = _staff_record(connection, staff_id)
     record['active'] = bool(record['active'])
     record['revision'] = _staff_revision(connection, record)
-    try:
-        _admin(connection, actor_id)
-    except PermissionError:
+    if not _is_administrator(connection, actor_id):
         record.pop('accountId')
+    elif record['accountId'] is not None:
+        account_id = record['accountId']
+        record['username'] = connection.execute('SELECT username FROM accounts WHERE id=?', (account_id,)).fetchone()[0]
+        if include_conflicts:
+            conflicts = shared_profile_conflicts(record, read_personal_details(connection, account_id))
+            if conflicts:
+                record['profileConflicts'] = conflicts
     return record
 
 
@@ -110,15 +117,21 @@ def read_department(connection, actor_id, department_id):
 
 
 def list_directory(connection, actor_id, section, *, query='', limit=100, offset=0):
-    """Search bounded pages without exposing account names or security data."""
+    """Search bounded pages, with sign-in names available only to administrators."""
     require_directory_access(connection, actor_id, section)
     query = _text(query, 'search', 100)
     if type(limit) is not int or not 1 <= limit <= 100 or type(offset) is not int or not 0 <= offset <= 1000000:
         raise ValueError('Invalid directory page')
     pattern = '%' + query.replace('!', '!!').replace('%', '!%').replace('_', '!_') + '%'
     if section == 'Staff Members':
-        ids = connection.execute("SELECT s.id FROM staff_members s LEFT JOIN departments d ON d.id=s.department_id WHERE s.first_name||' '||s.last_name LIKE ? ESCAPE '!' OR d.name LIKE ? ESCAPE '!' ORDER BY s.last_name,s.first_name,s.id LIMIT ? OFFSET ?", (pattern, pattern, limit, offset)).fetchall()
-        return [read_staff_member(connection, actor_id, row[0]) for row in ids]
+        ids = connection.execute("""
+            SELECT s.id FROM staff_members s LEFT JOIN departments d ON d.id=s.department_id
+            LEFT JOIN accounts a ON a.id=s.account_id AND ?
+            WHERE s.first_name||' '||s.last_name LIKE ? ESCAPE '!' OR d.name LIKE ? ESCAPE '!'
+               OR a.username LIKE ? ESCAPE '!'
+            ORDER BY s.last_name,s.first_name,s.id LIMIT ? OFFSET ?
+        """, (_is_administrator(connection, actor_id), pattern, pattern, pattern, limit, offset)).fetchall()
+        return [read_staff_member(connection, actor_id, row[0], include_conflicts=False) for row in ids]
     ids = connection.execute("SELECT id FROM departments WHERE name LIKE ? ESCAPE '!' ORDER BY name,id LIMIT ? OFFSET ?", (pattern, limit, offset)).fetchall()
     return [read_department(connection, actor_id, row[0]) for row in ids]
 
@@ -137,7 +150,7 @@ def list_staff_department_choices(connection, actor_id):
 
 
 def _validate_staff(payload, *, creating):
-    if not isinstance(payload, dict) or not payload or set(payload) - {*STAFF_FIELDS, 'departmentId', 'active', 'login', 'revision'}:
+    if not isinstance(payload, dict) or not payload or set(payload) - {*STAFF_FIELDS, 'departmentId', 'active', 'login', 'revision', 'resolveProfile'}:
         raise ValueError('Invalid Staff fields')
     if creating:
         if 'revision' in payload:
@@ -161,6 +174,33 @@ def _validate_staff(payload, *, creating):
     return values
 
 
+def _save_linked_personal_details(connection, actor_id, staff, values, resolutions, *, on_email_change):
+    account_id = staff['accountId']
+    account = read_personal_details(connection, account_id)
+    conflicts = shared_profile_conflicts(staff, account)
+    if (not isinstance(resolutions, dict) or resolutions.keys() - conflicts.keys()
+            or any(choice not in ('staff', 'account') for choice in resolutions.values())):
+        raise ValueError('Select a saved value for each conflict you want to resolve.')
+    updated_staff, updated_account = staff.copy(), account.copy()
+    fill_shared_profile_blanks(updated_staff, updated_account)
+    for field in SHARED_PROFILE_FIELDS:
+        if field in resolutions:
+            updated_staff[field] = updated_account[field] = conflicts[field][resolutions[field]]
+        elif field in values and values[field] != staff[field]:
+            if field == 'email':
+                _admin(connection, actor_id)
+            if field in conflicts:
+                message = ('Select which saved value to keep for ' if _is_administrator(connection, actor_id)
+                           else 'Contact a Caffoot Lite administrator to reconcile ')
+                raise ValueError(message + FIELD_LABELS[field] + '.')
+            updated_staff[field] = updated_account[field] = values[field]
+        values.pop(field, None)
+        if updated_staff[field] != staff[field]:
+            values[field] = updated_staff[field]
+    write_personal_details(connection, actor_id, account_id, account, updated_account,
+                           on_email_change=on_email_change)
+
+
 def _create_login(connection, actor_id, staff_id, login):
     _admin(connection, actor_id)
     if not isinstance(login, dict) or set(login) != {'username', 'password'}:
@@ -176,7 +216,8 @@ def _create_login(connection, actor_id, staff_id, login):
                                       profile, staff_id=staff_id)
 
 
-def save_staff_member(connection, actor_id, session_token, payload, *, staff_id=None, login_only=False):
+def save_staff_member(connection, actor_id, session_token, payload, *, staff_id=None, login_only=False,
+                      on_email_change=None):
     """Save directory changes and an optional administrator-created login together."""
     connection.execute('BEGIN IMMEDIATE')
     try:
@@ -189,11 +230,20 @@ def save_staff_member(connection, actor_id, session_token, payload, *, staff_id=
                 raise ValueError('An existing Staff Member is required')
             _admin(connection, actor_id)
             _create_login(connection, actor_id, staff_id, payload)
+            record_actor_event(connection, actor_id, kind='Staff Member', action='Updated',
+                label=staff_id, reason='Staff directory updated', fields=['Caffoot Login'])
         else:
             values = _validate_staff(payload, creating=creating)
             before = {} if creating else _staff_record(connection, staff_id)
             if not creating and payload['revision'] != _staff_revision(connection, before):
                 raise StaleStaffEdit('This Staff Member was changed elsewhere. Refresh the current details before editing again.')
+            if 'resolveProfile' in payload:
+                _admin(connection, actor_id)
+            if before.get('accountId') is not None:
+                _save_linked_personal_details(connection, actor_id, before, values,
+                    payload.get('resolveProfile', {}), on_email_change=on_email_change)
+            elif 'resolveProfile' in payload:
+                raise ValueError('An existing linked Staff Member is required.')
             department = payload.get('departmentId', before.get('departmentId'))
             if department is not None and department != before.get('departmentId'):
                 if _department_record(connection, department)['archived']:

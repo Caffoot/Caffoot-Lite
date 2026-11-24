@@ -1262,7 +1262,7 @@ function hierarchyValidateTypes(subnets) {
                 return renderInterfaceTemplate("shared/render-section-header-3",[options.map(([key,label,icon])=>tab(key,label,icon,'select-rack-section',v13RackSection===key,'racks-tab','data-section-tab')).join('')]);
             }
             if (section === 'users') {
-                const options=[['overview','Overview','i-grid'],['list','User List','i-users'],['add','Add User','i-user'],['roles','Manage Roles','i-shield']];
+                const options=[['overview','Overview','i-grid'],['roles','Manage Roles','i-shield']];
                 return renderInterfaceTemplate("shared/render-section-header-4",[options.map(([key,label,icon])=>tab(key,label,icon,'select-users-section',activeUsersTab===key,'tab')).join('')]).replace('Users &amp; Permissions','Permissions');
             }
             return '';
@@ -1334,7 +1334,15 @@ function hierarchyValidateTypes(subnets) {
                 const panelClass = {devices:['overview','inventory'].includes(activeDeviceDetailsTab)?'account-panel':'account-panel catalog-section',ipam:'ipam-panel',racks:'racks-panel'+(v13RackSection==='overview'?' rack-overview-section':''),users:'users-sections'}[currentTab];
                 html = renderSectionHeader(currentTab) + '<section class="' + panelClass + ' active section-page-body"' + (currentTab==='devices'?' data-section="'+activeDeviceDetailsTab+'"':'') + '>' + html + '</section>';
             }
+            const accountLayer=currentTab==='staff'?container.querySelector(':scope > [data-staff-account-modal]'):null;
+            const accountFocus=accountLayer?.contains(document.activeElement)?document.activeElement:null;
             container.innerHTML = html;
+            if(accountLayer){
+                [...container.children].forEach(element=>element.inert=true);
+                container.append(accountLayer);
+                document.body.style.overflow='hidden';
+                accountFocus?.focus({preventScroll:true});
+            }
             if (currentTab === 'it-assets') {
                 window.caffootStockIntake.hydrate();
                 window.caffootServiceDesk.hydrateEquipment(container);
@@ -7663,11 +7671,11 @@ function openIpModal(ip) {
           form.elements.namedItem('password').placeholder=s?.passwordConfigured?'Leave blank to keep the saved password':'Enter SMTP password';
           const status=root.querySelector('#smtp-config-status');
           if(status)status.textContent=!smtpLoaded?'Loading…':s?.configured?'Configured':smtpSettings?'Not Configured':'Unavailable';
-          const button=form.querySelector('button[type="submit"]');
-          if(button)button.disabled=!smtpLoaded||!smtpSettings;
+          form.querySelector('button[type="submit"]').disabled=!smtpLoaded||!s;
           const send=root.querySelector('#smtp-test-form button[type="submit"]');
           if(send)send.disabled=!s?.configured;
           updateSmtpFields(form);
+          if(!smtpLoaded||!s)form.querySelectorAll('input,select').forEach(field=>field.disabled=true);
         }
         function updateSmtpFields(form){
           if(!form)return;
@@ -9069,11 +9077,12 @@ function openIpModal(ip) {
                 
                 case 'tab-settings': switchTab('settings'); break;
                 case 'tab-users': switchTab('users'); break;
-                case 'tab-staff': switchTab('staff'); break;
+                case 'tab-staff':
+                    switchTab('staff');
+                    if(currentTab==='staff')window.caffootStaffDirectory.openStaffWorkspace('list');
+                    break;
                 case 'tab-departments': switchTab('departments'); break;
                 case 'sidebar-users-overview': activeUsersTab='overview'; switchTab('users'); break;
-                case 'sidebar-users-list': activeUsersTab='list'; switchTab('users'); break;
-                case 'sidebar-users-add': activeUsersTab='add'; switchTab('users'); break;
                 case 'tab-equipment': switchTab('equipment'); break;
                 case 'tab-my-tickets': switchTab('my-tickets'); break;
                 case 'tab-account': activeAccountSection='overview'; switchTab('account'); break;
@@ -9136,7 +9145,7 @@ function openIpModal(ip) {
                     break;
                 }
                 case 'select-users-section': {
-                    if (['overview','list','add','roles'].includes(target.dataset.tab)) {
+                    if (['overview','roles'].includes(target.dataset.tab)) {
                         activeUsersTab = target.dataset.tab;
                         switchTab('users');
                     }
@@ -9442,7 +9451,7 @@ void (async () => {
           (editPermissions.Devices&&editPermissions.IPAM&&button.form.id==='device-ipam-link-form') ||
           button.form?.matches('#next-account-password-form,#next-account-mfa-start,#next-account-mfa-confirm,#account-mfa-removal-form,#personal-details-form,#account-email-verification-form') ||
           canSubmitLifecycleSettings(button.form) ||
-          (sessionIsAdmin && (button.closest('#next-user-create-form,#next-user-profile-form,#smtp-settings-form,#smtp-test-form') || button.form?.matches('#role-definition-form'))) ||
+          (sessionIsAdmin && (button.closest('#next-user-profile-form,#smtp-settings-form,#smtp-test-form') || button.form?.matches('#role-definition-form'))) ||
           (editPermissions['Staff Members'] && button.form?.matches('#staff-record-form')) ||
           (editPermissions.Departments && button.form?.matches('#staff-department-form')) ||
           canSubmitSupplierForm(button.form) || canSubmitServiceDeskForm(button.form) ||
@@ -9749,6 +9758,7 @@ void (async () => {
       const receipt = receiptHash.exec(location.hash);
       if (receipt) window.caffootStockIntake.prepareReceipt(receipt[1]);
     }
+    if(currentTab==='staff'&&tab!=='staff'&&staffAccountEditor)closeUserWorkspace(false);
     originalSwitchTab(tab);
     if (tab === 'my-tickets') window.scrollTo({top:0, behavior:'instant'});
     if (isSupplierPage(tab)) window.caffootSuppliers.enter(tab, fromRoute);
@@ -10734,6 +10744,7 @@ void (async () => {
     });
     const form=root.querySelector('#personal-details-form');
     if(form){
+      form.dataset.revision=accountProfile?.revision||'';
       for(const name of ['firstName','lastName','displayName','email']){
         form.elements.namedItem(name).value=accountProfile?.[name]||'';
       }
@@ -10794,7 +10805,7 @@ void (async () => {
   };
   // Users: administrator-only section, following the published sidebar and panel style.
   let users = null;
-  let activeUserEditorId = null;
+  let staffAccountEditor=null;
   let roleCatalogue=[];
   const roleSections=['Devices','IPAM','Racks','Staff Members','Departments','IT Assets','Suppliers','Service Desk'];
   const roleLayers=[];
@@ -10908,7 +10919,7 @@ void (async () => {
         while(roleLayers.length)closeRoleLayer();
         await loadCentralUsers();
         showToast(roleNotificationMessage(result.notifications));
-        document.querySelector(activeUsersTab==='roles'?'[data-role-command="create"]':'[data-action="users-close-editor"]')?.focus();
+        document.querySelector(currentTab==='users'?'[data-role-command="create"]':'[data-action="users-close-editor"]')?.focus({preventScroll:true});
       }).catch(error=>{layer.querySelector('[data-role-feedback]').textContent=error.message;button.disabled=false;});
     }
   },true);
@@ -10931,16 +10942,6 @@ void (async () => {
 
   nextRenderUsers = function() {
     if (!sessionIsAdmin) return '';
-    const profileFields=(profile={})=>[
-      ['firstName','First Name','text',100],
-      ['lastName','Last Name','text',100],
-      ['displayName','Display Name','text',120],
-      ['email','E-Mail Address','email',254]
-    ].map(([key,label,type,max])=>
-      '<div class="field"><label for="user-'+key.replace(/[A-Z]/g,letter=>'-'+letter.toLowerCase())+'">'+label+'</label>'+
-      '<input class="input" id="user-'+key.replace(/[A-Z]/g,letter=>'-'+letter.toLowerCase())+'" name="'+key+'" type="'+type+
-      '" autocomplete="off" placeholder="'+({firstName:'First name',lastName:'Last name',displayName:'Name shown across Caffoot Lite',email:'name@example.com'}[key])+'" maxlength="'+max+'" value="'+escapeHtml(profile[key]||'')+'"></div>'
-    ).join('');
     let html='<div class="users-live">';
     if (!users) return html + '<p role="status">Loading users...</p></div>';
     if (activeUsersTab==='overview') {
@@ -10960,18 +10961,16 @@ void (async () => {
         '<div class="track"><div class="fill '+colour+'" style="width:'+(total?Math.round(count/total*100):0)+'%"></div></div></div>').join('');
       html+='<section class="section active" aria-label="Users Overview">'+
         renderInterfaceTemplate("users/overview-summary",[])+
-        '<button class="btn primary" type="button" data-action="users-add-nav">+ Add User</button></div>';
+        '<button class="btn" type="button" data-action="users-view-staff">Staff Members</button></div>';
       html+='<div class="cards4">'+stats.map(stat).join('')+'</div>';
       html+='<div class="two-col"><div class="card cardpad"><h3 class="cardtitle">Accounts by role</h3>'+
         '<p class="sub">Staff Member is automatic; additional roles grant reusable section access.</p>'+
         bars([['Administrators',admins,''],['Staff Members',total,'soft']])+
-        '<div class="card-end"><span class="tiny">All figures come from the saved accounts.</span>'+
-        '<button class="action-link" type="button" data-action="select-users-section" data-tab="list">View User List →</button></div></div>';
+        '<div class="card-end"><span class="tiny">All figures come from the saved accounts.</span></div></div>';
       html+='<div class="card cardpad"><h3 class="cardtitle">Authenticator enrolment</h3>'+
         '<p class="sub">Enabled additional roles and wider Read/Edit access require MFA.</p>'+
         bars([['Enrolled',enrolled,''],['Not enrolled',total-enrolled,'orange']])+
-        '<div class="card-end"><span class="tiny">Required enrolment starts at sign-in.</span>'+
-        '<button class="action-link" type="button" data-action="users-filter-pending">Review not enrolled →</button></div></div></div>';
+        '<div class="card-end"><span class="tiny">Required enrolment starts at sign-in.</span></div></div></div>';
       html+='<div class="card cardpad" style="margin-top:17px"><div class="section-heading"><div><h2>Access, made simple</h2>'+
         '<p>Enabled roles supply inherited access; individual overrides take precedence.</p></div></div>'+
         renderInterfaceTemplate("users/read-access-guide",[])+
@@ -10979,33 +10978,9 @@ void (async () => {
         renderInterfaceTemplate("users/edit-access-guide",[]);
       return html+'</div>';
     }
-    if (activeUsersTab==='roles') return html+renderRoleCatalogue()+'</div>';
-    if (activeUsersTab==='add') {
-      return html+'<section class="section active users-create-shell" aria-label="Add User">'+
-        renderInterfaceTemplate("users/next-render-users-1",[])+
-        '<div class="addwrap"><div class="card form-panel"><h3 class="cardtitle">Create User</h3>'+
-        renderInterfaceTemplate("users/next-render-users-2",[])+
-        '<form id="next-user-create-form"><div class="form-grid">'+
-        renderInterfaceTemplate("users/next-render-users-3",[])+
-        renderInterfaceTemplate("users/next-render-users-4",[])+
-        renderInterfaceTemplate("users/next-render-users-5",[])+
-        '<div class="form-grid profile-grid">'+profileFields()+'</div>'+
-        renderInterfaceTemplate("users/next-render-users-6",[])+
-        renderInterfaceTemplate("users/next-render-users-7",[])+
-        renderInterfaceTemplate("users/next-render-users-8",[]);
-    }
-    const rows=users.map(user=>{
-      const own=user.username.toLowerCase()===signedInUsername.toLowerCase();
-      const role=user.isAdmin?'Administrator':'Staff Member';
-      const grantPills=user.isAdmin?'<span class="badge dark">All sections</span>':roleSections.map(section=>{
-        const level=user.isAdmin?'edit':(user.permissions?.[section]||'');
-        return `<span class="mini ${level==='edit'?'edit':level===''?'no':''}" title="${section}: ${level||'No access'}">${section}: ${level==='edit'?'Edit':level==='read'?'Read':'—'}</span>`;
-      }).join('');
-      return renderInterfaceTemplate("users/rows-1",[user.id,escapeHtml([user.username,user.profile?.firstName,user.profile?.lastName,user.profile?.displayName,user.profile?.email].filter(Boolean).join(' ').toLowerCase()),user.active?'active':'disabled',user.mfaEnrolled?'enrolled':'pending',escapeHtml(user.username.slice(0,1).toUpperCase()),escapeHtml(user.username),own?'Your account · Protected':(user.profile?.displayName||[user.profile?.firstName,user.profile?.lastName].filter(Boolean).join(' ')||role),user.isAdmin?'blue':'dark',role,user.active?'green':'red',user.active?'Active':'Disabled',user.mfaEnrolled?'green':'amber',accountMfaLabel(user),grantPills,user.id,own?'View':'Manage',user.accessDetails.roles.filter(role=>role.roleKey!=='staff_member').map(role=>'<span class="badge role-membership-badge '+(role.enabled?'blue':'amber')+'">'+escapeHtml(role.name)+(role.enabled?'':' · Disabled')+'</span>').join('')]);
-    }).join('');
-    html+=renderInterfaceTemplate("users/account-list-panel",[rows,users.length,users.length]);
-    const editingUser=users.find(u=>u.id===activeUserEditorId);
-    if(editingUser){
+    return html+renderRoleCatalogue()+'</div>';
+  };
+  function renderUserWorkspace(editingUser){
       const own=editingUser.username.toLowerCase()===signedInUsername.toLowerCase();
       const permissionControls=roleSections.map(section=>{
         const rights=editingUser.accessDetails.sections[section];
@@ -11014,75 +10989,71 @@ void (async () => {
       }).join('');
       const operation=(kind,label)=>`<button type="button" class="btn ${kind==='delete'?'danger':''}" data-next-user-operation="${kind}" data-user-id="${editingUser.id}" ${own?'disabled':''}>${label}</button>`;
       const profile=editingUser.profile||{};
-      const profileHTML=renderInterfaceTemplate("users/source-profile",[editingUser.id,...['firstName','lastName','displayName','email'].map(key=>escapeHtml(profile[key]||'')),own?'Edit your own personal details through My Account.':'Contact details do not change the sign-in username or account permissions. Saving an email address does not verify it.',own?'disabled':'']);
+      const profileHTML=renderInterfaceTemplate("users/source-profile",[editingUser.id,...['firstName','lastName','displayName','email'].map(key=>escapeHtml(profile[key]||'')),own?'Edit your own personal details through My Account.':'Shared personal details also appear in Staff Details. Resolve differences in Edit Staff Member. A changed email address needs to be verified again.',own?'disabled':'',escapeHtml(editingUser.username),escapeHtml(profile.revision||'')]);
       const meta=renderInterfaceTemplate("users/source-user-meta",[editingUser.active?'green':'red',editingUser.active?'Active':'Disabled',editingUser.isAdmin?'blue':'dark',editingUser.isAdmin?'Administrator · All Sections':'Staff Member',editingUser.mfaEnrolled?'green':'amber',accountMfaLabel(editingUser)]);
       const administratorNote=editingUser.isAdmin?'<div class="note-row" style="margin-bottom:13px">Administrators retain configured access to all inventory sections. Disabled features remain unavailable. Their per-section permissions are not individually configured.</div>':'';
       const warnings=own?'<div class="modal-warning">You cannot disable, demote or delete your own signed-in administrator account. These controls are intentionally unavailable.</div>':editingUser.accessDetails.mfaPending?'<div class="modal-warning">MFA enrolment is required before wider Read/Edit access or enabled additional roles can be used. The user will be guided through enrolment before normal sign-in.</div>':'';
       const activeControl=renderInterfaceTemplate("users/source-account-control",[editingUser.active?'Disable account':'Enable account',editingUser.active?'Prevent this person signing in until the account is enabled again.':'Allow this person to sign in again.',operation('active',editingUser.active?'Disable':'Enable')]);
       const administratorControl=renderInterfaceTemplate("users/source-account-control",[editingUser.isAdmin?'Remove administrator':'Make administrator',editingUser.isAdmin?'Return this account to standard-user status.':'Grant existing administrator privileges to an MFA-enrolled account.',operation('admin',editingUser.isAdmin?'Remove admin':'Make admin')]);
-      html+=renderInterfaceTemplate("users/account-management-dialog",[own?'Your administrator account':'Manage '+escapeHtml(editingUser.username),own?'Self-protection prevents account changes here. Use My Account for your own security settings.':'Review access and account controls for this user.',meta,profileHTML+renderRoleMemberships(editingUser,own),administratorNote,'<p class="formhint">Permissions from assigned roles can be customised for each user. Select <strong>Inherit</strong> to use the permissions provided by their roles. Select <strong>No Access</strong>, <strong>Read</strong> or <strong>Edit</strong> to set an individual override. Individual overrides take precedence, including when a role’s permissions change.</p>'+renderInterfaceTemplate("users/access-summary",[permissionControls]),warnings,activeControl,administratorControl,renderInterfaceTemplate("users/source-delete-control",[operation('delete','Delete User')])]);
-      document.body.style.overflow='hidden';
-    }
-    return html+'</div>';
-  };
-  // Clear the account editor before the shared tab handler renders the next Users tab.
-  // This listener shares the real editor state rather than creating a stray global.
-  document.addEventListener('click', event=>{
-    if(event.target.closest('[data-action="select-users-section"],[data-action^="sidebar-users-"]')) {
-      activeUserEditorId=null;
-    }
-  },true);
-  function filterUserRows() {
-    const list=document.getElementById('users-live-list');
-    if(!list) return;
-    const search=(list.querySelector('#live-users-search')?.value||'').trim().toLowerCase();
-    const status=list.querySelector('#live-users-status')?.value||'all';
-    const mfa=list.querySelector('#live-users-mfa')?.value||'all';
-    let count=0;
-    const rows=[...list.querySelectorAll('[data-users-row]')];
-    rows.forEach(row=>{
-      const visible=(!search || row.dataset.search.includes(search)) &&
-        (status==='all'||row.dataset.active===status) &&
-        (mfa==='all'||row.dataset.mfa===mfa);
-      row.hidden=!visible;
-      if(visible)count++;
-    });
-    const caption=list.querySelector('#live-users-count');
-    if(caption)caption.textContent='Showing '+count+' of '+rows.length+' accounts';
+      return renderInterfaceTemplate("users/account-management-dialog",[own?'Your administrator account':'Manage '+escapeHtml(editingUser.username),own?'Self-protection prevents account changes here. Use My Account for your own security settings.':'Review access and account controls for this user.',meta,profileHTML+renderRoleMemberships(editingUser,own),administratorNote,'<p class="formhint">Permissions from assigned roles can be customised for each user. Select <strong>Inherit</strong> to use the permissions provided by their roles. Select <strong>No Access</strong>, <strong>Read</strong> or <strong>Edit</strong> to set an individual override. Individual overrides take precedence, including when a role’s permissions change.</p>'+renderInterfaceTemplate("users/access-summary",[permissionControls]),warnings,activeControl,administratorControl,renderInterfaceTemplate("users/source-delete-control",[operation('delete','Delete User')])]);
   }
-  document.addEventListener('input', event=>{
-    if(event.target?.id==='live-users-search')filterUserRows();
-  });
-  document.addEventListener('change', event=>{
-    if(['live-users-status','live-users-mfa'].includes(event.target?.id))filterUserRows();
-  });
-  function closeUserWorkspace(){
-    const closingId=activeUserEditorId;
-    activeUserEditorId=null;
+  function updateUserWorkspace(){
+    if(!staffAccountEditor)return;
+    const {layer,accountId}=staffAccountEditor;
+    const user=users.find(item=>item.id===accountId);
+    if(!user){closeUserWorkspace();return;}
+    const scroll=layer.querySelector('.modal')?.scrollTop||0;
+    layer.innerHTML=renderUserWorkspace(user);
+    layer.querySelector('.modal').scrollTop=scroll;
+    layer.querySelector('[data-action="users-close-editor"]')?.focus({preventScroll:true});
+  }
+  function openUserWorkspace(accountId,trigger){
+    if(currentTab!=='staff'||staffAccountEditor||!trigger.isConnected)return;
+    if(!users.some(user=>user.id===accountId)){
+      showToast('This login is no longer available. Refresh Staff Details.','error');return;
+    }
+    const host=document.getElementById('main-content');
+    const layer=document.createElement('div');
+    layer.className='users-live';
+    layer.dataset.staffAccountModal='';
+    const background=[...host.children,document.getElementById('sidebar'),document.querySelector('.topbar')]
+      .filter(Boolean).map(element=>[element,element.inert]);
+    staffAccountEditor={layer,accountId,staffId:trigger.dataset.id,background,overflow:document.body.style.overflow};
+    background.forEach(([element])=>element.inert=true);
+    host.append(layer);document.body.style.overflow='hidden';
+    updateUserWorkspace();
+  }
+  function closeUserWorkspace(restoreStaff=true){
+    if(!staffAccountEditor)return;
+    while(roleLayers.length)closeRoleLayer();
+    const {layer,staffId,background,overflow}=staffAccountEditor;
+    staffAccountEditor=null;
+    layer.remove();
+    background.forEach(([element,inert])=>element.inert=inert);
+    document.body.style.overflow=overflow;
+    if(!restoreStaff||currentTab!=='staff')return;
     renderContent();
-    document.querySelector('#main-content [data-action="users-open-editor"][data-user-id="'+closingId+'"]')?.focus();
+    const trigger=[...document.querySelectorAll('[data-staff-action="manage-login"],[data-staff-action="staff-create-login"]')]
+      .find(button=>button.dataset.id===staffId);
+    (trigger||document.querySelector('[data-staff-action="staff-back"]'))?.focus({preventScroll:true});
   }
-  document.addEventListener('click', event=>{
-    const target=event.target.closest('[data-action="users-open-editor"],[data-action="users-close-editor"],[data-action="users-add-nav"]');
-    if(!target||currentTab!=='users'||!sessionIsAdmin)return;
-    if(target.dataset.action==='users-open-editor'){
-      const id=Number(target.dataset.userId);
-      if(!users?.some(user=>user.id===id))return;
-      activeUserEditorId=id;
-      renderContent();
-      document.querySelector('#main-content .users-management-modal [data-action="users-close-editor"]')?.focus();
-    } else if(target.dataset.action==='users-close-editor'){
-      closeUserWorkspace();
-    } else {
-      activeUserEditorId=null;
-      activeUsersTab='add';
-      switchTab('users');
-    }
-  });
+  function openStaffAdministration(view,accountId){
+    if(!sessionIsAdmin||!sessionDirectoryPermissions.staffMembers?.read)return;
+    switchTab('staff');
+    if(currentTab==='staff')window.caffootStaffDirectory.openStaffWorkspace(view,accountId);
+  }
+  document.addEventListener('click',event=>{
+    const target=event.target.closest('[data-action="users-close-editor"],[data-action="users-open-editor"],[data-action="users-add-nav"],[data-action="users-view-staff"],[data-action="users-filter-pending"],[data-action="sidebar-users-list"],[data-action="sidebar-users-add"],[data-action="select-users-section"][data-tab="list"],[data-action="select-users-section"][data-tab="add"]');
+    if(!target)return;
+    event.preventDefault();event.stopImmediatePropagation();
+    if(!sessionIsAdmin)return;
+    const action=target.dataset.action;
+    if(action==='users-close-editor'){closeUserWorkspace();return;}
+    if(action==='users-open-editor'){openStaffAdministration('account',Number(target.dataset.userId));return;}
+    openStaffAdministration(target.dataset.tab==='add'||['sidebar-users-add','users-add-nav'].includes(action)?'add':'list');
+  },true);
   document.addEventListener('keydown',event=>{
-    if(event.key==='Escape'&&activeUserEditorId!==null&&currentTab==='users'){
-      closeUserWorkspace();
-    }
+    if(event.key==='Escape'&&staffAccountEditor){event.preventDefault();closeUserWorkspace();}
   });
   let signedInUsername = '';
   async function loadCentralUsers() {
@@ -11090,11 +11061,13 @@ void (async () => {
     if (!response.ok) throw new Error('Unable to load users.');
     const data=await response.json();users=data.users;roleCatalogue=data.roles;
     if (currentTab === 'users') renderContent();
+    updateUserWorkspace();
   }
   async function changeCentralUser(path,payload) {
     await postInventory(path,payload);
+    if(['/api/users/profile','/api/users/delete'].includes(path))await window.caffootStaffDirectory.refresh(false);
     await loadCentralUsers();
-    showToast('Users updated.');
+    showToast('Account updated.');
   }
 
   // Published v1.3.3 import decisions stay explicit. Original JSON is held by
@@ -11238,9 +11211,11 @@ void (async () => {
           firstName:String(data.get('firstName')||''),
           lastName:String(data.get('lastName')||''),
           displayName:String(data.get('displayName')||''),
-          email:String(data.get('email')||'')
+          email:String(data.get('email')||''),
+          revision:form.dataset.revision||''
         };
         accountProfile=await postInventory('/api/account/profile',details);
+        if(sessionDirectoryPermissions.staffMembers?.read)await window.caffootStaffDirectory.refresh(false);
         updateAccountHeaderPhoto();
         if(currentTab==='account')renderContent();
         showToast('Personal details saved.');
@@ -11301,26 +11276,6 @@ void (async () => {
       .catch(error=>showToast(error.message,'error'));
   },true);
   document.addEventListener('submit',event=>{
-    if (event.target.id !== 'next-user-create-form' || !sessionIsAdmin) return;
-    event.preventDefault();event.stopImmediatePropagation();
-    const form=event.target;
-    const fields=new FormData(form);
-    if(fields.get('password')!==fields.get('confirmPassword')){showToast('The initial passwords do not match.','error');form.elements.confirmPassword.focus();return;}
-    const submit=form.querySelector('[type="submit"]');submit.disabled=true;
-    void changeCentralUser('/api/users/create',{
-      username:fields.get('username'),password:fields.get('password'),
-      profile:{
-        firstName:String(fields.get('firstName')||''),
-        lastName:String(fields.get('lastName')||''),
-        displayName:String(fields.get('displayName')||''),
-        email:String(fields.get('email')||'')
-      }
-    }).then(()=>{
-      activeUsersTab='list';
-      switchTab('users');
-    }).catch(error=>{showToast(error.message,'error');submit.disabled=false;});
-  },true);
-  document.addEventListener('submit',event=>{
     if(event.target.id!=='next-user-profile-form'||!sessionIsAdmin)return;
     event.preventDefault();event.stopImmediatePropagation();
     const form=event.target,fields=new FormData(form);
@@ -11332,17 +11287,11 @@ void (async () => {
         firstName:String(fields.get('firstName')||''),
         lastName:String(fields.get('lastName')||''),
         displayName:String(fields.get('displayName')||''),
-        email:String(fields.get('email')||'')
+        email:String(fields.get('email')||''),
+        revision:form.dataset.revision
       }
     }).catch(error=>{showToast(error.message,'error');submit.disabled=false;});
   },true);
-  document.addEventListener('click',event=>{
-    if(!event.target.closest('[data-action="users-filter-pending"]')||!sessionIsAdmin||currentTab!=='users')return;
-    activeUsersTab='list';
-    switchTab('users');
-    const select=document.getElementById('live-users-mfa');
-    if(select){select.value='pending';filterUserRows();}
-  });
   document.addEventListener('change',event=>{
     const select=event.target.closest('[data-next-user-permission]');
     if (!select || !sessionIsAdmin) return;
@@ -11525,7 +11474,7 @@ void (async () => {
     if(element.form?.id==='device-ipam-link-form'&&editPermissions.Devices&&editPermissions.IPAM)return;
     if(canSubmitLifecycleSettings(element.form))return;
     if (isBlockedAction(action, element) || (element.matches('button') && element.type==='submit' && element.form &&
-        !element.form.matches('form[data-device-form="true"],#role-definition-form,#next-user-create-form,#next-user-profile-form,#next-account-password-form,#next-account-mfa-start,#next-account-mfa-confirm,#account-mfa-removal-form,#personal-details-form,#smtp-settings-form,#smtp-test-form,#account-email-verification-form') &&
+        !element.form.matches('form[data-device-form="true"],#role-definition-form,#next-user-profile-form,#next-account-password-form,#next-account-mfa-start,#next-account-mfa-confirm,#account-mfa-removal-form,#personal-details-form,#smtp-settings-form,#smtp-test-form,#account-email-verification-form') &&
         !(editPermissions.IPAM && element.closest('form[data-form-action="ip"],form[data-form-action="bulk-ip"],form[data-form-action="subnet"],form[data-ipam-subnet-creation]')) &&
         !(editPermissions.Devices && element.form?.matches('#equipment-assignment-form,#stock-reissue-form[data-direct-handover]')) &&
         !(editPermissions.Devices && editPermissions.Racks && element.closest('#rack-shelf-removal-form')) &&
@@ -11552,7 +11501,7 @@ void (async () => {
         (editPermissions.IPAM && event.target.matches('form[data-form-action="ip"],form[data-form-action="bulk-ip"],form[data-form-action="subnet"],form[data-ipam-subnet-creation]')) ||
         (editPermissions.Racks && event.target.matches('form[data-form-action="rack"],form[data-form-action="assign"],#rack-accessory-form')) ||
         (editPermissions.Devices && editPermissions.Racks && event.target.matches('#rack-shelf-removal-form')) ||
-        (sessionIsAdmin && event.target.matches('#next-user-create-form,#role-definition-form'))) return;
+        (sessionIsAdmin && event.target.matches('#role-definition-form'))) return;
     event.preventDefault();event.stopImmediatePropagation();
   },true);
   const root=document.getElementById('main-content');
@@ -11604,11 +11553,11 @@ void (async () => {
       rights:sessionDirectoryPermissions,admin:sessionIsAdmin,csrf:csrfToken,
       canReadDevices:()=>!!permissions.Devices,canReadAssets:()=>!!permissions['IT Assets'],canEditAssets:()=>!!editPermissions['IT Assets'],
       canReadHistory:()=>inventorySectionAccess(),openStaff:()=>switchTab('staff'),
-      accountList:()=>users||[],reloadAccounts:async()=>{if(sessionIsAdmin)await loadCentralUsers();},
+      accountList:()=>users||[],accountMfaLabel,reloadAccounts:async()=>{if(sessionIsAdmin)await loadCentralUsers();},
       redraw:()=>renderContent(),notify:(message,type)=>showToast(message,type),
-      manageLogin:accountId=>{
+      manageLogin:(accountId,trigger)=>{
         if(!sessionIsAdmin)return;
-        activeUsersTab='list';activeUserEditorId=Number(accountId);switchTab('users');
+        void loadCentralUsers().then(()=>openUserWorkspace(accountId,trigger)).catch(error=>showToast(error.message,'error'));
       }
     });
     window.caffootSuppliers.configure({

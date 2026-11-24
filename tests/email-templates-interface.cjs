@@ -126,18 +126,41 @@ async function verifyTicketNotificationSettings(instance) {
     for (const [theme, mobile] of [['light', false], ['dark', false], ['light', true], ['dark', true]]) {
         const {page, context, errors} = await openEmailWorkspace(instance, {theme, mobile});
         const mode = (mobile ? 'mobile' : 'desktop') + '-' + theme;
+        const emailSettingsRoute = '**/api/settings/email';
+        const allowSettingsLoad = Promise.withResolvers();
+        if (mode === 'desktop-light') {
+            await page.route(emailSettingsRoute, async route => {
+                if (route.request().method() === 'GET') await allowSettingsLoad.promise;
+                await route.continue();
+            });
+        }
         await page.locator('#next-settings-nav').click();
         await page.getByRole('tab', {name: 'Email Settings', exact: true}).click();
         const supportEmail = page.getByRole('textbox', {name: 'IT Support Email Address'});
         const saveSettings = page.getByRole('button', {name: 'Save Email Settings'});
         await supportEmail.waitFor();
         if (mode === 'desktop-light') {
-            await page.getByRole('textbox', {name: 'SMTP server address'}).fill('mail.example.invalid');
+            const smtpHost = page.getByRole('textbox', {name: 'SMTP server address'});
+            try {
+                assert.equal(await page.locator('#smtp-config-status').textContent(), 'Loading…');
+                assert.ok(await smtpHost.isDisabled());
+                assert.ok(await supportEmail.isDisabled());
+                assert.ok(await saveSettings.isDisabled());
+            } finally {
+                allowSettingsLoad.resolve();
+            }
+            await page.waitForFunction(() => document.querySelector('#smtp-config-status')?.textContent === 'Not Configured');
+            await smtpHost.fill('mail.example.invalid');
             await page.getByRole('spinbutton', {name: 'SMTP port'}).fill('587');
             await page.locator('label.toggle:has(#smtp-auth)').click();
             await page.getByRole('textbox', {name: 'From Email Address'}).fill('caffoot@example.invalid');
             await supportEmail.fill('it-support@example.invalid');
-            await saveSettings.click();
+            const [saved] = await Promise.all([
+                page.waitForResponse(response => response.url() === instance.base + '/api/settings/email' &&
+                    response.request().method() === 'POST'),
+                saveSettings.click(),
+            ]);
+            assert.equal(saved.status(), 200);
             await page.getByText('Outgoing email settings saved.', {exact: true}).waitFor();
             await supportEmail.fill('discard@example.invalid');
             await page.getByRole('button', {name: 'Discard Changes'}).click();

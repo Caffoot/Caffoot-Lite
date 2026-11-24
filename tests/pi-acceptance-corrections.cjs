@@ -1,3 +1,4 @@
+const {startStaffLoginForm}=require('./staff-account-workflow.cjs');
 // Exercise the approved acceptance corrections against real HTTPS and fictional SQLite data.
 const assert=require('node:assert/strict');
 const fs=require('node:fs'),os=require('node:os'),path=require('node:path');
@@ -176,14 +177,15 @@ let browser;
  await page.evaluate(()=>{switchTab('devices');openDeviceModal('mounted');});await page.locator('#device-editor-form').waitFor();
  await page.locator('[data-action="create-rack-from-device"]').click({force:true});await invalid('form[data-form-action="rack"]');
  await page.locator('[data-action="close-modal"]').last().click();await page.locator('#device-editor-form').waitFor();assert.equal(await page.locator('#dev-location').inputValue(),'Original Rack Name');await page.evaluate(()=>closeModal(true));
- await page.evaluate(()=>switchTab('users'));await page.locator('[data-action="select-users-section"][data-tab="add"]').click();await invalid('#next-user-create-form');
- await page.locator('[data-action="select-users-section"][data-tab="roles"]').click();await page.locator('[data-role-command="create"]').click();await invalid('#role-definition-form');
+ await startStaffLoginForm(page);await invalid('#staff-record-form');
+ await page.evaluate(()=>switchTab('users'));await page.locator('[data-action="select-users-section"][data-tab="roles"]').click();await page.locator('[data-role-command="create"]').click();await invalid('#role-definition-form');
  await page.locator('[data-role-layer] [data-role-command="close"]').click();
  await page.evaluate(()=>switchTab('settings'));await page.locator('.settings-screen [data-tab="email"]').click();await page.waitForFunction(()=>document.querySelector('#smtp-settings-form button[type="submit"]')?.disabled===false);await invalid('#smtp-settings-form');
  // User password mismatch is an application-level validation error, not a native constraint.
- await page.evaluate(()=>switchTab('users'));await page.locator('[data-action="select-users-section"][data-tab="add"]').click();
- await page.locator('#new-user-username').fill('unsaved-colleague');await page.locator('#new-user-password').fill('Fictional-Password-2026!');await page.locator('#new-user-password-confirm').fill('Different-Password-2026!');
- await page.locator('#next-user-create-form [type="submit"]').click();await page.waitForFunction(()=>document.getElementById('toast-message').textContent==='The initial passwords do not match.');
+ const invalidLogin=await startStaffLoginForm(page);
+ await invalidLogin.locator('#preview-firstName').fill('Alex');await invalidLogin.locator('#preview-lastName').fill('Example');
+ await invalidLogin.locator('#preview-username').fill('unsaved-colleague');await invalidLogin.locator('#preview-password').fill('Fictional-Password-2026!');await invalidLogin.locator('#preview-confirmPassword').fill('Different-Password-2026!');
+ await invalidLogin.locator('[type="submit"]').click();await page.waitForFunction(()=>document.getElementById('toast-message').textContent==='The initial passwords do not match.');
  assert.deepEqual(snapshot(),initial);assert.deepEqual(errors,[]);
 
  // A real unrelated Edit save keeps the recorded room and placement.

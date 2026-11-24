@@ -54,7 +54,6 @@
 .staff-actions{background:var(--white);border:1px solid var(--line);border-radius:var(--radius);margin-top:17px;padding:16px 21px;display:flex;align-items:center;justify-content:space-between;gap:17px;flex-wrap:wrap}
 .staff-actions p{font-size:10.5px;color:var(--muted);margin:0;line-height:1.6;max-width:440px}
 .staff-action-buttons{display:flex;gap:10px;flex-wrap:wrap;margin-left:auto}
-@media(min-width:1001px){.preview-staff-directory .list-header,.preview-staff-directory .userrow{grid-template-columns:minmax(180px,1.35fr) minmax(100px,.8fr) minmax(130px,.9fr) minmax(140px,1fr) 172px}}
 @media(max-width:1110px){.staff-main-grid{grid-template-columns:1fr}.staff-side-stack{grid-template-columns:1fr 1fr}}
 @media(max-width:1000px){.preview-row-actions{max-width:108px}}
 @media(max-width:850px){.staff-side-stack{grid-template-columns:1fr}}
@@ -62,9 +61,18 @@
 
 .staff-live .section-page-header{margin-bottom:20px}
 .staff-live .preview-record-name{margin:0}
-.staff-live .preview-staff-directory .userrow{min-width:0}
-.staff-live .preview-staff-directory .list-header{min-width:750px}
-.staff-live .preview-staff-directory .userrow{min-width:750px}
+.staff-live .preview-staff-directory .users-list-table-scroll{overflow-x:auto}
+.staff-live .preview-staff-directory :is(.list-header,.userrow){
+  display:grid;grid-template-columns:minmax(160px,1.35fr) minmax(90px,.8fr) minmax(156px,.9fr) minmax(140px,1fr) 155px;
+  gap:10px;min-width:780px;align-items:center
+}
+.staff-live .preview-staff-directory .userrow :is(.role-cell,.mfa-cell,.permissions-cell,.actions){grid-column:auto;grid-row:auto}
+.staff-live .preview-staff-directory .preview-row-actions{flex-wrap:nowrap;max-width:none}
+.staff-live .preview-staff-directory .preview-row-actions .btn{white-space:nowrap}
+.staff-list-status{display:flex;align-items:center;gap:6px}
+.staff-login-details{margin-top:17px}
+.staff-permissions-action{margin-top:16px}
+.user-sign-in-field{margin-bottom:13px}
 .staff-live .staff-restricted,.staff-live .staff-account-fields{line-height:1.5}
 
 /* Department Details reuse the existing cards, tabs and assignment table layout. */

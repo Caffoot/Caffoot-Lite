@@ -1,3 +1,4 @@
+const {openStaffAccount,startStaffLoginForm}=require('./staff-account-workflow.cjs');
 // Owner-approved exceptions and live actions, using the existing isolated visual runner.
 const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
 module.exports=async function verifyOwnerAcceptanceBatch({page,reference,sourceBase,context,out}){
@@ -127,7 +128,7 @@ module.exports=async function verifyOwnerAcceptanceBatch({page,reference,sourceB
   console.log('Checked modal header coverage at',width);
 
 
-  await go('users');await page.locator('.section-page-header [data-tab="list"]').click();const own=page.locator('[data-action="users-open-editor"]').first();await own.click();
+  const own=await openStaffAccount(page,(await (await page.request.get(address+'/api/session')).json()).username);
   const workspace=page.locator('.users-management-modal .modal');assert.equal(await workspace.evaluate(e=>Math.round(e.getBoundingClientRect().width)),Math.min(710,width-20));
   assert.equal(await workspace.locator('[data-next-user-operation]:disabled').count(),3);assert.equal(await workspace.locator('.profile-modal-grid input:disabled').count(),4);
   for(const selector of ['#user-first-name','[data-next-user-permission][data-section="Devices"]','[data-next-user-permission][data-section="IPAM"]','[data-next-user-permission][data-section="Racks"]'])await height(selector);
@@ -137,17 +138,20 @@ module.exports=async function verifyOwnerAcceptanceBatch({page,reference,sourceB
   }
   await capture('09-protected-workspace-'+width,'users-permissions-draft-02',ref=>ref.evaluate(()=>{setTab('list');openModal(initialUsers[0]);}));
   await workspace.locator('.app-modal-close').click();assert.ok(await own.evaluate(e=>document.activeElement===e),'Header Close must return focus to Manage');
-  await page.locator('.section-page-header [data-tab="add"]').click();const username='acceptance-viewer-'+width,password='Isolated-Acceptance-Viewer-2026!';
-  await page.locator('#next-user-create-form [name="username"]').fill(username);await page.locator('#next-user-create-form [name="password"]').fill(password);await page.locator('#next-user-create-form button[type="submit"]').click();
-  await page.waitForFunction(name=>[...document.querySelectorAll('#main-content h3')].some(e=>e.textContent===name),username);
+  const username='acceptance-viewer-'+width,password='Isolated-Acceptance-Viewer-2026!';
+  const loginForm=await startStaffLoginForm(page);
+  await loginForm.locator('[name="firstName"]').fill('Alex');await loginForm.locator('[name="lastName"]').fill('Example');
+  await loginForm.locator('[name="username"]').fill(username);await loginForm.locator('[name="password"]').fill(password);
+  await loginForm.locator('[name="confirmPassword"]').fill(password);await loginForm.locator('button[type="submit"]').click();
+  await page.getByRole('heading',{name:'Staff Details'}).waitFor();
   const userId=await page.evaluate(async name=>(await (await fetch('/api/users')).json()).users.find(u=>u.username===name).id,username);
-  await page.locator('[data-action="users-open-editor"][data-user-id="'+userId+'"]').click();assert.equal(await workspace.locator('.profile-modal-grid input:disabled').count(),0);
+  const manage=await openStaffAccount(page,username);assert.equal(await workspace.locator('.profile-modal-grid input:disabled').count(),0);
   await page.locator('#user-display-name').fill('Acceptance Viewer');await page.locator('#next-user-profile-form button[type="submit"]').click();
   await page.waitForFunction(async id=>(await (await fetch('/api/users')).json()).users.find(u=>u.id===id).profile.displayName==='Acceptance Viewer',userId);
   await page.locator('[data-next-user-permission][data-section="Devices"]').selectOption('read');
   await page.waitForFunction(async id=>(await (await fetch('/api/users')).json()).users.find(u=>u.id===id).permissions.Devices==='read',userId);
   await capture('09-manageable-workspace-'+width,'users-permissions-draft-02',ref=>ref.evaluate(()=>{setTab('list');openModal(initialUsers[1]);}));
-  await page.keyboard.press('Escape');assert.ok(await page.locator('[data-action="users-open-editor"][data-user-id="'+userId+'"]').evaluate(e=>document.activeElement===e));
+  await page.keyboard.press('Escape');assert.ok(await manage.evaluate(e=>document.activeElement===e));
   const viewer=await context.browser().newContext({ignoreHTTPSErrors:true,viewport:{width,height:844}});
   assert.ok((await viewer.request.post(address+'/api/login',{headers:{Origin:address},data:{username,password}})).ok());
   const viewerPage=await viewer.newPage();await viewerPage.goto(address+'/inventory');await viewerPage.locator('#app[aria-busy="false"]').waitFor();await viewerPage.evaluate(()=>{switchTab('devices');activeDeviceDetailsTab='inventory';appState.devices=[];renderContent();});
