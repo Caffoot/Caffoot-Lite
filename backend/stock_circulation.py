@@ -5,6 +5,8 @@ import json
 from backend.audit_events import record_actor_event
 from backend.device_assignments import assignment_recipients
 from backend.permissions import can_access
+from backend.shared_devices import (current_departments, historical_stock_recipient, shared_device_schema_active,
+                                    SHARED_DEVICE_TYPES)
 from backend.stock_intake import (stock_access, stock_item, stock_json, stock_text,
     stock_quantity, stock_operation, stock_replay, stock_write_access, stock_configuration,
     stock_digest)
@@ -54,7 +56,7 @@ def stock_movement_snapshot(item, unit=None):
     return stock_json(snapshot)
 
 
-def publish_stock_movement(connection, actor, key, kind, entries, details, *, event_date, reason='', closures=()):
+def publish_stock_movement(connection, actor, key, kind, entries, details, *, event_date, reason='', closures=(), before_publish=None):
     """Publish all transfers, their audit and any allocation closure together."""
     movement = connection.execute('SELECT coalesce(max(id),0)+1 FROM it_asset_stock_movements').fetchone()[0]
     for entry in entries:
@@ -62,6 +64,8 @@ def publish_stock_movement(connection, actor, key, kind, entries, details, *, ev
         columns = list(values)
         connection.execute('INSERT INTO it_asset_stock_entries('+','.join(columns)+') VALUES('+','.join('?' for _ in columns)+')',
                            [values[column] for column in columns])
+    if before_publish is not None:
+        before_publish(movement)
     action = {'issued':'Issued', 'returned':'Returned', 'written_off':'Written Off', 'readiness_changed':'Prepared'}[kind]
     audit_details = {'movementId': movement}
     if details.get('physicalReturnConfirmed') is True:
@@ -87,15 +91,16 @@ def publish_stock_movement(connection, actor, key, kind, entries, details, *, ev
 def stock_issue_records(connection, *, staff_id=None, department_id=None):
     """Resolve outstanding quantities from the original issue and its transfers."""
     result=[]
-    for row in connection.execute('''SELECT e.id,e.stock_item_id,e.stock_unit_id,e.quantity,
+    custody = 'e.custody_recipient_id' if shared_device_schema_active(connection) else 'NULL'
+    for row in connection.execute(f'''SELECT e.id,e.stock_item_id,e.stock_unit_id,e.quantity,
         e.staff_id,e.department_id,e.recipient_label,e.device_assignment_id,e.snapshot_json,
-        m.event_date,m.actor_label,m.recorded_at,
+        m.event_date,m.actor_label,m.recorded_at,{custody},
         (SELECT coalesce(sum(x.quantity*((x.to_state IS 'issued')-(x.from_state IS 'issued'))),0)
          FROM it_asset_stock_entries x JOIN it_asset_stock_movements closed ON closed.id=x.movement_id
          WHERE x.id=e.id OR x.source_issue_entry_id=e.id)
         FROM it_asset_stock_entries e JOIN it_asset_stock_movements m ON m.id=e.movement_id
         WHERE m.kind='issued' AND e.to_state='issued' ORDER BY e.id DESC'''):
-        (identity,item,unit,quantity,staff,department,recipient,assignment,snapshot,issued,actor,recorded,outstanding)=row
+        (identity,item,unit,quantity,staff,department,recipient,assignment,snapshot,issued,actor,recorded,custody_id,outstanding)=row
         if staff_id is not None and staff!=staff_id or department_id is not None and department!=department_id:
             continue
         original={key:value for key,value in json.loads(snapshot).items() if key in (
@@ -105,6 +110,8 @@ def stock_issue_records(connection, *, staff_id=None, department_id=None):
             outstanding=outstanding,staffId=staff,departmentId=department,recipientLabel=recipient,
             deviceAssignmentId=assignment,name=original.get('name','Equipment'),specification=original,
             issuedOn=issued,actor=actor,recordedAt=recorded,version=stock_digest([identity,outstanding,latest])))
+        if custody_id is not None:
+            result[-1]['custodyRecipientId'] = custody_id
         corrected=connection.execute('SELECT corrected_quantity FROM it_asset_stock_movements WHERE corrects_entry_id=? ORDER BY id DESC LIMIT 1',(identity,)).fetchone()
         result[-1]['effectiveQuantity']=corrected[0] if corrected else quantity
     return result
@@ -116,7 +123,8 @@ def read_stock_issues(connection, actor):
     devices=can_access(connection,actor,'Devices')
     issues=stock_issue_records(connection)
     if not devices:
-        issues=[issue for issue in issues if not issue['deviceAssignmentId']]
+        issues=[{key: value for key, value in issue.items() if key!='custodyRecipientId'}
+                for issue in issues if not issue['deviceAssignmentId']]
     assignments=[]
     choices=[]
     if devices:
@@ -147,11 +155,14 @@ def issue_stock(connection, actor, token, payload):
         raise
 
 
-def issue_stock_in_transaction(connection, actor, token, payload, *, operation_key=None):
+def issue_stock_in_transaction(connection, actor, token, payload, *, operation_key=None,
+                               custody_recipient=None, before_publish=None):
     """Issue selected Ready stock without committing part of a combined save."""
     if not connection.in_transaction:
         raise RuntimeError('Stock issue requires an active write transaction')
-    fields={'operationId','stockItemId','version','quantity','stockUnitIds','recipientKind','recipientId','issuedOn','note'}
+    fields={'operationId','stockItemId','version','quantity','stockUnitIds','issuedOn','note'}
+    if custody_recipient is None:
+        fields.update(('recipientKind', 'recipientId'))
     operation,digest=stock_operation(payload,fields,fields-{'stockUnitIds'})
     key=operation_key or 'stock:issue:'+str(actor)+':'+operation
     stock_write_access(connection,actor,token)
@@ -164,7 +175,8 @@ def issue_stock_in_transaction(connection, actor, token, payload, *, operation_k
     quantity=stock_quantity(payload['quantity'],'Quantity To Issue',1)
     if quantity>item['balances']['readyToIssue']:
         raise ValueError('Quantity To Issue exceeds this item’s Ready To Issue balance')
-    recipient=stock_recipient(connection,payload['recipientKind'],payload['recipientId'])
+    recipient = (stock_recipient(connection, payload['recipientKind'], payload['recipientId'])
+                 if custody_recipient is None else custody_recipient)
     issued=stock_event_date(payload['issuedOn'],'Date Issued')
     note=stock_text(payload['note'],'Issue Note',2000)
     if item['trackingMode']=='quantity':
@@ -189,7 +201,8 @@ def issue_stock_in_transaction(connection, actor, token, payload, *, operation_k
     movement=connection.execute('SELECT coalesce(max(id),0)+1 FROM it_asset_stock_movements').fetchone()[0]
     result=dict(stockItemId=item['id'],movementId=movement,issuedQuantity=quantity)
     publish_stock_movement(connection,actor,key,'issued',entries,
-        dict(operationHash=digest,result=result,stockItemId=item['id'],note=note),event_date=issued)
+        dict(operationHash=digest,result=result,stockItemId=item['id'],note=note),
+        event_date=issued,before_publish=before_publish)
     return result
 
 
@@ -231,6 +244,9 @@ def legacy_device_issue(connection, identity):
         raise LookupError('Outstanding Device assignment not found')
     assignment,device_id,staff,department,label,assigned,name,raw,revision=row
     record=json.loads(raw)
+    if staff is None:
+        departments = current_departments(connection, assignment)
+        label = ', '.join(department['label'] for department in departments) or label
     unit=connection.execute('SELECT id FROM it_asset_stock_units WHERE device_id=?',(device_id,)).fetchone()
     return dict(id=assignment,deviceId=device_id,staffId=staff,departmentId=department,
         recipientLabel=label,issuedOn=assigned[:10],quantity=1,outstanding=1,name=name,
@@ -346,8 +362,7 @@ def return_stock(connection, actor, token, payload):
             snapshot=dict(source['specification'],originalIssueEntryId=identity)
             entry={('stock_item_id' if source['stockItemId'] else 'stock_unit_id'):
                 source['stockItemId'] or source['stockUnitId'],
-                'from_state':'issued','source_issue_entry_id':identity,'staff_id':source['staffId'],
-                'department_id':source['departmentId'],'recipient_label':source['recipientLabel']}
+                'from_state':'issued','source_issue_entry_id':identity, **historical_stock_recipient(source)}
             if source['deviceAssignmentId']:
                 device_id=connection.execute('SELECT device_id FROM it_asset_stock_units WHERE id=?',(source['stockUnitId'],)).fetchone()[0]
                 require_stock_device_edit(connection,actor,device_id)
@@ -487,6 +502,7 @@ def canonical_device_choice(connection, identity):
                              (unit[0] if unit else None,)).fetchone()[0]
     physical=not (record.get('isVirtual') or record.get('virtualHostId') or record.get('type') in ('Virtual Machine','Server - Virtual'))
     return dict(deviceId=identity,name=name,category=record.get('type',''),physical=physical,revision=revision,
+        sharedDepartments=physical and record.get('type') in SHARED_DEVICE_TYPES,
         canReturnUnassigned=physical and assignment is None and latest==0,
         stockUnitId=unit[0] if unit else None,states=states,deviceAssignmentId=assignment[0] if assignment else None,
         version=stock_digest([identity,revision,unit[0] if unit else None,latest,assignment[0] if assignment else None]))
@@ -543,7 +559,7 @@ def write_off_stock(connection, actor, token, payload):
                 if source is None:
                     raise ValueError('Original issued Device stock reference not found')
                 entries[0].update(from_state='issued',source_issue_entry_id=source['id'],
-                    staff_id=source['staffId'],department_id=source['departmentId'],recipient_label=source['recipientLabel'])
+                    **historical_stock_recipient(source))
             elif state in ('ready','awaiting_checks','awaiting_preparation') and item['states'].get(state,0)==1:
                 entries[0]['from_state']=state
             else:
@@ -571,8 +587,8 @@ def write_off_stock(connection, actor, token, payload):
             item_id=source['stockItemId']
             entries=[dict({('stock_unit_id' if source['stockUnitId'] else 'stock_item_id'):
                 source['stockUnitId'] or source['stockItemId']},quantity=quantity,from_state='issued',
-                source_issue_entry_id=source['id'],staff_id=source['staffId'],department_id=source['departmentId'],
-                recipient_label=source['recipientLabel'],snapshot_json=stock_json(source['specification']))]
+                source_issue_entry_id=source['id'], **historical_stock_recipient(source),
+                snapshot_json=stock_json(source['specification']))]
             if source['deviceAssignmentId']:
                 entries[0]['device_assignment_id']=source['deviceAssignmentId']
         else:

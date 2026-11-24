@@ -1,5 +1,6 @@
 """Deliver committed Service Desk events through the shared email queue."""
 from contextlib import closing
+from dataclasses import replace
 import smtplib
 import sqlite3
 
@@ -15,11 +16,44 @@ def queue_ticket_email(database_path, origin, ticket_id, notification):
     return queue_mail_task(lambda: send_ticket_email(database_path, origin, ticket_id, notification))
 
 
-def employee_audience(connection, ticket_id):
+def department_device_members(connection, ticket_id):
+    """Resolve the Department audience from the ticket's physical custody ID."""
     assignment = connection.execute("""
-        SELECT coalesce(a.department_id, issue.department_id), ticket.employee_id
+        SELECT a.id,a.ended_at FROM service_desk_tickets ticket
+        JOIN device_assignments a ON a.id=ticket.device_assignment_id
+        WHERE ticket.id=? AND a.staff_id IS NULL
+    """, (ticket_id,)).fetchone()
+    if assignment is None:
+        return None
+    if assignment[1] is not None:
+        return []
+    return connection.execute("""
+        SELECT DISTINCT s.account_id,r.id FROM device_assignment_departments r
+        JOIN staff_members s ON s.department_id=r.department_id
+        WHERE r.assignment_id=? AND r.removed_at IS NULL AND s.active=1 AND s.account_id IS NOT NULL
+        ORDER BY s.account_id
+    """, (assignment[0],)).fetchall()
+
+
+def snapshot_department_notice(connection, ticket_id, notification):
+    """A later addition must never receive an already recorded Device update."""
+    if notification is None or notification.technician_id is not None or notification.template_id == 'ticket-created':
+        return notification
+    members = department_device_members(connection, ticket_id)
+    if members is None:
+        return notification
+    return replace(notification, department_members=tuple(
+        (account, relationship) for account, relationship in members
+        if authorised_mailbox(connection, 'department', ticket_id, account)))
+
+
+def employee_audience(connection, ticket_id):
+    members = department_device_members(connection, ticket_id)
+    if members is not None:
+        return 'department', [account for account, _ in members]
+    assignment = connection.execute("""
+        SELECT issue.department_id, ticket.employee_id
         FROM service_desk_tickets ticket
-        LEFT JOIN device_assignments a ON a.id=ticket.device_assignment_id
         LEFT JOIN it_asset_stock_entries issue ON issue.id=ticket.stock_issue_id
         WHERE ticket.id=?
     """, (ticket_id,)).fetchone()
@@ -86,6 +120,9 @@ def send_ticket_email(database_path, origin, ticket_id, notification):
                 scope, accounts = 'it', [notification.technician_id]
             else:
                 scope, accounts = employee_audience(connection, ticket_id)
+                original = dict(notification.department_members or ())
+                if notification.department_members is not None:
+                    accounts = [account for account in accounts if account in original]
         page = 'inventory' if scope == 'it' else 'account'
         link = f'{origin}/{page}?ticket={scope}-{ticket_id}'
         if not safe_email_url(link):
@@ -93,6 +130,7 @@ def send_ticket_email(database_path, origin, ticket_id, notification):
         values = {**notification.values, 'ticket_number': f'SD-{ticket_id:04d}', 'ticket_link': link}
         if not created:
             values['device_name'] = ticket[0] or ''
+        sent_addresses = set()
         for account_id in accounts:
             if created:
                 recipient = smtp['itSupportEmail']
@@ -101,6 +139,10 @@ def send_ticket_email(database_path, origin, ticket_id, notification):
                 # immediately before each individual send, outside the write transaction.
                 with connection:
                     connection.execute('BEGIN')
+                    if notification.department_members is not None and (
+                        account_id, original[account_id]
+                    ) not in department_device_members(connection, ticket_id):
+                        continue
                     mailbox = authorised_mailbox(
                         connection, scope, ticket_id, account_id,
                         require_current_assignee=template_id in ('ticket-reply', 'ticket-reopened'),
@@ -109,10 +151,14 @@ def send_ticket_email(database_path, origin, ticket_id, notification):
                     continue
                 recipient, name = mailbox
                 values['technician_name' if scope == 'it' else 'employee_name'] = name
+            address = recipient.strip().casefold()
+            if address in sent_addresses:
+                continue
             mail = render_ticket_email(template_id, wording, branding, values)
             try:
                 deliver_email(smtp, recipient, mail['subject'], mail['text'],
                               html=mail['html'], logo=branding['logo'])
+                sent_addresses.add(address)
             except (smtplib.SMTPException, OSError, ValueError):
                 # A failed delivery cannot undo the ticket or suppress other recipients.
                 continue

@@ -106,8 +106,12 @@ async function main(){
  }
  async function chooseRecipient(kind,id){
   await page.locator('#stock-recipientKind').selectOption(kind);
-  await page.locator('#stock-recipientId option[value="'+id+'"]').waitFor({state:'attached'});
-  await page.locator('#stock-recipientId').selectOption(id);
+  if(kind==='department'&&await page.locator('#stock-reissue-form [data-department-picker]').isVisible()){
+   await page.locator('[data-department-choice][value="'+id+'"]').check();
+  }else{
+   await page.locator('#stock-recipientId option[value="'+id+'"]').waitFor({state:'attached'});
+   await page.locator('#stock-recipientId').selectOption(id);
+  }
  }
  async function confirmChecks(){
   await page.locator('#stock-reissue-form [name="cleanedWorking"]').check();
@@ -141,8 +145,8 @@ async function main(){
  assert.equal(await page.locator('#stock-recipientSearch').count(),0,'Direct handover must show only its two dropdowns');
  assert.equal(await page.locator('#stock-reissue-form').getByText('New Recipient',{exact:true}).count(),0);
  await page.locator('#stock-recipientKind').selectOption('department');
- await page.locator('#stock-recipientId option[value="department"]').waitFor({state:'attached'});
- assert.equal(await page.locator('#stock-recipientId option[value="other"]').count(),0,'Department list must not show staff');
+ await page.locator('[data-department-choice][value="department"]').waitFor();
+ assert.equal(await page.locator('[data-department-choice][value="other"]').count(),0,'Department list must not show staff');
  await page.locator('#stock-recipientKind').selectOption('staff');
  await page.locator('#stock-recipientId option[value="other"]').waitFor({state:'attached'});
  assert.equal(await page.locator('#stock-recipientId option[value="department"]').count(),0,'Staff list must not show departments');

@@ -507,6 +507,7 @@
     const content=`<div class="staff-fields">${deviceField}
       ${stockSelect(handover?'Recipient Type':'Assign To','recipientKind',[['staff','Staff Member'],['department','Department']], '',stockContext.recipientKind||'staff')}
       ${handover?stockSelect('Find A Recipient','recipientId',[['','Select A Staff Member']], 'required'):stockField('Find A Recipient','recipientSearch','search','','maxlength="100"')+stockSelect('Staff Member Or Department','recipientId',[['','Select An Eligible Recipient']], 'required')}
+      ${window.caffootEquipment.departmentPickerMarkup()}
       ${stockField(handover?'Date Reassigned':'Date Issued','issuedOn','date',stockTodayIso(),'required')}</div>${checks}${stockNote(handover?'Reassignment Note (Optional)':'Issue Note (Optional)','issueNote')}`;
     return stockWorkflowForm('reissue',handover?'Reassignment Details':'Reissue Existing Device',handover?'The current holder stays recorded until this complete handover succeeds.':'Issue one genuinely held, prepared Device while preserving its identity and all previous assignments.',content,
       handover?'<p>This Device goes directly to its new holder. It is not being returned to the storeroom. Associated equipment must already be resolved.</p>':'<p>Only unassigned registered Devices recorded as Ready To Issue are eligible. A successful assignment reduces Physically Held and Ready To Issue by one. Device Status, configuration, network and rack details stay as recorded.</p>',handover?'Confirm Ready And Reassign':'Reissue Existing Device');
@@ -761,18 +762,40 @@
     const reissue=document.getElementById('stock-reissue-form');
     if(reissue){
       const handover=stockContext.handover;
-      reissue.querySelector('[type="submit"]').disabled=handover?!reissue.elements.recipientId.value||!reissue.elements.cleanedWorking.checked||(handover.preparation.dataConfirmationRequired&&!reissue.elements.dataPreparationConfirmed.checked):!reissueDevices.some(device=>device.deviceId===reissue.elements.reissueDevice.value)||!reissue.elements.recipientId.value;
+      const device=handover||reissueDevices.find(item=>item.deviceId===reissue.elements.reissueDevice.value);
       const kind=reissue.elements.recipientKind.value;
-      const key=handover?kind:kind+'|'+reissue.elements.recipientSearch.value;
-      if(reissue.dataset.recipientQuery!==key){
-        reissue.dataset.recipientQuery=key;
-        if(handover){
-          const recipient=reissue.elements.recipientId;
-          recipient.disabled=true;
-          recipient.innerHTML='<option value="">Loading '+(kind==='staff'?'Staff Members':'Departments')+'…</option>';
-          reissue.querySelector('[type="submit"]').disabled=true;
-          void loadHandoverRecipients(reissue,key);
-        }else void loadStockRecipients(reissue,key);
+      const shared=kind==='department'&&!!device?.sharedDepartments;
+      const picker=reissue.querySelector('[data-department-picker]');
+      const recipient=reissue.elements.recipientId;
+      const search=reissue.elements.recipientSearch;
+      picker.hidden=!shared;
+      recipient.closest('.preview-form-field').hidden=shared;
+      if(search)search.closest('.preview-form-field').hidden=shared;
+      const submit=reissue.querySelector('[type="submit"]');
+      const ready=!handover||(reissue.elements.cleanedWorking.checked&&
+        (!handover.preparation.dataConfirmationRequired||reissue.elements.dataPreparationConfirmed.checked));
+      if(shared){
+        recipient.disabled=true;
+        if(search)search.disabled=true;
+        reissue.dataset.recipientQuery='department-picker';
+        const selection=window.caffootEquipment.departmentPicker(picker,{onChange:hydrateStockCirculation});
+        submit.disabled=!ready||!selection.values().length;
+      }else{
+        if(search)search.disabled=false;
+        const key=handover?kind:kind+'|'+search.value;
+        submit.disabled=!device||!ready||!recipient.value;
+        if(reissue.dataset.recipientQuery!==key){
+          reissue.dataset.recipientQuery=key;
+          if(handover){
+            recipient.disabled=true;
+            recipient.innerHTML='<option value="">Loading '+(kind==='staff'?'Staff Members':'Departments')+'…</option>';
+            submit.disabled=true;
+            void loadHandoverRecipients(reissue,key);
+          }else{
+            recipient.disabled=false;
+            void loadStockRecipients(reissue,key);
+          }
+        }
       }
     }
     const issue=document.getElementById('stock-issue-form');
@@ -888,15 +911,20 @@
     const data=new FormData(form),operationId=form.dataset.operationId||(form.dataset.operationId=crypto.randomUUID());
     let payload={operationId},route;
     if(form.id==='stock-reissue-form'){
+      const picker=form.querySelector('[data-department-picker]');
+      const recipient=picker.hidden?{recipientId:String(data.get('recipientId'))}:
+        {departmentIds:window.caffootEquipment.departmentPicker(picker).values()};
+      Object.assign(payload,{recipientKind:String(data.get('recipientKind')),...recipient,note:String(data.get('issueNote')||'')});
       if(handover){
-        route='/api/equipment/reassign';Object.assign(payload,{deviceId:handover.deviceId,version:handover.version,
-          recipientKind:String(data.get('recipientKind')),recipientId:String(data.get('recipientId')),
-          handedOverOn:String(data.get('issuedOn')),checks:{cleanedWorking:data.get('cleanedWorking')==='on',dataPreparationConfirmed:data.get('dataPreparationConfirmed')==='on'},readyConfirmed:true,note:String(data.get('issueNote')||'')});
+        route='/api/equipment/reassign';
+        Object.assign(payload,{deviceId:handover.deviceId,version:handover.version,
+          handedOverOn:String(data.get('issuedOn')),checks:{cleanedWorking:data.get('cleanedWorking')==='on',dataPreparationConfirmed:data.get('dataPreparationConfirmed')==='on'},readyConfirmed:true});
       }else{
-      if(!config.canEditDevices())throw Error('Devices Edit and IT Assets Edit are required.');
-      const device=reissueDevices.find(device=>device.deviceId===data.get('reissueDevice'));
-      if(!device)throw Error('Select a Ready registered Device.');
-      route='reissue-device';Object.assign(payload,{deviceId:device.deviceId,version:device.version,recipientKind:String(data.get('recipientKind')),recipientId:String(data.get('recipientId')),issuedOn:String(data.get('issuedOn')),note:String(data.get('issueNote')||'')});
+        if(!config.canEditDevices())throw Error('Devices Edit and IT Assets Edit are required.');
+        const device=reissueDevices.find(device=>device.deviceId===data.get('reissueDevice'));
+        if(!device)throw Error('Select a Ready registered Device.');
+        route='reissue-device';
+        Object.assign(payload,{deviceId:device.deviceId,version:device.version,issuedOn:String(data.get('issuedOn'))});
       }
     }else if(form.id==='stock-issue-form'){
       if(stockContext.association&&data.get('associationMethod')==='existing'){

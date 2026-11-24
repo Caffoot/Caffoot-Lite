@@ -42,6 +42,7 @@ class TicketNotification:
     template_id: str
     values: dict = field(default_factory=dict)
     technician_id: int | None = None
+    department_members: tuple[tuple[int, int], ...] | None = None
 
 
 def ticket_rows(cursor):

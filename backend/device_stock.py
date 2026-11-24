@@ -4,13 +4,14 @@ import uuid
 
 from backend.audit_events import record_actor_event
 from backend.device_saves import create_device_in_transaction
+from backend.shared_devices import custody_stock_recipient, device_recipient, insert_device_custody, recipient_audit
 from backend.permissions import can_access
 from backend.equipment_associations import has_outstanding_associated_equipment
 from backend.equipment_lifecycle import capture_first_service_from_stock, device_type_availability
 from backend.stock_intake import (COMPUTER_TYPES, append_stock_fact, stock_item,
     stock_operation, stock_replay, stock_write_access, stock_text, stock_json)
 from backend.stock_circulation import (canonical_device_choice, require_stock_device_edit,
-    stock_recipient, stock_event_date, publish_stock_movement)
+    stock_event_date, publish_stock_movement)
 
 
 def require_device_stock_access(connection, actor):
@@ -123,8 +124,8 @@ def reissue_device_choices(connection, actor):
 
 def reissue_stock_device(connection, actor, token, payload):
     """Keep the original Device and commit its new assignment and physical issue together."""
-    fields = {'operationId', 'deviceId', 'version', 'recipientKind', 'recipientId', 'issuedOn', 'note'}
-    operation, digest = stock_operation(payload, fields, fields)
+    fields = {'operationId', 'deviceId', 'version', 'recipientKind', 'issuedOn', 'note'}
+    operation, digest = stock_operation(payload, fields | {'recipientId', 'departmentIds'}, fields)
     key = 'stock:reissue:' + str(actor) + ':' + operation
     connection.execute('BEGIN IMMEDIATE')
     try:
@@ -143,18 +144,19 @@ def reissue_stock_device(connection, actor, token, payload):
             raise ValueError('Choose an unassigned physical Device recorded as held and Ready To Issue')
         if has_outstanding_associated_equipment(connection,device_id):
             raise ValueError('Resolve all associated equipment through Return Equipment or Write Off before reissuing this Device')
-        recipient = stock_recipient(connection, payload['recipientKind'], payload['recipientId'])
+        recipient, departments = device_recipient(connection, payload)
+        if len(departments) > 1 and not choice['sharedDepartments']:
+            raise ValueError('Choose an eligible Desktop, Laptop or Printer for shared custody.')
         issued = stock_event_date(payload['issuedOn'], 'Date Issued')
         note = stock_text(payload['note'], 'Issue Note', 2000)
         capture_first_service_from_stock(connection, actor, choice, issued)
         actor_label = connection.execute('SELECT username FROM accounts WHERE id=?', (actor,)).fetchone()[0]
-        assignment = connection.execute('''INSERT INTO device_assignments
-            (device_id,staff_id,department_id,recipient_label,assigned_at,actor_id,actor_label)
-            VALUES(?,?,?,?,?,?,?)''', (device_id, recipient['staff_id'], recipient['department_id'],
-                recipient['recipient_label'], issued, actor, actor_label)).lastrowid
+        assignment = insert_device_custody(connection, device_id, recipient, departments, issued, actor, actor_label)
         record_actor_event(connection, actor, kind='Device', action='Assigned', label=device_id,
             reason='Reissued equipment', fields=['Assignment'],
-            after=dict(recipientKind=payload['recipientKind'], recipientId=payload['recipientId'], assignedAt=issued))
+            after=dict(**recipient_audit(payload), assignedAt=issued))
+        if len(departments) > 1:
+            recipient = custody_stock_recipient(assignment)
         entry = dict(stock_unit_id=choice['stockUnitId'], quantity=1, from_state='ready',
             to_state='issued', device_assignment_id=assignment, **recipient,
             snapshot_json=stock_json(dict(name=choice['name'], category=choice['category'],

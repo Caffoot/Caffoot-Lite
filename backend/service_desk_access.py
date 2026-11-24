@@ -36,6 +36,13 @@ def linked_ticket_staff(connection, actor_id):
     ).fetchone()
 
 
+def device_recipient_filter(scope):
+    if scope == 'personal':
+        return 'a.staff_id=?'
+    return """EXISTS(SELECT 1 FROM device_assignment_departments r
+        WHERE r.assignment_id=a.id AND r.department_id=? AND r.removed_at IS NULL)"""
+
+
 def ticket_scope_filter(connection, actor_id, scope, *, edit=False):
     """Return the same audience filter for counts, search, details and writes."""
     policy = evaluate_role_policy(connection, actor_id)
@@ -60,7 +67,7 @@ def ticket_scope_filter(connection, actor_id, scope, *, edit=False):
         f"""(
             (? AND EXISTS(SELECT 1 FROM device_assignments a
                            WHERE a.id=ticket.device_assignment_id AND a.ended_at IS NULL
-                             AND a.{recipient}=?))
+                             AND {device_recipient_filter(scope)}))
             OR (? AND EXISTS(SELECT 1 FROM it_asset_stock_entries issue
                              WHERE issue.id=ticket.stock_issue_id AND issue.{recipient}=?)
                   AND {STOCK_ASSIGNMENT_CONTINUES})
@@ -96,14 +103,17 @@ def ticket_equipment_for_creation(connection, actor_id, scope, kind, equipment_i
     if kind == 'device':
         if issue_id is not None:
             raise ValueError('A Device uses its own assignment record.')
+        filter_sql, params = ('', ()) if scope == 'it' else (
+            'AND ' + device_recipient_filter(scope), (recipient,))
         assignment = connection.execute(
-            'SELECT id,staff_id,department_id FROM device_assignments WHERE device_id=? AND ended_at IS NULL',
-            (equipment_id,),
+            f'''SELECT a.id,a.staff_id FROM device_assignments a
+                WHERE a.device_id=? AND a.ended_at IS NULL {filter_sql}''',
+            (equipment_id, *params),
         ).fetchone()
-        if scope != 'it' and (not assignment or assignment[1 if scope == 'personal' else 2] != recipient):
+        if scope != 'it' and assignment is None:
             raise LookupError('Equipment not found.')
         if assignment:
-            assignment_id, employee_id, _ = assignment
+            assignment_id, employee_id = assignment
     else:
         issue_field = 'stockUnitId' if kind == 'stockUnit' else 'stockItemId'
         choices = [issue for issue in stock_issue_records(connection)
@@ -144,7 +154,7 @@ def employee_ticket_equipment(connection, actor_id, scope):
             for device_id, label, device_type in connection.execute(f"""
                 SELECT d.id,d.name,json_extract(d.record_json,'$.type')
                 FROM device_assignments a JOIN inventory_devices d ON d.id=a.device_id
-                WHERE a.ended_at IS NULL AND a.{recipient}=?
+                WHERE a.ended_at IS NULL AND {device_recipient_filter(scope)}
             """, (identity,))
         )
     if feature_enabled(connection, 'IT Assets'):

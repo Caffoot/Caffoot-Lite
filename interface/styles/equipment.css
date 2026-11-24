@@ -51,3 +51,13 @@
 
 /* Use the existing dark foreground only for enabled, idle Device choices. */
 html.dark #modal-container .equipment-dialog .device-review-check-item:not(:has(input:checked)):not(:has(input:disabled)):not(:hover){color:var(--theme-text)}
+
+.equipment-department-picker {
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  padding: 10px;
+}
+.equipment-department-picker legend { font-weight: 750; padding: 0 4px; }
+.equipment-department-picker [data-department-search] { display: block; width: 100%; margin-top: 4px; }
+.equipment-department-picker [data-department-choices] { max-height: 12rem; overflow: auto; margin: 6px 0; }

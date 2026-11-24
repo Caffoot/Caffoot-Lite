@@ -1,8 +1,8 @@
 # Device Assignments And My Equipment
 
-> **Draft v2.2 — Unreleased.** This guide describes the implementation on `milestone-1` at `753b3266893987addb11406ef8303adb03c3c112`. It is for development review, not production installation, upgrade or restore. Use the [published v2.1 guides](../README.md) for the released application. Batch 3.4 native/manual acceptance remains deferred; release acceptance is separate.
+> **Draft v2.2 — Unreleased.** This guide includes the Stage 6.4 Shared Devices review changes. It is for development review, not production installation, upgrade or restore. Use the [published v2.1 guides](../README.md) for the released application. Batch 3.4 native/manual acceptance remains deferred; release acceptance is separate.
 
-An assignment records the Staff Member or Department holding an existing Device. Staff Details, Department Details and Device Details read the same saved relationship. My Equipment gives a linked person a limited view of their personal assignments and their Department's shared equipment.
+An assignment records one Staff Member or one or more Departments using an existing Device during a single physical custody period. Staff Details, Department Details and Device Details read the same saved relationship. My Equipment gives a linked person a limited view of their personal assignments and their Department's shared equipment.
 
 The Device remains the authoritative inventory record throughout issue, return and reassignment. Do not create a second Device to change its holder or make it visible to a person.
 
@@ -11,6 +11,7 @@ The Device remains the authoritative inventory record throughout issue, return a
 | Situation | Use this route |
 | --- | --- |
 | An eligible existing Device has never been assigned or recorded in equipment stock | **Assign Equipment** from Staff Details or **Assign Device** from Device Details → Assigned To. This records its initial holder. |
+| Departments change while the existing Device stays in the same physical custody | **Manage Departments** from Device Details → Assigned To. |
 | Brand-new computer stock needs its first Device identity | [Brand New / stock registration](Device-Stock-Registration-and-Reissue.md). Registration preserves physical stock; actual issue reduces held stock. |
 | A registered Device is genuinely held and prepared for another holder | [Reissue Existing Device](Device-Stock-Registration-and-Reissue.md). |
 | A currently assigned Device goes directly to a different holder | **Reassign Device**, after resolving associated equipment and completing preparation. See [Associated Equipment](Associated-Equipment.md#reassign-a-workstation-directly). |
@@ -34,7 +35,7 @@ Only **Desktop**, **Laptop** and **Printer** qualify for initial allocation. A D
 - still match the saved version selected in the form; and
 - have no active editing reservation when saved.
 
-The recipient must be an **Active** Staff Member or a non-archived Department. A person's login is optional and does not determine equipment eligibility. Other Device types, virtual machines and previously assigned or stock-recorded Devices cannot use this route to bypass stock, preparation or history safeguards.
+Choose an **Active** Staff Member or one or more non-archived Departments. A person's login is optional and does not determine equipment eligibility. Other Device types, virtual machines and previously assigned or stock-recorded Devices cannot use this route to bypass stock, preparation or history safeguards.
 
 See [Roles, Section Permissions And MFA](Roles-Section-Permissions-and-MFA.md) and [Optional Features](Optional-Features-and-Link-To-IPAM.md) for access controls.
 
@@ -61,18 +62,28 @@ If another technician starts editing AC-PRN-02 before confirmation, the whole al
 
 ## Assign From Device Details
 
-Use this route to choose a person or Department for one eligible Device.
+Use this route to assign one eligible Device to a person or to Departments that share it.
 
 1. Open the existing Device Details view and select **Assigned To**.
 2. Check **Current Assignment**. Choose **Assign Device** when initial allocation is available.
 3. Set **Assign To** to **Staff Member** or **Department**.
-4. Enter part of the name in **Find A Recipient**, then choose the correct entry under **Recipient**.
+4. For a Staff Member, search **Find A Recipient** and choose one person under **Recipient**. For Departments, use **Find A Department** and tick each applicable name. Your selections stay checked while you search for another name.
 5. Choose **Confirm Assignment**.
 6. Check the current holder, Issue Date and **Assignment History** on the same tab.
 
 The recipient picker reveals only eligible recipient names and identifiers needed for the action. It does not grant access to directory contacts, login details or roles. If someone is missing, ask an authorised directory user to check status rather than selecting another person's record.
 
-A Department-assigned Device belongs to that shared assignment once. It is not allocated individually to every member. See [Departments And Shared Equipment](Departments-and-Shared-Equipment.md).
+Departments share one custody period. Each selected Department has equal access to the Device under its existing membership and permissions. [Departments And Shared Equipment](Departments-and-Shared-Equipment.md)
+
+## Change The Departments Sharing A Device
+
+1. With **Devices Edit** and Devices enabled, open an assigned Desktop, Laptop or Printer and choose **Assigned To → Manage Departments**.
+2. Confirm the current selections. Search **Find A Department** and tick each Department you need to add. Clear any Department you need to remove. An archived Department already assigned can stay selected or be removed.
+3. Keep at least one Department selected. If the Device is physically returning or changing custodian, follow [Physical Return, Reissue And Direct Handover](#physical-return-reissue-and-direct-handover).
+4. Review the list and choose **Save Changes**. For example, add Sales to the Main Office Printer currently used by Accounts while it stays in the same room and custody. Both groups can find the original printer, and existing Department tickets for its current custody period become available to eligible Sales members.
+5. Check **Current Assignment** and **Assignment History**. The history shows who added or removed each Department and when. Stock quantities and physical issue history stay as recorded.
+
+Choose **Cancel** to close the form and keep the saved selection. If a change is rejected because the Device or its assignment changed, reopen **Manage Departments** and check the current selections before saving again. New assignments to archived Departments are unavailable until reactivation. [Ticket confidentiality and access](Service-Desk-Tickets.md#shared-device-ticket-confidentiality)
 
 ## Read Current Assignments And History
 
@@ -80,7 +91,7 @@ In Device Details → **Assigned To**, **Current Assignment** shows the present 
 
 **Assignment History** preserves the original Staff Member/Department label, Issue Date, Return / End Date and responsible account. Returns, write-offs and direct handovers close the relevant relationship without erasing it. Current labels follow recipient renames; historical labels retain names recorded at the time.
 
-Staff Details shows a person's current equipment and corresponding history. Department Details → Equipment shows directly Department-owned equipment, excluding members' personal assignments. With independent IT Assets access, genuine stock movements appear alongside the original relationships. Hidden stock information must not be interpreted as an absence of stock history.
+Staff Details shows a person's current equipment and corresponding history. Department Details → Equipment shows each Device shared with that Department, plus any outstanding IT Assets issued to it. Staff personal assignments remain in Staff Details. With independent IT Assets access, genuine stock movements appear alongside the original relationships. Hidden stock information must not be interpreted as an absence of stock history.
 
 Devices with assignment history are protected against ordinary deletion and inventory replacements that would remove those relationships. The administrator’s separate Clean Start operation clears those records and their history along with the rest of the operational data. [Clean Start](Service-Desk-Administration.md#clear-operational-data-with-clean-start)
 
@@ -100,7 +111,7 @@ Return Equipment also supports eligible previously deployed physical Devices tha
 
 1. Open **Associated Equipment** and resolve every outstanding explicitly linked accessory through actual return/disposition or an appropriate Write Off. Accessories do not transfer automatically.
 2. Open **Assigned To → Reassign Device** when eligible.
-3. Choose **Recipient Type** and a different eligible holder under **Find A Recipient**.
+3. Choose **Recipient Type**. For an eligible shared Device, search and tick the new Department selection under **Departments**. For a Staff Member, choose the new holder under **Find A Recipient**.
 4. Enter **Date Reassigned** and any **Reassignment Note (Optional)**. The date cannot precede the original issue or be in the future.
 5. Complete the displayed **Preparation Checks** for that Device type. Computers require **Checked Working** and **Data Wiped / Reset**; other equipment uses its applicable working, condition and data-clearing checks.
 6. Choose **Confirm Ready And Reassign** only after completing those checks.
@@ -119,7 +130,7 @@ My Equipment is for a person signing in with a login linked to their Staff recor
 3. Read **Assigned to Me** for Devices and outstanding IT Assets assigned directly to you.
 4. Read **Shared with My Department** for equipment assigned to your current Department. Viewing it does not make you the personal holder.
 5. Report an incorrect item or quantity to an authorised IT user, using its name and the relevant facts. This personal screen has no Issue, Return, Reassign or Write Off controls.
-6. To ask IT for help with listed equipment, select **Report A Problem** on the item. Confirm the preselected **Device / Asset**, then complete **Ticket Category**, **Subject** and **Description**. Add a permitted file if helpful. Select **Create Ticket** to save, or **Cancel** to return to My Equipment. Follow the saved reference in **My Tickets** for personal equipment or **Department Tickets** for shared equipment. [Full ticket instructions](Service-Desk-Tickets.md#raise-a-support-request)
+6. To ask IT for help with listed equipment, select **Report A Problem** on the item. Confirm the preselected **Device / Asset**. On a Department Device, read the confidentiality warning before completing **Subject**, **Description** or adding a file. Complete **Ticket Category** and the required fields. Add a permitted file if helpful. Select **Create Ticket** to save, or **Cancel** to return to My Equipment. Follow the saved reference in **My Tickets** for personal equipment or **Department Tickets** for shared equipment. [Full ticket instructions](Service-Desk-Tickets.md#raise-a-support-request)
 
 ![My Equipment with Report A Problem on personal and Department-shared Devices.](../../../development-handovers/evidence/employee-service-desk/my-equipment-desktop-light.png)
 

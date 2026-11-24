@@ -62,7 +62,9 @@ The screenshots use fictional inventory captured in the working application. See
 
 ## Upgrade A v2.1 Docker Installation
 
-The Stage 6.2 rehearsal used published v2.1 schema 10 and reached v2.2 schema 28 on a disposable copy. The review procedure below applies to an authorised isolated installation. Keep the v2.1 production instance on its published version until a release and deployment have been approved.
+The Stage 6.2 rehearsal used published v2.1 schema 10 and reached v2.2 schema 28 on a disposable copy. Stage 6.4 introduces schema 29 for supported upgrades in the v2.2 review build. It preserves the original Device, assignment, stock issue, accessory and ticket references while recording equal Department relationships separately. A protected inventory import continues to require matching saved Device records for equipment with this history.
+
+Before trying the schema 29 review build, stop the schema 28 review installation and archive its complete configured `/data` volume. Record the matching image identifier and keep the archive separate from the copy you upgrade. To roll back, restore that stopped archive into a fresh volume and start the recorded schema 28 image against it. See [Back Up A Complete Installation](#back-up-a-complete-installation) and the [Stage 6.3 recovery evidence](../../../development-handovers/evidence/stage-6-3/README.md). The review procedure below applies to an authorised isolated installation. Keep the v2.1 production instance on its published version until a release and deployment have been approved.
 
 ### Make A Complete Pre-Upgrade Backup
 

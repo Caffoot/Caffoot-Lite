@@ -4,10 +4,12 @@ from datetime import datetime, timezone
 from backend.audit_events import record_actor_event
 from backend.permissions import can_access
 from backend.sessions import session_account
+from backend.shared_devices import (current_departments, custody_stock_recipient, device_recipient,
+    historical_stock_recipient, insert_device_custody, next_custody_id, recipient_audit)
 from backend.equipment_associations import has_outstanding_associated_equipment
 from backend.stock_intake import stock_operation, stock_replay, stock_digest, stock_json, stock_text
 from backend.stock_circulation import (canonical_device_choice, require_stock_device_edit,
-    stock_issue_records, stock_recipient, stock_event_date, preparation_requirements,
+    stock_issue_records, stock_event_date, preparation_requirements,
     preparation_checks, publish_stock_movement)
 
 
@@ -44,6 +46,8 @@ def device_handover_source(connection, actor_id, device_id):
             raise ValueError('The Device custody record needs review before reassignment')
         original = matches[0]
     return dict(deviceId=device_id, name=choice['name'], deviceAssignmentId=choice['deviceAssignmentId'],
+        departmentIds={item['id'] for item in current_departments(connection, choice['deviceAssignmentId'])},
+        sharedDepartments=choice['sharedDepartments'],
         version=stock_digest([choice['version'], *assignment]), current=assignment,
         preparation=preparation_requirements(choice['category']), category=choice['category'],
         revision=choice['revision'], stockUnitId=choice['stockUnitId'], originalIssue=original)
@@ -55,14 +59,14 @@ def device_handover_context(connection, actor_id, device_id):
         source = device_handover_source(connection, actor_id, device_id)
     except (PermissionError, ValueError, LookupError):
         return None
-    return {key: source[key] for key in ('deviceId', 'name', 'deviceAssignmentId', 'version', 'preparation')}
+    return {key: source[key] for key in ('deviceId', 'name', 'deviceAssignmentId', 'version', 'preparation', 'sharedDepartments')}
 
 
 def reassign_device(connection, actor_id, token, payload):
     """Keep the previous holder unless every prepared handover fact commits together."""
-    fields = {'operationId', 'deviceId', 'version', 'recipientKind', 'recipientId',
+    fields = {'operationId', 'deviceId', 'version', 'recipientKind',
               'handedOverOn', 'checks', 'readyConfirmed', 'note'}
-    operation, digest = stock_operation(payload, fields, fields)
+    operation, digest = stock_operation(payload, fields | {'recipientId', 'departmentIds'}, fields)
     key = 'equipment:reassign:' + str(actor_id) + ':' + operation
     connection.execute('BEGIN IMMEDIATE')
     try:
@@ -77,8 +81,13 @@ def reassign_device(connection, actor_id, token, payload):
         source = device_handover_source(connection, actor_id, payload['deviceId'])
         if payload['version'] != source['version']:
             raise FileExistsError('Device or current holder changed. Reload before reassigning it.')
-        recipient = stock_recipient(connection, payload['recipientKind'], payload['recipientId'])
-        if (recipient['staff_id'], recipient['department_id']) == source['current'][:2]:
+        recipient, departments = device_recipient(connection, payload)
+        if len(departments) > 1 and not source['sharedDepartments']:
+            raise ValueError('Choose an eligible Desktop, Laptop or Printer for shared custody.')
+        destination = set(departments)
+        if recipient['department_id'] is not None:
+            destination.add(recipient['department_id'])
+        if recipient['staff_id'] == source['current'][0] and destination == source['departmentIds']:
             raise ValueError('Select a different eligible recipient')
         happened = stock_event_date(payload['handedOverOn'], 'Date Reassigned')
         today = datetime.now(timezone.utc).date().isoformat()
@@ -90,7 +99,7 @@ def reassign_device(connection, actor_id, token, payload):
         note = stock_text(payload['note'], 'Reassignment Note', 2000)
         ended = (datetime.now(timezone.utc).isoformat().replace('+00:00', 'Z')
                  if happened == today else happened + 'T23:59:59.999Z')
-        next_id = connection.execute('SELECT coalesce(max(id),0)+1 FROM device_assignments').fetchone()[0]
+        next_id = next_custody_id(connection)
         actor_label = connection.execute('SELECT username FROM accounts WHERE id=?', (actor_id,)).fetchone()[0]
         result = dict(deviceId=source['deviceId'], previousAssignmentId=source['deviceAssignmentId'],
                       assignmentId=next_id, handedOverOn=happened)
@@ -98,7 +107,7 @@ def reassign_device(connection, actor_id, token, payload):
             reason='Direct Device reassignment after confirmed preparation', fields=['Assignment', 'Preparation'],
             confirmation_id=key, after=dict(operationHash=digest, result=result,
                 deviceId=source['deviceId'], previousAssignmentId=source['deviceAssignmentId'], assignmentId=next_id,
-                recipientKind=payload['recipientKind'], recipientId=payload['recipientId'], endedAt=ended,
+                **recipient_audit(payload), endedAt=ended,
                 assignedAt=ended, handedOverOn=happened, readyConfirmed=True, checks=checks, note=note))
         event_id = connection.execute('SELECT last_insert_rowid()').fetchone()[0]
         movement = None
@@ -106,19 +115,20 @@ def reassign_device(connection, actor_id, token, payload):
             original = source['originalIssue']
             movement = connection.execute('SELECT coalesce(max(id),0)+1 FROM it_asset_stock_movements').fetchone()[0]
             snapshot = connection.execute('SELECT snapshot_json FROM it_asset_stock_entries WHERE id=?', (original['id'],)).fetchone()[0]
-            connection.execute('''INSERT INTO it_asset_stock_entries
-                (movement_id,stock_unit_id,quantity,from_state,to_state,staff_id,department_id,recipient_label,
-                 source_issue_entry_id,device_assignment_id,snapshot_json) VALUES(?,?,1,'issued',NULL,?,?,?,?,?,?)''',
-                (movement, source['stockUnitId'], original['staffId'], original['departmentId'], original['recipientLabel'],
-                 original['id'], source['deviceAssignmentId'], snapshot))
+            outgoing = dict(movement_id=movement, stock_unit_id=source['stockUnitId'], quantity=1,
+                from_state='issued', source_issue_entry_id=original['id'], device_assignment_id=source['deviceAssignmentId'],
+                snapshot_json=snapshot, **historical_stock_recipient(original))
+            columns = ','.join(outgoing)
+            marks = ','.join('?' for _ in outgoing)
+            connection.execute(f'INSERT INTO it_asset_stock_entries({columns}) VALUES({marks})', tuple(outgoing.values()))
         connection.execute('''UPDATE device_assignments SET ended_at=?,closure_movement_id=?,
             handover_event_id=?,successor_assignment_id=? WHERE id=?''',
             (ended, movement, event_id, next_id, source['deviceAssignmentId']))
-        connection.execute('''INSERT INTO device_assignments
-            (id,device_id,staff_id,department_id,recipient_label,assigned_at,actor_id,actor_label) VALUES(?,?,?,?,?,?,?,?)''',
-            (next_id, source['deviceId'], recipient['staff_id'], recipient['department_id'],
-             recipient['recipient_label'], ended, actor_id, actor_label))
+        insert_device_custody(connection, source['deviceId'], recipient, departments, ended,
+                              actor_id, actor_label, identity=next_id)
         if movement is not None:
+            if len(departments) > 1:
+                recipient = custody_stock_recipient(next_id)
             entry = dict(stock_unit_id=source['stockUnitId'], quantity=1, from_state=None, to_state='issued',
                 device_assignment_id=next_id, **recipient, snapshot_json=stock_json(dict(name=source['name'],
                     category=source['category'], deviceId=source['deviceId'], deviceRevision=source['revision'])))

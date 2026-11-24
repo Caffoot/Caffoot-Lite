@@ -1,10 +1,10 @@
 # Departments And Shared Equipment
 
-> **Draft v2.2 — Unreleased.** This guide describes the implementation on `milestone-1` at `753b3266893987addb11406ef8303adb03c3c112`. It is for development review, not production installation, upgrade or restore. Use the [published v2.1 guides](../README.md) for the released application. Native/manual and release acceptance remain separate.
+> **Draft v2.2 — Unreleased.** This guide includes the Stage 6.4 Shared Devices review changes. It is for development review, not production installation, upgrade or restore. Use the [published v2.1 guides](../README.md) for the released application. Native/manual and release acceptance remain separate.
 
 Departments group Staff Members and provide a holder for equipment used collectively, such as an Accounts printer. They are simple independent groups, without subdepartments or management trees. Membership is optional and grants no application permissions.
 
-An item assigned to a Department stays assigned once to that Department. It is not copied to every member or made each person's individual responsibility. Personally assigned equipment is a separate relationship, even when its holder belongs to the same Department.
+An eligible Desktop, Laptop or Printer can be shared by several Departments in one physical custody period. Every assigned Department has equal access through its existing membership. Personally assigned equipment and standalone IT Asset issues keep their existing recipient rules.
 
 ## Before You Start
 
@@ -15,7 +15,7 @@ An item assigned to a Department stays assigned once to that Department. It is n
 | View Staff membership in Department Details | Independent Staff Members Read. |
 | Change someone's membership | Staff Members Edit, through the existing Staff Add/Edit form. |
 | View shared Devices or IT Assets | Read access to the corresponding enabled equipment section. |
-| Initially assign an eligible existing Device | Devices Edit, with Devices enabled. |
+| Initially assign an eligible existing Device or manage its assigned Departments | Devices Edit, with Devices enabled. |
 | Issue or return IT Assets stock | IT Assets Edit, with IT Assets enabled. Canonical Device stock work also requires Devices Edit and Devices enabled. |
 
 Staff Members and Departments are core sections and do not depend on the IT Assets switch. Account administration remains separate in **Staff → Permissions**; Departments Edit does not grant it. See [Roles, Section Permissions And MFA](Roles-Section-Permissions-and-MFA.md) and [Optional Features](Optional-Features-and-Link-To-IPAM.md) if controls are unavailable.
@@ -61,9 +61,9 @@ Moving someone from Accounts to Sales changes their Department-shared equipment 
 
 | Tab | What it shows |
 | --- | --- |
-| Overview | Name, status, independent structure and New Membership availability. Staff, Department-Owned Devices and IT Assets summaries require independent access. **Not Available** is not a zero count. |
+| Overview | Name, status, independent structure and New Membership availability. Staff, Shared Devices and IT Assets summaries require independent access. **Not Available** is not a zero count. |
 | Staff Members | Current members, including inactive Staff whose membership is retained. Change membership through the Staff form. |
-| Equipment | Devices and outstanding IT Assets assigned directly to the Department, followed by genuine recorded equipment history. Personally assigned Staff equipment is excluded. |
+| Equipment | Devices shared with the Department and outstanding IT Assets issued to it, followed by recorded equipment history. A Device shared with Sales and Accounts appears in both Departments and opens the same inventory record. Personally assigned Staff equipment is excluded. |
 | History | Available recorded Department changes and authorised equipment activity, with dates and responsible accounts. Visibility depends on access to the existing history/equipment services. An empty state does not prove no changes have occurred. |
 
 The IT Assets summary counts outstanding issued quantities; it is not stock physically held by IT. Equipment dates and history remain on their original records, rather than being copied into a separate Department inventory.
@@ -74,6 +74,12 @@ If a panel could not load, reopen Details to retry. Check your access before int
 
 *Approved Batch 3.8 application capture with fictional data. The dock remains assigned to the Department once; the history records its original issue and partial return. Personally assigned Staff equipment is excluded from this view.*
 
+## Change Which Departments Share A Device
+
+Open **Device Details → Assigned To → Manage Departments** with **Devices Edit**. For example, if Finance joins Accounts in using the same printer, tick Finance, leave Accounts selected and choose **Save Changes**. Choose **Cancel** to keep the saved Departments. Use the physical return or handover workflow when the Device actually changes hands.
+
+A saved addition gives eligible Finance members access to employee-visible tickets from the current custody period, including earlier reports. Removing Finance ends that access on the next request. Previous custody-period tickets remain restricted to authorised IT. If Finance is later added back during the same custody period, current-period access resumes. [Manage Departments](Device-Assignments-and-My-Equipment.md#change-the-departments-sharing-a-device) · [Ticket confidentiality](Service-Desk-Tickets.md#shared-device-ticket-confidentiality)
+
 ## Assign Shared Equipment
 
 ### An Existing Device With No Equipment History
@@ -83,7 +89,7 @@ Use initial allocation for an eligible existing Desktop, Laptop or Printer that 
 1. Open the original Device Details view and select **Assigned To**.
 2. Choose **Assign Device**, where the Device is eligible and you have Devices Edit.
 3. Set **Assign To** to **Department**.
-4. Search under **Find A Recipient** and select the correct active Department under **Recipient**.
+4. Use **Find A Department** and tick one or more active Departments.
 5. Choose **Confirm Assignment** and check the holder and **Assignment History**.
 6. With Departments Read, open Department Details → **Equipment** to see the same saved relationship.
 

@@ -288,8 +288,7 @@ async function test(){
  await page.locator('#device-details-tab-assigned').click();
  await page.locator('[data-equipment-action="assign-device"]').click();
  await page.locator('#equipment-recipient-kind').selectOption('department');
- await page.locator('#equipment-recipient option[value="'+dept.id+'"]').waitFor({state:'attached'});
- await page.locator('#equipment-recipient').selectOption(dept.id);
+ await page.locator('[data-department-choice][value="'+dept.id+'"]').check();
  for(const width of [1440,390]){
   await page.setViewportSize({width,height:width===390?844:950});
   for(const theme of ['light','dark']){await page.evaluate(theme=>caffootSetTheme(theme),theme);await capture(`assignment-${width}-${theme}`);}
