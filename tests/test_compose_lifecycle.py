@@ -42,6 +42,19 @@ class ComposeLifecycleTests(unittest.TestCase):
                                   check=True, capture_output=True, text=True).stdout.strip()
         def inside(script):
             return run("exec", "-T", "caffoot-lite", "python", "-c", script)
+        schema_check = """
+import sqlite3
+from backend.schema import SCHEMA_VERSION
+
+with sqlite3.connect('file:/data/caffoot.sqlite3?mode=ro', uri=True) as db:
+    versions = db.execute('SELECT version FROM schema_migrations ORDER BY version').fetchall()
+    assert versions == [(version,) for version in range(1, SCHEMA_VERSION + 1)], versions
+    integrity = db.execute('PRAGMA integrity_check').fetchall()
+    assert integrity == [('ok',)], integrity
+    foreign_keys = db.execute('PRAGMA foreign_key_check').fetchall()
+    assert not foreign_keys, foreign_keys
+    print(SCHEMA_VERSION)
+"""
         try:
             run("up", "--build", "-d", "--wait")
             self.assertEqual(run("port", "caffoot-lite", "8080").split(":")[-1], str(port))
@@ -68,6 +81,7 @@ class ComposeLifecycleTests(unittest.TestCase):
             email_key_hash = inside(
                 "import hashlib,pathlib; p=pathlib.Path('/data/account-email-secret.key'); "
                 "assert p.stat().st_mode&0o777==0o600; print(hashlib.sha256(p.read_bytes()).hexdigest())")
+            schema_version = inside(schema_check)
             run("restart", "caffoot-lite")
             self.assertEqual(fingerprint, inside(
                 "import hashlib,pathlib; print(hashlib.sha256(pathlib.Path('/data/tls/server.crt').read_bytes()).hexdigest())"))
@@ -76,6 +90,7 @@ class ComposeLifecycleTests(unittest.TestCase):
                 "print(c.execute('SELECT value FROM smoke_marker').fetchone()[0])"), "persisted")
             self.assertEqual(email_key_hash, inside("import hashlib,pathlib; print(hashlib.sha256(pathlib.Path('/data/account-email-secret.key').read_bytes()).hexdigest())"))
             self.assertEqual(inside("import sqlite3; c=sqlite3.connect('/data/caffoot.sqlite3'); print(c.execute('SELECT count(*) FROM account_email_attempts').fetchone()[0])"), "1")
+            self.assertEqual(inside(schema_check), schema_version)
             run("up", "-d", "--wait", "--force-recreate")
             self.assertEqual(fingerprint, inside(
                 "import hashlib,pathlib; print(hashlib.sha256(pathlib.Path('/data/tls/server.crt').read_bytes()).hexdigest())"))
@@ -84,6 +99,7 @@ class ComposeLifecycleTests(unittest.TestCase):
                 "print(c.execute('SELECT value FROM smoke_marker').fetchone()[0])"), "persisted")
             self.assertEqual(email_key_hash, inside("import hashlib,pathlib; print(hashlib.sha256(pathlib.Path('/data/account-email-secret.key').read_bytes()).hexdigest())"))
             self.assertEqual(inside("import sqlite3; c=sqlite3.connect('/data/caffoot.sqlite3'); print(c.execute('SELECT count(*) FROM account_email_attempts').fetchone()[0])"), "1")
+            self.assertEqual(inside(schema_check), schema_version)
         finally:
             run("down", "-v", "--remove-orphans")
             build_settings.cleanup()

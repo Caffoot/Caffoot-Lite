@@ -226,7 +226,21 @@ async function confirm(page){
   assert.equal(unauthenticatedAccount.headers().location,'/setup#sign-in-required');
   for(const resource of ['/interface/application.js','/api/account/profile'])assert.equal((await anonymous.request.get(address+resource)).status(),401,resource);
   await anonymous.close();
-  assert.equal((await staffContext.request.post(address+'/api/users/profile',{headers:{Origin:address,'X-CSRF-Token':accountSession.csrf_token},data:{userId:1,profile:{firstName:'Forbidden'}}})).status(),403);
+  const ownerProfile = (await catalogue(context)).users.find(user => user.id === 1).profile;
+  const featureSettingsUrl = address + '/api/settings/features';
+  const savedFeatures = await (await context.request.get(featureSettingsUrl)).json();
+  const staffHeaders = {Origin: address, 'X-CSRF-Token': accountSession.csrf_token};
+  const deniedProfile = await staffContext.request.post(address + '/api/users/profile', {
+   headers: staffHeaders, data: {userId: 1, profile: {firstName: 'Forbidden'}}
+  });
+  assert.equal(deniedProfile.status(), 403);
+  const deniedFeature = await staffContext.request.post(featureSettingsUrl, {
+   headers: staffHeaders,
+   data: {feature: 'devices', enabled: !savedFeatures.features.devices, confirmDisable: true}
+  });
+  assert.equal(deniedFeature.status(), 403);
+  assert.deepEqual((await catalogue(context)).users.find(user => user.id === 1).profile, ownerProfile);
+  assert.deepEqual(await (await context.request.get(featureSettingsUrl)).json(), savedFeatures);
   await staff.evaluate(()=>switchTab('devices'));assert.equal(await staff.locator('.account-screen').count(),1);
   await staff.locator('.account-screen .subnav [data-section="security"]').click();
   await staff.locator('.optional-mfa-removal summary').click();

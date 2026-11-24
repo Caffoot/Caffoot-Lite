@@ -142,6 +142,60 @@ class ProtectedImportHttpTests(unittest.TestCase):
         self.assertEqual(denied, {'error': 'forbidden'})
         self.assertEqual(self.dump(), before)
 
+    def test_shared_accessory_custody_and_ticket_access_survive_protected_import(self):
+        source, _, _ = self.operational_fixture()
+        feature_route = '/api/settings/features'
+        for feature in ('it_assets', 'suppliers', 'equipment_lifecycle'):
+            status, body, _ = self.request(feature_route, method='POST',
+                                           payload=dict(feature=feature, enabled=True))
+            self.assertEqual(status, 200, body)
+        assignment_route = '/api/equipment/assignments?deviceId=device'
+        status, assignment, _ = self.request(assignment_route)
+        self.assertEqual(status, 200, assignment)
+        custody, = assignment['current']
+        status, body, _ = self.request('/api/equipment/manage-departments', method='POST', payload=dict(
+            deviceId='device', revision=assignment['revision'], assignmentId=custody['id'],
+            departmentIds=['dept', 'other']))
+        self.assertEqual(status, 200, body)
+
+        status, picker, _ = self.request('/api/service-desk/department/equipment', actor=5)
+        self.assertEqual(status, 200, picker)
+        accessory, = [entry for entry in picker['equipment'] if entry['kind'] == 'stockItem']
+        ticket = self.create('department', actor=5, equipmentKind='stockItem', equipmentId=accessory['id'],
+                             stockIssueId=accessory['stockIssueId'], associationId=accessory['associationId'],
+                             attachments=[TEST_FILE])
+        route = self.ticket_path('department', f'/{ticket}/messages')
+        status, thread, _ = self.request(route, actor=4)
+        self.assertEqual(status, 200, thread)
+        attachment, = thread['attachments']
+
+        for feature in ('it_assets', 'suppliers', 'equipment_lifecycle'):
+            status, body, _ = self.request(feature_route, method='POST', payload=dict(
+                feature=feature, enabled=False, confirmDisable=True))
+            self.assertEqual(status, 200, body)
+        protected_rows = self.non_inventory_rows()
+        unchanged = self.dump()
+        incompatible = dict(source, devices=[record for record in source['devices'] if record['id'] != 'device'])
+        self.assertEqual(self.preview(incompatible, 400)['code'], 'protected_devices')
+        self.assertEqual(self.dump(), unchanged)
+
+        source['devices'].reverse()
+        self.confirm(self.preview(source)['draftId'])
+        self.assertEqual(self.non_inventory_rows(), protected_rows)
+        self.assertEqual(self.request(route, actor=5)[0], 404)
+
+        status, body, _ = self.request(feature_route, method='POST',
+                                       payload=dict(feature='it_assets', enabled=True))
+        self.assertEqual(status, 200, body)
+        for actor in (4, 5):
+            self.assertEqual(self.download('department', ticket, attachment['id'], actor)[:2], (200, ATTACHMENT))
+        status, assignment, _ = self.request(assignment_route)
+        self.assertEqual(status, 200, assignment)
+        current, = assignment['current']
+        self.assertEqual(current['id'], custody['id'])
+        self.assertEqual({department['id'] for department in current['departments']}, {'dept', 'other'})
+        self.dump()
+
     def test_dependency_added_after_preview_is_rechecked_at_confirmation(self):
         draft = self.preview(exported_inventory())['draftId']
         self.assign_device()

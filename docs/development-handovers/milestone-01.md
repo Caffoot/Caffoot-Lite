@@ -1,6 +1,12 @@
 # Milestone 01 Development Handover — v2.2 Target
 
-## Stage 6.4 Shared Devices — 24 November 2026
+## Stage 6.5 Integrated Regression — 24 November 2026
+
+Stage 6.4 is owner-accepted and integrated. Stage 6.5 tested source revision `2380334970e1162ad6811f1703a91dcfc863b803` on `milestone-1`, schema 29, using fictional data and disposable application instances. The regression report records the new results, relevant earlier evidence and the remaining native, private-data, manual and release checks. [Stage 6.4 sign-off](https://github.com/Caffoot/Caffoot-Lite/issues/431#issuecomment-7132417522) · [Stage 6.5 report](evidence/stage-6-5/README.md) · [PR #448](https://github.com/Caffoot/Caffoot-Lite/pull/448)
+
+Published v2.1 is the current release. Stage 6.6 native and private acceptance, Stage 6.7 final documentation, the separately approved website preparation sequence and Stage 6.8 independent audit remain future checkpoints. [Milestone #351](https://github.com/Caffoot/Caffoot-Lite/issues/351) · [Release documentation #366](https://github.com/Caffoot/Caffoot-Lite/issues/366) · [Final audit #443](https://github.com/Caffoot/Caffoot-Lite/issues/443)
+
+## Historical Stage 6.4 Shared Devices Review — 24 November 2026
 
 The Stage 6.4 review branch starts from `957969ba1b44465472765e47f91117ca7c87d177` on `milestone-1`. Schema 29 preserves one physical custody period per Device and keeps equal Department relationships with attributed history. Stock recipient changes apply only to new multi-Department Device custody issues, including explicitly associated accessories. Employee Device tickets use live Department membership and the saved custody ID. [PR #447](https://github.com/Caffoot/Caffoot-Lite/pull/447) · [Owner-approved technical decision](https://github.com/Caffoot/Caffoot-Lite/issues/431#issuecomment-7129437209)
 
