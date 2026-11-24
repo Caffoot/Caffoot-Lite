@@ -49,6 +49,8 @@ If the reviewed backup changes or omits any protected Device, Caffoot Lite rejec
 
 *Both conflicts appear in the same rejection. Keep the original backup and review the file and mounting choices before starting again.*
 
+See the [desktop and mobile rejection captures in light and dark modes](../../../development-handovers/evidence/stage-6-2/README.md#protected-import-rejection-captures).
+
 | What you see | What to check |
 | --- | --- |
 | **Import v1.3.3 Inventory** is unavailable | Confirm the session belongs to an active MFA-enrolled Administrator and that Devices, IPAM and Racks are enabled. |

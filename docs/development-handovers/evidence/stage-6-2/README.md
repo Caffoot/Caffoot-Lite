@@ -7,7 +7,8 @@
 | Published v1.3.3 HTML, export schema 1 | [`65d9e016c6ddefcd43f236cacdf78fa168e7472f`](https://github.com/Caffoot/Caffoot-Lite/commit/65d9e016c6ddefcd43f236cacdf78fa168e7472f) |
 | Published v2.1 Docker source, SQLite schema 10 | [`c3237114108cad9f7d4e57657b6aed5e0091a5ef`](https://github.com/Caffoot/Caffoot-Lite/commit/c3237114108cad9f7d4e57657b6aed5e0091a5ef) |
 | Starting `milestone-1` integration, unreleased v2.2, SQLite schema 28 | [`2107de3668b08c5abdfdae6fe231a3114bbfc380`](https://github.com/Caffoot/Caffoot-Lite/commit/2107de3668b08c5abdfdae6fe231a3114bbfc380) |
-| Corrected runtime and application captures, SQLite schema 28 | [`222439bd82bc46d63cb3d232fde801cc378d426e`](https://github.com/Caffoot/Caffoot-Lite/commit/222439bd82bc46d63cb3d232fde801cc378d426e) |
+| Stage 6.2 import runtime and original review and success captures, SQLite schema 28 | [`222439bd82bc46d63cb3d232fde801cc378d426e`](https://github.com/Caffoot/Caffoot-Lite/commit/222439bd82bc46d63cb3d232fde801cc378d426e) |
+| Protected import rejection padding and refreshed rejection captures, SQLite schema 28 | [`9458ef86e5588a096a6b2fca6bc9d757a31abaaa`](https://github.com/Caffoot/Caffoot-Lite/commit/9458ef86e5588a096a6b2fca6bc9d757a31abaaa) |
 
 ## Correction And Focused Backend Verification
 
@@ -48,7 +49,17 @@ Captured on Chromium 156.0.8078.79 with Playwright 1.62.1 and Node 24.22.3 on De
 | [Access Point review](01-access-point-review.png) | Landing Access Point needs a mounting decision. |
 | [Replacement review](02-replacement-review.png) | Inventory counts, the proposed laptop mounting correction and confirmation choices. |
 | [Successful import](03-import-success.png) | The application confirms that inventory was imported. |
-| [Protected import rejection](04-protected-import-rejection.png) | Missing Supplier-linked Reception Desktop and changed Workshop Laptop with a Lifecycle record. |
+
+### Protected Import Rejection Captures
+
+The four captures below were taken on 24 November 2026 from the padded rejection dialog using the runtime and browser runner in `9458ef86e5588a096a6b2fca6bc9d757a31abaaa`. Chromium 156.0.8078.79 and Playwright 1.62.1 ran with Node 24.22.3 on Debian 13 AMD64, using the same fictional inventory and loopback HTTPS setup. The dialog lists the missing Supplier-linked Reception Desktop and changed Workshop Laptop with a Lifecycle record.
+
+| Viewport | Light mode | Dark mode | Measured padding |
+| --- | --- | --- | --- |
+| Desktop, 1440 × 960 | [Desktop light](04-protected-import-rejection.png) | [Desktop dark](04-protected-import-rejection-desktop-dark.png) | 28 px |
+| Mobile, 390 × 844 | [Mobile light](04-protected-import-rejection-mobile-light.png) | [Mobile dark](04-protected-import-rejection-mobile-dark.png) | 24 px |
+
+The genuine Chromium run passed the rejection, conflict text, unchanged database and Close checks in all four views. The modular interface's template resolution and pinned stylesheet checks also passed.
 
 To reproduce, fetch the published `v1.3.3` tag and run the browser test using the repository's existing Playwright setup.
 
