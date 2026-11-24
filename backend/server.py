@@ -2003,7 +2003,12 @@ def main():
     if not TLS_NAMES:
         raise RuntimeError("CAFFOOT_SERVER_ADDRESS must identify the TLS hostname or IP")
     context = ensure_certificate(TLS_DIR, TLS_NAMES)
-    server = ThreadingHTTPServer((HOST, PORT), Handler)
+    # One browser load requests up to 21 styles concurrently. Allow a bounded
+    # burst of pending connections while the existing TLS accept path runs.
+    class CaffootHttpsServer(ThreadingHTTPServer):
+        request_queue_size = 64
+
+    server = CaffootHttpsServer((HOST, PORT), Handler)
     server.socket = context.wrap_socket(server.socket, server_side=True)
     # Apply the installed timezone immediately before the server accepts requests.
     with connect() as connection:
