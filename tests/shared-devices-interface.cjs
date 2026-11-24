@@ -124,7 +124,8 @@ async function capture(page, name, required) {
             assert.ok(geometry.width<=width, JSON.stringify({name, ...geometry}));
             const filename = `${name}-${device}-${theme}.png`;
             const buffer = await page.screenshot({
-                path:path.join(evidence,filename), animations:'disabled', fullPage:name==='department-tickets'
+                path:path.join(evidence,filename), animations:'disabled',
+                fullPage:name==='department-tickets' || (name==='my-equipment' && device==='mobile')
             });
             captures[filename] = {width,height,theme,sha256:createHash('sha256').update(buffer).digest('hex')};
         }
