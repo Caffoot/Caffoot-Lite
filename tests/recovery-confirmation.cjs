@@ -150,7 +150,10 @@ async function main() {
     const response = await postFromPage(recovery, '/api/recovery/request',
       () => requestForm.getByRole('button').click(), 200);
     await form.waitFor();
-    return (await response.json()).challengeId;
+    const {challengeId, message} = await response.json();
+    assert.equal(message, 'If recovery is available, instructions will be emailed. Otherwise, contact your Caffoot Lite administrator.');
+    assert.equal(await feedback.textContent(), message);
+    return challengeId;
   }
   async function cleared() {
     assert.equal(await password.inputValue(), '');
@@ -161,29 +164,65 @@ async function main() {
     await confirmation.fill(recovered);
   }
 
+  const loginForm = recovery.locator('#form');
+  const recoveryUsername = requestForm.getByLabel('Username');
+  const requestButton = requestForm.getByRole('button', {name: 'Request Recovery Code'});
+  const back = recovery.getByRole('button', {name: 'Back To Sign In'});
+  async function checkLayout(step) {
+    assert.ok(await loginForm.isHidden());
+    assert.ok(await summary.isHidden());
+    assert.ok(await back.isVisible());
+    assert.equal(await requestForm.isVisible(), step === 'request');
+    assert.equal(await form.isVisible(), step === 'reset');
+    assert.equal(await recovery.locator('#recovery-resend').isVisible(), step === 'reset');
+    await recovery.getByRole('heading', {name: step === 'request' ? 'Request a Recovery Code' : 'Reset Your Password'}).waitFor();
+
+    for (const [width, height, name] of [[1440, 950, 'desktop'], [390, 844, 'mobile']]) {
+      await recovery.setViewportSize({width, height});
+      for (const theme of ['light', 'dark']) {
+        await recovery.evaluate(theme => {
+          localStorage.setItem('caffoot_theme_preference', theme);
+          applySignInTheme();
+        }, theme);
+        assert.equal(await recovery.locator('html').evaluate(el => el.classList.contains('dark')), theme === 'dark');
+        assert.ok(await recovery.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
+        assert.ok(await loginForm.isHidden());
+        if (step === 'reset') {
+          const first = await password.boundingBox();
+          const second = await confirmation.boundingBox();
+          assert.ok(name === 'desktop' ? first.y === second.y && first.x < second.x : first.y < second.y);
+        }
+        if (theme === 'light' && process.env.CAFFOOT_RECOVERY_OUTPUT) {
+          await recovery.screenshot({
+            path: path.join(process.env.CAFFOOT_RECOVERY_OUTPUT, 'recovery-' + step + '-' + name + '.png'),
+            fullPage: true, animations: 'disabled',
+          });
+        }
+      }
+    }
+    await recovery.evaluate(() => {
+      localStorage.setItem('caffoot_theme_preference', 'light');
+      applySignInTheme();
+    });
+  }
+
   await recovery.goto(origin + '/setup');
+  await loginForm.waitFor();
   await summary.focus();
   await recovery.keyboard.press('Enter');
+  await recovery.waitForFunction(() => document.querySelector('#recovery-request-form input') === document.activeElement);
+  await checkLayout('request');
+  await recoveryUsername.press('Tab');
+  assert.equal(await requestButton.evaluate(el => el === document.activeElement), true);
+  await requestButton.press('Tab');
+  assert.equal(await back.evaluate(el => el === document.activeElement), true);
   const challengeId = await requestCode();
   assert.equal(await token.evaluate(el => el === document.activeElement), true);
   assert.equal(await feedback.getAttribute('role'), 'status');
   assert.equal(await confirmation.getAttribute('aria-describedby'), 'recovery-message');
   assert.equal(await password.getAttribute('autocomplete'), 'new-password');
   assert.equal(await confirmation.getAttribute('autocomplete'), 'new-password');
-  for (const [width, height, name] of [[1440, 950, 'desktop'], [390, 844, 'mobile']]) {
-    await recovery.setViewportSize({width, height});
-    assert.ok(await recovery.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
-    const first = await password.boundingBox();
-    const second = await confirmation.boundingBox();
-    assert.ok(name === 'desktop' ? first.y === second.y && first.x < second.x : first.y < second.y);
-    if (process.env.CAFFOOT_RECOVERY_OUTPUT) {
-      await cleared();
-      await recovery.screenshot({
-        path: path.join(process.env.CAFFOOT_RECOVERY_OUTPUT, 'recover-password-' + name + '.png'),
-        fullPage: true, animations: 'disabled',
-      });
-    }
-  }
+  await checkLayout('reset');
   await token.fill(fs.readFileSync(mail, 'utf8'));
   await token.press('Tab');
   assert.equal(await password.evaluate(el => el === document.activeElement), true);
@@ -247,11 +286,13 @@ async function main() {
   await recovery.getByRole('button', {name: 'Back To Sign In'}).click();
   await cleared();
   assert.equal(await recovery.locator('#username').evaluate(el => el === document.activeElement), true);
+  assert.ok(await loginForm.isVisible());
   await summary.click();
   await openReset();
-  await summary.click();
+  await recovery.locator('#password-recovery').evaluate(el => { el.open = false; });
   await recovery.locator('#recovery-confirm-form[hidden]').waitFor({state: 'attached'});
   await cleared();
+  assert.ok(await loginForm.isVisible());
   await summary.click();
   await requestForm.getByLabel('Username').fill('navigation-example');
   await requestForm.getByRole('button').click();
@@ -264,6 +305,20 @@ async function main() {
   await recovery.reload();
   assert.equal(await recovery.evaluate(() => sessionStorage.getItem('recoveryClearedOnPagehide')), 'true');
   await cleared();
+
+  await recovery.locator('#username').fill(username);
+  await recovery.locator('#password').fill(recovered);
+  await recovery.locator('#submit').click();
+  const loginCode = recovery.locator('#code');
+  await loginCode.waitFor();
+  await summary.click();
+  assert.ok(await loginForm.isHidden());
+  await back.click();
+  assert.equal(await loginCode.evaluate(el => el === document.activeElement), true);
+  await recovery.getByRole('heading', {name: 'Verify Your Identity'}).waitFor();
+  await loginCode.fill(authenticator(secret));
+  await recovery.waitForURL('**/inventory');
+  console.log('Back restores the original sign-in and MFA challenge, and browser sign-in with MFA succeeds.');
 
   for (const request of confirms) {
     assert.deepEqual(Object.keys(request.postDataJSON()).sort(), ['challengeId', 'mfa_code', 'password', 'token']);

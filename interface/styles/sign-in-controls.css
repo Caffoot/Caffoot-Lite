@@ -34,6 +34,8 @@ html.dark .eyebrow {color:#fb923c;}
 .brand-content .brand-tagline-detail{font-size:clamp(.75rem,1.1vw,.875rem);font-weight:400;line-height:1.5;color:#ffad70;margin:0 0 18px}
 #recovery-reset-fields{border:0;padding:0;margin:0;min-width:0}
 #password-recovery .secondary{cursor:pointer}
+#password-recovery[open] > summary,
+#auth-live-screen:has(> #password-recovery[open]:not([hidden])) > :is(#auth-eyebrow,#auth-heading,#intro,#form){display:none}
 .visually-hidden{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 
 /* Keep the added mandatory-enrolment instructions readable without restyling first-run setup. */
