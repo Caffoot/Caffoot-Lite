@@ -1,0 +1,25 @@
+test_complete_named_volume_recovery_and_matching_rollback (test_stage_6_3_recovery.CompleteVolumeRecoveryTests.test_complete_named_volume_recovery_and_matching_rollback) ... IMAGE sha256:9c44356190eeb36255953a04d71dd1fb1d6546eb3e401ef26cd44a65dee5256d amd64 c3237114108cad9f7d4e57657b6aed5e0091a5ef
+IMAGE sha256:5a2f2dbb59730137c3f357af1c8a0b5ccd8df04ba4d34b1e90372aba7cdf7294 amd64 5645bc4f91b8090a3eef62673c817bfaa6b10966
+TLS SHA-256 3e8ddafddd7b6924e8626433514c2326663bbdaae0bcf2e2c69508ec16e0fca0
+STOPPED caffoot-stage63-21e2c7ecfbd3-source10 exit=137
+ARCHIVE schema=10 sha256=ba80443cfed7cae0e4771dfe3dd7df061212cb54dd2e41486d7f25cecb66eafb tables=17 paths=9 python=3.12.16 sqlite=3.53.4 sidecars=[]
+STOPPED caffoot-stage63-21e2c7ecfbd3-source28 exit=137
+ARCHIVE schema=28 sha256=feb80ee8fb625b052fe92f4685476af093893aa184ca34e406b215fabbd19737 tables=57 paths=9 python=3.12.16 sqlite=3.53.4 sidecars=[]
+STOPPED caffoot-stage63-21e2c7ecfbd3-target28 exit=137
+STOPPED caffoot-stage63-21e2c7ecfbd3-target28 exit=137
+SCHEMA 28 PASS: exact pre-start restore, trusted HTTPS and access after start, restart and recreation
+STOPPED caffoot-stage63-21e2c7ecfbd3-rollback exit=137
+STOPPED caffoot-stage63-21e2c7ecfbd3-rollback exit=137
+SCHEMA 10 PASS: original unchanged, exact rollback, matching-image access and recreation
+STOPPED caffoot-stage63-21e2c7ecfbd3-bind exit=137
+BIND PASS: runtime UID/GID 10001:10001, runner-visible UID/GID 65534:65534, exact stopped restore and durable data after re-enabling features
+REHEARSAL PASS: all recovery scenarios completed
+ok
+
+----------------------------------------------------------------------
+Ran 1 test in 162.298s
+
+OK
+
+CLEANUP PASS: both attempts left no rehearsal containers, volumes or networks.
+The bind directory, temporary fixture data and the two locally built rehearsal images were removed.
