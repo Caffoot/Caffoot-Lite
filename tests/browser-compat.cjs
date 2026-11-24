@@ -163,6 +163,8 @@ async function run(){
       if(!response.ok)throw Error('Unable to enable regression inventory');
     }
   });
+  // The document load can finish before the inventory's asynchronous bootstrap.
+  await page.locator('#app[aria-busy="false"]').waitFor();
   await page.reload();
   assert.equal(await page.locator('script[src*="cdn.tailwindcss.com"]').count(),0,
     'Inventory must not load remote Tailwind JavaScript');
