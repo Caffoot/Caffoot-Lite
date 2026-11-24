@@ -48,6 +48,14 @@ The accessory follow-up passed 72 focused backend tests. Live HTTP and loopback 
 
 The My Equipment layout check verified that every **Report A Problem** button meets the right edge of its row in both cards at widths of 1440, 390 and 320 pixels. It also checked for overflow and opened the ticket form from a personal Device, a Department Device and an associated accessory. The Department warning and equipment preselection continued to work. [Chromium check](../../../../tests/shared-devices-interface.cjs)
 
+## Git History Secret Scan
+
+Gitleaks 8.24.3 reported `generic-api-key` on line 272 of `capture-manifest.json` in commit `18e3a1ea2da7b15e2d26182db1abb8a24761c86a`. The reported line and columns identify the screenshot provenance entry for `backend/service_desk_access.py`. Recomputing the SHA-256 of that file’s committed bytes at the manifest’s recorded source revision, `e3676087588e1f5c9f96f1a1012ee8841ff918ea`, produced the exact checksum on that line. [Original scan](https://github.com/Caffoot/Caffoot-Lite/actions/runs/45394754491)
+
+The owner approved a single exception keyed to that exact commit, path, rule and line. The exception is recorded in `.gitleaksignore`. The workflow still scans the complete reachable Git history with the same rules. [Exception](../../../../.gitleaksignore) · [Owner approval](https://github.com/Caffoot/Caffoot-Lite/pull/447#issuecomment-7131902975)
+
+In a disposable repository with the same exception file, Gitleaks detected a synthetic key and the original checksum when each appeared at the same path and line in a different commit.
+
 ## Remaining Acceptance
 
 Independent review, owner visual acceptance, final-head CI and explicit merge approval remain separate. Stages 6.5–6.8 and the previously deferred native Raspberry Pi, Safari, Portainer, private-data and manual acceptance are outstanding. The recovery exercise used isolated Linux x86-64 images, Docker-managed volumes and fictional data. [Active milestone handover](../../milestone-01.md) · [Draft recovery procedure](../../../how-tos/features-and-instructions/v2.2-draft/Legacy-Import-and-Docker-Upgrade.md#back-up-a-complete-installation)
