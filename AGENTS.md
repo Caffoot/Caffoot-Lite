@@ -15,6 +15,10 @@ These rules apply to all AI-assisted development in this repository. Read them b
 9. **Stop at a genuine blocker.** If the approved approach cannot work, explain exactly what prevents it and the minimum proposed change; obtain explicit owner approval *before* deviating. Do not disguise a workaround as equivalent.
 10. **Respect the delivery boundary.** Do not modify `main`, merge PRs, publish images or releases, or change unrelated branches/issues unless explicitly authorised. A finished task is the agreed outcome, not a large diff, high test count or long-running investigation.
 
+## Private Raspberry Pi acceptance
+
+Before any authorised native Pi/Portainer acceptance, read and follow the [Private Raspberry Pi Acceptance — Owner Runbook](docs/development-guide/Private-Raspberry-Pi-Acceptance.md). Reuse the documented existing checkout, private build helper, revision/ARM64 verification and existing private stack; do not invent new SSH commands, stacks or ports. Verify production/test data isolation first, keep production untouched, and stop on any discrepancy. The runbook records the verified manual Portainer image-update route, not an unverified automatic SSH update. Keep this guide current when the owner approves and verifies a change to the procedure.
+
 ## Stop-and-simplify trigger
 
 If the product owner **or the assistant** says "this is too complicated", "this is getting silly", or words to that effect, **stop repeating the current procedure**. Treat the comment as an instruction to investigate the simplest safe, supported route to the agreed outcome, not as permission to drop security or acceptance checks.
