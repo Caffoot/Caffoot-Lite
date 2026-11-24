@@ -32,15 +32,21 @@ Keep the reference shown after you submit. A new personal or Department request 
 
 ## Shared Device Ticket Confidentiality
 
-The warning appears when you select a Device assigned to a Department, even if only one Department currently shares it. It also appears when **My Equipment → Report A Problem** preselects that Device. The warning updates if you change the equipment.
+The warning appears when you select a Department-assigned Device or an accessory explicitly associated with its current custody. It applies even when only one Department uses the equipment. It also appears when **My Equipment → Report A Problem** preselects either item and updates when you change the selection.
 
 Keep confidential, personal and sensitive information out of the subject, description, replies and files. For example, report *the Main Office Printer jams after page one* without attaching a print job that contains personnel records. If Accounts shares that printer with Sales later in the same custody period, eligible Sales members can open the earlier ticket, employee-visible replies and permitted files. If Sales is removed, its access ends on the next request. Re-adding Sales during that custody period restores access.
 
-A physical return, reassignment, write-off or reissue ends the previous employee audience. Authorised IT can still review the previous ticket. Internal IT notes and their attachments remain in the technician workspace. [Assignment and ticket privacy](Service-Desk-Administration.md#what-happens-to-service-desk-tickets-when-equipment-changes-hands)
+The Device’s current Departments can read new associated accessory tickets raised by eligible employees or by IT. For example, Sales can follow a new ticket about the USB cable associated with the printer once its Department is added to the same custody period. An earlier accessory ticket may be available only to authorised IT if its original audience cannot be verified. Ask IT to look up the original ticket number if you need help with it.
+
+A physical return, reassignment, write-off or reissue ends the previous employee audience. Fully returning an accessory issue also ends employee access to its tickets. Authorised IT can still review the previous ticket. Internal IT notes and their attachments remain in the technician workspace. [Assignment and ticket privacy](Service-Desk-Administration.md#what-happens-to-service-desk-tickets-when-equipment-changes-hands)
 
 ![Mobile Create Ticket for the Main Office Printer with the confidentiality warning above Subject](../../../development-handovers/evidence/stage-6-4/screenshots/ticket-confidentiality-mobile-dark.png)
 
 *The warning appears before Subject and Description, including when Report A Problem preselects the Device.* [Capture provenance](../../../development-handovers/evidence/stage-6-4/README.md)
+
+![Create Ticket showing the confidentiality warning for the printer’s linked USB cable.](../../../development-handovers/evidence/stage-6-4/screenshots/accessory-confidentiality-mobile-dark.png)
+
+*Report A Problem preselects the accessory and shows who may see its reports and files.* [Capture provenance](../../../development-handovers/evidence/stage-6-4/README.md)
 
 ## Find And Review Your Tickets
 

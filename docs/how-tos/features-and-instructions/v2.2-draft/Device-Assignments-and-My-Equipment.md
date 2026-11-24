@@ -134,11 +134,11 @@ My Equipment is for a person signing in with a login linked to their Staff recor
 3. Read **Assigned to Me** for Devices and outstanding IT Assets assigned directly to you.
 4. Read **Shared with My Department** for equipment assigned to your current Department. Viewing it does not make you the personal holder.
 5. Report an incorrect item or quantity to an authorised IT user, using its name and the relevant facts. This personal screen has no Issue, Return, Reassign or Write Off controls.
-6. To ask IT for help with listed equipment, select **Report A Problem** on the item. Confirm the preselected **Device / Asset**. On a Department Device, read the confidentiality warning before completing **Subject**, **Description** or adding a file. Complete **Ticket Category** and the required fields. Add a permitted file if helpful. Select **Create Ticket** to save, or **Cancel** to return to My Equipment. Follow the saved reference in **My Tickets** for personal equipment or **Department Tickets** for shared equipment. [Full ticket instructions](Service-Desk-Tickets.md#raise-a-support-request)
+6. To ask IT for help with listed equipment, select **Report A Problem** on the item. Confirm the preselected **Device / Asset**. On a Department Device or its associated accessory, read the confidentiality warning before completing **Subject**, **Description** or adding a file. Complete **Ticket Category** and the required fields. Add a permitted file if helpful. Select **Create Ticket** to save, or **Cancel** to return to My Equipment. Follow the saved reference in **My Tickets** for personal equipment or **Department Tickets** for shared equipment. [Full ticket instructions](Service-Desk-Tickets.md#raise-a-support-request)
 
 ![Sales employee My Equipment showing a personal laptop and shared printers in separate sections](../../../development-handovers/evidence/stage-6-4/screenshots/my-equipment-desktop-light.png)
 
-*The same Main Office Printer appears in each eligible Department member’s shared list.* [Capture provenance](../../../development-handovers/evidence/stage-6-4/README.md)
+*The Main Office Printer and its outstanding associated USB cable appear in each eligible Department member’s shared list.* [Capture provenance](../../../development-handovers/evidence/stage-6-4/README.md)
 
 ![My Equipment with Report A Problem on personal and Department-shared Devices.](../../../development-handovers/evidence/employee-service-desk/my-equipment-desktop-light.png)
 

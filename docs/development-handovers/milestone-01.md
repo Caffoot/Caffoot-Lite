@@ -6,6 +6,8 @@ The Stage 6.4 review branch starts from `957969ba1b44465472765e47f91117ca7c87d17
 
 The branch carries the focused test results, genuine Chromium screenshots and the stopped-volume rehearsal, including schema 10 and schema 28 upgrades to 29 and restoration with the matching schema 28 image. [Evidence and limits](evidence/stage-6-4/README.md) · [Draft v2.2 guides](../how-tos/features-and-instructions/v2.2-draft/README.md)
 
+The associated equipment correction keeps current accessory views with Device custody. New accessory tickets record their explicit association when created and use current custody and outstanding stock checks. Historical accessory tickets with unverifiable employee audiences remain available to authorised IT, including their original replies, attachments and audit history. The correction uses schema 29’s existing ticket creation event. [Owner approval](https://github.com/Caffoot/Caffoot-Lite/issues/431#issuecomment-7131158752) · [Privacy fallback](https://github.com/Caffoot/Caffoot-Lite/issues/431#issuecomment-7131342057)
+
 Independent code review, owner visual acceptance, final-head CI and separate merge approval are pending. Stages 6.5–6.8 and the previously deferred native Raspberry Pi, Safari, Portainer, private-data and manual acceptance continue under the milestone. [Milestone #351](https://github.com/Caffoot/Caffoot-Lite/issues/351)
 
 ## Historical Stage 6.3 Complete-Volume Recovery — 24 November 2026

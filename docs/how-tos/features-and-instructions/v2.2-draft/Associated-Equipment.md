@@ -51,6 +51,12 @@ The entire outstanding original issue is linked. If three mice remain outstandin
 
 In both routes, **Cancel** abandons unsaved work; a discard prompt lets you keep editing. A stale or failed save leaves existing records unchanged. Reload after a holder or stock change and select the equipment again using current information.
 
+## Check The Accessory’s Current Department
+
+With **Devices Read** and **IT Assets Read**, open the Device’s **Assigned To** tab to check the current Departments. Then open **Associated Equipment** to confirm the original issue and outstanding quantity. The issue’s recorded **Issued To** value remains part of the stock history.
+
+For example, Accounts originally received a printer cable. When Sales shares the printer and Accounts is removed, Sales can find the cable in **Department Details → Equipment** and eligible Sales members can see it in **My Equipment**. The association, outstanding quantity and original Accounts issue stay on record. For a continuing problem, use **Report A Problem** on the accessory and read the warning before reporting details. [Department ticket confidentiality](Service-Desk-Tickets.md#shared-device-ticket-confidentiality)
+
 ## Resolve Returned, Damaged Or Missing Accessories
 
 Use the equipment's real condition and whereabouts to choose the action:

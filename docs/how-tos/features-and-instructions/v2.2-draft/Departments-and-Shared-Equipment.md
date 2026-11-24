@@ -63,7 +63,7 @@ Moving someone from Accounts to Sales changes their Department-shared equipment 
 | --- | --- |
 | Overview | Name, status, independent structure and New Membership availability. Staff, Shared Devices and IT Assets summaries require independent access. **Not Available** is not a zero count. |
 | Staff Members | Current members, including inactive Staff whose membership is retained. Change membership through the Staff form. |
-| Equipment | Devices shared with the Department and outstanding IT Assets issued to it, followed by recorded equipment history. A Device shared with Sales and Accounts appears in both Departments and opens the same inventory record. Personally assigned Staff equipment is excluded. |
+| Equipment | Devices shared with the Department and outstanding IT Assets issued to it, followed by recorded equipment history. A Device shared with Sales and Accounts appears in both Departments and opens the same inventory record. Its outstanding explicitly associated accessories appear with the same current Departments when you have Devices and IT Assets access. Personally assigned Staff equipment is excluded. |
 | History | Available recorded Department changes and authorised equipment activity, with dates and responsible accounts. Visibility depends on access to the existing history/equipment services. An empty state does not prove no changes have occurred. |
 
 The IT Assets summary counts outstanding issued quantities; it is not stock physically held by IT. Equipment dates and history remain on their original records, rather than being copied into a separate Department inventory.
@@ -78,7 +78,7 @@ If a panel could not load, reopen Details to retry. Check your access before int
 
 Open **Device Details → Assigned To → Manage Departments** with **Devices Edit**. For example, if Finance joins Accounts in using the same printer, tick Finance, leave Accounts selected and choose **Save Changes**. Choose **Cancel** to keep the saved Departments. Use the physical return or handover workflow when the Device actually changes hands.
 
-A saved addition gives eligible Finance members access to employee-visible tickets from the current custody period, including earlier reports. Removing Finance ends that access on the next request. Previous custody-period tickets remain restricted to authorised IT. If Finance is later added back during the same custody period, current-period access resumes. [Manage Departments](Device-Assignments-and-My-Equipment.md#change-the-departments-sharing-a-device) · [Ticket confidentiality](Service-Desk-Tickets.md#shared-device-ticket-confidentiality)
+A saved addition gives eligible Finance members access to employee-visible Device tickets and new associated accessory tickets from the current custody period. Earlier accessory tickets with unverifiable audiences stay with authorised IT. Removing Finance ends that access on the next request. Previous custody-period tickets remain restricted to authorised IT. If Finance is later added back during the same custody period, current-period access resumes. [Manage Departments](Device-Assignments-and-My-Equipment.md#change-the-departments-sharing-a-device) · [Ticket confidentiality](Service-Desk-Tickets.md#shared-device-ticket-confidentiality)
 
 ![Sales Department Equipment listing the original Main Office Printer](../../../development-handovers/evidence/stage-6-4/screenshots/department-equipment-desktop-light.png)
 

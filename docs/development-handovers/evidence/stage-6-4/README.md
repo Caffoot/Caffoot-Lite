@@ -4,9 +4,11 @@
 
 The review starts from `957969ba1b44465472765e47f91117ca7c87d177` on `milestone-1` (schema 28). The application source for the local schema 29 Docker rehearsal and the original Chromium capture batch is [`57ca30e15f2d61d2bb4689c6ca1a3600973df3c7`](https://github.com/Caffoot/Caffoot-Lite/commit/57ca30e15f2d61d2bb4689c6ca1a3600973df3c7). The four refreshed Current Assignment captures use [`7cfe63a344ab9088194e899f88e2d837342e585e`](https://github.com/Caffoot/Caffoot-Lite/commit/7cfe63a344ab9088194e899f88e2d837342e585e). The mobile captures scroll to the existing Assignment History card so both subheadings are visible.
 
+The accessory custody follow-up refreshed Department Details Equipment, My Equipment and Department Tickets and added the accessory confidentiality warning. All 16 captures in that batch use [`e3676087588e1f5c9f96f1a1012ee8841ff918ea`](https://github.com/Caffoot/Caffoot-Lite/commit/e3676087588e1f5c9f96f1a1012ee8841ff918ea).
+
 ## Application Screenshots
 
-The captures use the running Caffoot Lite application over loopback HTTPS in Chromium 156.0.8078.79. The test seeds fictional accounts, Departments, Devices and a printer ticket raised before Sales shares the Device. It uses the real UI for initial assignment, Department changes, Department Details, My Equipment, Department Tickets and Create Ticket. Desktop viewports are 1440 × 960 and mobile viewports are 390 × 844. Department Tickets uses full-page capture so the ticket list appears on mobile. [Capture manifest with source and image hashes](capture-manifest.json) · [Chromium test](../../../../tests/shared-devices-interface.cjs) · [Frozen design references](https://github.com/Caffoot/Caffoot-Lite/issues/431#issuecomment-7129171072)
+The captures use the running Caffoot Lite application over loopback HTTPS in Chromium 156.0.8078.79. The test seeds fictional accounts, Departments, Devices and a printer ticket raised before Sales shares the Device. The accessory follow-up includes a USB cable originally issued to Accounts and explicitly associated with that printer. It uses the real UI to raise a ticket for the cable as a Sales employee. Desktop viewports are 1440 × 960 and mobile viewports are 390 × 844. Department Tickets uses full-page capture so the ticket list appears on mobile. [Capture manifest with source and image hashes](capture-manifest.json) · [Chromium test](../../../../tests/shared-devices-interface.cjs) · [Frozen design references](https://github.com/Caffoot/Caffoot-Lite/issues/431#issuecomment-7129171072)
 
 | Existing application screen | Desktop light | Desktop dark | Mobile light | Mobile dark |
 | --- | --- | --- | --- | --- |
@@ -17,6 +19,7 @@ The captures use the running Caffoot Lite application over loopback HTTPS in Chr
 | Sales employee My Equipment | [Light](screenshots/my-equipment-desktop-light.png) | [Dark](screenshots/my-equipment-desktop-dark.png) | [Light](screenshots/my-equipment-mobile-light.png) | [Dark](screenshots/my-equipment-mobile-dark.png) |
 | Department Tickets after Sales joins | [Light](screenshots/department-tickets-desktop-light.png) | [Dark](screenshots/department-tickets-desktop-dark.png) | [Light](screenshots/department-tickets-mobile-light.png) | [Dark](screenshots/department-tickets-mobile-dark.png) |
 | Create Ticket warning via Report A Problem | [Light](screenshots/ticket-confidentiality-desktop-light.png) | [Dark](screenshots/ticket-confidentiality-desktop-dark.png) | [Light](screenshots/ticket-confidentiality-mobile-light.png) | [Dark](screenshots/ticket-confidentiality-mobile-dark.png) |
+| Associated accessory Create Ticket warning | [Light](screenshots/accessory-confidentiality-desktop-light.png) | [Dark](screenshots/accessory-confidentiality-desktop-dark.png) | [Light](screenshots/accessory-confidentiality-mobile-light.png) | [Dark](screenshots/accessory-confidentiality-mobile-dark.png) |
 
 ## Focused Checks
 
@@ -38,6 +41,8 @@ node tests/shared-devices-interface.cjs
 ```
 
 The focused follow-up Chromium check verified both history headings, table columns and record order. The four affected captures were refreshed. All 36 focused backend tests passed, including the existing exact role migration assertion. Schema 29 skips empty inserts that would otherwise initialise zero-valued SQLite sequence entries, while preserving the original high-water marks. [Owner visual correction](https://github.com/Caffoot/Caffoot-Lite/pull/447#issuecomment-7130128114)
+
+The accessory follow-up passed 72 focused backend tests. Live HTTP and loopback SMTP covered original Department and custody stock recipients, historical IT-only tickets, current-custody ticket access, replies, direct attachments, queued delivery after removal and re-addition, and the effect of stock return. Standalone assets and canonical Device tickets served as controls. The focused Chromium run checked both accessory ticket entry points and captured all four affected views. [Live regression tests](../../../../tests/test_associated_ticket_custody.py) · [Accessory custody decision](https://github.com/Caffoot/Caffoot-Lite/issues/431#issuecomment-7131158752) · [Historical privacy decision](https://github.com/Caffoot/Caffoot-Lite/issues/431#issuecomment-7131342057)
 
 ## Remaining Acceptance
 

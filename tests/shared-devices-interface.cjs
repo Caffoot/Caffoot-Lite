@@ -11,7 +11,7 @@ const {chromium} = require('playwright');
 const root = path.resolve(__dirname, '..');
 const temporary = fs.mkdtempSync(path.join(os.tmpdir(), 'caffoot-shared-devices-'));
 const evidence = process.env.CAFFOOT_STAGE64_SCREENSHOTS;
-const captureScreen = process.env.CAFFOOT_STAGE64_CAPTURE_SCREEN;
+const captureScreens = new Set((process.env.CAFFOOT_STAGE64_CAPTURE_SCREEN || '').split(',').filter(Boolean));
 const database = path.join(temporary, 'caffoot.sqlite3');
 const log = path.join(temporary, 'server.log');
 const captures = {};
@@ -21,9 +21,12 @@ let server, browser;
 const seed = `
 import json, sqlite3, sys
 from backend.device_assignments import assign_devices
+from backend.equipment_associations import add_associated_equipment
 from backend.schema import initialise_database
 from backend.service_desk import save_ticket_request
 from backend.sessions import _digest
+from backend.stock_circulation import issue_stock, stock_issue_records
+from backend.stock_intake import receive_stock, stock_item
 
 with sqlite3.connect(sys.argv[1]) as db:
     db.execute('PRAGMA foreign_keys=ON')
@@ -46,9 +49,24 @@ with sqlite3.connect(sys.argv[1]) as db:
     db.commit()
     for device,kind,recipient in [('office-printer','department','accounts'),('sales-laptop','staff','casey')]:
         assign_devices(db,1,'1'*64,dict(recipientKind=kind,recipientId=recipient,devices=[dict(id=device,revision=0)]))
+    token = '1'*64
+    receipt = receive_stock(db,1,token,dict(operationId='fixture-accessory-receipt',quantity=4,
+        readyQuantity=4,receivedOn='2026-11-15',supplier='',notes='',
+        checks=dict(itemsChecked=True,conditionChecked=True),
+        item=dict(category='Other',trackingMode='quantity',manufacturer='Fictional',
+                  model='Printer USB Cable',sharedSpecifications={})))
+    item = receipt['stockItemId']
+    issue_stock(db,1,token,dict(operationId='fixture-accessory-issue',stockItemId=item,
+        version=stock_item(db,item)['version'],quantity=1,recipientKind='department',recipientId='accounts',
+        issuedOn='2026-11-16',note=''))
+    issue, = stock_issue_records(db)
+    assignment, = db.execute("SELECT id FROM device_assignments WHERE device_id='office-printer'").fetchone()
+    add_associated_equipment(db,1,token,dict(operationId='fixture-accessory-link',deviceId='office-printer',
+        deviceRevision=0,deviceAssignmentId=assignment,issueEntryId=issue['id'],version=issue['version']))
     db.execute('BEGIN IMMEDIATE')
     save_ticket_request(db,1,'it',dict(equipmentKind='device',equipmentId='office-printer',
         categoryId=5,subject='Printer jams after page one',description='The paper feed stops on every second page.'))
+    print(json.dumps({'issueId':issue['id'],'name':issue['name']}))
 `;
 
 function run(command, args) {
@@ -85,7 +103,7 @@ async function openWorkspace(base, actor) {
 }
 
 async function capture(page, name, required) {
-    if (!evidence || (captureScreen && captureScreen !== name)) return;
+    if (!evidence || (captureScreens.size && !captureScreens.has(name))) return;
     for (const [width,height,device] of [[1440,960,'desktop'],[390,844,'mobile']]) {
         await page.setViewportSize({width,height});
         for (const theme of ['light','dark']) {
@@ -124,7 +142,9 @@ async function openDevice(page, id) {
 }
 
 async function main() {
-    run('python3',['-c',seed,database]);
+    const accessory = JSON.parse(run('python3',['-c',seed,database]));
+    const accessoryKey = 'stock-issue-' + accessory.issueId;
+    const accessoryLabel = department => `${accessory.name} · Issue ${accessory.issueId} · Shared with ${department}`;
     const port = await listenPort();
     const base = `https://127.0.0.1:${port}`;
     const fd = fs.openSync(log,'w');
@@ -149,6 +169,11 @@ async function main() {
     await accounts.locator('#sidebar [data-tab="equipment"]').click();
     await accounts.locator('[data-ticket-report-equipment="office-printer"]').click();
     await warning(accounts).waitFor();
+    await accounts.getByRole('button',{name:'Cancel',exact:true}).click();
+    await accounts.locator(`[data-ticket-report-equipment="${accessoryKey}"]`).click();
+    await warning(accounts).waitFor();
+    assert.equal(await ticketForm(accounts).locator('[name="equipment"] option:checked').textContent(),
+                 accessoryLabel('Accounts'));
     await accounts.getByRole('button',{name:'Cancel',exact:true}).click();
 
     await openDevice(admin,'spare-printer');
@@ -199,13 +224,17 @@ async function main() {
     });
     await departmentPrinter.waitFor();
     assert.equal(await departmentPrinter.locator('[data-id="office-printer"]').count(),1);
-    await capture(admin,'department-equipment',departmentPrinter);
+    const departmentAccessory = admin.getByRole('row').filter({hasText:accessory.name});
+    await departmentAccessory.getByText('Accounts, HR, Sales',{exact:true}).waitFor();
+    await capture(admin,'department-equipment',departmentAccessory);
 
     await employee.locator('#sidebar [data-tab="equipment"]').click();
     const sharedPrinter = employee.locator('[data-shared-equipment]').getByText('Main Office Printer',{exact:true});
     await sharedPrinter.waitFor();
     await employee.locator('[data-personal-equipment]').getByText('Sales Laptop',{exact:true}).waitFor();
-    await capture(employee,'my-equipment',sharedPrinter);
+    const sharedAccessory = employee.locator('[data-shared-equipment]').getByText(accessory.name,{exact:true});
+    await sharedAccessory.waitFor();
+    await capture(employee,'my-equipment',sharedAccessory);
     await employee.locator('[data-ticket-report-equipment="office-printer"]').click();
     await warning(employee).waitFor();
     assert.equal(await ticketForm(employee).locator('[name="equipment"] option:checked').textContent(),
@@ -214,26 +243,46 @@ async function main() {
         !!(element.compareDocumentPosition(element.closest('form').elements.subject) & Node.DOCUMENT_POSITION_FOLLOWING)));
     await capture(employee,'ticket-confidentiality',warning(employee));
     await employee.getByRole('button',{name:'Cancel',exact:true}).click();
+    await employee.locator(`[data-ticket-report-equipment="${accessoryKey}"]`).click();
+    await warning(employee).waitFor();
+    assert.equal(await ticketForm(employee).locator('[name="equipment"] option:checked').textContent(),
+                 accessoryLabel('Sales'));
+    assert.match(await warning(employee).textContent(), /assigned to the Device this equipment is associated with/);
+    assert.ok(await warning(employee).evaluate(element =>
+        !!(element.compareDocumentPosition(element.closest('form').elements.subject) & Node.DOCUMENT_POSITION_FOLLOWING)));
+    await capture(employee,'accessory-confidentiality',warning(employee));
+    await ticketForm(employee).locator('[name="categoryId"]').selectOption('5');
+    await ticketForm(employee).locator('[name="subject"]').fill('Printer cable connection drops');
+    await ticketForm(employee).locator('[name="description"]').fill('The printer disappears when the cable moves.');
+    await employee.getByRole('button',{name:'Create Ticket',exact:true}).click();
+    await ticketForm(employee).waitFor({state:'hidden'});
 
     await employee.locator('#sidebar [data-tab="my-tickets"]').click();
     await employee.getByRole('tab',{name:'Department Tickets',exact:true}).click();
     const ticket = employee.getByText('Printer jams after page one',{exact:true});
     await ticket.waitFor();
-    await capture(employee,'department-tickets',ticket);
+    const accessoryTicket = employee.getByText('Printer cable connection drops',{exact:true});
+    await accessoryTicket.waitFor();
+    await capture(employee,'department-tickets',accessoryTicket);
     await employee.locator('[data-employee-ticket-create]').click();
     const equipment = ticketForm(employee).locator('[name="equipment"]');
     await equipment.selectOption({label:'Main Office Printer · Shared with Sales'});
     await warning(employee).waitFor();
+    await equipment.selectOption({label:accessoryLabel('Sales')});
+    await warning(employee).waitFor();
+    assert.match(await warning(employee).textContent(), /assigned to the Device this equipment is associated with/);
     await equipment.selectOption({label:'Sales Laptop · Assigned to Me'});
     await warning(employee).waitFor({state:'hidden'});
     await employee.getByRole('button',{name:'Cancel',exact:true}).click();
     assert.deepEqual(errors,[]);
 
     if (evidence) {
-        if (captureScreen) assert.equal(Object.keys(captures).length, 4);
+        if (captureScreens.size) assert.equal(Object.keys(captures).length, 4 * captureScreens.size);
         const sources = ['interface/application.js','interface/equipment.js','interface/staff-directory.js',
             'interface/stock-intake.js','interface/service-desk.js','interface/styles/equipment.css',
-            'interface/styles/service-desk.css','backend/shared_devices.py','backend/shared_device_schema.py'];
+            'interface/styles/service-desk.css','backend/shared_devices.py','backend/shared_device_schema.py',
+            'backend/device_assignments.py','backend/stock_circulation.py','backend/service_desk_access.py',
+            'backend/service_desk.py'];
         const report = {sourceRevision:run('git',['rev-parse','HEAD']), browser:await browser.version(),
             capturedAt:new Date().toISOString(), origin:base, schema:29,
             fixture:'Fictional Staff, Departments, Devices and tickets seeded in this Chromium test.',
