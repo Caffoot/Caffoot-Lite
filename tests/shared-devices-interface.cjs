@@ -11,6 +11,7 @@ const {chromium} = require('playwright');
 const root = path.resolve(__dirname, '..');
 const temporary = fs.mkdtempSync(path.join(os.tmpdir(), 'caffoot-shared-devices-'));
 const evidence = process.env.CAFFOOT_STAGE64_SCREENSHOTS;
+const captureScreen = process.env.CAFFOOT_STAGE64_CAPTURE_SCREEN;
 const database = path.join(temporary, 'caffoot.sqlite3');
 const log = path.join(temporary, 'server.log');
 const captures = {};
@@ -84,7 +85,7 @@ async function openWorkspace(base, actor) {
 }
 
 async function capture(page, name, required) {
-    if (!evidence) return;
+    if (!evidence || (captureScreen && captureScreen !== name)) return;
     for (const [width,height,device] of [[1440,960,'desktop'],[390,844,'mobile']]) {
         await page.setViewportSize({width,height});
         for (const theme of ['light','dark']) {
@@ -95,6 +96,10 @@ async function capture(page, name, required) {
             }
             await required.waitFor();
             await page.locator('#toast:not(.opacity-0)').waitFor({state:'detached'});
+            if (name==='current-assignment' && device==='mobile') {
+                const history = page.locator('#device-details-panel-assigned > section').last();
+                await history.evaluate(element => element.scrollIntoView({block:'start'}));
+            }
             const geometry = await page.evaluate(() => ({viewport:innerWidth, width:document.documentElement.scrollWidth,
                                                           dark:document.documentElement.classList.contains('dark')}));
             assert.equal(geometry.dark, theme==='dark');
@@ -172,7 +177,18 @@ async function main() {
     await capture(admin,'manage-departments',picker);
     await admin.getByRole('button',{name:'Save Changes',exact:true}).click();
     await assigned.getByText('Accounts, HR, Sales',{exact:true}).first().waitFor();
-    await capture(admin,'current-assignment',assigned.getByText('Accounts, HR, Sales',{exact:true}).first());
+    const history = assigned.locator('section').filter({has:admin.getByRole('heading', {name:'Assignment History', exact:true})});
+    assert.deepEqual(await history.getByRole('heading',{level:4}).allTextContents(),
+        ['Physical Assignment History','Department Assignment History']);
+    const physical = history.locator('h4:has-text("Physical Assignment History") + div table');
+    const department = history.locator('h4:has-text("Department Assignment History") + div table');
+    assert.deepEqual(await physical.locator('th').allTextContents(),
+        ['Staff Member / Department','Issue Date','Return / End Date','Movement']);
+    assert.deepEqual(await department.locator('th').allTextContents(),
+        ['Department','Date / Time','Change','Recorded By']);
+    assert.deepEqual(await physical.locator('tbody tr td:first-child').allTextContents(), ['Accounts']);
+    assert.deepEqual(await department.locator('tbody tr td:first-child').allTextContents(), ['Sales','HR','Accounts']);
+    await capture(admin,'current-assignment',history.getByRole('heading',{name:'Department Assignment History'}));
     await admin.getByRole('button',{name:'Close',exact:true}).click();
 
     await admin.locator('#sidebar [data-tab="departments"]').click();
@@ -214,6 +230,7 @@ async function main() {
     assert.deepEqual(errors,[]);
 
     if (evidence) {
+        if (captureScreen) assert.equal(Object.keys(captures).length, 4);
         const sources = ['interface/application.js','interface/equipment.js','interface/staff-directory.js',
             'interface/stock-intake.js','interface/service-desk.js','interface/styles/equipment.css',
             'interface/styles/service-desk.css','backend/shared_devices.py','backend/shared_device_schema.py'];

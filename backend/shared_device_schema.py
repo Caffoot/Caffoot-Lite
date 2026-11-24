@@ -182,7 +182,9 @@ def replace_table(connection, table, definition, objects):
     columns = ','.join(row[1] for row in connection.execute(f'PRAGMA table_info({table})'))
     previous_sequence = connection.execute('SELECT seq FROM sqlite_sequence WHERE name=?', (table,)).fetchone()
     connection.execute(definition.replace(f'CREATE TABLE "{table}"', f'CREATE TABLE {temporary}', 1))
-    connection.execute(f'INSERT INTO {temporary} ({columns}) SELECT {columns} FROM {table}')
+    # SQLite initialises sqlite_sequence even when INSERT ... SELECT copies no rows.
+    if connection.execute(f'SELECT 1 FROM {table} LIMIT 1').fetchone():
+        connection.execute(f'INSERT INTO {temporary} ({columns}) SELECT {columns} FROM {table}')
     for left, right in ((table, temporary), (temporary, table)):
         if connection.execute(f'SELECT {columns} FROM {left} EXCEPT SELECT {columns} FROM {right} LIMIT 1').fetchone():
             raise RuntimeError(f'Schema 29 changed existing {table} records')
@@ -234,9 +236,11 @@ def migrate_shared_devices(connection):
                 or (sql.startswith('CREATE TRIGGER ') and ' ON it_asset_stock_entries BEGIN' in sql))))
         table, *guards = stock_schema_statements(DEPARTMENTS_SQL)
         connection.execute(table)
-        connection.execute("""INSERT INTO device_assignment_departments
-            (assignment_id,department_id,added_at,added_by,added_by_label)
-            SELECT id,department_id,assigned_at,actor_id,actor_label FROM device_assignments WHERE department_id IS NOT NULL""")
+        if connection.execute('SELECT 1 FROM device_assignments WHERE department_id IS NOT NULL LIMIT 1').fetchone():
+            connection.execute("""INSERT INTO device_assignment_departments
+                (assignment_id,department_id,added_at,added_by,added_by_label)
+                SELECT id,department_id,assigned_at,actor_id,actor_label
+                FROM device_assignments WHERE department_id IS NOT NULL""")
         for statement in [*guards, department_insert]:
             connection.execute(statement)
         for name, statement in (('it_asset_movements_insert_guard', stock_movement_guard()),

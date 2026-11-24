@@ -37,7 +37,14 @@ class SharedDeviceSchemaTests(unittest.TestCase):
             columns = ','.join(row[1] for row in self.db.execute(f'PRAGMA table_info({table})'))
             originals[table] = (columns, self.db.execute(f'SELECT {columns} FROM {table}').fetchall())
         balances = stock_item(self.db, self.item)['balances']
+        # Earlier allocations can leave a sequence above the largest remaining ID.
+        self.db.execute("""UPDATE sqlite_sequence SET seq=seq+100
+            WHERE name IN ('device_assignments','it_asset_stock_entries')""")
+        self.db.commit()
+        sequence = self.db.execute('SELECT name,seq FROM sqlite_sequence').fetchall()
         schema.initialise_database(self.db)
+        self.assertCountEqual(self.db.execute('SELECT name,seq FROM sqlite_sequence').fetchall(),
+                              [*sequence, ('device_assignment_departments', 1)])
         self.assertEqual(self.db.execute('SELECT max(version) FROM schema_migrations').fetchone(), (29,))
         for table, (columns, rows) in originals.items():
             if table != 'schema_migrations':

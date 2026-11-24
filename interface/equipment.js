@@ -72,7 +72,7 @@
     return picker;
   }
   function departmentHistory(changes){
-    return changes?.length?`<div class="table-scroll"><table class="small-table">
+    return changes?.length?`<h4 class="text-xs font-semibold mt-3 mb-1">Department Assignment History</h4><div class="table-scroll"><table class="small-table">
       <thead><tr><th>Department</th><th>Date / Time</th><th>Change</th><th>Recorded By</th></tr></thead>
       <tbody>${changes.flatMap(item=>[
         {label:item.label,at:item.addedAt,action:'Department Added',actor:item.addedBy},
@@ -84,7 +84,7 @@
   function assignmentHistory(history,deviceView=false){
     if(!history.length)return '<p class="sub">No equipment assignment history.</p>';
     if(!deviceView)return `<table class="staff-history-list"><tbody>${history.map(item=>`<tr><td>${escapeHtml(dateLabel(item.assignedAt))}</td><td><strong>Assigned · ${escapeHtml(item.deviceName)}</strong><small>Assigned To ${escapeHtml(item.recipientLabel)} · Recorded By ${escapeHtml(item.actorLabel)}</small>${item.closure?`<small>${({returned:'Returned',written_off:'Written Off',reassigned:'Reassigned'})[item.closure.kind]||'Closed'} ${escapeHtml(dateLabel(item.closure.date))} · Recorded By ${escapeHtml(item.closure.actor)}</small>`:''}</td></tr>`).join('')}</tbody></table>`;
-    return `<div class="table-scroll"><table class="small-table"><thead><tr><th>Staff Member / Department</th><th>Issue Date</th><th>Return / End Date</th><th>Movement</th></tr></thead><tbody>${history.map(item=>`<tr><td>${escapeHtml(item.recipientLabel)}</td><td>${escapeHtml(dateLabel(item.assignedAt))}</td><td>${escapeHtml(dateLabel(item.closure?.date||item.endedAt))}</td><td>Assigned<br>Recorded By ${escapeHtml(item.actorLabel)}${item.closure?`<br>${({returned:'Returned',written_off:'Written Off',reassigned:'Reassigned'})[item.closure.kind]||'Closed'} · Recorded By ${escapeHtml(item.closure.actor)}`:''}</td></tr>`).join('')}</tbody></table></div>`;
+    return `<h4 class="text-xs font-semibold mt-3 mb-1">Physical Assignment History</h4><div class="table-scroll"><table class="small-table"><thead><tr><th>Staff Member / Department</th><th>Issue Date</th><th>Return / End Date</th><th>Movement</th></tr></thead><tbody>${history.map(item=>`<tr><td>${escapeHtml(item.recipientLabel)}</td><td>${escapeHtml(dateLabel(item.assignedAt))}</td><td>${escapeHtml(dateLabel(item.closure?.date||item.endedAt))}</td><td>Assigned<br>Recorded By ${escapeHtml(item.actorLabel)}${item.closure?`<br>${({returned:'Returned',written_off:'Written Off',reassigned:'Reassigned'})[item.closure.kind]||'Closed'} · Recorded By ${escapeHtml(item.closure.actor)}`:''}</td></tr>`).join('')}</tbody></table></div>`;
   }
   function assetMovementHistory(history,deviceView=false){
     const labels={registered:'Device Registered',issued:'Equipment Issued',reassigned:'Device Reassigned',returned:'Equipment Returned',readiness_changed:'Equipment Prepared',written_off:'Equipment Written Off'};
