@@ -234,7 +234,34 @@ async function main() {
     await employee.locator('[data-personal-equipment]').getByText('Sales Laptop',{exact:true}).waitFor();
     const sharedAccessory = employee.locator('[data-shared-equipment]').getByText(accessory.name,{exact:true});
     await sharedAccessory.waitFor();
+    await employee.locator('[data-personal-equipment] [data-ticket-report-equipment]').first().waitFor();
+    for (const width of [1440,390,320]) {
+        await employee.setViewportSize({width,height:960});
+        const layout = await employee.locator('.my-equipment').evaluate(element => ({
+            documentWidth:document.documentElement.scrollWidth,
+            buttons:[...element.querySelectorAll('[data-ticket-report-equipment]')].map(button => {
+                const {left,right} = button.getBoundingClientRect();
+                const row = button.closest('.info-row');
+                return {left,right,rowRight:row.getBoundingClientRect().right,scope:button.dataset.equipmentScope};
+            })
+        }));
+        assert.ok(layout.buttons.some(button => button.scope==='personal'));
+        assert.ok(layout.buttons.some(button => button.scope==='department'));
+        assert.ok(layout.documentWidth<=width, `My Equipment overflows at ${width}px`);
+        for (const {left,right,rowRight} of layout.buttons) {
+            assert.ok(left>=0 && right<=width, `Report A Problem overflows at ${width}px`);
+            assert.ok(Math.abs(right-rowRight)<1 && Math.abs(right-layout.buttons[0].right)<1,
+                `Report A Problem is not right-aligned across both cards at ${width}px`);
+        }
+    }
+    await employee.setViewportSize({width:1440,height:960});
     await capture(employee,'my-equipment',sharedAccessory);
+    await employee.locator('[data-ticket-report-equipment="sales-laptop"]').click();
+    await ticketForm(employee).waitFor();
+    assert.equal(await ticketForm(employee).locator('[name="equipment"] option:checked').textContent(),
+                 'Sales Laptop · Assigned to Me');
+    await warning(employee).waitFor({state:'hidden'});
+    await employee.getByRole('button',{name:'Cancel',exact:true}).click();
     await employee.locator('[data-ticket-report-equipment="office-printer"]').click();
     await warning(employee).waitFor();
     assert.equal(await ticketForm(employee).locator('[name="equipment"] option:checked').textContent(),

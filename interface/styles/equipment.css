@@ -39,6 +39,7 @@
 
 .my-equipment .info-row{flex-wrap:wrap}
 .my-equipment .info-row>*{min-width:0;overflow-wrap:anywhere}
+.my-equipment .info-row>[data-ticket-report-equipment]{margin-inline-start:auto}
 
 .device-details-dialog .small-table{min-width:520px}
 
