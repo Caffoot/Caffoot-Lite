@@ -3,6 +3,7 @@ import re
 
 from backend.permissions import can_access
 from backend.audit_events import record_actor_event
+from backend.shared_devices import current_departments, custody_stock_recipient
 from backend.stock_circulation import (stock_issue_records, stock_recipient,
     issue_stock_in_transaction, require_stock_device_edit)
 from backend.stock_intake import stock_digest, stock_operation, stock_replay, stock_write_access
@@ -63,12 +64,17 @@ def equipment_association_schema(connection):
         "(lower(name) GLOB 'device_equipment_associations*' OR tbl_name='device_equipment_associations')")}
 
 
-def validate_equipment_associations(connection):
+def validate_equipment_associations(connection, *, sharing=None):
     """Refuse an unexpected relationship or missing history protection."""
     expected = {}
     for statement in stock_schema_statements(EQUIPMENT_ASSOCIATION_SQL):
         name = re.match(r'CREATE (?:TABLE|INDEX|TRIGGER) (\w+)', statement)[1]
         expected[name] = normalise_schema_statement(statement)
+    if sharing is None:
+        sharing = connection.execute('SELECT 1 FROM schema_migrations WHERE version=29').fetchone() is not None
+    if sharing:
+        from backend.shared_device_schema import association_guard
+        expected['device_equipment_associations_insert_guard'] = normalise_schema_statement(association_guard())
     if equipment_association_schema(connection) != expected:
         raise RuntimeError('Unexpected equipment association schema; review required')
     if connection.execute('PRAGMA foreign_key_check').fetchone():
@@ -100,11 +106,13 @@ def read_equipment_associations(connection, actor_id, device_id):
         JOIN device_assignments a ON a.id=l.device_assignment_id
         WHERE a.device_id=? ORDER BY l.id DESC''', (device_id,)).fetchall()
     assignment = connection.execute('''SELECT a.id,a.staff_id,a.department_id,a.recipient_label,d.revision,
-        coalesce(s.active,1),coalesce(p.archived,0)
+        coalesce(s.active,1)
         FROM device_assignments a JOIN inventory_devices d ON d.id=a.device_id
-        LEFT JOIN staff_members s ON s.id=a.staff_id LEFT JOIN departments p ON p.id=a.department_id
+        LEFT JOIN staff_members s ON s.id=a.staff_id
         WHERE a.device_id=? AND a.ended_at IS NULL''', (device_id,)).fetchone()
-    can_add = bool(assignment and assignment[5] and not assignment[6]
+    departments = current_departments(connection, assignment[0]) if assignment and assignment[1] is None else []
+    eligible = {item['id'] for item in departments if not item['archived']}
+    can_add = bool(assignment and (assignment[5] if assignment[1] is not None else eligible)
                   and all(can_access(connection, actor_id, section, edit=True) for section in ('Devices', 'IT Assets')))
     issues = {issue['id']: issue for issue in stock_issue_records(connection)} if rows or can_add else {}
     history = [dict(id=identity, deviceAssignmentId=assignment, associatedAt=associated,
@@ -117,14 +125,19 @@ def read_equipment_associations(connection, actor_id, device_id):
                 WHERE e.source_issue_entry_id=? OR json_extract(m.checks_json,'$.sourceIssueEntryId')=?
                 GROUP BY m.id ORDER BY m.id''', (record['issue']['id'],record['issue']['id']))]
     linked = {row[0] for row in connection.execute('SELECT issue_entry_id FROM device_equipment_associations')} if can_add else set()
-    context = (dict(deviceId=device_id,deviceRevision=assignment[4],deviceAssignmentId=assignment[0],
-                    staffId=assignment[1],departmentId=assignment[2],recipientLabel=assignment[3]) if can_add else None)
+    context = None
+    if can_add:
+        context = dict(deviceId=device_id, deviceRevision=assignment[4], deviceAssignmentId=assignment[0],
+                       staffId=assignment[1], departmentId=departments[0]['id'] if len(departments) == 1 else None,
+                       recipientLabel=', '.join(item['label'] for item in departments) or assignment[3])
     return dict(current=[record for record in history
                          if record['assignmentEndedAt'] is None and record['issue']['outstanding'] > 0],
                 history=history,canAdd=can_add,context=context,
                 existingIssues=[issue for issue in issues.values() if can_add and issue['outstanding']>0
                     and issue['deviceAssignmentId'] is None and issue['id'] not in linked
-                    and (issue['staffId'],issue['departmentId'])==(assignment[1],assignment[2])])
+                    and issue.get('custodyRecipientId') is None
+                    and issue['staffId'] == assignment[1]
+                    and (issue['departmentId'] in eligible if departments else issue['departmentId'] is None)])
 
 
 def add_associated_equipment(connection, actor_id, token, payload, *, issue_new=False):
@@ -158,19 +171,45 @@ def add_associated_equipment(connection, actor_id, token, payload, *, issue_new=
             WHERE id=? AND device_id=? AND ended_at IS NULL''', (assignment_id, device_id)).fetchone()
         if device is None or device[0] != revision or assignment is None:
             raise FileExistsError('Device or holder changed. Reload before adding equipment.')
-        recipient = stock_recipient(connection, 'staff' if assignment[0] is not None else 'department',
-                                    assignment[0] if assignment[0] is not None else assignment[1])
+        departments = current_departments(connection, assignment_id) if assignment[0] is None else []
+        eligible = {item['id'] for item in departments if not item['archived']}
+        if assignment[0] is not None:
+            recipient = stock_recipient(connection, 'staff', assignment[0])
+        elif len(departments) == 1:
+            recipient = stock_recipient(connection, 'department', departments[0]['id'])
+        elif eligible:
+            recipient = custody_stock_recipient(assignment_id)
+        else:
+            raise ValueError('An active Staff Member or non-archived Department is required')
+        actor_label = connection.execute('SELECT username FROM accounts WHERE id=?', (actor_id,)).fetchone()[0]
+        associations, issue_ids = [], []
+
+        def associate(identities):
+            issue_ids.extend(identities)
+            for index, identity in enumerate(identities):
+                associations.append(connection.execute('''INSERT INTO device_equipment_associations
+                    (device_assignment_id,issue_entry_id,operation_key,operation_hash,actor_id,actor_label)
+                    VALUES(?,?,?,?,?,?)''', (assignment_id, identity, key if index == 0 else key + ':' + str(index),
+                                            digest, actor_id, actor_label)).lastrowid)
+
+        def movement_issue_ids(movement_id):
+            return [row[0] for row in connection.execute('''SELECT id FROM it_asset_stock_entries
+                WHERE movement_id=? AND to_state='issued' ORDER BY id''', (movement_id,))]
+
         movement = None
         if issue_new:
             issue_payload = {name: payload[name] for name in selection if name in payload}
-            issue_payload.update(operationId=operation,
-                recipientKind='staff' if recipient['staff_id'] is not None else 'department',
-                recipientId=recipient['staff_id'] if recipient['staff_id'] is not None else recipient['department_id'])
+            issue_payload['operationId'] = operation
+            custody = recipient if 'custody_recipient_id' in recipient else None
+            if custody is None:
+                who = 'staff' if recipient['staff_id'] is not None else 'department'
+                issue_payload.update(recipientKind=who, recipientId=recipient[who + '_id'])
             issued = issue_stock_in_transaction(connection, actor_id, token, issue_payload,
-                                                operation_key=key + ':stock')
+                operation_key=key + ':stock', custody_recipient=custody,
+                before_publish=(lambda identity: associate(movement_issue_ids(identity))) if custody else None)
             movement = issued['movementId']
-            issue_ids = [row[0] for row in connection.execute('''SELECT id FROM it_asset_stock_entries
-                WHERE movement_id=? AND to_state='issued' ORDER BY id''', (movement,))]
+            if custody is None:
+                associate(movement_issue_ids(movement))
         else:
             identity = payload['issueEntryId']
             if type(identity) is not int or identity < 1:
@@ -181,18 +220,12 @@ def add_associated_equipment(connection, actor_id, token, payload, *, issue_new=
             if source['version'] != payload['version']:
                 raise FileExistsError('Issued equipment changed. Reload before associating it.')
             if (source['outstanding'] < 1 or source['deviceAssignmentId'] is not None
-                    or (source['staffId'], source['departmentId']) != (recipient['staff_id'], recipient['department_id'])):
+                    or source.get('custodyRecipientId') is not None or source['staffId'] != assignment[0]
+                    or (source['departmentId'] not in eligible if departments else source['departmentId'] is not None)):
                 raise ValueError('Select outstanding accessory equipment issued to this exact holder')
             if connection.execute('SELECT 1 FROM device_equipment_associations WHERE issue_entry_id=?', (identity,)).fetchone():
                 raise FileExistsError('This original issue is already associated with a Device')
-            issue_ids = [identity]
-        actor_label = connection.execute('SELECT username FROM accounts WHERE id=?', (actor_id,)).fetchone()[0]
-        associations = []
-        for index, identity in enumerate(issue_ids):
-            associations.append(connection.execute('''INSERT INTO device_equipment_associations
-                (device_assignment_id,issue_entry_id,operation_key,operation_hash,actor_id,actor_label)
-                VALUES(?,?,?,?,?,?)''', (assignment_id, identity, key if index == 0 else key + ':' + str(index),
-                                        digest, actor_id, actor_label)).lastrowid)
+            associate([identity])
         result = dict(deviceId=device_id, deviceAssignmentId=assignment_id,
                       associationIds=associations, issueEntryIds=issue_ids, movementId=movement)
         record_actor_event(connection, actor_id, kind='IT Assets', action='Associated', label=device_id,

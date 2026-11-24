@@ -85,7 +85,7 @@ def read_staff_member(connection, actor_id, staff_id):
 
 def department_has_associations(connection, department_id):
     """Retain Departments referenced currently or in append-only Staff history."""
-    if connection.execute('SELECT 1 FROM device_assignments WHERE department_id=? LIMIT 1',
+    if connection.execute('SELECT 1 FROM device_assignment_departments WHERE department_id=? LIMIT 1',
                           (department_id,)).fetchone():
         return True
     if connection.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name='it_asset_stock_entries'").fetchone():

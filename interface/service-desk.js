@@ -659,7 +659,11 @@ window.caffootServiceDesk = (() => {
               <p>${employee ? 'Select the affected equipment and describe the problem.' : 'All Service Desk tickets are associated with an existing Device or IT Asset.'}</p>
               ${employee ? '<div class="employee-ticket-create-fields">' + equipmentField + categoryField + '</div>' + equipmentHelp
                   : equipmentField + '<p>Employee access follows the equipment’s verified assignment.</p>' + equipmentHelp + categoryField}
-              ${employee ? `<div data-ticket-software-field hidden>
+              ${employee ? `<div class="device-review-warning service-desk-confidentiality" data-ticket-confidentiality role="status" hidden>
+                  <strong>Department Ticket — Confidentiality Warning</strong>
+                  <p data-ticket-confidentiality-audience></p>
+                  <p><strong>Do not include or attach confidential, personal or sensitive information.</strong></p>
+                </div><div data-ticket-software-field hidden>
                   <label class="service-desk-field">Affected Software (Optional)<select name="affectedSoftware" disabled></select></label>
                   <p data-ticket-software-help aria-live="polite"></p>
                 </div>` : ''}
@@ -674,7 +678,20 @@ window.caffootServiceDesk = (() => {
             if (linkedEquipment && selected === -1) showTicketError(dialog, 'This equipment is no longer available for a new ticket.');
             if (employee) {
                 const form = body.querySelector('form');
+                const updateConfidentiality = () => {
+                    const index = form.elements.equipment.value;
+                    const item = index === '' ? null : dialog.equipment[Number(index)];
+                    const warning = form.querySelector('[data-ticket-confidentiality]');
+                    warning.hidden = item?.scope !== 'department' || !(item.kind === 'device' || item.associationId);
+                    if (!warning.hidden) {
+                        const device = item.associationId ? 'the Device this equipment is associated with' : 'this Device';
+                        warning.querySelector('[data-ticket-confidentiality-audience]').textContent =
+                            'This ticket, employee-visible replies and permitted attachments will be visible to authorised Staff Members in any Department currently or subsequently assigned to ' + device + '.';
+                    }
+                };
+                updateConfidentiality();
                 form.addEventListener('change', event => {
+                    if (event.target.name === 'equipment') updateConfidentiality();
                     if (['equipment','categoryId'].includes(event.target.name))
                         void updateTicketSoftware(dialog, form, softwareCategoryId);
                 });
@@ -1070,6 +1087,7 @@ window.caffootServiceDesk = (() => {
                 payload = {equipmentId:selected.id, equipmentKind:selected.kind, categoryId:Number(data.get('categoryId')),
                     subject:data.get('subject'), description:data.get('description'), ...await ticketAttachmentPayload(form.elements.attachments)};
                 if (selected.stockIssueId) payload.stockIssueId = selected.stockIssueId;
+                if (selected.associationId) payload.associationId = selected.associationId;
                 if (dialog.employee && data.get('affectedSoftware')) payload.affectedSoftware = data.get('affectedSoftware');
             } else {
                 path += '/' + dialog.id + '/';

@@ -185,6 +185,8 @@ def save_stock_correction(connection, actor, token, payload):
         movement = connection.execute('SELECT coalesce(max(id),0)+1 FROM it_asset_stock_movements').fetchone()[0]
         entry = {key: source[key] for key in ('stock_item_id', 'stock_unit_id', 'staff_id',
             'department_id', 'recipient_label', 'device_assignment_id', 'snapshot_json')}
+        if source.get('custody_recipient_id') is not None:
+            entry['custody_recipient_id'] = source['custody_recipient_id']
         entry.update(movement_id=movement, quantity=abs(quantity-previous),
             from_state=source['from_state'] if quantity > previous else source['to_state'],
             to_state=source['to_state'] if quantity > previous else source['from_state'],

@@ -256,3 +256,6 @@ html.dark .service-desk-settings [data-support-confirm-error] { color: #ffb7b3; 
     .support-list .device-table [data-support-categories] .support-list-actions { justify-content: start; }
     .support-list .device-table [data-support-exclusions] tr { grid-template-columns: auto minmax(0, 1fr); }
 }
+
+.service-desk-confidentiality { margin: 0 0 .85rem; }
+.service-desk-confidentiality p { margin: .3rem 0 0; }

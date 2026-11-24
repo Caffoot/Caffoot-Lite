@@ -1,0 +1,290 @@
+{
+  "sourceRevision": "57ca30e15f2d61d2bb4689c6ca1a3600973df3c7",
+  "browser": "156.0.8078.79",
+  "capturedAt": "2026-11-24T11:18:49.621Z",
+  "origin": "https://127.0.0.1:44029",
+  "schema": 29,
+  "fixture": "Fictional Staff, Departments, Devices and tickets seeded in this Chromium test.",
+  "sourceHashes": {
+    "interface/application.js": "fbc7513ca4d94af13916d6aa5aab84fc6b328b007ab99f17bdcab5b2b48e47fd",
+    "interface/equipment.js": "356bb9309f1d7fa452f37e0cbdf000e3ac61435bce7c7d2c55f09596a3f61d2c",
+    "interface/staff-directory.js": "edf86d220d8b6ee404c1a42470dd606e9fd05c4cd75fd69ed5cfbb484e71cd33",
+    "interface/stock-intake.js": "3fd23f39a9cc300cd6800a4225410d6c352bbcc4d51c9977a39b4473165ec2c8",
+    "interface/service-desk.js": "8939790b72b6bbf855b813d5109c5fb55037d945ea00ba99592e26b324b2bb29",
+    "interface/styles/equipment.css": "9b101af92509d778720f068e228e0b67f8a1256949be4978f7018f3074959e6b",
+    "interface/styles/service-desk.css": "19000de84db368b5a5145383f269e305df4e1337fe9d47ed897ef05a19b607b8",
+    "backend/shared_devices.py": "f9c337f2e4c3a8b8caad2aedbec6c0a589b8bdda7997c181164b7b4ab58b5fd2",
+    "backend/shared_device_schema.py": "44bc6b106c64001aea9bf492ca319353eb3010d63b36ee828b413f1cca968176"
+  },
+  "captures": {
+    "assign-device-desktop-light.png": {
+      "width": 1440,
+      "height": 960,
+      "theme": "light",
+      "sha256": "f6b3953da8f14f90dd72fe641bd7da99d2a136797b222b3b242b181584d95e64"
+    },
+    "assign-device-desktop-dark.png": {
+      "width": 1440,
+      "height": 960,
+      "theme": "dark",
+      "sha256": "f05bf4183ff702a6944ac49590e85208dfc525cb39f2d446ac27af508f64dcad"
+    },
+    "assign-device-mobile-light.png": {
+      "width": 390,
+      "height": 844,
+      "theme": "light",
+      "sha256": "b6d2bf972a5d1231f6e44d48141ee80177072863abe1a05769f26404f5a09a8d"
+    },
+    "assign-device-mobile-dark.png": {
+      "width": 390,
+      "height": 844,
+      "theme": "dark",
+      "sha256": "25cb39bdc9b1b70372ce2230d43e200708afb4b809bd35d7162217ec1fa8d9d7"
+    },
+    "manage-departments-desktop-light.png": {
+      "width": 1440,
+      "height": 960,
+      "theme": "light",
+      "sha256": "08091fc6c49a391dca499682ce7bac37b88f776a02ae9996ce56599ade9e4db3"
+    },
+    "manage-departments-desktop-dark.png": {
+      "width": 1440,
+      "height": 960,
+      "theme": "dark",
+      "sha256": "e7ae5a5c03a41d078a9a71bfdf51c51edb49240b9d98f89654378790bac02720"
+    },
+    "manage-departments-mobile-light.png": {
+      "width": 390,
+      "height": 844,
+      "theme": "light",
+      "sha256": "6cae9761f07c9b66bbd9ebd7b84f74c6df40b360dfa98f63067e9bc517cc8c39"
+    },
+    "manage-departments-mobile-dark.png": {
+      "width": 390,
+      "height": 844,
+      "theme": "dark",
+      "sha256": "3e76fe90663755486e0abc8443d8d12656653cbdede628b6a514745e4198d580"
+    },
+    "current-assignment-desktop-light.png": {
+      "width": 1440,
+      "height": 960,
+      "theme": "light",
+      "sha256": "732dac0bc975af546b070faafae3d258d60beed913dad8f2289f1a1846f91db0",
+      "sourceRevision": "7cfe63a344ab9088194e899f88e2d837342e585e"
+    },
+    "current-assignment-desktop-dark.png": {
+      "width": 1440,
+      "height": 960,
+      "theme": "dark",
+      "sha256": "db52445b60f7bdec0edd56718594f1d385eb6c90b8b2d242311ffbf28e80845e",
+      "sourceRevision": "7cfe63a344ab9088194e899f88e2d837342e585e"
+    },
+    "current-assignment-mobile-light.png": {
+      "width": 390,
+      "height": 844,
+      "theme": "light",
+      "sha256": "39e87afbb8ffac7c43c41787e8955e1cdb5ec6417da35e049d67eeed9d7b23e1",
+      "sourceRevision": "7cfe63a344ab9088194e899f88e2d837342e585e"
+    },
+    "current-assignment-mobile-dark.png": {
+      "width": 390,
+      "height": 844,
+      "theme": "dark",
+      "sha256": "b3e1d438eba19ca617cf769cd6ecc2af45c5bde740cd3d54b0217fdb999fcaaf",
+      "sourceRevision": "7cfe63a344ab9088194e899f88e2d837342e585e"
+    },
+    "department-equipment-desktop-light.png": {
+      "width": 1440,
+      "height": 960,
+      "theme": "light",
+      "sha256": "867a641318605783000f7ad38b8cce1c28bc0dacfdf7d76f3e5f927936b7f44a",
+      "sourceRevision": "e3676087588e1f5c9f96f1a1012ee8841ff918ea"
+    },
+    "department-equipment-desktop-dark.png": {
+      "width": 1440,
+      "height": 960,
+      "theme": "dark",
+      "sha256": "d603766b85ef25ee3d536ae4bf688cde548dbccd52ee37ed6e44ab7f56a1ad1b",
+      "sourceRevision": "e3676087588e1f5c9f96f1a1012ee8841ff918ea"
+    },
+    "department-equipment-mobile-light.png": {
+      "width": 390,
+      "height": 844,
+      "theme": "light",
+      "sha256": "f522aab71fb10493c5f5858f5e7587f302b63fda277bb98e7c2e8b3ee7121caa",
+      "sourceRevision": "e3676087588e1f5c9f96f1a1012ee8841ff918ea"
+    },
+    "department-equipment-mobile-dark.png": {
+      "width": 390,
+      "height": 844,
+      "theme": "dark",
+      "sha256": "9cb104e20471c0a2e5eb08700fbec9ce5dddc401059744a6808d7bad39e056fb",
+      "sourceRevision": "e3676087588e1f5c9f96f1a1012ee8841ff918ea"
+    },
+    "my-equipment-desktop-light.png": {
+      "width": 1440,
+      "height": 960,
+      "theme": "light",
+      "sha256": "13abfac23635d3ce2622214907975ecdee14fce31bb1c5a027be57737be5654e",
+      "sourceRevision": "5db6483cdf5c7811f53e50fd6235f2233ad6d24c"
+    },
+    "my-equipment-desktop-dark.png": {
+      "width": 1440,
+      "height": 960,
+      "theme": "dark",
+      "sha256": "36c55caece9450e43a9dbac113dfd5c2be6af8d0184a5e3641b9d4db01ba59eb",
+      "sourceRevision": "5db6483cdf5c7811f53e50fd6235f2233ad6d24c"
+    },
+    "my-equipment-mobile-light.png": {
+      "width": 390,
+      "height": 844,
+      "theme": "light",
+      "sha256": "3ea7f5dca40658fb7534b45d89b5fc4d6f59a0c96972f74ece12458244ab77d8",
+      "imageHeight": 958,
+      "sourceRevision": "5db6483cdf5c7811f53e50fd6235f2233ad6d24c"
+    },
+    "my-equipment-mobile-dark.png": {
+      "width": 390,
+      "height": 844,
+      "theme": "dark",
+      "sha256": "acdc8f0ddafc691a3874c47b2f2883c72a7c263b114a17a4a8518712acc0a955",
+      "imageHeight": 958,
+      "sourceRevision": "5db6483cdf5c7811f53e50fd6235f2233ad6d24c"
+    },
+    "ticket-confidentiality-desktop-light.png": {
+      "width": 1440,
+      "height": 960,
+      "theme": "light",
+      "sha256": "0ea14bccbbe6c9356a138fdb88489863e9b99d08530ac0cdb60d2868e70ea4aa"
+    },
+    "ticket-confidentiality-desktop-dark.png": {
+      "width": 1440,
+      "height": 960,
+      "theme": "dark",
+      "sha256": "003d0873a7388ed3b7e44b060c7b931b3b28d93ef5b62db85665d46cc56c6524"
+    },
+    "ticket-confidentiality-mobile-light.png": {
+      "width": 390,
+      "height": 844,
+      "theme": "light",
+      "sha256": "41e18a8265b2cdc256febc6aafeaab02db711d42afba48fddbcde418c44eb507"
+    },
+    "ticket-confidentiality-mobile-dark.png": {
+      "width": 390,
+      "height": 844,
+      "theme": "dark",
+      "sha256": "ce535661a076c818908a34fd52d842d9d57df9e658dbfa3f72ff39630c512991"
+    },
+    "department-tickets-desktop-light.png": {
+      "width": 1440,
+      "height": 960,
+      "theme": "light",
+      "sha256": "0afaa963a50cbc217e680f436f73bcaa590b0dd1a9b35a96660f9dd846c49ddd",
+      "sourceRevision": "e3676087588e1f5c9f96f1a1012ee8841ff918ea"
+    },
+    "department-tickets-desktop-dark.png": {
+      "width": 1440,
+      "height": 960,
+      "theme": "dark",
+      "sha256": "07ca559eecf012360ad4850b2cc012465c0d227ad613c861fac5afd96f3c0d93",
+      "sourceRevision": "e3676087588e1f5c9f96f1a1012ee8841ff918ea"
+    },
+    "department-tickets-mobile-light.png": {
+      "width": 390,
+      "height": 844,
+      "theme": "light",
+      "sha256": "08322861a12e4b1ff4f4dcf155fae96e67e8d949258c9b96b942b844f245f609",
+      "sourceRevision": "e3676087588e1f5c9f96f1a1012ee8841ff918ea"
+    },
+    "department-tickets-mobile-dark.png": {
+      "width": 390,
+      "height": 844,
+      "theme": "dark",
+      "sha256": "88750a5fb53859bc47849c9324a8538b0fcf0f832ab42ab9246bccb1516ca065",
+      "sourceRevision": "e3676087588e1f5c9f96f1a1012ee8841ff918ea"
+    },
+    "accessory-confidentiality-desktop-light.png": {
+      "width": 1440,
+      "height": 960,
+      "theme": "light",
+      "sha256": "48d26e1418a38e72bc8f212948ac5f9901797d7e5f55877566f94d31f5ef3310",
+      "sourceRevision": "e3676087588e1f5c9f96f1a1012ee8841ff918ea"
+    },
+    "accessory-confidentiality-desktop-dark.png": {
+      "width": 1440,
+      "height": 960,
+      "theme": "dark",
+      "sha256": "467203230d7d10aee5f0e70b4f7a429a83f3e79960d2447dfdfdb55cd757a993",
+      "sourceRevision": "e3676087588e1f5c9f96f1a1012ee8841ff918ea"
+    },
+    "accessory-confidentiality-mobile-light.png": {
+      "width": 390,
+      "height": 844,
+      "theme": "light",
+      "sha256": "0aa99112057d265d7e408049caf9bb16b51b51cf5a5788f5fe944e439419c0f9",
+      "sourceRevision": "e3676087588e1f5c9f96f1a1012ee8841ff918ea"
+    },
+    "accessory-confidentiality-mobile-dark.png": {
+      "width": 390,
+      "height": 844,
+      "theme": "dark",
+      "sha256": "9232ca0391b9eed1478975a806b860ca9e79ca834ad5c07713287027a0ddaa62",
+      "sourceRevision": "e3676087588e1f5c9f96f1a1012ee8841ff918ea"
+    }
+  },
+  "currentAssignmentRefresh": {
+    "sourceRevision": "7cfe63a344ab9088194e899f88e2d837342e585e",
+    "browser": "156.0.8078.79",
+    "capturedAt": "2026-11-24T11:30:35.597Z",
+    "origin": "https://127.0.0.1:46655",
+    "schema": 29,
+    "fixture": "Fictional Staff, Departments, Devices and tickets seeded in this Chromium test.",
+    "sourceHashes": {
+      "interface/application.js": "fbc7513ca4d94af13916d6aa5aab84fc6b328b007ab99f17bdcab5b2b48e47fd",
+      "interface/equipment.js": "513734d06fe12e4faab6597fb1e7fcf6ae844fbfa56a519d74315d3e1dbbd6ea",
+      "interface/staff-directory.js": "edf86d220d8b6ee404c1a42470dd606e9fd05c4cd75fd69ed5cfbb484e71cd33",
+      "interface/stock-intake.js": "3fd23f39a9cc300cd6800a4225410d6c352bbcc4d51c9977a39b4473165ec2c8",
+      "interface/service-desk.js": "8939790b72b6bbf855b813d5109c5fb55037d945ea00ba99592e26b324b2bb29",
+      "interface/styles/equipment.css": "9b101af92509d778720f068e228e0b67f8a1256949be4978f7018f3074959e6b",
+      "interface/styles/service-desk.css": "19000de84db368b5a5145383f269e305df4e1337fe9d47ed897ef05a19b607b8",
+      "backend/shared_devices.py": "f9c337f2e4c3a8b8caad2aedbec6c0a589b8bdda7997c181164b7b4ab58b5fd2",
+      "backend/shared_device_schema.py": "344874196c5f9ab53fd2deac88891e2de10c986fa52ef8d1cafc55a896d63bf4"
+    },
+    "mobileFraming": "Scrolled the existing Device Details body to show both Assignment History tables."
+  },
+  "accessoryCustodyRefresh": {
+    "sourceRevision": "e3676087588e1f5c9f96f1a1012ee8841ff918ea",
+    "browser": "156.0.8078.79",
+    "capturedAt": "2026-11-24T12:30:49.335Z",
+    "origin": "https://127.0.0.1:41941",
+    "schema": 29,
+    "fixture": "Fictional printer with a USB cable originally issued to Accounts and explicitly associated before Sales joins the Device custody. A Sales employee raises an accessory ticket from My Equipment.",
+    "sourceHashes": {
+      "interface/application.js": "fbc7513ca4d94af13916d6aa5aab84fc6b328b007ab99f17bdcab5b2b48e47fd",
+      "interface/equipment.js": "513734d06fe12e4faab6597fb1e7fcf6ae844fbfa56a519d74315d3e1dbbd6ea",
+      "interface/staff-directory.js": "edf86d220d8b6ee404c1a42470dd606e9fd05c4cd75fd69ed5cfbb484e71cd33",
+      "interface/stock-intake.js": "3fd23f39a9cc300cd6800a4225410d6c352bbcc4d51c9977a39b4473165ec2c8",
+      "interface/service-desk.js": "ea359e071bbd5b00500061dbde798af1b002319079915acbb6b23f169e16c3e2",
+      "interface/styles/equipment.css": "9b101af92509d778720f068e228e0b67f8a1256949be4978f7018f3074959e6b",
+      "interface/styles/service-desk.css": "19000de84db368b5a5145383f269e305df4e1337fe9d47ed897ef05a19b607b8",
+      "backend/shared_devices.py": "f9c337f2e4c3a8b8caad2aedbec6c0a589b8bdda7997c181164b7b4ab58b5fd2",
+      "backend/shared_device_schema.py": "344874196c5f9ab53fd2deac88891e2de10c986fa52ef8d1cafc55a896d63bf4",
+      "backend/device_assignments.py": "6bd82159e31ba5769f44b33e66db708a01669e044aeac4600aaa8bb12c184172",
+      "backend/stock_circulation.py": "03333d205754c8298d57805bbc6428ad4f15c261013641e4174ef8ec5918a6fb",
+      "backend/service_desk_access.py": "80d9dc6795e16cb05ed43f7e92e78545164acafec645e4226d54a5782009a668",
+      "backend/service_desk.py": "a58e58e3fcaa55ce6d795ae23016082ff9887a623888674860d65207a1044e13"
+    }
+  },
+  "myEquipmentAlignmentRefresh": {
+    "sourceRevision": "5db6483cdf5c7811f53e50fd6235f2233ad6d24c",
+    "browser": "156.0.8078.79",
+    "capturedAt": "2026-11-24T12:43:26.743Z",
+    "origin": "https://127.0.0.1:46763",
+    "schema": 29,
+    "fixture": "The Sales employee has a personal laptop, two shared printers and a USB cable associated with the Main Office Printer.",
+    "sourceHashes": {
+      "interface/styles/equipment.css": "83cc0877130509cbbe987b0424550544e23d580300cee61322126a53dfa26211",
+      "tests/shared-devices-interface.cjs": "07f55c0fedb7bc4d523be377a5ec21acd68fa5ec54460a0afe0c6a5390e53d44"
+    }
+  }
+}

@@ -147,16 +147,26 @@ Up to 10 MB is allowed per file and 100 MB retained per ticket. If two technicia
 
 Caffoot Lite records the equipment and its assignment when a ticket is raised. The original Device or IT Asset keeps its identity as it changes hands. Authorised IT can still review the ticket, its replies, attachments and attributed history under the equipment's section permissions.
 
-After a transfer, **My Tickets** shows eligible tickets from each employee’s current personal assignment. **Department Tickets** uses the current membership and the Department’s current equipment assignment. The ticket number and all original records remain in **IT → Service Desk** for technicians with access.
+After a physical transfer, **My Tickets** shows eligible tickets from each employee’s current personal assignment. **Department Tickets** uses live Staff membership and the Departments assigned to the Device’s current physical custody period. IT-created and employee-created Device tickets and new associated accessory tickets follow the same rule. An associated accessory ticket also requires the original accessory issue to remain in custody. The ticket number and all original records remain in **IT → Service Desk** for technicians with access.
 
 | Change | Worked example |
 | --- | --- |
 | Person to Department | Alex returns a scanner which is then assigned to Reception. Alex's earlier personal ticket goes out of employee views. Reception members can see employee-visible tickets raised for the scanner under Reception's assignment. |
 | Department to Department | Payroll's printer moves to Finance. Payroll's earlier printer conversations become IT-only. Finance can see eligible conversations raised for its own assignment. |
 | Department to Person | Operations' shared laptop is issued to Priya. The earlier Operations tickets become IT-only. Priya can see eligible tickets from her new personal assignment. |
+| Departments sharing the Device change within one custody period | Accounts and Sales share an office printer. IT adds Finance in **Manage Departments**. Eligible Finance members can see employee-visible conversations and permitted files from earlier in this custody period. Removing Finance revokes that access on the next request. Re-adding Finance restores current-period access. |
 | Department membership changes while the assignment continues | Asha joins Finance while its printer is still assigned to Finance. She can see employee-visible tickets from that same assignment. A colleague who leaves Finance loses the access they had through its membership. |
 
-Internal notes and the attachments to them stay within IT. If a previously returned Device goes back to the same person or Department, tickets from that earlier equipment assignment stay with IT. A quantity-stock correction that restores the outstanding balance after a full return follows the same privacy boundary. The earlier ticket stays with IT and an eligible current holder may raise a new one. [Device Assignments And My Equipment](Device-Assignments-and-My-Equipment.md) · [Correct Movement](IT-Assets-Correct-Movement.md)
+The employee **Create Ticket** warning applies to every Department-assigned Device and its explicitly associated outstanding accessories. Check the warning text and tell employees to keep confidential, personal and sensitive information out of shared Device requests. Existing email events recheck membership, custody, account eligibility and verified addresses at dispatch. Sharing changes send no historical notifications. Internal notes and the attachments to them stay within IT. If a previously returned Device goes back to the same person or Department, tickets from that earlier equipment assignment stay with IT. A quantity-stock correction that restores the outstanding balance after a full return follows the same privacy boundary. The earlier ticket stays with IT and an eligible current holder may raise a new one. [Device Assignments And My Equipment](Device-Assignments-and-My-Equipment.md) · [Correct Movement](IT-Assets-Correct-Movement.md)
+
+### Review A Historical Accessory Ticket
+
+1. With **Service Desk Read**, **IT Assets Read** and IT Assets enabled, open **IT → Service Desk**. Look up the original ticket number and check its issue, updates and history.
+2. If the issue is associated with a Device and the ticket predates the approved warning or the association, employee access requires a verifiable original audience. Where that audience cannot be established, the ticket and permitted files are available only to authorised IT.
+3. Check current equipment in **Device Details → Associated Equipment**. If the problem continues, an eligible employee can use **My Equipment → Report A Problem**, read the warning and raise a new request. The new ticket’s employee audience follows the Device’s current Departments.
+4. Check removals with a test employee account. Opening, replying, downloading and queued notification delivery all recheck the ticket’s audience. Adding a Department restores access to eligible current-period tickets created with the new rule.
+
+[Historical access on upgrade](Legacy-Import-and-Docker-Upgrade.md#historical-associated-equipment-tickets)
 
 ## Check Affected Software And Category Corrections
 

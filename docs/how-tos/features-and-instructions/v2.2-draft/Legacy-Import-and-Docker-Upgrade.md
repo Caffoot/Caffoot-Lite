@@ -62,25 +62,33 @@ The screenshots use fictional inventory captured in the working application. See
 
 ## Upgrade A v2.1 Docker Installation
 
-The Stage 6.2 rehearsal used published v2.1 schema 10 and reached v2.2 schema 28 on a disposable copy. The review procedure below applies to an authorised isolated installation. Keep the v2.1 production instance on its published version until a release and deployment have been approved.
+The Stage 6.2 rehearsal used published v2.1 schema 10 and reached v2.2 schema 28 on a disposable copy. Stage 6.4 introduces schema 29 for supported upgrades in the v2.2 review build. It preserves the original Device, assignment, stock issue, accessory and ticket references while recording equal Department relationships separately. A protected inventory import continues to require matching saved Device records for equipment with this history.
+
+Before trying the schema 29 review build, stop the schema 28 review installation and archive its complete configured `/data` volume. Record the matching image identifier and keep the archive separate from the copy you upgrade. To roll back, restore that stopped archive into a fresh volume and start the recorded schema 28 image against it. See [Back Up A Complete Installation](#back-up-a-complete-installation) and the [Stage 6.3 recovery evidence](../../../development-handovers/evidence/stage-6-3/README.md). The review procedure below applies to an authorised isolated installation. Keep the v2.1 production instance on its published version until a release and deployment have been approved.
+
+### Historical Associated Equipment Tickets
+
+After the Stage 6.4 correction, authorised IT can still open historical associated accessory tickets in **IT → Service Desk** with the existing Service Desk and IT Assets permissions. When the original employee audience cannot be verified, those tickets and their files are available only to authorised IT. This covers earlier tickets raised against issues that have since been explicitly associated with a Device. Existing ticket numbers, replies, attachments and audit records are retained.
+
+During upgrade checks, sign in as a representative Staff Member and confirm that a saved link to a restricted historical ticket is unavailable. Confirm the same ticket still opens for an authorised technician. If the equipment still needs support, an eligible employee can open **My Equipment → Report A Problem** and submit a new ticket after reading the shared-equipment warning. Standalone IT Asset and canonical Device tickets retain their existing access rules. [Ticket privacy and custody](Service-Desk-Administration.md#what-happens-to-service-desk-tickets-when-equipment-changes-hands)
 
 ### Make A Complete Pre-Upgrade Backup
 
-Follow [Back up a complete installation](#back-up-a-complete-installation) while the source is still on v2.1. Test restoring that backup with the matching v2.1 image before proceeding. Keep the verified snapshot and its image for rollback.
+Follow [Back up a complete installation](#back-up-a-complete-installation) while the source is on its original image, published v2.1 with schema 10 or an earlier authorised v2.2 review build. Test restoring the backup with that matching image before proceeding. Keep the verified snapshot and image for rollback, including when both review builds use schema 29.
 
 ### Start The Review Image And Check The Result
 
-1. Use a separate disposable installation and a consistent copy of the stopped v2.1 `/data`. Confirm that the test stack cannot see your production mount. Use the authorised v2.2 review image for the intended revision and architecture.
+1. Use a separate disposable installation and a consistent copy of the stopped source `/data`. Confirm that the test stack cannot see your production mount. Use the authorised v2.2 review image for the intended revision and architecture.
 2. Keep the test stack's existing `/data` mapping and working HTTPS/network settings when you replace the image. For Portainer, edit the existing test stack and replace its image reference. For Compose, change the image in the existing test definition and recreate the service in the same project. Confirm the volume mapping before starting. The application applies the pending migrations on startup.
-3. Check that the instance becomes healthy and that it still presents the trusted certificate. Existing sessions end and affected outstanding email proofs are revoked. Sign in again. Legacy Readers and other active accounts moved to **IT Staff** may need to enrol an authenticator, even if their inventory access remains **No Access**. Existing authenticator details are retained. See [Roles, Section Permissions And MFA](Roles-Section-Permissions-and-MFA.md#what-an-existing-account-may-show-after-upgrade).
-4. Verify representative Devices, linked IPAM and Racks records, preferences and Audit Trail entries. Check a saved profile, existing Read and Edit access and Administrator sign-in. Check that the private email settings remain readable. The upgrade maintains configured legacy access while applying the new MFA requirements.
+3. Check that the instance becomes healthy and that it still presents the trusted certificate. Sign in using an authorised test account. On the v2.1 upgrade, earlier migrations end existing sessions and revoke affected outstanding email proofs. Legacy Readers and other active accounts moved to **IT Staff** may need to enrol an authenticator, even if their inventory access remains **No Access**. Existing authenticator details are retained. See [Roles, Section Permissions And MFA](Roles-Section-Permissions-and-MFA.md#what-an-existing-account-may-show-after-upgrade).
+4. Verify representative Devices, linked IPAM and Racks records, preferences and Audit Trail entries. Check a saved profile, existing Read and Edit access, Administrator sign-in and private email settings. For a populated v2.2 review source, compare Department assignments, original stock recipients and quantities, associated equipment, ticket visibility and attachments. The upgrade maintains configured section permissions while applying the new MFA requirements and the historical accessory ticket restriction above.
 5. Recreate the isolated container again against the same mount and repeat the health, sign-in and sample record checks. The rehearsal also checked SQLite integrity, foreign keys and unchanged rows on repeat startup. If startup fails, preserve the stopped copy and review the container log before trying again.
 
 ### Roll Back Using The Complete Pre-Upgrade Backup
 
 1. Stop the upgraded container. If you need its data for investigation or later recovery, back up its complete stopped mount separately and label that copy with its v2.2 image and schema.
-2. [Restore the complete pre-upgrade snapshot](#restore-a-complete-installation) into a clean target using the matching v2.1 image and saved stack settings. The migrated schema-28 mount must never be attached to v2.1.
-3. Check trusted HTTPS, MFA sign-in, representative inventory, profiles, permissions and private settings. Rollback returns the installation to the time of the schema-10 backup. Changes made afterwards are absent from that recovery.
+2. [Restore the complete pre-upgrade snapshot](#restore-a-complete-installation) into a clean target using the matching source image and saved stack settings. Use the stopped backup with that image, because the upgraded volume is on schema 29.
+3. Check trusted HTTPS, MFA sign-in, representative inventory, profiles, permissions and private settings. For a v2.2 review source, also check Staff assignments, stock and restricted Service Desk access. Rollback restores the state captured in the backup. Any later changes are absent from that recovery.
 
 ## Back Up A Complete Installation
 

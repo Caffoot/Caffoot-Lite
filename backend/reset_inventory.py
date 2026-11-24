@@ -18,7 +18,7 @@ from .supplier_schema import INITIAL_CATEGORIES
 OPERATIONAL_TABLES = (
     'service_desk_tickets', 'service_desk_categories',
     'device_equipment_associations', 'device_suppliers', 'receipt_suppliers',
-    'device_lifecycle', 'it_asset_stock_entries', 'device_assignments',
+    'device_lifecycle', 'it_asset_stock_entries', 'device_assignment_departments', 'device_assignments',
     'it_asset_stock_movements', 'it_asset_stock_units', 'it_asset_stock_items',
     'supplier_issue_updates', 'supplier_issue_contacts', 'supplier_issues',
     'supplier_notes', 'supplier_contact_locations', 'supplier_category_assignments',
@@ -28,7 +28,7 @@ OPERATIONAL_TABLES = (
 )
 OPERATIONAL_DELETE_GUARDS = (
     'device_equipment_associations_no_delete', 'receipt_supplier_no_delete',
-    'it_asset_entries_no_delete', 'retain_device_assignment_delete',
+    'it_asset_entries_no_delete', 'retain_device_assignment_delete', 'device_assignment_department_no_delete',
     'it_asset_movements_no_delete', 'it_asset_units_no_delete',
     'supplier_issue_update_no_delete', 'supplier_issue_no_delete',
     'supplier_supply_history_no_delete', 'supplier_issue_contact_retention',

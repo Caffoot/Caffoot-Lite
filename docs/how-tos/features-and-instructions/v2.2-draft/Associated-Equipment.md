@@ -29,13 +29,13 @@ Read-only users can inspect permitted records but cannot add, return or write of
 Use this route when the accessory is physically available and has not yet been issued.
 
 1. In **Device Details → Associated Equipment**, choose **Add Equipment**.
-2. In **Add Equipment From**, keep **Issue And Associate** selected. Check **Issued To**: this is the Device's actual current Staff Member or Department. It is fixed for this operation.
+2. In **Add Equipment From**, keep **Issue And Associate** selected. Check **Issued To** for the Device’s current Staff Member or Departments. When several Departments share the Device, the new accessory issue records the Device’s custody as its recipient.
 3. Choose the item under **Ready Equipment**. Read the availability for that selected item.
 4. Enter a whole **Quantity To Issue** within its Ready balance. For individually tracked equipment, select the actual Ready units; check their serial numbers or asset tags where recorded. A unit without either identifier still keeps its individual identity.
 5. Enter **Date Issued** and an optional **Issue Note**. Review **Selected Equipment** and the fixed recipient.
 6. Choose **Add Equipment**. On success, the application returns to the Device's **Associated Equipment** tab. Check the new outstanding association and its original issue.
 
-The issue and association save together. For two newly issued keyboards, held and Ready stock each reduce by two, and their original issue is explicitly associated with this Device's holder. If validation fails, neither the issue nor its link is saved. The separate ordinary **Issue Equipment** confirmation is described in [Issue, Return And Write Off](IT-Assets-Issue-Return-and-Write-Off.md); this combined action retains its **Add Equipment** submission.
+The issue and association save together. For example, issue a keyboard for an Accounts and Sales workstation through **Issue And Associate**. One stock issue and one explicit association are recorded. If Sales later stops sharing that workstation, the issue and associated quantity stay with the same custody period. For two newly issued keyboards, held and Ready stock each reduce by two, and their original issue is explicitly associated with this Device's holder. If validation fails, neither the issue nor its link is saved. The separate ordinary **Issue Equipment** confirmation is described in [Issue, Return And Write Off](IT-Assets-Issue-Return-and-Write-Off.md); this combined action retains its **Add Equipment** submission.
 
 ## Associate Already Issued Equipment
 
@@ -44,12 +44,18 @@ Use this route when the right equipment has already been issued to this exact ho
 1. Open **Device Details → Associated Equipment → Add Equipment**.
 2. Choose **Associate Already Issued Equipment** under **Add Equipment From**.
 3. Select **Already Issued Equipment**. Check its equipment identity, original issue reference, date and outstanding quantity. For individually tracked equipment, inspect its recorded serial number or asset tag.
-4. Check the fixed **Issued To** holder against the Device's current assignment.
+4. Check the original **Issued To** holder against the Device’s current assignment. For Department custody, the original issue must match an eligible Department currently sharing the Device.
 5. Choose **Add Equipment**, then check the association on the Device.
 
 The entire outstanding original issue is linked. If three mice remain outstanding on that issue, this action links that issue's three; it is not a way to select one mouse from the line or move it to another person. No further stock is issued or deducted. If the list says **No Eligible Issued Equipment**, check the original recipient, outstanding balance and existing associations rather than creating a second issue.
 
 In both routes, **Cancel** abandons unsaved work; a discard prompt lets you keep editing. A stale or failed save leaves existing records unchanged. Reload after a holder or stock change and select the equipment again using current information.
+
+## Check The Accessory’s Current Department
+
+With **Devices Read** and **IT Assets Read**, open the Device’s **Assigned To** tab to check the current Departments. Then open **Associated Equipment** to confirm the original issue and outstanding quantity. The issue’s recorded **Issued To** value remains part of the stock history.
+
+For example, Accounts originally received a printer cable. When Sales shares the printer and Accounts is removed, Sales can find the cable in **Department Details → Equipment** and eligible Sales members can see it in **My Equipment**. The association, outstanding quantity and original Accounts issue stay on record. For a continuing problem, use **Report A Problem** on the accessory and read the warning before reporting details. [Department ticket confidentiality](Service-Desk-Tickets.md#shared-device-ticket-confidentiality)
 
 ## Resolve Returned, Damaged Or Missing Accessories
 
@@ -68,11 +74,11 @@ Every explicitly associated outstanding accessory must be resolved before a prep
 
 ## Reassign A Workstation Directly
 
-Direct reassignment records a prepared Device moving from its current holder straight to a different Staff Member or Department. Use it for a genuine handover. When equipment actually returns to the storeroom, use [Return → Preparation → Reissue Existing Device](Device-Stock-Registration-and-Reissue.md) instead.
+Direct reassignment records a prepared Device moving from its current holder straight to a different Staff Member or Department assignment. Use it for a genuine handover. When equipment actually returns to the storeroom, use [Return → Preparation → Reissue Existing Device](Device-Stock-Registration-and-Reissue.md) instead.
 
 1. Resolve **all** explicitly associated outstanding equipment first using the actual returns, damage dispositions or missing-equipment write-offs above. Accessories do not follow the workstation to its next holder automatically.
 2. Open **Device Details → Assigned To → Reassign Device** for the currently assigned physical Device. The selected Device is fixed on the existing form; it is not a bulk reassignment screen.
-3. Choose **Recipient Type**, then the different active Staff Member or non-archived Department under **Find A Recipient**.
+3. Choose **Recipient Type**. Select the new Staff Member under **Find A Recipient**, or search and tick the applicable Departments for an eligible shared Device.
 4. Enter the actual **Date Reassigned** and an optional **Reassignment Note**. The date cannot precede the current issue or be in the future.
 5. Physically check and prepare the workstation. Complete its displayed **Preparation Checks** only after doing the work. These checks start unchecked.
 6. Choose **Confirm Ready And Reassign** as the explicit confirmation that the Device is ready for its new holder.

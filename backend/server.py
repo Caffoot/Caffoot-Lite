@@ -42,7 +42,7 @@ from .service_desk import (read_ticket, read_ticket_assignment_choices, read_tic
                            read_ticket_categories, read_ticket_equipment_choices, read_ticket_list,
                            read_ticket_software_choices, require_ticket, save_ticket_request)
 from .service_desk_access import linked_ticket_staff, ticket_scope_filter
-from .service_desk_email import queue_ticket_email
+from .service_desk_email import queue_ticket_email, snapshot_department_notice
 from .service_desk_calendar import activate_deployment_timezone
 from .service_desk_settings import read_service_desk_settings, save_service_desk_settings
 from .service_desk_reporting import read_service_desk_report, save_report_period
@@ -78,6 +78,7 @@ from .request_auth import authorised_mutation
 from .http_security import require_same_origin
 from .tls import ensure_certificate
 from .deployment_settings import validate_published_port
+from .shared_devices import manage_departments
 from .device_assignments import (assignment_recipients, assignment_device_choices,
     read_assignments, assign_devices, my_equipment)
 from .equipment_associations import read_equipment_associations, add_associated_equipment
@@ -1044,6 +1045,9 @@ class Handler(BaseHTTPRequestHandler):
                 else:
                     result = save_ticket_request(connection, actor_id, scope, payload, ticket_id=ticket_id,
                                                  action=resource, message_id=child_id, attachments=attachments)
+                    if 'notification' in result:
+                        result['notification'] = snapshot_department_notice(
+                            connection, ticket_id or result['id'], result['notification'])
         except TimeoutError:
             self.close_connection = True
             self.respond(408, {'error': 'The ticket upload timed out.'})
@@ -1129,7 +1133,8 @@ class Handler(BaseHTTPRequestHandler):
                     result = read_assignments(connection, actor, **{names[key]: value for key, value in parameters.items()})
                 elif self.command == 'POST' and parsed.path in (
                         '/api/equipment/assignments', '/api/equipment/associations',
-                        '/api/equipment/issue-and-associate', '/api/equipment/reassign') and not parameters:
+                        '/api/equipment/issue-and-associate', '/api/equipment/reassign',
+                        '/api/equipment/manage-departments') and not parameters:
                     length = self.headers.get('Content-Length', '')
                     if not length.isdecimal() or not 0 < int(length) <= MAX_LOGIN_BYTES:
                         raise ValueError('Invalid request size')
@@ -1139,6 +1144,8 @@ class Handler(BaseHTTPRequestHandler):
                     payload = json.loads(self.rfile.read(int(length)), object_pairs_hook=unique_directory_fields)
                     if parsed.path == '/api/equipment/assignments':
                         result = assign_devices(connection, actor, read_session_cookie(cookie), payload)
+                    elif parsed.path == '/api/equipment/manage-departments':
+                        result = manage_departments(connection, actor, read_session_cookie(cookie), payload)
                     elif parsed.path == '/api/equipment/reassign':
                         result = reassign_device(connection, actor, read_session_cookie(cookie), payload)
                     else:

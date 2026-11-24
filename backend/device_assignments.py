@@ -5,6 +5,8 @@ from datetime import datetime, timezone
 from backend.audit_events import record_actor_event
 from backend.permissions import can_access, feature_enabled
 from backend.sessions import session_account
+from backend.shared_devices import (current_departments, device_recipient, insert_device_custody,
+                                    is_shared_device_type, recipient_audit, SHARED_DEVICE_TYPES)
 
 
 def require_assignment_access(connection, actor_id, *, edit=False):
@@ -42,7 +44,7 @@ def device_assignment_dependency(connection, device_id, record):
         return 'This Device is not active. Return, preparation and stock workflows are required before it can be issued.'
     if record.get('isVirtual') or record.get('virtualHostId') or record.get('type') in ('Virtual Machine', 'Server - Virtual'):
         return 'Virtual machines cannot be physically allocated as equipment.'
-    if record.get('type') not in ('Desktop', 'Laptop', 'Printer'):
+    if record.get('type') not in SHARED_DEVICE_TYPES:
         return 'Initial allocation eligibility for this Device type needs product-owner approval.'
     return None
 
@@ -85,13 +87,15 @@ def read_assignments(connection, actor_id, *, device_id=None, staff_id=None, dep
     table = {'device_id': 'inventory_devices', 'staff_id': 'staff_members', 'department_id': 'departments'}[column]
     if connection.execute(f'SELECT 1 FROM {table} WHERE id=?', (value,)).fetchone() is None:
         raise LookupError('Assignment subject not found')
+    subject = ("""EXISTS(SELECT 1 FROM device_assignment_departments r
+        WHERE r.assignment_id=a.id AND r.department_id=?)""" if department_id is not None else f'a.{column}=?')
     rows = connection.execute(f'''SELECT a.id,a.device_id,d.name,a.staff_id,a.department_id,
         a.recipient_label,a.assigned_at,a.actor_id,a.actor_label,a.ended_at,
         COALESCE(NULLIF(trim(s.first_name||' '||s.last_name),''),p.name,a.recipient_label)
         FROM device_assignments a JOIN inventory_devices d ON d.id=a.device_id
         LEFT JOIN staff_members s ON s.id=a.staff_id
         LEFT JOIN departments p ON p.id=a.department_id
-        WHERE a.{column}=? ORDER BY a.id DESC''', (value,))
+        WHERE {subject} ORDER BY a.id DESC''', (value,))
     records = [(dict(zip(('id', 'deviceId', 'deviceName', 'staffId', 'departmentId', 'recipientLabel', 'assignedAt', 'actorId', 'actorLabel', 'endedAt'), row[:10])), row[10]) for row in rows] if device_access else []
     history = [record for record, label in records]
     if device_access:
@@ -109,15 +113,38 @@ def read_assignments(connection, actor_id, *, device_id=None, staff_id=None, dep
                 WHERE a.id=?''',(record['id'],)).fetchone()
             if closure and 'closure' not in record:
                 record['closure']=dict(kind=closure[0],date=closure[1],actor=closure[2])
-    result = {'current': [{**record, 'recipientLabel': label} for record, label in records if record['endedAt'] is None], 'history': history,
-              'canAssign': can_access(connection, actor_id, 'Devices', edit=True)}
+    current = []
+    for record, label in records:
+        if record['endedAt'] is not None:
+            continue
+        if record['staffId'] is not None:
+            current.append({**record, 'recipientLabel': label})
+            continue
+        departments = current_departments(connection, record['id'])
+        if department_id is not None and not any(item['id'] == department_id for item in departments):
+            continue
+        current.append({**record, 'departments': departments,
+            'departmentId': departments[0]['id'] if len(departments) == 1 else None,
+            'recipientLabel': ', '.join(item['label'] for item in departments)})
+    result = {'current': current, 'history': history, 'canAssign': can_access(connection, actor_id, 'Devices', edit=True)}
     if device_id is not None:
         raw, revision = connection.execute('SELECT record_json,revision FROM inventory_devices WHERE id=?', (device_id,)).fetchone()
-        result.update(dependency=device_assignment_dependency(connection, device_id, json.loads(raw)), revision=revision)
+        device = json.loads(raw)
+        result.update(dependency=device_assignment_dependency(connection, device_id, device), revision=revision,
+                      canManageDepartments=bool(result['canAssign'] and current and current[0].get('departments')
+                                                and is_shared_device_type(device)))
+        result['departmentChanges'] = [
+            dict(zip(('assignmentId','departmentId','label','addedAt','addedBy','removedAt','removedBy'), row))
+            for row in connection.execute('''SELECT a.id,d.id,d.name,r.added_at,r.added_by_label,
+                   r.removed_at,r.removed_by_label
+                FROM device_assignment_departments r JOIN departments d ON d.id=r.department_id
+                JOIN device_assignments a ON a.id=r.assignment_id
+                WHERE a.device_id=? ORDER BY r.id DESC''', (device_id,))]
         from backend.device_handovers import device_handover_context
         result['handoverContext']=device_handover_context(connection,actor_id,device_id)
     if asset_access:
-        from backend.stock_circulation import stock_issue_records,stock_movement_history,canonical_device_choice
+        from backend.stock_circulation import (canonical_device_choice, current_stock_issues,
+                                               stock_issue_records, stock_movement_history)
         if device_id is not None:
             choice=canonical_device_choice(connection,device_id)
             from backend.device_stock import device_ready_for_reissue
@@ -145,7 +172,9 @@ def read_assignments(connection, actor_id, *, device_id=None, staff_id=None, dep
         else:
             assets=[issue for issue in stock_issue_records(connection,staff_id=staff_id,department_id=department_id)
                     if not issue['deviceAssignmentId']]
-            result.update(assetCurrent=[issue for issue in assets if issue['outstanding']>0],assetHistory=assets,
+            current_assets = list(current_stock_issues(connection, staff_id=staff_id,
+                                                       department_id=department_id, allow_associated=device_access))
+            result.update(assetCurrent=current_assets,assetHistory=assets,
                 assetMovements=stock_movement_history(connection,actor_id,staff_id=staff_id,department_id=department_id),
                 canIssueStock=can_access(connection,actor_id,'IT Assets',edit=True))
     return result
@@ -158,19 +187,13 @@ def assign_devices(connection, actor_id, session_token, payload):
         if session_account(connection, session_token) != actor_id:
             raise PermissionError('Verified session required')
         require_assignment_access(connection, actor_id, edit=True)
-        if not isinstance(payload, dict) or set(payload) != {'recipientKind', 'recipientId', 'devices'}:
+        if not isinstance(payload, dict) or set(payload) not in (
+                {'recipientKind', 'recipientId', 'devices'}, {'recipientKind', 'departmentIds', 'devices'}):
             raise ValueError('Invalid assignment fields')
-        kind, recipient_id, devices = payload['recipientKind'], payload['recipientId'], payload['devices']
-        if kind not in ('staff', 'department') or not isinstance(recipient_id, str) or not recipient_id:
-            raise ValueError('Invalid recipient')
+        devices = payload['devices']
         if not isinstance(devices, list) or not 1 <= len(devices) <= 100:
             raise ValueError('Select between 1 and 100 Devices')
-        if kind == 'staff':
-            recipient = connection.execute("SELECT trim(first_name||' '||last_name),active FROM staff_members WHERE id=?", (recipient_id,)).fetchone()
-        else:
-            recipient = connection.execute('SELECT name,1-archived FROM departments WHERE id=?', (recipient_id,)).fetchone()
-        if not recipient or not recipient[1]:
-            raise ValueError('An active Staff Member or non-archived Department is required')
+        recipient, departments = device_recipient(connection, payload)
         seen = set()
         for device in devices:
             if (not isinstance(device, dict) or set(device) != {'id', 'revision'}
@@ -189,13 +212,11 @@ def assign_devices(connection, actor_id, session_token, payload):
         actor_label = connection.execute('SELECT username FROM accounts WHERE id=?', (actor_id,)).fetchone()[0]
         assigned_at = datetime.now(timezone.utc).isoformat().replace('+00:00', 'Z')
         for device in devices:
-            connection.execute('''INSERT INTO device_assignments(device_id,staff_id,department_id,recipient_label,assigned_at,actor_id,actor_label)
-                VALUES(?,?,?,?,?,?,?)''', (device['id'], recipient_id if kind == 'staff' else None,
-                recipient_id if kind == 'department' else None, recipient[0] or 'Name Not Recorded', assigned_at, actor_id, actor_label))
+            insert_device_custody(connection, device['id'], recipient, departments, assigned_at, actor_id, actor_label)
             # The general Device audit contains IDs only, never employee names or contacts.
             record_actor_event(connection, actor_id, kind='Device', action='Assigned', label=device['id'],
                 reason='Initial equipment allocation', fields=['Assignment'],
-                after={'recipientKind': kind, 'recipientId': recipient_id, 'assignedAt': assigned_at})
+                after={**recipient_audit(payload), 'assignedAt': assigned_at})
         connection.commit()
         return {'assigned': len(devices), 'assignedAt': assigned_at}
     except BaseException:
@@ -209,24 +230,24 @@ def my_equipment(connection, actor_id):
     staff = connection.execute('SELECT id,department_id FROM staff_members WHERE account_id=?', (actor_id,)).fetchone()
     if staff is None:
         return result
-    rows = connection.execute('''SELECT a.staff_id,a.department_id,d.id,d.record_json,a.assigned_at
+    rows = connection.execute('''SELECT a.staff_id,d.id,d.record_json,a.assigned_at
         FROM device_assignments a JOIN inventory_devices d ON d.id=a.device_id
-        WHERE a.ended_at IS NULL AND (a.staff_id=? OR a.department_id=?) ORDER BY d.name,d.id''', staff) if feature_enabled(connection,'Devices') else []
-    for staff_id, department_id, device_id, raw, assigned_at in rows:
+        WHERE a.ended_at IS NULL AND (a.staff_id=? OR EXISTS(SELECT 1 FROM device_assignment_departments r
+            WHERE r.assignment_id=a.id AND r.department_id=? AND r.removed_at IS NULL)) ORDER BY d.name,d.id''', staff) if feature_enabled(connection,'Devices') else []
+    for staff_id, device_id, raw, assigned_at in rows:
         record = json.loads(raw)
         safe = {'id': device_id, 'name': record['name'], 'type': record.get('type', ''),
                 'manufacturer': record.get('manufacturer', ''), 'model': record.get('model', ''),
                 'assignedAt': assigned_at}
         result['assignedToMe' if staff_id == staff[0] else 'sharedWithMyDepartment'].append(safe)
     if feature_enabled(connection,'IT Assets'):
-        from backend.stock_circulation import stock_issue_records
+        from backend.stock_circulation import current_stock_issues
+        allow_associated = feature_enabled(connection, 'Devices')
         for key,filters in (('assignedToMe',{'staff_id':staff[0]}),
                             ('sharedWithMyDepartment',{'department_id':staff[1]})):
             if key=='sharedWithMyDepartment' and staff[1] is None:
                 continue
-            for issue in stock_issue_records(connection,**filters):
-                if issue['outstanding']<1 or issue['deviceAssignmentId']:
-                    continue
+            for issue in current_stock_issues(connection, allow_associated=allow_associated, **filters):
                 original=issue['specification']
                 result[key].append(dict(id='stock-issue-'+str(issue['id']),name=issue['name'],
                     type=original.get('category',''),manufacturer=original.get('manufacturer',''),

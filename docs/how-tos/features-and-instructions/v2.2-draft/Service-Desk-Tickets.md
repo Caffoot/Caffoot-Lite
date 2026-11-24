@@ -18,8 +18,8 @@ For examples of directly assigned and shared equipment, see [Device Assignments 
 1. Select the affected **Device / Asset**. The choices identify equipment assigned to you and equipment shared with your current Department. If you have several issues of the same IT Asset, check the issue shown in the picker. Ask IT to check your assignment if the correct equipment is missing.
 2. Select one **Ticket Category**. It starts empty. Choose **Other / Not Listed** if the list has no suitable category. **LAN / Shared Drive Issues**, **Email / Sending & Receiving Issues** and **Other / Not Listed** are at the end.
 3. If you choose **Software / Applications** for a Laptop or Desktop, **Affected Software (Optional)** appears. Select an application recorded on that Device, choose **Other / Not Listed** for an unlisted application, or leave it blank. You can name an unlisted application in the description. This selection is saved with the ticket.
-4. Enter a **Subject** of up to 120 characters, such as *Teams calls drop after waking*. In **Description**, use up to 3,000 characters to explain what you expected, what actually happened and which steps bring the problem back.
-5. Use **Attachment (Optional)** if a file will help IT. The form accepts PNG, JPG/JPEG, PDF, TXT, DOCX or XLSX. Each file can be up to **10 MB**, with **100 MB retained across the ticket**. For shared equipment, current Department members with access to the ticket can read the original report and download its attachment.
+4. If a **Department Ticket — Confidentiality Warning** appears, read it before entering details or selecting files. Enter a **Subject** of up to 120 characters, such as *Teams calls drop after waking*. In **Description**, use up to 3,000 characters to explain what you expected, what actually happened and which steps bring the problem back.
+5. Use **Attachment (Optional)** if a file will help IT. The form accepts PNG, JPG/JPEG, PDF, TXT, DOCX or XLSX. Each file can be up to **10 MB**, with **100 MB retained across the ticket**. Eligible current Department members can read the original report and download permitted attachments for the Device’s current custody period.
 6. Select **Create Ticket**. The confirmation gives you a ticket number such as `SD-0006`. The ticket starts **Open**, **Medium** priority and **Unassigned**. Look in **My Tickets** for personal equipment or **Department Tickets** for shared equipment. **Cancel** or **Close Ticket Window** discards the form.
 
 If the form reports a problem, correct the highlighted or named field and submit again. If the file is rejected, use the correct file format or remove it. If a Device, assignment or software choice changed while you had the form open, reopen the form to load its current choices. A failed save leaves the ticket and its attachment unsaved.
@@ -29,6 +29,24 @@ Keep the reference shown after you submit. A new personal or Department request 
 ![Create Ticket showing a Laptop and Microsoft Teams selected under Affected Software.](../../../development-handovers/evidence/employee-service-desk/create-ticket-desktop-light.png)
 
 *The optional software picker uses the selected computer’s recorded applications.* [Capture details](../../../development-handovers/evidence/employee-service-desk/README.md)
+
+## Shared Device Ticket Confidentiality
+
+The warning appears when you select a Department-assigned Device or an accessory explicitly associated with its current custody. It applies even when only one Department uses the equipment. It also appears when **My Equipment → Report A Problem** preselects either item and updates when you change the selection.
+
+Keep confidential, personal and sensitive information out of the subject, description, replies and files. For example, report *the Main Office Printer jams after page one* without attaching a print job that contains personnel records. If Accounts shares that printer with Sales later in the same custody period, eligible Sales members can open the earlier ticket, employee-visible replies and permitted files. If Sales is removed, its access ends on the next request. Re-adding Sales during that custody period restores access.
+
+The Device’s current Departments can read new associated accessory tickets raised by eligible employees or by IT. For example, Sales can follow a new ticket about the USB cable associated with the printer once its Department is added to the same custody period. An earlier accessory ticket may be available only to authorised IT if its original audience cannot be verified. Ask IT to look up the original ticket number if you need help with it.
+
+A physical return, reassignment, write-off or reissue ends the previous employee audience. Fully returning an accessory issue also ends employee access to its tickets. Authorised IT can still review the previous ticket. Internal IT notes and their attachments remain in the technician workspace. [Assignment and ticket privacy](Service-Desk-Administration.md#what-happens-to-service-desk-tickets-when-equipment-changes-hands)
+
+![Mobile Create Ticket for the Main Office Printer with the confidentiality warning above Subject](../../../development-handovers/evidence/stage-6-4/screenshots/ticket-confidentiality-mobile-dark.png)
+
+*The warning appears before Subject and Description, including when Report A Problem preselects the Device.* [Capture provenance](../../../development-handovers/evidence/stage-6-4/README.md)
+
+![Create Ticket showing the confidentiality warning for the printer’s linked USB cable.](../../../development-handovers/evidence/stage-6-4/screenshots/accessory-confidentiality-mobile-dark.png)
+
+*Report A Problem preselects the accessory and shows who may see its reports and files.* [Capture provenance](../../../development-handovers/evidence/stage-6-4/README.md)
 
 ## Find And Review Your Tickets
 

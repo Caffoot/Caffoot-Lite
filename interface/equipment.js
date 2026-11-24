@@ -1,7 +1,7 @@
 /* Device allocation views use the same server relationships on every screen. */
 'use strict';
 (function(){
-  let config=null,dialogContext=null,selectedDevices=new Map(),recipientResults=[];
+  let config=null,dialogContext=null,selectedDevices=new Map();
   const escapeHtml=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const displayDeviceType=name=>window.caffootPublicDeviceTypeName?.(name) ?? (name==='Server - Physical'?'Server':name==='Server - Virtual'?'Virtual Machine':name);
   const dateLabel=value=>/^\d{4}-\d{2}-\d{2}$/.test(value)?value.slice(8,10)+'/'+value.slice(5,7)+'/'+value.slice(0,4):value?new Date(value).toLocaleDateString('en-GB'):'—';
@@ -13,10 +13,78 @@
     if(!response.ok)throw Error(data.error||'Unable to load equipment.');
     return data;
   }
+  function departmentPickerMarkup() {
+    return `<fieldset class="equipment-department-picker assignment-field" data-department-picker hidden>
+      <legend>Departments</legend>
+      <label>Find A Department<input class="input" type="search" maxlength="100" data-department-search></label>
+      <div data-department-choices>Loading Departments…</div>
+      <p class="sub" data-department-count role="status"></p>
+      <input type="hidden" data-department-selection value="[]">
+    </fieldset>`;
+  }
+  const departmentPickers=new WeakMap();
+  function departmentPicker(root,{initial=[],onChange=()=>{}}={}){
+    if(departmentPickers.has(root))return departmentPickers.get(root);
+    const search=root.querySelector('[data-department-search]');
+    const choices=root.querySelector('[data-department-choices]');
+    const count=root.querySelector('[data-department-count]');
+    const selection=root.querySelector('[data-department-selection]');
+    const selected=new Map(initial.map(item=>[item.id,item]));
+    const retainedArchived=initial.filter(item=>item.archived);
+    let matches=[], timer, generation=0;
+    const render=()=>{
+      const candidates=new Map([...selected,...[...retainedArchived,...matches].map(item=>[item.id,item])]);
+      selection.value=JSON.stringify([...selected.keys()].sort());
+      count.textContent=selected.size+' '+(selected.size===1?'Department':'Departments')+' Selected';
+      choices.innerHTML=[...candidates.values()].map(item=>`<label class="device-review-check-item">
+        <input type="checkbox" value="${escapeHtml(item.id)}" data-department-choice ${selected.has(item.id)?'checked':''}>
+        <span>${escapeHtml(item.label)}${item.archived?' · Archived':''}</span></label>`).join('')||'<p>No Departments found.</p>';
+    };
+    const find=async()=>{
+      const requestId=++generation, query=search.value, results=[];
+      try{
+        for(let offset=0;;offset+=50){
+          const response=await request('/api/equipment/recipients?kind=department&query='+encodeURIComponent(query)+'&offset='+offset);
+          if(!root.isConnected||requestId!==generation||search.value!==query)return;
+          results.push(...response.recipients);
+          if(response.recipients.length<50)break;
+        }
+        matches=results;render();
+      }catch(error){if(root.isConnected&&requestId===generation)choices.textContent=error.message;}
+    };
+    search.addEventListener('input',()=>{clearTimeout(timer);timer=setTimeout(find,180);});
+    choices.addEventListener('change',event=>{
+      const input=event.target;
+      if(!input.matches('[data-department-choice]'))return;
+      if(input.checked){
+        const item=[...retainedArchived,...matches].find(item=>item.id===input.value);
+        if(item)selected.set(item.id,item);
+      }else selected.delete(input.value);
+      const focus=input.value;
+      render();
+      [...choices.querySelectorAll('[data-department-choice]')].find(item=>item.value===focus)?.focus();
+      onChange();
+    });
+    const picker={values:()=>[...selected.keys()]};
+    departmentPickers.set(root,picker);
+    render();
+    void find();
+    return picker;
+  }
+  function departmentHistory(changes){
+    return changes?.length?`<h4 class="text-xs font-semibold mt-3 mb-1">Department Assignment History</h4><div class="table-scroll"><table class="small-table">
+      <thead><tr><th>Department</th><th>Date / Time</th><th>Change</th><th>Recorded By</th></tr></thead>
+      <tbody>${changes.flatMap(item=>[
+        {label:item.label,at:item.addedAt,action:'Department Added',actor:item.addedBy},
+        ...(item.removedAt?[{label:item.label,at:item.removedAt,action:'Department Removed',actor:item.removedBy}]:[])
+      ]).sort((a,b)=>b.at.localeCompare(a.at)).map(item=>`<tr><td>${escapeHtml(item.label)}</td>
+      <td>${escapeHtml(new Date(item.at).toLocaleString('en-GB'))}</td><td>${item.action}</td>
+      <td>${escapeHtml(item.actor)}</td></tr>`).join('')}</tbody></table></div>`:'';
+  }
   function assignmentHistory(history,deviceView=false){
     if(!history.length)return '<p class="sub">No equipment assignment history.</p>';
     if(!deviceView)return `<table class="staff-history-list"><tbody>${history.map(item=>`<tr><td>${escapeHtml(dateLabel(item.assignedAt))}</td><td><strong>Assigned · ${escapeHtml(item.deviceName)}</strong><small>Assigned To ${escapeHtml(item.recipientLabel)} · Recorded By ${escapeHtml(item.actorLabel)}</small>${item.closure?`<small>${({returned:'Returned',written_off:'Written Off',reassigned:'Reassigned'})[item.closure.kind]||'Closed'} ${escapeHtml(dateLabel(item.closure.date))} · Recorded By ${escapeHtml(item.closure.actor)}</small>`:''}</td></tr>`).join('')}</tbody></table>`;
-    return `<div class="table-scroll"><table class="small-table"><thead><tr><th>Staff Member / Department</th><th>Issue Date</th><th>Return / End Date</th><th>Movement</th></tr></thead><tbody>${history.map(item=>`<tr><td>${escapeHtml(item.recipientLabel)}</td><td>${escapeHtml(dateLabel(item.assignedAt))}</td><td>${escapeHtml(dateLabel(item.closure?.date||item.endedAt))}</td><td>Assigned<br>Recorded By ${escapeHtml(item.actorLabel)}${item.closure?`<br>${({returned:'Returned',written_off:'Written Off',reassigned:'Reassigned'})[item.closure.kind]||'Closed'} · Recorded By ${escapeHtml(item.closure.actor)}`:''}</td></tr>`).join('')}</tbody></table></div>`;
+    return `<h4 class="text-xs font-semibold mt-3 mb-1">Physical Assignment History</h4><div class="table-scroll"><table class="small-table"><thead><tr><th>Staff Member / Department</th><th>Issue Date</th><th>Return / End Date</th><th>Movement</th></tr></thead><tbody>${history.map(item=>`<tr><td>${escapeHtml(item.recipientLabel)}</td><td>${escapeHtml(dateLabel(item.assignedAt))}</td><td>${escapeHtml(dateLabel(item.closure?.date||item.endedAt))}</td><td>Assigned<br>Recorded By ${escapeHtml(item.actorLabel)}${item.closure?`<br>${({returned:'Returned',written_off:'Written Off',reassigned:'Reassigned'})[item.closure.kind]||'Closed'} · Recorded By ${escapeHtml(item.closure.actor)}`:''}</td></tr>`).join('')}</tbody></table></div>`;
   }
   function assetMovementHistory(history,deviceView=false){
     const labels={registered:'Device Registered',issued:'Equipment Issued',reassigned:'Device Reassigned',returned:'Equipment Returned',readiness_changed:'Equipment Prepared',written_off:'Equipment Written Off'};
@@ -44,7 +112,7 @@
       const result=await request('/api/equipment/assignments?deviceId='+encodeURIComponent(deviceId));
       if(!host.isConnected||host.dataset.deviceId!==deviceId)return;
       const current=result.current[0];
-      host.innerHTML=`<section class="device-details-section device-review-panel full"><h3><span class="mini-icon" aria-hidden="true">♙</span>Current Assignment</h3><p>Current Staff Member or Department holder of this Device.</p><div class="assignment-bar"><div class="assignment-main"><strong>${escapeHtml(current?.recipientLabel||'Unassigned')}</strong><small>${current?'Issue Date: '+escapeHtml(dateLabel(current.assignedAt)):'No current Staff or Department assignment.'}</small></div>${result.canAssign&&!result.dependency?button('Assign Device','assign-device',deviceId):''}${result.handoverContext?button('Reassign Device','reassign-device',deviceId):''}${result.canReissue?button('Reissue Existing Device','reissue-device-stock',deviceId):''}${result.canReturn?button('Return Equipment','return-device-stock',result.returnSource):''}${result.canWriteOff?button('Write Off','writeoff-device-stock',deviceId):''}</div>${result.dependency?'<p class="device-review-quiet">'+escapeHtml(result.dependency)+'</p>':''}${result.reissueBlockReason?'<p class="device-review-quiet">'+escapeHtml(result.reissueBlockReason)+'</p>':''}</section><section class="device-details-section device-review-panel full"><h3><span class="mini-icon" aria-hidden="true">↻</span>Assignment History</h3><p>Shared with the original Staff or Department assignment record.</p>${assignmentHistory(result.history,true)}${assetMovementHistory(result.stockHistory,true)}</section>`;
+      host.innerHTML=`<section class="device-details-section device-review-panel full"><h3><span class="mini-icon" aria-hidden="true">♙</span>Current Assignment</h3><p>Current Staff Member or Departments assigned to this Device.</p><div class="assignment-bar"><div class="assignment-main"><strong>${escapeHtml(current?.recipientLabel||'Unassigned')}</strong><small>${current?'Issue Date: '+escapeHtml(dateLabel(current.assignedAt)):'No current Staff or Department assignment.'}</small></div>${result.canAssign&&!result.dependency?button('Assign Device','assign-device',deviceId):''}${result.canManageDepartments?button('Manage Departments','manage-departments',deviceId):''}${result.handoverContext?button('Reassign Device','reassign-device',deviceId):''}${result.canReissue?button('Reissue Existing Device','reissue-device-stock',deviceId):''}${result.canReturn?button('Return Equipment','return-device-stock',result.returnSource):''}${result.canWriteOff?button('Write Off','writeoff-device-stock',deviceId):''}</div>${result.dependency?'<p class="device-review-quiet">'+escapeHtml(result.dependency)+'</p>':''}${result.reissueBlockReason?'<p class="device-review-quiet">'+escapeHtml(result.reissueBlockReason)+'</p>':''}</section><section class="device-details-section device-review-panel full"><h3><span class="mini-icon" aria-hidden="true">↻</span>Assignment History</h3><p>The same canonical assignment history is retained on this Device.</p>${assignmentHistory(result.history,true)}${departmentHistory(result.departmentChanges)}${assetMovementHistory(result.stockHistory,true)}</section>`;
       host.dataset.revision=String(result.revision);
     }catch(error){if(host.isConnected)host.innerHTML='<p role="status">'+escapeHtml(error.message)+'</p>';}
   }
@@ -99,23 +167,32 @@
   }
   async function showAssignmentDialog(context){
     if(!config.canEdit())return;
-    dialogContext=context;selectedDevices=new Map();recipientResults=[];
+    dialogContext=context;selectedDevices=new Map();
     if(context.deviceId)selectedDevices.set(context.deviceId,{id:context.deviceId,revision:context.revision});
-    const recipientField=context.staffId?'':`<div class="assignment-field"><label for="equipment-recipient-kind">Assign To</label><select class="input" id="equipment-recipient-kind"><option value="staff">Staff Member</option><option value="department">Department</option></select></div><div class="assignment-field"><label for="equipment-recipient-search">Find A Recipient</label><input class="input" type="search" id="equipment-recipient-search" maxlength="100"></div><div class="assignment-field"><label for="equipment-recipient">Recipient</label><select class="input" id="equipment-recipient" required><option value="">Select An Active Recipient</option></select></div>`;
+    const recipientField=context.staffId||context.manage?'':`<div class="assignment-field"><label for="equipment-recipient-kind">Assign To</label><select class="input" id="equipment-recipient-kind"><option value="staff">Staff Member</option><option value="department">Department</option></select></div><div class="assignment-field"><label for="equipment-recipient-search">Find A Recipient</label><input class="input" type="search" id="equipment-recipient-search" maxlength="100"></div><div class="assignment-field"><label for="equipment-recipient">Recipient</label><select class="input" id="equipment-recipient" required><option value="">Select An Active Recipient</option></select></div>`;
     const deviceField=context.deviceId?'':`<div class="assignment-field"><label for="equipment-device-search">Find Existing Devices</label><input class="input" type="search" id="equipment-device-search" maxlength="100"></div><fieldset class="assignment-field"><legend>Devices</legend><div id="equipment-device-choices" role="status">Loading eligible Devices…</div><p class="sub" id="equipment-selection-count">0 Devices Selected</p></fieldset>`;
-    config.openModal(`<div class="equipment-dialog"><div class="assignment-modal-head"><h2>Assign Equipment</h2><p>Record an initial allocation of existing, unassigned Devices. This does not mark equipment as physically held stock or Ready.</p></div><form id="equipment-assignment-form"><div class="assignment-modal-body">${recipientField}${deviceField}<p class="sub">Use Return Equipment to record a physical return. This form records initial Device allocation only.</p><p role="alert" id="equipment-assignment-feedback"></p></div><div class="assignment-modal-actions">${button('Cancel','cancel-assignment')}<button type="submit" class="btn btn-primary">Confirm Assignment</button></div></form></div>`);
-    document.querySelector('#equipment-recipient-kind,#equipment-device-search')?.focus();
-    try{if(!context.staffId)await searchRecipients();if(!context.deviceId)await searchDevices();}
-    catch(error){document.getElementById('equipment-assignment-feedback').textContent=error.message;}
+    const subtitle=context.manage?'Add or remove Departments that share this Device. The current custody period continues.'
+      :'Record an initial allocation of existing, unassigned Devices. This does not mark equipment as physically held stock or Ready.';
+    config.openModal(`<div class="equipment-dialog"><div class="assignment-modal-head"><h2>${context.manage?'Manage Departments':'Assign Equipment'}</h2><p>${subtitle}</p></div><form id="equipment-assignment-form"><div class="assignment-modal-body">${recipientField}${context.staffId?'':departmentPickerMarkup()}${deviceField}<p class="sub">${context.manage?'At least one Department must remain. Use the existing equipment workflow to end this custody period.':'Use Return Equipment to record a physical return. This form records initial Device allocation only.'}</p><p role="alert" id="equipment-assignment-feedback"></p></div><div class="assignment-modal-actions">${button('Cancel','cancel-assignment')}<button type="submit" class="btn btn-primary">${context.manage?'Save Changes':'Confirm Assignment'}</button></div></form></div>`);
+    const picker=document.querySelector('#equipment-assignment-form [data-department-picker]');
+    if(context.manage&&picker){picker.hidden=false;departmentPicker(picker,{initial:context.departments});}
+    document.querySelector(context.manage?'[data-department-search]':'#equipment-recipient-kind,#equipment-device-search')?.focus();
+    try{if(!context.staffId&&!context.manage)await searchRecipients();if(!context.deviceId)await searchDevices();}
+    catch(error){const feedback=document.getElementById('equipment-assignment-feedback');if(feedback)feedback.textContent=error.message;}
   }
   async function searchRecipients(){
     const host=document.getElementById('equipment-recipient'),search=document.getElementById('equipment-recipient-search'),kind=document.getElementById('equipment-recipient-kind');
     if(!host)return;
+    const picker=host.closest('form').querySelector('[data-department-picker]');
+    const department=kind.value==='department';
+    picker.hidden=!department;
+    host.closest('.assignment-field').hidden=search.closest('.assignment-field').hidden=department;
+    host.disabled=department;
+    if(department){departmentPicker(picker);return;}
     const query=search.value,selectedKind=kind.value;
     const result=await request('/api/equipment/recipients?kind='+selectedKind+'&query='+encodeURIComponent(query));
     if(!host.isConnected||search.value!==query||kind.value!==selectedKind)return;
-    recipientResults=result.recipients;
-    host.innerHTML='<option value="">Select An Active Recipient</option>'+recipientResults.map(item=>`<option value="${escapeHtml(item.id)}">${escapeHtml(item.label)}</option>`).join('');
+    host.innerHTML='<option value="">Select An Active Recipient</option>'+result.recipients.map(item=>`<option value="${escapeHtml(item.id)}">${escapeHtml(item.label)}</option>`).join('');
   }
   async function searchDevices(){
     const host=document.getElementById('equipment-device-choices'),search=document.getElementById('equipment-device-search');
@@ -134,15 +211,19 @@
   async function saveAssignment(form){
     if(!dialogContext)return;
     const context=dialogContext;
+    const recipientKind=context.manage?'department':context.staffId?'staff':document.getElementById('equipment-recipient-kind').value;
     const recipientId=context.staffId||document.getElementById('equipment-recipient')?.value;
-    if(!recipientId||!selectedDevices.size)throw Error('Select a recipient and at least one Device.');
-    const recipientKind=context.staffId?'staff':document.getElementById('equipment-recipient-kind').value;
+    const departmentIds=recipientKind==='department'?departmentPicker(form.querySelector('[data-department-picker]')).values():null;
+    if(!selectedDevices.size||!(departmentIds?departmentIds.length:recipientId))
+      throw Error(departmentIds?'Select at least one Department.':'Select a recipient and at least one Device.');
+    const payload=context.manage?{deviceId:context.deviceId,revision:context.revision,assignmentId:context.assignmentId,departmentIds}:
+      {recipientKind,devices:[...selectedDevices.values()],...(departmentIds?{departmentIds}:{recipientId})};
     form.dataset.saving='true';
-    const controls=[...form.querySelectorAll('button,input,select')];controls.forEach(item=>item.disabled=true);
+    const controls=[...form.querySelectorAll('button:enabled,input:enabled,select:enabled')];controls.forEach(item=>item.disabled=true);
     try{
-      await request('/api/equipment/assignments',{recipientKind,recipientId,devices:[...selectedDevices.values()]});
+      await request('/api/equipment/'+(context.manage?'manage-departments':'assignments'),payload);
       delete form.dataset.saving;
-      leaveAssignmentDialog();config.notify('Equipment assignment saved.');
+      leaveAssignmentDialog();config.notify(context.manage?'Departments saved.':'Equipment assignment saved.');
     }finally{delete form.dataset.saving;controls.forEach(item=>item.disabled=false);}
   }
   document.addEventListener('click',event=>{
@@ -154,6 +235,15 @@
     if(action==='writeoff-associated'){window.caffootStockIntake.openWorkflow('writeoff',{issueEntryId:Number(id)});return;}
     if(action==='issue-stock-staff'){window.caffootStockIntake.openWorkflow('issue',{recipientKind:'staff',recipientId:id});return;}
     if(action==='return-stock'){window.caffootStockIntake.openWorkflow('return',{returnSource:'stock:'+id});return;}
+    if(action==='manage-departments'){
+      void request('/api/equipment/assignments?deviceId='+encodeURIComponent(id)).then(result=>{
+        if(!result.canManageDepartments)throw Error('This Device is no longer available for Department changes.');
+        const current=result.current[0];
+        return showAssignmentDialog({deviceId:id,revision:result.revision,assignmentId:current.id,
+          departments:current.departments,manage:true});
+      }).catch(error=>config.notify(error.message,'error'));
+      return;
+    }
     if(action==='reassign-device'){void request('/api/equipment/assignments?deviceId='+encodeURIComponent(id)).then(result=>{if(!result.handoverContext)throw Error('This Device is not currently eligible for reassignment.');window.caffootStockIntake.openHandover(result.handoverContext);}).catch(error=>config.notify(error.message,'error'));return;}
     if(action==='reissue-device-stock'){window.caffootStockIntake.openWorkflow('reissue',{deviceId:id});return;}
     if(action==='return-device-stock'){window.caffootStockIntake.openWorkflow('return',{returnSource:id});return;}
@@ -185,5 +275,5 @@
       config.notify(error.message,'error');
     });
   });
-  window.caffootEquipment={configure(settings){config=settings;},staffPlaceholder,hydrate,loadDeviceEquipment,loadAssociatedEquipment,canReadAssociations,renderMyEquipment};
+  window.caffootEquipment={configure(settings){config=settings;},staffPlaceholder,hydrate,loadDeviceEquipment,loadAssociatedEquipment,canReadAssociations,renderMyEquipment,departmentPickerMarkup,departmentPicker};
 })();

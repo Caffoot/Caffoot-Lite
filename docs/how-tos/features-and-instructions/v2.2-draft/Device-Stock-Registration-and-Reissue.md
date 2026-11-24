@@ -27,7 +27,7 @@ For stock registration or reissue, an administrator enables **Devices** and **IT
 
 Normal direct Add Device uses its existing Devices permissions and works with IT Assets disabled. A Device can have no IP address. Add a managed address or rack placement only when needed and authorised, using the independent IPAM and Network Racks permissions. A stock source adds no IPAM or rack requirement. See [Optional Features](Optional-Features-and-Link-To-IPAM.md) and [roles and access](Roles-Section-Permissions-and-MFA.md).
 
-Have the actual equipment available when checking identities and recording a physical issue or return. For registration, confirm that the stock item represents the correct common specification. For reissue, identify the intended active Staff Member or non-archived Department and resolve outstanding Associated Equipment first.
+Have the actual equipment available when checking identities and recording a physical issue or return. For registration, confirm that the stock item represents the correct common specification. For reissue, identify the intended active Staff Member or eligible Departments and resolve outstanding Associated Equipment first.
 
 ## Receive And Check New Computers
 
@@ -90,14 +90,14 @@ The stock-item total includes its registered unit. Do not count both the item to
 2. Open **IT → IT Assets → Reissue Existing Device**. You can also start from an eligible registered Device's Stock Inventory details or **Device Details → Assigned To → Reissue Existing Device**.
 3. Select **Ready Registered Device**. Choices exclude awaiting equipment, assigned/issued equipment, written-off or virtual Devices, and Devices with outstanding Associated Equipment.
 4. In **Assign To**, choose **Staff Member** or **Department**.
-5. Use **Find A Recipient** to search, then select the intended person or Department under **Staff Member Or Department**. Inactive Staff and archived Departments cannot receive a new assignment. The restricted search provides eligible names and identities without granting the full directory.
+5. Use **Find A Recipient** and select the intended Staff Member, or use **Find A Department** and tick the applicable Departments for an eligible shared Device. Inactive Staff and archived Departments cannot receive a new assignment. The restricted search provides eligible names and identities without granting the full directory.
 6. Verify **Date Issued** and enter **Issue Note (Optional)** where useful, for example “Prepared desktop issued for reception cover”.
 7. Check the selected machine and recipient, then choose **Reissue Existing Device** when the equipment is actually issued.
 8. Check the current holder in the Device, Staff or Department equipment view. A linked employee can see permitted personal or Department-shared equipment through [My Equipment](Device-Assignments-and-My-Equipment.md).
 
 A successful operation records a new permanent dated assignment and its matching stock issue. Ready To Issue and Physically Held each reduce by one. The original Device and all earlier assignments remain. **Cancel** abandons the unsaved form and makes no assignment or physical movement. Changed eligibility, revoked access, a stale record or an edit reservation can reject the save without applying either half.
 
-Outstanding accessories are not silently transferred to the new holder. Resolve them using [Associated Equipment](Associated-Equipment.md) before reissue. A missing accessory must follow its approved return/write-off handling; recording it as physically returned when it is missing would make stock inaccurate.
+For an eligible Desktop, Laptop or Printer, select **Department** to search and tick the new Department list. If several Departments receive the Device, the stock issue records its custody as the recipient. Outstanding accessories must be resolved through the existing physical workflow before the new issue. Resolve them using [Associated Equipment](Associated-Equipment.md) before reissue. A missing accessory must follow its approved return/write-off handling; recording it as physically returned when it is missing would make stock inaccurate.
 
 In the Batch 4.4 draft, a genuine first issue of a Device registered from stock also records its **Original In Service Date** when the qualifying history is available. This happens even if Equipment Lifecycle is switched off. See [Record First Service From Stock](Equipment-Lifecycle.md#record-first-service-from-stock) for the date rules and what happens on later reissues.
 

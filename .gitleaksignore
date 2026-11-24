@@ -5,3 +5,7 @@
 # False positive: the SHA-256 of backend/request_auth.py in the source manifest.
 # Verified against the committed file bytes; this is not an authentication key.
 80011c8c11c9d3c1fae5feb4ab3492f4fed54be3:docs/development-handovers/evidence/stock-circulation/Source-Checks.json:generic-api-key:27
+
+# Stage 6.4 screenshot provenance. SHA-256 of the committed backend/service_desk_access.py bytes.
+# Source revision e3676087588e1f5c9f96f1a1012ee8841ff918ea. Owner approval is recorded in PR #447.
+18e3a1ea2da7b15e2d26182db1abb8a24761c86a:docs/development-handovers/evidence/stage-6-4/capture-manifest.json:generic-api-key:272

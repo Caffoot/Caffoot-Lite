@@ -22,7 +22,9 @@ from backend.service_desk_schema import (migrate_service_desk, migrate_service_d
 
 from backend.email_templates import migrate_email_templates
 
-SCHEMA_VERSION = 28
+from backend.shared_device_schema import migrate_shared_devices, validate_relationships
+
+SCHEMA_VERSION = 29
 
 DDL = """
 CREATE TABLE IF NOT EXISTS inventory_devices (
@@ -71,6 +73,26 @@ CREATE TABLE IF NOT EXISTS inventory_change_history (
 
 def initialise_database(connection: sqlite3.Connection) -> None:
     """Apply schema changes in one transaction; fail closed on newer versions."""
+    # SQLite's table-rebuild procedure requires changing FK enforcement before
+    # beginning the transaction. The writer lock and final FK check cover both
+    # rebuilt tables and their unchanged dependants.
+    has_migrations = connection.execute(
+        "SELECT 1 FROM sqlite_schema WHERE name='schema_migrations' AND type='table'"
+    ).fetchone()
+    rebuild = SCHEMA_VERSION >= 29 and (not has_migrations or not connection.execute(
+        'SELECT 1 FROM schema_migrations WHERE version=29'
+    ).fetchone())
+    restore_foreign_keys = rebuild and connection.execute('PRAGMA foreign_keys').fetchone()[0]
+    if restore_foreign_keys:
+        connection.execute('PRAGMA foreign_keys=OFF')
+    try:
+        _initialise_database(connection)
+    finally:
+        if restore_foreign_keys:
+            connection.execute('PRAGMA foreign_keys=ON')
+
+
+def _initialise_database(connection):
     connection.execute("BEGIN IMMEDIATE")
     try:
         # Read the database before creating any tables. An existing installation
@@ -283,6 +305,12 @@ def initialise_database(connection: sqlite3.Connection) -> None:
         if SCHEMA_VERSION >= 28 and 28 not in versions:
             migrate_email_templates(connection)
             connection.execute("INSERT INTO schema_migrations(version) VALUES(28)")
+        if SCHEMA_VERSION >= 29:
+            if 29 not in versions:
+                migrate_shared_devices(connection)
+                connection.execute("INSERT INTO schema_migrations(version) VALUES(29)")
+            else:
+                validate_relationships(connection)
         connection.commit()
     except BaseException:
         connection.rollback()

@@ -144,17 +144,22 @@ def handover_schema_objects(connection):
         "SELECT name,sql FROM sqlite_master WHERE name GLOB 'device_handover_*' AND sql IS NOT NULL")}
 
 
-def validate_device_handovers(connection):
+def validate_device_handovers(connection, *, sharing=None):
     """Fail closed if any handover guard or canonical relationship is unexpected."""
     from backend.assignment_closure import validate_assignment_closure
     from backend.stock_schema import validate_it_asset_stock
     expected = {statement.split()[2]: normalise_schema_statement(statement) for statement in
                 [*stock_schema_statements(HANDOVER_ASSIGNMENT_SQL),
                  *stock_schema_statements(HANDOVER_AUDIT_SQL), *stock_schema_statements(HANDOVER_STOCK_SQL)]}
+    if sharing is None:
+        sharing = connection.execute('SELECT 1 FROM schema_migrations WHERE version=29').fetchone() is not None
+    if sharing:
+        from backend.shared_device_schema import assignment_schema
+        expected.update({name: sql for name, sql in assignment_schema().items() if name.startswith('device_handover_')})
     if handover_schema_objects(connection) != expected:
         raise RuntimeError('Unexpected Device handover schema; review required')
-    validate_assignment_closure(connection, handovers=True)
-    validate_it_asset_stock(connection, handovers=True)
+    validate_assignment_closure(connection, handovers=True, sharing=sharing)
+    validate_it_asset_stock(connection, handovers=True, sharing=sharing)
 
 
 def migrate_device_handovers(connection):

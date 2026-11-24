@@ -1,7 +1,8 @@
 """Resolve the two ticket audiences against live permissions and custody."""
 from backend.permissions import can_access, feature_enabled
 from backend.role_policy import SERVICE_DESK_SECTION, evaluate_role_policy
-from backend.stock_circulation import stock_issue_records
+from backend.stock_circulation import (associated_issue_custodies, current_stock_issues,
+                                       stock_issue_records)
 
 EQUIPMENT_COLUMNS = {
     'device': ('inventory_devices', 'device_id', 'Devices'),
@@ -28,12 +29,33 @@ STOCK_ASSIGNMENT_CONTINUES = """
 """
 
 
+# New accessory tickets record the exact explicit link in their server-authored
+# Created event. Legacy tickets have no verified member-level audience, even
+# if an association exists today. They never acquire this marker retroactively.
+ASSOCIATED_TICKET_ASSIGNMENT = """
+    SELECT link.device_assignment_id
+    FROM device_equipment_associations link
+    JOIN service_desk_events event ON event.ticket_id=ticket.id AND event.kind='Created'
+    WHERE link.issue_entry_id=ticket.stock_issue_id
+      AND json_type(event.private_details,'$.accessoryAssociationId')='integer'
+      AND json_extract(event.private_details,'$.accessoryAssociationId')=link.id
+"""
+TICKET_CUSTODY = f"coalesce(ticket.device_assignment_id, ({ASSOCIATED_TICKET_ASSIGNMENT}))"
+
+
 def linked_ticket_staff(connection, actor_id):
     """Get the current Staff identity through its saved link to this account."""
     return connection.execute(
         """SELECT id,department_id FROM staff_members WHERE account_id=? AND active=1""",
         (actor_id,),
     ).fetchone()
+
+
+def device_recipient_filter(scope):
+    if scope == 'personal':
+        return 'a.staff_id=?'
+    return """EXISTS(SELECT 1 FROM device_assignment_departments r
+        WHERE r.assignment_id=a.id AND r.department_id=? AND r.removed_at IS NULL)"""
 
 
 def ticket_scope_filter(connection, actor_id, scope, *, edit=False):
@@ -56,21 +78,25 @@ def ticket_scope_filter(connection, actor_id, scope, *, edit=False):
         return '0', ()
     recipient = 'staff_id' if scope == 'personal' else 'department_id'
     identity = staff[0] if scope == 'personal' else staff[1]
+    assets = feature_enabled(connection, 'IT Assets')
     return (
         f"""(
             (? AND EXISTS(SELECT 1 FROM device_assignments a
-                           WHERE a.id=ticket.device_assignment_id AND a.ended_at IS NULL
-                             AND a.{recipient}=?))
+                           WHERE a.id={TICKET_CUSTODY} AND a.ended_at IS NULL
+                             AND {device_recipient_filter(scope)})
+                AND (ticket.stock_issue_id IS NULL OR (? AND {STOCK_ASSIGNMENT_CONTINUES})))
             OR (? AND EXISTS(SELECT 1 FROM it_asset_stock_entries issue
-                             WHERE issue.id=ticket.stock_issue_id AND issue.{recipient}=?)
+                             WHERE issue.id=ticket.stock_issue_id AND issue.{recipient}=?
+                               AND NOT EXISTS(SELECT 1 FROM device_equipment_associations link
+                                              WHERE link.issue_entry_id=issue.id))
                   AND {STOCK_ASSIGNMENT_CONTINUES})
         )""",
-        (feature_enabled(connection, 'Devices'), identity,
-         feature_enabled(connection, 'IT Assets'), identity),
+        (feature_enabled(connection, 'Devices'), identity, assets, assets, identity),
     )
 
 
-def ticket_equipment_for_creation(connection, actor_id, scope, kind, equipment_id, issue_id):
+def ticket_equipment_for_creation(connection, actor_id, scope, kind, equipment_id, issue_id,
+                                  expected_association=None):
     """Resolve canonical equipment and record exactly the assignment seen now."""
     ticket_scope_filter(connection, actor_id, scope, edit=True)
     if not isinstance(kind, str) or kind not in EQUIPMENT_COLUMNS:
@@ -79,6 +105,10 @@ def ticket_equipment_for_creation(connection, actor_id, scope, kind, equipment_i
         raise ValueError('Select a Device or IT Asset.')
     if issue_id is not None and (type(issue_id) is not int or not 0 < issue_id <= 2**63 - 1):
         raise ValueError('Invalid IT Asset issue.')
+    if expected_association is not None and (
+            type(expected_association) is not int or not 0 < expected_association <= 2**63 - 1
+            or kind == 'device' or issue_id is None):
+        raise ValueError('Invalid equipment association.')
     table, column, section = EQUIPMENT_COLUMNS[kind]
     if not feature_enabled(connection, section) or (scope == 'it' and not can_access(connection, actor_id, section)):
         raise LookupError('Equipment not found.')
@@ -90,26 +120,32 @@ def ticket_equipment_for_creation(connection, actor_id, scope, kind, equipment_i
     staff = linked_ticket_staff(connection, actor_id)
     if scope != 'it' and (staff is None or (scope == 'department' and staff[1] is None)):
         raise LookupError('Equipment not found.')
-    recipient_key = 'staffId' if scope == 'personal' else 'departmentId'
     recipient = None if scope == 'it' else staff[0 if scope == 'personal' else 1]
-    assignment_id = movement_id = employee_id = None
+    assignment_id = movement_id = employee_id = association_id = None
     if kind == 'device':
         if issue_id is not None:
             raise ValueError('A Device uses its own assignment record.')
+        filter_sql, params = ('', ()) if scope == 'it' else (
+            'AND ' + device_recipient_filter(scope), (recipient,))
         assignment = connection.execute(
-            'SELECT id,staff_id,department_id FROM device_assignments WHERE device_id=? AND ended_at IS NULL',
-            (equipment_id,),
+            f'''SELECT a.id,a.staff_id FROM device_assignments a
+                WHERE a.device_id=? AND a.ended_at IS NULL {filter_sql}''',
+            (equipment_id, *params),
         ).fetchone()
-        if scope != 'it' and (not assignment or assignment[1 if scope == 'personal' else 2] != recipient):
+        if scope != 'it' and assignment is None:
             raise LookupError('Equipment not found.')
         if assignment:
-            assignment_id, employee_id, _ = assignment
+            assignment_id, employee_id = assignment
     else:
         issue_field = 'stockUnitId' if kind == 'stockUnit' else 'stockItemId'
-        choices = [issue for issue in stock_issue_records(connection)
-                   if issue[issue_field] == equipment_id and issue['outstanding'] > 0
-                   and issue['deviceAssignmentId'] is None
-                   and (scope == 'it' or issue[recipient_key] == recipient)
+        if scope == 'it':
+            available = stock_issue_records(connection)
+        else:
+            holder = 'staff_id' if scope == 'personal' else 'department_id'
+            available = current_stock_issues(connection, **{holder: recipient},
+                                             allow_associated=feature_enabled(connection, 'Devices'))
+        choices = [issue for issue in available if issue[issue_field] == equipment_id
+                   and issue['outstanding'] > 0 and issue['deviceAssignmentId'] is None
                    and (issue_id is None or issue['id'] == issue_id)]
         if len(choices) > 1:
             raise ValueError('Select the specific issue for this IT Asset.')
@@ -117,13 +153,21 @@ def ticket_equipment_for_creation(connection, actor_id, scope, kind, equipment_i
             raise LookupError('Equipment not found.')
         if choices:
             issue_id, employee_id = choices[0]['id'], choices[0]['staffId']
+            if scope == 'it':
+                custody = associated_issue_custodies(connection).get(issue_id)
+                if custody and custody['endedAt'] is None:
+                    association_id, employee_id = custody['id'], custody['staffId']
+            else:
+                association_id = choices[0].get('associationId')
+                if association_id != expected_association:
+                    raise FileExistsError('Equipment sharing changed. Reopen Create Ticket and review the selection.')
             movement_id = connection.execute(
                 'SELECT max(movement_id) FROM it_asset_stock_entries WHERE id=? OR source_issue_entry_id=?',
                 (issue_id, issue_id),
             ).fetchone()[0]
     if employee_id is None and scope != 'it':
         employee_id = staff[0]
-    return column, assignment_id, issue_id, movement_id, employee_id
+    return column, assignment_id, issue_id, movement_id, employee_id, association_id
 
 
 def employee_ticket_equipment(connection, actor_id, scope):
@@ -144,17 +188,19 @@ def employee_ticket_equipment(connection, actor_id, scope):
             for device_id, label, device_type in connection.execute(f"""
                 SELECT d.id,d.name,json_extract(d.record_json,'$.type')
                 FROM device_assignments a JOIN inventory_devices d ON d.id=a.device_id
-                WHERE a.ended_at IS NULL AND a.{recipient}=?
+                WHERE a.ended_at IS NULL AND {device_recipient_filter(scope)}
             """, (identity,))
         )
     if feature_enabled(connection, 'IT Assets'):
-        for issue in stock_issue_records(connection, **{recipient: identity}):
-            if issue['outstanding'] <= 0 or issue['deviceAssignmentId'] is not None:
-                continue
+        for issue in current_stock_issues(connection, **{recipient: identity},
+                                          allow_associated=feature_enabled(connection, 'Devices')):
             unit = issue['stockUnitId']
             specification = issue['specification']
-            choices.append({'kind': 'stockUnit' if unit else 'stockItem',
-                            'id': unit or issue['stockItemId'], 'stockIssueId': issue['id'],
-                            'label': f"{issue['name']} · Issue {issue['id']}", 'type': specification.get('category', '')})
+            choice = {'kind': 'stockUnit' if unit else 'stockItem',
+                      'id': unit or issue['stockItemId'], 'stockIssueId': issue['id'],
+                      'label': f"{issue['name']} · Issue {issue['id']}", 'type': specification.get('category', '')}
+            if 'associationId' in issue:
+                choice['associationId'] = issue['associationId']
+            choices.append(choice)
     return {'equipment': sorted(choices, key=lambda choice: (choice['label'].casefold(), choice['id'])),
             'department': department[0] if department else None}
