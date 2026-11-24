@@ -1,6 +1,10 @@
 # Milestone 01 Development Handover — v2.2 Target
 
-## Service Desk Notifications — 23 November 2026
+## Stage 6.2 Legacy Import Protection — 24 November 2026
+
+The verified starting integration revision is `2107de3668b08c5abdfdae6fe231a3114bbfc380` (schema 28). The isolated published v2.1 schema-10 → 28 upgrade passed there. [PR #445](https://github.com/Caffoot/Caffoot-Lite/pull/445) corrects protected Device replacement and its error reporting. [Evidence and remaining checks](evidence/stage-6-2/README.md) · [Draft v2.2 administrator guide](../how-tos/features-and-instructions/v2.2-draft/Legacy-Import-and-Docker-Upgrade.md)
+
+## Historical Service Desk Notifications — 23 November 2026
 
 Stage 5.6 implements the seven authorised Service Desk notifications in [PR #442](https://github.com/Caffoot/Caffoot-Lite/pull/442) against `milestone-1`. It starts from `e708c2f5069ec5ff1a429e66bb1cc0d0769e36f3`, after owner acceptance of Stages 5.1–5.5. The private SMTP settings file accepts one optional IT support mailbox and remains readable when the field is absent in older settings. The existing central editor has ten templates. Schema 28 is sufficient. [Owner authorisation](https://github.com/Caffoot/Caffoot-Lite/issues/425#issuecomment-7109456682)
 

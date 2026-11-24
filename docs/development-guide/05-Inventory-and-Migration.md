@@ -41,10 +41,10 @@ The implemented route chain is:
 1. `server.Handler.handle_import` receives `/api/import/preview`, checks a logged-in administrator and forwards to [`ImportDrafts.begin`](../../backend/import_drafts.py).
 2. [`inventory.inspect_export`](../../backend/inventory.py) checks the JSON and published-export metadata. Metadata is a **format gate**, not cryptographic proof of where a file originated.
 3. [`import_review.prepare_published_export_review`](../../backend/import_review.py) preserves the existing Access Point mounting review *before* the remaining detached normalisation, legacy mounting review and integrity checks.
-4. [`import_service.preview_published_export`](../../backend/import_service.py) produces a non-persistent preview and replacement counts when the review is ready. The server retains original file bytes in a **short-lived in-memory draft** tied to the session; the UI cannot submit its own candidate inventory for saving.
+4. [`import_service.preview_published_export`](../../backend/import_service.py) checks protected Device conflicts when the reviewed candidate is available. A clear review returns replacement counts. The server retains original file bytes in a **short-lived in-memory draft** tied to the session. Confirmation rebuilds the candidate from those bytes.
 5. `/api/import/access-point-choices` collects any required Access Point corrections. `/api/import/cancel` discards the draft without replacing inventory.
 6. `/api/import/confirm` requires the documented reviews and explicit replacement confirmation. [`import_service.replace_from_published_export`](../../backend/import_service.py) re-derives and validates the candidate, checks permission again inside the database write transaction, and calls [`inventory.stage_inventory`](../../backend/inventory.py).
-7. The transaction replaces inventory-only tables and either commits or rolls back. It does **not** overwrite accounts, passwords, MFA, permissions or sessions.
+7. The transaction rechecks durable Device dependencies under the write lock. It keeps identical protected Device rows, including their revisions and linked records, and rejects the whole import if a protected Device is changed or missing. The check reads storage directly and includes links for disabled features. The rejection names Devices and relationship types while keeping associated record details private. Accounts, passwords, MFA, permissions, sessions and the audit trail are outside the replacement scope.
 
 The server's `/api/import/*` routes are **live**. The protected import helper and staging transaction are called from the running HTTP service after review and confirmation. Their docstrings describe that current behaviour; the live permission checks and transaction handling remain authoritative.
 
@@ -60,4 +60,4 @@ The dated acceptance checkpoints above are historical evidence rather than an ex
 
 ### Related reading
 
-[Database](02-Database.md) · [Frontend and API](03-Frontend-and-Backend.md) · [Testing](08-Testing-and-Maintenance.md)
+[Database](02-Database.md) · [Frontend and API](03-Frontend-and-Backend.md) · [Testing](08-Testing-and-Maintenance.md) · [Draft v2.2 import and upgrade guide](../how-tos/features-and-instructions/v2.2-draft/Legacy-Import-and-Docker-Upgrade.md)

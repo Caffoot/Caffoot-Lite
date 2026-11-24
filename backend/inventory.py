@@ -6,8 +6,6 @@ Account and security tables are not part of an inventory import."""
 import json
 import sqlite3
 
-from .service_desk_schema import has_service_desk_storage
-
 COLLECTIONS = {
     "devices": "inventory_devices",
     "subnets": "inventory_subnets",
@@ -27,6 +25,10 @@ MAX_BYTES = 10 * 1024 * 1024
 
 class ImportRejected(ValueError):
     pass
+
+
+class ProtectedDeviceConflict(ImportRejected):
+    """An inventory replacement would remove or change protected Devices."""
 
 
 def _json(value):
@@ -212,37 +214,76 @@ def preview_inventory_counts(candidate, current):
     return {"backup": backup, "current": current_counts}
 
 
-def retain_ticket_devices(connection, records):
-    """Keep existing Device rows where replacing them would break a ticket."""
-    if not has_service_desk_storage(connection):
+def retain_protected_devices(connection, records):
+    """Check the reviewed candidate against durable Device relationships."""
+    # Consult storage directly, including closed history, even with features off.
+    # Edit reservations are temporary and keep their existing import behaviour.
+    dependencies = [
+        ('device_assignments', 'Staff or Department assignment history',
+         'SELECT device_id FROM device_assignments'),
+        ('device_equipment_associations', 'associated equipment',
+         'SELECT a.device_id FROM device_equipment_associations e '
+         'JOIN device_assignments a ON a.id=e.device_assignment_id'),
+        ('it_asset_stock_units', 'IT Assets stock links or movement history',
+         'SELECT device_id FROM it_asset_stock_units WHERE device_id IS NOT NULL'),
+        ('it_asset_stock_entries', 'IT Assets stock links or movement history',
+         'SELECT a.device_id FROM it_asset_stock_entries e '
+         'JOIN device_assignments a ON a.id=e.device_assignment_id'),
+        ('device_suppliers', 'Supplier association', 'SELECT device_id FROM device_suppliers'),
+        ('device_lifecycle', 'Equipment Lifecycle record', 'SELECT device_id FROM device_lifecycle'),
+        ('service_desk_tickets', 'Service Desk ticket history',
+         'SELECT device_id FROM service_desk_tickets WHERE device_id IS NOT NULL'),
+        ('service_desk_tickets', 'Service Desk ticket history',
+         'SELECT u.device_id FROM service_desk_tickets t '
+         'JOIN it_asset_stock_units u ON u.id=t.stock_unit_id WHERE u.device_id IS NOT NULL'),
+    ]
+    tables = {name for name, in connection.execute("SELECT name FROM sqlite_schema WHERE type='table'")}
+    if any(column[1] == 'handover_event_id' for column in connection.execute('PRAGMA table_info(device_assignments)')):
+        dependencies.append(('device_assignments', 'Device handover history',
+                             'SELECT device_id FROM device_assignments WHERE handover_event_id IS NOT NULL'))
+    sources = [(label, query) for table, label, query in dependencies if table in tables]
+    if not sources:
         return set()
-    linked = dict(connection.execute("""
-        SELECT device.id,device.record_json FROM inventory_devices device
-        WHERE EXISTS(SELECT 1 FROM service_desk_tickets ticket WHERE ticket.device_id=device.id)
-    """))
-    if not linked:
-        return set()
-    retained = set()
+
+    # All SQL fragments are fixed above. Consolidate the relationship categories
+    # without selecting recipient, Supplier, stock or ticket details.
+    relationships = ' UNION '.join(f'SELECT device_id, ? FROM ({query})' for _, query in sources)
+    protected = {}
+    for identity, name, raw, label in connection.execute(f'''
+        WITH relationships(device_id, label) AS ({relationships})
+        SELECT d.id, d.name, d.record_json, r.label
+        FROM relationships r JOIN inventory_devices d ON d.id=r.device_id
+        ORDER BY d.name, d.id, r.label COLLATE NOCASE
+    ''', [label for label, _ in sources]):
+        protected.setdefault(identity, (name, raw, []))[2].append(label)
+
+    incoming = {}
     for record in records:
         identity = record.get('id')
-        if not isinstance(identity, str) or identity not in linked:
+        if isinstance(identity, str) and identity in protected:
+            incoming.setdefault(identity, []).append(record)
+
+    conflicts = []
+    for identity, (name, raw, labels) in protected.items():
+        matches = incoming.get(identity, [])
+        if matches == [json.loads(raw)]:
             continue
-        if identity in retained or json.loads(linked[identity]) != record:
-            raise ImportRejected('The import must preserve the existing records for Devices with protected history.')
-        retained.add(identity)
-    if retained != linked.keys():
-        raise ImportRejected('The import would remove Devices with protected history. No inventory was changed.')
-    return retained
+        reason = 'changed in the backup' if matches else 'missing from the backup'
+        display_name = ' '.join(name.split())
+        conflicts.append(f'{display_name} — {reason} ({", ".join(labels)})')
+    if conflicts:
+        raise ProtectedDeviceConflict('\n'.join([
+            'These Devices have protected history or relationships:',
+            *conflicts,
+            'No inventory or associated records have been changed.',
+        ]))
+    return set(protected)
 
 
 def _write_detached(connection: sqlite3.Connection, data):
     """Replace validated inventory inside the caller's transaction."""
-    retained_devices = retain_ticket_devices(connection, data.get('devices', []))
+    retained_devices = retain_protected_devices(connection, data.get('devices', []))
     if retained_devices:
-        connection.execute("""
-            DELETE FROM inventory_devices WHERE NOT EXISTS(
-                SELECT 1 FROM service_desk_tickets WHERE device_id=inventory_devices.id)
-        """)
         # Give retained rows temporary positions so imports can reorder them.
         # The existing names, identities and revision numbers stay intact.
         first_position = connection.execute(
@@ -251,6 +292,7 @@ def _write_detached(connection: sqlite3.Connection, data):
         connection.executemany('UPDATE inventory_devices SET ordinal=? WHERE id=?',
                                ((first_position-index, identity)
                                 for index, identity in enumerate(sorted(retained_devices), start=1)))
+        connection.execute('DELETE FROM inventory_devices WHERE ordinal>=?', (first_position,))
         connection.execute('DELETE FROM device_edit_reservations')
     else:
         connection.execute('DELETE FROM inventory_devices')

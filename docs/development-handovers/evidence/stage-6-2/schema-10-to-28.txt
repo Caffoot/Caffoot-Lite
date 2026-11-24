@@ -1,0 +1,10 @@
+sha256:d55053f0662559daa5148f4e88860420b9c48f022313376482e9944636d2de0a amd64 c3237114108cad9f7d4e57657b6aed5e0091a5ef
+sha256:19f9205a833ef741ba8a4e0b87362aa3a1dbc2ae904faa4a6973029fb3d3aa2b amd64 2107de3668b08c5abdfdae6fe231a3114bbfc380
+Schema-10 fixture populated via published image
+PREFLIGHT PASS: active schema-10 baseline, populated tables, trusted HTTPS
+UPGRADE PASS: 10→28, 40 expected new tables, preserved 13 legacy row sets plus old sequence rows, integrity/FKs and private files. Runtime Python 3.12.16, SQLite 3.53.4.
+SECURITY PASS: grants unchanged; expected overrides; six stored sessions and one proof revoked; eight linked Staff records; legacy Read MFA gate
+RESTART PASS: recreated app, unchanged logical rows and file manifest
+APPLICATION PASS: HTTPS reads and authenticated account/Settings operations; stale session rejected; enabled/disabled and Read/Edit MFA paths
+ISOLATION PASS: original stopped schema-10 snapshot unchanged
+Disposable Compose resources removed

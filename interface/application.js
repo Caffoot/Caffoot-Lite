@@ -8033,8 +8033,8 @@ function openIpModal(ip) {
             catch (error) { throw new Error('This file is not valid JSON. Select a Caffoot Lite or older compatible JSON backup (not a CSV export). ' + error.message); }
         }
         // Import failures must remain visible until explicitly dismissed.
-        function showBackupImportError(message) {
-            openModal(renderInterfaceTemplate("migration/show-backup-import-error-1",[escapeHtml(String(message))]));
+        function showBackupImportError(message, guidance = 'Check that this is a supported Caffoot Lite JSON backup. If the problem continues, keep the original backup unchanged and report the error details. Do not manually bypass inventory validation.') {
+            openModal(renderInterfaceTemplate("migration/show-backup-import-error-1",[escapeHtml(String(message)), escapeHtml(guidance)]));
         }
         // Review detached legacy corrections before restore. Closing the dialog always cancels.
         function reviewLegacyDeviceMountingRepairs(repairs) {
@@ -9299,7 +9299,11 @@ void (async () => {
       body:JSON.stringify(data)
     });
     const result = await response.json();
-    if (!response.ok) throw new Error(result.error || 'Unable to save inventory.');
+    if (!response.ok) {
+      const error = new Error(result.error || 'Unable to save inventory.');
+      error.code = result.code;
+      throw error;
+    }
     return result;
   }
   const actionCanEditIpam = new Set(['open-subnet-modal','open-multiple-subnets','bulk-ip','apply-bulk-ip-assignment',
@@ -11094,6 +11098,7 @@ void (async () => {
   // the server draft; no inventory data is written to browser storage.
   let importDraft=null;
   let importWorking=false;
+  const protectedImportGuidance='Keep the original backup. Check that you selected the intended file and review any mounting choices. The import can continue only with a backup that leaves every listed Device unchanged.';
   const accessPointMounts=['Tabletop / Shelf Mounted','Ceiling Mounted','Wall Mounted','Pole Mounted','Desktop'];
   function importPanel(body) {
     openModal('<div class="p-6 sm:p-7 space-y-4 text-slate-900 dark:text-white">' +
@@ -11157,6 +11162,10 @@ void (async () => {
         method:'POST',headers:{'Content-Type':'application/octet-stream','X-CSRF-Token':csrfToken},body:file
       });
       const payload=await response.json();
+      if (payload.code==='protected_devices') {
+        showBackupImportError(payload.error, protectedImportGuidance);
+        return;
+      }
       if (!response.ok) throw new Error(payload.error||'Unable to review import.');
       importDraft={id:payload.draftId};
       showImportReview(payload.review);
@@ -11198,8 +11207,9 @@ void (async () => {
         showToast('Inventory imported.');
       }
     } catch(error) {
-      if (action==='confirm') importDraft=null; // Server consumes confirmation drafts.
-      showToast(error.message,'error');
+      if (action==='confirm' || error.code==='protected_devices') importDraft=null;
+      if (error.code==='protected_devices') showBackupImportError(error.message, protectedImportGuidance);
+      else showToast(error.message,'error');
     } finally { importWorking=false; }
   }
   // Capture import-file change before the published browser-only import handler.

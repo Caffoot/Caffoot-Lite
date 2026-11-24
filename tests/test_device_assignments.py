@@ -203,7 +203,7 @@ class DeviceAssignmentTests(unittest.TestCase):
 
     def test_clean_start_clears_assignments_while_delete_and_import_protect_them(self):
         from backend.device_saves import delete_reserved_device
-        from backend.inventory import reconstruct_inventory, stage_inventory
+        from backend.inventory import ProtectedDeviceConflict, reconstruct_inventory, stage_inventory
         from backend.reset_inventory import reset_inventory
 
         self.allocate()
@@ -214,7 +214,7 @@ class DeviceAssignmentTests(unittest.TestCase):
             delete_reserved_device(self.db, 1, 'one', 0)
         self.assertEqual(before, self.snapshot())
         candidate = dict(reconstruct_inventory(self.db), devices=[])
-        with self.assertRaises(sqlite3.IntegrityError):
+        with self.assertRaisesRegex(ProtectedDeviceConflict, 'Staff or Department assignment history'):
             stage_inventory(self.db, candidate)
         self.assertEqual(before, self.snapshot())
         reset_inventory(self.db, 1)

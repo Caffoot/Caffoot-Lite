@@ -11,6 +11,7 @@ from backend.http_security import read_session_cookie
 from backend.import_service import (
     preview_published_export, replace_from_published_export,
 )
+from backend.inventory import ProtectedDeviceConflict
 
 
 class ImportDrafts:
@@ -67,11 +68,15 @@ class ImportDrafts:
         """Rebuild review from server-held original bytes and explicit choices."""
         with self._lock:
             draft = self._get(draft_id, cookie_header)
-            preview = preview_published_export(
-                connection, draft["raw"], cookie_header=cookie_header,
-                origin=origin, allowed_origin=allowed_origin,
-                csrf_header=csrf_header, access_point_choices=choices, now=now,
-            )
+            try:
+                preview = preview_published_export(
+                    connection, draft["raw"], cookie_header=cookie_header,
+                    origin=origin, allowed_origin=allowed_origin,
+                    csrf_header=csrf_header, access_point_choices=choices, now=now,
+                )
+            except ProtectedDeviceConflict:
+                self._drafts.pop(draft_id)
+                raise
             if preview["requiresAccessPointMountReview"]:
                 raise ValueError("All Access Point mounting choices are required")
             draft["choices"] = list(choices)
