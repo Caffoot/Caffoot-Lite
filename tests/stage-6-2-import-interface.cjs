@@ -255,18 +255,39 @@ with sqlite3.connect(sys.argv[1]) as db:
         const protectedState = snapshot();
         const protectedBefore = protectedRows();
         await openData(page);
-        dialog = await chooseBackup(page, conflicting);
-        const rejected = page.waitForResponse(response => response.url().endsWith('/api/import/access-point-choices'));
-        await continueMountReview(dialog);
-        assert.equal((await rejected).status(), 400);
-        await dialog.getByRole('heading', {name:'Backup Import Could Not Continue'}).waitFor();
-        await dialog.getByText('No inventory or associated records have been changed.', {exact:false}).waitFor();
-        assert.match(await dialog.innerText(), /Reception Desktop — missing from the backup \(Supplier association\)/);
-        assert.match(await dialog.innerText(), /Workshop Laptop — changed in the backup \(Equipment Lifecycle record\)/);
-        assert.equal(await dialog.getByRole('button', {name:'Confirm Import', exact:true}).count(), 0);
-        await capture(page, '04-protected-import-rejection.png');
-        assert.equal(snapshot(), protectedState);
-        await dialog.getByRole('button', {name:'Close', exact:true}).click();
+        for (const {width, height, theme, padding, file} of [
+            {width:1440, height:960, theme:'light', padding:'28px', file:'04-protected-import-rejection.png'},
+            {width:1440, height:960, theme:'dark', padding:'28px', file:'04-protected-import-rejection-desktop-dark.png'},
+            {width:390, height:844, theme:'light', padding:'24px', file:'04-protected-import-rejection-mobile-light.png'},
+            {width:390, height:844, theme:'dark', padding:'24px', file:'04-protected-import-rejection-mobile-dark.png'},
+        ]) {
+            await page.setViewportSize({width, height});
+            await page.evaluate(theme => caffootSetTheme(theme), theme);
+            assert.equal(await page.locator('html').evaluate(html => html.classList.contains('dark')), theme === 'dark');
+            dialog = await chooseBackup(page, conflicting);
+            const rejected = page.waitForResponse(response => response.url().endsWith('/api/import/access-point-choices'));
+            await continueMountReview(dialog);
+            assert.equal((await rejected).status(), 400);
+            await dialog.getByRole('heading', {name:'Backup Import Could Not Continue'}).waitFor();
+            const alert = dialog.getByRole('alert');
+            const message = await alert.innerText();
+            assert.match(message, /Reception Desktop — missing from the backup \(Supplier association\)/);
+            assert.match(message, /Workshop Laptop — changed in the backup \(Equipment Lifecycle record\)/);
+            assert.match(message, /No inventory or associated records have been changed\./);
+            assert.equal(await dialog.getByRole('button', {name:'Confirm Import', exact:true}).count(), 0);
+            assert.equal(await alert.evaluate(element => getComputedStyle(element).padding), padding);
+            const close = dialog.getByRole('button', {name:'Close', exact:true});
+            const bounds = await close.boundingBox();
+            assert.ok(bounds && bounds.x >= 0 && bounds.y >= 0 &&
+                bounds.x + bounds.width <= width && bounds.y + bounds.height <= height);
+            await capture(page, file);
+            assert.equal(snapshot(), protectedState);
+            await close.click();
+            await dialog.waitFor({state:'hidden'});
+            console.log('PASS: protected import rejection at ' + width + ' × ' + height + ', ' + theme + ', padding ' + padding + '.');
+        }
+        await page.setViewportSize(contexts.viewport);
+        await page.evaluate(() => caffootSetTheme('light'));
 
         dialog = await chooseBackup(page, original);
         await continueMountReview(dialog);
