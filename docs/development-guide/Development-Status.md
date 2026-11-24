@@ -4,7 +4,9 @@
 
 Caffoot Lite **v2.1 remains the published release**, at tagged source `c3237114108cad9f7d4e57657b6aed5e0091a5ef` (schema 10). Use the [published user guides](../how-tos/features-and-instructions/README.md) and [installation instructions](../../INSTALLATION.md) for that release.
 
-The Stage 6.2 starting checkpoint is `milestone-1` at `2107de3668b08c5abdfdae6fe231a3114bbfc380` (unreleased v2.2, schema 28), after the Stage 5.1–5.6 merges. The isolated schema-10 → 28 upgrade passed there. The import protection correction is under review in [PR #445](https://github.com/Caffoot/Caffoot-Lite/pull/445). [Stage 6.2 evidence](../development-handovers/evidence/stage-6-2/README.md) · [Draft administrator guide](../how-tos/features-and-instructions/v2.2-draft/Legacy-Import-and-Docker-Upgrade.md)
+The verified integration head for the Stage 6.4 review is `milestone-1` at `957969ba1b44465472765e47f91117ca7c87d177` (schema 28), following the Stage 6.3 recovery merge. Shared Devices is in [Stage 6.4 PR #447](https://github.com/Caffoot/Caffoot-Lite/pull/447) with schema 29, focused test evidence and draft v2.2 guidance. Independent review, owner visual acceptance, final-head CI and separate merge approval remain required. Stages 6.5–6.8 and the deferred native and manual acceptance continue under the milestone. [Stage 6.4 evidence](../development-handovers/evidence/stage-6-4/README.md)
+
+The historical Stage 6.2 starting checkpoint was `milestone-1` at `2107de3668b08c5abdfdae6fe231a3114bbfc380` (unreleased v2.2, schema 28), after the Stage 5.1–5.6 merges. The isolated schema-10 → 28 upgrade passed there. The import protection correction was reviewed in [PR #445](https://github.com/Caffoot/Caffoot-Lite/pull/445). [Stage 6.2 evidence](../development-handovers/evidence/stage-6-2/README.md) · [Draft administrator guide](../how-tos/features-and-instructions/v2.2-draft/Legacy-Import-and-Docker-Upgrade.md)
 
 ### Historical Stage 5.4 Checkpoint — 23 November 2026
 
@@ -38,7 +40,7 @@ Batch 5.4 adds the administrator support calendar, category management and live 
 
 Staff Members and Departments are core and independently permissioned. IT Assets is independently optional and defaults off on fresh installations. Schema 20 adds IT Assets Edit to the built-in IT Staff role default while preserving existing accounts' configured access with compatibility overrides; it does not automatically add new ordinary accounts to IT Staff.
 
-**Still deferred** are Batch 3.4 manual/native acceptance, native Raspberry Pi, Safari, Portainer and private-installation checks, private legacy-data verification, and cross-stage security and compatibility. Stage 6.2 is integrated. Stage 6.3 isolated recovery evidence is available for independent review and owner merge approval. [Stage 6 plan](https://github.com/Caffoot/Caffoot-Lite/issues/351#issuecomment-7020041373)
+**Still deferred** are Batch 3.4 manual/native acceptance, native Raspberry Pi, Safari, Portainer and private-installation checks, private legacy-data verification, and cross-stage security and compatibility. Stage 6.2 is integrated. Stage 6.3 isolated recovery evidence is integrated via PR #446. [Stage 6 plan](https://github.com/Caffoot/Caffoot-Lite/issues/351#issuecomment-7020041373)
 
 The [documentation review record](Stage-1-3-Documentation-Review.md) lists sources, screenshot approvals, wording discrepancies and remaining documentation acceptance. The [active handover](../development-handovers/milestone-01.md) preserves implementation evidence.
 

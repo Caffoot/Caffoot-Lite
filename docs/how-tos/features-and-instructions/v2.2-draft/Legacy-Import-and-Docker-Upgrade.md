@@ -68,21 +68,21 @@ Before trying the schema 29 review build, stop the schema 28 review installation
 
 ### Make A Complete Pre-Upgrade Backup
 
-Follow [Back up a complete installation](#back-up-a-complete-installation) while the source is still on v2.1. Test restoring that backup with the matching v2.1 image before proceeding. Keep the verified snapshot and its image for rollback.
+Follow [Back up a complete installation](#back-up-a-complete-installation) while the source is on its original image, published v2.1 with schema 10 or the authorised v2.2 review build with schema 28. Test restoring the backup with that matching image before proceeding. Keep the verified snapshot and image for rollback.
 
 ### Start The Review Image And Check The Result
 
-1. Use a separate disposable installation and a consistent copy of the stopped v2.1 `/data`. Confirm that the test stack cannot see your production mount. Use the authorised v2.2 review image for the intended revision and architecture.
+1. Use a separate disposable installation and a consistent copy of the stopped source `/data`. Confirm that the test stack cannot see your production mount. Use the authorised v2.2 review image for the intended revision and architecture.
 2. Keep the test stack's existing `/data` mapping and working HTTPS/network settings when you replace the image. For Portainer, edit the existing test stack and replace its image reference. For Compose, change the image in the existing test definition and recreate the service in the same project. Confirm the volume mapping before starting. The application applies the pending migrations on startup.
-3. Check that the instance becomes healthy and that it still presents the trusted certificate. Existing sessions end and affected outstanding email proofs are revoked. Sign in again. Legacy Readers and other active accounts moved to **IT Staff** may need to enrol an authenticator, even if their inventory access remains **No Access**. Existing authenticator details are retained. See [Roles, Section Permissions And MFA](Roles-Section-Permissions-and-MFA.md#what-an-existing-account-may-show-after-upgrade).
-4. Verify representative Devices, linked IPAM and Racks records, preferences and Audit Trail entries. Check a saved profile, existing Read and Edit access and Administrator sign-in. Check that the private email settings remain readable. The upgrade maintains configured legacy access while applying the new MFA requirements.
+3. Check that the instance becomes healthy and that it still presents the trusted certificate. Sign in using an authorised test account. On the v2.1 upgrade, earlier migrations end existing sessions and revoke affected outstanding email proofs. Legacy Readers and other active accounts moved to **IT Staff** may need to enrol an authenticator, even if their inventory access remains **No Access**. Existing authenticator details are retained. See [Roles, Section Permissions And MFA](Roles-Section-Permissions-and-MFA.md#what-an-existing-account-may-show-after-upgrade).
+4. Verify representative Devices, linked IPAM and Racks records, preferences and Audit Trail entries. Check a saved profile, existing Read and Edit access, Administrator sign-in and private email settings. For a populated schema 28 source, compare Department assignments, original stock recipients and quantities, associated equipment, ticket visibility and attachments. The upgrade maintains configured legacy access while applying the new MFA requirements.
 5. Recreate the isolated container again against the same mount and repeat the health, sign-in and sample record checks. The rehearsal also checked SQLite integrity, foreign keys and unchanged rows on repeat startup. If startup fails, preserve the stopped copy and review the container log before trying again.
 
 ### Roll Back Using The Complete Pre-Upgrade Backup
 
 1. Stop the upgraded container. If you need its data for investigation or later recovery, back up its complete stopped mount separately and label that copy with its v2.2 image and schema.
-2. [Restore the complete pre-upgrade snapshot](#restore-a-complete-installation) into a clean target using the matching v2.1 image and saved stack settings. The migrated schema-28 mount must never be attached to v2.1.
-3. Check trusted HTTPS, MFA sign-in, representative inventory, profiles, permissions and private settings. Rollback returns the installation to the time of the schema-10 backup. Changes made afterwards are absent from that recovery.
+2. [Restore the complete pre-upgrade snapshot](#restore-a-complete-installation) into a clean target using the matching source image and saved stack settings. Use the stopped backup with that image, because the upgraded volume is on schema 29.
+3. Check trusted HTTPS, MFA sign-in, representative inventory, profiles, permissions and private settings. If your source was schema 28, also check Staff assignments, stock and restricted Service Desk access. Rollback restores the state captured in the backup. Any later changes are absent from that recovery.
 
 ## Back Up A Complete Installation
 

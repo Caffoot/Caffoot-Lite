@@ -38,6 +38,10 @@ Keep confidential, personal and sensitive information out of the subject, descri
 
 A physical return, reassignment, write-off or reissue ends the previous employee audience. Authorised IT can still review the previous ticket. Internal IT notes and their attachments remain in the technician workspace. [Assignment and ticket privacy](Service-Desk-Administration.md#what-happens-to-service-desk-tickets-when-equipment-changes-hands)
 
+![Mobile Create Ticket for the Main Office Printer with the confidentiality warning above Subject](../../../development-handovers/evidence/stage-6-4/screenshots/ticket-confidentiality-mobile-dark.png)
+
+*The warning appears before Subject and Description, including when Report A Problem preselects the Device.* [Capture provenance](../../../development-handovers/evidence/stage-6-4/README.md)
+
 ## Find And Review Your Tickets
 
 1. Select **My Tickets** directly below **My Equipment** at the top of the sidebar. The **My Tickets** tab shows tickets for your current personal equipment assignments. Switch to **Department Tickets** for equipment shared with your current Department. A shared-equipment ticket stays in the Department tab, including when you raised it yourself.

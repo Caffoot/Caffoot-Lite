@@ -1,6 +1,14 @@
 # Milestone 01 Development Handover — v2.2 Target
 
-## Stage 6.3 Complete-Volume Recovery — 24 November 2026
+## Stage 6.4 Shared Devices — 24 November 2026
+
+The Stage 6.4 review branch starts from `957969ba1b44465472765e47f91117ca7c87d177` on `milestone-1`. Schema 29 preserves one physical custody period per Device and keeps equal Department relationships with attributed history. Stock recipient changes apply only to new multi-Department Device custody issues, including explicitly associated accessories. Employee Device tickets use live Department membership and the saved custody ID. [PR #447](https://github.com/Caffoot/Caffoot-Lite/pull/447) · [Owner-approved technical decision](https://github.com/Caffoot/Caffoot-Lite/issues/431#issuecomment-7129437209)
+
+The branch carries the focused test results, genuine Chromium screenshots and the stopped-volume rehearsal, including schema 10 and schema 28 upgrades to 29 and restoration with the matching schema 28 image. [Evidence and limits](evidence/stage-6-4/README.md) · [Draft v2.2 guides](../how-tos/features-and-instructions/v2.2-draft/README.md)
+
+Independent code review, owner visual acceptance, final-head CI and separate merge approval are pending. Stages 6.5–6.8 and the previously deferred native Raspberry Pi, Safari, Portainer, private-data and manual acceptance continue under the milestone. [Milestone #351](https://github.com/Caffoot/Caffoot-Lite/issues/351)
+
+## Historical Stage 6.3 Complete-Volume Recovery — 24 November 2026
 
 The isolated Compose rehearsal recovered the populated v2.2 schema-28 mount and rolled back a separate copy to published v2.1 schema 10 with its matching image. Stopped file and SQLite comparisons, trusted HTTPS and functional access, restart/recreation and a focused rootless bind-mount check passed. [PR #446](https://github.com/Caffoot/Caffoot-Lite/pull/446) · [Revision-pinned evidence and limitations](evidence/stage-6-3/README.md) · [Draft administrator procedure](../how-tos/features-and-instructions/v2.2-draft/Legacy-Import-and-Docker-Upgrade.md#back-up-a-complete-installation)
 

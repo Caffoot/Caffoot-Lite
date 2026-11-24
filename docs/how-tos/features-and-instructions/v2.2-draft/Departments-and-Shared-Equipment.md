@@ -80,6 +80,10 @@ Open **Device Details → Assigned To → Manage Departments** with **Devices Ed
 
 A saved addition gives eligible Finance members access to employee-visible tickets from the current custody period, including earlier reports. Removing Finance ends that access on the next request. Previous custody-period tickets remain restricted to authorised IT. If Finance is later added back during the same custody period, current-period access resumes. [Manage Departments](Device-Assignments-and-My-Equipment.md#change-the-departments-sharing-a-device) · [Ticket confidentiality](Service-Desk-Tickets.md#shared-device-ticket-confidentiality)
 
+![Sales Department Equipment listing the original Main Office Printer](../../../development-handovers/evidence/stage-6-4/screenshots/department-equipment-desktop-light.png)
+
+*The Sales row opens the same Main Office Printer that Accounts uses.* [Capture provenance](../../../development-handovers/evidence/stage-6-4/README.md)
+
 ## Assign Shared Equipment
 
 ### An Existing Device With No Equipment History

@@ -85,6 +85,10 @@ Departments share one custody period. Each selected Department has equal access 
 
 Choose **Cancel** to close the form and keep the saved selection. If a change is rejected because the Device or its assignment changed, reopen **Manage Departments** and check the current selections before saving again. New assignments to archived Departments are unavailable until reactivation. [Ticket confidentiality and access](Service-Desk-Tickets.md#shared-device-ticket-confidentiality)
 
+![Manage Departments for a Device shared by Accounts, Sales and HR](../../../development-handovers/evidence/stage-6-4/screenshots/manage-departments-desktop-light.png)
+
+*Search and tick the Departments sharing the Device, then choose **Save Changes**.* [Capture provenance](../../../development-handovers/evidence/stage-6-4/README.md)
+
 ## Read Current Assignments And History
 
 In Device Details → **Assigned To**, **Current Assignment** shows the present holder or **Unassigned**. Unassigned establishes no current holder; it does not establish physical possession or readiness.
@@ -131,6 +135,10 @@ My Equipment is for a person signing in with a login linked to their Staff recor
 4. Read **Shared with My Department** for equipment assigned to your current Department. Viewing it does not make you the personal holder.
 5. Report an incorrect item or quantity to an authorised IT user, using its name and the relevant facts. This personal screen has no Issue, Return, Reassign or Write Off controls.
 6. To ask IT for help with listed equipment, select **Report A Problem** on the item. Confirm the preselected **Device / Asset**. On a Department Device, read the confidentiality warning before completing **Subject**, **Description** or adding a file. Complete **Ticket Category** and the required fields. Add a permitted file if helpful. Select **Create Ticket** to save, or **Cancel** to return to My Equipment. Follow the saved reference in **My Tickets** for personal equipment or **Department Tickets** for shared equipment. [Full ticket instructions](Service-Desk-Tickets.md#raise-a-support-request)
+
+![Sales employee My Equipment showing a personal laptop and shared printers in separate sections](../../../development-handovers/evidence/stage-6-4/screenshots/my-equipment-desktop-light.png)
+
+*The same Main Office Printer appears in each eligible Department member’s shared list.* [Capture provenance](../../../development-handovers/evidence/stage-6-4/README.md)
 
 ![My Equipment with Report A Problem on personal and Department-shared Devices.](../../../development-handovers/evidence/employee-service-desk/my-equipment-desktop-light.png)
 

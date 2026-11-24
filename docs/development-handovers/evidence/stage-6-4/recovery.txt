@@ -1,0 +1,20 @@
+test_complete_named_volume_recovery_and_matching_rollback (test_stage_6_4_recovery.SharedDeviceRecoveryTests.test_complete_named_volume_recovery_and_matching_rollback) ... IMAGE sha256:b2bc1c5493a872ee33b4a14e5c24acfb890669d52f4569977b5600ae79242696 amd64 c3237114108cad9f7d4e57657b6aed5e0091a5ef
+IMAGE sha256:59487ff0b220db57b4ed9bc60855a43e711589733467f06e593186b3f6763fad amd64 957969ba1b44465472765e47f91117ca7c87d177
+IMAGE sha256:fa007a3de438b2c9e8f25476de14b97db7be9d95158d016efbca02103a89e123 amd64 57ca30e15f2d61d2bb4689c6ca1a3600973df3c7
+TLS SHA-256 bd1cdbc9c556757314e9892cba4709cbf2a4c3cf9b83bdf4f4f7e44053792fb4
+STOPPED caffoot-stage63-c508c6b88cf7-source10 exit=137
+ARCHIVE schema=10 sha256=c8081e8eb600ce1599a1dba8cc36765b378ef8bea029c22dfabb099494b881d7 tables=17 paths=9 python=3.12.16 sqlite=3.53.4 sidecars=[]
+STOPPED caffoot-stage63-c508c6b88cf7-direct29 exit=137
+SCHEMA 10 TO 29 PASS: matching source untouched, trusted HTTPS, MFA and saved inventory
+STOPPED caffoot-stage63-c508c6b88cf7-source28 exit=137
+ARCHIVE schema=28 sha256=f3e1ce75bf0332d414698b84a22bab8967ae4a0799deb2638dfeb659f6630c19 tables=57 paths=9 python=3.12.16 sqlite=3.53.4 sidecars=[]
+STOPPED caffoot-stage63-c508c6b88cf7-upgrade29 exit=137
+SCHEMA 28 TO 29 PASS: original rows and stock facts, MFA, private notes and attachments
+STOPPED caffoot-stage63-c508c6b88cf7-restore28 exit=137
+SCHEMA 28 ROLLBACK PASS: exact stopped-volume restore and matching-image functional checks
+ok
+
+----------------------------------------------------------------------
+Ran 1 test in 118.998s
+
+OK

@@ -8,7 +8,7 @@ from backend.device_handovers import reassign_device
 from backend.device_stock import reissue_stock_device
 from backend.equipment_associations import add_associated_equipment
 from backend.shared_devices import manage_departments
-from backend.stock_circulation import return_stock, stock_issue_records
+from backend.stock_circulation import return_stock, stock_issue_records, write_off_stock
 from backend.stock_intake import stock_item
 import test_associated_equipment_writes as association
 import test_device_handovers as handover
@@ -73,7 +73,12 @@ class SharedStockTests(unittest.TestCase):
         self.assertEqual((previous['deviceAssignmentId'], previous['staffId'], previous['outstanding']),
                          (original['assignmentId'], 'person', 0))
         self.assertEqual(current['stockUnitId'], previous['stockUnitId'])
+        payload = stock.writeoff_payload(current, issueEntryId=current['id'], fromState='issued')
+        del payload['stockItemId']
+        write_off_stock(self.db, 1, self.token, payload)
         self.assertEqual(stock_item(self.db, item)['balances']['physicallyHeld'], 9)
+        self.assertEqual(read_assignments(self.db, 1, device_id=identity)['current'], [])
+        self.assertEqual(stock_issue_records(self.db)[0]['outstanding'], 0)
         self.assertEqual(self.db.execute('PRAGMA foreign_key_check').fetchall(), [])
 
 
@@ -100,6 +105,22 @@ class SharedDeviceHttpTests(unittest.TestCase):
         return self.request('/api/equipment/manage-departments', method='POST', actor=actor, payload=dict(
             deviceId='device', revision=record['revision'], assignmentId=record['current'][0]['id'],
             departmentIds=departments))
+
+    def test_initial_department_assignment_retains_one_identity_and_rejects_mixed_recipients(self):
+        route = '/api/equipment/assignments'
+        selected = {'recipientKind': 'department', 'departmentIds': ['dept','other'],
+                    'devices': self.allocation['devices']}
+        self.assertEqual(self.request(route, method='POST', payload=dict(selected, recipientId='person'))[0], 400)
+        self.assertEqual(self.request(route, method='POST', payload=dict(selected, recipientKind='staff'))[0], 400)
+        self.assertEqual(self.request(route, method='POST', payload=dict(selected, departmentIds=['dept','dept']))[0], 400)
+        self.assertEqual(self.allocated()['current'], [])
+        self.assertEqual(self.request(route, method='POST', payload=selected)[0], 200)
+        current, = self.allocated()['current']
+        self.assertIsNone(current['staffId'])
+        self.assertEqual({department['id'] for department in current['departments']}, {'dept','other'})
+        for department in selected['departmentIds']:
+            records = self.request(f'{route}?departmentId={department}')[1]['current']
+            self.assertEqual([(row['id'],row['deviceId']) for row in records], [(current['id'],'device')])
 
     def test_current_custody_ticket_scope_and_private_attachments(self):
         self.assign_device()
@@ -134,6 +155,8 @@ class SharedDeviceHttpTests(unittest.TestCase):
         with sqlite3.connect(self.path) as connection:
             connection.execute("UPDATE staff_members SET department_id=NULL WHERE id='colleague'")
         self.assert_ticket_hidden('department', department, 5)
+        self.hand_over('staff', 'person')
+        self.assert_ticket_hidden('department', department, 4)
 
     def test_archived_department_is_retained_until_authorised_removal(self):
         self.assign_device('department', 'dept')
@@ -159,8 +182,17 @@ class SharedDeviceHttpTests(unittest.TestCase):
         self.finish_mail_jobs()
         self.ticket_mail('account-4@example.test', ticket, 'department', 'Shared update')
         self.ticket_mail('account-5@example.test', ticket, 'department', 'Shared update')
+        with sqlite3.connect(self.path) as connection:
+            connection.execute("UPDATE account_profiles SET email='ACCOUNT-4@example.test' WHERE account_id=5")
+        self.assertEqual(self.save('it', ticket, 'messages', {'body': 'One mailbox', 'employeeVisible': True})[0], 200)
+        self.finish_mail_jobs()
+        self.ticket_mail('account-4@example.test', ticket, 'department', 'One mailbox')
+        self.assertTrue(self.mail.empty())
+        with sqlite3.connect(self.path) as connection:
+            connection.execute("UPDATE account_profiles SET email='account-5@example.test' WHERE account_id=5")
         self.assertEqual(self.save('it', ticket, 'messages', {'body': 'Queued update', 'employeeVisible': True})[0], 200)
         self.assertEqual(self.manage(['dept'])[0], 200)
+        self.assertEqual(self.manage(['dept','other'])[0], 200)
         self.finish_mail_jobs()
         self.ticket_mail('account-4@example.test', ticket, 'department', 'Queued update')
         self.assertTrue(self.mail.empty())

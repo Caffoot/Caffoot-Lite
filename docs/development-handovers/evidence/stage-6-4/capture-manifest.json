@@ -1,0 +1,189 @@
+{
+  "sourceRevision": "57ca30e15f2d61d2bb4689c6ca1a3600973df3c7",
+  "browser": "156.0.8078.79",
+  "capturedAt": "2026-11-24T11:18:49.621Z",
+  "origin": "https://127.0.0.1:44029",
+  "schema": 29,
+  "fixture": "Fictional Staff, Departments, Devices and tickets seeded in this Chromium test.",
+  "sourceHashes": {
+    "interface/application.js": "fbc7513ca4d94af13916d6aa5aab84fc6b328b007ab99f17bdcab5b2b48e47fd",
+    "interface/equipment.js": "356bb9309f1d7fa452f37e0cbdf000e3ac61435bce7c7d2c55f09596a3f61d2c",
+    "interface/staff-directory.js": "edf86d220d8b6ee404c1a42470dd606e9fd05c4cd75fd69ed5cfbb484e71cd33",
+    "interface/stock-intake.js": "3fd23f39a9cc300cd6800a4225410d6c352bbcc4d51c9977a39b4473165ec2c8",
+    "interface/service-desk.js": "8939790b72b6bbf855b813d5109c5fb55037d945ea00ba99592e26b324b2bb29",
+    "interface/styles/equipment.css": "9b101af92509d778720f068e228e0b67f8a1256949be4978f7018f3074959e6b",
+    "interface/styles/service-desk.css": "19000de84db368b5a5145383f269e305df4e1337fe9d47ed897ef05a19b607b8",
+    "backend/shared_devices.py": "f9c337f2e4c3a8b8caad2aedbec6c0a589b8bdda7997c181164b7b4ab58b5fd2",
+    "backend/shared_device_schema.py": "44bc6b106c64001aea9bf492ca319353eb3010d63b36ee828b413f1cca968176"
+  },
+  "captures": {
+    "assign-device-desktop-light.png": {
+      "width": 1440,
+      "height": 960,
+      "theme": "light",
+      "sha256": "f6b3953da8f14f90dd72fe641bd7da99d2a136797b222b3b242b181584d95e64"
+    },
+    "assign-device-desktop-dark.png": {
+      "width": 1440,
+      "height": 960,
+      "theme": "dark",
+      "sha256": "f05bf4183ff702a6944ac49590e85208dfc525cb39f2d446ac27af508f64dcad"
+    },
+    "assign-device-mobile-light.png": {
+      "width": 390,
+      "height": 844,
+      "theme": "light",
+      "sha256": "b6d2bf972a5d1231f6e44d48141ee80177072863abe1a05769f26404f5a09a8d"
+    },
+    "assign-device-mobile-dark.png": {
+      "width": 390,
+      "height": 844,
+      "theme": "dark",
+      "sha256": "25cb39bdc9b1b70372ce2230d43e200708afb4b809bd35d7162217ec1fa8d9d7"
+    },
+    "manage-departments-desktop-light.png": {
+      "width": 1440,
+      "height": 960,
+      "theme": "light",
+      "sha256": "08091fc6c49a391dca499682ce7bac37b88f776a02ae9996ce56599ade9e4db3"
+    },
+    "manage-departments-desktop-dark.png": {
+      "width": 1440,
+      "height": 960,
+      "theme": "dark",
+      "sha256": "e7ae5a5c03a41d078a9a71bfdf51c51edb49240b9d98f89654378790bac02720"
+    },
+    "manage-departments-mobile-light.png": {
+      "width": 390,
+      "height": 844,
+      "theme": "light",
+      "sha256": "6cae9761f07c9b66bbd9ebd7b84f74c6df40b360dfa98f63067e9bc517cc8c39"
+    },
+    "manage-departments-mobile-dark.png": {
+      "width": 390,
+      "height": 844,
+      "theme": "dark",
+      "sha256": "3e76fe90663755486e0abc8443d8d12656653cbdede628b6a514745e4198d580"
+    },
+    "current-assignment-desktop-light.png": {
+      "width": 1440,
+      "height": 960,
+      "theme": "light",
+      "sha256": "092f1b71f5f208dad228365390009e2d9fbb55081a1c642b1b9fdeb53a85776b"
+    },
+    "current-assignment-desktop-dark.png": {
+      "width": 1440,
+      "height": 960,
+      "theme": "dark",
+      "sha256": "151ce0c07a2f9be0968033132854339070ab8e9c38f2a88cf15ef04d7b2d7e3b"
+    },
+    "current-assignment-mobile-light.png": {
+      "width": 390,
+      "height": 844,
+      "theme": "light",
+      "sha256": "1a5661104b134e19ee5ab681fdd6199fa9e755ad9c981521361715dff4f2c621"
+    },
+    "current-assignment-mobile-dark.png": {
+      "width": 390,
+      "height": 844,
+      "theme": "dark",
+      "sha256": "99f9f308e3cef4abce4d2abc2d5cbe01c17ebfb3ffe1d67f314a0797ab86275b"
+    },
+    "department-equipment-desktop-light.png": {
+      "width": 1440,
+      "height": 960,
+      "theme": "light",
+      "sha256": "ef8cab981e25b239c76856550a4a72d1f4d0743924cf02ec9c06d617d858b2c8"
+    },
+    "department-equipment-desktop-dark.png": {
+      "width": 1440,
+      "height": 960,
+      "theme": "dark",
+      "sha256": "616e99b5475bf7ccc932d6ca1a521075531fea40e3c899e16ec9d22483435559"
+    },
+    "department-equipment-mobile-light.png": {
+      "width": 390,
+      "height": 844,
+      "theme": "light",
+      "sha256": "a8c451b2dcf3fb8db1988a89f36dd78b93caaae3768e41d0b73023083973020b"
+    },
+    "department-equipment-mobile-dark.png": {
+      "width": 390,
+      "height": 844,
+      "theme": "dark",
+      "sha256": "30d5559a21e3602d08be62b396d633911db90bd39e697bb4d511af931231fbe3"
+    },
+    "my-equipment-desktop-light.png": {
+      "width": 1440,
+      "height": 960,
+      "theme": "light",
+      "sha256": "7b7d099a96afd05554305dcc9bc3337591e085a5dcaa2c987af29ed3039ba114"
+    },
+    "my-equipment-desktop-dark.png": {
+      "width": 1440,
+      "height": 960,
+      "theme": "dark",
+      "sha256": "1c958b2d11863f05d56df4be7fff32d250ddfec902c3a4608d9a160ce5142580"
+    },
+    "my-equipment-mobile-light.png": {
+      "width": 390,
+      "height": 844,
+      "theme": "light",
+      "sha256": "da2d6d3e37be64a21c3f468be49bd80f404d4d6562c4152455a66baccd5e02dc"
+    },
+    "my-equipment-mobile-dark.png": {
+      "width": 390,
+      "height": 844,
+      "theme": "dark",
+      "sha256": "155113c0a2f050917b4736da9ac9bac230bd172f5b50f83aaf84ae848a5b2590"
+    },
+    "ticket-confidentiality-desktop-light.png": {
+      "width": 1440,
+      "height": 960,
+      "theme": "light",
+      "sha256": "0ea14bccbbe6c9356a138fdb88489863e9b99d08530ac0cdb60d2868e70ea4aa"
+    },
+    "ticket-confidentiality-desktop-dark.png": {
+      "width": 1440,
+      "height": 960,
+      "theme": "dark",
+      "sha256": "003d0873a7388ed3b7e44b060c7b931b3b28d93ef5b62db85665d46cc56c6524"
+    },
+    "ticket-confidentiality-mobile-light.png": {
+      "width": 390,
+      "height": 844,
+      "theme": "light",
+      "sha256": "41e18a8265b2cdc256febc6aafeaab02db711d42afba48fddbcde418c44eb507"
+    },
+    "ticket-confidentiality-mobile-dark.png": {
+      "width": 390,
+      "height": 844,
+      "theme": "dark",
+      "sha256": "ce535661a076c818908a34fd52d842d9d57df9e658dbfa3f72ff39630c512991"
+    },
+    "department-tickets-desktop-light.png": {
+      "width": 1440,
+      "height": 960,
+      "theme": "light",
+      "sha256": "34f2109f4794c08f7d4a48ec283e753f186e6d559ede60dd231070f87bb4dd77"
+    },
+    "department-tickets-desktop-dark.png": {
+      "width": 1440,
+      "height": 960,
+      "theme": "dark",
+      "sha256": "bb994becaec3347355e3839d8e0e9bd45f573a8dac7407f6a523339bc0beb233"
+    },
+    "department-tickets-mobile-light.png": {
+      "width": 390,
+      "height": 844,
+      "theme": "light",
+      "sha256": "2e75daf9bf0e88d1a63d514a9cb1acab745c1d05c7b64ac827828c7cc13f73d8"
+    },
+    "department-tickets-mobile-dark.png": {
+      "width": 390,
+      "height": 844,
+      "theme": "dark",
+      "sha256": "0338d06981c85725d550fdb62f073e88044818a6c4acc3780ad875a38ac6695c"
+    }
+  }
+}
