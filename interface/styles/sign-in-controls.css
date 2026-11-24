@@ -32,6 +32,8 @@ html.dark .eyebrow {color:#fb923c;}
 /* Keep the full brand message readable within the existing responsive panel. */
 .brand-content .brand-tagline-heading{font-size:clamp(1.25rem,2.5vw,1.875rem);font-weight:800;line-height:1.25;letter-spacing:-.8px;margin-bottom:8px}
 .brand-content .brand-tagline-detail{font-size:clamp(.75rem,1.1vw,.875rem);font-weight:400;line-height:1.5;color:#ffad70;margin:0 0 18px}
+.recovery-password-fields{display:grid;gap:16px;grid-template-columns:repeat(2,minmax(0,1fr))}
+@media(max-width:730px){.recovery-password-fields{grid-template-columns:1fr}}
 #recovery-reset-fields{border:0;padding:0;margin:0;min-width:0}
 #password-recovery .secondary{cursor:pointer}
 #password-recovery[open] > summary,
