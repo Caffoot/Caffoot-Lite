@@ -69,25 +69,29 @@
       "width": 1440,
       "height": 960,
       "theme": "light",
-      "sha256": "092f1b71f5f208dad228365390009e2d9fbb55081a1c642b1b9fdeb53a85776b"
+      "sha256": "732dac0bc975af546b070faafae3d258d60beed913dad8f2289f1a1846f91db0",
+      "sourceRevision": "7cfe63a344ab9088194e899f88e2d837342e585e"
     },
     "current-assignment-desktop-dark.png": {
       "width": 1440,
       "height": 960,
       "theme": "dark",
-      "sha256": "151ce0c07a2f9be0968033132854339070ab8e9c38f2a88cf15ef04d7b2d7e3b"
+      "sha256": "db52445b60f7bdec0edd56718594f1d385eb6c90b8b2d242311ffbf28e80845e",
+      "sourceRevision": "7cfe63a344ab9088194e899f88e2d837342e585e"
     },
     "current-assignment-mobile-light.png": {
       "width": 390,
       "height": 844,
       "theme": "light",
-      "sha256": "1a5661104b134e19ee5ab681fdd6199fa9e755ad9c981521361715dff4f2c621"
+      "sha256": "39e87afbb8ffac7c43c41787e8955e1cdb5ec6417da35e049d67eeed9d7b23e1",
+      "sourceRevision": "7cfe63a344ab9088194e899f88e2d837342e585e"
     },
     "current-assignment-mobile-dark.png": {
       "width": 390,
       "height": 844,
       "theme": "dark",
-      "sha256": "99f9f308e3cef4abce4d2abc2d5cbe01c17ebfb3ffe1d67f314a0797ab86275b"
+      "sha256": "b3e1d438eba19ca617cf769cd6ecc2af45c5bde740cd3d54b0217fdb999fcaaf",
+      "sourceRevision": "7cfe63a344ab9088194e899f88e2d837342e585e"
     },
     "department-equipment-desktop-light.png": {
       "width": 1440,
@@ -185,5 +189,25 @@
       "theme": "dark",
       "sha256": "0338d06981c85725d550fdb62f073e88044818a6c4acc3780ad875a38ac6695c"
     }
+  },
+  "currentAssignmentRefresh": {
+    "sourceRevision": "7cfe63a344ab9088194e899f88e2d837342e585e",
+    "browser": "156.0.8078.79",
+    "capturedAt": "2026-11-24T11:30:35.597Z",
+    "origin": "https://127.0.0.1:46655",
+    "schema": 29,
+    "fixture": "Fictional Staff, Departments, Devices and tickets seeded in this Chromium test.",
+    "sourceHashes": {
+      "interface/application.js": "fbc7513ca4d94af13916d6aa5aab84fc6b328b007ab99f17bdcab5b2b48e47fd",
+      "interface/equipment.js": "513734d06fe12e4faab6597fb1e7fcf6ae844fbfa56a519d74315d3e1dbbd6ea",
+      "interface/staff-directory.js": "edf86d220d8b6ee404c1a42470dd606e9fd05c4cd75fd69ed5cfbb484e71cd33",
+      "interface/stock-intake.js": "3fd23f39a9cc300cd6800a4225410d6c352bbcc4d51c9977a39b4473165ec2c8",
+      "interface/service-desk.js": "8939790b72b6bbf855b813d5109c5fb55037d945ea00ba99592e26b324b2bb29",
+      "interface/styles/equipment.css": "9b101af92509d778720f068e228e0b67f8a1256949be4978f7018f3074959e6b",
+      "interface/styles/service-desk.css": "19000de84db368b5a5145383f269e305df4e1337fe9d47ed897ef05a19b607b8",
+      "backend/shared_devices.py": "f9c337f2e4c3a8b8caad2aedbec6c0a589b8bdda7997c181164b7b4ab58b5fd2",
+      "backend/shared_device_schema.py": "344874196c5f9ab53fd2deac88891e2de10c986fa52ef8d1cafc55a896d63bf4"
+    },
+    "mobileFraming": "Scrolled the existing Device Details body to show both Assignment History tables."
   }
 }

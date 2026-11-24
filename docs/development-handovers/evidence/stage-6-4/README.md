@@ -2,7 +2,7 @@
 
 24 November 2026 · [Draft v2.2 review](https://github.com/Caffoot/Caffoot-Lite/pull/447) · [Owner-approved behaviour](https://github.com/Caffoot/Caffoot-Lite/issues/431#issuecomment-7128685595) · [Approved schema and stock recipient decision](https://github.com/Caffoot/Caffoot-Lite/issues/431#issuecomment-7129437209)
 
-The review starts from `957969ba1b44465472765e47f91117ca7c87d177` on `milestone-1` (schema 28). The application source for the local schema 29 Docker rehearsal and these Chromium captures is [`57ca30e15f2d61d2bb4689c6ca1a3600973df3c7`](https://github.com/Caffoot/Caffoot-Lite/commit/57ca30e15f2d61d2bb4689c6ca1a3600973df3c7). Subsequent commits package tests, screenshots and draft documentation.
+The review starts from `957969ba1b44465472765e47f91117ca7c87d177` on `milestone-1` (schema 28). The application source for the local schema 29 Docker rehearsal and the original Chromium capture batch is [`57ca30e15f2d61d2bb4689c6ca1a3600973df3c7`](https://github.com/Caffoot/Caffoot-Lite/commit/57ca30e15f2d61d2bb4689c6ca1a3600973df3c7). The four refreshed Current Assignment captures use [`7cfe63a344ab9088194e899f88e2d837342e585e`](https://github.com/Caffoot/Caffoot-Lite/commit/7cfe63a344ab9088194e899f88e2d837342e585e). The mobile captures scroll to the existing Assignment History card so both subheadings are visible.
 
 ## Application Screenshots
 
@@ -36,6 +36,8 @@ CAFFOOT_CHROMIUM_PATH=/path/to/chromium \
 CAFFOOT_STAGE64_SCREENSHOTS=/path/to/evidence \
 node tests/shared-devices-interface.cjs
 ```
+
+The focused follow-up Chromium check verified both history headings, table columns and record order. The four affected captures were refreshed. All 36 focused backend tests passed, including the existing exact role migration assertion. Schema 29 skips empty inserts that would otherwise initialise zero-valued SQLite sequence entries, while preserving the original high-water marks. [Owner visual correction](https://github.com/Caffoot/Caffoot-Lite/pull/447#issuecomment-7130128114)
 
 ## Remaining Acceptance
 
