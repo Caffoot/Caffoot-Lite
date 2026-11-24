@@ -1,5 +1,6 @@
 // Caffoot Lite Next: published browser controls exercised against HTTPS/SQLite.
 const assert=require('node:assert/strict');
+const {openStaffAccount,startStaffLoginForm}=require('./staff-account-workflow.cjs');
 const fs=require('node:fs');
 const os=require('node:os');
 const path=require('node:path');
@@ -685,8 +686,7 @@ async function run(){
   await page.locator('[data-action="select-account-section"][data-section="security"]').first().click();
   await page.locator('#sidebar [data-action="tab-users"]').click();
   assert.equal(await page.locator('#page-title').textContent(),'Permissions');
-  await page.locator('.section-page-header [data-tab="list"]').click();
-  await page.locator('[data-action="users-open-editor"]').first().click();
+  await openStaffAccount(page,(await (await page.request.get(address+'/api/session')).json()).username);
   const ownerWorkspace=page.locator('.users-management-modal .modal');
   assert.equal(await ownerWorkspace.evaluate(el=>Math.round(el.getBoundingClientRect().width)),710,
     'Owner workspace must use the approved full-width layout');
@@ -2054,24 +2054,20 @@ async function run(){
   console.log('Approved Device Details for physical and virtual hardware passed');
 
   // Approved acceptance: new accounts initially lack inventory access.
-  await page.evaluate(()=>switchTab('users'));
-  await page.locator('#main-content .section-page-header [data-action="select-users-section"][data-tab="add"]').click();
-  await page.locator('#next-user-create-form input[name="username"]').fill('editor');
-  await page.locator('#next-user-create-form input[name="password"]').fill(password+'-Editor');
-  await page.locator('#next-user-create-form input[name="confirmPassword"]').fill(password+'-Editor');
-  await page.locator('#next-user-create-form input[name="firstName"]').fill('Taylor');
-  await page.locator('#next-user-create-form input[name="lastName"]').fill('Example');
-  await page.locator('#next-user-create-form input[name="displayName"]').fill('Taylor E');
-  await page.locator('#next-user-create-form input[name="email"]').fill('taylor@example.test');
-  await page.locator('#next-user-create-form button[type="submit"]').click();
-  await page.waitForFunction(()=>[...document.querySelectorAll('#main-content h3')]
-    .some(h=>h.textContent.trim()==='editor'));
-  assert.equal(await page.locator('#main-content .section-page-header [data-action="select-users-section"][data-tab="list"]').getAttribute('aria-selected'),'true');
+  const editorForm=await startStaffLoginForm(page);
+  await editorForm.locator('[name="username"]').fill('editor');
+  await editorForm.locator('[name="password"]').fill(password+'-Editor');
+  await editorForm.locator('[name="confirmPassword"]').fill(password+'-Editor');
+  await editorForm.locator('[name="firstName"]').fill('Taylor');
+  await editorForm.locator('[name="lastName"]').fill('Example');
+  await editorForm.locator('[name="email"]').fill('taylor@example.test');
+  await editorForm.locator('button[type="submit"]').click();
+  await page.getByRole('heading',{name:'Staff Details'}).waitFor();
+  await page.locator('#sidebar [data-tab="users"]').click();
   await page.locator('#main-content .section-page-header [data-action="select-users-section"][data-tab="overview"]').click();
   await page.getByText('Accounts by role',{exact:true}).waitFor();
   assert.equal(await page.locator('#main-content .users-live .statnum').nth(0).textContent(),'2');
   assert.equal(await page.locator('#main-content .users-live .statnum').nth(1).textContent(),'1');
-  await page.locator('#main-content .section-page-header [data-action="select-users-section"][data-tab="list"]').click();
   const editorId=await page.evaluate(async()=>{
     const r=await fetch('/api/users',{cache:'no-store'});
     if(!r.ok)throw Error('Unable to read users');
@@ -2082,7 +2078,8 @@ async function run(){
     const r=await fetch('/api/users',{cache:'no-store'});
     return (await r.json()).users.find(u=>u.id===id)?.profile;
   },editorId);
-  assert.equal(editorProfile.displayName,'Taylor E','Optional details must persist with a newly created user');
+  assert.equal(editorProfile.firstName,'Taylor','The saved Staff name must be shared with the new account');
+  assert.equal(editorProfile.displayName,'','The combined Staff form does not set a display name');
   assert.equal(editorProfile.email,'taylor@example.test');
   assert.equal(editorProfile.emailVerified,false,'Adding an email must not mark it as verified');
   const second=await browser.newContext({
@@ -2114,8 +2111,7 @@ async function run(){
   await editor.locator('#next-account-mfa-confirm button[type="submit"]').click();
   await editor.waitForURL('**/setup');
 
-  await page.locator('#main-content [data-action="users-open-editor"][data-user-id="'+editorId+'"]').click();
-  await page.locator('#main-content .users-management-modal').waitFor();
+  await openStaffAccount(page,'editor');
   await page.locator('#next-user-profile-form input[name="displayName"]').fill('Taylor Updated');
   // Finish the profile write before creating a state-bound permissions preview.
   // A concurrent profile audit entry must correctly invalidate an earlier proof.
@@ -2138,7 +2134,7 @@ async function run(){
   },editorId);
   await page.locator('#main-content .users-management-modal [data-action="users-close-editor"]').first().click();
   assert.equal(await page.locator('#main-content .users-management-modal').count(),0,
-    'Closing the approved Manage dialog must return to the User List');
+    'Closing Manage Permissions must return to Staff Details');
   await editor.locator('#username').fill('editor');
   await editor.locator('#password').fill(password+'-Editor');
   assert.ok(await editor.locator('#code-field').evaluate(el=>el.hidden));
@@ -2226,20 +2222,20 @@ async function run(){
   await second.close();
   console.log('Two-user exclusive device edit reservations passed');
   // Staff Member alone may sign in without MFA; wider Read access requires it.
-  await page.evaluate(()=>switchTab('users'));
-  await page.locator('#main-content .section-page-header [data-action="select-users-section"][data-tab="add"]').click();
-  await page.locator('#next-user-create-form input[name="username"]').fill('viewer');
-  await page.locator('#next-user-create-form input[name="password"]').fill(password+'-Viewer');
-  await page.locator('#next-user-create-form input[name="confirmPassword"]').fill(password+'-Viewer');
-  await page.locator('#next-user-create-form button[type="submit"]').click();
-  await page.waitForFunction(()=>[...document.querySelectorAll('#main-content h3')].some(node=>node.textContent.trim()==='viewer'));
+  const viewerForm=await startStaffLoginForm(page);
+  await viewerForm.locator('[name="firstName"]').fill('Rowan');
+  await viewerForm.locator('[name="lastName"]').fill('Viewer');
+  await viewerForm.locator('[name="username"]').fill('viewer');
+  await viewerForm.locator('[name="password"]').fill(password+'-Viewer');
+  await viewerForm.locator('[name="confirmPassword"]').fill(password+'-Viewer');
+  await viewerForm.locator('button[type="submit"]').click();
+  await page.getByRole('heading',{name:'Staff Details'}).waitFor();
   const viewerId=await page.evaluate(async()=>{
     const r=await fetch('/api/users');
     return (await r.json()).users.find(u=>u.username==='viewer')?.id;
   });
   assert.ok(Number.isInteger(viewerId));
-  await page.locator('#main-content [data-action="users-open-editor"][data-user-id="'+viewerId+'"]').click();
-  await page.locator('#main-content .users-management-modal').waitFor();
+  await openStaffAccount(page,'viewer');
   const blockedEdit=page.locator('[data-next-user-permission][data-user-id="'+viewerId+'"][data-section="Devices"]');
   await blockedEdit.selectOption('edit');
   await page.locator('[data-role-command="confirm"]').waitFor();

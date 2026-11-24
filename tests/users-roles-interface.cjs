@@ -1,5 +1,6 @@
 // Exercise the additive Users interface against disposable HTTPS/SQLite data.
 const assert=require('node:assert/strict');
+const {openStaffAccount,startStaffLoginForm}=require('./staff-account-workflow.cjs');
 const fs=require('node:fs'),path=require('node:path'),os=require('node:os');
 const {spawn,spawnSync}=require('node:child_process');
 const browserEngine=process.env.CAFFOOT_ROLES_ENGINE||'chromium';
@@ -8,7 +9,8 @@ const engine=require('playwright')[browserEngine];
 const root=path.resolve(__dirname,'..');
 const tmp=fs.mkdtempSync(path.join(os.tmpdir(),'caffoot-roles-ui-'));
 const out=process.env.CAFFOOT_ROLES_OUTPUT||path.join(tmp,'evidence');fs.mkdirSync(out,{recursive:true});
-const address='https://127.0.0.1:8080';
+const port=process.env.CAFFOOT_ROLES_PORT||'8080';
+const address='https://127.0.0.1:'+port;
 let browser,server;
 const errors=[],checks=[];
 function python(code,args=[]){
@@ -57,7 +59,7 @@ async function confirm(page){
   const seed=spawnSync('python3',['tests/visual_fixtures.py',tmp],{cwd:root,encoding:'utf8'});assert.equal(seed.status,0,seed.stderr);
   const creds=JSON.parse(fs.readFileSync(path.join(tmp,'test-credentials.json')));
   const log=fs.openSync(path.join(tmp,'server.log'),'w');
-  server=spawn('python3',['-m','backend.server'],{cwd:root,stdio:['ignore',log,log],env:{...process.env,CAFFOOT_DB_PATH:path.join(tmp,'inventory.sqlite3'),CAFFOOT_TLS_DIR:path.join(tmp,'tls'),CAFFOOT_WEB_ADDRESS:address,CAFFOOT_SERVER_ADDRESS:'127.0.0.1',CAFFOOT_HOST:'127.0.0.1'}});
+  server=spawn('python3',['-c','from backend import server; import sys; server.PORT=int(sys.argv[1]); server.main()',port],{cwd:root,stdio:['ignore',log,log],env:{...process.env,CAFFOOT_DB_PATH:path.join(tmp,'inventory.sqlite3'),CAFFOOT_TLS_DIR:path.join(tmp,'tls'),CAFFOOT_WEB_ADDRESS:address,CAFFOOT_SERVER_ADDRESS:'127.0.0.1',CAFFOOT_HOST:'127.0.0.1'}});
   browser=await engine.launch({headless:true,...(browserEngine==='chromium'?{executablePath:process.env.CAFFOOT_CHROMIUM_PATH||undefined,args:['--no-sandbox']}:{})});
   const context=await browser.newContext({ignoreHTTPSErrors:true,viewport:{width:1440,height:950}});
   for(let i=0;i<60;i++){try{if((await context.request.get(address+'/health')).ok())break}catch{}await new Promise(r=>setTimeout(r,100));}
@@ -65,26 +67,30 @@ async function confirm(page){
   const page=await context.newPage();page.on('pageerror',error=>errors.push(error.message));
   await page.goto(address+'/inventory#users');await page.locator('#app[aria-busy="false"]').waitFor();
   if(process.env.CAFFOOT_BUILTIN_ROLES_ONLY==='1'){
-   await require('./builtin-roles-interface.cjs')({page,context,catalogue,confirmedAction,confirm,screenshot,checked});
+   await require('./builtin-roles-interface.cjs')({page,context,address,catalogue,confirmedAction,confirm,screenshot,checked});
    assert.deepEqual(errors,[]);fs.writeFileSync(path.join(out,'results.json'),JSON.stringify({checks,errors},null,2));return;
   }
-  assert.deepEqual(await page.locator('.section-page-header .tabs button').allTextContents(),['Overview','User List','Add User','Manage Roles']);
+  assert.deepEqual(await page.locator('.section-page-header .tabs button').allTextContents(),['Overview','Manage Roles']);
   assert.equal(await page.locator('.users-live .cards4 .stat').count(),4);
   assert.equal(await page.locator('.users-live .two-col>.card').count(),2);
   await screenshot(page,'overview-1440');
-  await page.locator('[data-action="select-users-section"][data-tab="add"]').click();
-  await page.locator('#new-user-username').fill('colleague');await page.locator('#new-user-password').fill('Test-Colleague-2026!');
-  await page.locator('#new-user-password-confirm').fill('Different!');
-  await page.locator('#next-user-create-form [type="submit"]').click();
+  const staffForm=await startStaffLoginForm(page);
+  await staffForm.locator('#preview-firstName').fill('Test');
+  await staffForm.locator('#preview-lastName').fill('Colleague');
+  await staffForm.locator('#preview-username').fill('colleague');
+  await staffForm.locator('#preview-password').fill('Test-Colleague-2026!');
+  await staffForm.locator('#preview-confirmPassword').fill('Different!');
+  await staffForm.locator('[type="submit"]').click();
+  await page.getByText('The initial passwords do not match.',{exact:true}).first().waitFor();
   assert.equal((await catalogue(context)).users.length,1);
-  await page.locator('#new-user-password-confirm').fill('Test-Colleague-2026!');
-  await page.locator('#user-first-name').fill('Test');
+  await staffForm.locator('#preview-confirmPassword').fill('Test-Colleague-2026!');
   await screenshot(page,'add-1440');
-  await page.locator('#next-user-create-form [type="submit"]').click();
-  await page.locator('#users-live-list').waitFor();
+  await staffForm.locator('[type="submit"]').click();
+  await page.getByRole('heading',{name:'Staff Details'}).waitFor();
   let data=await catalogue(context),worker=data.users.find(user=>user.username==='colleague');
   assert.equal(worker.profile.firstName,'Test');assert.equal(worker.accessDetails.roles.length,1);assert.deepEqual(worker.permissions,{});
-  await checked(page,'Add User confirms passwords and creates only protected Staff Member with the existing profile');
+  await checked(page,'Add Staff Member confirms passwords and creates a baseline login with the shared details');
+  await page.locator('#sidebar [data-tab="users"]').click();
   await page.locator('[data-action="select-users-section"][data-tab="roles"]').click();
   await page.locator('[data-role-command="create"]').click();
   await page.locator('#role-name').fill('Inventory Readers');await page.locator('#role-grant-Devices').selectOption('read');
@@ -94,8 +100,7 @@ async function confirm(page){
   await screenshot(page,'create-preview-1440');await audit(page,'role-preview','[data-role-layer]');await confirm(page);
   data=await catalogue(context);let role=data.roles.find(role=>role.name==='Inventory Readers');assert.ok(role);assert.equal(role.accountCount,0);
   await checked(page,'Role create uses preview then confirmation and leaves the new role unassigned');
-  await page.locator('[data-action="select-users-section"][data-tab="list"]').click();
-  await page.locator('[data-action="users-open-editor"][data-user-id="'+worker.id+'"]').click();
+  await openStaffAccount(page,'colleague');
   assert.equal(await page.locator('#user-first-name').inputValue(),'Test');assert.ok(await page.locator('#user-first-name').isEditable());
   await page.locator('#user-first-name').fill('Updated');await page.locator('#next-user-profile-form [type="submit"]').click();
   await page.waitForFunction(()=>document.querySelector('#user-first-name')?.value==='Updated'&&!document.querySelector('#next-user-profile-form [type="submit"]').disabled);
@@ -111,23 +116,24 @@ async function confirm(page){
   // Give the same role to a second real test account to check shared impact.
   const adminSession=await (await context.request.get(address+'/api/session')).json();
   const secondAccount=await context.request.post(address+'/api/users/create',{headers:{Origin:address,'X-CSRF-Token':adminSession.csrf_token},data:{username:'second-colleague',password:'Second-Colleague-2026!'}});assert.equal(secondAccount.status(),200);
-  const secondId=(await catalogue(context)).users.find(user=>user.username==='second-colleague').id;
+  const secondId=(await secondAccount.json()).id;
   await confirmedAction(context,{type:'membership.assign',roleId:role.id,userId:secondId});
 
   await page.locator('[data-action="users-close-editor"]').first().click();
+  await page.locator('#sidebar [data-tab="users"]').click();
   await page.locator('[data-action="select-users-section"][data-tab="roles"]').click();
   await page.locator('[data-role-command="create"]').click();await page.locator('#role-name').fill('Device Editors');await page.locator('#role-grant-Devices').selectOption('edit');await page.locator('[form="role-definition-form"]').click();await confirm(page);
   const additionalRole=(await catalogue(context)).roles.find(role=>role.name==='Device Editors');
   await screenshot(page,'notification-feedback-1440',true);await screenshot(page,'roles-list-1440');
-  await page.locator('[data-action="select-users-section"][data-tab="list"]').click();await page.locator('[data-action="users-open-editor"][data-user-id="'+worker.id+'"]').click();
+  await openStaffAccount(page,'colleague');
   await page.locator('[data-role-membership="'+additionalRole.id+'"]').click();await confirm(page);
   let multiple=(await catalogue(context)).users.find(user=>user.id===worker.id);
   assert.equal(multiple.accessDetails.roles.length,3);assert.equal(multiple.accessDetails.sections.Devices.inherited,'edit');
   await screenshot(page,'multiple-roles-1440');
   await page.locator('[data-role-membership="'+additionalRole.id+'"]').click();await confirm(page);
   multiple=(await catalogue(context)).users.find(user=>user.id===worker.id);assert.equal(multiple.accessDetails.sections.Devices.inherited,'read');
-  await page.locator('[data-action="users-close-editor"]').first().click();await page.locator('[data-action="select-users-section"][data-tab="roles"]').click();await page.locator('[data-role-command="edit"][data-role-id="'+additionalRole.id+'"]').click();await page.locator('[data-role-command="delete"]').click();await confirm(page);
-  await page.locator('[data-action="select-users-section"][data-tab="list"]').click();await page.locator('[data-action="users-open-editor"][data-user-id="'+worker.id+'"]').click();
+  await page.locator('[data-action="users-close-editor"]').first().click();await page.locator('#sidebar [data-tab="users"]').click();await page.locator('[data-action="select-users-section"][data-tab="roles"]').click();await page.locator('[data-role-command="edit"][data-role-id="'+additionalRole.id+'"]').click();await page.locator('[data-role-command="delete"]').click();await confirm(page);
+  await openStaffAccount(page,'colleague');
   await checked(page,'Multiple role assignments display the server-provided highest inherited grant and retain the other role when one is removed');
   const select=page.locator('#live-user-permission-Devices');assert.equal(await select.inputValue(),'');
   await select.selectOption('deny');await page.locator('[data-role-command="confirm"]').waitFor();
@@ -159,6 +165,7 @@ async function confirm(page){
   const close=page.locator('[data-action="users-close-editor"]').first();await close.focus();await page.keyboard.press('Shift+Tab');
   assert.equal(await page.evaluate(()=>document.activeElement.textContent.trim()),'Done');
   await page.keyboard.press('Escape');
+  await page.locator('#sidebar [data-tab="users"]').click();
   await checked(page,'Retained editable profile and account controls work; desktop/mobile fit and modal keyboard containment checked');
   await page.locator('[data-action="select-users-section"][data-tab="roles"]').click();
   await page.locator('[data-role-command="edit"][data-role-id="'+role.id+'"]').click();
@@ -195,20 +202,21 @@ async function confirm(page){
   const requiredSession=await (await workerContext.request.get(address+'/api/session')).json();assert.equal(requiredSession.mfa_removal_eligible,false);
   assert.equal((await workerContext.request.post(address+'/api/account/mfa/remove',{headers:{Origin:address,'X-CSRF-Token':requiredSession.csrf_token},data:{password:'Test-Colleague-2026!',code:code(secret)}})).status(),403);
   await workerContext.close();
-  await page.locator('[data-action="select-users-section"][data-tab="list"]').click();await page.locator('[data-action="users-open-editor"][data-user-id="'+worker.id+'"]').click();
+  await openStaffAccount(page,'colleague');
   await page.locator('[data-next-user-operation="admin"]').click();await page.waitForFunction(()=>document.querySelector('[data-next-user-operation="admin"]')?.textContent==='Remove admin');
   assert.ok((await catalogue(context)).users.find(user=>user.id===worker.id).isAdmin);
   await page.locator('[data-next-user-operation="admin"]').click();await page.waitForFunction(()=>document.querySelector('[data-next-user-operation="admin"]')?.textContent==='Make admin');
   assert.equal((await catalogue(context)).users.find(user=>user.id===worker.id).isAdmin,false);
-  await page.locator('[data-action="users-close-editor"]').first().click();await page.locator('[data-action="select-users-section"][data-tab="roles"]').click();
+  await page.locator('[data-action="users-close-editor"]').first().click();await page.locator('#sidebar [data-tab="users"]').click();await page.locator('[data-action="select-users-section"][data-tab="roles"]').click();
   await checked(page,'Retained independent Administrator promotion and demotion work after confirmed MFA without replacing role controls');
 
   await page.locator('[data-role-command="edit"][data-role-id="'+role.id+'"]').click();await page.locator('[data-role-command="delete"]').click();await confirm(page);
   assert.ok(!(await catalogue(context)).roles.some(r=>r.id===role.id));
   await checked(page,'Role deletion uses reviewed impact and leaves accounts intact');
-  await page.locator('[data-action="select-users-section"][data-tab="list"]').click();await page.locator('[data-action="users-open-editor"][data-user-id="'+secondId+'"]').click();
+  await openStaffAccount(page,'second-colleague');
   page.once('dialog',dialog=>dialog.accept());await page.locator('[data-next-user-operation="delete"]').click();
   await page.waitForFunction(()=>!document.querySelector('.users-management-modal'));
+  await page.locator('#sidebar [data-tab="users"]').click();
   assert.deepEqual((await catalogue(context)).users.map(user=>user.username),['owner','colleague']);
   await page.locator('[data-action="select-users-section"][data-tab="roles"]').click();
   await checked(page,'Retained Delete User confirmation removes only the selected test account');
@@ -258,7 +266,7 @@ async function confirm(page){
   await staff.locator('.account-screen .subnav [data-section="security"]').click();assert.ok(await staff.locator('#next-account-mfa-start').isVisible());
   await screenshot(staff,'staff-my-account-390');await staffContext.close();
   await checked(page,'Approved /account shell permits only own-account functionality; unauthenticated access and Staff inventory/admin/other-user access are denied; optional removal verifies proofs and ends all sessions');
-  await require('./builtin-roles-interface.cjs')({page,context,catalogue,confirmedAction,confirm,screenshot,checked});
+  await require('./builtin-roles-interface.cjs')({page,context,address,catalogue,confirmedAction,confirm,screenshot,checked});
   if(process.env.CAFFOOT_AXE_SOURCE){
    await page.locator('[data-role-command="create"]').click();
    await audit(page,'role-editor','[data-role-layer]');

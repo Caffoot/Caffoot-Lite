@@ -1,3 +1,4 @@
+const {startStaffLoginForm}=require('./staff-account-workflow.cjs');
 // Exercise the owner's new refinements without repeating the original implementation.
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
@@ -100,7 +101,7 @@ module.exports = async function verifySubnetPrivateCorrections({page, context, f
   await page.evaluate(tab=>switchTab(tab),tab);await audit(tab);
  }
  await page.evaluate(()=>{switchTab('racks');openRackModal();});await audit('Rack modal');await close();
- await page.evaluate(()=>switchTab('users'));await page.locator('[data-action=users-add-nav]').click();await audit('User editor');
+ await startStaffLoginForm(page);await audit('Staff login editor');
  await page.evaluate(()=>{activeSettingsTab='email';switchTab('settings');});await page.waitForFunction(()=>!smtpLoading);await audit('Email settings');
  await page.evaluate(()=>{activeIpamTab='addresses';switchTab('ipam');});await audit('Active Subnet and address filters');
  await page.evaluate(()=>{switchTab('devices');openDeviceModal();});
