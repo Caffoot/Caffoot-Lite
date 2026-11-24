@@ -1,5 +1,11 @@
 # Milestone 01 Development Handover — v2.2 Target
 
+## Stage 6.3 Complete-Volume Recovery — 24 November 2026
+
+The isolated Compose rehearsal recovered the populated v2.2 schema-28 mount and rolled back a separate copy to published v2.1 schema 10 with its matching image. Stopped file and SQLite comparisons, trusted HTTPS and functional access, restart/recreation and a focused rootless bind-mount check passed. [PR #446](https://github.com/Caffoot/Caffoot-Lite/pull/446) · [Revision-pinned evidence and limitations](evidence/stage-6-3/README.md) · [Draft administrator procedure](../how-tos/features-and-instructions/v2.2-draft/Legacy-Import-and-Docker-Upgrade.md#back-up-a-complete-installation)
+
+Independent review and owner merge approval are pending. Native Raspberry Pi, Safari, Portainer and private-installation acceptance remain separate, as do off-host backup tooling and affected checks after #431.
+
 ## Stage 6.2 Legacy Import Protection — 24 November 2026
 
 The verified starting integration revision is `2107de3668b08c5abdfdae6fe231a3114bbfc380` (schema 28). The isolated published v2.1 schema-10 → 28 upgrade passed there. [PR #445](https://github.com/Caffoot/Caffoot-Lite/pull/445) corrects protected Device replacement and its error reporting. [Evidence and remaining checks](evidence/stage-6-2/README.md) · [Draft v2.2 administrator guide](../how-tos/features-and-instructions/v2.2-draft/Legacy-Import-and-Docker-Upgrade.md)
