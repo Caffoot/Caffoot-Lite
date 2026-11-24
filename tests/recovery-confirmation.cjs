@@ -14,6 +14,7 @@ const mail = path.join(tmp, 'mail-code');
 const log = path.join(tmp, 'server.log');
 const username = 'recovery-owner';
 const original = 'Fictional-Original-Password!';
+const changed = 'Fictional-Changed-Password!';
 const recovered = 'Fictional-Recovered-Password!';
 const mismatch = 'Fictional-Confirmation-Mismatch!';
 let browser, server;
@@ -76,19 +77,56 @@ async function main() {
   assert.equal(await page.locator('#confirm-password').inputValue(), '');
   console.log('First administrator rejects mismatch and accepts matching confirmation with MFA.');
 
-  const login = password => api(context.request, '/api/login', {username, password, mfa_code: authenticator(secret)});
+  const login = (password, request = context.request) => api(request, '/api/login', {username, password, mfa_code: authenticator(secret)});
   assert.equal((await login(original)).status(), 200);
+  await page.goto(origin + '/inventory');
+  await page.locator('#app[aria-busy="false"] .header-account').click();
+  const profile = page.locator('#personal-details-form');
+  await profile.getByLabel('Email Address').fill('recovery@example.org');
+  await postFromPage(page, '/api/account/profile', () => profile.getByRole('button', {name: 'Save Personal Details'}).click(), 200);
+  await page.locator('#toast').filter({hasText: 'Personal details saved.'}).waitFor();
+  await page.locator('[data-action="select-account-section"][data-section="security"]').first().click();
+
+  const accountForm = page.locator('#next-account-password-form');
+  const change = page.locator('button[form="next-account-password-form"]');
+  assert.equal(await accountForm.locator('button[type="submit"]').count(), 0);
+  await accountForm.locator('[name="currentPassword"]').fill(original);
+  await accountForm.locator('[name="newPassword"]').fill(changed);
+  await accountForm.locator('[name="confirmPassword"]').fill(mismatch);
+  await change.click();
+  await page.locator('#toast').filter({hasText: 'The new passwords do not match.'}).waitFor();
+  assert.ok(!requests.includes('/api/account/password'));
+  const secondSession = await browser.newContext({ignoreHTTPSErrors: true});
+  assert.equal((await login(original, secondSession.request)).status(), 200);
+
+  await accountForm.locator('[name="confirmPassword"]').fill(changed);
+  await accountForm.locator('[name="currentPassword"]').fill(mismatch);
+  await postFromPage(page, '/api/account/password', () => change.click(), 400);
+  await page.locator('#toast').filter({hasText: 'Current password is incorrect'}).waitFor();
+  assert.equal((await context.request.get(origin + '/api/session')).status(), 200);
+  assert.equal((await login(changed, secondSession.request)).status(), 401);
+  assert.equal((await login(original, secondSession.request)).status(), 200);
+
+  await accountForm.locator('[name="currentPassword"]').fill(original);
+  const update = await postFromPage(page, '/api/account/password', () => change.click(), 200);
+  assert.deepEqual(update.request().postDataJSON(), {currentPassword: original, newPassword: changed});
+  await page.waitForURL('**/setup');
+  assert.equal((await context.request.get(origin + '/api/session')).status(), 401);
+  assert.equal((await secondSession.request.get(origin + '/api/session')).status(), 401);
+  await secondSession.close();
+  assert.equal((await login(original)).status(), 401);
+  assert.equal((await login(changed)).status(), 200);
+  console.log('My Account saves personal details, blocks mismatches, rejects wrong current passwords and revokes the session on change.');
+
   const session = await (await context.request.get(origin + '/api/session')).json();
   const options = {headers: {Origin: origin, 'X-CSRF-Token': session.csrf_token}};
-  assert.equal((await context.request.post(origin + '/api/account/profile', {
-    ...options, data: {firstName: '', lastName: '', displayName: '', email: 'recovery@example.org'},
-  })).status(), 200);
+  await checkOptionalMfa(options);
   const verification = await context.request.post(origin + '/api/account/email/request', {
-    ...options, data: {password: original},
+    ...options, data: {password: changed},
   });
   assert.equal(verification.status(), 200);
   assert.equal((await context.request.post(origin + '/api/account/email/confirm', {
-    ...options, data: {password: original, challengeId: (await verification.json()).challengeId, token: fs.readFileSync(mail, 'utf8')},
+    ...options, data: {password: changed, challengeId: (await verification.json()).challengeId, token: fs.readFileSync(mail, 'utf8')},
   })).status(), 200);
 
   const guest = await browser.newContext({ignoreHTTPSErrors: true});
@@ -163,7 +201,7 @@ async function main() {
   await confirmation.fill(mismatch);
   await recover.press('Enter');
   assert.equal(confirms.length, 0);
-  assert.equal((await login(original)).status(), 200);
+  assert.equal((await login(changed)).status(), 200);
   console.log('Recovery blocks empty and unequal fields and supports keyboard order and focus on desktop/mobile.');
 
   await fillPasswords();
@@ -175,7 +213,7 @@ async function main() {
   await mfa.fill('');
   await postFromPage(recovery, '/api/recovery/confirm', () => recover.press('Enter'), 400);
   await feedback.filter({hasText: 'Invalid or expired confirmation'}).waitFor();
-  assert.equal((await login(original)).status(), 200);
+  assert.equal((await login(changed)).status(), 200);
   const mfaCode = authenticator(secret);
   await mfa.fill(mfaCode);
   const result = await postFromPage(recovery, '/api/recovery/confirm', () => recover.press('Enter'), 200);
@@ -186,7 +224,7 @@ async function main() {
   await form.waitFor({state: 'hidden'});
   await cleared();
   assert.equal((await context.request.get(origin + '/api/session')).status(), 401);
-  assert.equal((await login(original)).status(), 401);
+  assert.equal((await login(changed)).status(), 401);
   assert.equal((await api(guest.request, '/api/login', {username, password: recovered})).status(), 401);
   assert.equal((await login(recovered)).status(), 200);
   assert.equal((await api(guest.request, '/api/recovery/confirm', payload)).status(), 400);
@@ -231,13 +269,47 @@ async function main() {
     assert.deepEqual(Object.keys(request.postDataJSON()).sort(), ['challengeId', 'mfa_code', 'password', 'token']);
   }
   const dump = python('import sqlite3,sys; print("\\n".join(sqlite3.connect(sys.argv[1]).iterdump()))', [db]);
-  for (const value of [original, recovered, mismatch]) {
+  for (const value of [original, changed, recovered, mismatch]) {
     assert.ok(!dump.includes(value));
     assert.ok(!fs.readFileSync(log, 'utf8').includes(value));
   }
   assert.deepEqual(errors, []);
   console.log('Resend, Back, collapse and reload clear both fields; payloads, database/audit and server logs checked.');
   console.log('Chromium ' + browser.version());
+
+  async function checkOptionalMfa(options) {
+    const staff = {username: 'mfa-example', password: 'Fictional-Optional-MFA!'};
+    assert.equal((await context.request.post(origin + '/api/users/create', {...options, data: staff})).status(), 200);
+    const staffContext = await browser.newContext({ignoreHTTPSErrors: true});
+    const staffPage = await staffContext.newPage();
+    staffPage.on('pageerror', error => errors.push(error.message));
+    const openSecurity = async () => {
+      await staffPage.goto(origin + '/account');
+      await staffPage.locator('.account-screen .subnav [data-section="security"]').click();
+    };
+    assert.equal((await api(staffContext.request, '/api/login', staff)).status(), 200);
+    await openSecurity();
+    const start = staffPage.locator('#next-account-mfa-start');
+    await start.locator('[name="password"]').fill(staff.password);
+    const enrolment = await postFromPage(staffPage, '/api/account/mfa/start', () => start.getByRole('button').click(), 200);
+    const {mfaSecret} = await enrolment.json();
+    const confirm = staffPage.locator('#next-account-mfa-confirm');
+    await confirm.locator('[name="code"]').fill(authenticator(mfaSecret));
+    await postFromPage(staffPage, '/api/account/mfa/confirm', () => confirm.getByRole('button').click(), 200);
+    await staffPage.waitForURL('**/setup');
+    assert.equal((await staffContext.request.get(origin + '/api/session')).status(), 401);
+    assert.equal((await api(staffContext.request, '/api/login', {...staff, mfa_code: authenticator(mfaSecret)})).status(), 200);
+    await openSecurity();
+    await staffPage.locator('.optional-mfa-removal summary').click();
+    const remove = staffPage.locator('#account-mfa-removal-form');
+    await remove.locator('[name="password"]').fill(staff.password);
+    await remove.locator('[name="code"]').fill(authenticator(mfaSecret));
+    await postFromPage(staffPage, '/api/account/mfa/remove', () => remove.getByRole('button').click(), 200);
+    await staffPage.waitForURL('**/setup#mfa-removed');
+    assert.equal((await staffContext.request.get(origin + '/api/session')).status(), 401);
+    await staffContext.close();
+    console.log('My Account starts, confirms and removes optional MFA through the shared submit handler.');
+  }
 
   async function expectRequired(field) {
     await recover.press('Enter');
