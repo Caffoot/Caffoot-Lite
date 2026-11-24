@@ -6,9 +6,9 @@ Caffoot Lite brings accounts, Staff Members, Departments, Devices and optional I
 
 Start with the task you need to complete. Each feature guide explains its permissions, controls, numbered procedures, examples and recovery steps. A missing section may mean the feature is switched off or your account lacks permission; ask an administrator to check before creating duplicate records.
 
-## Import And Upgrade
+## Import, Upgrade And Recovery
 
-Use [Import Legacy Inventory Or Upgrade Docker](Legacy-Import-and-Docker-Upgrade.md) to review a standalone v1.3.3 export, understand protected Device conflicts, or rehearse a v2.1 Docker upgrade on an isolated copy.
+Use [Import Legacy Inventory Or Upgrade Docker](Legacy-Import-and-Docker-Upgrade.md) to review a standalone v1.3.3 export, understand protected Device conflicts, rehearse a v2.1 Docker upgrade on an isolated copy, or recover a complete Docker installation with its matching image.
 
 ## UK Date Entry And Calendar Controls
 

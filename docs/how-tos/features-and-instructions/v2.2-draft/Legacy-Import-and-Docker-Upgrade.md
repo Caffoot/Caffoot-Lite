@@ -1,6 +1,6 @@
 # Import Legacy Inventory Or Upgrade Docker
 
-> **Draft v2.2 — Unreleased.** These instructions describe the Stage 6.2 review build and an isolated upgrade rehearsal. For a live v2.1 installation, use the [published v2.1 guidance](https://github.com/Caffoot/Caffoot-Lite/blob/v2.1/docs/how-tos/features-and-instructions/Migration-Backup-and-Restore.md).
+> **Draft v2.2 — Unreleased.** These instructions are for authorised isolated v2.2 review installations. For a live v2.1 installation, use the [published v2.1 guidance](https://github.com/Caffoot/Caffoot-Lite/blob/v2.1/docs/how-tos/features-and-instructions/Migration-Backup-and-Restore.md).
 
 Choose the procedure for the installation you already have.
 
@@ -8,7 +8,7 @@ Choose the procedure for the installation you already have.
 | --- | --- |
 | The standalone v1.3.3 HTML application | Export its inventory with **Download Backup**, then use [Import legacy inventory](#import-legacy-inventory). This is a one-way transfer of inventory into Docker. |
 | An existing Caffoot Lite v2.1 Docker installation | Follow [Upgrade a v2.1 Docker installation](#upgrade-a-v21-docker-installation). The application upgrades the existing SQLite database on startup. |
-| A Docker installation that needs recovery | Use your external backup tooling and the [matching image and complete backup](#roll-back-using-the-complete-pre-upgrade-backup). A standalone inventory JSON file cannot recover a Docker installation. |
+| A Docker installation that needs recovery | Use your external backup tooling and [restore the complete installation with its matching image](#restore-a-complete-installation). A standalone inventory JSON file cannot recover a Docker installation. |
 
 ## Import Legacy Inventory
 
@@ -66,9 +66,7 @@ The Stage 6.2 rehearsal used published v2.1 schema 10 and reached v2.2 schema 28
 
 ### Make A Complete Pre-Upgrade Backup
 
-1. Record the exact current image tag or digest, the stack or Compose project, and the storage mounted at `/data`. A named volume can have a stack or project prefix. A bind mount is a host directory. Record the HTTPS address, port and existing private configuration so you can recreate the same stack.
-2. Stop the source container so the installation is consistent. Use your usual external Docker or host backup tool to copy the **whole** `/data` mount. Include `caffoot.sqlite3`, SQLite sidecars when present, `smtp-settings.json` and `account-email-secret.key` when present, `tls/` including certificate and private key, and any other installation files. Preserve file ownership and modes.
-3. Check that the backup contains the expected files and can be read. Keep an access-controlled copy outside the Docker host. Keep the old image and stack definition available with the backup. Restore verification for the complete volume is handled in Stage 6.3.
+Follow [Back up a complete installation](#back-up-a-complete-installation) while the source is still on v2.1. Test restoring that backup with the matching v2.1 image before proceeding. Keep the verified snapshot and its image for rollback.
 
 ### Start The Review Image And Check The Result
 
@@ -80,6 +78,24 @@ The Stage 6.2 rehearsal used published v2.1 schema 10 and reached v2.2 schema 28
 
 ### Roll Back Using The Complete Pre-Upgrade Backup
 
-Stop the upgraded container and keep a separate copy of its data if you need to investigate it. Use the external backup tool to restore the **complete matching pre-upgrade data** into a stopped, isolated target. Start it with the **matching v2.1 image and stack settings**. Check the TLS identity, MFA sign-in, inventory, profiles, permissions and private settings before relying on the recovered installation. Restoring the snapshot returns data to the time it was taken. Keep the v2.1 image away from the upgraded schema-28 database.
+1. Stop the upgraded container. If you need its data for investigation or later recovery, back up its complete stopped mount separately and label that copy with its v2.2 image and schema.
+2. [Restore the complete pre-upgrade snapshot](#restore-a-complete-installation) into a clean target using the matching v2.1 image and saved stack settings. The migrated schema-28 mount must never be attached to v2.1.
+3. Check trusted HTTPS, MFA sign-in, representative inventory, profiles, permissions and private settings. Rollback returns the installation to the time of the schema-10 backup. Changes made afterwards are absent from that recovery.
 
-See [Docker recovery guidance](../../../../INSTALLATION.md#external-backup-and-recovery-of-your-docker-installation) and the [historical upgrade and restore rehearsal](../../../development-guide/Upgrade-And-Restore-Rehearsal.md) for the distinction between source upgrade evidence and complete-volume restoration.
+## Back Up A Complete Installation
+
+1. Record the exact running image digest or revision and architecture, your Compose project or Portainer stack, and the actual mount at `/data`. In Compose, inspect the running service container's mounts. In Portainer, check the container's mount details and **Volumes**. For Docker-managed storage, use the actual named volume, including any project prefix. For a bind mount, use the exact host directory shown as the mount source.
+2. Save the stack definition and its private environment and secrets separately from `/data`. Include the web origin, server address, published port and any configured `TZ`. Retain access to the exact matching image. If TLS terminates at a separate reverse proxy, preserve its configuration and credentials separately.
+3. Stop the source service and confirm all writers to its mount have stopped. For Compose, run `docker compose stop caffoot-lite` in the source project. In Portainer, stop the corresponding container and confirm it is stopped. Keep the service stopped until the external backup finishes.
+4. Use your external Docker volume-backup utility for the named volume or your external host backup tool for the bind directory. Archive the entire mount relative to its root, including hidden entries. Include `caffoot.sqlite3` and any SQLite sidecars that remain, `tls/`, `smtp-settings.json`, `account-email-secret.key` and all other files present. Preserve numeric owners and groups, directory and file modes, and the directory layout. For example, `caffoot.sqlite3` should restore directly into `/data`.
+5. Check that the backup is readable and contains the expected files before restarting the source. Keep an access-controlled copy outside the Docker host. The archive includes authentication data and can include SMTP credentials, private TLS keys and private tickets and attachments. Protect it and the saved stack settings accordingly. Confirm the backup through an isolated restore.
+
+## Restore A Complete Installation
+
+1. Create a new, isolated target. Confirm its container is stopped and its `/data` mapping is a new empty volume or a new empty bind directory. Check the mapping before extracting. Keep the source and earlier recovery copies available.
+2. Extract with the external tool, restoring all paths, numeric ownership and modes. Make sure the application user `10001:10001` inside the container can read and write its data and traverse the mount. For a standard rootful bind mount, an administrator can prepare a new directory with `sudo install -d -m 0750 -o 10001 -g 10001 /path/to/new-data` before restoring. For rootless Docker or user namespace remapping, check the ownership as seen inside a container using that mapping. The host IDs can differ. Preserve restrictive modes on private files.
+3. Verify the expected files are directly under the restored mount. Use the archived image revision and saved stack configuration. Bind the test service to an isolated endpoint and retain the saved HTTPS identity. Confirm the SHA-256 certificate fingerprint against your trusted record and verify the hostname or IP used by the client before signing in.
+4. Start the target and check HTTPS health, sign-in and MFA, the expected account permissions and representative data. For example, check a saved rack position, a Department assignment, a Service Desk closure and an authorised attachment download. Check that an unrelated account cannot read that ticket. Verify settings and the expected optional-feature choices. Keep any test mail on an isolated receiver.
+5. Restart or recreate the target with the same mount and repeat the checks. If the application opens first-run setup, stop and verify the mount and archive layout. If it reports a permissions error, compare the mount ownership and modes inside the container with those saved. If the schema is newer than the image understands, stop and select the image recorded for that backup.
+
+See the [Stage 6.2 upgrade evidence](../../../development-handovers/evidence/stage-6-2/README.md) and the [historical matching-image rollback rehearsal](../../../development-guide/Upgrade-And-Restore-Rehearsal.md). A disposable local restore does not exercise your off-host backup tooling or verify recovery of your own installation.
