@@ -3,12 +3,20 @@
 No profile field changes an account's sign-in identifier, roles, permissions or MFA.
 Profile photographs are private user data, never static/public assets.
 """
+import hashlib
+import json
 import re
 import struct
 from backend.audit_events import record_actor_event
+from backend.staff_identity import (
+    SHARED_PROFILE_FIELDS, fill_shared_profile_blanks, read_linked_staff,
+    shared_profile_conflicts, staff_history_revision, write_shared_staff_details,
+)
 
 MAX_PHOTO_BYTES = 5 * 1024 * 1024
 FIELD_LIMITS = {"firstName": 100, "lastName": 100, "displayName": 120, "email": 254}
+FIELD_LABELS = {"firstName": "First Name", "lastName": "Surname",
+                "displayName": "Display Name", "email": "Email Address"}
 MIME_TYPES = frozenset(("image/jpeg", "image/png", "image/webp"))
 _EMAIL = re.compile(r"^[^@\s<>]+@[^@\s<>]+\.[^@\s<>]+$", re.UNICODE)
 
@@ -32,20 +40,47 @@ def _authorise(connection, actor_id, target_id):
     return target[0]
 
 
-def read_profile(connection, actor_id, target_id=None):
-    target_id = actor_id if target_id is None else target_id
-    username = _authorise(connection, actor_id, target_id)
+def read_personal_details(connection, account_id):
     row = connection.execute(
         "SELECT first_name,last_name,display_name,email,email_verified,"
         "photo_mime FROM account_profiles WHERE account_id=?",
-        (target_id,),
+        (account_id,),
     ).fetchone()
     first, last, display, email, verified, mime = row or ("", "", "", "", 0, None)
     return {
-        "username": username, "firstName": first, "lastName": last,
+        "firstName": first, "lastName": last,
         "displayName": display, "email": email,
         "emailVerified": bool(verified), "hasPhoto": bool(mime),
     }
+
+
+class StaleProfileEdit(ValueError):
+    """Reject a save from an account profile opened before a newer edit."""
+
+
+def _profile_revision(connection, account_id, username, details, staff):
+    history = connection.execute("""
+        SELECT h.id FROM inventory_change_history h
+        WHERE json_extract(h.record_json,'$.reason')='Personal details updated'
+          AND EXISTS (SELECT 1 FROM json_each(h.record_json,'$.changes') c
+            WHERE CASE WHEN c.type='object' THEN
+                json_extract(c.value,'$.kind')='Account'
+                AND json_extract(c.value,'$.label')=? END)
+        ORDER BY h.id DESC LIMIT 1
+    """, (username,)).fetchone()
+    values = [account_id, [details[field] for field in FIELD_LIMITS],
+              staff, staff_history_revision(connection, staff['id']) if staff else None,
+              history[0] if history else None]
+    return hashlib.sha256(json.dumps(values, ensure_ascii=False).encode('utf-8')).hexdigest()
+
+
+def read_profile(connection, actor_id, target_id=None):
+    target_id = actor_id if target_id is None else target_id
+    username = _authorise(connection, actor_id, target_id)
+    details = read_personal_details(connection, target_id)
+    staff = read_linked_staff(connection, target_id)
+    return {**details, "username": username,
+            "revision": _profile_revision(connection, target_id, username, details, staff)}
 
 
 def validate_profile_details(details):
@@ -63,50 +98,97 @@ def validate_profile_details(details):
     return validated
 
 
-def save_profile(connection, actor_id, details, target_id=None):
-    target_id = actor_id if target_id is None else target_id
-    values = validate_profile_details(details)
+def write_personal_details(connection, actor_id, target_id, before, values, *, on_email_change=None):
+    """Use the account email and proof rules inside either profile save."""
+    changed = [FIELD_LABELS[field] for field in FIELD_LIMITS if before[field] != values[field]]
+    if not changed:
+        return
+    email_changed = before['email'] != values['email']
+    if email_changed and on_email_change:
+        on_email_change(connection, target_id)
+    connection.execute(
+        "INSERT INTO account_profiles(account_id,first_name,last_name,"
+        "display_name,email,email_verified) VALUES(?,?,?,?,?,0) "
+        "ON CONFLICT(account_id) DO UPDATE SET "
+        "first_name=excluded.first_name,last_name=excluded.last_name,"
+        "display_name=excluded.display_name,email=excluded.email,"
+        "email_verified=CASE WHEN account_profiles.email=excluded.email "
+        "THEN account_profiles.email_verified ELSE 0 END",
+        (target_id, *(values[field] for field in FIELD_LIMITS)),
+    )
+    if email_changed:
+        connection.execute("DELETE FROM account_email_proofs WHERE account_id=?", (target_id,))
+    if actor_id is not None:
+        username = connection.execute("SELECT username FROM accounts WHERE id=?", (target_id,)).fetchone()[0]
+        record_actor_event(connection, actor_id, kind="Account", action="Updated",
+                           label=username, reason="Personal details updated", fields=changed)
+
+
+def reconcile_saved_staff_profiles(connection):
+    """Fill safe blanks on start-up or restore, including databases already at schema 29."""
     connection.execute("BEGIN IMMEDIATE")
     try:
-        username = _authorise(connection, actor_id, target_id)
-        before = connection.execute(
-            "SELECT first_name,last_name,display_name,email "
-            "FROM account_profiles WHERE account_id=?",
-            (target_id,),
-        ).fetchone()
-        previous = before or ("", "", "", "")
-        changed = [
-            label for label, prior, current in zip(
-                ("First Name", "Last Name", "Display Name", "Email Address"),
-                previous,
-                (values["firstName"], values["lastName"],
-                 values["displayName"], values["email"]),
-            ) if prior != current
-        ]
-        connection.execute(
-            "INSERT INTO account_profiles(account_id,first_name,last_name,"
-            "display_name,email,email_verified) VALUES(?,?,?,?,?,0) "
-            "ON CONFLICT(account_id) DO UPDATE SET "
-            "first_name=excluded.first_name,last_name=excluded.last_name,"
-            "display_name=excluded.display_name,email=excluded.email,"
-            "email_verified=CASE WHEN account_profiles.email=excluded.email "
-            "THEN account_profiles.email_verified ELSE 0 END",
-            (target_id, values["firstName"], values["lastName"],
-             values["displayName"], values["email"]),
-        )
-        if previous[3] != values["email"]:
-            connection.execute("DELETE FROM account_email_proofs WHERE account_id=?", (target_id,))
-        if changed:
-            record_actor_event(
-                connection, actor_id, kind="Account", action="Updated",
-                label=username, reason="Personal details updated",
-                fields=changed,
-            )
+        for account_id, in connection.execute("""
+            SELECT s.account_id FROM staff_members s
+            LEFT JOIN account_profiles p ON p.account_id=s.account_id
+            WHERE s.account_id IS NOT NULL AND (
+                ((s.first_name='' OR coalesce(p.first_name,'')='') AND s.first_name<>coalesce(p.first_name,'')) OR
+                ((s.last_name='' OR coalesce(p.last_name,'')='') AND s.last_name<>coalesce(p.last_name,'')) OR
+                (s.email='' AND p.email<>''))
+        """).fetchall():
+            staff = read_linked_staff(connection, account_id)
+            account = read_personal_details(connection, account_id)
+            updated_staff, updated_account = staff.copy(), account.copy()
+            fill_shared_profile_blanks(updated_staff, updated_account)
+            if updated_staff != staff:
+                write_shared_staff_details(connection, staff['id'], updated_staff)
+            write_personal_details(connection, None, account_id, account, updated_account)
         connection.commit()
     except BaseException:
         connection.rollback()
         raise
-    return read_profile(connection, actor_id, target_id)
+
+
+def save_profile(connection, actor_id, details, target_id=None, *, on_email_change=None):
+    target_id = actor_id if target_id is None else target_id
+    revision = details.get('revision') if isinstance(details, dict) else None
+    if isinstance(details, dict) and 'revision' in details:
+        if not isinstance(revision, str) or not re.fullmatch('[0-9a-f]{64}', revision):
+            raise ValueError('Refresh your personal details before saving.')
+        details = {field: value for field, value in details.items() if field != 'revision'}
+    values = validate_profile_details(details)
+    connection.execute("BEGIN IMMEDIATE")
+    try:
+        username = _authorise(connection, actor_id, target_id)
+        before = read_personal_details(connection, target_id)
+        staff = read_linked_staff(connection, target_id)
+        if revision is not None and revision != _profile_revision(connection, target_id, username, before, staff):
+            raise StaleProfileEdit('Personal details changed elsewhere. Reopen the profile and review the current values.')
+        if staff:
+            conflicts = shared_profile_conflicts(staff, before)
+            changed_conflicts = [FIELD_LABELS[field] for field in conflicts if before[field] != values[field]]
+            if changed_conflicts:
+                raise ValueError('Contact a Caffoot Lite administrator to reconcile ' + ', '.join(changed_conflicts) + '.')
+            updated_staff, updated_account = staff.copy(), before.copy()
+            fill_shared_profile_blanks(updated_staff, updated_account)
+            for field in SHARED_PROFILE_FIELDS:
+                if values[field] != before[field]:
+                    updated_staff[field] = updated_account[field] = values[field]
+            changed_staff = [field for field in SHARED_PROFILE_FIELDS if updated_staff[field] != staff[field]]
+            if changed_staff:
+                write_shared_staff_details(connection, staff['id'], updated_staff)
+                record_actor_event(connection, actor_id, kind='Staff Member', action='Updated',
+                                   label=staff['id'], reason='Shared personal details updated',
+                                   fields=[FIELD_LABELS[field] for field in changed_staff])
+            values.update({field: updated_account[field] for field in SHARED_PROFILE_FIELDS})
+        write_personal_details(connection, actor_id, target_id, before, values,
+                               on_email_change=on_email_change)
+        result = read_profile(connection, actor_id, target_id)
+        connection.commit()
+    except BaseException:
+        connection.rollback()
+        raise
+    return result
 
 
 def _check_dimensions(width, height):

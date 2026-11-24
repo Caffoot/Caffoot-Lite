@@ -68,6 +68,83 @@ class StaffDirectoryHttpTests(unittest.TestCase):
         client.close()
         return result
 
+    def test_linked_conflicts_require_admin_selection_and_protect_email_proofs(self):
+        with sqlite3.connect(self.path) as db:
+            db.execute("UPDATE accounts SET username='person_%!login' WHERE id=4")
+            db.execute("UPDATE staff_members SET email='staff@example.test' WHERE id='person'")
+            db.execute("INSERT INTO account_profiles(account_id,first_name,last_name,email,email_verified) VALUES(4,'Alexa','Example','saved@example.test',1)")
+            db.execute("INSERT INTO account_email_proofs(token_hash,account_id,purpose,email,expires_at) VALUES('existing-proof',4,'recover','saved@example.test',9999999999)")
+
+        url = '/api/staff-members/person'
+        admin = self.request(url)[1]['staffMember']
+        self.assertEqual(admin['username'], 'person_%!login')
+        self.assertEqual(admin['profileConflicts'], {
+            'firstName': {'staff': 'Alex', 'account': 'Alexa'},
+            'email': {'staff': 'staff@example.test', 'account': 'saved@example.test'},
+        })
+        for actor in (2, 3):
+            private = self.request(url, actor=actor)[1]['staffMember']
+            self.assertTrue({'username', 'accountId', 'profileConflicts'}.isdisjoint(private))
+            self.assertEqual(self.request('/api/staff-members?query=person_%25%21', actor=actor)[1]['staffMembers'], [])
+        self.assertEqual(len(self.request('/api/staff-members?query=person_%25%21')[1]['staffMembers']), 1)
+        self.assertEqual(self.request('/api/staff-members?query=_%25%21no')[1]['staffMembers'], [])
+        for change in ({'email': 'new@example.test'}, {'resolveProfile': {'email': 'staff'}}):
+            self.assertEqual(self.request(url, method='POST', actor=2,
+                payload=dict(change, revision=admin['revision']))[0], 403)
+
+        profile_path = '/api/account/profile'
+        profile = self.request(profile_path, actor=4)[1]
+        values = {field: profile[field] for field in ('firstName', 'lastName', 'email', 'displayName', 'revision')}
+        status, error, _ = self.request(profile_path, method='POST', actor=4, payload=dict(values, firstName='Changed'))
+        self.assertEqual(status, 400)
+        self.assertIn('Contact a Caffoot Lite administrator', error['error'])
+        self.assertEqual(self.request(profile_path, method='POST', actor=4, payload=dict(values, displayName='Alex'))[0], 200)
+        updated = self.request(url, method='POST', actor=2, payload={'revision': admin['revision'], 'location': 'Workshop'})
+        self.assertEqual(updated[0], 200)
+        self.assertEqual(self.request(url)[1]['staffMember']['profileConflicts'], admin['profileConflicts'])
+
+        for choice, expected_email, verified in (('account', 'saved@example.test', 1), ('staff', 'staff@example.test', 0)):
+            with self.subTest(choice=choice):
+                if choice == 'staff':
+                    with sqlite3.connect(self.path) as db:
+                        db.execute("UPDATE staff_members SET email='staff@example.test' WHERE id='person'")
+                current = self.request(url)[1]['staffMember']
+                stale = self.request(url, method='POST', payload={'revision': admin['revision'], 'resolveProfile': {'email': choice}})
+                self.assertEqual((stale[0], stale[1]['code']), (409, 'stale_staff_edit'))
+                with patch('backend.server.notify_security_change') as notify:
+                    status, result, _ = self.request(url, method='POST', payload={
+                        'revision': current['revision'], 'resolveProfile': {'email': choice}})
+                    self.assertEqual(status, 200, result)
+                    self.assertEqual(result['staffMember']['email'], expected_email)
+                    if verified:
+                        notify.assert_not_called()
+                    else:
+                        self.assertEqual(notify.call_args.args[1], {'saved@example.test'})
+                with sqlite3.connect(self.path) as db:
+                    self.assertEqual(db.execute('SELECT email,email_verified FROM account_profiles WHERE account_id=4').fetchone(), (expected_email, verified))
+                    self.assertEqual(db.execute('SELECT count(*) FROM account_email_proofs WHERE account_id=4').fetchone(), (verified,))
+
+    def test_startup_reconciliation_fills_only_safe_blanks_on_existing_schema(self):
+        with sqlite3.connect(self.path) as db:
+            db.execute("UPDATE staff_members SET last_name='' WHERE id='person'")
+            db.execute("INSERT INTO account_profiles(account_id,last_name,display_name,email,email_verified) VALUES(4,'Rivers','Alex R','verified@example.test',1)")
+            db.execute("INSERT INTO account_email_proofs(token_hash,account_id,purpose,email,expires_at) VALUES('existing-proof',4,'recover','verified@example.test',9999999999)")
+            db.execute("INSERT INTO staff_members(id,account_id,email) VALUES('staff-email',5,'contact@example.test')")
+        from backend.server import initialise_database as initialise_server_database
+        initialise_server_database()
+        with sqlite3.connect(self.path) as db:
+            self.assertEqual(db.execute("SELECT id,first_name,last_name,email,account_id FROM staff_members WHERE id='person'").fetchone(),
+                ('person', 'Alex', 'Rivers', 'verified@example.test', 4))
+            self.assertEqual(db.execute('SELECT first_name,last_name,display_name,email,email_verified FROM account_profiles WHERE account_id=4').fetchone(),
+                ('Alex', 'Rivers', 'Alex R', 'verified@example.test', 1))
+            self.assertEqual(db.execute('SELECT token_hash FROM account_email_proofs WHERE account_id=4').fetchone(), ('existing-proof',))
+            self.assertIsNone(db.execute('SELECT 1 FROM account_profiles WHERE account_id=5').fetchone())
+            self.assertEqual(db.execute('SELECT max(version) FROM schema_migrations').fetchone(), (29,))
+            preserved = list(db.iterdump())
+        initialise_server_database()
+        with sqlite3.connect(self.path) as db:
+            self.assertEqual(list(db.iterdump()), preserved)
+
 
     def test_staff_only_workspace_entry_never_grants_inventory_access(self):
         status, session, _ = self.request('/api/session', actor=3)

@@ -6,7 +6,7 @@ from backend.accounts import hash_password
 from backend.audit_events import record_actor_event
 from backend.profiles import validate_profile_details
 from backend.role_policy import assign_staff_member, evaluate_role_policy, LEVELS, SERVICE_DESK_SECTION
-from backend.staff_identity import link_account_staff
+from backend.staff_identity import link_account_staff, read_linked_staff
 
 
 def _admin(connection, actor_id):
@@ -158,6 +158,7 @@ def delete_user(connection, actor_id, target_id):
             "SELECT count(*) FROM accounts WHERE is_admin=1 AND active=1"
         ).fetchone()[0] <= 1:
             raise ValueError("Cannot delete the last active administrator")
+        staff = read_linked_staff(connection, target_id)
         connection.execute("DELETE FROM account_permission_overrides WHERE account_id=?", (target_id,))
         connection.execute("DELETE FROM account_roles WHERE account_id=?", (target_id,))
         connection.execute("DELETE FROM accounts WHERE id=?", (target_id,))
@@ -165,6 +166,9 @@ def delete_user(connection, actor_id, target_id):
             connection, actor_id, kind="Account", action="Deleted",
             label=target_name, reason="Account deleted", fields=["Account"],
         )
+        if staff:
+            record_actor_event(connection, actor_id, kind="Staff Member", action="Updated",
+                               label=staff['id'], reason="Caffoot login removed", fields=["Caffoot Login"])
         connection.commit()
     except BaseException:
         connection.rollback()

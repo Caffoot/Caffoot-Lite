@@ -199,9 +199,10 @@ class StaffDirectoryMigrationTests(unittest.TestCase):
 
     def test_account_profile_status_and_deletion_keep_staff_identity(self):
         schema.initialise_database(self.db)
-        staff = self.db.execute('SELECT * FROM staff_members WHERE account_id=3').fetchone()
+        original = self.db.execute('SELECT * FROM staff_members WHERE account_id=3').fetchone()
         save_profile(self.db, 3, dict(firstName='Changed', lastName='Name', displayName='', email='new@example.test'))
-        self.assertEqual(self.db.execute('SELECT * FROM staff_members WHERE account_id=3').fetchone(), staff)
+        staff = self.db.execute('SELECT * FROM staff_members WHERE account_id=3').fetchone()
+        self.assertEqual(staff, (original[0], 'Changed', 'Name', 'new@example.test', *original[4:]))
         set_account_active(self.db, 1, 3, False)
         self.assertEqual(self.db.execute('SELECT * FROM staff_members WHERE account_id=3').fetchone(), staff)
         before = list(self.db.iterdump())
