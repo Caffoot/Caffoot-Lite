@@ -117,6 +117,7 @@ def _record_mfa_change(connection, account_id, *, enrolled):
     record_actor_event(
         connection, account_id, kind="Security", action="Updated", label=username,
         reason="MFA enrolment confirmed" if enrolled else "MFA removed by account owner",
+        subject=("Account", account_id, username),
         fields=["Multi-factor authentication"],
         before={"MFA status": "Not enrolled" if enrolled else "Enabled"},
         after={"MFA status": "Enabled" if enrolled else "Not enrolled"},

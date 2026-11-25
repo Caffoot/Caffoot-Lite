@@ -35,6 +35,7 @@ def recover_sole_administrator(connection, username, password):
         record_actor_event(
             connection, account_id, kind="Security", action="Updated", label=username,
             reason="Sole administrator recovered by local Docker host operator; fresh MFA required",
+            subject=("Account", account_id, username),
             fields=["Credentials", "Sessions", "MFA enrolment"],
         )
         connection.commit()

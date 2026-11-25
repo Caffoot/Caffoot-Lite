@@ -149,7 +149,8 @@ def complete_password_change(connection, proof, password, confirmation, *, now=N
         connection.execute('DELETE FROM account_email_proofs WHERE account_id=?', (account_id,))
         connection.execute('DELETE FROM account_sessions WHERE account_id=?', (account_id,))
         record_actor_event(connection, account_id, kind='Security', action='Updated', label=username,
-                           reason='Temporary password changed', fields=['Password', 'Mandatory password change'])
+                           reason='Temporary password changed', fields=['Password', 'Mandatory password change'],
+                           subject=('Account', account_id, username))
         connection.commit()
     except BaseException:
         connection.rollback()
