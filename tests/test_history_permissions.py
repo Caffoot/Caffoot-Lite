@@ -58,6 +58,24 @@ class HistoryPermissionProjectionTests(unittest.TestCase):
             self.db.execute("INSERT INTO inventory_change_history(record_json) VALUES(?)",(json.dumps(event),))
         self.assertTrue(all("reason" not in e for e in visible_change_history(self.db,2)))
 
+    def test_subject_projection_preserves_original_labels_and_section_boundary(self):
+        from backend.audit_events import audit_subject
+        event = self.add('Device', 'Staff Member', 'IT Assets')
+        event['changes'][0].update(audit_subject('Device', 'device-id', 'Event-time Laptop'))
+        event['changes'][0]['recordSubject']['extra'] = 'private extension'
+        event['changes'][1].update(audit_subject('Staff Member', 'staff-id', 'Private Staff'))
+        event['changes'][2].update(audit_subject('Stock Item', 'stock-id', 'Private Stock'))
+        self.db.execute('UPDATE inventory_change_history SET record_json=?', (json.dumps(event),))
+        stored = self.db.execute('SELECT record_json FROM inventory_change_history').fetchone()
+        result = visible_change_history(self.db, 2)
+        self.assertEqual(result[0]['changes'], [{
+            'kind': 'Device', 'action': 'Updated', 'label': 'label-Device', 'fields': [],
+            'recordSubject': {'kind': 'Device', 'id': 'device-id', 'name': 'Event-time Laptop'},
+        }])
+        self.assertEqual(self.db.execute('SELECT record_json FROM inventory_change_history').fetchone(), stored)
+        self.assertEqual(audit_subject('Device', 'device-id', 'bad\nname'),
+                         {'recordSubject': {'kind': 'Device', 'id': 'device-id'}})
+
     def test_mixed_event_excludes_disallowed_changes_and_counts(self):
         self.add("Device", "IPAM", "Rack", omitted=9)
         result = visible_change_history(self.db, 2)
@@ -267,6 +285,23 @@ class HistoryPermissionProjectionTests(unittest.TestCase):
         self.assertEqual([change["label"] for change in result[0]["changes"]],
                          ["Unassociated stock", "owner"])
         self.assertNotIn("PRIVATE", json.dumps(result))
+
+    def test_stock_subject_does_not_disclose_device_name_without_devices_read(self):
+        event = {"changes": [
+            {"kind": "IT Assets", "label": "Equipment", "fields": [],
+             "recordSubject": {"kind": "Device", "id": "private-device", "name": "Private laptop"}},
+            {"kind": "IT Assets", "label": "Stock", "fields": [],
+             "recordSubject": {"kind": "Stock Item", "id": "stock-id", "name": "USB cable"}},
+        ]}
+        self.db.execute("INSERT INTO inventory_change_history(record_json) VALUES(?)", (json.dumps(event),))
+        self.allowed = {"IT Assets": True}
+        result = visible_change_history(self.db, 2)
+        self.assertNotIn("Private laptop", json.dumps(result))
+        self.assertNotIn("private-device", json.dumps(result))
+        self.assertEqual(result[0]["changes"][1]["recordSubject"]["name"], "USB cable")
+        self.allowed["Devices"] = True
+        result = visible_change_history(self.db, 2)
+        self.assertEqual(result[0]["changes"][0]["recordSubject"]["name"], "Private laptop")
 
     def test_stock_only_reader_cannot_reclassify_pre_reset_movement_using_reused_id(self):
         self.db.execute("CREATE TABLE it_asset_stock_units (id INTEGER PRIMARY KEY, device_id TEXT)")

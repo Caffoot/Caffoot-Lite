@@ -32,7 +32,10 @@ class FeatureSettingsTests(unittest.TestCase):
 
     def snapshot(self):
         tables = [r[0] for r in self.db.execute("SELECT name FROM sqlite_master WHERE type='table' AND name NOT IN ('schema_migrations','organisation_features','sqlite_sequence')")]
-        return {t: self.db.execute(f'SELECT * FROM "{t}" ORDER BY rowid').fetchall() for t in tables}
+        # Include every receipt row, ordered by its composite primary key.
+        return {t: self.db.execute(f'SELECT * FROM "{t}" ORDER BY ' +
+                                  ('account_id,message_id' if t == 'service_desk_message_reads' else 'rowid')).fetchall()
+                for t in tables}
 
     def test_fresh_defaults_and_repeated_initialisation(self):
         schema.initialise_database(self.db)

@@ -121,7 +121,8 @@ def write_personal_details(connection, actor_id, target_id, before, values, *, o
     if actor_id is not None:
         username = connection.execute("SELECT username FROM accounts WHERE id=?", (target_id,)).fetchone()[0]
         record_actor_event(connection, actor_id, kind="Account", action="Updated",
-                           label=username, reason="Personal details updated", fields=changed)
+                           label=username, reason="Personal details updated", fields=changed,
+                           subject=("Account", target_id, username))
 
 
 def reconcile_saved_staff_profiles(connection):
@@ -179,6 +180,7 @@ def save_profile(connection, actor_id, details, target_id=None, *, on_email_chan
                 write_shared_staff_details(connection, staff['id'], updated_staff)
                 record_actor_event(connection, actor_id, kind='Staff Member', action='Updated',
                                    label=staff['id'], reason='Shared personal details updated',
+                                   subject=('Staff Member', staff['id'], ' '.join(filter(None, (updated_staff['firstName'], updated_staff['lastName'])))),
                                    fields=[FIELD_LABELS[field] for field in changed_staff])
             values.update({field: updated_account[field] for field in SHARED_PROFILE_FIELDS})
         write_personal_details(connection, actor_id, target_id, before, values,
@@ -275,6 +277,7 @@ def save_profile_photo(connection, actor_id, mime, data, target_id=None):
         record_actor_event(
             connection, actor_id, kind="Account", action="Updated",
             label=username, reason="Profile image changed",
+            subject=("Account", target_id, username),
             fields=["Profile Image"],
         )
         connection.commit()
@@ -310,6 +313,7 @@ def remove_profile_photo(connection, actor_id, target_id=None):
             record_actor_event(
                 connection, actor_id, kind="Account", action="Updated",
                 label=username, reason="Profile image removed",
+                subject=("Account", target_id, username),
                 fields=["Profile Image"],
             )
         connection.commit()

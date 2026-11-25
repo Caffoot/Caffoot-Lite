@@ -60,6 +60,30 @@ A physical return, reassignment, write-off or reissue ends the previous employee
 
 *Department Tickets shows requests for Purchasing’s current shared equipment.* [Capture details](../../../development-handovers/evidence/employee-service-desk/README.md)
 
+## Recognise And Read New Replies
+
+The orange numbers help you find replies you have not yet read. They belong to your signed-in account, not to the computer or Department.
+
+1. Look beside **My Tickets** in the sidebar. The number is the total of distinct tickets with unread replies across your permitted personal and Department tickets, not the total number of messages. A ticket counted in both scopes contributes only once. The numbers beside the **My Tickets** and **Department Tickets** tabs are the unread-ticket totals for those individual views.
+2. Select the appropriate tab. A number beside a ticket number, such as **SD-0007** with **2**, means that ticket contains two eligible unread replies. The sidebar and tab totals include all statuses and pages, even if the current search or filter hides the ticket. If a badge shows a ticket you cannot find, use **Clear Filters**, check both tabs and move through the pages.
+3. Select the ticket number or **Open**. The window opens on **Overview** as before. Its **Updates** tab shows the number of unread replies. Reading Overview or History does not clear the badge, including when Overview displays a resolution note.
+4. Select **Updates**. Once the conversation is successfully loaded and displayed, the application records the eligible replies in that loaded conversation as read for your account. The relevant numbers update automatically. A number disappears when the count reaches zero. If a new reply arrives after the loaded snapshot, it remains unread until you load Updates again. A failed conversation load does not mark replies read. If the application reports that it could not mark replies as read, reopen Updates to try again.
+5. Select **Close Window** when you have finished. Opening and closing a ticket without reading Updates does not mark it read. You do not need to save a ticket or have technician editing permission just to read an authorised conversation.
+
+The badges refresh on returning to the application, moving between workspaces, relevant successful ticket actions and read acknowledgements, and every 30 seconds while the application is visible. They do not automatically reload your open conversation. Your read receipts persist when you sign out, change browser or sign in on another device.
+
+For example, Casey and Jordan are both current members of a Department with a shared printer. IT sends two visible replies on its ticket. Each account has its own two unread replies. When Casey reads Updates, Casey's count clears; Jordan's remains two until Jordan reads the conversation. A reply you write yourself is not unread for you. Original ticket creation, original attachments, status-only changes and edits to existing replies are not new unread replies. Internal IT notes never contribute to employee counts.
+
+If your Department membership or equipment custody changes, the same existing access rules determine which tickets and replies can appear. An unread badge cannot provide access to an earlier holder's conversation. See [Who Can See A Ticket?](#who-can-see-a-ticket) and [Unread Reply Administration](Service-Desk-Administration.md#verify-unread-reply-indicators).
+
+![Department Tickets with an unread count beside My Tickets, the Department Tickets tab and the ticket number.](../../../development-handovers/evidence/stage-6-6-batch-2/screenshots/unread-department-tickets-desktop-light.png)
+
+*The sidebar and tab count tickets. The number beside the ticket reference counts replies on that ticket.*
+
+![Ticket Overview on a mobile-sized dark screen with an unread reply badge beside Updates.](../../../development-handovers/evidence/stage-6-6-batch-2/screenshots/unread-updates-tab-mobile-dark.png)
+
+*The unread reply remains while Overview is open. Select Updates to load the conversation.* [Desktop and mobile captures and provenance](../../../development-handovers/evidence/stage-6-6-batch-2/README.md#application-screenshots)
+
 ## Reply To IT Or Reopen A Ticket
 
 1. Open **Ticket Details → Updates**, or choose **Reply To IT** from **Overview** or **History** on an active ticket.
@@ -127,6 +151,21 @@ Sign in with **Service Desk Read** or **Edit**. You also need Read access to **D
 3. Enter a ticket number such as `SD-0001`, subject, requester or equipment name in **Search Tickets**. Use **Status**, **Priority**, **Assignment** or **Assigned Technician** for a more specific view. **All Tickets** includes Closed tickets. **Assigned To Me** uses your signed-in account.
 4. Use **Sort By** to order the results by newest update, oldest update or descending ticket number. Use **Previous** and **Next** when the results span more than one page. On a narrow screen, scroll the table horizontally to reach all eight columns.
 5. Select a ticket number or **Open Details**. **Clear Filters** restores the default Open queue and newest-first sort.
+
+## Read Unread Replies In The IT Queue
+
+In **IT → Service Desk**, the sidebar badge counts distinct accessible tickets with unread replies across the IT queue, independently of status, assignment, search and pagination. The number beside each ticket number counts that ticket's unread replies. An authorised technician can have a different total from an employee because the IT view includes permitted internal notes.
+
+1. Open **IT → Service Desk**, clear or change filters if necessary, and locate a ticket with an unread number.
+2. Select the ticket number or **Open Details**. The window opens on **Overview**; the number beside **Updates** is still present.
+3. Select **Updates** and read the permitted employee replies, technician updates and resolution notes. Only the successfully loaded conversation is acknowledged for your account. Your own replies do not count, and reading as IT does not clear an employee's or another technician's badges.
+4. If a further reply arrives after that conversation was loaded, its unread number remains until you select Updates again. Use the existing technician actions only if you have the applicable editing permission. A technician with read-only access can read and acknowledge their own permitted replies without being able to edit the ticket.
+
+![Service Desk shows one unread ticket beside the sidebar entry and one unread reply beside its ticket reference.](../../../development-handovers/evidence/stage-6-6-batch-2/screenshots/unread-it-queue-desktop-light.png)
+
+*The IT sidebar counts accessible tickets with unread replies across all queue pages and filters.* [Capture provenance](../../../development-handovers/evidence/stage-6-6-batch-2/README.md#application-screenshots)
+
+For sign-in, feature, equipment and custody checks see [Administer The Service Desk](Service-Desk-Administration.md#verify-unread-reply-indicators). The IT count does not grant permission to see any restricted tickets or notes.
 
 ## Read Service Desk Activity
 

@@ -1,6 +1,6 @@
 """SQLite-backed independent IPAM allocation changes."""
 import json
-from .audit_events import attribute_event, safe_inventory_differences
+from .audit_events import attribute_event, safe_inventory_differences, audit_subject
 from datetime import datetime, timezone
 
 from .application_integrity import validate_live_application_state as validate_detached_application_state
@@ -52,7 +52,7 @@ def change_independent_allocation(connection, account_id, ip, record):
             event = {"at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
                      "reason": "Inventory saved",
                      "changes": [{"action": action, "kind": "IPAM",
-                                  "label": ip, "fields": fields,
+                                  "label": ip, "fields": fields, **audit_subject("IPAM", ip, ip),
                                   **safe_inventory_differences(before, record, "ipAllocations")}],
                      "omitted": 0}
             connection.execute(
@@ -108,7 +108,7 @@ def change_bulk_allocations(connection, account_id, changes):
             )
         if updates:
             events = [{"action": "Created" if previous is None else "Updated",
-                       "kind": "IPAM", "label": ip, "fields": [],
+                       "kind": "IPAM", "label": ip, "fields": [], **audit_subject("IPAM", ip, ip),
                        **safe_inventory_differences(previous, record, "ipAllocations")}
                       for ip, record, previous in updates[:16]]
             entry = {"at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),

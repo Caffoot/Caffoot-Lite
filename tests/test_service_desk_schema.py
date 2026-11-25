@@ -41,7 +41,7 @@ class ServiceDeskSchemaTests(unittest.TestCase):
         self.connection.execute("INSERT INTO device_lifecycle(device_id,purchase_date) VALUES('host','2026-11-20')")
         self.connection.commit()
         schema.initialise_database(self.connection)
-        self.assertEqual(self.connection.execute('SELECT max(version) FROM schema_migrations').fetchone(), (30,))
+        self.assertEqual(self.connection.execute('SELECT max(version) FROM schema_migrations').fetchone(), (31,))
         self.assertEqual(self.connection.execute('SELECT name FROM service_desk_categories ORDER BY id').fetchall(),
                          [(name,) for name in DEFAULT_TICKET_CATEGORIES])
         ticket = insert_ticket(self.connection)
@@ -97,6 +97,55 @@ class ServiceDeskSchemaTests(unittest.TestCase):
         """).fetchone(), (ticket, event, note, None))
         self.assertEqual(self.connection.execute('SELECT count(*) FROM service_desk_calendars').fetchone(), (0,))
         self.assertFalse(self.connection.execute('PRAGMA foreign_key_check').fetchall())
+
+    def test_read_receipt_upgrade_preserves_schema_30_data_and_cascades(self):
+        with patch.object(schema, 'SCHEMA_VERSION', 30):
+            schema.initialise_database(self.connection)
+        db = self.connection
+        db.execute("INSERT INTO accounts(id,username,password_hash) VALUES(1,'owner','hash')")
+        db.execute("INSERT INTO accounts(id,username,password_hash) VALUES(2,'reader','hash')")
+        ticket = insert_ticket(db)
+        message = db.execute("""
+            INSERT INTO service_desk_messages(ticket_id,kind,actor_id,actor_label,created_at,employee_visible,body)
+            VALUES(?, 'Reply', 1, 'Technician', '2026-11-23', 1, 'Existing reply')
+        """, (ticket,)).lastrowid
+        db.commit()
+        before = {table: db.execute(f'SELECT * FROM "{table}"').fetchall()
+                  for (table,) in db.execute("SELECT name FROM sqlite_schema WHERE type='table'")
+                  if table != 'schema_migrations'}
+        schema.initialise_database(db)
+        self.assertEqual(db.execute('SELECT max(version) FROM schema_migrations').fetchone(), (31,))
+        self.assertEqual(db.execute('SELECT * FROM service_desk_message_reads').fetchall(), [])
+        for table, rows in before.items():
+            self.assertEqual(db.execute(f'SELECT * FROM "{table}"').fetchall(), rows, table)
+        db.executemany('INSERT INTO service_desk_message_reads VALUES(?,?)', [(1,message),(2,message)])
+        for pair in ((1,message),(999,message),(2,999)):
+            with self.assertRaises(sqlite3.IntegrityError):
+                db.execute('INSERT INTO service_desk_message_reads VALUES(?,?)', pair)
+        db.commit()
+        original = tuple(db.iterdump())
+        schema.initialise_database(db)
+        self.assertEqual(tuple(db.iterdump()), original)
+        db.execute('DELETE FROM accounts WHERE id=2')
+        self.assertEqual(db.execute('SELECT * FROM service_desk_message_reads').fetchall(), [(1,message)])
+        db.execute('DELETE FROM service_desk_tickets WHERE id=?', (ticket,))
+        self.assertEqual(db.execute('SELECT * FROM service_desk_message_reads').fetchall(), [])
+        self.assertEqual(db.execute('PRAGMA foreign_key_check').fetchall(), [])
+
+    def test_read_receipt_failed_upgrade_is_atomic_and_missing_schema_fails_closed(self):
+        with patch.object(schema, 'SCHEMA_VERSION', 30):
+            schema.initialise_database(self.connection)
+        db = self.connection
+        original = tuple(db.iterdump())
+        with patch('backend.schema.validate_message_reads', side_effect=RuntimeError('Receipt validation failed')):
+            with self.assertRaisesRegex(RuntimeError, 'Receipt validation failed'):
+                schema.initialise_database(db)
+        self.assertEqual(tuple(db.iterdump()), original)
+        schema.initialise_database(db)
+        db.execute('DROP TABLE service_desk_message_reads')
+        db.commit()
+        with self.assertRaisesRegex(RuntimeError, 'Invalid Service Desk read receipt schema'):
+            schema.initialise_database(db)
 
     def test_failed_upgrade_rolls_back_tables_and_version(self):
         def authorise(action, first, second, database, trigger):

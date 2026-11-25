@@ -1,6 +1,6 @@
 """Published Device Types and Locations management on central SQLite."""
 import json
-from .audit_events import attribute_event, record_actor_event
+from .audit_events import attribute_event, record_actor_event, audit_subject
 import time
 from datetime import datetime, timezone
 
@@ -178,7 +178,7 @@ def change_device_catalogue(connection, account_id, kind, operation, old_name,
             connection.execute("UPDATE equipment_lifecycle_settings SET revision=revision+1")
         changes = [
             {"action": "Updated", "kind": "Device", "label": str(d["name"])[:100],
-             "fields": [field]}
+             "fields": [field], **audit_subject("Device", d["id"], d["name"])}
             for d in affected
         ]
         if original_list != state[key]:

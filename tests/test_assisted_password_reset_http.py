@@ -367,7 +367,7 @@ class PasswordResetHttpTests(unittest.TestCase):
 
 
 class PasswordChangeMigrationTests(unittest.TestCase):
-    def test_published_schema_10_upgrades_to_30_with_existing_administrator_access(self):
+    def test_published_schema_10_upgrades_to_31_with_existing_administrator_access(self):
         with sqlite3.connect(':memory:') as db:
             db.execute('PRAGMA foreign_keys=ON')
             db.executescript((Path(__file__).parent / 'fixtures/schema-v10.sql').read_text())
@@ -380,7 +380,7 @@ class PasswordChangeMigrationTests(unittest.TestCase):
                                 ('worker', hash_password(ORIGINAL))).lastrowid
             db.commit()
             schema.initialise_database(db)
-            self.assertEqual(db.execute('SELECT max(version) FROM schema_migrations').fetchone(), (30,))
+            self.assertEqual(db.execute('SELECT max(version) FROM schema_migrations').fetchone(), (31,))
             self.assertEqual(db.execute('SELECT id,is_admin,must_change_password FROM accounts ORDER BY id').fetchall(),
                              [(owner, 1, 0), (worker, 0, 0)])
             self.assertEqual(db.execute('PRAGMA foreign_key_check').fetchall(), [])
@@ -409,7 +409,7 @@ class PasswordChangeMigrationTests(unittest.TestCase):
                 db.execute('PRAGMA foreign_keys=ON')
                 schema.initialise_database(db)
                 schema.initialise_database(db)
-                self.assertEqual(db.execute('SELECT max(version) FROM schema_migrations').fetchone(), (30,))
+                self.assertEqual(db.execute('SELECT max(version) FROM schema_migrations').fetchone(), (31,))
                 self.assertEqual(db.execute('SELECT * FROM accounts ORDER BY id').fetchall(), [(*row, 0) for row in old_accounts])
                 self.assertEqual(db.execute('SELECT * FROM account_profiles ORDER BY account_id').fetchall(), old_profiles)
                 self.assertEqual(db.execute('SELECT account_id FROM account_sessions WHERE token_hash=?', (_digest('a' * 64),)).fetchone(), (owner,))

@@ -42,6 +42,8 @@ from .service_desk import (read_ticket, read_ticket_assignment_choices, read_tic
                            read_ticket_categories, read_ticket_equipment_choices, read_ticket_list,
                            read_ticket_software_choices, require_ticket, save_ticket_request)
 from .service_desk_access import linked_ticket_staff, ticket_scope_filter
+from .service_desk_reads import (acknowledge_conversation, conversation_read_proof,
+                                 read_unread_counts)
 from .service_desk_email import queue_ticket_email, snapshot_department_notice
 from .service_desk_calendar import activate_deployment_timezone
 from .service_desk_settings import read_service_desk_settings, save_service_desk_settings
@@ -78,7 +80,7 @@ from .suppliers import (read_directory as read_supplier_directory, read_supplier
                         read_issue, read_issues, read_purchasing_dashboard, read_supply_impact,
                         save_supplier_operation, supplier_access)
 from .request_auth import authorised_mutation
-from .http_security import require_same_origin
+from .http_security import check_csrf, require_same_origin
 from .tls import ensure_certificate
 from .deployment_settings import validate_published_port
 from .shared_devices import manage_departments
@@ -100,7 +102,7 @@ MAX_LOGIN_BYTES = 4096
 MAX_TICKET_REQUEST_BYTES = 128 * 1024
 MAX_TICKET_UPLOAD_REQUEST_BYTES = (MAX_RETAINED_TICKET_BYTES * 4 // 3) + 2_000_000
 TICKET_ROUTE = re.compile(
-    r'/api/service-desk/(personal|department|it)/(tickets|categories|equipment|software|report)'
+    r'/api/service-desk/(personal|department|it)/(tickets|categories|equipment|software|report|unread)'
     r'(?:/([1-9][0-9]{0,18})(?:/([a-z]+)(?:/([1-9][0-9]{0,18}))?)?)?'
 )
 TICKET_EMAIL_QUERY = re.compile(r'ticket=(it|personal|department)-([1-9][0-9]{0,18})')
@@ -980,7 +982,7 @@ class Handler(BaseHTTPRequestHandler):
                 or (resource == 'technicians' and scope != 'it')
                 or (reading and bool(child_id) != (resource == 'attachments'))
                 or (not reading and ticket_id and resource not in
-                    ('messages', 'assign', 'hold', 'resume', 'close', 'reopen', 'priority', 'category', 'attachments'))
+                    ('messages', 'assign', 'hold', 'resume', 'close', 'reopen', 'priority', 'category', 'attachments', 'read'))
                 or (not reading and child_id and resource not in ('messages', 'attachments'))
                 or (resource == 'attachments' and (child_id is None or (not reading and scope != 'it')))):
             self.respond(404, {'error': 'not found'})
@@ -1004,7 +1006,7 @@ class Handler(BaseHTTPRequestHandler):
                     if actor_id is None:
                         raise PermissionError()
                     if ticket_id:
-                        ticket = require_ticket(connection, actor_id, scope, ticket_id, edit=True)
+                        ticket = require_ticket(connection, actor_id, scope, ticket_id, edit=resource != 'read')
                         if scope != 'it' and resource == 'messages' and child_id is None and ticket[1] == 'Closed':
                             raise FileExistsError('Reopen the ticket before adding an employee-visible reply.')
                     else:
@@ -1069,6 +1071,11 @@ class Handler(BaseHTTPRequestHandler):
                     if not reading:
                         save_report_period(connection, actor_id, payload)
                     result = read_service_desk_report(connection, actor_id)
+                elif collection == 'unread':
+                    # A stale application tab must not display counts for a different session.
+                    if not check_csrf(csrf_for_session(read_session_cookie(cookie)), csrf):
+                        raise PermissionError()
+                    result = read_unread_counts(connection, actor_id, scope)
                 elif collection == 'categories':
                     result = read_ticket_categories(connection, actor_id, scope)
                 elif collection == 'equipment':
@@ -1079,6 +1086,13 @@ class Handler(BaseHTTPRequestHandler):
                     result = read_ticket_attachment(connection, actor_id, scope, ticket_id, child_id)
                 elif reading:
                     result = read_ticket(connection, actor_id, scope, ticket_id, resource)
+                    if resource == 'messages':
+                        result['readProof'] = conversation_read_proof(
+                            connection, actor_id, scope, ticket_id, read_session_cookie(cookie), result['messages'])
+                elif resource == 'read':
+                    require_ticket(connection, actor_id, scope, ticket_id)
+                    result = acknowledge_conversation(connection, actor_id, scope, ticket_id,
+                                                      read_session_cookie(cookie), payload)
                 else:
                     result = save_ticket_request(connection, actor_id, scope, payload, ticket_id=ticket_id,
                                                  action=resource, message_id=child_id, attachments=attachments)
@@ -1686,6 +1700,7 @@ class Handler(BaseHTTPRequestHandler):
                         record_actor_event(
                             connection, actor, kind="Security", action="Updated",
                             label=username, reason="MFA enrolment confirmed",
+                            subject=("Account", actor, username),
                             fields=["Multi-factor authentication"],
                             before={"MFA status": "Not enrolled"},
                             after={"MFA status": "Enabled"},
@@ -1725,6 +1740,7 @@ class Handler(BaseHTTPRequestHandler):
                         record_actor_event(
                             connection, actor, kind="Security", action="Updated",
                             label=username, reason="Account password changed",
+                            subject=("Account", actor, username),
                             fields=["Password"],
                         )
                         connection.execute(

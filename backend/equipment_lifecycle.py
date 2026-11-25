@@ -183,6 +183,7 @@ def save_lifecycle_settings(connection, actor, token, payload):
                 'ON CONFLICT(name) DO UPDATE SET years=excluded.years', (name, years))
             record_actor_event(connection, actor, kind='Settings', action='Updated', label=label,
                 reason=SETTINGS_AUDIT_REASON, fields=['Expected Equipment Lifespan'],
+                subject=('Settings', 'equipment-lifecycle:lifespan:' + name, label),
                 before={'Expected Equipment Lifespan': kind['years']},
                 after={'Expected Equipment Lifespan': years})
 
@@ -190,7 +191,9 @@ def save_lifecycle_settings(connection, actor, token, payload):
         if before:
             after = {label: payload[key] for key, label in warning_fields.items() if label in before}
             record_actor_event(connection, actor, kind='Settings', action='Updated', label='Warning Periods',
-                reason=SETTINGS_AUDIT_REASON, fields=before, before=before, after=after)
+                reason=SETTINGS_AUDIT_REASON, fields=before,
+                subject=('Settings', 'equipment-lifecycle:warning-periods', 'Warning Periods'),
+                before=before, after=after)
         connection.execute(
             'UPDATE equipment_lifecycle_settings SET warranty_days=?,replacement_days=?,revision=revision+1',
             (payload['warrantyDays'], payload['replacementDays']))
@@ -236,6 +239,7 @@ def write_device_lifecycle(connection, actor, record, updates):
         'replacement_override=excluded.replacement_override', (device_id, *values.values()))
     record_actor_event(connection, actor, kind='Device', action='Updated', label=record['name'][:100],
         reason=DEVICE_AUDIT_REASON, fields=[DATE_FIELDS[key] for key in changed],
+        subject=('Device', device_id, record['name']),
         before={'deviceId': device_id, **{DATE_FIELDS[key]: previous[key] for key in changed}},
         after={'deviceId': device_id, **{DATE_FIELDS[key]: values[key] for key in changed}})
 
@@ -289,5 +293,6 @@ def capture_first_service_from_stock(connection, actor, choice, issued_on):
         (device_id, issued_on))
     record_actor_event(connection, actor, kind='Device', action='Updated', label=choice['name'][:100],
         reason=FIRST_SERVICE_AUDIT_REASON, fields=['Original In Service Date'],
+        subject=('Device', device_id, choice['name']),
         before={'deviceId': device_id, 'Original In Service Date': None},
         after={'deviceId': device_id, 'Original In Service Date': issued_on})

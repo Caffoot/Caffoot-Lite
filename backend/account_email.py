@@ -221,7 +221,8 @@ def confirm_email_proof(connection, token, purpose, *, challenge_id, account_id=
             reason = "Password recovered using verified email and required authenticator proof"
         connection.execute("DELETE FROM account_email_proofs WHERE account_id=?", (target,))
         record_actor_event(connection, target, kind="Security", action="Updated", label=username, reason=reason,
-                           fields=["Email verification" if purpose == "verify" else "Password"])
+                           fields=["Email verification" if purpose == "verify" else "Password"],
+                           subject=("Account", target, username))
         connection.commit()
         return target
     except BaseException:

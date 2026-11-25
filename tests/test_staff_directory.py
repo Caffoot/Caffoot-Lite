@@ -468,11 +468,29 @@ class StaffDirectoryTests(unittest.TestCase):
         self.assertEqual(self.db.execute('SELECT count(*) FROM accounts').fetchone(), (4,))
 
     def test_audit_omits_contact_and_login_secrets(self):
-        self.staff(dict(firstName='Private First', lastName='Private Last', email='private@example.test',
+        staff = self.staff(dict(firstName='Private First', lastName='Private Last', email='private@example.test',
                         telephone='private telephone', login=dict(username='new', password='private-password')))
-        history = json.dumps(self.db.execute('SELECT record_json FROM inventory_change_history').fetchall())
+        events = [json.loads(raw) for raw, in self.db.execute('SELECT record_json FROM inventory_change_history ORDER BY id')]
+        directory_change = next(c for e in events for c in e['changes'] if c['kind'] == 'Staff Member')
+        self.assertEqual(directory_change['label'], staff['id'])
+        self.assertEqual(directory_change.pop('recordSubject'), {
+            'kind': 'Staff Member', 'id': staff['id'], 'name': staff['firstName'] + ' ' + staff['lastName']})
+        # The approved name is the sole exception. Keep all prior exclusions
+        # in the remaining event, including contact and authentication data.
+        history = json.dumps(events)
         for secret in ('Private First', 'Private Last', 'private@example.test', 'private telephone', 'private-password', self.tokens[1]):
             self.assertNotIn(secret, history)
+
+    def test_audit_staff_rename_retains_original_event_and_canonical_label(self):
+        staff = self.staff({'firstName': 'Casey', 'lastName': 'Reed'})
+        original = self.db.execute('SELECT record_json FROM inventory_change_history ORDER BY id DESC LIMIT 1').fetchone()[0]
+        self.staff({'lastName': 'Morgan'}, staff_id=staff['id'])
+        records = self.db.execute('SELECT record_json FROM inventory_change_history ORDER BY id').fetchall()
+        self.assertEqual(records[-2][0], original)
+        changes = [json.loads(raw)['changes'][0] for raw, in records[-2:]]
+        self.assertEqual([c['label'] for c in changes], [staff['id'], staff['id']])
+        self.assertEqual([c['recordSubject']['name'] for c in changes], ['Casey Reed', 'Casey Morgan'])
+        self.assertEqual([c['recordSubject']['id'] for c in changes], [staff['id'], staff['id']])
 
     def test_waiting_write_rechecks_session_mfa_status_and_permission(self):
         for statement in (

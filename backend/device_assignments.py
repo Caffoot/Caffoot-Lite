@@ -5,6 +5,7 @@ from datetime import datetime, timezone
 from backend.audit_events import record_actor_event
 from backend.permissions import can_access, feature_enabled
 from backend.sessions import session_account
+from backend.ticket_software import employee_installed_software
 from backend.shared_devices import (current_departments, device_recipient, insert_device_custody,
                                     is_shared_device_type, recipient_audit, SHARED_DEVICE_TYPES)
 
@@ -213,9 +214,11 @@ def assign_devices(connection, actor_id, session_token, payload):
         assigned_at = datetime.now(timezone.utc).isoformat().replace('+00:00', 'Z')
         for device in devices:
             insert_device_custody(connection, device['id'], recipient, departments, assigned_at, actor_id, actor_label)
-            # The general Device audit contains IDs only, never employee names or contacts.
+            # Record the Device name, never the recipient's name or contacts.
+            name = connection.execute('SELECT name FROM inventory_devices WHERE id=?', (device['id'],)).fetchone()[0]
             record_actor_event(connection, actor_id, kind='Device', action='Assigned', label=device['id'],
                 reason='Initial equipment allocation', fields=['Assignment'],
+                subject=('Device', device['id'], name),
                 after={**recipient_audit(payload), 'assignedAt': assigned_at})
         connection.commit()
         return {'assigned': len(devices), 'assignedAt': assigned_at}
@@ -224,10 +227,23 @@ def assign_devices(connection, actor_id, session_token, payload):
         raise
 
 
+def _employee_text(value):
+    return value.strip() if isinstance(value, str) else ''
+
+
+def _employee_operating_system(record):
+    details = record.get('typeDetails')
+    if not isinstance(details, dict):
+        details = {}
+    platform = _employee_text(details.get('softwarePlatform', details.get('os', record.get('os'))))
+    version = _employee_text(details.get('softwareVersion'))
+    return ' '.join(part for part in (platform, version) if part) if platform else ''
+
+
 def my_equipment(connection, actor_id):
     """Resolve the current login link and membership without accepting a client identity."""
     result = {'assignedToMe': [], 'sharedWithMyDepartment': []}
-    staff = connection.execute('SELECT id,department_id FROM staff_members WHERE account_id=?', (actor_id,)).fetchone()
+    staff = connection.execute('SELECT id,department_id FROM staff_members WHERE account_id=? AND active=1', (actor_id,)).fetchone()
     if staff is None:
         return result
     rows = connection.execute('''SELECT a.staff_id,d.id,d.record_json,a.assigned_at
@@ -236,9 +252,14 @@ def my_equipment(connection, actor_id):
             WHERE r.assignment_id=a.id AND r.department_id=? AND r.removed_at IS NULL)) ORDER BY d.name,d.id''', staff) if feature_enabled(connection,'Devices') else []
     for staff_id, device_id, raw, assigned_at in rows:
         record = json.loads(raw)
-        safe = {'id': device_id, 'name': record['name'], 'type': record.get('type', ''),
-                'manufacturer': record.get('manufacturer', ''), 'model': record.get('model', ''),
-                'assignedAt': assigned_at}
+        safe = {'id': device_id, 'name': _employee_text(record['name']),
+                'type': _employee_text(record.get('type')),
+                'manufacturer': _employee_text(record.get('manufacturer')),
+                'model': _employee_text(record.get('model')),
+                'assignedAt': assigned_at, 'equipmentKind': 'Device',
+                'serialNumber': _employee_text(record.get('serialNumber')),
+                'operatingSystem': _employee_operating_system(record),
+                'installedSoftware': employee_installed_software(connection, record)}
         result['assignedToMe' if staff_id == staff[0] else 'sharedWithMyDepartment'].append(safe)
     if feature_enabled(connection,'IT Assets'):
         from backend.stock_circulation import current_stock_issues
@@ -249,7 +270,7 @@ def my_equipment(connection, actor_id):
                 continue
             for issue in current_stock_issues(connection, allow_associated=allow_associated, **filters):
                 original=issue['specification']
-                result[key].append(dict(id='stock-issue-'+str(issue['id']),name=issue['name'],
-                    type=original.get('category',''),manufacturer=original.get('manufacturer',''),
-                    model=original.get('model',''),assignedAt=issue['issuedOn'],quantity=issue['outstanding'],equipmentKind='IT Asset'))
+                result[key].append(dict(id='stock-issue-'+str(issue['id']),name=_employee_text(issue['name']),
+                    type=_employee_text(original.get('category')),manufacturer=_employee_text(original.get('manufacturer')),
+                    model=_employee_text(original.get('model')),assignedAt=issue['issuedOn'],quantity=issue['outstanding'],equipmentKind='IT Asset'))
     return result

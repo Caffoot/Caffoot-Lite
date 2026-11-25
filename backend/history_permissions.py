@@ -5,6 +5,7 @@ changes apply immediately without a schema migration or history rewrite.
 """
 import json
 
+from .audit_events import audit_subject
 from .email_templates import EMAIL_SETTINGS_AUDIT_REASONS
 from .equipment_lifecycle import DEVICE_AUDIT_REASON, FIRST_SERVICE_AUDIT_REASON, SETTINGS_AUDIT_REASON
 from .equipment_suppliers import SUPPLIER_AUDIT_REASON
@@ -152,7 +153,27 @@ def visible_change_history(connection, account_id):
                             continue
                 # Never forward unrecognised historical payload properties.
                 fields = change.get("fields")
+                # Project only explicitly compatible, already authorised
+                # subject types. Device metadata in stock events is withheld
+                # unless the account can read Devices as well.
+                metadata = change.get('recordSubject')
+                compatible = {
+                    'Device': {'Device'}, 'IPAM': {'IPAM', 'Subnet', 'VLAN'},
+                    'Subnet': {'Subnet'}, 'VLAN': {'VLAN'},
+                    'Rack': {'Rack', 'Rack Accessory'},
+                    'Account': {'Account'}, 'Security': {'Account'}, 'Role': {'Role'},
+                    'Settings': {'Settings'},
+                    'IT Assets': {'Stock Item', 'Stock Unit', 'Stock Movement'},
+                    'Suppliers': {'Supplier', 'Supplier Location', 'Supplier Contact',
+                                  'Supplier Note', 'Supplier Issue', 'Supplier Category', 'Supplier Issue Category', 'Supplier Issue Update'},
+                }.get(kind, set())
+                if kind == 'IT Assets' and sections['Devices']:
+                    compatible.add('Device')
+                subject_kind = metadata.get('kind') if isinstance(metadata, dict) else None
+                subject = (audit_subject(subject_kind, metadata.get('id'), metadata.get('name'))
+                           if isinstance(subject_kind, str) and subject_kind in compatible else {})
                 changes.append({
+                    **subject,
                     "kind": kind,
                     "action": change.get("action") if isinstance(change.get("action"), str) else "",
                     "label": change.get("label") if isinstance(change.get("label"), str) else "",

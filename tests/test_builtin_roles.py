@@ -29,7 +29,9 @@ class BuiltinRoleMigrationTests(unittest.TestCase):
         self.db.close()
 
     def snapshot(self):
-        return {name: self.db.execute('SELECT * FROM "' + name + '" ORDER BY rowid').fetchall()
+        # Schema 31 receipts have a composite primary key and no rowid.
+        return {name: self.db.execute('SELECT * FROM "' + name + '" ORDER BY ' +
+                                      ('account_id,message_id' if name == 'service_desk_message_reads' else 'rowid')).fetchall()
                 for name, in self.db.execute("SELECT name FROM sqlite_master WHERE type='table' ORDER BY name")}
 
     def populate_matrix(self):
@@ -84,6 +86,7 @@ class BuiltinRoleMigrationTests(unittest.TestCase):
                     expected_rows = expected_rows + [("supplier_categories", 8), ("supplier_issue_categories", 8)]
                 self.assertEqual(after[table], expected_rows, table)
         self.assertEqual(after["account_password_change_proofs"], [])
+        self.assertEqual(after["service_desk_message_reads"], [])
         for table in ("roles", "role_grants", "account_roles"):
             self.assertEqual([row for row in after[table] if (row[0] if table == "roles" else row[0] if table == "role_grants" else row[1]) != role], before[table], table)
         for account, policy in policies.items():

@@ -62,6 +62,11 @@ def save_feature_setting(connection, account_id, session_token, payload):
             record_actor_event(
                 connection, account_id, kind="Settings", action="Updated",
                 label=feature, reason="Optional feature setting changed",
+                subject=("Settings", "feature:" + feature, {
+                    "devices": "Devices", "ipam": "IPAM", "racks": "Racks",
+                    "suppliers": "Suppliers", "equipment_lifecycle": "Equipment Lifecycle",
+                    "it_assets": "IT Assets",
+                }[feature]),
                 fields=["Enabled"], before={"enabled": bool(row[0])},
                 after={"enabled": enabled},
             )

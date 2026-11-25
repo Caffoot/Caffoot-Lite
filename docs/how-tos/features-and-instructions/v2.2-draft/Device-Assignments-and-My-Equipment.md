@@ -131,7 +131,7 @@ Devices-only handover needs Devices Edit. A Device with recorded stock history a
 
 ## My Equipment
 
-My Equipment is for a person signing in with a login linked to their Staff record. It does not require or grant general inventory or directory rights.
+My Equipment is for a person signing in with a login linked to an active Staff Member. It does not require or grant general inventory or directory rights.
 
 1. Sign in using your own linked login.
 2. Open **My Equipment** at the top of the sidebar, beneath **Workspace** on desktop.
@@ -140,21 +140,22 @@ My Equipment is for a person signing in with a login linked to their Staff recor
 5. Report an incorrect item or quantity to an authorised IT user, using its name and the relevant facts. This personal screen has no Issue, Return, Reassign or Write Off controls.
 6. To ask IT for help with listed equipment, select **Report A Problem** on the item. Confirm the preselected **Device / Asset**. On a Department Device or its associated accessory, read the confidentiality warning before completing **Subject**, **Description** or adding a file. Complete **Ticket Category** and the required fields. Add a permitted file if helpful. Select **Create Ticket** to save, or **Cancel** to return to My Equipment. Follow the saved reference in **My Tickets** for personal equipment or **Department Tickets** for shared equipment. [Full ticket instructions](Service-Desk-Tickets.md#raise-a-support-request)
 
-![Sales employee My Equipment showing a personal laptop and shared printers in separate sections](../../../development-handovers/evidence/stage-6-4/screenshots/my-equipment-desktop-light.png)
+### Find Equipment And Open Details
 
-*The Main Office Printer and its outstanding associated USB cable appear in each eligible Department member’s shared list.* [Capture provenance](../../../development-handovers/evidence/stage-6-4/README.md)
+1. In **Search Equipment**, enter part of a name, type, manufacturer, model or operating system. Use **Equipment Type** or **Equipment Kind** to narrow both tables. **Clear Filters** restores the full list your account can see.
+2. On a narrow screen, scroll each table horizontally to reach **Assigned date**, **Details** and **Report A Problem**.
+3. Select **Details** for an item. Device details can include the serial number and operating system. For a Laptop or Desktop, **Recorded Installed Software** lists eligible application names recorded on that Device. The list describes the saved record and may differ from what is installed today. An IT Asset shows its outstanding quantity where applicable.
+4. Choose **Close** or press Escape to return to the table. **Report A Problem** opens the existing ticket form with the equipment selected. If the assignment changed before you opened Details, the dialogue may say the equipment is no longer available. Reopen My Equipment to refresh the list.
 
-![My Equipment with Report A Problem on personal and Department-shared Devices.](../../../development-handovers/evidence/employee-service-desk/my-equipment-desktop-light.png)
+![My Equipment with the Studio Laptop in Assigned to Me and a printer and its associated cable in Shared with My Department.](../../../development-handovers/evidence/stage-6-6-batch-2/screenshots/my-equipment-desktop-light.png)
 
-*The action opens Create Ticket with the equipment already selected.* [Capture details](../../../development-handovers/evidence/employee-service-desk/README.md)
+*The two sections show current custody. The cable quantity is the outstanding quantity.*
 
-![My Equipment in dark mode showing a fictional person's three outstanding mice separately from one Department-shared dock](../../../development-handovers/evidence/stock-circulation/screenshots/my-equipment-dark-1440.png)
+![Studio Laptop Details in mobile dark mode showing recorded hardware, serial number and Microsoft Teams.](../../../development-handovers/evidence/stage-6-6-batch-2/screenshots/equipment-details-mobile-dark.png)
 
-*Approved Batch 3.8 application capture with fictional data. The two sections keep personal and shared assignments distinct. Quantities show what is still outstanding, rather than the original issued quantity.*
+*The dialogue shows the fields this account can see. Network configuration, licence keys, credentials, private notes, stock totals and former holders are excluded.* [Desktop and mobile captures and provenance](../../../development-handovers/evidence/stage-6-6-batch-2/README.md#application-screenshots)
 
-The limited view shows equipment name, type, manufacturer, model and assignment date, plus outstanding quantity for IT Assets. General network configuration, credentials, private notes, former holders, other people's history, stock totals and administration controls are excluded.
-
-On each request, the server derives the Staff link and current Department from the signed-in account. You cannot choose another person's identity or another Department. Without a Department there is no Department-shared list to populate; without a linked login a Staff record provides no self-service access.
+The server checks the active Staff link and current custody on every request. Without a current Department there is no Department-shared list. An inactive or unlinked Staff record gives no self-service equipment visibility. Authorised IT staff can still resolve outstanding assignments. A current Department member can see equipment still shared with their archived Department until an authorised change ends that relationship.
 
 Devices and IT Assets obey independent feature switches. Disabling one hides its equipment and blocks its protected actions while preserving saved relationships. Ordinary baseline Staff access therefore exposes personal/shared equipment without opening the organisation's inventory pages.
 
@@ -164,7 +165,7 @@ This example is fictional. **Priya Shah** in Accounts holds one laptop and two q
 
 IT records one adapter's actual return. Priya's next My Equipment request shows one outstanding adapter, rather than the original two. If Priya moves to Sales, the Accounts printer disappears from the shared list. The remaining adapter and laptop stay personally assigned to Priya, and the printer remains assigned to Accounts. Nothing is duplicated or physically returned by the membership change.
 
-Marking Priya Inactive retains the outstanding assignments. It does not disable her login or return equipment. Administrators handle login access separately, and IT resolves equipment through actual return, write-off or handover workflows.
+Marking Priya Inactive removes her self-service equipment visibility and retains the outstanding assignments for authorised IT staff. Her login status is managed separately. Administrators handle login access separately, and IT resolves equipment through actual return, write-off or handover workflows.
 
 ## Troubleshooting And Recovery
 
@@ -175,7 +176,7 @@ Marking Priya Inactive retains the outstanding assignments. It does not disable 
 | Confirmation reports a changed/edited Device | No selected assignment was saved. Refresh choices after the other edit finishes and review the whole selection. |
 | A recipient is missing | Check Active Staff/non-archived Department status. Equipment eligibility and login availability are separate. |
 | Reassign Device or Reissue Existing Device is unavailable | Review required rights, actual custody/readiness and unresolved Associated Equipment, including earlier holders' history. |
-| My Equipment is empty | Check the correct login/Staff link, actual assignments and feature switches. A Staff record alone creates no assignment. |
+| My Equipment is empty | Check that the login is linked to an active Staff Member, then check current assignments and feature switches. A Staff record alone creates no assignment. |
 | Shared equipment changes after a transfer | It follows current Department membership. Verify membership rather than creating duplicate personal assignments to restore former visibility. |
 | A request loses its response | Reopen current assignment and history to establish the saved state before repeating an action. |
 

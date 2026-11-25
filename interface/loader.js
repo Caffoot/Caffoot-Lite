@@ -8,6 +8,7 @@ window.caffootSessionRedirectPending = false;
 function returnToExistingSignIn() {
     if (window.caffootSessionRedirectPending) return;
     window.caffootSessionRedirectPending = true;
+    window.caffootServiceDesk?.stopUnread();
     window.location.replace('/setup#session-ended');
 }
 window.fetch = async (...args) => {

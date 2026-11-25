@@ -117,7 +117,7 @@ with sqlite3.connect('/data/caffoot.sqlite3') as db:
                 "import hashlib,pathlib; p=pathlib.Path('/data/account-email-secret.key'); "
                 "assert p.stat().st_mode&0o777==0o600; print(hashlib.sha256(p.read_bytes()).hexdigest())")
             schema_version = inside(schema_check)
-            self.assertEqual(schema_version, "30")
+            self.assertEqual(schema_version, "31")
             run("restart", "caffoot-lite")
             self.assertEqual(fingerprint, inside(
                 "import hashlib,pathlib; print(hashlib.sha256(pathlib.Path('/data/tls/server.crt').read_bytes()).hexdigest())"))

@@ -96,6 +96,7 @@ def register_stock_device(connection, actor, token, payload):
             dict(operationHash=digest, result=result, deviceId=record['id']))
         record_actor_event(connection, actor, kind='IT Assets', action='Registered',
             label=record['id'], reason='Registered Device from Ready stock',
+            subject=('Device', record['id'], record['name']),
             fields=['Stock Movement'], after=dict(stockItemId=item['id'], deviceId=record['id'], movementId=movement))
         connection.commit()
         return result
@@ -154,6 +155,7 @@ def reissue_stock_device(connection, actor, token, payload):
         assignment = insert_device_custody(connection, device_id, recipient, departments, issued, actor, actor_label)
         record_actor_event(connection, actor, kind='Device', action='Assigned', label=device_id,
             reason='Reissued equipment', fields=['Assignment'],
+            subject=('Device', device_id, choice['name']),
             after=dict(**recipient_audit(payload), assignedAt=issued))
         if len(departments) > 1:
             recipient = custody_stock_recipient(assignment)

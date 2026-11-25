@@ -24,6 +24,18 @@ USERS_APPROVED_RULES = b"""#staff-password-reset .modal-warning{margin-top:14px}
 """
 
 
+# #458 appends exactly these five reviewed rules to the pinned Audit Trail CSS.
+AUDIT_APPROVED_RULES = b"""
+/* #458: approved affected-record identity block in the existing dialog. */
+.audit-modal .identity-grid { margin:0; display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; padding:15px; border:1px solid var(--line); border-radius:10px; }
+.audit-modal .identity-grid dt { display:block; font-size:10px; color:var(--muted); margin-bottom:6px; }
+.audit-modal .identity-grid dd { margin:0; font-size:12px; font-weight:650; overflow-wrap:anywhere; }
+@media(max-width:730px) { .audit-modal .identity-grid { grid-template-columns:1fr; } }
+
+.audit-screen #activity-results tr[hidden] { display:none!important; }
+"""
+
+
 class ModularInterfaceTests(unittest.TestCase):
     def test_every_design_stylesheet_is_the_exact_pinned_source(self):
         sources=json.loads((ROOT/'interface/design-sources.json').read_text())
@@ -43,6 +55,9 @@ class ModularInterfaceTests(unittest.TestCase):
                     end = start + len(USERS_APPROVED_RULES)
                     self.assertEqual(actual[start:end], USERS_APPROVED_RULES)
                     actual = actual[:start] + actual[end:]
+                elif source['screen']=='audit-trail':
+                    self.assertEqual(actual[len(expected):], AUDIT_APPROVED_RULES)
+                    actual = actual[:len(expected)]
                 self.assertEqual(actual,expected)
                 self.assertEqual(hashlib.sha256(actual).hexdigest(),source['cssSha256'])
 

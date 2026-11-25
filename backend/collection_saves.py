@@ -1,6 +1,6 @@
 """Transactional inventory collection changes for published IPAM and Racks workflows."""
 import json
-from .audit_events import attribute_event, safe_inventory_differences
+from .audit_events import attribute_event, safe_inventory_differences, audit_subject
 import time
 from datetime import datetime, timezone
 
@@ -99,6 +99,7 @@ def change_inventory_record(connection, account_id, collection, record_id, recor
                      "reason": "Inventory saved",
                      "changes": [{"action": action, "kind": kind,
                                   "label": label, "fields": fields,
+                                  **audit_subject({"subnets":"Subnet", "vlans":"VLAN", "racks":"Rack", "rackAccessories":"Rack Accessory"}[collection], record_id, (record or existing).get("name")),
                                   **safe_inventory_differences(existing, record, collection)}],
                      "omitted": 0}
             connection.execute(
@@ -224,6 +225,7 @@ def change_ipam_subnet_and_vlan_records(connection, account_id, changes):
             action = "Created" if existing is None else "Deleted" if record is None else "Updated"
             changed.append({"action": action, "kind": kind,
                             "label": str((record or existing).get("name") or identifier)[:100],
+                            **audit_subject({"subnets":"Subnet", "vlans":"VLAN"}[collection], identifier, (record or existing).get("name")),
                             "fields": [],
                             **safe_inventory_differences(existing, record, collection)})
         if changed:
@@ -355,15 +357,18 @@ def delete_subnet_with_dependencies(connection, account_id, subnet_id,
             connection.execute("DELETE FROM inventory_vlans WHERE id=?", (linked[0]["id"],))
         changes = [{"action": "Updated", "kind": "Device",
                     "label": str(d["name"])[:100],
+                    **audit_subject("Device", d["id"], d["name"]),
                     "fields": ["previousPrimaryIp", "primaryIp"]} for d in devices]
         changes.extend({"action": "Deleted", "kind": "IPAM",
-                        "label": ip, "fields": []} for ip in ips)
+                        "label": ip, **audit_subject("IPAM", ip, ip), "fields": []} for ip in ips)
         changes.append({"action": "Deleted", "kind": "IPAM",
                         "label": str(subnet.get("name") or subnet_id)[:100],
+                        **audit_subject("Subnet", subnet_id, subnet.get("name")),
                         "fields": []})
         if linked:
             changes.append({"action": "Deleted", "kind": "IPAM",
                             "label": str(linked[0].get("name") or linked[0]["id"])[:100],
+                            **audit_subject("VLAN", linked[0]["id"], linked[0].get("name")),
                             "fields": []})
         event = {"at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
                  "reason": "Inventory saved", "changes": changes[:60],
@@ -446,6 +451,7 @@ def remove_linked_rack_shelf(connection, account_id, shelf_id, expected_shelf, d
             fields = [key for key in dict.fromkeys((*previous, *record))
                       if previous.get(key) != record.get(key)]
             changes.append({"action": "Updated", "kind": "Device", "label": str(record["name"])[:100],
+                            **audit_subject("Device", record["id"], record["name"]),
                             "fields": fields, **safe_device_differences(previous, record)})
         state["devices"] = [updates.get(d["id"], d) for d in state["devices"]]
         state["rackAccessories"] = [a for a in state["rackAccessories"] if a["id"] != shelf_id]
@@ -465,6 +471,7 @@ def remove_linked_rack_shelf(connection, account_id, shelf_id, expected_shelf, d
         rack = next((r for r in state["racks"] if r["id"] == shelf.get("rackId")), {})
         former_location = f"{rack.get('name') or shelf.get('rackId')} · Shelf U{shelf.get('startU')} ({str(shelf.get('face')).title()})"
         changes.append({"action": "Deleted", "kind": "Rack", "label": former_location[:100],
+                        **audit_subject("Rack Accessory", shelf_id, former_location),
                         "fields": ["rackShelfAccessoryId", "rackId", "startU", "face"],
                         **safe_inventory_differences(shelf, {}, "rackAccessories")})
         # Keep every affected device in the existing bounded history representation.

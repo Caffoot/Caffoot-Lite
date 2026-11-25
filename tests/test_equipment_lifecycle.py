@@ -93,8 +93,10 @@ class EquipmentLifecycleTests(unittest.TestCase):
         with self.assertRaises(FileExistsError):
             save_lifecycle_settings(self.db, 1, self.token, payload)
         audit = visible_change_history(self.db, 1)
-        self.assertTrue(any(change.get('after', {}).get('Warranty Expiry Warning Period') == 0
-                            for event in audit for change in event['changes']))
+        warning, = (change for event in audit for change in event['changes']
+                    if change.get('after', {}).get('Warranty Expiry Warning Period') == 0)
+        self.assertEqual(warning['recordSubject'], {'kind': 'Settings',
+                         'id': 'equipment-lifecycle:warning-periods', 'name': 'Warning Periods'})
 
     def test_device_validation_permissions_override_and_disabled_projection(self):
         self.setup_devices()

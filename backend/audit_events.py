@@ -111,8 +111,32 @@ def attribute_event(connection, account_id, event):
     }
 
 
+def audit_subject(kind, identity, name):
+    """Capture only a caller's explicit, bounded event-time subject fields.
+
+    Identity is not proof that a record survived deletion, import or reset.
+    The original audit label remains unchanged.
+    """
+    if not isinstance(kind, str) or kind not in (
+            'Staff Member', 'Department', 'Device', 'Account', 'Role', 'Settings',
+            'Subnet', 'VLAN', 'Rack', 'Rack Accessory', 'IPAM', 'Stock Item',
+            'Stock Unit', 'Stock Movement', 'Supplier', 'Supplier Location',
+            'Supplier Contact', 'Supplier Note', 'Supplier Issue', 'Supplier Category', 'Supplier Issue Category', 'Supplier Issue Update'):
+        return {}
+    if type(identity) is int and 0 < identity <= 2**63-1:
+        identity = str(identity)
+    if (not isinstance(identity, str) or not identity.strip() or
+            _safe_audit_value(identity) is _UNSAFE):
+        return {}
+    subject = {'kind': kind, 'id': identity}
+    if isinstance(name, str) and name.strip() and _safe_audit_value(name) is not _UNSAFE:
+        subject['name'] = name
+    return {'recordSubject': subject}
+
+
 def record_actor_event(connection, actor_id, *, kind, action, label,
-                       reason, fields=(), before=None, after=None, confirmation_id=None):
+                       reason, fields=(), before=None, after=None, confirmation_id=None,
+                       subject=None):
     """Append one sanitised, attributable security/account event.
 
     Call only inside an already-authorised mutation transaction. Passing
@@ -123,6 +147,8 @@ def record_actor_event(connection, actor_id, *, kind, action, label,
         "kind": str(kind), "action": str(action),
         "label": str(label), "fields": list(fields),
     }
+    if subject is not None:
+        change.update(audit_subject(*subject))
     if before is not None:
         change["before"] = before
     if after is not None:

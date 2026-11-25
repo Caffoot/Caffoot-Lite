@@ -71,6 +71,7 @@ def create_user_in_transaction(connection, actor_id, username, password, profile
     record_actor_event(
         connection, actor_id, kind="Account", action="Created",
         label=username.strip(), reason="Account created",
+        subject=("Account", account_id, username.strip()),
         fields=["Account"] + (["Personal details"] if details is not None else []))
     return account_id
 
@@ -135,6 +136,7 @@ def set_account_active(connection, actor_id, target_id, active):
             record_actor_event(
                 connection, actor_id, kind="Account", action="Updated",
                 label=target_name, reason="Account status changed",
+                subject=("Account", target_id, target_name),
                 fields=["Account status"],
                 before={"Account status": "Active" if target_active else "Disabled"},
                 after={"Account status": "Active" if active else "Disabled"},
@@ -167,10 +169,12 @@ def delete_user(connection, actor_id, target_id):
         record_actor_event(
             connection, actor_id, kind="Account", action="Deleted",
             label=target_name, reason="Account deleted", fields=["Account"],
+            subject=("Account", target_id, target_name),
         )
         if staff:
             record_actor_event(connection, actor_id, kind="Staff Member", action="Updated",
-                               label=staff['id'], reason="Caffoot login removed", fields=["Caffoot Login"])
+                               label=staff['id'], reason="Caffoot login removed", fields=["Caffoot Login"],
+                               subject=("Staff Member", staff["id"], " ".join(filter(None, (staff["firstName"], staff["lastName"])))))
         connection.commit()
     except BaseException:
         connection.rollback()
@@ -217,6 +221,7 @@ def set_administrator(connection, actor_id, target_id, is_admin, *, session_toke
             record_actor_event(
                 connection, actor_id, kind="Account", action="Updated",
                 label=target_name, reason="Administrator role changed",
+                subject=("Account", target_id, target_name),
                 fields=["Administrator role"],
                 before={"Administrator role": "Administrator" if target_admin else "User"},
                 after={"Administrator role": "Administrator" if is_admin else "User"},
@@ -248,6 +253,7 @@ def reset_user_password(connection, actor_id, session_token, target_id, password
         connection.execute("DELETE FROM account_password_change_proofs WHERE account_id=?", (target_id,))
         record_actor_event(connection, actor_id, kind="Security", action="Updated", label=username,
                            reason="Administrator reset a password", fields=["Password", "Mandatory password change"],
+                           subject=("Account", target_id, username),
                            after={"Account ID": target_id, "Mandatory password change": True})
         connection.commit()
         return bool(target_active)

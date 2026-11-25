@@ -130,8 +130,21 @@ class DeviceAssignmentTests(unittest.TestCase):
         result = my_equipment(self.db, 3)
         self.assertEqual([d['id'] for d in result['assignedToMe']], ['one'])
         self.assertEqual([d['id'] for d in result['sharedWithMyDepartment']], ['two'])
-        self.assertEqual(set(result['assignedToMe'][0]), {'id','name','type','manufacturer','model','assignedAt'})
+        self.assertEqual(set(result['assignedToMe'][0]), {
+            'id', 'name', 'type', 'manufacturer', 'model', 'assignedAt',
+            'equipmentKind', 'serialNumber', 'operatingSystem', 'installedSoftware',
+        })
         self.assertNotIn('PRIVATE', json.dumps(result))
+        # Archived Departments retain current relationships and eligible access.
+        self.department({'archived': True}, department_id=self.dept)
+        self.assertEqual(my_equipment(self.db, 3), result)
+        # Inactive Staff lose employee visibility, not their assigned equipment.
+        self.staff({'active': False}, staff_id=self.person)
+        self.assertEqual(my_equipment(self.db, 3), {'assignedToMe': [], 'sharedWithMyDepartment': []})
+        self.assertEqual(len(read_assignments(self.db, 1, staff_id=self.person)['current']), 1)
+        self.assertEqual(len(read_assignments(self.db, 1, department_id=self.dept)['current']), 1)
+        self.staff({'active': True}, staff_id=self.person)
+        self.assertEqual(my_equipment(self.db, 3), result)
         self.staff({'departmentId': None}, staff_id=self.person)
         self.assertEqual(my_equipment(self.db, 3)['sharedWithMyDepartment'], [])
         self.db.execute("UPDATE organisation_features SET enabled=0 WHERE feature='devices'")
@@ -139,6 +152,42 @@ class DeviceAssignmentTests(unittest.TestCase):
         self.assertEqual(my_equipment(self.db, 3), {'assignedToMe': [], 'sharedWithMyDepartment': []})
         with self.assertRaises(PermissionError):
             read_assignments(self.db, 1, staff_id=self.person)
+
+    def test_employee_projection_only_discloses_named_recorded_fields(self):
+        from backend.ticket_software import ticket_software_choices
+        self.db.execute('UPDATE staff_members SET account_id=3,department_id=? WHERE id=?',
+                        (self.dept, self.person))
+        record = json.loads(self.db.execute(
+            "SELECT record_json FROM inventory_devices WHERE id='one'").fetchone()[0])
+        record.update(manufacturer='Example', model='Model 1', serialNumber='DEMO-001',
+                      macAddress='PRIVATE MAC', os='Old OS')
+        record['typeDetails'].update(softwarePlatform='Windows', softwareVersion='11 Pro',
+            windowsLicence='PRIVATE LICENCE', MicrosoftOffice=True, catalogSoftware_google_chrome=True,
+            customSoftware_demo=True, customSoftware_PRIVATE_ORPHAN=True,
+            customSoftware_false=False, customSoftware_string='true', password=True)
+        self.db.execute("UPDATE inventory_devices SET record_json=? WHERE id='one'", (json.dumps(record),))
+        self.db.execute("INSERT OR REPLACE INTO inventory_settings(key,value_json) VALUES('installedSoftware',?)",
+                        (json.dumps([{'key': 'customSoftware_demo', 'label': 'Example Application'},
+                                     {'key': 'customSoftware_false', 'label': 'Not Installed'},
+                                     {'key': 'customSoftware_string', 'label': 'Not Boolean'},
+                                     {'key': 'password', 'label': 'PRIVATE FIELD'}]),))
+        self.db.commit()
+        self.allocate()
+        result = my_equipment(self.db, 3)
+        item = result['assignedToMe'][0]
+        self.assertEqual(item['operatingSystem'], 'Windows 11 Pro')
+        self.assertEqual(item['serialNumber'], 'DEMO-001')
+        self.assertEqual(item['installedSoftware'], ['Example Application', 'Google Chrome', 'Microsoft Office'])
+        self.assertNotIn('PRIVATE', json.dumps(result))
+        self.assertEqual(my_equipment(self.db, 2), {'assignedToMe': [], 'sharedWithMyDepartment': []})
+        # The existing ticket picker keeps its historical fallback and Other option.
+        choices = ticket_software_choices(self.db, 'one')
+        self.assertIn('customSoftware_PRIVATE_ORPHAN', [choice['key'] for choice in choices])
+        self.assertEqual(choices[-1]['key'], 'other')
+        record['typeDetails'] = {'os': 'Recorded legacy OS'}
+        self.db.execute("UPDATE inventory_devices SET record_json=? WHERE id='one'", (json.dumps(record),))
+        self.assertEqual(my_equipment(self.db, 3)['assignedToMe'][0]['operatingSystem'], 'Recorded legacy OS')
+        self.assertEqual(my_equipment(self.db, 3)['assignedToMe'][0]['installedSoftware'], [])
 
     def test_history_cannot_be_orphaned_or_rewritten(self):
         self.allocate()

@@ -76,9 +76,11 @@ def link_device_to_ipam(connection, account_id, session_token, payload):
                            (ip,json.dumps(allocation,ensure_ascii=False,allow_nan=False)))
         record_actor_event(connection, account_id, kind='Device', action='Updated', label=device['name'],
                            reason='Device linked to IPAM', fields=['Primary IP Mode'],
+                           subject=('Device', device['id'], device['name']),
                            before={'primaryIpMode':'basic'}, after={'primaryIpMode':'managed'})
         record_actor_event(connection, account_id, kind='IPAM', action='Updated', label=ip,
-                           reason='Device linked to IPAM', fields=['deviceId','status'])
+                           reason='Device linked to IPAM', fields=['deviceId','status'],
+                           subject=('IPAM', ip, ip))
         connection.commit()
         return {'revision':payload['revision']+1}
     except BaseException:

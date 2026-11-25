@@ -37,9 +37,41 @@
 .equipment-dialog .assignment-modal-actions{display:flex;justify-content:flex-end;gap:9px;padding:16px 22px;border-top:1px solid var(--line)}
 @media(max-width:650px){.equipment-staff .staff-assign-table{overflow-x:auto}.equipment-staff .staff-assign-table table{min-width:610px}.equipment-staff .staff-assignment-top{padding:14px}.equipment-staff .staff-assignment-top + .staff-assignment-tip{margin-left:14px;margin-right:14px}.equipment-staff .staff-detail-card{padding:15px}}
 
-.my-equipment .info-row{flex-wrap:wrap}
-.my-equipment .info-row>*{min-width:0;overflow-wrap:anywhere}
-.my-equipment .info-row>[data-ticket-report-equipment]{margin-inline-start:auto}
+.my-equipment{min-width:0;container-type:inline-size}
+.my-equipment .device-filters{grid-template-columns:repeat(2,minmax(0,1fr))}
+.my-equipment .device-table-card{min-width:0;max-width:100%}
+.my-equipment .device-table{min-width:890px;font-size:13px}
+.my-equipment .device-table td{overflow-wrap:anywhere}
+.my-equipment .device-name{font-size:13.5px}
+.my-equipment .device-actions{white-space:nowrap}
+.my-equipment .device-action-details{padding:9px 12px;font-size:12px}
+.my-equipment .device-empty{padding:30px 22px;font-size:13px;line-height:1.6}
+.my-equipment .device-empty strong{font-size:15px;margin-bottom:5px}
+.my-equipment-actions-heading{text-align:right}
+.my-equipment-date{white-space:nowrap}
+.my-equipment-scroll-tip{display:none;margin:8px 0;color:var(--muted);font-size:11px}
+.my-equipment-error{margin-top:15px;padding:12px 14px;border:1px solid #c98778;border-radius:10px;color:var(--ink);background:var(--white)}
+.my-equipment-details{position:fixed;inset:0;margin:auto;width:min(680px,calc(100% - 36px));max-height:calc(100dvh - 36px);overflow:auto;border:1px solid var(--line);border-radius:15px;padding:0;color:var(--ink);background:var(--white);box-shadow:0 30px 80px #0003}
+.my-equipment-details::backdrop{background:#10253dbb}
+.my-equipment-detail-head{padding:20px 22px;border-bottom:1px solid var(--line);display:flex;align-items:start;justify-content:space-between;gap:12px}
+.my-equipment-detail-head h2{font-size:21px;color:var(--ink);margin:0 0 5px;overflow-wrap:anywhere}
+.my-equipment-detail-head p{color:var(--muted);font-size:12px;line-height:1.6}
+.my-equipment-detail-body{padding:19px 22px;display:grid;gap:18px}
+.my-equipment-facts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:17px 24px;margin:0}
+.my-equipment-facts div{min-width:0}
+.my-equipment-facts dt{font-size:12px;font-weight:700;color:var(--muted);margin-bottom:5px}
+.my-equipment-facts dd{font-size:14px;color:var(--ink);overflow-wrap:anywhere;font-weight:650}
+.my-equipment-software{border-top:1px solid var(--line);padding-top:18px}
+.my-equipment-software h3{font-size:15px;margin-bottom:6px;color:var(--ink)}
+.my-equipment-software p{font-size:12px;color:var(--muted);line-height:1.6}
+.my-equipment-software ul{list-style:none;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 16px;padding:0;margin:14px 0 0}
+.my-equipment-software li{display:flex;align-items:start;gap:8px;overflow-wrap:anywhere;min-width:0}
+.my-equipment-software li svg{width:16px;height:16px;color:var(--muted);flex:none}
+.my-equipment-detail-actions{display:flex;justify-content:flex-end;gap:9px;padding:16px 22px;border-top:1px solid var(--line);flex-wrap:wrap}
+.my-equipment-detail-actions span:empty{display:none}
+@container (max-width:1150px){.my-equipment-scroll-tip:not([hidden]){display:block}}
+@container (max-width:720px){.my-equipment .device-filters{grid-template-columns:1fr}}
+@media(max-width:520px){.my-equipment-facts,.my-equipment-software ul{grid-template-columns:1fr}.my-equipment-detail-head,.my-equipment-detail-body{padding:17px}.my-equipment-detail-actions{padding:14px 17px}.my-equipment-detail-actions>*,.my-equipment-detail-actions span .btn{flex:1;width:100%}}
 
 .device-details-dialog .small-table{min-width:520px}
 

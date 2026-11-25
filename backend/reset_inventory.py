@@ -4,7 +4,7 @@ from datetime import datetime, timezone
 import json
 
 from .application_integrity import validate_detached_application_state
-from .audit_events import attribute_event
+from .audit_events import attribute_event, audit_subject
 from .equipment_lifecycle_schema import seed_equipment_lifecycle_defaults
 from .inventory import _write_detached, reconstruct_inventory
 from .normalisation_pipeline import PUBLISHED_DEFAULTS
@@ -119,11 +119,13 @@ def reset_inventory(connection, account_id):
                 changes.append({
                     "action": "Deleted", "kind": kind,
                     "label": str(record.get(label_key) or record["id"])[:100],
+                    **audit_subject(kind, record["id"], record.get("name") or record.get(label_key)),
                     "fields": []
                 })
         for ip in current["ipAllocations"]:
             changes.append({
                 "action": "Deleted", "kind": "IPAM", "label": ip,
+                **audit_subject("IPAM", ip, ip),
                 "fields": []
             })
         for key, kind in (("deviceTypes", "Device types"),

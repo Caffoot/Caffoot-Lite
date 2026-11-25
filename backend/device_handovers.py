@@ -105,6 +105,7 @@ def reassign_device(connection, actor_id, token, payload):
                       assignmentId=next_id, handedOverOn=happened)
         record_actor_event(connection, actor_id, kind='Device', action='Reassigned', label=source['deviceId'],
             reason='Direct Device reassignment after confirmed preparation', fields=['Assignment', 'Preparation'],
+            subject=('Device', source['deviceId'], source['name']),
             confirmation_id=key, after=dict(operationHash=digest, result=result,
                 deviceId=source['deviceId'], previousAssignmentId=source['deviceAssignmentId'], assignmentId=next_id,
                 **recipient_audit(payload), endedAt=ended,

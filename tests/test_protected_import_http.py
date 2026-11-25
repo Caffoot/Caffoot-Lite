@@ -88,7 +88,10 @@ class ProtectedImportHttpTests(unittest.TestCase):
             names = [name for name, in db.execute("SELECT name FROM sqlite_schema WHERE type='table'")
                      if (not name.startswith('inventory_') or name == 'inventory_change_history')
                      and name != 'device_edit_reservations']
-            return {name: db.execute(f'SELECT * FROM {name} ORDER BY rowid').fetchall() for name in names}
+            # Receipts are WITHOUT ROWID; retain the complete snapshot.
+            return {name: db.execute(f'SELECT * FROM {name} ORDER BY ' +
+                                     ('account_id,message_id' if name == 'service_desk_message_reads' else 'rowid')).fetchall()
+                    for name in names}
 
     def test_identical_protected_devices_retain_rows_with_features_disabled(self):
         source, ticket, attachment = self.operational_fixture()

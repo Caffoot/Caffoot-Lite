@@ -297,11 +297,15 @@ def confirm_role_change(connection, actor_id, session_token, action, proof, *, n
         # authenticator secrets and the confirmation proof are never recorded.
         label = (action.get("roleKey") or previous["roleKey"]) if action["type"].startswith("role.") else fresh["users"][0]["username"]
         after = _audit_role_value(connection, action) if action["type"].startswith("role.") else fresh["users"][0]["after"]
-        record_actor_event(connection, actor_id, kind="Role" if action["type"].startswith("role.") else "Account",
+        role_change = action["type"].startswith("role.")
+        role_subject = after or previous if role_change else None
+        subject = (("Role", role_subject["id"], role_subject["name"]) if role_change else
+                   ("Account", fresh["users"][0]["userId"], fresh["users"][0]["username"]))
+        record_actor_event(connection, actor_id, kind="Role" if role_change else "Account",
                            action={"role.create": "Created", "role.delete": "Deleted"}.get(action["type"], "Updated"),
                            label=label, reason="Roles or individual permissions changed", fields=["Roles and permissions"],
                            before={"Roles and permissions": previous}, after={"Roles and permissions": after},
-                           confirmation_id=proof["confirmationId"])
+                           confirmation_id=proof["confirmationId"], subject=subject)
         for user in fresh["users"]:
             if user["revokeSessions"] or user["before"]["sections"] != user["after"]["sections"]:
                 revoke_password_change_proof(connection, user["userId"])

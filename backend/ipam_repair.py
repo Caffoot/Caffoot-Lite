@@ -1,6 +1,6 @@
 """Published safe IPAM integrity repair, applied to central SQLite."""
 import json
-from .audit_events import attribute_event
+from .audit_events import attribute_event, audit_subject
 import time
 from datetime import datetime, timezone
 
@@ -87,7 +87,8 @@ def apply_ipam_repairs(connection, account_id, expected_fixes):
                        if existing.get(key) != updated.get(key)][:16]
                       if existing else [])
             changes.append({
-                "action": action, "kind": "IPAM", "label": ip, "fields": fields
+                "action": action, "kind": "IPAM", "label": ip, "fields": fields,
+                **audit_subject("IPAM", ip, ip)
             })
         validate_normalisation_devices(state)
         errors = validate_detached_application_state(state)

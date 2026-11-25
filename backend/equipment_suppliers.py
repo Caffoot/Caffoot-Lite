@@ -67,6 +67,7 @@ def write_device_supplier(connection, actor, device_id, label, supplier_id, supp
         )
     record_actor_event(connection, actor, kind="Device", action="Updated", label=label[:100],
                        reason=SUPPLIER_AUDIT_REASON, fields=["Supplier"],
+                       subject=("Device", device_id, label),
                        before={"deviceId": device_id, "supplierId": previous[0], "supplierText": previous[1]},
                        after={"deviceId": device_id, "supplierId": supplier_id, "supplierText": supplier_text})
 
@@ -108,6 +109,7 @@ def write_receipt_supplier(connection, actor, receipt_id, supplier_id, previous=
     )
     record_actor_event(connection, actor, kind="IT Assets", action="Updated", label=f"Receipt #{receipt_id}",
                        reason=SUPPLIER_AUDIT_REASON, fields=["Supplier"],
+                       subject=("Stock Movement", receipt_id, f"Receipt #{receipt_id}"),
                        before={"movementId": receipt_id, "supplierId": previous},
                        after={"movementId": receipt_id, "supplierId": supplier_id})
 
