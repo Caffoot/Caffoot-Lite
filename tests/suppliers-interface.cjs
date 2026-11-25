@@ -119,8 +119,11 @@ with sqlite3.connect(sys.argv[1]) as db:
   }
   await settings();
   assert.equal(await supplierNav.isVisible(), false);
-  assert.equal(await page.locator('#optional-feature-equipment-lifecycle').count(), 0);
+  const lifecycleFeature = page.locator('#optional-feature-equipment-lifecycle');
+  assert.equal(await lifecycleFeature.count(), 1, 'Equipment Lifecycle has its own enable switch');
+  assert.equal(await lifecycleFeature.isChecked(), false, 'Equipment Lifecycle starts disabled');
   await toggleFeature(true);
+  assert.equal(await lifecycleFeature.isChecked(), false, 'Enabling Supplier Management leaves Equipment Lifecycle disabled');
   const purchasingNav = button('Purchasing');
   const itToggle = page.locator('#sidebar [data-group="it"]');
   const purchasingToggle = page.locator('#sidebar [data-group="purchasing"]');
