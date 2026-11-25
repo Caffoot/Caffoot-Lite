@@ -36,7 +36,14 @@ async function captureThemes(page, name, target) {
     await target.scrollIntoViewIfNeeded();
     assert.ok(await target.isVisible());
     assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
-    if (screenshots) await page.screenshot({path: path.join(screenshots, `${name}-${theme}-${width}.png`)});
+    if (screenshots) {
+      await page.waitForFunction(() => {
+        const toast = document.getElementById('toast');
+        return !toast || getComputedStyle(toast).opacity === '0';
+      });
+      await page.evaluate(() => document.fonts.ready.then(() => undefined));
+      await page.screenshot({path: path.join(screenshots, `${name}-${theme}-${width}.png`)});
+    }
   }
   await page.setViewportSize({width: 1440, height: 960});
   await page.emulateMedia({colorScheme: 'light'});

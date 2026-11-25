@@ -14,7 +14,7 @@ import time
 from backend.audit_events import record_actor_event
 from backend.permissions import _admin, _target, feature_enabled
 from backend import role_policy
-from backend.sessions import session_account
+from backend.sessions import revoke_password_change_proof, session_account
 
 CONFIRMATION_SECONDS = 5 * 60
 _CONFIRMATION_SECRET = secrets.token_bytes(32)
@@ -304,7 +304,7 @@ def confirm_role_change(connection, actor_id, session_token, action, proof, *, n
                            confirmation_id=proof["confirmationId"])
         for user in fresh["users"]:
             if user["revokeSessions"] or user["before"]["sections"] != user["after"]["sections"]:
-                connection.execute("DELETE FROM account_password_change_proofs WHERE account_id=?", (user["userId"],))
+                revoke_password_change_proof(connection, user["userId"])
             if user["revokeSessions"]:
                 connection.execute("DELETE FROM account_sessions WHERE account_id=?", (user["userId"],))
                 connection.execute("DELETE FROM account_email_proofs WHERE account_id=?", (user["userId"],))

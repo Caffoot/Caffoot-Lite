@@ -323,6 +323,9 @@ def _initialise_database(connection):
                 )
             """)
             connection.execute("INSERT INTO schema_migrations(version) VALUES(30)")
+        elif SCHEMA_VERSION >= 30:
+            connection.execute("SELECT must_change_password FROM accounts LIMIT 0")
+            connection.execute("SELECT token_hash,account_state,expires_at FROM account_password_change_proofs LIMIT 0")
         connection.commit()
     except BaseException:
         connection.rollback()

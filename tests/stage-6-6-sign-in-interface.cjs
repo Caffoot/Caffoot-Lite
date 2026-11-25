@@ -27,6 +27,17 @@ async function submitCredentials(page, username, enteredPassword = password) {
   await page.locator('#submit').click();
 }
 
+async function waitForPermissionRequest(requested) {
+  let timer;
+  try {
+    await Promise.race([requested, new Promise((_, reject) => {
+      timer = setTimeout(() => reject(new Error('Expected a permission request')), 15000);
+    })]);
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
 async function holdResponse(context, url, {fail = false} = {}) {
   let permit, started;
   const release = new Promise(resolve => { permit = resolve; });
@@ -112,7 +123,7 @@ print(secret)
   };
   const staffPermissions = await holdWorkspaceSession('/account');
   await submitCredentials(page, 'jamie.taylor');
-  await staffPermissions.requested;
+  await waitForPermissionRequest(staffPermissions.requested);
   await allRestrictedNavigationHidden(page);
   staffPermissions.permit();
   await page.locator('#app[aria-busy="false"]').waitFor();
@@ -122,7 +133,7 @@ print(secret)
   assert.equal((await context.request.get(origin + '/api/users')).status(), 403);
   const failure = await holdWorkspaceSession('/account', true);
   await page.reload();
-  await failure.requested;
+  await waitForPermissionRequest(failure.requested);
   await allRestrictedNavigationHidden(page);
   failure.permit();
   await page.getByText('Please sign in first.').waitFor();
@@ -156,16 +167,29 @@ print(secret)
   }
   const inventory = await holdResponse(context, '**/api/inventory/state');
   await page.locator('#code').fill(python('from backend.mfa import code_at; import sys,time; print(code_at(sys.argv[1], time.time()))', secret));
-  await inventory.requested;
+  await waitForPermissionRequest(inventory.requested);
   await allRestrictedNavigationHidden(page);
   inventory.permit();
   await page.locator('#app[aria-busy="false"]').waitFor();
   assert.ok(await page.locator('#sidebar [data-tab="devices"]').isVisible());
   assert.ok(await page.locator('#sidebar [data-tab="users"]').isVisible());
   assert.equal((await context.request.get(origin + '/api/inventory/state')).status(), 200);
+  await page.getByRole('button', {name: 'Settings & Data'}).click();
+  await page.locator('.settings-screen [data-tab="features"]').click();
+  const devicesFeature = page.locator('[data-optional-feature="devices"]');
+  assert.ok(await devicesFeature.isChecked());
+  const changedPermissions = await holdResponse(context, '**/api/inventory/state');
+  page.once('dialog', dialog => dialog.accept());
+  await devicesFeature.click({force: true});
+  await waitForPermissionRequest(changedPermissions.requested);
+  await allRestrictedNavigationHidden(page);
+  changedPermissions.permit();
+  await page.locator('[data-feature-card="devices"] [data-feature-status]').getByText('Disabled').waitFor();
+  assert.ok(await page.locator('#sidebar [data-tab="devices"]').isHidden());
+  assert.ok(await page.locator('#sidebar [data-tab="users"]').isVisible());
   const failedInventory = await holdResponse(context, '**/api/inventory/state', {fail: true});
   await page.reload();
-  await failedInventory.requested;
+  await waitForPermissionRequest(failedInventory.requested);
   await allRestrictedNavigationHidden(page);
   failedInventory.permit();
   await page.getByText('Unable to load central inventory.').waitFor();

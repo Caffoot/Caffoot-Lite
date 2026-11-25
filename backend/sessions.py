@@ -7,6 +7,7 @@ import hashlib
 import hmac
 import json
 import secrets
+import sqlite3
 import time
 
 from backend.accounts import hash_password, verify_password
@@ -36,6 +37,22 @@ def _digest(token):
     return hashlib.sha256(token.encode("ascii")).hexdigest()
 
 
+def password_change_state_available(connection):
+    """Identify accounts written before the additive schema 30 migration."""
+    if connection.execute(
+        "SELECT 1 FROM pragma_table_info('accounts') WHERE name='must_change_password'"
+    ).fetchone():
+        return True
+    if connection.execute('SELECT 1 FROM schema_migrations WHERE version>=30').fetchone():
+        raise sqlite3.DatabaseError('Schema 30 account security state is unavailable')
+    return False
+
+
+def revoke_password_change_proof(connection, account_id):
+    if password_change_state_available(connection):
+        connection.execute('DELETE FROM account_password_change_proofs WHERE account_id=?', (account_id,))
+
+
 def login_session(connection, username, password, *, mfa_code=None, now=None,
                   report_enrolment=False, report_mfa_challenge=False,
                   report_password_change=False):
@@ -52,8 +69,9 @@ def login_session(connection, username, password, *, mfa_code=None, now=None,
         if account_id is None:
             connection.rollback()
             return None
-        pending = connection.execute('SELECT must_change_password FROM accounts WHERE id=?',
-                                     (account_id,)).fetchone()[0]
+        pending = password_change_state_available(connection) and connection.execute(
+            'SELECT must_change_password FROM accounts WHERE id=?', (account_id,)
+        ).fetchone()[0]
         if pending:
             if not report_password_change:
                 connection.rollback()
@@ -145,10 +163,11 @@ def session_account(connection, token, *, now=None):
         return None
     if now is None:
         now = time.time()
+    pending_guard = ' AND a.must_change_password=0' if password_change_state_available(connection) else ''
     row = connection.execute(
         "SELECT a.id,a.active,a.is_admin,a.mfa_confirmed,s.expires_at "
         "FROM account_sessions s JOIN accounts a ON a.id=s.account_id "
-        "WHERE s.token_hash=? AND a.must_change_password=0", (digest,)
+        "WHERE s.token_hash=?" + pending_guard, (digest,)
     ).fetchone()
     if not row or not row[1] or row[4] <= now:
         return None

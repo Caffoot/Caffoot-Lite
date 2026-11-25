@@ -13,7 +13,8 @@ from unittest.mock import patch
 
 from backend import schema
 from backend.account_email import issue_email_proof
-from backend.accounts import bootstrap_first_admin, confirm_admin_mfa, verify_password
+from backend.accounts import bootstrap_first_admin, confirm_admin_mfa, hash_password, verify_password
+from backend.audit_events import record_actor_event
 from backend.http_security import COOKIE_NAME
 from backend.login_throttle import LoginThrottle
 from backend.mfa import code_at, new_secret
@@ -239,6 +240,38 @@ class PasswordResetHttpTests(unittest.TestCase):
         with self.database() as db:
             self.assertEqual(db.execute('SELECT must_change_password FROM accounts WHERE id=?', (self.target,)).fetchone(), (1,))
 
+    def test_concurrent_reset_supersedes_a_waiting_password_change(self):
+        self.assertEqual(self.reset()[0], 200)
+        proof = self.pending_proof()
+        reset_writing, change_waiting, allow_commit = threading.Event(), threading.Event(), threading.Event()
+        results = {}
+
+        def hold_reset(*args, **kwargs):
+            record_actor_event(*args, **kwargs)
+            reset_writing.set()
+            self.assertTrue(allow_commit.wait(5))
+
+        def start_change(*args, **kwargs):
+            change_waiting.set()
+            return complete_password_change(*args, **kwargs)
+
+        with patch('backend.permissions.record_actor_event', side_effect=hold_reset), \
+                patch('backend.server.complete_password_change', side_effect=start_change):
+            reset = threading.Thread(target=lambda: results.update(reset=self.reset('Replacement-Temporary!')), daemon=True)
+            change = threading.Thread(target=lambda: results.update(change=self.change(proof)), daemon=True)
+            reset.start()
+            try:
+                self.assertTrue(reset_writing.wait(3))
+                change.start()
+                self.assertTrue(change_waiting.wait(3))
+            finally:
+                allow_commit.set()
+            reset.join(5)
+            change.join(5)
+        self.assertEqual((results['reset'][0], results['change'][0]), (200, 401))
+        self.assertEqual(self.sign_in(NEW)[0], 401)
+        self.assertTrue(self.pending_proof('Replacement-Temporary!'))
+
     def test_reset_rechecks_actor_session_after_initial_http_authorisation(self):
         def authenticate_then_revoke(*args, **kwargs):
             actor = authorised_mutation(*args, **kwargs)
@@ -332,6 +365,26 @@ class PasswordResetHttpTests(unittest.TestCase):
 
 
 class PasswordChangeMigrationTests(unittest.TestCase):
+    def test_published_schema_10_upgrades_to_30_with_existing_administrator_access(self):
+        with sqlite3.connect(':memory:') as db:
+            db.execute('PRAGMA foreign_keys=ON')
+            db.executescript((Path(__file__).parent / 'fixtures/schema-v10.sql').read_text())
+            secret = new_secret()
+            owner = db.execute(
+                'INSERT INTO accounts(username,password_hash,is_admin,mfa_confirmed,mfa_secret) VALUES(?,?,1,1,?)',
+                ('owner', hash_password(ORIGINAL), secret),
+            ).lastrowid
+            worker = db.execute('INSERT INTO accounts(username,password_hash) VALUES(?,?)',
+                                ('worker', hash_password(ORIGINAL))).lastrowid
+            db.commit()
+            schema.initialise_database(db)
+            self.assertEqual(db.execute('SELECT max(version) FROM schema_migrations').fetchone(), (30,))
+            self.assertEqual(db.execute('SELECT id,is_admin,must_change_password FROM accounts ORDER BY id').fetchall(),
+                             [(owner, 1, 0), (worker, 0, 0)])
+            self.assertEqual(db.execute('PRAGMA foreign_key_check').fetchall(), [])
+            self.assertTrue(login_session(db, 'owner', ORIGINAL, mfa_code=code_at(secret, time.time())))
+            self.assertTrue(login_session(db, 'worker', ORIGINAL))
+
     def test_schema_29_upgrade_keeps_existing_accounts_profiles_and_sessions(self):
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / 'schema29.sqlite3'

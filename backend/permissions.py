@@ -6,7 +6,7 @@ from backend.accounts import hash_password
 from backend.audit_events import record_actor_event
 from backend.profiles import validate_profile_details
 from backend.role_policy import assign_staff_member, evaluate_role_policy, LEVELS, SERVICE_DESK_SECTION
-from backend.sessions import session_account
+from backend.sessions import password_change_state_available, revoke_password_change_proof, session_account
 from backend.staff_identity import link_account_staff, read_linked_staff
 
 
@@ -128,7 +128,7 @@ def set_account_active(connection, actor_id, target_id, active):
         connection.execute(
             "DELETE FROM account_sessions WHERE account_id=?", (target_id,)
         )
-        connection.execute("DELETE FROM account_password_change_proofs WHERE account_id=?", (target_id,))
+        revoke_password_change_proof(connection, target_id)
         if not active:
             connection.execute("DELETE FROM account_email_proofs WHERE account_id=?", (target_id,))
         if bool(target_active) != active:
@@ -192,7 +192,7 @@ def set_administrator(connection, actor_id, target_id, is_admin, *, session_toke
         ).fetchone()[0]
         if not is_admin and actor_id == target_id:
             raise ValueError("Administrators cannot demote themselves")
-        if is_admin and not target_admin and connection.execute(
+        if is_admin and not target_admin and password_change_state_available(connection) and connection.execute(
             "SELECT must_change_password FROM accounts WHERE id=?", (target_id,)
         ).fetchone()[0]:
             raise ValueError("The user must change their temporary password before becoming an administrator.")
