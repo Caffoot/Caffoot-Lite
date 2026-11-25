@@ -187,12 +187,15 @@ html{font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Arial,sa
 
 /* Move the existing form padding inside the scrolling surface. */
 #modal-content.modal-scroll-shell,
-#modal-content > .modal-scroll-shell {
+#modal-content > .modal-scroll-shell,
+#main-content .audit-modal.modal-scroll-shell {
   display:flex;
   flex-direction:column;
   overflow:hidden;
 }
 .modal-scroll-body {min-height:0;overflow:auto;}
+#main-content .audit-modal.modal-scroll-shell {padding:0;}
+#main-content .audit-modal > .modal-scroll-body {padding:25px;}
 #modal-content > :is(.catalog-modal,.rack-modal).modal-scroll-shell {padding:0;}
 #modal-content > :is(.catalog-modal,.rack-modal) > .modal-scroll-body {padding:24px;}
 @media(max-width:700px) {

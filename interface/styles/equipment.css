@@ -53,7 +53,8 @@
 .my-equipment-date{white-space:nowrap}
 .my-equipment-scroll-tip{display:none;margin:8px 0;color:var(--muted);font-size:11px}
 .my-equipment-error{margin-top:15px;padding:12px 14px;border:1px solid #c98778;border-radius:10px;color:var(--ink);background:var(--white)}
-.my-equipment-details{position:fixed;inset:0;margin:auto;width:min(680px,calc(100% - 36px));max-height:calc(100dvh - 36px);overflow:auto;border:1px solid var(--line);border-radius:15px;padding:0;color:var(--ink);background:var(--white);box-shadow:0 30px 80px #0003}
+.my-equipment-details{position:fixed;inset:0;margin:auto;width:min(680px,calc(100% - 36px));max-height:calc(100dvh - 36px);overflow:hidden;border:1px solid var(--line);border-radius:15px;padding:0;color:var(--ink);background:var(--white);box-shadow:0 30px 80px #0003}
+.my-equipment-details[open]{display:flex;flex-direction:column}
 .my-equipment-details::backdrop{background:#10253dbb}
 .my-equipment-detail-head{padding:20px 22px;border-bottom:1px solid var(--line);display:flex;align-items:start;justify-content:space-between;gap:12px}
 .my-equipment-detail-head h2{font-size:21px;color:var(--ink);margin:0 0 5px;overflow-wrap:anywhere}

@@ -153,7 +153,11 @@
       <div class="device-filters"><label class="device-filter">Equipment Type<select data-equipment-type disabled><option value="">All types</option></select></label><label class="device-filter">Equipment Kind<select data-equipment-kind disabled><option value="">All equipment</option><option>Device</option><option>IT Asset</option></select></label></div></section>
       <div class="my-equipment-error" data-equipment-error hidden role="alert">Equipment could not be loaded. Please try again. <button type="button" class="btn btn-outline" data-equipment-retry>Try Again</button></div>
       <div data-equipment-sections>${section('personal','Assigned to Me')}${section('shared','Shared with My Department','<p>Shared equipment remains assigned to your Department.</p>')}</div>
-      <dialog class="my-equipment-details" aria-labelledby="my-equipment-detail-title"><header class="my-equipment-detail-head"><div><div class="eyebrow">EQUIPMENT DETAILS</div><h2 id="my-equipment-detail-title"></h2><p data-equipment-detail-scope></p></div><button type="button" class="btn btn-outline" data-equipment-detail-close aria-label="Close equipment details">Close ×</button></header><div class="my-equipment-detail-body" data-equipment-detail-body></div><footer class="my-equipment-detail-actions"><button type="button" class="btn btn-outline" data-equipment-detail-close>Close</button><span data-equipment-detail-report></span></footer></dialog>
+      <dialog class="my-equipment-details" aria-labelledby="my-equipment-detail-title"><div class="modal-scroll-body">
+        <header class="my-equipment-detail-head"><div><div class="eyebrow">EQUIPMENT DETAILS</div><h2 id="my-equipment-detail-title"></h2><p data-equipment-detail-scope></p></div><button type="button" class="btn btn-outline" data-equipment-detail-close aria-label="Close equipment details">Close ×</button></header>
+        <div class="my-equipment-detail-body" data-equipment-detail-body></div>
+        <footer class="my-equipment-detail-actions"><button type="button" class="btn btn-outline" data-equipment-detail-close>Close</button><span data-equipment-detail-report></span></footer>
+      </div></dialog>
       </div></div>`;
   }
   const equipmentKind=item=>item.equipmentKind==='IT Asset'?'IT Asset':'Device';
