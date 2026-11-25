@@ -621,8 +621,8 @@ async function run(){
   assert.equal(await page.locator('.account-screen .subnav [data-section="overview"]').getAttribute('aria-selected'),'true');
   assert.equal(await page.getByRole('heading',{name:'My Devices',exact:true}).count(),0,
     'The obsolete planned My Devices card is removed');
-  assert.equal(await page.getByRole('button',{name:'Open My Equipment',exact:true}).count(),0,
-    'The equipment shortcut is hidden without an active linked Staff Member');
+  assert.ok(await page.getByRole('button',{name:'Open My Equipment',exact:true}).isVisible(),
+    'The first administrator has an active Staff link and can open My Equipment');
   await page.locator('[data-action="select-account-section"][data-section="security"]').first().click();
   await page.locator('#next-account-password-form').waitFor();
   assert.ok(await page.getByText('Security At A Glance',{exact:true}).isVisible());

@@ -119,6 +119,10 @@ Closing the dialogue discards unsaved profile typing. Changes you already saved 
 
 Staff Member cannot be removed. An additional role may be assigned before MFA enrolment, but cannot be used to bypass enrolment. Removing a role does not automatically remove an enrolled authenticator or erase individual overrides.
 
+![Manage Permissions with the mandatory MFA warning directly above Section Permissions.](../../../development-handovers/evidence/stage-6-6-batch-3/screenshots/manage-permissions-warning-dark-390.png)
+
+*When the account requires enrolment, the warning appears before the section controls.* [Light view and capture provenance](../../../development-handovers/evidence/stage-6-6-batch-3/README.md#application-screenshots)
+
 ## Set An Individual Section Override
 
 1. Open **Staff Details → Manage Permissions** for the ordinary account.
@@ -171,6 +175,10 @@ Account controls are separate from role previews. Check the account identity bef
 6. To remove the account permanently, select **Delete User** and read its confirmation. Confirm only if deletion is intended; cancelling keeps the account. Prefer disabling when the requirement is simply to prevent sign-in while retaining the login.
 
 You cannot disable, demote or delete your own signed-in administrator account, and the last active administrator is protected. Deleting a login does not delete its Staff directory identity or return its equipment; review those separately in the [Staff lifecycle](Staff-Members.md). These controls do not provide an administrator bypass for a forgotten password or authenticator.
+
+![Manage Permissions account controls showing a green active-account panel and Disable button.](../../../development-handovers/evidence/stage-6-6-batch-3/screenshots/account-active-light-1440.png)
+
+*The panel colour follows the current status. A disabled account has a red panel with an Enable button.* [Disabled account and dark-mode captures](../../../development-handovers/evidence/stage-6-6-batch-3/README.md#application-screenshots)
 
 ## Make An Existing User An Administrator
 

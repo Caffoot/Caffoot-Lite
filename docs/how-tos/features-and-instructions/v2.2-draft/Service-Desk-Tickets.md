@@ -214,9 +214,9 @@ If the equipment disappears or the category is unavailable, reopen the form and 
 
 If a colleague changes the ticket while a technician action is open, the application reloads the current details and shows a conflict message. Review the latest status or classification before trying again.
 
-![Ticket Details Overview with the Ticket Information, Equipment and Requester, and Original Problem panels.](../../../development-handovers/evidence/it-service-desk/overview-desktop-light.png)
+![Ticket Details Overview showing Close Ticket on the left and Close Window on the right. Ticket Category and Priority have pencil Edit buttons beside their headings.](../../../development-handovers/evidence/stage-6-6-batch-3/screenshots/ticket-details-light-1440.png)
 
-*Overview presents the three tabs and groups technician actions in the footer. Priority and category are corrected within Ticket Information.* [Capture details](../../../development-handovers/evidence/it-service-desk/README.md)
+*Overview presents the three tabs and groups technician actions in the footer. Priority and category are corrected within Ticket Information.* [Dark and mobile captures](../../../development-handovers/evidence/stage-6-6-batch-3/README.md#application-screenshots)
 
 ## Assign, Pause, Resolve Or Reopen A Ticket
 

@@ -139,6 +139,10 @@ Staff status and account status are separate. Inactivating a leaver neither disa
 
 To restore eligibility, open the inactive person's Staff Details, choose the solid orange **Reactivate** button and confirm. This retains history and does not enable a disabled login. The Staff form's **Staff Status** also changes directory status when saved. The directory offers no permanent-delete action for Staff.
 
+![Staff Details with an outlined orange Mark Inactive button for the active Staff Member.](../../../development-handovers/evidence/stage-6-6-batch-3/screenshots/staff-1440-light.png)
+
+*Mark Inactive applies to the Staff record. Account controls are in Manage Permissions.* [Capture provenance](../../../development-handovers/evidence/stage-6-6-batch-3/README.md#capture-provenance)
+
 For example, fictional Alex leaves with a laptop and two adapters still recorded against them. Marking Alex Inactive leaves all three outstanding. IT records items actually returned, resolves any missing item through the appropriate Write Off procedure, and separately disables Alex's account. No stock balance increases merely because Staff status changes.
 
 ## Work With Equipment

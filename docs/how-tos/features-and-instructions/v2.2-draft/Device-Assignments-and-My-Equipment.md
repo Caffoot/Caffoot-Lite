@@ -142,6 +142,10 @@ My Equipment is for a person signing in with a login linked to an active Staff M
 
 ### Find Equipment And Open Details
 
+![My Account Overview for a fictional Staff Member with the Open My Equipment shortcut.](../../../development-handovers/evidence/stage-6-6-batch-3/screenshots/my-account-1440-light.png)
+
+*Open My Equipment brings you to the personal and Department lists.* [Mobile view and capture provenance](../../../development-handovers/evidence/stage-6-6-batch-3/README.md#application-screenshots)
+
 1. In **Search Equipment**, enter part of a name, type, manufacturer, model or operating system. Use **Equipment Type** or **Equipment Kind** to narrow both tables. **Clear Filters** restores the full list your account can see.
 2. On a narrow screen, scroll each table horizontally to reach **Assigned date**, **Details** and **Report A Problem**.
 3. Select **Details** for an item. Device details can include the serial number and operating system. For a Laptop or Desktop, **Recorded Installed Software** lists eligible application names recorded on that Device. The list describes the saved record and may differ from what is installed today. An IT Asset shows its outstanding quantity where applicable.
