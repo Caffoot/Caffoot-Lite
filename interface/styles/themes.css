@@ -48,6 +48,7 @@ html.dark :is(#app,#modal-container) :is(.db-bar,.intelligence-track,.ipam-progr
 html.dark :is(#app,#modal-container) :is(.device-ip,.inline-link,.textlink,.rack-back,.rack-card-action,.ipam-overview-group .go,.action-link,.device-review-eyebrow) {color:var(--theme-link);}
 html.dark :is(#app,#modal-container) :is(.device-review-dialog,.device-review-body) {background:var(--canvas);color:var(--ink);}
 html.dark #modal-container .device-review-dialog {border-color:var(--line);}
+html.dark #modal-container :is(.ipam-modal-head,.catalog-manager-list,.catalog-manager-row) {border-color:var(--line);}
 html.dark #app .racks-hub-bar p {color:var(--muted);}
 html.dark :is(#app,#modal-container) .device-review-inline-explain {color:var(--muted)!important;}
 html.dark :is(#app,#modal-container) .device-review-danger {background:var(--theme-danger-bg)!important;color:var(--theme-danger-text)!important;}

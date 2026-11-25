@@ -129,7 +129,7 @@ async function main(){
    for(const theme of ['light','dark']){
     await page.evaluate(theme=>caffootSetTheme(theme),theme);
     assert.equal(await footer.locator('[type="submit"]').evaluate(button=>getComputedStyle(button).backgroundColor),'rgb(237, 133, 50)',formId+' primary action must be orange in '+theme);
-    assert.equal(await footer.locator('[type="submit"]').evaluate(button=>getComputedStyle(button).color),'rgb(255, 255, 255)',formId+' primary action must have white text in '+theme);
+    assert.equal(await footer.locator('[type="submit"]').evaluate(button=>getComputedStyle(button).color),'rgb(20, 43, 67)',formId+' primary action must have approved navy text in '+theme);
    }
    await page.evaluate(()=>caffootSetTheme('light'));
    assert.equal(await footer.evaluate(node=>getComputedStyle(node).justifyContent),'flex-end');

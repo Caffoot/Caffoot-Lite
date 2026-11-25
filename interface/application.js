@@ -4286,20 +4286,33 @@ function openIpModal(ip) {
             if (typeof onClosed === 'function') onClosed();
         }
 
+        function containModalScrolling(shell) {
+            const scroll = document.createElement('div');
+            scroll.className = 'modal-scroll-body';
+            scroll.append(...shell.childNodes);
+            shell.append(scroll);
+            shell.classList.add('modal-scroll-shell');
+        }
+
         function openModal(htmlContent) {
             const container = document.getElementById('modal-container');
             const content = document.getElementById('modal-content');
             if (container.classList.contains('hidden')) modalReturnFocus = document.activeElement;
             content.classList.remove('rack-balanced-modal', 'settings-access-point-review', 'settings-legacy-review', 'ipam-record-modal','ipam-subnet-preview','ipam-subnet-generator', 'catalogue-modal', 'device-review-container', 'ipam-modal', 'catalog-modal');
+            content.classList.remove('modal-scroll-shell');
             container.classList.remove('catalog-modal-overlay', 'device-review-overlay', 'ipam-modal-overlay', 'rack-modal-shade');
             content.innerHTML = htmlContent;
             if(content.querySelector('.ipam-modal-head')){
                 content.classList.add('ipam-modal');container.classList.add('ipam-modal-overlay');
+                if (!content.querySelector('#subnet-batch-generator,#subnet-batch-preview')) containModalScrolling(content);
             }
             if(content.querySelector('.catalog-modal-head')){
                 content.classList.add('catalog-modal','catalogue-modal');container.classList.add('catalog-modal-overlay');
             }
-            if(content.querySelector(':scope > .rack-modal'))container.classList.add('rack-modal-shade');
+            const rackModal = content.querySelector(':scope > .rack-modal');
+            if (rackModal) container.classList.add('rack-modal-shade');
+            const paddedModal = rackModal || content.querySelector(':scope > .catalog-modal');
+            if (paddedModal) containModalScrolling(paddedModal);
             container.classList.remove('hidden');
             container.classList.add('flex');
             const heading = content.querySelector('h1,h2,h3,h4');
@@ -8474,8 +8487,9 @@ function openIpModal(ip) {
             const height = Number.isInteger(safeHeight) && safeHeight >= 1 && safeHeight <= (rackAccessoryTypeDefinitions[type]?.vertical?rackLimit:12) ? safeHeight : 1;
             const modal=document.getElementById('modal-container');
             const modalContent = document.getElementById('modal-content');
-            modalContent.classList.remove('rack-balanced-modal');
+            modalContent.classList.remove('rack-balanced-modal', 'modal-scroll-shell');
             modalContent.innerHTML=renderInterfaceTemplate("racks/open-rack-accessory-editor-2",[existing?(verticalWorkflow?'Edit Vertical 0U Accessory':'Edit Horizontal Accessory Placement'):verticalWorkflow?'Add Vertical 0U Accessory':'Place Horizontal Accessory',verticalWorkflow?'Manage a vertical 0U accessory on the left or right rail. Rail accessories do not occupy central rack U slots.':'Place a horizontal rack accessory into free U positions on the selected face.',verticalWorkflow?'Vertical Accessory Type':'Horizontal Accessory Type',Object.entries(rackAccessoryTypeDefinitions).filter(([key,item])=>!!item.vertical===verticalWorkflow).map(([key,item])=>`<option value="${key}" ${type===key?'selected':''}>${item.label}</option>`).join(''),type==='patch'?'':'display:none;',type==='patch'?'required':'disabled',Number(existing?.portCount)===12?'selected':'',![12,48].includes(Number(existing?.portCount))?'selected':'',Number(existing?.portCount)===48?'selected':'',escapeHtml(existing?.name||''),face==='front'?'selected':'',face==='rear'?'selected':'',rackAccessoryTypeDefinitions[type]?.vertical?'':'display:none;',existing?.side==='left'?'selected':'',existing?.side==='right'?'selected':'',verticalWorkflow?'Vertical Span (U)':'Height (U)',rackAccessoryTypeDefinitions[type]?.vertical?rackLimit:12,height,existing?renderInterfaceTemplate("racks/open-rack-accessory-editor-1",[]):'',existing?'Save changes':'Place accessory']);
+            containModalScrolling(modalContent.firstElementChild);
             modal.classList.remove('hidden');
             modal.classList.add('flex');
             const form=modal.querySelector('#rack-accessory-form');
