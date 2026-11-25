@@ -46,7 +46,7 @@
 }
 .caffoot-uk-date-trigger:focus-visible,
 .caffoot-uk-date-picker button:focus-visible {
-  outline: 2px solid #e77e2d;
+  outline: 2px solid var(--light-focus,#e77e2d);
   outline-offset: 1px;
 }
 .caffoot-uk-date-trigger:disabled {
@@ -140,7 +140,7 @@
   border-color: #e77e2d;
 }
 .caffoot-uk-date-day.is-selected {
-  background: #d15d16;
+  background: var(--light-selected,#d15d16);
   color: #fff;
 }
 .caffoot-uk-date-day:disabled {

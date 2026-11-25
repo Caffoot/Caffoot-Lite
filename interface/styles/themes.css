@@ -67,6 +67,31 @@ html.dark .caffoot-search-options button:is(:hover,:focus-visible,[aria-selected
 :is(#app,#modal-container) .device-review-smallbtn.primary:hover:not(:disabled) {background:var(--orange2,#d87327);}
 html:not(.dark) :is(#app,#modal-container) :is(.header p,.formhint,.switch-row small,.device-review-facts dt) {color:#4e6981;}
 
+/* Keep focus visible on light surfaces and on the always-navy navigation. */
+html:not(.dark) {
+ --light-focus:#142b43;
+ --light-selected:#ad5010;
+}
+html:not(.dark) :is(#app,#modal-container,.caffoot-search-popup,.caffoot-uk-date-picker)
+ :is(button,input,select,textarea,summary,a[href],[tabindex]):focus-visible:not(.rack-elevation *,#sidebar *) {
+ outline:2px solid var(--light-focus);outline-offset:2px;
+}
+html:not(.dark) #sidebar :is(button,a[href],[tabindex]):focus-visible {
+ outline:2px solid #f4a569;outline-offset:-2px;
+}
+html:not(.dark) :is(#app,#modal-container,.caffoot-search-popup) :is(.tabs,.subnav,.audit-tabs,.ipam-tabs,.racks-tabs,.device-review-tabs,.employee-ticket-tabs,.caffoot-search-options)
+ :is(button,[role=tab]):focus-visible:not(#sidebar *) {
+ outline-offset:-2px;
+}
+html:not(.dark) .switch-control input:focus-visible + .switch-slider {outline-color:var(--light-focus);}
+html:not(.dark) :is(#app,#modal-container) :is(.subnav button.active,.tab.active,.audit-tab.active,.ipam-tab,.racks-tab,.device-review-tab,.employee-ticket-tab,.email-tab):is(.active,[aria-selected=true],[aria-current=page]) {
+ border-bottom-color:var(--light-selected);
+}
+html:not(.dark) :is(#app,#modal-container) :is(.service-desk-workload-card,[data-lifecycle-category])[aria-pressed=true] {
+ border-color:var(--light-selected);
+}
+html:not(.dark) [data-lifecycle-category][aria-pressed=true] {box-shadow:inset 0 0 0 1px var(--light-selected);}
+
 html.dark #sidebar {background:var(--navy);}
 html.dark #sidebar :is(.nav-item.current,.nav-item.subtle:hover,.sidebar-button:hover) {background:var(--theme-hover);}
 html.dark :is(#app,#modal-container) :is(.btn,.device-review-smallbtn,.device-action-details,.device-more summary,.audit-row-button,.appearance-buttons button,.caffoot-search-trigger):disabled {

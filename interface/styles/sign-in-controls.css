@@ -31,6 +31,7 @@ html.dark :is(.primary,#auth-live-screen .panel button):not(:disabled) {color:#1
 html :is(.primary,#auth-live-screen .panel button):hover:not(:disabled) {color:#0f172a;}
 html.dark :is(.primary,#auth-live-screen .panel button):hover:not(:disabled) {background:#d87327;}
 html.dark :is(button,input,select,summary,a[href]):focus-visible {outline:2px solid #9dc9ff;outline-offset:2px;}
+html:not(.dark) .form-side :is(button,input,select,summary,a[href]):focus-visible {outline:2px solid #142b43;outline-offset:2px;}
 html.dark :is(.primary,#auth-live-screen .panel button):disabled {background:#34485c;color:var(--muted);}
 html.dark .form-foot a {color:#ffb77d;}
 html.dark .eyebrow {color:#ed8532;}
