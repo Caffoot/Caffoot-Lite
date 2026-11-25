@@ -68,6 +68,13 @@ class SharedStockTests(unittest.TestCase):
                                             departmentIds=['extra', 'department'])
         del payload['recipientId']
         result = reassign_device(self.db, 1, self.token, payload)
+        same_custody = handover.handover_payload(self.db, identity, recipientKind='department',
+                                                departmentIds=['department', 'extra'])
+        del same_custody['recipientId']
+        before_rejection = list(self.db.iterdump())
+        with self.assertRaisesRegex(ValueError, 'Select a different eligible recipient'):
+            reassign_device(self.db, 1, self.token, same_custody)
+        self.assertEqual(list(self.db.iterdump()), before_rejection)
         current, previous = stock_issue_records(self.db)
         self.assertEqual((current['custodyRecipientId'], current['outstanding']), (result['assignmentId'], 1))
         self.assertEqual((previous['deviceAssignmentId'], previous['staffId'], previous['outstanding']),

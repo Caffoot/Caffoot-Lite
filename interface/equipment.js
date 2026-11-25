@@ -244,7 +244,15 @@
       }).catch(error=>config.notify(error.message,'error'));
       return;
     }
-    if(action==='reassign-device'){void request('/api/equipment/assignments?deviceId='+encodeURIComponent(id)).then(result=>{if(!result.handoverContext)throw Error('This Device is not currently eligible for reassignment.');window.caffootStockIntake.openHandover(result.handoverContext);}).catch(error=>config.notify(error.message,'error'));return;}
+    if(action==='reassign-device'){
+      void request('/api/equipment/assignments?deviceId='+encodeURIComponent(id)).then(result=>{
+        const handover=result.handoverContext;
+        const holder=handover&&result.current.find(item=>item.id===handover.deviceAssignmentId);
+        if(!holder)throw Error('This Device is not currently eligible for reassignment.');
+        window.caffootStockIntake.openHandover({...handover,currentStaffId:holder.staffId,currentDepartmentId:holder.departmentId});
+      }).catch(error=>config.notify(error.message,'error'));
+      return;
+    }
     if(action==='reissue-device-stock'){window.caffootStockIntake.openWorkflow('reissue',{deviceId:id});return;}
     if(action==='return-device-stock'){window.caffootStockIntake.openWorkflow('return',{returnSource:id});return;}
     if(action==='writeoff-device-stock'){window.caffootStockIntake.openWorkflow('writeoff',{deviceId:id});return;}

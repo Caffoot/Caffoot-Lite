@@ -779,7 +779,10 @@
         if(search)search.disabled=true;
         reissue.dataset.recipientQuery='department-picker';
         const selection=window.caffootEquipment.departmentPicker(picker,{onChange:hydrateStockCirculation});
-        submit.disabled=!ready||!selection.values().length;
+        const selected=selection.values();
+        // A current Department may be retained as part of a new shared selection.
+        const sameSingleHolder=selected.length===1&&selected[0]===handover?.currentDepartmentId;
+        submit.disabled=!ready||!selected.length||sameSingleHolder;
       }else{
         if(search)search.disabled=false;
         const key=handover?kind:kind+'|'+search.value;
@@ -790,7 +793,7 @@
             recipient.disabled=true;
             recipient.innerHTML='<option value="">Loading '+(kind==='staff'?'Staff Members':'Departments')+'…</option>';
             submit.disabled=true;
-            void loadHandoverRecipients(reissue,key);
+            void loadHandoverRecipients(reissue,key,kind==='staff'?handover.currentStaffId:handover.currentDepartmentId);
           }else{
             recipient.disabled=false;
             void loadStockRecipients(reissue,key);
@@ -859,7 +862,7 @@
     const preparation=document.getElementById('stock-preparation-form');
     if(preparation&&preparation.dataset.registered!=='true'&&detail?.item.trackingMode==='individual')preparation.elements.prepareQuantity.value=String(preparation.querySelectorAll('[name="prepareUnitIds"]:checked').length);
   }
-  async function loadHandoverRecipients(form,kind){
+  async function loadHandoverRecipients(form,kind,currentHolderId){
     const recipient=form.elements.recipientId;
     try{
       // A single selection contains every eligible holder, not only the first 50.
@@ -873,7 +876,8 @@
       }
       if(!form.isConnected||form.dataset.recipientQuery!==kind)return;
       recipient.innerHTML='<option value="">Select A '+(kind==='staff'?'Staff Member':'Department')+'</option>'+
-        recipients.map(item=>`<option value="${safe(item.id)}">${safe(item.label)}</option>`).join('');
+        recipients.filter(item=>item.id!==currentHolderId)
+          .map(item=>`<option value="${safe(item.id)}">${safe(item.label)}</option>`).join('');
       recipient.disabled=false;
       recipient.dispatchEvent(new Event('device-dropdown-refresh'));
       hydrateStockCirculation();
