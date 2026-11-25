@@ -29,7 +29,7 @@
 .stock-live #stock-panel .stock-form-actions .btn{min-height:42px;padding:10px 18px}
 
 /* IT Assets form-only visual corrections, retaining the approved actions and workflows. */
-.stock-live #stock-panel .stock-form-actions .btn.btn-primary{background:var(--orange);border-color:var(--orange);color:white}
+.stock-live #stock-panel .stock-form-actions .btn.btn-primary{background:var(--orange);border-color:var(--orange);color:#142b43}
 .stock-live #stock-panel .stock-form-actions .btn.btn-primary:hover{background:#da782d}
 .stock-live #stock-panel #stock-receipt-form .preview-details-actions[role="group"]{margin-bottom:20px}
 .stock-live #stock-panel #stock-receipt-form #stock-computer-fields,

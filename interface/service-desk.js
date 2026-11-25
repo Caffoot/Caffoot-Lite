@@ -994,7 +994,7 @@ window.caffootServiceDesk = (() => {
         if (!ticket.canEdit) return [];
         if (ticket.status === 'Closed') return [['reopen','Reopen Ticket']];
         if (ticket.status === 'On Hold') return [['resume','Resume Ticket']];
-        return [['assign',ticket.technicianId ? 'Reassign Ticket' : 'Assign Ticket'], ['hold','Place On Hold'], ['close','Close Ticket']];
+        return [['close','Close Ticket'], ['assign',ticket.technicianId ? 'Reassign Ticket' : 'Assign Ticket'], ['hold','Place On Hold']];
     }
 
     async function showTicketTab(dialog, focusTab = false) {
@@ -1011,20 +1011,12 @@ window.caffootServiceDesk = (() => {
           id="ticket-tab-${name.toLowerCase()}" aria-controls="service-desk-tab-panel" data-ticket-tab="${name}"
           tabindex="${name === tab ? 0 : -1}" aria-selected="${name === tab}">${name}${name === 'Updates' ? unreadBadge(ticket.unreadCount, 'reply', 'data-unread-updates') : ''}</button>`).join('');
         if (focusTab) nav.querySelector('[aria-selected="true"]').focus();
-        const close = closeTicketWindowButton;
         const employeeAction = ticket.status === 'Closed'
             ? '<form id="reopen-employee-ticket" data-ticket-form="reopen"></form><button type="submit" form="reopen-employee-ticket" class="btn btn-primary">Reopen Ticket</button>'
             : tab !== 'Updates' ? '<button type="button" class="btn btn-primary" data-ticket-reply>Reply To IT</button>' : '';
-        const footer = root.querySelector('[data-ticket-footer]');
-        if (dialog.employee) {
-            footer.innerHTML = close + employeeAction;
-        } else {
-            const actions = ticketActions(ticket);
-            const completion = actions.filter(([action]) => action === 'close');
-            const remaining = actions.filter(([action]) => action !== 'close');
-            const actionButton = ([action, label]) => `<button type="button" class="btn ${action === 'close' ? 'btn-primary' : 'btn-outline'}" data-ticket-start="${action}">${label}</button>`;
-            footer.innerHTML = [...completion, ...remaining].map(actionButton).join('') + close;
-        }
+        root.querySelector('[data-ticket-footer]').innerHTML = dialog.employee
+            ? closeTicketWindowButton + employeeAction
+            : ticketActions(ticket).map(([action, label]) => `<button type="button" class="btn ${action === 'close' ? 'btn-primary' : 'btn-outline'}" data-ticket-start="${action}">${label}</button>`).join('') + closeTicketWindowButton;
         body.id = 'service-desk-tab-panel';
         body.setAttribute('role', 'tabpanel');
         body.setAttribute('aria-labelledby', 'ticket-tab-' + tab.toLowerCase());

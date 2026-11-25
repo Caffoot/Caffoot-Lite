@@ -1,12 +1,14 @@
-/* Existing slate dark palette. Light values remain in the approved page sheets.
-   Shared tokens also reach Batch 01 controls and searchable-select inline styles. */
+/* Shared application tokens for the approved #459 dark palette. */
 html.dark {
- color-scheme:dark;--canvas:#0f172a;--white:#1e293b;--ink:#f1f5f9;--muted:#cbd5e1;--line:#475569;
- --theme-text:#f1f5f9;--theme-secondary:#cbd5e1;--theme-border:#475569;
- --theme-control:#0f172a;--theme-control-border:#64748b;--theme-disabled:#334155;--theme-hover:#334155;
- --theme-warning-bg:#451a03;--theme-warning-text:#fde68a;--theme-warning-border:#92400e;
- --theme-good-bg:#022c22;--theme-good-text:#a7f3d0;
- --theme-danger-bg:#4c0519;--theme-danger-text:#fecdd3;
+ color-scheme:dark;
+ --canvas:#172536;--white:#223448;--ink:#f1f5f9;--muted:#c0cddd;--line:#3b4e62;
+ --navy:#142b43;--orange:#ed8532;--orange2:#d87327;
+ --theme-text:var(--ink);--theme-secondary:var(--muted);--theme-border:var(--line);
+ --theme-control:#1b2c3e;--theme-control-border:#72869a;--theme-disabled:#34485c;--theme-hover:#30465c;
+ --theme-warning-bg:#503b28;--theme-warning-text:#fde68a;--theme-warning-border:var(--line);
+ --theme-good-bg:#234b40;--theme-good-text:#b0ebcd;
+ --theme-danger-bg:#4c2d3a;--theme-danger-text:#fecdd3;
+ --theme-focus:#9dc9ff;--theme-link:#ffb77d;
 }
 html.dark body {background:var(--canvas);color:var(--ink);}
 /* Component categories live here so late-loaded page CSS cannot leave light
@@ -31,7 +33,7 @@ html.dark :is(#app,#modal-container) :is(.intelligence-pills button.active,.rack
 html.dark :is(#app,#modal-container) :is(.btn-outline,.device-action-details,.device-more summary,.audit-row-button,.quick-action,.intelligence-chart-row,.intelligence-quality-card,.db-metric,.ipam-overview-group,.rack-directory-item,.device-review-check-item,.device-more-menu button):hover,
 html.dark :is(#app,#modal-container) :is(.device-table,.rack-table,.audit-table) tbody tr:hover {background:var(--theme-hover);color:var(--ink);}
 html.dark :is(#app,#modal-container) :is(.appearance-buttons button.selected,.theme-option.selected,.device-review-pick button.active,.rack-height-picker button.active,.catalog-type-option:has(input:checked),.device-review-check-item:has(input:checked)) {background:var(--theme-warning-bg);color:var(--theme-warning-text);border-color:var(--theme-warning-border);}
-/* Preserve semantic distinctions using the existing dark utility palette. */
+/* Preserve distinct warning, success, error and informational treatments. */
 html.dark :is(#app,#modal-container) :is(.audit-warn,.modal-warning,.ipam-warning,.ipam-modal-explain.warn,.device-review-warning,.rack-warn,.catalog-delete-warning,.intelligence-alert,.linked-filter-context,.settings-screen .hint,.db-callout,.db-warning,.device-status.maintenance,.chip.wait,.ipam-address-card.reserved,.ipam-legend .reserved,.catalog-pill.pill-custom,.coverage-status,.ipam-chip,.step-index,.btn.warn) {background:var(--theme-warning-bg);color:var(--theme-warning-text);border-color:var(--theme-warning-border);}
 html.dark :is(#app,#modal-container) :is(.intelligence-alert strong,.intelligence-alert svg) {color:var(--theme-warning-text);}
 html.dark :is(#app,#modal-container) :is(.security-band,.statusline,.db-good,.device-status:not(.retired):not(.maintenance),.chip:not(.wait):not(.mute),.coverage-status.current) {background:var(--theme-good-bg);color:var(--theme-good-text);border-color:#065f46;}
@@ -43,20 +45,67 @@ html.dark :is(#app,#modal-container) :is(.iconwrap,.stat-icon,.metric-ico,.futur
 html.dark :is(#app,#modal-container) :is(.iconwrap.orange,.metric-ico.orange,.device-review-panel .mini-icon) {background:var(--theme-warning-bg);color:var(--theme-warning-text);}
 html.dark :is(#app,#modal-container) :is(.iconwrap.green,.metric-ico.green) {background:var(--theme-good-bg);color:var(--theme-good-text);}
 html.dark :is(#app,#modal-container) :is(.db-bar,.intelligence-track,.ipam-progress,.rack-directory-item .rack-bar,.rack-util-bar,.bartrack) {background:var(--theme-disabled);}
-html.dark :is(#app,#modal-container) :is(.device-ip,.inline-link,.textlink,.rack-back,.rack-card-action,.ipam-overview-group .go,.action-link,.device-review-eyebrow) {color:#fb923c;}
+html.dark :is(#app,#modal-container) :is(.device-ip,.inline-link,.textlink,.rack-back,.rack-card-action,.ipam-overview-group .go,.action-link,.device-review-eyebrow) {color:var(--theme-link);}
 html.dark :is(#app,#modal-container) :is(.device-review-dialog,.device-review-body) {background:var(--canvas);color:var(--ink);}
+html.dark #modal-container .device-review-dialog {border-color:var(--line);}
+html.dark #app .racks-hub-bar p {color:var(--muted);}
 html.dark :is(#app,#modal-container) .device-review-inline-explain {color:var(--muted)!important;}
 html.dark :is(#app,#modal-container) .device-review-danger {background:var(--theme-danger-bg)!important;color:var(--theme-danger-text)!important;}
 html.dark :is(#app,#modal-container) :is(.rack-danger,.danger-action) {background:var(--theme-danger-bg);color:var(--theme-danger-text);border-color:#9f1239;}
 html.dark :is(#app,#modal-container) :is(.rack-face-control button.front.active) {background:var(--theme-good-bg);color:var(--theme-good-text);border-color:#065f46;}
 html.dark :is(#app,#modal-container) :is(.rack-face-control button.rear.active) {background:var(--theme-warning-bg);color:var(--theme-warning-text);border-color:var(--theme-warning-border);}
 /* Existing menu popup is mounted on body, outside :is(#app,#modal-container). */
-html.dark .caffoot-search-popup {background:var(--white);color:var(--ink);border-color:var(--line);}
+html.dark .caffoot-search-popup {background:var(--white);color:var(--ink);border-color:var(--theme-control-border);}
 html.dark .caffoot-search-options button {color:var(--ink);}
 html.dark .caffoot-search-options button:is(:hover,:focus-visible,[aria-selected=true]) {background:var(--theme-hover);color:var(--ink);}
 
-/* Slate foreground on the existing orange accent keeps dark-mode actions legible. */
-html.dark :is(#app,#modal-container) :is(.btn-primary,.btn.primary,.device-review-smallbtn.primary) {color:var(--theme-control);}
+/* Ordinary primary buttons share the approved foregrounds and existing hover fills. */
+:is(#app,#modal-container) :is(.btn-primary,.btn.primary,.device-review-smallbtn.primary):not(:disabled,:hover,.danger,.warn,#account-mfa-removal-form *) {
+ background:var(--orange,#ed8532);border-color:var(--orange,#ed8532);color:#142b43;
+}
+:is(#app,#modal-container) :is(.btn-primary,.btn.primary,.device-review-smallbtn.primary):not(:disabled,.danger,.warn,#account-mfa-removal-form *):hover {color:#0f172a;}
+:is(#app,#modal-container) .device-review-smallbtn.primary:hover:not(:disabled) {background:var(--orange2,#d87327);}
+html:not(.dark) :is(#app,#modal-container) :is(.header p,.formhint,.switch-row small,.device-review-facts dt) {color:#4e6981;}
+
+html.dark #sidebar {background:var(--navy);}
+html.dark #sidebar :is(.nav-item.current,.nav-item.subtle:hover,.sidebar-button:hover) {background:var(--theme-hover);}
+html.dark :is(#app,#modal-container) :is(.btn,.device-review-smallbtn,.device-action-details,.device-more summary,.audit-row-button,.appearance-buttons button,.caffoot-search-trigger):disabled {
+ background:var(--theme-disabled);color:var(--muted);
+}
+html.dark :is(#app,#modal-container,.caffoot-search-popup,.caffoot-uk-date-picker) :is(button,input,select,textarea,summary,a[href],[tabindex]):focus-visible:not(.rack-elevation *) {
+ outline:2px solid var(--theme-focus);outline-offset:2px;
+}
+html.dark :is(#app,#modal-container) :is(.device-review-close,.device-review-check-item,.service-desk-workload-card,.caffoot-search-trigger):not(:disabled) {
+ border-color:var(--theme-control-border);
+}
+html.dark :is(#app,#modal-container) :is(.service-desk-field,.equipment-dialog,.stock-live,.staff-live,.supplier-live) :is(input,select,textarea):not([type=checkbox],[type=radio],[type=hidden],.switch):not(:disabled) {
+ background:var(--theme-control);color:var(--theme-text);border-color:var(--theme-control-border);
+}
+html.dark :is(#app,#modal-container) .service-desk-workload-card[aria-pressed=true] {border-color:var(--orange);}
+html.dark #modal-content:not(.catalogue-modal,.device-review-container) {border-color:var(--line);}
+html.dark :is(#app,#modal-container) .badge {background:var(--theme-disabled);color:var(--muted);}
+html.dark :is(#app,#modal-container) .badge.amber {background:var(--theme-warning-bg);color:var(--theme-warning-text);}
+html.dark :is(#app,#modal-container) .badge.green {background:var(--theme-good-bg);color:var(--theme-good-text);}
+html.dark :is(#app,#modal-container) .badge.red {background:var(--theme-danger-bg);color:var(--theme-danger-text);}
+html.dark :is(#app,#modal-container) .badge.blue {background:#082f49;color:#bae6fd;}
+html:not(.dark) .badge.amber {color:#ad5010;}
+html.dark #toast {background:var(--white);color:var(--ink);}
+html.dark #toast[data-notification-type="success"] {background:var(--theme-good-bg);color:var(--theme-good-text);}
+html.dark #toast[data-notification-type="error"] {background:var(--theme-danger-bg);color:var(--theme-danger-text);}
+html.dark #toast #toast-icon {color:inherit;}
+
+/* Neutral utilities in the shared shell, legacy forms and record details. */
+html.dark :is(.dark\:bg-slate-600,.dark\:bg-slate-700) {background-color:var(--theme-disabled);}
+html.dark .dark\:bg-slate-800 {background-color:var(--white);}
+html.dark .dark\:bg-slate-900 {background-color:var(--theme-control);}
+html.dark :is(.dark\:border-slate-600,.dark\:border-slate-700) {border-color:var(--line);}
+html.dark :is(input,select,textarea,button,[role=button],summary):is(.dark\:border-slate-500,.dark\:border-slate-600,.dark\:border-slate-700) {
+ border-color:var(--theme-control-border);
+}
+html.dark :is(.dark\:text-slate-100,.dark\:text-slate-200) {color:var(--ink);}
+html.dark :is(.dark\:text-slate-300,.dark\:text-slate-400) {color:var(--muted);}
+html.dark :is(.dark\:hover\:bg-slate-600,.dark\:hover\:bg-slate-700):hover,
+html.dark .dark\:active\:bg-slate-600:active {background-color:var(--theme-hover);}
 
 html.dark :is(#app,#modal-container) .diff-row .before {color:var(--theme-danger-text);}
 html.dark :is(#app,#modal-container) .diff-row .after {color:var(--theme-good-text);}

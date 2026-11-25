@@ -147,6 +147,9 @@
   opacity: .28;
   cursor: not-allowed;
 }
+html.dark :is(.caffoot-uk-date-trigger,.caffoot-uk-date-picker button):focus-visible {
+  outline-color: var(--theme-focus);
+}
 html.dark .caffoot-uk-date-picker {
   background: var(--theme-control,#0f172a);
   color: var(--theme-text,#f1f5f9);
@@ -157,8 +160,8 @@ html.dark .caffoot-uk-date-day {
   color: inherit;
 }
 html.dark .caffoot-uk-date-day.is-selected {
-  background: #e77e2d;
-  color: #111827;
+  background: var(--orange);
+  color: #142b43;
 }
 html.dark .caffoot-uk-date-nav {
   background: var(--theme-control,#0f172a);
