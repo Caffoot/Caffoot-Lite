@@ -142,7 +142,7 @@ class StaffDirectoryHttpTests(unittest.TestCase):
                 ('Alex', 'Rivers', 'Alex R', 'verified@example.test', 1))
             self.assertEqual(db.execute('SELECT token_hash FROM account_email_proofs WHERE account_id=4').fetchone(), ('existing-proof',))
             self.assertIsNone(db.execute('SELECT 1 FROM account_profiles WHERE account_id=5').fetchone())
-            self.assertEqual(db.execute('SELECT max(version) FROM schema_migrations').fetchone(), (29,))
+            self.assertEqual(db.execute('SELECT max(version) FROM schema_migrations').fetchone(), (30,))
             preserved = list(db.iterdump())
         initialise_server_database()
         with sqlite3.connect(self.path) as db:

@@ -6,6 +6,7 @@ from backend.accounts import hash_password
 from backend.audit_events import record_actor_event
 from backend.profiles import validate_profile_details
 from backend.role_policy import assign_staff_member, evaluate_role_policy, LEVELS, SERVICE_DESK_SECTION
+from backend.sessions import session_account
 from backend.staff_identity import link_account_staff, read_linked_staff
 
 
@@ -127,6 +128,7 @@ def set_account_active(connection, actor_id, target_id, active):
         connection.execute(
             "DELETE FROM account_sessions WHERE account_id=?", (target_id,)
         )
+        connection.execute("DELETE FROM account_password_change_proofs WHERE account_id=?", (target_id,))
         if not active:
             connection.execute("DELETE FROM account_email_proofs WHERE account_id=?", (target_id,))
         if bool(target_active) != active:
@@ -188,6 +190,10 @@ def set_administrator(connection, actor_id, target_id, is_admin):
         ).fetchone()[0]
         if not is_admin and actor_id == target_id:
             raise ValueError("Administrators cannot demote themselves")
+        if is_admin and not target_admin and connection.execute(
+            "SELECT must_change_password FROM accounts WHERE id=?", (target_id,)
+        ).fetchone()[0]:
+            raise ValueError("The user must change their temporary password before becoming an administrator.")
         if is_admin and not connection.execute(
             "SELECT mfa_confirmed FROM accounts WHERE id=?", (target_id,)
         ).fetchone()[0]:
@@ -211,6 +217,35 @@ def set_administrator(connection, actor_id, target_id, is_admin):
                 after={"Administrator role": "Administrator" if is_admin else "User"},
             )
         connection.commit()
+    except BaseException:
+        connection.rollback()
+        raise
+
+
+def reset_user_password(connection, actor_id, session_token, target_id, password, confirmation):
+    """Replace an ordinary account's password and revoke all affected proofs together."""
+    connection.execute("BEGIN IMMEDIATE")
+    try:
+        if session_account(connection, session_token) != actor_id:
+            raise PermissionError("Verified session required")
+        _admin(connection, actor_id)
+        target_admin, target_active = _target(connection, target_id)
+        if actor_id == target_id or target_admin:
+            raise PermissionError("Administrator passwords cannot be reset here")
+        if password != confirmation:
+            raise ValueError("Passwords do not match.")
+        replacement = hash_password(password)
+        username = connection.execute("SELECT username FROM accounts WHERE id=?", (target_id,)).fetchone()[0]
+        connection.execute("UPDATE accounts SET password_hash=?,must_change_password=1 WHERE id=?",
+                           (replacement, target_id))
+        connection.execute("DELETE FROM account_sessions WHERE account_id=?", (target_id,))
+        connection.execute("DELETE FROM account_email_proofs WHERE account_id=?", (target_id,))
+        connection.execute("DELETE FROM account_password_change_proofs WHERE account_id=?", (target_id,))
+        record_actor_event(connection, actor_id, kind="Security", action="Updated", label=username,
+                           reason="Administrator reset a password", fields=["Password", "Mandatory password change"],
+                           after={"Account ID": target_id, "Mandatory password change": True})
+        connection.commit()
+        return bool(target_active)
     except BaseException:
         connection.rollback()
         raise

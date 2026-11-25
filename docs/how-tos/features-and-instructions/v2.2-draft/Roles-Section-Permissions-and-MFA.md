@@ -172,6 +172,18 @@ Account controls are separate from role previews. Check the account identity bef
 
 You cannot disable, demote or delete your own signed-in administrator account, and the last active administrator is protected. Deleting a login does not delete its Staff directory identity or return its equipment; review those separately in the [Staff lifecycle](Staff-Members.md). These controls do not provide an administrator bypass for a forgotten password or authenticator.
 
+## Reset A Staff Member’s Password
+
+Use an assisted reset when a non-administrator needs a temporary password. You need a signed-in administrator account with confirmed MFA. Staff directory editing access alone cannot reset passwords. You can reset Staff Members, IT Staff and users with custom roles, including a disabled user. An administrator changes their own password in **My Account** or uses [account recovery](#recover-your-password-from-sign-in).
+
+1. Open **Staff → Staff Members**. Find the person by name or sign-in username, for example **Jamie Taylor** (`jamie.taylor`). Choose **View Details → Manage Permissions** and check the **Sign-in Username**.
+2. Under **Account controls**, select **Reset Password**. Enter a long, unique **Temporary Password** and repeat it exactly in **Confirm Temporary Password**. Use a password manager or another approved secure method to generate it.
+3. Review the warning, then select **Reset Password** in the dialogue to confirm. **Cancel**, **Close** and Escape discard the temporary entries. If the passwords differ, correct the confirmation before submitting. If the reset reports a failure, refresh the account and verify its current state before trying again.
+4. Wait for the confirmation beneath the reset control. The target’s existing sessions and recovery codes have ended. Their roles, Staff link, authenticator and verified email stay in place. A disabled account stays disabled and must be enabled separately before the person can sign in.
+5. Give Jamie the temporary password using a secure channel outside Caffoot Lite. The person must still complete their own authenticator checks and choose a new password. Confirm that they can complete a fresh sign-in without asking them to disclose their new password.
+
+Caffoot Lite records the administrator, affected account and change in the audit trail. Passwords and authenticator values stay out of the audit record.
+
 ## Set Up And Use MFA
 
 ### Required Enrolment At Sign-In
@@ -205,6 +217,17 @@ Removal is unavailable for Administrators, accounts with any enabled additional 
 
 ## Change Your Password Safely
 
+### After An Administrator Gives You A Temporary Password
+
+1. At **Sign In**, enter your username and the temporary password. For example, Jamie Taylor enters `jamie.taylor` and the password their administrator supplied privately.
+2. If prompted, enter the six-digit authenticator code. If **Secure Your Account** appears first, [complete enrolment](#required-enrolment-at-sign-in) and sign in again with the temporary password and your authenticator.
+3. On **Change Your Password**, enter a personal **New Password** and repeat it in **Confirm New Password**. Select **Change Password**. Use a password different from the temporary password. Correct any mismatch and submit again.
+4. When you see **Password changed successfully. Sign in again with your new password.**, enter the new password on the sign-in screen and provide your authenticator code if prompted. Only that fresh sign-in opens the workspace.
+
+**Back to Sign In** clears the form. The password change remains required the next time you sign in with the temporary password. If the change screen expires, begin again at sign-in. If the administrator resets the account again, use the latest temporary password. If the account is disabled, ask your administrator to check its status. A verified-email recovery can also complete the required password change when recovery is available and you choose a different password.
+
+### Change Your Password From My Account
+
 1. Open **My Account → Security → Change Password**.
 2. Enter **Current Password**.
 3. Enter a long, unique **New Password**, then repeat it in **Confirm New Password**. A password manager can help you retain it securely.
@@ -230,6 +253,8 @@ You need an active Caffoot Lite account, a verified email address saved to that 
 4. If you have enrolled MFA, enter the current six-digit **Authenticator Code (If Enrolled)**. This is the code from your authenticator app.
 5. Select **Recover Password**. If the passwords differ, the form shows **The new passwords do not match.** and returns focus to **Confirm New Password**. Correct the entries and try again. A mismatch or empty field leaves your password and recovery challenge unchanged. The confirmation entry stays in the browser and is cleared with the new password when the form is reset.
 6. When Caffoot Lite reports that the password was updated, both password fields clear and your existing sessions end. Use **Back To Sign In** and sign in with the new password and your authenticator if required.
+
+If an administrator has set a temporary password, successful recovery also clears the required password change. Enter a different password at step 3 and still complete all recovery and authenticator checks.
 
 ![The Request a Recovery Code step on desktop with the recovery Username, Request Recovery Code and Back To Sign In.](screenshots/recovery-request-desktop.png)
 

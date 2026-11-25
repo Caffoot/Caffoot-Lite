@@ -19,10 +19,14 @@ let mode='login';
 let setupWelcomeAcknowledged=false;
 let csrfToken='';
 let pendingCredentials=null;
+let passwordChangeProof='';
 const neutralSignInFailure='Unable to sign in. Please check your credentials or contact your administrator.';
-function clearSignInPassword(){
- $('password').value='';$('password').type='password';
- document.querySelector('[data-reveal="password"]').textContent='Show';
+function clearPasswordField(id){
+ $(id).value='';$(id).type='password';
+ document.querySelector('[data-reveal="'+id+'"]').textContent='Show';
+}
+function clearPasswordChange(){
+ passwordChangeProof='';clearPasswordField('new-password');clearPasswordField('confirm-new-password');
 }
 function showMfaQr(id,uri){
  const holder=$(id);holder.replaceChildren();
@@ -60,6 +64,7 @@ function display(){
  const welcomeIsVisible=mode==='setup'&&!setupWelcomeAcknowledged;
  const complete=mode==='complete';
  const enrolling=mode==='enrol'||mode==='required-enrol';
+ const changingPassword=mode==='change-password';
  $('setup-complete').hidden=!complete;
  $('resume-hint').hidden=mode!=='resume';
  for(const id of ['auth-heading','auth-eyebrow','intro'])$(id).hidden=complete;
@@ -72,22 +77,25 @@ function display(){
  $('back-to-welcome').hidden=mode!=='setup';
  $('welcome-flow').hidden=!welcomeIsVisible;
  $('form').hidden=welcomeIsVisible||complete;
- $('credentials').hidden=enrolling||mode==='login-mfa';
+ $('credentials').hidden=enrolling||mode==='login-mfa'||changingPassword;
  $('username').required=$('password').required=!$('credentials').hidden;
- $('back-to-login').hidden=!['login-mfa','required-enrol'].includes(mode);
+ $('change-password-fields').hidden=!changingPassword;
+ $('new-password').required=$('confirm-new-password').required=changingPassword;
+ $('back-to-login').hidden=!['login-mfa','required-enrol','change-password'].includes(mode);
  $('auth-heading').textContent=welcomeIsVisible?'Welcome to Caffoot Lite':
    mode==='setup'?'Create Your Administrator':
    enrolling?'Secure Your Account':
    mode==='resume'?'Finish Administrator Setup':
+   changingPassword?'Change Your Password':
    mode==='login-mfa'?'Verify Your Identity':'Welcome Back';
  $('auth-eyebrow').textContent=mode==='setup'?'First-Time Setup':
-   enrolling||mode==='login-mfa'?'Account Security':'Welcome to Caffoot Lite';
+   enrolling||mode==='login-mfa'||changingPassword?'Account Security':'Welcome to Caffoot Lite';
  $('message').textContent='';
  $('enrolment').hidden=!enrolling;
  $('enrolment').classList.toggle('required-mfa-enrolment',mode==='required-enrol');
  $('code-field').hidden=!enrolling&&mode!=='login-mfa';
- $('intro').textContent=welcomeIsVisible?'Your self-hosted workspace is ready to configure. Two essential steps will secure your first administrator account.':mode==='setup'?'Choose a username and password for your first administrator account. Authenticator enrolment follows.':mode==='required-enrol'?'Your assigned roles or access require MFA. Add this account to your authenticator, confirm its code, then sign in again.':mode==='enrol'?'Add the administrator account to your authenticator app, then confirm the six-digit code it generates.':mode==='resume'?'Sign in with your administrator credentials to resume MFA enrolment.':mode==='login-mfa'?'Enter the six-digit code from your authenticator app to finish signing in.':'Sign in with your Caffoot Lite account to access your infrastructure workspace.';
- $('submit').textContent=mode==='setup'?'Continue To Authenticator Setup':enrolling?'Confirm MFA Setup':mode==='resume'?'Continue Enrolment':mode==='login-mfa'?'Verify & Sign In':'Sign In';
+ $('intro').textContent=welcomeIsVisible?'Your self-hosted workspace is ready to configure. Two essential steps will secure your first administrator account.':mode==='setup'?'Choose a username and password for your first administrator account. Authenticator enrolment follows.':mode==='required-enrol'?'Your assigned roles or access require MFA. Add this account to your authenticator, confirm its code, then sign in again.':mode==='enrol'?'Add the administrator account to your authenticator app, then confirm the six-digit code it generates.':mode==='resume'?'Sign in with your administrator credentials to resume MFA enrolment.':mode==='login-mfa'?'Enter the six-digit code from your authenticator app to finish signing in.':changingPassword?'Your administrator has reset your password. Choose a new password before you can access Caffoot Lite.':'Sign in with your Caffoot Lite account to access your infrastructure workspace.';
+ $('submit').textContent=mode==='setup'?'Continue To Authenticator Setup':enrolling?'Confirm MFA Setup':mode==='resume'?'Continue Enrolment':mode==='login-mfa'?'Verify & Sign In':changingPassword?'Change Password':'Sign In';
  $('password').autocomplete=mode==='setup'?'new-password':'current-password';
  $('code').required=enrolling||mode==='login-mfa';
 }
@@ -114,7 +122,7 @@ $('get-started').addEventListener('click',()=>{
  setupWelcomeAcknowledged=true;display();$('username').focus();
 });
 $('back-to-login').addEventListener('click',()=>{
- pendingCredentials=null;clearSignInPassword();clearRequiredMfaDisplay();mode='login';display();$('username').focus();
+ pendingCredentials=null;clearPasswordField('password');clearPasswordChange();clearRequiredMfaDisplay();mode='login';display();$('username').focus();
 });
 document.querySelectorAll('[data-reveal]').forEach(button=>{
  button.addEventListener('click',()=>{
@@ -140,32 +148,48 @@ $('form').addEventListener('submit',async e=>{
    const r=await request('/api/setup/mfa-secret',data);$('secret').textContent=r.mfaSecret;mode='enrol';display();showMfaQr('setup-qr',r.mfaUri);
  }else if(mode==='required-enrol'){
    await request('/api/login/mfa/confirm',{...data,mfa_code:$('code').value});
-   pendingCredentials=null;clearRequiredMfaDisplay();clearSignInPassword();mode='login';display();
+   pendingCredentials=null;clearRequiredMfaDisplay();clearPasswordField('password');mode='login';display();
    $('message').style.color='#166534';$('message').textContent='MFA enrolled. Sign in again with your password and authenticator code.';
    $('username').focus();
  }else if(mode==='enrol'){
    await request('/api/setup/mfa',{...data,mfa_code:$('code').value});
    $('code').value='';$('confirm-password').value='';$('secret').replaceChildren();$('setup-qr').replaceChildren();
    mode='complete';display();
+ }else if(mode==='change-password'){
+   const password=$('new-password').value,confirmation=$('confirm-new-password').value;
+   if(password!==confirmation){$('confirm-new-password').focus();throw Error('The passwords do not match.');}
+   try{
+     await request('/api/login/change-password',{proof:passwordChangeProof,password,confirmation});
+   }catch(error){
+     if(error.code==='password_change_expired'){
+       clearPasswordChange();mode='login';display();$('password').focus();
+     }else $('new-password').focus();
+     throw error;
+   }
+   clearPasswordChange();mode='login';display();$('password').focus();
+   $('message').style.color='#166534';$('message').textContent='Password changed successfully. Sign in again with your new password.';
  }else{
    try{
      const result=await request('/api/login',{...data,...(mode==='login-mfa'?{mfa_code:$('code').value}:{})});
      if(result.status==='mfa enrolment required'){
        const enrolment=await request('/api/login/mfa/start',data);
-       pendingCredentials=data;clearSignInPassword();
+       pendingCredentials=data;clearPasswordField('password');
        mode='required-enrol';$('code').value='';display();
        $('secret').textContent=enrolment.mfaSecret;showMfaQr('setup-qr',enrolment.mfaUri);$('code').focus();return;
      }
-     pendingCredentials=null;clearSignInPassword();$('code').value='';
+     pendingCredentials=null;clearPasswordField('password');$('code').value='';
+     if(result.status==='password change required'){
+       passwordChangeProof=result.proof;mode='change-password';display();$('new-password').focus();return;
+     }
      if(!await showSession())throw Error('Unable to load session');
    }catch(error){
      if(mode==='login' && error.code==='mfa_required'){
-       pendingCredentials=data;clearSignInPassword();
+       pendingCredentials=data;clearPasswordField('password');
        mode='login-mfa';display();$('code').focus();
        return;
      }
      if(mode==='login'){
-       clearSignInPassword();$('password').focus();
+       clearPasswordField('password');$('password').focus();
      }else if(mode==='login-mfa'){
        $('code').value='';$('code').focus();
      }
@@ -278,4 +302,4 @@ $('setup-continue-sign-in').addEventListener('click',()=>{
 function clearRequiredMfaDisplay(){
  $('code').value='';$('secret').replaceChildren();$('setup-qr').replaceChildren();
 }
-window.addEventListener('pagehide',()=>{pendingCredentials=null;clearRequiredMfaDisplay();clearSignInPassword();});
+window.addEventListener('pagehide',()=>{pendingCredentials=null;clearRequiredMfaDisplay();clearPasswordField('password');clearPasswordChange();});

@@ -9469,7 +9469,7 @@ void (async () => {
           (editPermissions.Devices&&editPermissions.IPAM&&button.form.id==='device-ipam-link-form') ||
           button.form?.matches('#next-account-password-form,#next-account-mfa-start,#next-account-mfa-confirm,#account-mfa-removal-form,#personal-details-form,#account-email-verification-form') ||
           canSubmitLifecycleSettings(button.form) ||
-          (sessionIsAdmin && (button.closest('#next-user-profile-form,#smtp-settings-form,#smtp-test-form') || button.form?.matches('#role-definition-form'))) ||
+          (sessionIsAdmin && (button.closest('#next-user-profile-form,#smtp-settings-form,#smtp-test-form') || button.form?.matches('#role-definition-form,#staff-password-reset'))) ||
           (editPermissions['Staff Members'] && button.form?.matches('#staff-record-form')) ||
           (editPermissions.Departments && button.form?.matches('#staff-department-form')) ||
           canSubmitSupplierForm(button.form) || canSubmitServiceDeskForm(button.form) ||
@@ -10950,7 +10950,11 @@ void (async () => {
   document.addEventListener('keydown',event=>{
     const dialog=roleLayers.at(-1)?.layer.querySelector('[role="dialog"]')||document.querySelector('.users-management-modal [role="dialog"]');
     if(!dialog)return;
-    if(event.key==='Escape'&&roleLayers.length){event.preventDefault();event.stopImmediatePropagation();closeRoleLayer();return;}
+    if(event.key==='Escape'&&roleLayers.length){
+      event.preventDefault();event.stopImmediatePropagation();
+      if(!dialog.querySelector('#staff-password-reset[aria-busy="true"]'))closeRoleLayer();
+      return;
+    }
     if(event.key!=='Tab')return;
     const controls=[...dialog.querySelectorAll('button:not(:disabled),input:not(:disabled),select:not(:disabled),[tabindex="0"]')].filter(element=>element.getClientRects().length);
     const first=controls[0],last=controls.at(-1);
@@ -11005,15 +11009,62 @@ void (async () => {
         const sectionId=section==='Service Desk'?'service-desk':section;
         return renderInterfaceTemplate("users/permission-controls-1",[sectionId,section,sectionId,editingUser.id,section,own||editingUser.isAdmin?'disabled':'',[[null,'Inherit'],['deny','No Access'],['read','Read'],['edit','Edit']].map(([value,label])=>'<option value="'+(value===null?'':value)+'" '+(rights.override===value?'selected':'')+'>'+label+'</option>').join(''),permissionLabel(rights.inherited),permissionLabel(rights.effective)+(rights.featureEnabled===false?' · Feature Disabled':'')]);
       }).join('');
-      const operation=(kind,label)=>`<button type="button" class="btn ${kind==='delete'?'danger':''}" data-next-user-operation="${kind}" data-user-id="${editingUser.id}" ${own?'disabled':''}>${label}</button>`;
+      const operation=(kind,label,unavailable=false)=>`<button type="button" class="btn ${kind==='delete'?'danger':''}" data-next-user-operation="${kind}" data-user-id="${editingUser.id}" ${own||unavailable?'disabled':''}>${label}</button>`;
       const profile=editingUser.profile||{};
       const profileHTML=renderInterfaceTemplate("users/source-profile",[editingUser.id,...['firstName','lastName','displayName','email'].map(key=>escapeHtml(profile[key]||'')),own?'Edit your own personal details through My Account.':'Shared personal details also appear in Staff Details. Resolve differences in Edit Staff Member. A changed email address needs to be verified again.',own?'disabled':'',escapeHtml(editingUser.username),escapeHtml(profile.revision||'')]);
       const meta=renderInterfaceTemplate("users/source-user-meta",[editingUser.active?'green':'red',editingUser.active?'Active':'Disabled',editingUser.isAdmin?'blue':'dark',editingUser.isAdmin?'Administrator · All Sections':'Staff Member',editingUser.mfaEnrolled?'green':'amber',accountMfaLabel(editingUser)]);
       const administratorNote=editingUser.isAdmin?'<div class="note-row" style="margin-bottom:13px">Administrators retain configured access to all inventory sections. Disabled features remain unavailable. Their per-section permissions are not individually configured.</div>':'';
       const warnings=own?'<div class="modal-warning">You cannot disable, demote or delete your own signed-in administrator account. These controls are intentionally unavailable.</div>':editingUser.accessDetails.mfaPending?'<div class="modal-warning">MFA enrolment is required before wider Read/Edit access or enabled additional roles can be used. The user will be guided through enrolment before normal sign-in.</div>':'';
       const activeControl=renderInterfaceTemplate("users/source-account-control",[editingUser.active?'Disable account':'Enable account',editingUser.active?'Prevent this person signing in until the account is enabled again.':'Allow this person to sign in again.',operation('active',editingUser.active?'Disable':'Enable')]);
-      const administratorControl=renderInterfaceTemplate("users/source-account-control",[editingUser.isAdmin?'Remove administrator':'Make administrator',editingUser.isAdmin?'Return this account to standard-user status.':'Grant existing administrator privileges to an MFA-enrolled account.',operation('admin',editingUser.isAdmin?'Remove admin':'Make admin')]);
-      return renderInterfaceTemplate("users/account-management-dialog",[own?'Your administrator account':'Manage '+escapeHtml(editingUser.username),own?'Self-protection prevents account changes here. Use My Account for your own security settings.':'Review access and account controls for this user.',meta,profileHTML+renderRoleMemberships(editingUser,own),administratorNote,'<p class="formhint">Permissions from assigned roles can be customised for each user. Select <strong>Inherit</strong> to use the permissions provided by their roles. Select <strong>No Access</strong>, <strong>Read</strong> or <strong>Edit</strong> to set an individual override. Individual overrides take precedence, including when a role’s permissions change.</p>'+renderInterfaceTemplate("users/access-summary",[permissionControls]),warnings,activeControl,administratorControl,renderInterfaceTemplate("users/source-delete-control",[operation('delete','Delete User')])]);
+      const administratorControl=renderInterfaceTemplate("users/source-account-control",[editingUser.isAdmin?'Remove administrator':'Make administrator',editingUser.isAdmin?'Return this account to standard-user status.':editingUser.mustChangePassword?'The user must change their temporary password before becoming an administrator.':'Grant existing administrator privileges to an MFA-enrolled account.',operation('admin',editingUser.isAdmin?'Remove admin':'Make admin',editingUser.mustChangePassword)]);
+      const resetHelp=own?'Use My Account to change your own password.':editingUser.isAdmin?'Administrator passwords cannot be reset using this facility.':'Set a temporary password. The user must change it at their next sign-in.';
+      const resetControl=renderInterfaceTemplate('users/source-account-control',[
+        'Reset Password',resetHelp,operation('reset-password','Reset Password',editingUser.isAdmin),
+      ])+'<p class="note-row account-reset-result" role="status" data-password-reset-result hidden></p>';
+      return renderInterfaceTemplate("users/account-management-dialog",[own?'Your administrator account':'Manage '+escapeHtml(editingUser.username),own?'Self-protection prevents account changes here. Use My Account for your own security settings.':'Review access and account controls for this user.',meta,profileHTML+renderRoleMemberships(editingUser,own),administratorNote,'<p class="formhint">Permissions from assigned roles can be customised for each user. Select <strong>Inherit</strong> to use the permissions provided by their roles. Select <strong>No Access</strong>, <strong>Read</strong> or <strong>Edit</strong> to set an individual override. Individual overrides take precedence, including when a role’s permissions change.</p>'+renderInterfaceTemplate("users/access-summary",[permissionControls]),warnings,activeControl,administratorControl,resetControl+renderInterfaceTemplate("users/source-delete-control",[operation('delete','Delete User')])]);
+  }
+  function openStaffPasswordReset(user){
+    const body=renderInterfaceTemplate('users/password-reset-form',[user.active?'':'<br>This account will remain disabled.']);
+    const layer=openRoleLayer('Reset Password','Set a temporary password for '+user.username+'.',body,
+      '<button type="button" class="btn" data-role-command="close">Cancel</button><button type="submit" form="staff-password-reset" class="btn primary">Reset Password</button>');
+    const form=layer.querySelector('#staff-password-reset'),feedback=layer.querySelector('#staff-password-reset-error');
+    const {password,confirmation}=form.elements;
+    const buttons=[...layer.querySelectorAll('button')];
+    function clearFeedback(){feedback.hidden=true;feedback.textContent='';confirmation.removeAttribute('aria-invalid');}
+    form.addEventListener('input',clearFeedback);
+    form.addEventListener('submit',async event=>{
+      event.preventDefault();
+      if(form.getAttribute('aria-busy')==='true')return;
+      clearFeedback();
+      if(password.value!==confirmation.value){
+        feedback.textContent='Passwords do not match.';feedback.hidden=false;
+        confirmation.setAttribute('aria-invalid','true');confirmation.focus();return;
+      }
+      form.setAttribute('aria-busy','true');buttons.forEach(button=>button.disabled=true);
+      try{
+        const result=await postInventory('/api/users/reset-password',{
+          userId:user.id,password:password.value,confirmation:confirmation.value,
+        });
+        form.reset();
+        if(!layer.isConnected)return;
+        closeRoleLayer();
+        user.mustChangePassword=true;user.active=result.active;
+        updateUserWorkspace();
+        const status=staffAccountEditor?.layer.querySelector('[data-password-reset-result]');
+        if(status){
+          status.hidden=false;
+          status.textContent='Password reset for '+user.username+'. Existing sessions and recovery codes were revoked. '+
+            (result.active?'Password change required at next sign-in.':'Account remains disabled. Password change required after re-enabling.');
+          staffAccountEditor.layer.querySelector('[data-next-user-operation="reset-password"]').focus({preventScroll:true});
+          status.scrollIntoView({block:'nearest'});
+        }
+      }catch(error){
+        form.reset();feedback.hidden=false;feedback.textContent=error.message;password.focus();
+      }finally{
+        form.removeAttribute('aria-busy');buttons.forEach(button=>button.disabled=false);
+      }
+    });
+    password.focus();
   }
   function updateUserWorkspace(){
     if(!staffAccountEditor)return;
@@ -11342,12 +11393,18 @@ void (async () => {
       path='/api/users/active';payload={userId:id,active:!user.active};
     } else if (kind==='admin') {
       path='/api/users/admin';payload={userId:id,isAdmin:!user.isAdmin};
+    } else if(kind==='reset-password'){
+      if(!user.isAdmin)openStaffPasswordReset(user);
+      return;
     } else return;
     void changeCentralUser(path,payload).catch(error=>showToast(error.message,'error'));
   },true);
 
   function canSubmitLifecycleSettings(form) {
     return sessionIsAdmin && form?.id==='lifecycle-settings-form';
+  }
+  function canSubmitPasswordReset(form) {
+    return sessionIsAdmin && form?.id==='staff-password-reset';
   }
   async function openLifecycleSettings(trigger) {
     const response=await fetch('/api/settings/lifecycle',{cache:'no-store'});
@@ -11490,7 +11547,7 @@ void (async () => {
     if (!element) return;
     const action = element.dataset.action || '';
     if(element.form?.id==='device-ipam-link-form'&&editPermissions.Devices&&editPermissions.IPAM)return;
-    if(canSubmitLifecycleSettings(element.form))return;
+    if(canSubmitLifecycleSettings(element.form)||canSubmitPasswordReset(element.form))return;
     if (isBlockedAction(action, element) || (element.matches('button') && element.type==='submit' && element.form &&
         !element.form.matches('form[data-device-form="true"],#role-definition-form,#next-user-profile-form,#next-account-password-form,#next-account-mfa-start,#next-account-mfa-confirm,#account-mfa-removal-form,#personal-details-form,#smtp-settings-form,#smtp-test-form,#account-email-verification-form') &&
         !(editPermissions.IPAM && element.closest('form[data-form-action="ip"],form[data-form-action="bulk-ip"],form[data-form-action="subnet"],form[data-ipam-subnet-creation]')) &&
@@ -11508,7 +11565,7 @@ void (async () => {
   },true);
   document.addEventListener('submit',event => {
     if(editPermissions.Devices&&editPermissions.IPAM&&event.target.matches('#device-ipam-link-form'))return;
-    if(canSubmitLifecycleSettings(event.target))return;
+    if(canSubmitLifecycleSettings(event.target)||canSubmitPasswordReset(event.target))return;
     if (event.target.matches('#next-account-password-form,#next-account-mfa-start,#next-account-mfa-confirm,#account-mfa-removal-form,#personal-details-form,#next-user-profile-form,#smtp-settings-form,#smtp-test-form,#account-email-verification-form') ||
         (editPermissions['Staff Members'] && event.target.matches('#staff-record-form')) ||
         (editPermissions.Departments && event.target.matches('#staff-department-form')) ||

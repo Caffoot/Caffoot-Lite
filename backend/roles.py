@@ -303,6 +303,8 @@ def confirm_role_change(connection, actor_id, session_token, action, proof, *, n
                            before={"Roles and permissions": previous}, after={"Roles and permissions": after},
                            confirmation_id=proof["confirmationId"])
         for user in fresh["users"]:
+            if user["revokeSessions"] or user["before"]["sections"] != user["after"]["sections"]:
+                connection.execute("DELETE FROM account_password_change_proofs WHERE account_id=?", (user["userId"],))
             if user["revokeSessions"]:
                 connection.execute("DELETE FROM account_sessions WHERE account_id=?", (user["userId"],))
                 connection.execute("DELETE FROM account_email_proofs WHERE account_id=?", (user["userId"],))

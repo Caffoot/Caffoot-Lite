@@ -24,7 +24,7 @@ from backend.email_templates import migrate_email_templates
 
 from backend.shared_device_schema import migrate_shared_devices, validate_relationships
 
-SCHEMA_VERSION = 29
+SCHEMA_VERSION = 30
 
 DDL = """
 CREATE TABLE IF NOT EXISTS inventory_devices (
@@ -311,6 +311,18 @@ def _initialise_database(connection):
                 connection.execute("INSERT INTO schema_migrations(version) VALUES(29)")
             else:
                 validate_relationships(connection)
+        if SCHEMA_VERSION >= 30 and 30 not in versions:
+            connection.execute("ALTER TABLE accounts ADD COLUMN must_change_password INTEGER "
+                               "NOT NULL DEFAULT 0 CHECK(must_change_password IN (0,1))")
+            connection.execute("""
+                CREATE TABLE account_password_change_proofs (
+                    account_id INTEGER PRIMARY KEY REFERENCES accounts(id) ON DELETE CASCADE,
+                    token_hash TEXT NOT NULL UNIQUE,
+                    account_state TEXT NOT NULL,
+                    expires_at INTEGER NOT NULL
+                )
+            """)
+            connection.execute("INSERT INTO schema_migrations(version) VALUES(30)")
         connection.commit()
     except BaseException:
         connection.rollback()

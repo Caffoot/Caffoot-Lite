@@ -38,6 +38,10 @@
   <details class="key"><summary>Can't scan? Show setup key</summary><p id="secret"></p></details>
  </div>
  <div id="code-field" hidden><label class="field" for="code">Authenticator Code<input class="code-input" id="code" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6" placeholder="••••••"></label></div>
+ <div class="form-fields" id="change-password-fields" hidden>
+  <label class="field" for="new-password">New Password<span class="password-field"><input id="new-password" type="password" autocomplete="new-password" placeholder="Enter your new password"><button type="button" class="show-password" data-reveal="new-password">Show</button></span></label>
+  <label class="field" for="confirm-new-password">Confirm New Password<span class="password-field"><input id="confirm-new-password" type="password" autocomplete="new-password" placeholder="Re-enter your new password"><button type="button" class="show-password" data-reveal="confirm-new-password">Show</button></span></label>
+ </div>
  <p id="message" class="status" role="alert"></p><button class="primary" id="submit" type="submit">Continue</button>
  <button class="secondary" id="back-to-welcome" type="button" hidden>← Back</button>
  <button class="secondary" id="back-to-login" type="button" hidden>← Back to Sign In</button>

@@ -42,6 +42,22 @@ class ComposeLifecycleTests(unittest.TestCase):
                                   check=True, capture_output=True, text=True).stdout.strip()
         def inside(script):
             return run("exec", "-T", "caffoot-lite", "python", "-c", script)
+        schema_29_fixture = """
+import sqlite3, time
+from backend import schema
+from backend.accounts import bootstrap_first_admin, confirm_admin_mfa
+from backend.mfa import code_at
+from backend.permissions import create_user
+
+schema.SCHEMA_VERSION = 29
+with sqlite3.connect('/data/caffoot.sqlite3') as db:
+    db.execute('PRAGMA foreign_keys=ON')
+    schema.initialise_database(db)
+    owner, secret = bootstrap_first_admin(db, 'fictional-smoke-owner', 'Fictional-Smoke-Password')
+    confirm_admin_mfa(db, owner, code_at(secret, time.time()))
+    create_user(db, owner, 'fictional-smoke-worker', 'Fictional-Worker-Original')
+    assert db.execute('SELECT max(version) FROM schema_migrations').fetchone() == (29,)
+"""
         schema_check = """
 import sqlite3
 from backend.schema import SCHEMA_VERSION
@@ -55,8 +71,23 @@ with sqlite3.connect('file:/data/caffoot.sqlite3?mode=ro', uri=True) as db:
     assert not foreign_keys, foreign_keys
     print(SCHEMA_VERSION)
 """
+        password_state_check = """
+import sqlite3, time
+from backend.mfa import code_at
+from backend.sessions import login_session
+
+with sqlite3.connect('/data/caffoot.sqlite3') as db:
+    owner, secret, pending = db.execute('SELECT id,mfa_secret,must_change_password FROM accounts WHERE is_admin=1').fetchone()
+    assert pending == 0
+    assert login_session(db, 'fictional-smoke-owner', 'Fictional-Smoke-Password', mfa_code=code_at(secret, time.time()))
+    assert db.execute('SELECT must_change_password FROM accounts WHERE is_admin=0').fetchone() == (1,)
+    assert login_session(db, 'fictional-smoke-worker', 'Fictional-Worker-Temporary') is None
+    print('persisted')
+"""
         try:
-            run("up", "--build", "-d", "--wait")
+            run("build")
+            run("run", "-T", "--rm", "--no-deps", "--entrypoint", "python", "caffoot-lite", "-c", schema_29_fixture)
+            run("up", "-d", "--wait")
             self.assertEqual(run("port", "caffoot-lite", "8080").split(":")[-1], str(port))
             self.assertEqual(inside(
                 "import pathlib; p=pathlib.Path('/opt/caffoot'); "
@@ -69,12 +100,16 @@ with sqlite3.connect('file:/data/caffoot.sqlite3?mode=ro', uri=True) as db:
             inside("import sqlite3; c=sqlite3.connect('/data/caffoot.sqlite3'); "
                    "c.execute('CREATE TABLE IF NOT EXISTS smoke_marker (value TEXT)'); "
                    "c.execute(\"INSERT INTO smoke_marker VALUES ('persisted')\"); c.commit()")
-            inside("import sqlite3,time; from backend.accounts import bootstrap_first_admin,confirm_admin_mfa; "
+            inside("import sqlite3,time; from backend.permissions import reset_user_password; "
                    "from backend.mfa import code_at; from backend.profiles import save_profile; "
                    "from backend.account_email import issue_email_proof,confirm_email_proof; "
+                   "from backend.sessions import login_session; "
                    "c=sqlite3.connect('/data/caffoot.sqlite3'); "
-                   "actor,secret=bootstrap_first_admin(c,'fictional-smoke-owner','Fictional-Smoke-Password'); "
-                   "confirm_admin_mfa(c,actor,code_at(secret,time.time())); "
+                   "actor,secret=c.execute('SELECT id,mfa_secret FROM accounts WHERE is_admin=1').fetchone(); "
+                   "target,flag=c.execute('SELECT id,must_change_password FROM accounts WHERE is_admin=0').fetchone(); "
+                   "assert flag==0 and login_session(c,'fictional-smoke-worker','Fictional-Worker-Original'); "
+                   "session=login_session(c,'fictional-smoke-owner','Fictional-Smoke-Password',mfa_code=code_at(secret,time.time())); "
+                   "reset_user_password(c,actor,session,target,'Fictional-Worker-Temporary','Fictional-Worker-Temporary'); "
                    "save_profile(c,actor,dict(firstName='',lastName='',displayName='',email='smoke@example.test')); "
                    "proof=issue_email_proof(c,actor,'verify'); "
                    "exec(\"try:\\n confirm_email_proof(c,'invalid!','verify',challenge_id=proof[2],account_id=actor)\\nexcept ValueError: pass\")")
@@ -82,6 +117,7 @@ with sqlite3.connect('file:/data/caffoot.sqlite3?mode=ro', uri=True) as db:
                 "import hashlib,pathlib; p=pathlib.Path('/data/account-email-secret.key'); "
                 "assert p.stat().st_mode&0o777==0o600; print(hashlib.sha256(p.read_bytes()).hexdigest())")
             schema_version = inside(schema_check)
+            self.assertEqual(schema_version, "30")
             run("restart", "caffoot-lite")
             self.assertEqual(fingerprint, inside(
                 "import hashlib,pathlib; print(hashlib.sha256(pathlib.Path('/data/tls/server.crt').read_bytes()).hexdigest())"))
@@ -91,6 +127,7 @@ with sqlite3.connect('file:/data/caffoot.sqlite3?mode=ro', uri=True) as db:
             self.assertEqual(email_key_hash, inside("import hashlib,pathlib; print(hashlib.sha256(pathlib.Path('/data/account-email-secret.key').read_bytes()).hexdigest())"))
             self.assertEqual(inside("import sqlite3; c=sqlite3.connect('/data/caffoot.sqlite3'); print(c.execute('SELECT count(*) FROM account_email_attempts').fetchone()[0])"), "1")
             self.assertEqual(inside(schema_check), schema_version)
+            self.assertEqual(inside(password_state_check), "persisted")
             run("up", "-d", "--wait", "--force-recreate")
             self.assertEqual(fingerprint, inside(
                 "import hashlib,pathlib; print(hashlib.sha256(pathlib.Path('/data/tls/server.crt').read_bytes()).hexdigest())"))
@@ -100,6 +137,7 @@ with sqlite3.connect('file:/data/caffoot.sqlite3?mode=ro', uri=True) as db:
             self.assertEqual(email_key_hash, inside("import hashlib,pathlib; print(hashlib.sha256(pathlib.Path('/data/account-email-secret.key').read_bytes()).hexdigest())"))
             self.assertEqual(inside("import sqlite3; c=sqlite3.connect('/data/caffoot.sqlite3'); print(c.execute('SELECT count(*) FROM account_email_attempts').fetchone()[0])"), "1")
             self.assertEqual(inside(schema_check), schema_version)
+            self.assertEqual(inside(password_state_check), "persisted")
         finally:
             run("down", "-v", "--remove-orphans")
             build_settings.cleanup()

@@ -24,7 +24,7 @@ def login(connection, peer, username, password, *, mfa_code=None, now=None):
         return None
     token = login_session(
         connection, username, password, mfa_code=mfa_code, now=now,
-        report_enrolment=True, report_mfa_challenge=True,
+        report_enrolment=True, report_mfa_challenge=True, report_password_change=True,
     )
     if token is None:
         THROTTLE.failed(peer, username)

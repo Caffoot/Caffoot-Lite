@@ -62,4 +62,15 @@
 
 <!-- interface-template:users/source-delete-control --><div class="danger-zone"><strong style="color:var(--theme-danger-text,#a85650);font-size:12px">Delete user</strong><p>Review the confirmation before deleting this account.</p>{{slot:0}}</div><!-- /interface-template -->
 
+<!-- interface-template:users/password-reset-form -->
+<form id="staff-password-reset">
+  <div class="profile-modal-grid">
+    <div class="field"><label for="staff-temporary-password">Temporary Password *</label><input class="input" id="staff-temporary-password" name="password" type="password" autocomplete="new-password" placeholder="Enter temporary password" required><p class="formhint">Share the temporary password through a secure channel.</p></div>
+    <div class="field"><label for="staff-confirm-temporary-password">Confirm Temporary Password *</label><input class="input" id="staff-confirm-temporary-password" name="confirmation" type="password" autocomplete="new-password" placeholder="Re-enter temporary password" aria-describedby="staff-password-reset-error" required></div>
+  </div>
+  <p id="staff-password-reset-error" role="alert" class="formhint" hidden></p>
+  <div class="modal-warning"><strong>Before continuing</strong><br>All existing sessions and outstanding recovery codes will be invalidated. The user must choose a new password at their next sign-in. Existing MFA and permissions remain unchanged.{{slot:0}}</div>
+</form>
+<!-- /interface-template -->
+
 <!-- interface-template:users/source-user-meta --><span class="badge {{slot:0}}"><span class="dot"></span>{{slot:1}}</span><span class="badge {{slot:2}}">{{slot:3}}</span><span class="badge {{slot:4}}">{{slot:5}}</span><!-- /interface-template -->
