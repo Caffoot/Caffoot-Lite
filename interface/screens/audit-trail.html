@@ -17,7 +17,7 @@
     <div class="section-heading"><div><h2>Recent activity</h2><p>A searchable, chronological record of meaningful system changes.</p></div><span class="preview-side">Saved events</span></div>
     <div class="card audit-toolbar">
       <div class="field search"><label for="q">Search actor, record or event</label><input class="input" id="q" type="search" placeholder="Search actor, event or record"></div>
-      <div class="field"><label for="area">Area</label><select class="input" id="area"><option value="">All areas</option><option>Devices</option><option>IPAM</option><option>Racks</option><option>Users</option><option>Security</option><option>Settings</option></select></div>
+      <div class="field"><label for="area">Area</label><select class="input" id="area"><option value="">All areas</option><!--AUDIT_AREAS--></select></div>
       <div class="field short"><label for="action">Action</label><select class="input" id="action"><option value="">All actions</option><option>Created</option><option>Updated</option><option>Deleted</option><option value="Security">Security event</option><option value="System">System event</option></select></div>
       <div class="field short"><label for="actor">Performed by</label><select class="input" id="actor"><option value="">Anyone</option><!--AUDIT_ACTORS--><option value="unknown">Unknown</option></select></div>
       <button class="btn slim" type="button" id="reset-filters" data-action="audit-reset-filters">Clear filters</button>

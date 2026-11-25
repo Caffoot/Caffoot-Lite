@@ -680,6 +680,41 @@ function hierarchyValidateTypes(subnets) {
         let activeAuditTab='activity';
         let selectedAuditAsset='';
         let auditLastFocus=null;
+        // Read only recorded names: never resolve a historical label against today's data.
+        function auditRecordPresentation(change, reason, index){
+          const kind=String(change.kind||'Unknown');
+          const originalLabel=String(change.label||'Unspecified record');
+          const safe=value=>typeof value==='string'&&value.trim()&&value.length<=160&&!/[\u0000-\u001f\u007f]/.test(value);
+          const metadata=change.recordSubject;
+          const compatible=metadata&&typeof metadata==='object'&&(
+            metadata.kind===kind ||
+            kind==='Security'&&metadata.kind==='Account' ||
+            kind==='IPAM'&&['Subnet','VLAN'].includes(metadata.kind) ||
+            kind==='Rack'&&metadata.kind==='Rack Accessory' ||
+            kind==='IT Assets'&&['Stock Item','Stock Unit','Stock Movement','Device'].includes(metadata.kind) ||
+            kind==='Suppliers'&&['Supplier','Supplier Location','Supplier Contact','Supplier Note','Supplier Issue','Supplier Category'].includes(metadata.kind));
+          const recordKind=compatible?metadata.kind:kind;
+          let id=compatible&&safe(metadata.id)?metadata.id:'';
+          let name=compatible&&safe(metadata.name)?metadata.name:'';
+          let source=name?'Name recorded at event':'Original recorded label';
+          if(!id&&['Staff Member','Department'].includes(kind)&&safe(originalLabel))id=originalLabel;
+          if(!name&&kind==='Department'&&reason==='Department directory updated'){
+            const historical=(change.action==='Deleted'?change.before:change.after)?.name;
+            if(safe(historical)){name=historical;source='Name from recorded event values';}
+          }
+          if(!id&&kind==='Device'){
+            if(['Initial equipment allocation','Direct Device reassignment after confirmed preparation','Reissued equipment'].includes(reason)&&safe(originalLabel))id=originalLabel;
+            else if(['Equipment Lifecycle dates changed','Original In Service Date recorded at first stock issue'].includes(reason)&&safe(change.after?.deviceId))id=change.after.deviceId;
+          }
+          if(!name&&id===originalLabel&&['Staff Member','Department','Device','Stock Item','Stock Unit','Stock Movement'].includes(recordKind))source='Historical name not recorded';
+          // Only server-generated directory IDs and non-reused account IDs
+          // are grouped here. Reusable inventory IDs require lifetime proof.
+          const stable=(['Staff Member','Department'].includes(recordKind)&&/^[0-9a-f]{32}$/.test(id))||
+            (recordKind==='Account'&&/^[1-9][0-9]{0,18}$/.test(id));
+          return {label:name||originalLabel,originalLabel,canonicalId:id||'Not recorded',
+            labelSource:source,verifiedIdentity:stable,
+            recordKey:stable?JSON.stringify([recordKind,id]):'unlinked-'+index};
+        }
         function auditVisibleRows(){
           const rows=[];
           for(let i=auditHistory.length-1;i>=0;i--){
@@ -690,11 +725,13 @@ function hierarchyValidateTypes(subnets) {
               if(!change||typeof change!=='object'||Array.isArray(change))continue;
               const kind=String(change.kind||'Unknown');
               const area=['IPAM','Subnet','VLAN'].includes(kind)?'IPAM':kind==='Rack'?'Racks':
-                kind==='Settings'?'Settings':kind==='Account'?'Users':
+                kind==='Settings'?'Settings':['Account','Role'].includes(kind)?'Users':
                 ['Authentication','Security'].includes(kind)?'Security':
-                ['Device','Device types','Locations'].includes(kind)?'Devices':'Other';
+                ['Device','Device types','Locations'].includes(kind)?'Devices':
+                ['Staff Member','Department'].includes(kind)?'Staff':
+                ['IT Assets','Suppliers','Service Desk'].includes(kind)?kind:'Other';
               rows.push({index:rows.length,at:ev.at||'',actor:typeof ev.actor==='string'&&ev.actor.trim()?ev.actor:'Not recorded',
-                area,kind,action:String(change.action||'Updated'),label:String(change.label||'Unspecified record'),
+                area,kind,action:String(change.action||'Updated'),...auditRecordPresentation(change, ev.reason, rows.length),
                 reason:String(ev.reason||'Recorded change'),outcome:String(ev.outcome||'Succeeded'),
                 fields:Array.isArray(change.fields)?change.fields.filter(x=>typeof x==='string'):[],
                 before:change.before,after:change.after});
@@ -709,26 +746,33 @@ function hierarchyValidateTypes(subnets) {
         function renderAuditHTML() {
           const rows=auditVisibleRows();
           const names=[...new Set(rows.map(r=>r.actor).filter(n=>n!=='Not recorded'))].sort();
-          const assets=[...new Map(rows.map(r=>[JSON.stringify([r.kind,r.label]),{kind:r.kind,label:r.label,area:r.area}])).entries()];
+          const assetGroups=new Map();
+          for(const row of rows){
+            if(!assetGroups.has(row.recordKey))assetGroups.set(row.recordKey,[]);
+            assetGroups.get(row.recordKey).push(row);
+          }
+          const assets=[...assetGroups.entries()].map(([key,history])=>[key,history[0]]);
           if(!assets.some(([key])=>key===selectedAuditAsset))selectedAuditAsset=assets[0]?.[0]||'';
-          const tr=rows.map(r=>'<tr data-audit-index="'+r.index+'" data-area="'+escapeHtml(r.area)+'" data-verb="'+escapeHtml(r.action)+'" data-actor="'+escapeHtml(r.actor)+'" data-search="'+escapeHtml([r.actor,r.area,r.action,r.kind,r.label,r.reason].join(' ').toLowerCase())+'">' +
+          const tr=rows.map(r=>'<tr data-audit-index="'+r.index+'" data-area="'+escapeHtml(r.area)+'" data-verb="'+escapeHtml(r.action)+'" data-actor="'+escapeHtml(r.actor)+'" data-search="'+escapeHtml([r.actor,r.area,r.action,r.kind,r.label,r.originalLabel,r.canonicalId,r.labelSource,r.reason].join(' ').toLowerCase())+'">' +
             '<td><div class="time">'+escapeHtml(auditDate(r.at))+'</div><div class="secondary">UTC</div></td>' +
             '<td><strong>'+escapeHtml(r.actor)+'</strong></td>' +
             '<td><div class="event-name">'+escapeHtml(r.kind+' '+r.action.toLowerCase())+'</div><div class="event-note">'+escapeHtml(r.reason)+'</div></td>' +
             '<td><span class="act-badge '+escapeHtml(r.action.toLowerCase())+'">'+escapeHtml(r.action)+'</span></td>' +
-            '<td><div class="subject">'+escapeHtml(r.label)+'</div><div class="secondary">'+escapeHtml(r.area)+'</div></td>' +
+            '<td><div class="subject">'+escapeHtml(r.label)+'</div><div class="secondary">'+escapeHtml(r.area)+(r.labelSource==='Historical name not recorded'?' · Historical name not recorded':'')+'</div></td>' +
             '<td><button class="audit-row-button" type="button" data-action="audit-view-detail" data-index="'+r.index+'">View Details</button></td></tr>').join('')||
             '<tr><td colspan="6" class="audit-empty">No authorised audit events are recorded yet.</td></tr>';
           const list=assets.map(([key,asset])=>{
-            const count=rows.filter(r=>r.kind===asset.kind&&r.label===asset.label).length;
-            return '<button class="asset-item '+(key===selectedAuditAsset?'selected':'')+'" type="button" data-action="audit-select-asset" data-key="'+escapeHtml(key)+'"><span><b>'+escapeHtml(asset.label)+'</b><small>'+escapeHtml(asset.area)+' · Saved history</small></span><span class="num">'+count+'</span></button>';
+            const history=assetGroups.get(key);
+            const search=history.map(r=>[r.label,r.originalLabel,r.canonicalId,r.area,r.actor,r.reason].join(' ')).join(' ').toLowerCase();
+            return '<button class="asset-item '+(key===selectedAuditAsset?'selected':'')+'" type="button" data-action="audit-select-asset" data-key="'+escapeHtml(key)+'" data-search="'+escapeHtml(search)+'"><span><b>'+escapeHtml(asset.label)+'</b><small>'+escapeHtml(asset.area)+(asset.verifiedIdentity?' · Saved history':' · Identity not verified')+'</small></span><span class="num">'+history.length+'</span></button>';
           }).join('')||'<p class="audit-empty">No authorised records to display.</p>';
           const chosen=assets.find(([key])=>key===selectedAuditAsset)?.[1];
-          const timeline=chosen?rows.filter(r=>r.kind===chosen.kind&&r.label===chosen.label):[];
-          const timelineHtml=timeline.length?'<h3>'+escapeHtml(chosen.label)+'</h3><p class="subtitle">'+timeline.length+' saved changes</p>' +
-            '<div class="timeline-list">'+timeline.map(r=>'<div class="timeline-entry"><strong>'+escapeHtml(r.kind+' '+r.action.toLowerCase())+'</strong><p>'+escapeHtml(r.actor)+' · '+escapeHtml(auditDate(r.at))+' UTC</p><button type="button" class="audit-row-button" data-action="audit-view-detail" data-index="'+r.index+'">View event details</button></div>').join('')+'</div>':
+          const timeline=assetGroups.get(selectedAuditAsset)||[];
+          const timelineHtml=timeline.length?'<h3>'+escapeHtml(chosen.label)+'</h3><p class="subtitle">'+timeline.length+' saved changes'+(chosen.verifiedIdentity?' · Latest recorded label':' · No verified link to other events')+'</p>' +
+            '<div class="timeline-list">'+timeline.map(r=>'<div class="timeline-entry"><strong>'+escapeHtml(r.kind+' '+r.action.toLowerCase())+'</strong><p>'+escapeHtml(r.actor)+' · '+escapeHtml(auditDate(r.at))+' UTC<br>'+escapeHtml(r.label)+' · '+escapeHtml(r.labelSource)+'</p><button type="button" class="audit-row-button" data-action="audit-view-detail" data-index="'+r.index+'">View event details</button></div>').join('')+'</div>':
             '<p class="audit-empty">Select a record to view its history.</p>';
           return auditMarkup
+            .replace('<!--AUDIT_AREAS-->',[...new Set(rows.map(r=>r.area))].sort().map(area=>'<option>'+escapeHtml(area)+'</option>').join(''))
             .replace('<!--AUDIT_ACTORS-->',names.map(n=>'<option value="'+escapeHtml(n)+'">'+escapeHtml(n)+'</option>').join(''))
             .replace('<tbody id="activity-results"></tbody>','<tbody id="activity-results">'+tr+'</tbody>')
             .replace('<div class="card asset-list" id="asset-list"></div>','<div class="card asset-list" id="asset-list">'+list+'</div>')
@@ -774,7 +818,7 @@ function hierarchyValidateTypes(subnets) {
           if(event.target.id!=='asset-search'||!event.target.closest('.audit-screen'))return;
           const q=event.target.value.trim().toLowerCase();
           event.target.closest('.audit-screen').querySelectorAll('.asset-item').forEach(button=>{
-            button.hidden=!button.textContent.toLowerCase().includes(q);
+            button.hidden=!button.dataset.search.includes(q);
           });
         },true);
         document.addEventListener('keydown',event=>{
@@ -801,7 +845,10 @@ function hierarchyValidateTypes(subnets) {
             fields=renderInterfaceTemplate("audit-trail/fields-1",[])+
               keys.map(k=>'<div class="diff-row"><b>'+escapeHtml(k)+'</b><span class="before">'+escapeHtml(String(row.before[k]??'Not recorded'))+'</span><span class="after">'+escapeHtml(String(row.after[k]??'Not recorded'))+'</span></div>').join('');
           }
-          document.getElementById('audit-detail-body').innerHTML='<div class="detail-meta"><div><small>Performed by</small><b>'+escapeHtml(row.actor)+'</b></div><div><small>When (UTC)</small><b>'+escapeHtml(auditDate(row.at))+'</b></div><div><small>Result</small><b>'+escapeHtml(row.outcome)+'</b></div></div><p class="detail-description">'+escapeHtml(row.reason)+'</p>'+fields;
+          const identity='<h3 class="detail-section">Affected record</h3><dl class="identity-grid">'+
+            [['Displayed record',row.label],['Label source',row.labelSource],['Canonical record ID',row.canonicalId],['Original recorded label',row.originalLabel]]
+              .map(([label,value])=>'<div><dt>'+escapeHtml(label)+'</dt><dd>'+escapeHtml(value)+'</dd></div>').join('')+'</dl>';
+          document.getElementById('audit-detail-body').innerHTML='<div class="detail-meta"><div><small>Performed by</small><b>'+escapeHtml(row.actor)+'</b></div><div><small>When (UTC)</small><b>'+escapeHtml(auditDate(row.at))+'</b></div><div><small>Result</small><b>'+escapeHtml(row.outcome)+'</b></div></div><p class="detail-description">'+escapeHtml(row.reason)+'</p>'+identity+fields;
           layer.hidden=false;
           layer.querySelector('[data-action="audit-close-detail"]').focus();
         }
