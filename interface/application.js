@@ -798,6 +798,7 @@ function hierarchyValidateTypes(subnets) {
           const {list,timelineHtml}=auditAssetPanels(rows);
           return auditMarkup
             .replace('<!--AUDIT_AREAS-->',[...new Set(rows.map(r=>r.area))].sort().map(area=>'<option>'+escapeHtml(area)+'</option>').join(''))
+            .replace('<!--AUDIT_ACTIONS-->',[...new Set(rows.map(r=>r.action))].sort().map(action=>'<option>'+escapeHtml(action)+'</option>').join(''))
             .replace('<!--AUDIT_ACTORS-->',names.map(n=>'<option value="'+escapeHtml(n)+'">'+escapeHtml(n)+'</option>').join(''))
             .replace('<tbody id="activity-results"></tbody>','<tbody id="activity-results">'+tr+noMatches+'</tbody>')
             .replace('<div class="card asset-list" id="asset-list"></div>','<div class="card asset-list" id="asset-list">'+list+'</div>')

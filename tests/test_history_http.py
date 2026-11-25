@@ -45,8 +45,10 @@ class HistoryHttpPermissionTests(unittest.TestCase):
             self.assertTrue(self.viewer_token)
             event = {"at": "2026-11-02T12:00:00Z", "reason": "Inventory saved",
                      "changes": [
-                         {"action": "Updated", "kind": "Device", "label": "allowed", "fields": []},
-                         {"action": "Updated", "kind": "IPAM", "label": "hidden-ipam", "fields": []},
+                         {"action": "Updated", "kind": "Device", "label": "allowed", "fields": [],
+                          "recordSubject": {"kind": "Device", "id": "allowed-id", "name": "Saved Laptop"}},
+                         {"action": "Updated", "kind": "IPAM", "label": "hidden-ipam", "fields": [],
+                          "recordSubject": {"kind": "Subnet", "id": "hidden-id", "name": "Hidden subnet name"}},
                          {"action": "Updated", "kind": "Rack", "label": "hidden-rack", "fields": []},
                          {"action": "Updated", "kind": "Settings", "label": "device-setting", "fields": []},
                          {"action": "Updated", "kind": "unknown-legacy", "label": "hidden-other", "fields": []},
@@ -86,6 +88,9 @@ class HistoryHttpPermissionTests(unittest.TestCase):
                 self.assertEqual([change["label"] for change in entries[0]["changes"]],
                                  ["allowed", "device-setting"])
                 self.assertEqual(entries[0]["omitted"], 0)
+                self.assertEqual(entries[0]["changes"][0]["recordSubject"],
+                                 {"kind": "Device", "id": "allowed-id", "name": "Saved Laptop"})
+                self.assertNotIn("Hidden subnet name", json.dumps(entries))
                 status, admin_result = self.get(path, self.admin_token)
                 self.assertEqual(status, 200)
                 inventory_events = [

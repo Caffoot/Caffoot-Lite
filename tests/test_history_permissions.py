@@ -286,6 +286,23 @@ class HistoryPermissionProjectionTests(unittest.TestCase):
                          ["Unassociated stock", "owner"])
         self.assertNotIn("PRIVATE", json.dumps(result))
 
+    def test_stock_subject_does_not_disclose_device_name_without_devices_read(self):
+        event = {"changes": [
+            {"kind": "IT Assets", "label": "Equipment", "fields": [],
+             "recordSubject": {"kind": "Device", "id": "private-device", "name": "Private laptop"}},
+            {"kind": "IT Assets", "label": "Stock", "fields": [],
+             "recordSubject": {"kind": "Stock Item", "id": "stock-id", "name": "USB cable"}},
+        ]}
+        self.db.execute("INSERT INTO inventory_change_history(record_json) VALUES(?)", (json.dumps(event),))
+        self.allowed = {"IT Assets": True}
+        result = visible_change_history(self.db, 2)
+        self.assertNotIn("Private laptop", json.dumps(result))
+        self.assertNotIn("private-device", json.dumps(result))
+        self.assertEqual(result[0]["changes"][1]["recordSubject"]["name"], "USB cable")
+        self.allowed["Devices"] = True
+        result = visible_change_history(self.db, 2)
+        self.assertEqual(result[0]["changes"][0]["recordSubject"]["name"], "Private laptop")
+
     def test_stock_only_reader_cannot_reclassify_pre_reset_movement_using_reused_id(self):
         self.db.execute("CREATE TABLE it_asset_stock_units (id INTEGER PRIMARY KEY, device_id TEXT)")
         self.db.execute("CREATE TABLE it_asset_stock_entries (movement_id INTEGER, stock_unit_id INTEGER)")
