@@ -36,6 +36,18 @@ If the product owner **or the assistant** says "this is too complicated", "this 
 - **Evidence-only follow-ups are narrow.** Review only the new evidence and affected files; do not regenerate unrelated screenshots or repeat broad local testing. Record any check affected by the changed PR head.
 - **Never weaken acceptance to save credits.** Permissions, persistence, security, release and compatibility requirements still apply. If a focused check cannot establish safe behaviour, run the necessary wider check and explain why. The owner alone approves scope, merges and releases.
 
+## Verification scope and resource approval — all development
+
+These restrictions apply to every development, investigation, review and acceptance session, not just the current milestone.
+
+- **Cloud desktop and computer use require explicit prior owner approval.** Do not launch or use cloud desktop skills, remote graphical desktop sessions or computer-use tools as an alternative verification method without approval for that specific purpose. Existing approved local automated browser fixtures are not prohibited.
+- **Respect acceptance stages.** Keep native/manual acceptance and other explicitly deferred checks in their approved stage. An outstanding item in a coverage matrix is not permission to bring it forward. Record deferred items as outstanding, never as passed; use the agreed acceptance route when authorised.
+- **Ask before resource-intensive deviations.** If the approved verification approach is insufficient and a resource-intensive investigation outside that approach is proposed, stop first. Report the exact blocker, evidence already obtained, the minimum necessary next step and its likely resource implications; seek explicit owner approval before proceeding.
+- **Reuse verified evidence.** Do not repeat previously verified checks or browser journeys without a documented technical reason, such as an affected code change or invalidated evidence. Limit reruns and new captures to the affected scope while meeting all mandatory acceptance requirements.
+- **Do not independently expand verification scope.** Permission to develop or complete a batch does not authorise unrelated investigations, additional acceptance stages or alternative resource-intensive methods. If scope or stage is uncertain, stop and ask. Preserve meaningful checkpoints and report what remains outstanding.
+
+These restrictions do not waive any security, functional, accessibility, visual, compatibility or release acceptance requirement.
+
 ## Mandatory Documentation Quality Standard
 
 **Every new or materially changed feature must have comprehensive, accurate user and administrator instructions written alongside the implementation.** This applies to existing and future Caffoot Lite versions, including the approved Stage 1–3 draft guides and forthcoming Stage 4–6 features. Do not leave the guide until the end of a milestone or treat a brief feature summary as sufficient.
