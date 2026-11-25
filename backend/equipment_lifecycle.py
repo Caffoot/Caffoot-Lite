@@ -236,6 +236,7 @@ def write_device_lifecycle(connection, actor, record, updates):
         'replacement_override=excluded.replacement_override', (device_id, *values.values()))
     record_actor_event(connection, actor, kind='Device', action='Updated', label=record['name'][:100],
         reason=DEVICE_AUDIT_REASON, fields=[DATE_FIELDS[key] for key in changed],
+        subject=('Device', device_id, record['name']),
         before={'deviceId': device_id, **{DATE_FIELDS[key]: previous[key] for key in changed}},
         after={'deviceId': device_id, **{DATE_FIELDS[key]: values[key] for key in changed}})
 
@@ -289,5 +290,6 @@ def capture_first_service_from_stock(connection, actor, choice, issued_on):
         (device_id, issued_on))
     record_actor_event(connection, actor, kind='Device', action='Updated', label=choice['name'][:100],
         reason=FIRST_SERVICE_AUDIT_REASON, fields=['Original In Service Date'],
+        subject=('Device', device_id, choice['name']),
         before={'deviceId': device_id, 'Original In Service Date': None},
         after={'deviceId': device_id, 'Original In Service Date': issued_on})

@@ -452,6 +452,7 @@ def update_stock_readiness(connection, actor, token, payload):
                 "UPDATE it_asset_stock_items SET minimum_stock_level=? WHERE id=?", (minimum, item["id"]))
             record_actor_event(connection, actor, kind="IT Assets", action="Updated", label=item["name"],
                 reason="Minimum Stock Level changed", fields=["Minimum Stock Level"],
+                subject=("Stock Item", item["id"], item["name"]),
                 before={"minimumStockLevel": item["minimumStockLevel"]},
                 after=dict(stockItemId=item["id"], minimumStockLevel=minimum,
                            operationHash=digest, result=result), confirmation_id=key)

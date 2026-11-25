@@ -153,12 +153,24 @@ def visible_change_history(connection, account_id):
                             continue
                 # Never forward unrecognised historical payload properties.
                 fields = change.get("fields")
-                # Only an already-authorised Device subject may pass this
-                # restricted projection. Never copy nested arbitrary metadata.
+                # Project only explicitly compatible, already authorised
+                # subject types. Device metadata in stock events is withheld
+                # unless the account can read Devices as well.
                 metadata = change.get('recordSubject')
-                subject = (audit_subject('Device', metadata.get('id'), metadata.get('name'))
-                           if kind == 'Device' and isinstance(metadata, dict)
-                           and metadata.get('kind') == 'Device' else {})
+                compatible = {
+                    'Device': {'Device'}, 'IPAM': {'IPAM', 'Subnet', 'VLAN'},
+                    'Subnet': {'Subnet'}, 'VLAN': {'VLAN'},
+                    'Rack': {'Rack', 'Rack Accessory'},
+                    'Account': {'Account'}, 'Security': {'Account'}, 'Role': {'Role'},
+                    'IT Assets': {'Stock Item', 'Stock Unit', 'Stock Movement'},
+                    'Suppliers': {'Supplier', 'Supplier Location', 'Supplier Contact',
+                                  'Supplier Note', 'Supplier Issue', 'Supplier Category'},
+                }.get(kind, set())
+                if kind == 'IT Assets' and sections['Devices']:
+                    compatible.add('Device')
+                subject_kind = metadata.get('kind') if isinstance(metadata, dict) else None
+                subject = (audit_subject(subject_kind, metadata.get('id'), metadata.get('name'))
+                           if isinstance(subject_kind, str) and subject_kind in compatible else {})
                 changes.append({
                     **subject,
                     "kind": kind,
