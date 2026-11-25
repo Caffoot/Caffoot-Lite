@@ -321,7 +321,8 @@ async function test(){
  }
  await employeePage.locator('.account-screen .subnav [data-section="security"]').click();
  await employeePage.locator('#next-account-mfa-start').waitFor();
- await employeePage.locator('#sidebar [data-tab="equipment"]').click();
+ await employeePage.locator('.account-screen .subnav [data-section="overview"]').click();
+ await employeePage.getByRole('button',{name:'Open My Equipment',exact:true}).click();
  await employeePage.locator('[data-personal-equipment] tbody tr').first().waitFor();
  assert.equal(await employeePage.locator('[data-personal-equipment] tbody tr').count(),2);
  assert.equal(await employeePage.locator('[data-shared-equipment] tbody tr').count(),1);

@@ -114,6 +114,9 @@ async function confirm(page){
   assert.ok(!await member.isChecked());assert.ok(await member.evaluate(e=>e===document.activeElement));
   await member.click();await confirm(page);
   data=await catalogue(context);worker=data.users.find(user=>user.id===worker.id);assert.equal(worker.permissions.Devices,'read');assert.ok(worker.accessDetails.mfaPending);
+  const mfaWarning=page.getByText('MFA enrolment is required before wider Read/Edit access',{exact:false});
+  await mfaWarning.waitFor();
+  assert.equal(await mfaWarning.evaluate(warning=>warning.nextElementSibling?.textContent.trim()),'Section permissions');
   await checked(page,'Membership cancellation saves nothing; confirmation uses live inheritance and pending MFA');
   // Give the same role to a second real test account to check shared impact.
   const adminSession=await (await context.request.get(address+'/api/session')).json();
@@ -150,9 +153,9 @@ async function confirm(page){
   await select.selectOption('');await confirm(page);
   await checked(page,'Stale real-backend confirmation saves nothing and requires explicit renewed confirmation; Inherit removes an override');
   // Exercise the full retained account controls, without changing the last administrator.
-  await page.locator('[data-next-user-operation="active"]').click();
+  await page.locator('[data-account-status="active"] [data-next-user-operation="active"]').click();
   await page.waitForFunction(()=>document.querySelector('[data-next-user-operation="active"]')?.textContent==='Enable');
-  await page.locator('[data-next-user-operation="active"]').click();
+  await page.locator('[data-account-status="disabled"] [data-next-user-operation="active"]').click();
   await page.waitForFunction(()=>document.querySelector('[data-next-user-operation="active"]')?.textContent==='Disable');
   const administratorAction=page.locator('[data-next-user-operation="admin"]');
   assert.equal(await administratorAction.textContent(),'Make admin');
@@ -163,7 +166,7 @@ async function confirm(page){
    assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'Document overflow at '+width);
    assert.ok(await page.locator('#user-first-name').isEditable());
    assert.equal(await page.locator('.users-management-modal .modal').evaluate(e=>Math.round(e.getBoundingClientRect().width)),Math.min(710,width-20));
-   await page.locator('.users-management-modal .modal').evaluate(element=>{element.scrollTop=0;element.querySelector('.modal-body').scrollTop=0;});
+   await page.locator('.users-modal-scroll').evaluate(element=>{element.scrollTop=0;});
    await screenshot(page,'manage-'+width);
    await page.locator('[data-next-user-operation="delete"]').scrollIntoViewIfNeeded();await screenshot(page,'account-controls-'+width);
   }

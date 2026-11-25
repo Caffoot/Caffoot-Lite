@@ -115,7 +115,7 @@ Closing the dialogue discards unsaved profile typing. Changes you already saved 
 3. In **Review Access Change**, inspect the before/after roles, section inheritance, overrides, effective levels and MFA status.
 4. Check **Affected Accounts** and **Sessions To End**. Assigning or removing a membership ends that account's sessions, even when its effective rights would stay the same.
 5. Select **Confirm Change** to save, or **Cancel** to leave the saved membership unchanged.
-6. After success, review the refreshed account. Tell the person to sign in again and complete MFA enrolment if required.
+6. After success, review the refreshed account. If MFA enrolment is pending, the warning appears immediately above **Section Permissions**. Tell the person to sign in again and complete enrolment.
 
 Staff Member cannot be removed. An additional role may be assigned before MFA enrolment, but cannot be used to bypass enrolment. Removing a role does not automatically remove an enrolled authenticator or erase individual overrides.
 
@@ -164,8 +164,8 @@ Notification feedback is separate from saving access. **Notices Queued** means a
 Account controls are separate from role previews. Check the account identity before selecting them: **Disable**, **Enable**, **Make Admin** and **Remove Admin** apply their own operation directly when selected. **Done** closes the editor; it is not a final save for these earlier actions.
 
 1. Open **Staff → Staff Members → Staff Details → Manage Permissions** for the person.
-2. To stop sign-in while retaining the account, select **Disable**. This ends its sessions and prevents sign-in until re-enabled.
-3. To restore login eligibility, select **Enable**, then review the current roles, permissions and MFA requirements. Enabling does not remove those safeguards.
+2. An active account has a green status panel. Select **Disable** to end its sessions and prevent sign-in while retaining the account.
+3. A disabled account has a red status panel. Select **Enable** to restore login eligibility, then review the current roles, permissions and MFA requirements.
 4. To appoint an Administrator, review the eligibility checks and select **Make admin** once the account qualifies. See [Make An Existing User An Administrator](#make-an-existing-user-an-administrator).
 5. To remove independent Administrator status, select **Remove Admin**. Remaining ordinary access comes from the account's roles and overrides. The account must sign in again after Administrator status changes.
 6. To remove the account permanently, select **Delete User** and read its confirmation. Confirm only if deletion is intended; cancelling keeps the account. Prefer disabling when the requirement is simply to prevent sign-in while retaining the login.

@@ -68,6 +68,11 @@ html.dark .service-desk-dialog .device-review-facts > div { border-color: var(--
 }
 .service-desk-field textarea { resize: vertical; }
 .service-desk-form-actions { display: flex; justify-content: flex-end; gap: .55rem; margin-top: .8rem; flex-wrap: wrap; }
+.service-desk-dialog .service-desk-edit-heading {display:flex;align-items:center;justify-content:space-between;gap:.5rem}
+.service-desk-edit-heading .device-review-smallbtn {display:inline-flex;align-items:center;gap:.3rem;flex:none}
+@media (min-width: 731px) {
+    .service-desk-dialog [data-ticket-start="close"] {margin-inline-end:auto}
+}
 .service-desk-classification { padding-top: .5rem; border-top: 1px solid var(--line); }
 .service-desk-action, .service-desk-dialog .device-review-panel .service-desk-info {
     border-color: var(--line); background: var(--soft); color: var(--ink);

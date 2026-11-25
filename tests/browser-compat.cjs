@@ -619,8 +619,10 @@ async function run(){
   assert.equal(await page.locator('#profile-username').getAttribute('readonly'),'',
     'Username is never editable in personal details');
   assert.equal(await page.locator('.account-screen .subnav [data-section="overview"]').getAttribute('aria-selected'),'true');
-  assert.deepEqual(await page.locator('.account-screen .future-compact h3').allTextContents(), ['My Devices'],
-    'The approved My Tickets shortcut replaces its planned feature card');
+  assert.equal(await page.getByRole('heading',{name:'My Devices',exact:true}).count(),0,
+    'The obsolete planned My Devices card is removed');
+  assert.equal(await page.getByRole('button',{name:'Open My Equipment',exact:true}).count(),0,
+    'The equipment shortcut is hidden without an active linked Staff Member');
   await page.locator('[data-action="select-account-section"][data-section="security"]').first().click();
   await page.locator('#next-account-password-form').waitFor();
   assert.ok(await page.getByText('Security At A Glance',{exact:true}).isVisible());

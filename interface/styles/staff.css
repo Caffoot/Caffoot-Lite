@@ -9,6 +9,8 @@
 #preview-settings{gap:12px}
 .preview-sample-note{font-size:10px;color:var(--muted);margin:0 0 15px;line-height:1.6}
 .preview-details-actions{display:flex;gap:9px;align-items:center;flex-wrap:wrap;margin-top:18px}
+.staff-live .btn[data-staff-action="staff-status"]:not(.primary){border-color:#ad5010;color:#ad5010}
+html.dark #app .staff-live .btn[data-staff-action="staff-status"]:not(.primary){border-color:#ed8532;color:#ed8532}
 .preview-record-name{overflow-wrap:anywhere}
 .preview-page-actions{display:flex;justify-content:flex-end;align-items:center;gap:9px;flex-wrap:wrap;margin-left:auto}
 .section-page-header>.header:has(>.preview-page-actions){flex-wrap:wrap}
