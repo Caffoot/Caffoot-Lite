@@ -24,7 +24,7 @@ def _digest(token):
 
 
 def login_session(connection, username, password, *, mfa_code=None, now=None,
-                  report_enrolment=False):
+                  report_enrolment=False, report_mfa_challenge=False):
     """Issue a fresh session only after credential and MFA verification."""
     if now is None:
         now = time.time()
@@ -34,7 +34,7 @@ def login_session(connection, username, password, *, mfa_code=None, now=None,
         # slip between verification and creation of the session.
         account_id = authenticate(
             connection, username, password, mfa_code=mfa_code, timestamp=now,
-            report_enrolment=report_enrolment,
+            report_enrolment=report_enrolment, report_mfa_challenge=report_mfa_challenge,
         )
         if account_id is None:
             connection.rollback()

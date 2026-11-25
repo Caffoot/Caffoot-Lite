@@ -18,6 +18,12 @@ else if(signInThemeMedia?.addListener)signInThemeMedia.addListener(applySignInTh
 let mode='login';
 let setupWelcomeAcknowledged=false;
 let csrfToken='';
+let pendingCredentials=null;
+const neutralSignInFailure='Unable to sign in. Please check your credentials or contact your administrator.';
+function clearSignInPassword(){
+ $('password').value='';$('password').type='password';
+ document.querySelector('[data-reveal="password"]').textContent='Show';
+}
 function showMfaQr(id,uri){
  const holder=$(id);holder.replaceChildren();
  try{
@@ -44,7 +50,9 @@ async function showSession(){
 }
 async function request(path,data){
  const r=await fetch(path,{method:'POST',headers:{'Content-Type':'application/json',...(csrfToken?{'X-CSRF-Token':csrfToken}:{})},body:JSON.stringify(data)});
- const payload=await r.json();if(!r.ok)throw Error(payload.error||'Request failed');return payload;
+ const payload=await r.json();
+ if(!r.ok)throw Object.assign(Error(payload.error||'Request failed'),{code:payload.code});
+ return payload;
 }
 function display(){
  $('password-recovery').hidden=!['login','login-mfa'].includes(mode);
@@ -65,6 +73,7 @@ function display(){
  $('welcome-flow').hidden=!welcomeIsVisible;
  $('form').hidden=welcomeIsVisible||complete;
  $('credentials').hidden=enrolling||mode==='login-mfa';
+ $('username').required=$('password').required=!$('credentials').hidden;
  $('back-to-login').hidden=!['login-mfa','required-enrol'].includes(mode);
  $('auth-heading').textContent=welcomeIsVisible?'Welcome to Caffoot Lite':
    mode==='setup'?'Create Your Administrator':
@@ -105,7 +114,7 @@ $('get-started').addEventListener('click',()=>{
  setupWelcomeAcknowledged=true;display();$('username').focus();
 });
 $('back-to-login').addEventListener('click',()=>{
- clearRequiredMfaDisplay();mode='login';display();$('username').focus();
+ pendingCredentials=null;clearSignInPassword();clearRequiredMfaDisplay();mode='login';display();$('username').focus();
 });
 document.querySelectorAll('[data-reveal]').forEach(button=>{
  button.addEventListener('click',()=>{
@@ -114,15 +123,15 @@ document.querySelectorAll('[data-reveal]').forEach(button=>{
   button.textContent=input.type==='password'?'Show':'Hide';
  });
 });
-$('username').addEventListener('input',()=>{if(mode==='login-mfa'){mode='login';$('code').value='';display();}});
-$('password').addEventListener('input',()=>{if(mode==='login-mfa'){mode='login';$('code').value='';display();}});
 $('code').addEventListener('input',()=>{
  if(mode==='login-mfa' && /^[0-9]{6}$/.test($('code').value) && !$('submit').disabled)
    $('form').requestSubmit();
 });
 $('form').addEventListener('submit',async e=>{
- e.preventDefault();$('submit').disabled=true;$('message').textContent='';
- const data={username:$('username').value,password:$('password').value};
+ e.preventDefault();
+ if($('submit').disabled)return;
+ $('submit').disabled=$('back-to-login').disabled=true;$('message').textContent='';
+ const data=pendingCredentials||{username:$('username').value,password:$('password').value};
  try{
  if(mode==='setup'){
    if($('password').value!==$('confirm-password').value)throw Error('The passwords do not match.');
@@ -131,7 +140,7 @@ $('form').addEventListener('submit',async e=>{
    const r=await request('/api/setup/mfa-secret',data);$('secret').textContent=r.mfaSecret;mode='enrol';display();showMfaQr('setup-qr',r.mfaUri);
  }else if(mode==='required-enrol'){
    await request('/api/login/mfa/confirm',{...data,mfa_code:$('code').value});
-   clearRequiredMfaDisplay();$('password').value='';mode='login';display();
+   pendingCredentials=null;clearRequiredMfaDisplay();clearSignInPassword();mode='login';display();
    $('message').style.color='#166534';$('message').textContent='MFA enrolled. Sign in again with your password and authenticator code.';
    $('username').focus();
  }else if(mode==='enrol'){
@@ -143,19 +152,28 @@ $('form').addEventListener('submit',async e=>{
      const result=await request('/api/login',{...data,...(mode==='login-mfa'?{mfa_code:$('code').value}:{})});
      if(result.status==='mfa enrolment required'){
        const enrolment=await request('/api/login/mfa/start',data);
+       pendingCredentials=data;clearSignInPassword();
        mode='required-enrol';$('code').value='';display();
        $('secret').textContent=enrolment.mfaSecret;showMfaQr('setup-qr',enrolment.mfaUri);$('code').focus();return;
      }
+     pendingCredentials=null;clearSignInPassword();$('code').value='';
      if(!await showSession())throw Error('Unable to load session');
    }catch(error){
-     if(mode==='login' && error.message==='invalid credentials'){
+     if(mode==='login' && error.code==='mfa_required'){
+       pendingCredentials=data;clearSignInPassword();
        mode='login-mfa';display();$('code').focus();
-       $('message').textContent='If your account uses an authenticator, enter its code. Otherwise check your username and password.';
-     }else throw error;
+       return;
+     }
+     if(mode==='login'){
+       clearSignInPassword();$('password').focus();
+     }else if(mode==='login-mfa'){
+       $('code').value='';$('code').focus();
+     }
+     throw error.message==='invalid credentials'?Error(neutralSignInFailure):error;
    }
  }
  }catch(err){$('message').style.color='#b91c1c';$('message').textContent=err.message}
- finally{$('submit').disabled=false}
+ finally{$('submit').disabled=$('back-to-login').disabled=false}
 });
 
 // Trim pasted padding before the browser applies the eight-character limit.
@@ -260,4 +278,4 @@ $('setup-continue-sign-in').addEventListener('click',()=>{
 function clearRequiredMfaDisplay(){
  $('code').value='';$('secret').replaceChildren();$('setup-qr').replaceChildren();
 }
-window.addEventListener('pagehide',()=>{clearRequiredMfaDisplay();$('password').value='';});
+window.addEventListener('pagehide',()=>{pendingCredentials=null;clearRequiredMfaDisplay();clearSignInPassword();});

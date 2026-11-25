@@ -58,7 +58,7 @@ from .profiles import (read_profile, save_profile, read_profile_photo,
                        StaleProfileEdit, MAX_PHOTO_BYTES)
 from .schema import initialise_database as migrate_database
 from .accounts import bootstrap_first_admin, confirm_admin_mfa, verify_password, hash_password
-from .authentication import MFAEnrolmentRequired
+from .authentication import MFACodeRequired, MFAEnrolmentRequired
 from .account_security import (start_required_mfa_enrolment,
                                confirm_required_mfa_enrolment, remove_own_mfa)
 from .mfa import new_secret, provisioning_uri, verify_code
@@ -748,6 +748,9 @@ class Handler(BaseHTTPRequestHandler):
                 )
         except MFAEnrolmentRequired:
             self.respond(200, {"status": "mfa enrolment required"})
+            return
+        except MFACodeRequired:
+            self.respond(401, {"error": "invalid credentials", "code": "mfa_required"})
             return
         if token is None:
             if not THROTTLE.allowed(self.client_address[0], payload["username"]):

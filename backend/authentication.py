@@ -15,6 +15,10 @@ class MFAEnrolmentRequired(Exception):
     """A valid password requires authenticator setup before a session is allowed."""
 
 
+class MFACodeRequired(Exception):
+    """A valid password requires an enrolled authenticator's code."""
+
+
 def verify_active_password(connection, username, password):
     """Check a password without revealing whether an unknown account exists."""
     if not isinstance(username, str) or not username.strip():
@@ -30,7 +34,7 @@ def verify_active_password(connection, username, password):
 
 
 def authenticate(connection, username, password, *, mfa_code=None, timestamp=None,
-                 report_enrolment=False):
+                 report_enrolment=False, report_mfa_challenge=False):
     """Return an active account ID only after required credential proofs.
 
     Wider Read or Edit access, additional enabled roles and administrators
@@ -51,6 +55,8 @@ def authenticate(connection, username, password, *, mfa_code=None, timestamp=Non
     if policy.requires_mfa:
         if report_enrolment and policy.mfa_mandatory and not confirmed:
             raise MFAEnrolmentRequired()
+        if report_mfa_challenge and confirmed and secret and mfa_code is None:
+            raise MFACodeRequired()
         if not confirmed or not secret or not verify_code(secret, mfa_code, timestamp=timestamp):
             return None
     return account_id

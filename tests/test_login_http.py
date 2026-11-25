@@ -11,6 +11,7 @@ from unittest.mock import patch
 
 from backend.accounts import bootstrap_first_admin, confirm_admin_mfa
 from backend.mfa import code_at, provisioning_uri
+from backend.login_throttle import LoginThrottle
 from backend.schema import initialise_database
 from backend.server import Handler
 
@@ -29,6 +30,11 @@ class LoginHttpTests(unittest.TestCase):
             confirm_admin_mfa(db, admin, code_at(self.secret, now), timestamp=now)
         self.path_patch = patch("backend.server.DB_PATH", self.path)
         self.origin_patch = patch("backend.server.PUBLIC_ORIGIN", ORIGIN)
+        self.throttle = LoginThrottle()
+        for module in ("request_auth", "server"):
+            throttle_patch = patch(f"backend.{module}.THROTTLE", self.throttle)
+            throttle_patch.start()
+            self.addCleanup(throttle_patch.stop)
         self.path_patch.start()
         self.origin_patch.start()
         self.server = ThreadingHTTPServer(("127.0.0.1", 0), Handler)
@@ -124,9 +130,43 @@ class LoginHttpTests(unittest.TestCase):
         payload = {"username": "owner", "password": "password"}
         self.assertEqual(self.request("POST", "/api/login", payload, headers)[0], 403)
         headers["Origin"] = ORIGIN
-        self.assertEqual(self.request("POST", "/api/login", payload, headers)[0], 401)
+        self.assertEqual(self.request("POST", "/api/login", payload, headers),
+                         (401, {"error": "invalid credentials", "code": "mfa_required"}, None))
         self.assertEqual(self.request("POST", "/api/logout", headers={"Origin": ORIGIN})[0], 403)
         self.assertEqual(self.request("POST", "/api/unknown", payload, headers)[0], 404)
+
+    def test_password_proof_is_required_before_showing_mfa(self):
+        headers = {"Origin": ORIGIN, "Content-Type": "application/json"}
+        failure = (401, {"error": "invalid credentials"}, None)
+        self.assertEqual(self.request("POST", "/api/login", {
+            "username": "owner", "password": "wrong-password",
+        }, headers), failure)
+        self.assertEqual(self.request("POST", "/api/login", {
+            "username": "unknown", "password": "password",
+        }, headers), failure)
+        with sqlite3.connect(self.path) as db:
+            db.execute("UPDATE accounts SET active=0 WHERE username='owner'")
+        self.assertEqual(self.request("POST", "/api/login", {
+            "username": "owner", "password": "password",
+        }, headers), failure)
+        self.assertEqual(self.request("GET", "/api/session")[0], 401)
+
+    def test_password_proof_does_not_reset_failed_authenticator_attempts(self):
+        headers = {"Origin": ORIGIN, "Content-Type": "application/json"}
+        password_proof = {"username": "owner", "password": "password"}
+        for index in range(5):
+            self.assertEqual(self.request("POST", "/api/login", password_proof, headers),
+                             (401, {"error": "invalid credentials", "code": "mfa_required"}, None))
+            status, response, cookie = self.request("POST", "/api/login", {
+                **password_proof, "mfa_code": "bad-code",
+            }, headers)
+            self.assertEqual((status, cookie), (401, None))
+            self.assertEqual("temporarily limited" in response["error"], index == 4)
+        status, response, cookie = self.request("POST", "/api/login", {
+            **password_proof, "mfa_code": code_at(self.secret, time.time()),
+        }, headers)
+        self.assertEqual((status, cookie), (401, None))
+        self.assertIn("temporarily limited", response["error"])
 
 
 if __name__ == "__main__":

@@ -182,7 +182,13 @@ You cannot disable, demote or delete your own signed-in administrator account, a
 4. Enter the app's current six-digit code and select **Confirm MFA Setup**.
 5. After confirmation, sign in again using your password and a current authenticator code. Enrolment itself does not create a normal application session.
 
-For an already-enrolled account, enter username and password first, then provide the six-digit code when prompted by **Verify Your Identity**. Use **Verify & Sign In** if the completed code has not already submitted. Keep the authenticator device's date and time accurate; if a code has expired, use the next one rather than repeatedly submitting the old code.
+### Sign In After Enrolment
+
+1. Enter your **Username** and **Password**, then select **Sign In**. The authenticator field appears after Caffoot Lite verifies the password for an active account that requires a code. A Staff Member such as Jamie Taylor, with no authenticator or MFA requirement, can enter the workspace with their password.
+2. On **Verify Your Identity**, enter the current six-digit **Authenticator Code** from your app. Select **Verify & Sign In** if entering the sixth digit did not submit the form. Select **Back to Sign In** to start again with your username and password.
+3. After successful sign-in, wait for the menu to load. The available destinations depend on your effective permissions. If permissions fail to load, reload the page or sign in again. Contact your administrator if the problem continues.
+
+If you see **Unable to sign in. Please check your credentials or contact your administrator.**, check your username and password. The same message covers incorrect credentials and unavailable accounts. At **Verify Your Identity**, check the time on your authenticator device and try the next code if the previous one expired. After repeated failures, wait for the temporary sign-in limit to expire. For lost credentials, see [Account Recovery](../../../development-guide/Account-Recovery.md) or contact your administrator.
 
 ### Voluntary Enrolment And Eligible Removal
 

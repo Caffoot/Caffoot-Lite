@@ -9214,6 +9214,9 @@ void (async () => {
   let suppliersEnabled = false;
   let sessionServiceDeskPermissions = {read:false,edit:false};
   let sessionCanUseMyTickets = false;
+  let sessionPermissionsRequest = 0;
+  let inventoryPermissionsRequest = 0;
+  const sidebar = document.getElementById('sidebar');
   const inventorySectionAccess = () => ['Devices','IPAM','Racks'].some(key=>permissions[key]);
   function addDirectoryAccess(){
     permissions['Staff Members']=!!sessionDirectoryPermissions.staffMembers?.read;
@@ -9264,8 +9267,12 @@ void (async () => {
     });
   });
   async function refreshStockAccess(){
+    const request = ++sessionPermissionsRequest;
+    sidebar.setAttribute('data-session-permissions-pending','');
     const response=await fetch('/api/session',{cache:'no-store'});
-    const session=response.ok?await response.json():{};
+    if (!response.ok) throw new Error('Unable to load current permissions.');
+    const session=await response.json();
+    if (request !== sessionPermissionsRequest) return;
     sessionStockPermissions=session.stock_permissions||{read:false,edit:false};
     sessionSupplierPermissions=session.supplier_permissions||{read:false,edit:false};
     suppliersEnabled=session.suppliers_enabled===true;
@@ -9274,11 +9281,15 @@ void (async () => {
     addDirectoryAccess();
     window.caffootStockIntake.clear();
     applyAllowedControls();
+    sidebar.removeAttribute('data-session-permissions-pending');
   }
   async function refreshCentralInventory(render = true) {
+    const request = ++inventoryPermissionsRequest;
+    sidebar.setAttribute('data-inventory-permissions-pending','');
     const response = await fetch('/api/inventory/state', {cache:'no-store'});
     if (!response.ok) throw new Error(response.status === 401 ? 'Please sign in first.' : 'Unable to load central inventory.');
     const state = await response.json();
+    if (request !== inventoryPermissionsRequest) return;
     permissions = state.sections || {};
     editPermissions = state.editPermissions || {};
     addDirectoryAccess();
@@ -9303,6 +9314,8 @@ void (async () => {
     auditHistory = Array.isArray(state.changeHistory) ? state.changeHistory : [];
     auditBaseline = JSON.stringify(appState);
     if (render) renderContent();
+    applyNavigationVisibility();
+    sidebar.removeAttribute('data-inventory-permissions-pending');
   }
   async function postInventory(path, data) {
     const response = await fetch(path, {
@@ -9394,11 +9407,9 @@ void (async () => {
       !(editPermissions.IPAM && actionCanEditIpam.has(action)) &&
       !(editPermissions.Racks && actionCanEditRack.has(action));
   }
-  function applyAllowedControls() {
-    const stockControls=document.getElementById('device-stock-controls');
-    if(stockControls)stockControls.hidden=!editPermissions.Devices||!editPermissions['IT Assets'];
-    const accountTickets=document.querySelector('[data-account-my-tickets]');
-    if(accountTickets)accountTickets.hidden=!sessionCanUseMyTickets;
+  function applyNavigationVisibility() {
+    document.getElementById('next-users-nav').classList.toggle('hidden', !sessionIsAdmin);
+    document.getElementById('next-settings-nav').classList.toggle('hidden', !sessionIsAdmin);
     document.querySelectorAll('#sidebar [data-tab]').forEach(button=>{
       const area=section[button.dataset.tab];
       if(area)button.hidden=!permissions[area];
@@ -9415,6 +9426,13 @@ void (async () => {
         group.hidden=!anyVisible && heading.disabled;
       } else group.hidden=!anyVisible && (!heading || heading.hidden);
     });
+  }
+  function applyAllowedControls() {
+    const stockControls=document.getElementById('device-stock-controls');
+    if(stockControls)stockControls.hidden=!editPermissions.Devices||!editPermissions['IT Assets'];
+    const accountTickets=document.querySelector('[data-account-my-tickets]');
+    if(accountTickets)accountTickets.hidden=!sessionCanUseMyTickets;
+    applyNavigationVisibility();
     const featureActions={Devices:['tab-devices','open-device-modal'],IPAM:['tab-ipam'],Racks:['tab-racks','dashboard-racks-overview','open-rack-modal']};
     for(const [area,actions] of Object.entries(featureActions)){
       if(permissions[area])continue;
@@ -11591,8 +11609,6 @@ void (async () => {
       redraw:()=>{if(currentTab==='it-assets')renderContent();},notify:(message,type)=>showToast(message,type)});
     await loadAccountProfile();
     window.nextMfaEnrolled=sessionMfaEnrolled;
-    document.getElementById('next-users-nav').classList.toggle('hidden', !sessionIsAdmin);
-    document.getElementById('next-settings-nav').classList.toggle('hidden', !sessionIsAdmin);
     if (sessionIsAdmin) await loadCentralUsers();
     if(sessionCanEnterInventory)await refreshCentralInventory(false);
     if(sessionDirectoryPermissions.staffMembers?.read||sessionDirectoryPermissions.departments?.read)
@@ -11601,6 +11617,7 @@ void (async () => {
     document.querySelectorAll('[data-action="settings-backup"],[data-action="export-data"],[data-action="export-backup"]').forEach(el=>el.hidden=true);
     document.getElementById('app').inert=false;
     if (!openEmailTicket()) switchTab(workspaceHashTab() || landingTab(),true);
+    applyNavigationVisibility();
     document.getElementById('app').setAttribute('aria-busy','false');
   }catch(error){
     const container=document.getElementById('main-content');
