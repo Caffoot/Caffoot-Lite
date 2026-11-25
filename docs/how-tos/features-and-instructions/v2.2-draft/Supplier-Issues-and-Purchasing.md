@@ -100,6 +100,8 @@ The same catalogue keeps retired categories visible for review and reactivation.
 | The Issue is absent from Recent Supplier Issues | Check **View All Issues** and clear the filters. Resolved and Closed appear in the full list and status counts. |
 | A save reports that someone else changed the record | Reopen the latest record and check its fields before reapplying your intended correction. |
 
-![Desktop light Purchasing Dashboard showing four live summary cards, recent active Issues and the four-status breakdown](../../../development-handovers/evidence/stage-4-batch-42/images/purchasing-dashboard-light-1440.png)
+![Desktop light Purchasing Dashboard showing four live summary cards, recent active Issues and the four-status breakdown](../../../development-handovers/evidence/stage-6-6-batch-3/screenshots/purchasing-dashboard-light-1440.png)
 
-See the [desktop and mobile light and dark application evidence](../../../development-handovers/evidence/stage-4-batch-42/README.md), [Supplier Management](Supplier-Management.md) and [Batch 4.2 approval](https://github.com/Caffoot/Caffoot-Lite/issues/411).
+![Mobile dark Supplier Issue Details showing the Issue status and details](../../../development-handovers/evidence/stage-6-6-batch-3/screenshots/supplier-issue-details-dark-390.png)
+
+See the [Batch 3 capture record](../../../development-handovers/evidence/stage-6-6-batch-3/README.md), [Supplier Management](Supplier-Management.md) and [Batch 4.2 approval](https://github.com/Caffoot/Caffoot-Lite/issues/411).

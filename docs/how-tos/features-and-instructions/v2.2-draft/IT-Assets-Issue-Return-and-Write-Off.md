@@ -208,4 +208,8 @@ Cancelling affects the current unsaved form. It does not reverse a return, write
 
 Genuine development screenshots are retained in the linked evidence reports. Approval of a functional preview alone does not make it an approved application screenshot. The [documentation review items](../../../development-guide/Stage-1-3-Documentation-Review.md) record image and remaining manual acceptance requirements. No production upgrade, backup or restore acceptance is claimed here.
 
+![Mobile dark Return Equipment form for an unassigned fictional device](../../../development-handovers/evidence/stage-6-6-batch-3/screenshots/stock-unassigned-return-dark-390.png)
+
+More current examples show [writing off an issued device in mobile dark](../../../development-handovers/evidence/stage-6-6-batch-3/screenshots/stock-issued-writeoff-dark-390.png) and [reviewing Movement History in desktop light](../../../development-handovers/evidence/stage-6-6-batch-3/screenshots/stock-movement-history-light-1440.png).
+
 [Implementation And Screenshots](../../../development-handovers/evidence/stock-circulation/Report.md) · [Roles And MFA](Roles-Section-Permissions-and-MFA.md) · [← Draft v2.2 Guides](README.md) · [Published v2.1 Guides](../README.md)

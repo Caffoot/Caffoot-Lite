@@ -171,6 +171,8 @@ hidden suggestions, custom values and historical Device records remain intact.
 
 Use factual equipment notes and avoid passwords, recovery information or unrelated personal details. Stock rights do not expose unrestricted Staff records; linked employees see only their permitted equipment relationships. The server rechecks permissions, recipient eligibility and balances when saving, including after an account's access changes.
 
+![Mobile dark Reissue Existing Device form for fictional stock](../../../development-handovers/evidence/stage-6-6-batch-3/screenshots/stock-reissue-dark-390.png)
+
 ## Related Guidance And Screenshots
 
 Continue with [stock intake](IT-Assets-Stock-Intake.md), [Issue, Return And Write Off](IT-Assets-Issue-Return-and-Write-Off.md), [assignments and My Equipment](Device-Assignments-and-My-Equipment.md), [Associated Equipment and handovers](Associated-Equipment.md), [corrections](IT-Assets-Correct-Movement.md) and [IT Assets reporting](IT-Assets-Dashboard.md).
