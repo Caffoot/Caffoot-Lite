@@ -20,7 +20,7 @@
   function button(label,action,id='',primary=false){return '<button class="btn'+(primary?' primary':'')+'" type="button" data-staff-action="'+action+'" data-id="'+escapeHtml(id)+'">'+label+'</button>';}
   function badge(label,colour='dark'){return '<span class="badge '+colour+'">'+label+'</span>';}
   function header(title,description,action=''){
-    return '<div class="section-page-header"><div class="eyebrow">STAFF DIRECTORY</div><div class="header"><div><h1>'+escapeHtml(title)+'</h1><p>'+escapeHtml(description)+'</p></div>'+(action?'<div class="preview-page-actions">'+action+'</div>':'')+'</div></div>';
+    return '<div class="section-page-header"><div class="header"><div><h1>'+escapeHtml(title)+'</h1><p>'+escapeHtml(description)+'</p></div>'+(action?'<div class="preview-page-actions">'+action+'</div>':'')+'</div></div>';
   }
 function renderStaffDirectory() {
   const query=searchText.trim().toLowerCase();
