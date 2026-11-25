@@ -166,7 +166,7 @@ def add_associated_equipment(connection, actor_id, token, payload, *, issue_new=
         if (type(revision) is not int or revision < 0
                 or type(assignment_id) is not int or assignment_id < 1):
             raise ValueError('Select the current Device revision and assignment')
-        device = connection.execute('SELECT revision FROM inventory_devices WHERE id=?', (device_id,)).fetchone()
+        device = connection.execute('SELECT revision,name FROM inventory_devices WHERE id=?', (device_id,)).fetchone()
         assignment = connection.execute('''SELECT staff_id,department_id FROM device_assignments
             WHERE id=? AND device_id=? AND ended_at IS NULL''', (assignment_id, device_id)).fetchone()
         if device is None or device[0] != revision or assignment is None:
@@ -230,6 +230,7 @@ def add_associated_equipment(connection, actor_id, token, payload, *, issue_new=
                       associationIds=associations, issueEntryIds=issue_ids, movementId=movement)
         record_actor_event(connection, actor_id, kind='IT Assets', action='Associated', label=device_id,
             reason='Equipment associated with Device', fields=['Associated Equipment'],
+            subject=('Device', device_id, device[1]),
             confirmation_id=key, after=dict(deviceId=device_id, operationHash=digest, result=result))
         connection.commit()
         return result

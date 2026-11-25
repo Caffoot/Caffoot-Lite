@@ -96,6 +96,7 @@ def register_stock_device(connection, actor, token, payload):
             dict(operationHash=digest, result=result, deviceId=record['id']))
         record_actor_event(connection, actor, kind='IT Assets', action='Registered',
             label=record['id'], reason='Registered Device from Ready stock',
+            subject=('Device', record['id'], record['name']),
             fields=['Stock Movement'], after=dict(stockItemId=item['id'], deviceId=record['id'], movementId=movement))
         connection.commit()
         return result

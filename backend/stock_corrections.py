@@ -206,6 +206,7 @@ def save_stock_correction(connection, actor, token, payload):
              stock_json(dict(operationHash=digest, result=result)), source['id'], previous, quantity))
         record_actor_event(connection, actor, kind='IT Assets', action='Corrected',
             label=str(source['movement_id']), reason=reason, fields=['Stock Movement Quantity'],
+            subject=('Stock Movement', source['movement_id'], json.loads(source['snapshot_json']).get('name')),
             before=dict(entryId=source['id'], quantity=previous),
             after=dict(entryId=source['id'], originalMovementId=source['movement_id'],
                        correctionId=movement, quantity=quantity), confirmation_id=key)

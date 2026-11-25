@@ -1700,6 +1700,7 @@ class Handler(BaseHTTPRequestHandler):
                         record_actor_event(
                             connection, actor, kind="Security", action="Updated",
                             label=username, reason="MFA enrolment confirmed",
+                            subject=("Account", actor, username),
                             fields=["Multi-factor authentication"],
                             before={"MFA status": "Not enrolled"},
                             after={"MFA status": "Enabled"},
@@ -1739,6 +1740,7 @@ class Handler(BaseHTTPRequestHandler):
                         record_actor_event(
                             connection, actor, kind="Security", action="Updated",
                             label=username, reason="Account password changed",
+                            subject=("Account", actor, username),
                             fields=["Password"],
                         )
                         connection.execute(

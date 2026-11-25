@@ -692,7 +692,7 @@ function hierarchyValidateTypes(subnets) {
             kind==='IPAM'&&['Subnet','VLAN'].includes(metadata.kind) ||
             kind==='Rack'&&metadata.kind==='Rack Accessory' ||
             kind==='IT Assets'&&['Stock Item','Stock Unit','Stock Movement','Device'].includes(metadata.kind) ||
-            kind==='Suppliers'&&['Supplier','Supplier Location','Supplier Contact','Supplier Note','Supplier Issue','Supplier Category'].includes(metadata.kind));
+            kind==='Suppliers'&&['Supplier','Supplier Location','Supplier Contact','Supplier Note','Supplier Issue','Supplier Category','Supplier Issue Category','Supplier Issue Update'].includes(metadata.kind));
           const recordKind=compatible?metadata.kind:kind;
           let id=compatible&&safe(metadata.id)?metadata.id:'';
           let name=compatible&&safe(metadata.name)?metadata.name:'';

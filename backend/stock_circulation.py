@@ -71,13 +71,28 @@ def publish_stock_movement(connection, actor, key, kind, entries, details, *, ev
     if details.get('physicalReturnConfirmed') is True:
         audit_details.update(deviceId=details['deviceId'], returnedOn=event_date,
                              physicalReturnConfirmed=True, returnOrigin='unassigned_device')
+    # Resolve only the explicitly recorded stock/Device identity while the
+    # movement is being written. Derived transfer events may have no unique
+    # subject in their header; retain the movement reference in that case.
+    stock_id = details.get('stockItemId')
+    device_id = details.get('deviceId')
+    if stock_id:
+        row = connection.execute('SELECT name FROM it_asset_stock_items WHERE id=?', (stock_id,)).fetchone()
+        subject = ('Stock Item', stock_id, row[0] if row else None)
+    elif device_id:
+        row = connection.execute('SELECT name FROM inventory_devices WHERE id=?', (device_id,)).fetchone()
+        subject = ('Device', device_id, row[0] if row else None)
+    else:
+        subject = ('Stock Movement', movement, None)
     record_actor_event(connection, actor, kind='IT Assets', action=action,
-        label=str(details.get('stockItemId') or details.get('deviceId') or 'Equipment'),
+        label=str(details.get('stockItemId') or details.get('deviceId') or 'Equipment'), subject=subject,
         reason=reason or action+' equipment', fields=['Stock Movement'], after=audit_details)
     for assignment, device_id in closures:
         ended = datetime.now(timezone.utc).isoformat().replace('+00:00','Z')
+        row = connection.execute('SELECT name FROM inventory_devices WHERE id=?', (device_id,)).fetchone()
         record_actor_event(connection, actor, kind='IT Assets', action=action, label=device_id,
             reason=reason or action+' equipment', fields=['Assignment'],
+            subject=('Device', device_id, row[0] if row else None),
             after=dict(assignmentId=assignment, closureMovementId=movement, deviceId=device_id, endedAt=ended))
         connection.execute('UPDATE device_assignments SET ended_at=?,closure_movement_id=? WHERE id=?',
                            (ended,movement,assignment))

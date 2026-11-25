@@ -220,9 +220,15 @@ def read_supplier(connection, identity, actor):
 
 
 def log_change(connection, actor, action, label, record, identity, before=None, after=None):
+    subject_kind = {'Company': 'Supplier', 'Location': 'Supplier Location',
+                    'Main Office': 'Supplier Location', 'Contact': 'Supplier Contact',
+                    'Note': 'Supplier Note', 'Issue': 'Supplier Issue',
+                    'Category': 'Supplier Category', 'Issue Category': 'Supplier Issue Category',
+                    'Issue Update': 'Supplier Issue Update'}.get(record)
     record_actor_event(
         connection, actor, kind="Suppliers", action=action, label=label,
         reason=f"Supplier {record.lower()} {action.lower()}", fields=[record],
+        subject=(subject_kind, identity, label) if subject_kind else None,
         before=before, after={"recordId": identity, **(after or {})},
     )
 

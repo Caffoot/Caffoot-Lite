@@ -121,7 +121,7 @@ def audit_subject(kind, identity, name):
             'Staff Member', 'Department', 'Device', 'Account', 'Role',
             'Subnet', 'VLAN', 'Rack', 'Rack Accessory', 'IPAM', 'Stock Item',
             'Stock Unit', 'Stock Movement', 'Supplier', 'Supplier Location',
-            'Supplier Contact', 'Supplier Note', 'Supplier Issue', 'Supplier Category'):
+            'Supplier Contact', 'Supplier Note', 'Supplier Issue', 'Supplier Category', 'Supplier Issue Category', 'Supplier Issue Update'):
         return {}
     if type(identity) is int and 0 < identity <= 2**63-1:
         identity = str(identity)

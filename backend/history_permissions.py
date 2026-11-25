@@ -164,7 +164,7 @@ def visible_change_history(connection, account_id):
                     'Account': {'Account'}, 'Security': {'Account'}, 'Role': {'Role'},
                     'IT Assets': {'Stock Item', 'Stock Unit', 'Stock Movement'},
                     'Suppliers': {'Supplier', 'Supplier Location', 'Supplier Contact',
-                                  'Supplier Note', 'Supplier Issue', 'Supplier Category'},
+                                  'Supplier Note', 'Supplier Issue', 'Supplier Category', 'Supplier Issue Category', 'Supplier Issue Update'},
                 }.get(kind, set())
                 if kind == 'IT Assets' and sections['Devices']:
                     compatible.add('Device')
