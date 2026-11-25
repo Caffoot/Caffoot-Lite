@@ -125,6 +125,8 @@ The old holder stays recorded until the complete save succeeds. Cancellation or 
 
 If the Device or current holder changes while the form is open, reopen **Reassign Device** from the refreshed **Assigned To** tab. Check current custody before choosing the new recipient. The server rejects an unchanged selection.
 
+![Reassign Device in desktop light mode. The form shows the fictional laptop, the selected new Staff holder and the preparation checks.](screenshots/stage-6-6-batch-1/direct-handover-devices-only-desktop-light.png)
+
 Devices-only handover needs Devices Edit. A Device with recorded stock history also requires IT Assets enabled and IT Assets Edit. Use [Associated Equipment And Direct Handover](Associated-Equipment.md#reassign-a-workstation-directly) for the full missing-accessory scenario and recovery guidance. [Correct Movement](IT-Assets-Correct-Movement.md) handles eligible stock-recording mistakes separately. A new holder can raise a separate ticket after a valid assignment. [Ticket privacy after handover](Service-Desk-Administration.md#what-happens-to-service-desk-tickets-when-equipment-changes-hands)
 
 ## My Equipment

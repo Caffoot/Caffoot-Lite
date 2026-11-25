@@ -76,6 +76,10 @@ The combined form reuses existing account security and links the login to the pe
 
 If **This username is already in use. Please choose another username.** appears beneath **Username**, enter a different username. For example, `Alex.Morgan` conflicts with `alex.morgan`. The form keeps the other Staff details you entered and clears both password fields. Re-enter the two passwords and select **Save Staff Member** again. The existing account keeps its credentials and the rejected save creates no Staff record or login.
 
+![Staff Member form in desktop light mode. The duplicate username message is below the highlighted Username field.](screenshots/stage-6-6-batch-1/duplicate-username-light-1440.png)
+
+*The saved username `taylor.cole` conflicts with `TAYLOR.COLE`. The Staff details remain in the form.* [Capture variants and provenance](screenshots/stage-6-6-batch-1/README.md)
+
 The **Caffoot Login** card shows **Username**, **Account Status**, **Authenticator** and **Assigned Roles**. Select **Manage Permissions** just below Assigned Roles to open the account dialogue. It displays the read-only **Sign-in Username**. Use it to review permissions or change the account’s status, role memberships and individual overrides. Close it with **Close**, **Done** or Escape to return to the same Staff Details. See the [account review procedure](Roles-Section-Permissions-and-MFA.md#review-an-account).
 
 ![Staff Details in desktop light mode. The Caffoot Login card shows the username, account status, authenticator, assigned roles and Manage Permissions.](screenshots/staff-administration/staff-details-light-1440.png)

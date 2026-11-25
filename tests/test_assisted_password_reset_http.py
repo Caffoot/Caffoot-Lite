@@ -13,8 +13,10 @@ from unittest.mock import patch
 
 from backend import schema
 from backend.account_email import issue_email_proof
+from backend.account_security import confirm_required_mfa_enrolment, start_required_mfa_enrolment
 from backend.accounts import bootstrap_first_admin, confirm_admin_mfa, hash_password, verify_password
 from backend.audit_events import record_actor_event
+from backend.authentication import MFAEnrolmentRequired
 from backend.http_security import COOKIE_NAME
 from backend.login_throttle import LoginThrottle
 from backend.mfa import code_at, new_secret
@@ -383,7 +385,13 @@ class PasswordChangeMigrationTests(unittest.TestCase):
                              [(owner, 1, 0), (worker, 0, 0)])
             self.assertEqual(db.execute('PRAGMA foreign_key_check').fetchall(), [])
             self.assertTrue(login_session(db, 'owner', ORIGINAL, mfa_code=code_at(secret, time.time())))
-            self.assertTrue(login_session(db, 'worker', ORIGINAL))
+            # The earlier built-in-role migration requires enrolment for active legacy accounts.
+            with self.assertRaises(MFAEnrolmentRequired):
+                login_session(db, 'worker', ORIGINAL, report_enrolment=True)
+            _, worker_secret = start_required_mfa_enrolment(db, 'worker', ORIGINAL)
+            code = code_at(worker_secret, time.time())
+            confirm_required_mfa_enrolment(db, 'worker', ORIGINAL, code)
+            self.assertTrue(login_session(db, 'worker', ORIGINAL, mfa_code=code))
 
     def test_schema_29_upgrade_keeps_existing_accounts_profiles_and_sessions(self):
         with tempfile.TemporaryDirectory() as directory:

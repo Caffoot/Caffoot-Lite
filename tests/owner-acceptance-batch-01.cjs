@@ -130,7 +130,9 @@ module.exports=async function verifyOwnerAcceptanceBatch({page,reference,sourceB
 
   const own=await openStaffAccount(page,(await (await page.request.get(address+'/api/session')).json()).username);
   const workspace=page.locator('.users-management-modal .modal');assert.equal(await workspace.evaluate(e=>Math.round(e.getBoundingClientRect().width)),Math.min(710,width-20));
-  assert.equal(await workspace.locator('[data-next-user-operation]:disabled').count(),3);assert.equal(await workspace.locator('.profile-modal-grid input:disabled').count(),4);
+  assert.deepEqual(await workspace.locator('[data-next-user-operation]:disabled').evaluateAll(
+   controls=>controls.map(control=>control.dataset.nextUserOperation).sort()),['active','admin','delete','reset-password']);
+  assert.equal(await workspace.locator('.profile-modal-grid input:disabled').count(),4);
   for(const selector of ['#user-first-name','[data-next-user-permission][data-section="Devices"]','[data-next-user-permission][data-section="IPAM"]','[data-next-user-permission][data-section="Racks"]'])await height(selector);
   if(width===1440){
    const rows=await workspace.locator('[data-next-user-permission]').evaluateAll(nodes=>nodes.map(e=>e.getBoundingClientRect().top));

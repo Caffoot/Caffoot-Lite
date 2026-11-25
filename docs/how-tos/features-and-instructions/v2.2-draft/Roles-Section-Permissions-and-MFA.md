@@ -183,7 +183,13 @@ Use an existing administrator session protected by MFA. The proposed administrat
 
 If **Make admin** stays disabled, check the guidance beside it. If an email address was just changed, the user must verify the new address. The server checks eligibility again when it receives the promotion request.
 
+![Manage Permissions in desktop light mode. Alex’s authenticator is enrolled, the email address is unverified and Make admin is disabled.](screenshots/stage-6-6-batch-1/administrator-eligibility-light-1440.png)
+
+*The guidance beside Make administrator explains which step Alex needs to complete.*
+
 On a fresh installation, the first administrator can finish setup before outgoing email is configured. They must still enrol their authenticator. After configuring outgoing email, they can verify their address in **My Account → Overview → Personal Details**. Existing administrators keep their access if an address is missing or loses verification. The warning below their email settings explains how to restore eligibility for password recovery. Outgoing email remains optional for everyday operation, and the protected [host-only first-administrator recovery procedure](../../../development-guide/Account-Recovery.md) remains available to the system operator when its conditions are met.
+
+![My Account in mobile light mode. The email verification warning is below Email Address and Verify Email.](screenshots/stage-6-6-batch-1/my-account-administrator-warning-light-390.png)
 
 ## Reset A Staff Member’s Password
 
@@ -196,6 +202,10 @@ Use an assisted reset when a non-administrator needs a temporary password. You n
 5. Give Jamie the temporary password using a secure channel outside Caffoot Lite. The person must still complete their own authenticator checks and choose a new password. Confirm that they can complete a fresh sign-in without asking them to disclose their new password.
 
 Caffoot Lite records the administrator, affected account and change in the audit trail. Passwords and authenticator values stay out of the audit record.
+
+![The Reset Password dialogue for Jamie Taylor in desktop light mode with two empty password fields and the warning about ending sessions and recovery codes.](screenshots/stage-6-6-batch-1/reset-password-light-1440.png)
+
+*Review the warning, then confirm the reset or select Cancel.*
 
 ## Set Up And Use MFA
 
@@ -214,6 +224,10 @@ Caffoot Lite records the administrator, affected account and change in the audit
 3. After successful sign-in, wait for the menu to load. The available destinations depend on your effective permissions. If permissions fail to load, reload the page or sign in again. Contact your administrator if the problem continues.
 
 If you see **Unable to sign in. Please check your credentials or contact your administrator.**, check your username and password. The same message covers incorrect credentials and unavailable accounts. At **Verify Your Identity**, check the time on your authenticator device and try the next code if the previous one expired. After repeated failures, wait for the temporary sign-in limit to expire. For lost credentials, see [Account Recovery](../../../development-guide/Account-Recovery.md) or contact your administrator.
+
+![The desktop light sign-in form shows Username and Password.](screenshots/stage-6-6-batch-1/sign-in-light-1440.png)
+
+![The mobile dark Verify Your Identity form shows the authenticator code after a valid password.](screenshots/stage-6-6-batch-1/authenticator-dark-390.png)
 
 ### Voluntary Enrolment And Eligible Removal
 
@@ -238,6 +252,10 @@ Removal is unavailable for Administrators, accounts with any enabled additional 
 4. When you see **Password changed successfully. Sign in again with your new password.**, enter the new password on the sign-in screen and provide your authenticator code if prompted. Only that fresh sign-in opens the workspace.
 
 **Back to Sign In** clears the form. The password change remains required the next time you sign in with the temporary password. If the change screen expires, begin again at sign-in. If the administrator resets the account again, use the latest temporary password. If the account is disabled, ask your administrator to check its status. A verified-email recovery can also complete the required password change when recovery is available and you choose a different password.
+
+![Change Your Password in mobile dark mode with empty New Password and Confirm New Password fields.](screenshots/stage-6-6-batch-1/change-temporary-password-dark-390.png)
+
+*The same sign-in page returns after a successful change and prompts you to use your new password.* [Capture variants and provenance](screenshots/stage-6-6-batch-1/README.md)
 
 ### Change Your Password From My Account
 
