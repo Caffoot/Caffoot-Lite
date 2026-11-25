@@ -13,10 +13,16 @@ class AdministratorRolesTests(unittest.TestCase):
         confirm_admin_mfa(self.db, self.owner, code_at(secret, 59), timestamp=59)
         self.other = create_user(self.db, self.owner, "second", "password")
 
+    def verify_other_email(self):
+        self.db.execute("INSERT INTO account_profiles(account_id,email,email_verified) VALUES(?,?,1)",
+                        (self.other, "second@example.invalid"))
+        self.db.commit()
+
     def tearDown(self):
         self.db.close()
 
     def test_promotion_requires_mfa(self):
+        self.verify_other_email()
         with self.assertRaisesRegex(ValueError, "MFA"):
             set_administrator(self.db, self.owner, self.other, True)
 
@@ -24,14 +30,14 @@ class AdministratorRolesTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "themselves"):
             set_administrator(self.db, self.owner, self.owner, False)
         self.db.execute("UPDATE accounts SET mfa_secret='test',mfa_confirmed=1 WHERE id=?", (self.other,))
-        self.db.commit()
+        self.verify_other_email()
         set_administrator(self.db, self.owner, self.other, True)
         set_administrator(self.db, self.owner, self.other, False)
         self.assertEqual(self.db.execute("SELECT is_admin FROM accounts WHERE id=?", (self.other,)).fetchone()[0], 0)
 
     def test_inactive_admin_cannot_manage_and_last_admin_survives(self):
         self.db.execute("UPDATE accounts SET mfa_secret='test',mfa_confirmed=1 WHERE id=?", (self.other,))
-        self.db.commit()
+        self.verify_other_email()
         set_administrator(self.db, self.owner, self.other, True)
         set_account_active(self.db, self.owner, self.other, False)
         with self.assertRaises(PermissionError):

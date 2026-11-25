@@ -175,6 +175,9 @@ class RequiredMfaTests(unittest.TestCase):
         self.assertEqual(self.db.execute("SELECT enabled FROM roles WHERE id=?", (role,)).fetchone()[0], 0)
 
     def test_administrator_promotion_still_requires_confirmed_mfa(self):
+        self.db.execute("INSERT INTO account_profiles(account_id,email,email_verified) VALUES(?,?,1)",
+                        (self.user, "worker@example.invalid"))
+        self.db.commit()
         with self.assertRaises(ValueError):
             set_administrator(self.db, self.admin, self.user, True)
         secret = self.enrol()

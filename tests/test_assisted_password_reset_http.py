@@ -278,6 +278,58 @@ class PasswordResetHttpTests(unittest.TestCase):
         response = self.request('/api/users/admin', {'userId': self.target, 'isAdmin': True}, token=self.owner_token)
         self.assertEqual(response[:2], (400, {'error': 'The user must change their temporary password before becoming an administrator.'}))
 
+    def test_promotion_requires_current_verified_email_and_mfa(self):
+        secret = new_secret()
+        action = {'userId': self.target, 'isAdmin': True}
+        def promote():
+            return self.request('/api/users/admin', action, token=self.owner_token)
+        with self.database() as db:
+            db.execute('UPDATE account_profiles SET email_verified=1 WHERE account_id=?', (self.target,))
+        self.assertIn('MFA enrolment required', promote()[1]['error'])
+        with self.database() as db:
+            db.execute('UPDATE accounts SET mfa_secret=?,mfa_confirmed=1 WHERE id=?', (secret, self.target))
+            db.execute("UPDATE account_profiles SET email='',email_verified=0 WHERE account_id=?", (self.target,))
+        self.assertIn('verify their email address', promote()[1]['error'])
+        with self.database() as db:
+            db.execute("UPDATE account_profiles SET email='jamie@example.invalid' WHERE account_id=?", (self.target,))
+        self.assertIn('verify their email address', promote()[1]['error'])
+
+        status, _, cookie = self.sign_in(ORIGINAL, mfa_code=code_at(secret, time.time()))
+        self.assertEqual(status, 200)
+        user_token = SimpleCookie(cookie)[COOKIE_NAME].value
+        with self.database() as db:
+            code, _, challenge_id = issue_email_proof(db, self.target, 'verify')
+        verified = self.request('/api/account/email/confirm', {'password': ORIGINAL, 'token': code, 'challengeId': challenge_id},
+                                token=user_token)
+        self.assertEqual(verified[:2], (200, {'status': 'Email verified'}))
+        self.assertEqual(promote()[:2], (200, {'status': 'updated'}))
+        self.assertEqual(self.request('/api/session', token=user_token)[0], 401)
+
+        _, _, cookie = self.sign_in(ORIGINAL, mfa_code=code_at(secret, time.time()))
+        user_token = SimpleCookie(cookie)[COOKIE_NAME].value
+        profile = self.request('/api/account/profile', token=user_token)[1]
+        changed = {key: profile[key] for key in ('firstName', 'lastName', 'displayName', 'email', 'revision')}
+        changed['email'] = 'updated@example.invalid'
+        self.assertEqual(self.request('/api/account/profile', changed, token=user_token)[0], 200)
+        self.assertFalse(self.request('/api/account/profile', token=user_token)[1]['emailVerified'])
+        self.assertTrue(self.request('/api/session', token=user_token)[1]['is_admin'])
+        self.assertEqual(self.request('/api/users', token=user_token)[0], 200)
+        self.assertEqual(self.request('/api/users', token=self.owner_token)[0], 200)
+
+    def test_promotion_checks_email_inside_the_transaction(self):
+        with self.database() as db:
+            db.execute('UPDATE accounts SET mfa_secret=?,mfa_confirmed=1 WHERE id=?', (new_secret(), self.target))
+            db.execute('UPDATE account_profiles SET email_verified=1 WHERE account_id=?', (self.target,))
+        def authenticate_then_unverify(*args, **kwargs):
+            actor = authorised_mutation(*args, **kwargs)
+            with self.database() as db:
+                db.execute('UPDATE account_profiles SET email_verified=0 WHERE account_id=?', (self.target,))
+            return actor
+        with patch('backend.server.authorised_mutation', side_effect=authenticate_then_unverify):
+            response = self.request('/api/users/admin', {'userId': self.target, 'isAdmin': True}, token=self.owner_token)
+        self.assertEqual(response[0], 400)
+        self.assertIn('verify their email address', response[1]['error'])
+
 
 class PasswordChangeMigrationTests(unittest.TestCase):
     def test_schema_29_upgrade_keeps_existing_accounts_profiles_and_sessions(self):

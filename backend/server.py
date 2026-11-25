@@ -1797,7 +1797,8 @@ class Handler(BaseHTTPRequestHandler):
                     elif self.path == "/api/users/admin":
                         if set(payload) != {"userId", "isAdmin"}:
                             raise ValueError("Invalid administrator request")
-                        set_administrator(connection, actor, payload["userId"], payload["isAdmin"])
+                        set_administrator(connection, actor, payload["userId"], payload["isAdmin"],
+                                          session_token=read_session_cookie(self.headers.get("Cookie")))
                         result = {"status": "updated"}
                     elif self.path == "/api/users/reset-password":
                         if set(payload) != {"userId", "password", "confirmation"}:

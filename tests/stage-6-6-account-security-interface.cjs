@@ -159,10 +159,27 @@ print(json.dumps({'owner': owner_secret, 'staff': staff_secret}))
   await staff.page.locator('#app[aria-busy="false"]').waitFor();
 
   await openStaffAccount(admin.page, 'alex.morgan');
+  const makeAdmin = manage.getByRole('button', {name: 'Make admin', exact: true});
+  assert.ok(await makeAdmin.isDisabled());
+  const eligibility = manage.locator('.administrator-eligibility');
+  assert.match(await eligibility.innerText(), /Authenticator\s+Enrolled/);
+  assert.match(await eligibility.innerText(), /Email Address\s+Not Verified/);
+  await captureThemes(admin.page, 'administrator-eligibility', eligibility);
+  // Seed the verified fixture state; email-code confirmation is exercised by the HTTP tests.
+  python(`
+import sqlite3, sys
+with sqlite3.connect(sys.argv[1]) as db:
+    db.execute("UPDATE account_profiles SET email_verified=1 WHERE account_id=(SELECT id FROM accounts WHERE username='alex.morgan')")
+`, database);
+  await openStaffAccount(admin.page, 'alex.morgan');
+  assert.ok(await makeAdmin.isEnabled());
+  await captureThemes(admin.page, 'administrator-eligible', eligibility);
   await reset.click();
   await fillPasswords(dialog, temporaryPassword);
   await dialog.getByRole('button', {name: 'Reset Password', exact: true}).click();
   await resetResult.getByText(/Password reset for alex\.morgan/).waitFor();
+  assert.ok(await makeAdmin.isDisabled());
+  await manage.getByText('The user must change their temporary password before becoming an administrator.').waitFor();
   const it = await client();
   await it.page.goto(origin + '/setup');
   await submitCredentials(it.page, 'alex.morgan', temporaryPassword);
@@ -171,6 +188,15 @@ print(json.dumps({'owner': owner_secret, 'staff': staff_secret}))
   await it.page.locator('#code').fill(authenticator(secrets.staff));
   await it.page.getByRole('heading', {name: 'Change Your Password'}).waitFor();
   assert.equal((await it.context.request.get(origin + '/api/session')).status(), 401);
+  await it.page.locator('#new-password').fill(personalPassword);
+  await it.page.locator('#confirm-new-password').fill(personalPassword);
+  await it.page.getByRole('button', {name: 'Change Password', exact: true}).click();
+  await it.page.getByText('Password changed successfully. Sign in again with your new password.').waitFor();
+  await openStaffAccount(admin.page, 'alex.morgan');
+  assert.ok(await makeAdmin.isEnabled());
+  await makeAdmin.click();
+  await manage.getByRole('button', {name: 'Remove admin', exact: true}).waitFor();
+  assert.ok(await reset.isDisabled());
 
   await openStaffAccount(admin.page, 'sam.ellis');
   await reset.click();
@@ -180,8 +206,15 @@ print(json.dumps({'owner': owner_secret, 'staff': staff_secret}))
   await resetResult.getByText(/Account remains disabled/).waitFor();
   await openStaffAccount(admin.page, 'local-admin');
   assert.ok(await reset.isDisabled());
+  await captureThemes(admin.page, 'existing-administrator-warning', manage.locator('.administrator-email-warning'));
+  await manage.getByRole('button', {name: 'Done', exact: true}).click();
+  await admin.page.getByRole('button', {name: 'Open My Account'}).click();
+  const warning = admin.page.locator('#account-administrator-email-warning');
+  await warning.waitFor();
+  await captureThemes(admin.page, 'my-account-administrator-warning', warning);
+  assert.ok((await (await admin.context.request.get(origin + '/api/session')).json()).is_admin);
   assert.deepEqual(errors, []);
-  console.log(`Assisted password reset and mandatory change passed over HTTPS (Chromium ${browser.version()}).`);
+  console.log(`Assisted password reset, mandatory change and administrator eligibility passed over HTTPS (Chromium ${browser.version()}).`);
 }
 
 run().catch(error => {

@@ -166,11 +166,24 @@ Account controls are separate from role previews. Check the account identity bef
 1. Open **Staff → Staff Members → Staff Details → Manage Permissions** for the person.
 2. To stop sign-in while retaining the account, select **Disable**. This ends its sessions and prevents sign-in until re-enabled.
 3. To restore login eligibility, select **Enable**, then review the current roles, permissions and MFA requirements. Enabling does not remove those safeguards.
-4. To appoint an Administrator, first ensure the account has completed MFA enrolment, then select **Make Admin**. Appointment before confirmed MFA is rejected.
+4. To appoint an Administrator, review the eligibility checks and select **Make admin** once the account qualifies. See [Make An Existing User An Administrator](#make-an-existing-user-an-administrator).
 5. To remove independent Administrator status, select **Remove Admin**. Remaining ordinary access comes from the account's roles and overrides. The account must sign in again after Administrator status changes.
 6. To remove the account permanently, select **Delete User** and read its confirmation. Confirm only if deletion is intended; cancelling keeps the account. Prefer disabling when the requirement is simply to prevent sign-in while retaining the login.
 
 You cannot disable, demote or delete your own signed-in administrator account, and the last active administrator is protected. Deleting a login does not delete its Staff directory identity or return its equipment; review those separately in the [Staff lifecycle](Staff-Members.md). These controls do not provide an administrator bypass for a forgotten password or authenticator.
+
+## Make An Existing User An Administrator
+
+Use an existing administrator session protected by MFA. The proposed administrator must have confirmed their authenticator, verified the email address saved in **My Account** and completed any required temporary password change. Saving an email address alone does not verify it.
+
+1. Open **Staff → Staff Members → Staff Details → Manage Permissions** for the intended account. Confirm the **Sign-in Username**, for example `alex.morgan`.
+2. Under **Account controls → Make administrator**, review **Authenticator** and **Email Address**. If Alex sees **Not Enrolled** or **Not Verified**, ask them to [complete MFA enrolment](#required-enrolment-at-sign-in) or [verify their email](#prepare-verified-email-recovery). If Alex still uses a temporary password, ask them to [change it](#after-an-administrator-gives-you-a-temporary-password).
+3. Reopen **Manage Permissions** after the person completes the checks. With **Enrolled** and **Verified** displayed and the password change complete, select **Make admin**. The choice takes effect immediately and ends that person’s existing sessions. They must sign in again with their authenticator.
+4. Confirm that the account now shows **Administrator · All Sections**. Enabled features determine which sections they can use. **Done** closes the dialogue.
+
+If **Make admin** stays disabled, check the guidance beside it. If an email address was just changed, the user must verify the new address. The server checks eligibility again when it receives the promotion request.
+
+On a fresh installation, the first administrator can finish setup before outgoing email is configured. They must still enrol their authenticator. After configuring outgoing email, they can verify their address in **My Account → Overview → Personal Details**. Existing administrators keep their access if an address is missing or loses verification. The warning below their email settings explains how to restore eligibility for password recovery. Outgoing email remains optional for everyday operation, and the protected [host-only first-administrator recovery procedure](../../../development-guide/Account-Recovery.md) remains available to the system operator when its conditions are met.
 
 ## Reset A Staff Member’s Password
 

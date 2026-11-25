@@ -44,6 +44,9 @@ class SessionInvalidationTests(unittest.TestCase):
 
     def test_role_change_revokes_sessions(self):
         token = self.login()
+        self.db.execute("INSERT INTO account_profiles(account_id,email,email_verified) VALUES(?,?,1)",
+                        (self.user, "worker@example.invalid"))
+        self.db.commit()
         with self.assertRaises(ValueError):
             set_administrator(self.db, self.admin, self.user, True)
         self.assertEqual(session_account(self.db, token, now=60), self.user)

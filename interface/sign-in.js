@@ -91,6 +91,7 @@ function display(){
  $('auth-eyebrow').textContent=mode==='setup'?'First-Time Setup':
    enrolling||mode==='login-mfa'||changingPassword?'Account Security':'Welcome to Caffoot Lite';
  $('message').textContent='';
+ $('message').classList.remove('good');
  $('enrolment').hidden=!enrolling;
  $('enrolment').classList.toggle('required-mfa-enrolment',mode==='required-enrol');
  $('code-field').hidden=!enrolling&&mode!=='login-mfa';
@@ -114,7 +115,7 @@ function display(){
   history.replaceState(null,'','/setup'+window.location.search);
  }
  if(window.location.hash==='#mfa-removed'){
-  $('message').style.color='#166534';$('message').textContent='MFA removed. All sessions have ended. Sign in again.';
+  $('message').classList.add('good');$('message').textContent='MFA removed. All sessions have ended. Sign in again.';
   history.replaceState(null,'','/setup');
  }
 }catch(e){$('intro').textContent=e.message}})();
@@ -138,7 +139,7 @@ $('code').addEventListener('input',()=>{
 $('form').addEventListener('submit',async e=>{
  e.preventDefault();
  if($('submit').disabled)return;
- $('submit').disabled=$('back-to-login').disabled=true;$('message').textContent='';
+ $('submit').disabled=$('back-to-login').disabled=true;$('message').textContent='';$('message').classList.remove('good');
  const data=pendingCredentials||{username:$('username').value,password:$('password').value};
  try{
  if(mode==='setup'){
@@ -149,7 +150,7 @@ $('form').addEventListener('submit',async e=>{
  }else if(mode==='required-enrol'){
    await request('/api/login/mfa/confirm',{...data,mfa_code:$('code').value});
    pendingCredentials=null;clearRequiredMfaDisplay();clearPasswordField('password');mode='login';display();
-   $('message').style.color='#166534';$('message').textContent='MFA enrolled. Sign in again with your password and authenticator code.';
+   $('message').classList.add('good');$('message').textContent='MFA enrolled. Sign in again with your password and authenticator code.';
    $('username').focus();
  }else if(mode==='enrol'){
    await request('/api/setup/mfa',{...data,mfa_code:$('code').value});
@@ -167,7 +168,7 @@ $('form').addEventListener('submit',async e=>{
      throw error;
    }
    clearPasswordChange();mode='login';display();$('password').focus();
-   $('message').style.color='#166534';$('message').textContent='Password changed successfully. Sign in again with your new password.';
+   $('message').classList.add('good');$('message').textContent='Password changed successfully. Sign in again with your new password.';
  }else{
    try{
      const result=await request('/api/login',{...data,...(mode==='login-mfa'?{mfa_code:$('code').value}:{})});
@@ -196,7 +197,7 @@ $('form').addEventListener('submit',async e=>{
      throw error.message==='invalid credentials'?Error(neutralSignInFailure):error;
    }
  }
- }catch(err){$('message').style.color='#b91c1c';$('message').textContent=err.message}
+ }catch(err){$('message').textContent=err.message}
  finally{$('submit').disabled=$('back-to-login').disabled=false}
 });
 
@@ -295,7 +296,7 @@ for(const id of ['recovery-request-form','recovery-confirm-form']){
 
 $('back-to-welcome').addEventListener('click',()=>{setupWelcomeAcknowledged=false;display();});
 $('setup-continue-sign-in').addEventListener('click',()=>{
- mode='login';$('code').value='';display();$('message').style.color='#166534';$('message').textContent='MFA enrolled. Sign in to continue.';
+ mode='login';$('code').value='';display();$('message').classList.add('good');$('message').textContent='MFA enrolled. Sign in to continue.';
 });
 
 // Clear the displayed key when an existing-account enrolment is left or completed.

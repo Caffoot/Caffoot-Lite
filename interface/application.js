@@ -10658,6 +10658,7 @@ void (async () => {
     const action=root.querySelector('#open-email-verification');
     const badge=root.querySelector('#account-email-status');
     const hint=root.querySelector('#account-email-hint');
+    const administratorWarning=root.querySelector('#account-administrator-email-warning');
     personalForm.insertAdjacentHTML('afterend',renderInterfaceTemplate('my-account/email-verification-1',[]));
     const panel=root.querySelector('#account-email-verification');
     const form=root.querySelector('#account-email-verification-form');
@@ -10685,7 +10686,9 @@ void (async () => {
     function updateEmailVerificationStatus(){
       const savedEmail=accountProfile?.email||'';
       const dirty=email.value.trim()!==savedEmail;
-      const verified=!!savedEmail&&!dirty&&!!accountProfile?.emailVerified;
+      const savedVerified=!!savedEmail&&accountProfile?.emailVerified===true;
+      const verified=savedVerified&&!dirty;
+      administratorWarning.hidden=!sessionIsAdmin||savedVerified;
       badge.textContent=verified?'Verified':'Not Verified';
       action.hidden=verified;action.disabled=!savedEmail||dirty;
       hint.textContent=dirty?'Save Personal Details before verifying this address.':!savedEmail?
@@ -11011,22 +11014,39 @@ void (async () => {
       }).join('');
       const operation=(kind,label,unavailable=false)=>`<button type="button" class="btn ${kind==='delete'?'danger':''}" data-next-user-operation="${kind}" data-user-id="${editingUser.id}" ${own||unavailable?'disabled':''}>${label}</button>`;
       const profile=editingUser.profile||{};
-      const profileHTML=renderInterfaceTemplate("users/source-profile",[editingUser.id,...['firstName','lastName','displayName','email'].map(key=>escapeHtml(profile[key]||'')),own?'Edit your own personal details through My Account.':'Shared personal details also appear in Staff Details. Resolve differences in Edit Staff Member. A changed email address needs to be verified again.',own?'disabled':'',escapeHtml(editingUser.username),escapeHtml(profile.revision||'')]);
+      const verified=!!profile.email?.trim()&&profile.emailVerified===true;
+      const enrolled=editingUser.accessDetails.mfaEnrolled===true;
+      const statusBadge=(label,passed)=>'<span class="badge '+(passed?'green':'amber')+'">'+label+'</span>';
+      const emailBadge=statusBadge(verified?'Verified':profile.email?'Not Verified':'No Email Address',verified);
+      const emailWarning=editingUser.isAdmin&&!verified?'<div class="modal-warning administrator-email-warning">Administrator email address is not verified. Verify your email in My Account to make password recovery available when outgoing email is configured. Existing administrator access is unchanged.</div>':'';
+      const profileHTML=renderInterfaceTemplate("users/source-profile",[editingUser.id,...['firstName','lastName','displayName','email'].map(key=>escapeHtml(profile[key]||'')),own?'Edit your own personal details through My Account.':'Shared personal details also appear in Staff Details. Resolve differences in Edit Staff Member. A changed email address needs to be verified again.',own?'disabled':'',escapeHtml(editingUser.username),escapeHtml(profile.revision||''),emailBadge,emailWarning]);
       const meta=renderInterfaceTemplate("users/source-user-meta",[editingUser.active?'green':'red',editingUser.active?'Active':'Disabled',editingUser.isAdmin?'blue':'dark',editingUser.isAdmin?'Administrator · All Sections':'Staff Member',editingUser.mfaEnrolled?'green':'amber',accountMfaLabel(editingUser)]);
       const administratorNote=editingUser.isAdmin?'<div class="note-row" style="margin-bottom:13px">Administrators retain configured access to all inventory sections. Disabled features remain unavailable. Their per-section permissions are not individually configured.</div>':'';
       const warnings=own?'<div class="modal-warning">You cannot disable, demote or delete your own signed-in administrator account. These controls are intentionally unavailable.</div>':editingUser.accessDetails.mfaPending?'<div class="modal-warning">MFA enrolment is required before wider Read/Edit access or enabled additional roles can be used. The user will be guided through enrolment before normal sign-in.</div>':'';
-      const activeControl=renderInterfaceTemplate("users/source-account-control",[editingUser.active?'Disable account':'Enable account',editingUser.active?'Prevent this person signing in until the account is enabled again.':'Allow this person to sign in again.',operation('active',editingUser.active?'Disable':'Enable')]);
-      const administratorControl=renderInterfaceTemplate("users/source-account-control",[editingUser.isAdmin?'Remove administrator':'Make administrator',editingUser.isAdmin?'Return this account to standard-user status.':editingUser.mustChangePassword?'The user must change their temporary password before becoming an administrator.':'Grant existing administrator privileges to an MFA-enrolled account.',operation('admin',editingUser.isAdmin?'Remove admin':'Make admin',editingUser.mustChangePassword)]);
+      const activeControl=renderInterfaceTemplate("users/source-account-control",[editingUser.active?'Disable account':'Enable account',editingUser.active?'Prevent this person signing in until the account is enabled again.':'Allow this person to sign in again.',operation('active',editingUser.active?'Disable':'Enable'),'']);
+      const promotionBlocked=editingUser.mustChangePassword||!enrolled||!verified;
+      const promotionHelp=editingUser.isAdmin?(own?'You cannot demote your own signed-in administrator account.':'Return this account to standard-user status.'):
+        editingUser.mustChangePassword?'The user must change their temporary password before becoming an administrator.':
+        !enrolled&&!verified?'Confirm MFA enrolment and verify an email address before granting administrator access.':
+        !enrolled?'The user must enrol and confirm MFA before becoming an administrator.':
+        !verified?'The user must verify their email address in My Account before becoming an administrator.':
+        'Grant existing administrator privileges to an account with confirmed MFA and verified email.';
+      const eligibility=editingUser.isAdmin?'':'<div class="administrator-eligibility"><div>Authenticator '+statusBadge(enrolled?'Enrolled':'Not Enrolled',enrolled)+'</div><div>Email Address '+emailBadge+'</div></div>';
+      const administratorControl=renderInterfaceTemplate('users/source-account-control',[
+        editingUser.isAdmin?'Remove administrator':'Make administrator',promotionHelp,
+        operation('admin',editingUser.isAdmin?'Remove admin':'Make admin',!editingUser.isAdmin&&promotionBlocked),eligibility,
+      ]);
       const resetHelp=own?'Use My Account to change your own password.':editingUser.isAdmin?'Administrator passwords cannot be reset using this facility.':'Set a temporary password. The user must change it at their next sign-in.';
       const resetControl=renderInterfaceTemplate('users/source-account-control',[
-        'Reset Password',resetHelp,operation('reset-password','Reset Password',editingUser.isAdmin),
-      ])+'<p class="note-row account-reset-result" role="status" data-password-reset-result hidden></p>';
+        'Reset Password',resetHelp,operation('reset-password','Reset Password',editingUser.isAdmin),'',
+      ])+'<p class="account-reset-result" role="status" data-password-reset-result hidden></p>';
       return renderInterfaceTemplate("users/account-management-dialog",[own?'Your administrator account':'Manage '+escapeHtml(editingUser.username),own?'Self-protection prevents account changes here. Use My Account for your own security settings.':'Review access and account controls for this user.',meta,profileHTML+renderRoleMemberships(editingUser,own),administratorNote,'<p class="formhint">Permissions from assigned roles can be customised for each user. Select <strong>Inherit</strong> to use the permissions provided by their roles. Select <strong>No Access</strong>, <strong>Read</strong> or <strong>Edit</strong> to set an individual override. Individual overrides take precedence, including when a role’s permissions change.</p>'+renderInterfaceTemplate("users/access-summary",[permissionControls]),warnings,activeControl,administratorControl,resetControl+renderInterfaceTemplate("users/source-delete-control",[operation('delete','Delete User')])]);
   }
   function openStaffPasswordReset(user){
     const body=renderInterfaceTemplate('users/password-reset-form',[user.active?'':'<br>This account will remain disabled.']);
     const layer=openRoleLayer('Reset Password','Set a temporary password for '+user.username+'.',body,
       '<button type="button" class="btn" data-role-command="close">Cancel</button><button type="submit" form="staff-password-reset" class="btn primary">Reset Password</button>');
+    layer.dataset.passwordResetDialog='';
     const form=layer.querySelector('#staff-password-reset'),feedback=layer.querySelector('#staff-password-reset-error');
     const {password,confirmation}=form.elements;
     const buttons=[...layer.querySelectorAll('button')];

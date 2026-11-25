@@ -286,6 +286,7 @@ html{font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Arial,sa
 #main-content .section-tab-control > .section-tab-icon {width:18px;height:18px;flex:none;}
 
 .account-email-status{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:8px}
+.administrator-email-warning{margin:10px 0 0;padding:10px 12px;border:1px solid #ead5ab;border-radius:9px;background:#fff8e8;color:#744d22;font-size:11px;line-height:1.5}
 .email-verification{margin-top:16px;border-top:1px solid var(--line);padding-top:16px}
 #email-verification-code-fields{border:0;margin:0;padding:0;min-width:0}
 .email-verification .personal-actions{flex-wrap:wrap;gap:8px}

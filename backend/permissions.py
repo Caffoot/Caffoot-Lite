@@ -177,12 +177,14 @@ def delete_user(connection, actor_id, target_id):
         raise
 
 
-def set_administrator(connection, actor_id, target_id, is_admin):
+def set_administrator(connection, actor_id, target_id, is_admin, *, session_token=None):
     """Manage administrator status without self-demotion or last-admin removal."""
     if not isinstance(is_admin, bool):
         raise ValueError("Invalid administrator status")
     connection.execute("BEGIN IMMEDIATE")
     try:
+        if session_token is not None and session_account(connection, session_token) != actor_id:
+            raise PermissionError("Verified session required")
         _admin(connection, actor_id)
         target_admin, target_active = _target(connection, target_id)
         target_name = connection.execute(
@@ -194,10 +196,13 @@ def set_administrator(connection, actor_id, target_id, is_admin):
             "SELECT must_change_password FROM accounts WHERE id=?", (target_id,)
         ).fetchone()[0]:
             raise ValueError("The user must change their temporary password before becoming an administrator.")
-        if is_admin and not connection.execute(
-            "SELECT mfa_confirmed FROM accounts WHERE id=?", (target_id,)
-        ).fetchone()[0]:
+        if is_admin and not evaluate_role_policy(connection, target_id).mfa_enrolled:
             raise ValueError("MFA enrolment required for administrators")
+        if is_admin and not target_admin and not connection.execute(
+            "SELECT 1 FROM account_profiles WHERE account_id=? AND email_verified=1 AND trim(email)<>''",
+            (target_id,),
+        ).fetchone():
+            raise ValueError("The user must verify their email address in My Account before becoming an administrator.")
         if target_admin and target_active and not is_admin and connection.execute(
             "SELECT count(*) FROM accounts WHERE is_admin=1 AND active=1"
         ).fetchone()[0] <= 1:
