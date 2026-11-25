@@ -16,6 +16,7 @@ from backend.equipment_lifecycle import DEFAULT_LIFESPANS
 from backend.history_permissions import visible_change_history
 from backend.http_security import COOKIE_NAME
 from backend.request_auth import csrf_for_session
+from backend.sessions import _digest
 from backend.inventory import reconstruct_inventory
 from backend.normalisation_pipeline import PUBLISHED_DEFAULTS
 from backend.schema import initialise_database
@@ -188,6 +189,67 @@ class ServiceDeskHttpTests(unittest.TestCase):
         self.hand_over('department', 'dept')
         self.assertEqual(self.save('personal', ticket, 'read', {'proof': latest['readProof']}, actor=4)[0], 404)
         self.assertEqual(unread(personal, 4)[1]['combined'], 0)
+
+    def test_unread_acknowledgement_is_session_bound_expiring_and_csrf_protected(self):
+        self.assign_device()
+        ticket = self.create()
+        self.assertEqual(self.save('it', ticket, 'messages', {'body': 'Visible reply', 'employeeVisible': True})[0], 200)
+        path = self.ticket_path('personal', f'/{ticket}')
+        snapshot = self.request(path+'/messages', actor=4)[1]
+        proof = snapshot['readProof']
+        for headers in ({'Origin': 'https://outside.example'}, {'X-CSRF-Token': ''},
+                        {'Sec-Fetch-Site': 'cross-site'}):
+            self.assertEqual(self.request(path+'/read', method='POST', actor=4,
+                                         payload={'proof': proof}, headers=headers)[0], 403)
+        self.assertEqual(self.save('personal', ticket, 'read', {'proof': proof, 'accountId': 4}, actor=4)[0], 400)
+        self.assertEqual(self.save('personal', ticket, 'read', {'proof': proof[:-1] + ('0' if proof[-1] != '0' else '1')},
+                                   actor=4)[0], 403)
+        original_token = self.tokens[4]
+        alternate_token = 'a' * 64
+        with sqlite3.connect(self.path) as connection:
+            connection.execute('INSERT INTO account_sessions VALUES(?,?,9999999999,1)', (_digest(alternate_token), 4))
+        self.tokens[4] = alternate_token
+        self.assertEqual(self.save('personal', ticket, 'read', {'proof': proof}, actor=4)[0], 403)
+        with patch('backend.service_desk_reads._PROOF_SECONDS', 0):
+            expired = self.request(path+'/messages', actor=4)[1]['readProof']
+        self.assertEqual(self.save('personal', ticket, 'read', {'proof': expired}, actor=4)[0], 403)
+        self.assertEqual(self.request(path, actor=4)[1]['unreadCount'], 1)
+        fresh = self.request(path+'/messages', actor=4)[1]['readProof']
+        self.assertEqual(self.save('personal', ticket, 'read', {'proof': fresh}, actor=4)[1], {'unreadCount': 0})
+        self.tokens[4] = original_token
+        self.assertEqual(self.request(path, actor=4)[1]['unreadCount'], 0)
+        with sqlite3.connect(self.path) as connection:
+            self.assertEqual(connection.execute('SELECT account_id,count(*) FROM service_desk_message_reads GROUP BY account_id').fetchall(),
+                             [(4, 1)])
+            connection.execute('DELETE FROM account_sessions WHERE token_hash=?', (_digest(original_token),))
+        self.assertEqual(self.save('personal', ticket, 'read', {'proof': proof}, actor=4)[0], 403)
+
+    def test_department_unread_counts_are_individual_and_follow_current_membership(self):
+        self.assign_device('department', 'dept')
+        with sqlite3.connect(self.path) as connection:
+            connection.execute("UPDATE staff_members SET department_id='dept' WHERE id='colleague'")
+        ticket = self.create('department')
+        self.assertEqual(self.save('department', ticket, 'messages', {'body': 'Employee reply'}, actor=4)[0], 200)
+        self.assertEqual(self.save('it', ticket, 'messages', {'body': 'Visible update', 'employeeVisible': True})[0], 200)
+        self.assertEqual(self.save('it', ticket, 'messages', {'body': 'Private IT note'})[0], 200)
+        path = self.ticket_path('department', f'/{ticket}')
+        def unread(actor):
+            return self.request(f'{SERVICE_DESK}/personal/unread', actor=actor,
+                                headers={'X-CSRF-Token': csrf_for_session(self.tokens[actor])})[1]
+        self.assertEqual(unread(4), {'personal': 0, 'department': 1, 'combined': 1,
+                                    'tickets': {'personal': {}, 'department': {str(ticket): 1}}})
+        self.assertEqual(unread(5)['tickets']['department'], {str(ticket): 2})
+        proof = self.request(path+'/messages', actor=5)[1]['readProof']
+        self.assertEqual(self.save('department', ticket, 'read', {'proof': proof}, actor=5)[1], {'unreadCount': 0})
+        self.assertEqual(unread(5)['combined'], 0)
+        self.assertEqual(unread(4)['combined'], 1)
+        self.assertEqual(self.save('it', ticket, 'messages', {'body': 'Another update', 'employeeVisible': True})[0], 200)
+        proof = self.request(path+'/messages', actor=5)[1]['readProof']
+        with sqlite3.connect(self.path) as connection:
+            connection.execute("UPDATE staff_members SET department_id='other' WHERE id='colleague'")
+        self.assertEqual(unread(5)['combined'], 0)
+        self.assertEqual(self.save('department', ticket, 'read', {'proof': proof}, actor=5)[0], 404)
+        self.assertEqual(unread(4)['tickets']['department'], {str(ticket): 2})
 
     def test_created_mail_scope_device_and_asset_published_wording_and_sign_in(self):
         self.capture_ticket_mail()

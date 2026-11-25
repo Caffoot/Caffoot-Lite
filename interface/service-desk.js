@@ -89,7 +89,8 @@ window.caffootServiceDesk = (() => {
     }
 
     async function refreshUnread() {
-        if (!config || unreadStopped || document.hidden || window.caffootSessionRedirectPending) return;
+        if (!config || unreadStopped || document.hidden || window.caffootSessionRedirectPending ||
+            document.getElementById('app')?.inert) return;
         unreadRequest?.abort();
         unreadRequest = new AbortController();
         const signal = unreadRequest.signal;
@@ -1067,7 +1068,7 @@ window.caffootServiceDesk = (() => {
         try {
             const result = await requestTickets('tickets/' + dialog.id + '/read',
                 {proof:pending.proof}, undefined, dialog.scope);
-            if (ticketDialogActive(dialog)) {
+            if (!unreadStopped && !window.caffootSessionRedirectPending && ticketDialogActive(dialog)) {
                 dialog.ticket.unreadCount = result.unreadCount;
                 setUnreadBadge(dialog.root.querySelector('[data-unread-updates]'), result.unreadCount, 'reply');
             }

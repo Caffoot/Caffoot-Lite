@@ -40,6 +40,21 @@ Ordinary Staff use equipment-scoped access through their Staff account link. The
 
 When troubleshooting, check the effective role and individual override, account status, MFA, the equipment feature switch and the equipment section’s Read access. The Service Desk uses the existing permission model and the Devices and IT Assets switches.
 
+## Verify Unread Reply Indicators
+
+Unread indicators in draft v2.2 are personal to the signed-in account. They count distinct tickets in the navigation and workspace tabs and qualifying unread replies against individual tickets and Updates. They are not a new permission, a workload target or a shared Department read flag.
+
+1. Verify the employee or technician's access using the preceding instructions. For a technician, check **Service Desk** read access and the corresponding enabled equipment section. For an employee, check the active Staff account link and current equipment custody or Department membership. A read-only technician can acknowledge their own permitted conversation without editing it.
+2. Use fictional acceptance records and two separately authenticated accounts with legitimate access to the same Department ticket. Send an employee-visible IT update from a third authorised account. Confirm that the recipient accounts each see an unread reply and that the sending account does not count its own reply.
+3. From one recipient account, open the ticket at Overview, then select Updates. Confirm only that account's eligible unread replies clear. Sign out and sign in again, or use another browser for the same account, to confirm its read state persists. The other account must still have its own unread reply.
+4. Add an internal IT note. Verify it contributes only to authorised IT counts, not to the employee's counts. A status or assignment change, an edit to an existing reply, and the original ticket attachment placeholder are not new replies.
+5. When checking a failed conversation load, confirm its unread indication is retained. A later reply must remain unread if it arrived after the loaded snapshot. An account that loses access through a Department membership, custody, role or feature change must not receive counts for the restricted records or be able to acknowledge them using an earlier conversation.
+6. Use the existing sign-in and access troubleshooting if badges do not appear. Zero indicators are hidden. Check filters, both employee tabs and other pages before assuming a ticket is missing. Do not grant additional permissions just to make a badge appear. See [Recognise And Read New Replies](Service-Desk-Tickets.md#recognise-and-read-new-replies).
+
+The read state is stored in the application database as separate account/message receipts (development schema 31). Published v2.1 does not contain Service Desk ticket history. The schema 31 development migration is additive; it does not initialise existing private-development messages as read or change existing ticket history. Actual supported upgrade, persistence, Clean Start, runtime security and visual acceptance remain to be verified before publication.
+
+> **Draft evidence outstanding:** the unread-reply implementation is in development. Genuine application screenshots and the relevant verification evidence will be added after execution and review.
+
 ## Configure The IT Support Mailbox
 
 The **Ticket Created** email alerts IT when someone raises a request for their own or their Department’s assigned Device or IT Asset. It contains the ticket reference, its initial **Open** status and a link to the authorised IT ticket view. The description, attachments and request subject stay inside Caffoot Lite.
