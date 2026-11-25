@@ -227,7 +227,7 @@ def assign_devices(connection, actor_id, session_token, payload):
 def my_equipment(connection, actor_id):
     """Resolve the current login link and membership without accepting a client identity."""
     result = {'assignedToMe': [], 'sharedWithMyDepartment': []}
-    staff = connection.execute('SELECT id,department_id FROM staff_members WHERE account_id=?', (actor_id,)).fetchone()
+    staff = connection.execute('SELECT id,department_id FROM staff_members WHERE account_id=? AND active=1', (actor_id,)).fetchone()
     if staff is None:
         return result
     rows = connection.execute('''SELECT a.staff_id,d.id,d.record_json,a.assigned_at

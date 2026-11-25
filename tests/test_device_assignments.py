@@ -132,6 +132,16 @@ class DeviceAssignmentTests(unittest.TestCase):
         self.assertEqual([d['id'] for d in result['sharedWithMyDepartment']], ['two'])
         self.assertEqual(set(result['assignedToMe'][0]), {'id','name','type','manufacturer','model','assignedAt'})
         self.assertNotIn('PRIVATE', json.dumps(result))
+        # Archived Departments retain current relationships and eligible access.
+        self.department({'archived': True}, department_id=self.dept)
+        self.assertEqual(my_equipment(self.db, 3), result)
+        # Inactive Staff lose employee visibility, not their assigned equipment.
+        self.staff({'active': False}, staff_id=self.person)
+        self.assertEqual(my_equipment(self.db, 3), {'assignedToMe': [], 'sharedWithMyDepartment': []})
+        self.assertEqual(len(read_assignments(self.db, 1, staff_id=self.person)['current']), 1)
+        self.assertEqual(len(read_assignments(self.db, 1, department_id=self.dept)['current']), 1)
+        self.staff({'active': True}, staff_id=self.person)
+        self.assertEqual(my_equipment(self.db, 3), result)
         self.staff({'departmentId': None}, staff_id=self.person)
         self.assertEqual(my_equipment(self.db, 3)['sharedWithMyDepartment'], [])
         self.db.execute("UPDATE organisation_features SET enabled=0 WHERE feature='devices'")
