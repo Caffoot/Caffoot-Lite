@@ -1,6 +1,6 @@
 # Draft v2.2 User And Administrator Guides
 
-> **Draft v2.2 — Unreleased.** Stage 6.6 Batch 1 adds account and Device handover changes in the schema 30 review candidate. The [development handover](../../../development-handovers/milestone-01.md) records the checks and acceptance gates. Use the [published v2.1 guides](https://github.com/Caffoot/Caffoot-Lite/tree/v2.1/docs/how-tos/features-and-instructions) for the current release.
+> **Draft v2.2 — Unreleased.** Stage 6.6 Batch 2 adds My Equipment, unread Service Desk replies and readable Audit Trail records in the schema 31 draft candidate. Application verification and owner acceptance are outstanding. The [development handover](../../../development-handovers/milestone-01.md) records the checks and acceptance gates. Use the [published v2.1 guides](https://github.com/Caffoot/Caffoot-Lite/tree/v2.1/docs/how-tos/features-and-instructions) for the current release.
 
 Caffoot Lite brings accounts, Staff Members, Departments, Devices and optional IT Assets together so your team can record who holds equipment, what is physically in stock and what is ready to issue. These guides explain workflows for ordinary users, IT technicians and administrators, including Suppliers and Equipment Lifecycle in Stage 4. Examples use fictional people, organisations and equipment.
 
@@ -97,6 +97,10 @@ Equipment Lifecycle is independently optional and starts switched off. Stage 4.4
 | Edit and publish templates, set company branding and send a sample | [Email Templates And Company Branding](Email-Templates-and-Company-Branding.md) |
 
 The foundation, IT queue and employee ticket workflows are integrated through [PRs #437](https://github.com/Caffoot/Caffoot-Lite/pull/437), [#438](https://github.com/Caffoot/Caffoot-Lite/pull/438) and [#439](https://github.com/Caffoot/Caffoot-Lite/pull/439). Service Desk settings and reporting are integrated through [PR #440](https://github.com/Caffoot/Caffoot-Lite/pull/440), and Email Templates and Company Branding through [PR #441](https://github.com/Caffoot/Caffoot-Lite/pull/441). The notification instructions cover the Stage 5.6 development changes submitted in [PR #442](https://github.com/Caffoot/Caffoot-Lite/pull/442).
+
+## Audit Trail
+
+Use [Read The Audit Trail](Audit-Trail.md) to search authorised event-time names and original references, inspect label provenance and export the history available to your account.
 
 ## Publication And Acceptance
 
