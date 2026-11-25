@@ -38,24 +38,24 @@ def unread_parameters(actor_id, scope):
 
 def read_unread_counts(connection, actor_id, scope):
     """Count distinct accessible tickets, independently of list filters/pages."""
-    def count(allowed, values, audience):
-        return connection.execute(f"""
-            SELECT count(*) FROM service_desk_tickets ticket
-            WHERE ({allowed}) AND {UNREAD_COUNT}>0
-        """, (*values, *unread_parameters(actor_id, audience))).fetchone()[0]
+    def counts_for(audience):
+        allowed, values = ticket_scope_filter(connection, actor_id, audience)
+        return {str(identity): count for identity, count in connection.execute(f"""
+            SELECT ticket.id, {UNREAD_COUNT} FROM service_desk_tickets ticket
+            WHERE {allowed}
+        """, (*unread_parameters(actor_id, audience), *values)) if count}
 
     if scope == 'it':
-        allowed, values = ticket_scope_filter(connection, actor_id, scope)
-        return {'it': count(allowed, values, scope)}
+        tickets = counts_for('it')
+        return {'it': len(tickets), 'tickets': {'it': tickets}}
     if scope not in ('personal', 'department'):
         raise ValueError('Invalid ticket scope.')
-    personal, personal_values = ticket_scope_filter(connection, actor_id, 'personal')
-    department, department_values = ticket_scope_filter(connection, actor_id, 'department')
+    personal = counts_for('personal')
+    department = counts_for('department')
     return {
-        'personal': count(personal, personal_values, 'personal'),
-        'department': count(department, department_values, 'department'),
-        'combined': count(f'({personal}) OR ({department})',
-                          (*personal_values, *department_values), 'personal'),
+        'personal': len(personal), 'department': len(department),
+        'combined': len(personal.keys() | department.keys()),
+        'tickets': {'personal': personal, 'department': department},
     }
 
 

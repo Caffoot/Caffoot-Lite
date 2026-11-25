@@ -9282,6 +9282,7 @@ void (async () => {
     window.caffootStockIntake.clear();
     applyAllowedControls();
     sidebar.removeAttribute('data-session-permissions-pending');
+    void window.caffootServiceDesk.refreshUnread();
   }
   async function refreshCentralInventory(render = true) {
     const request = ++inventoryPermissionsRequest;
@@ -9316,6 +9317,7 @@ void (async () => {
     if (render) renderContent();
     applyNavigationVisibility();
     sidebar.removeAttribute('data-inventory-permissions-pending');
+    void window.caffootServiceDesk.refreshUnread();
   }
   async function postInventory(path, data) {
     const response = await fetch(path, {
@@ -9781,6 +9783,7 @@ void (async () => {
     if (tab === 'my-tickets') window.scrollTo({top:0, behavior:'instant'});
     if (isSupplierPage(tab)) window.caffootSuppliers.enter(tab, fromRoute);
     applyAllowedControls();
+    void window.caffootServiceDesk.refreshUnread();
   };
   window.addEventListener('popstate', () => {
     const tab = workspaceHashTab() || ((isSupplierPage(currentTab) || ['service-desk','my-tickets'].includes(currentTab)) ? landingTab() : '');
@@ -11361,7 +11364,10 @@ void (async () => {
   document.addEventListener('click',event=>{
     if(event.target.id!=='next-account-signout')return;
     event.preventDefault();
-    void postInventory('/api/logout',{}).then(()=>window.location.assign('/setup'))
+    void postInventory('/api/logout',{}).then(()=>{
+      window.caffootServiceDesk.stopUnread();
+      window.location.assign('/setup');
+    })
       .catch(error=>showToast(error.message,'error'));
   },true);
   document.addEventListener('submit',event=>{
@@ -11696,6 +11702,7 @@ void (async () => {
     if (!openEmailTicket()) switchTab(workspaceHashTab() || landingTab(),true);
     applyNavigationVisibility();
     document.getElementById('app').setAttribute('aria-busy','false');
+    void window.caffootServiceDesk.refreshUnread();
   }catch(error){
     const container=document.getElementById('main-content');
     container.replaceChildren();

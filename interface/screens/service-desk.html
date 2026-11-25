@@ -95,8 +95,8 @@
     <button type="button" class="btn btn-primary" data-employee-ticket-create>＋ Create Ticket</button>
   </header>
   <nav class="employee-ticket-tabs" role="tablist" aria-label="Ticket Ownership">
-    <button id="employee-personal-tickets-tab" class="employee-ticket-tab" role="tab" aria-controls="employee-ticket-panel" aria-selected="true" type="button" data-ticket-scope="personal">My Tickets</button>
-    <button id="employee-department-tickets-tab" class="employee-ticket-tab" role="tab" aria-controls="employee-ticket-panel" aria-selected="false" tabindex="-1" type="button" data-ticket-scope="department">Department Tickets</button>
+    <button id="employee-personal-tickets-tab" class="employee-ticket-tab" role="tab" aria-controls="employee-ticket-panel" aria-selected="true" type="button" data-ticket-scope="personal">My Tickets <span class="service-desk-unread" data-unread-scope-count hidden></span></button>
+    <button id="employee-department-tickets-tab" class="employee-ticket-tab" role="tab" aria-controls="employee-ticket-panel" aria-selected="false" tabindex="-1" type="button" data-ticket-scope="department">Department Tickets <span class="service-desk-unread" data-unread-scope-count hidden></span></button>
   </nav>
   <div id="employee-ticket-panel" role="tabpanel" aria-labelledby="employee-personal-tickets-tab">
     <div class="employee-ticket-context" data-ticket-context aria-live="polite"></div>

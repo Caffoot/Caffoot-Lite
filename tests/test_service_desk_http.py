@@ -15,6 +15,7 @@ from backend.equipment_associations import add_associated_equipment
 from backend.equipment_lifecycle import DEFAULT_LIFESPANS
 from backend.history_permissions import visible_change_history
 from backend.http_security import COOKIE_NAME
+from backend.request_auth import csrf_for_session
 from backend.inventory import reconstruct_inventory
 from backend.normalisation_pipeline import PUBLISHED_DEFAULTS
 from backend.schema import initialise_database
@@ -151,18 +152,25 @@ class ServiceDeskHttpTests(unittest.TestCase):
                                             'contents': base64.b64encode(b'original').decode()}])
         personal = f'{SERVICE_DESK}/personal/unread'
         it = f'{SERVICE_DESK}/it/unread'
-        self.assertEqual(self.request(personal, actor=4)[1], {'personal': 0, 'department': 0, 'combined': 0})
-        self.assertEqual(self.request(it, actor=3)[1], {'it': 0})
+        def unread(path, actor):
+            return self.request(path, actor=actor, headers={'X-CSRF-Token': csrf_for_session(self.tokens[actor])})
+        self.assertEqual(unread(personal, 4)[1], {'personal': 0, 'department': 0, 'combined': 0,
+                                                   'tickets': {'personal': {}, 'department': {}}})
+        self.assertEqual(unread(it, 3)[1], {'it': 0, 'tickets': {'it': {}}})
+        self.assertEqual(self.request(personal, actor=4)[0], 403)
+        self.assertEqual(self.request(personal, actor=4,
+                                     headers={'X-CSRF-Token': csrf_for_session(self.tokens[3])})[0], 403)
         self.assertEqual(self.save('personal', ticket, 'messages', {'body': 'My reply'}, actor=4)[0], 200)
         self.assertEqual(self.save('it', ticket, 'messages', {'body': 'Internal note'})[0], 200)
         self.assertEqual(self.save('it', ticket, 'messages', {'body': 'Visible reply', 'employeeVisible': True})[0], 200)
-        self.assertEqual(self.request(personal, actor=4)[1], {'personal': 1, 'department': 0, 'combined': 1})
-        self.assertEqual(self.request(it, actor=3)[1], {'it': 1})
-        self.assertEqual(self.request(it, actor=4)[0], 403)
+        self.assertEqual(unread(personal, 4)[1], {'personal': 1, 'department': 0, 'combined': 1,
+                                                   'tickets': {'personal': {str(ticket): 1}, 'department': {}}})
+        self.assertEqual(unread(it, 3)[1], {'it': 1, 'tickets': {'it': {str(ticket): 3}}})
+        self.assertEqual(unread(it, 4)[0], 403)
         path = self.ticket_path('personal', f'/{ticket}')
         self.assertEqual(self.request(path, actor=4)[1]['unreadCount'], 1)
         self.assertEqual(self.request(self.ticket_path('personal')+'?status=Closed', actor=4)[1]['tickets'], [])
-        self.assertEqual(self.request(personal, actor=4)[1]['combined'], 1)
+        self.assertEqual(unread(personal, 4)[1]['combined'], 1)
         snapshot = self.request(path+'/messages', actor=4)[1]
         self.assertNotIn('Internal note', [message['body'] for message in snapshot['messages']])
         self.assertEqual(self.request(path, actor=4)[1]['unreadCount'], 1)
@@ -175,11 +183,11 @@ class ServiceDeskHttpTests(unittest.TestCase):
         technician = self.request(self.ticket_path('it', f'/{ticket}/messages'), actor=3)[1]
         self.assertEqual(self.save('it', ticket, 'read', {'proof': technician['readProof']}, actor=3)[1],
                          {'unreadCount': 0})
-        self.assertEqual(self.request(personal, actor=4)[1]['combined'], 1)
+        self.assertEqual(unread(personal, 4)[1]['combined'], 1)
         latest = self.request(path+'/messages', actor=4)[1]
         self.hand_over('department', 'dept')
         self.assertEqual(self.save('personal', ticket, 'read', {'proof': latest['readProof']}, actor=4)[0], 404)
-        self.assertEqual(self.request(personal, actor=4)[1]['combined'], 0)
+        self.assertEqual(unread(personal, 4)[1]['combined'], 0)
 
     def test_created_mail_scope_device_and_asset_published_wording_and_sign_in(self):
         self.capture_ticket_mail()

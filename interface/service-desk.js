@@ -14,11 +14,12 @@ window.caffootServiceDesk = (() => {
     const fileFormats = '.png,.jpg,.jpeg,.pdf,.txt,.docx,.xlsx';
     const dates = new Intl.DateTimeFormat('en-GB', {dateStyle:'medium', timeStyle:'short'});
     let config, currentDialog, queueRefresh, employeeQueueRefresh;
+    let unreadRequest, unreadTimer, unreadStopped = true;
 
     async function requestServiceDesk(path, payload, signal) {
         const response = await fetch(path, {
             cache:'no-store', signal,
-            ...(payload === undefined ? {} : {method:'POST', headers:{
+            ...(payload === undefined ? (path.endsWith('/unread') ? {headers:{'X-CSRF-Token':config.csrf}} : {}) : {method:'POST', headers:{
                 'Content-Type':'application/json', 'X-CSRF-Token':config.csrf
             }, body:JSON.stringify(payload)})
         });
@@ -37,6 +38,103 @@ window.caffootServiceDesk = (() => {
     function requestTickets(path, payload, signal, scope = 'it') {
         return requestServiceDesk(apiRoot + scope + '/' + path, payload, signal);
     }
+
+    function unreadLabel(value, type) {
+        return value + ' unread ' + (type === 'reply' ? (value === 1 ? 'reply' : 'replies')
+            : (value === 1 ? 'ticket' : 'tickets'));
+    }
+
+    function unreadBadge(value, type, attributes = '') {
+        const count = Number.isSafeInteger(value) && value > 0 ? value : 0;
+        const label = unreadLabel(count, type);
+        return `<span class="service-desk-unread" ${attributes} ${count ? '' : 'hidden'} aria-label="${label}" title="${label}">${count || ''}</span>`;
+    }
+
+    function setUnreadBadge(badge, value, type) {
+        if (!badge) return;
+        const count = Number.isSafeInteger(value) && value > 0 ? value : 0;
+        const label = unreadLabel(count, type);
+        if (badge.textContent !== String(count || '')) badge.textContent = count || '';
+        badge.hidden = !count;
+        badge.setAttribute('aria-label', label);
+        badge.title = label;
+    }
+
+    function setNavigationUnread(tab, title, count) {
+        const button = document.querySelector('#sidebar [data-tab="' + tab + '"]');
+        if (!button) return;
+        setUnreadBadge(button.querySelector('[data-unread-nav]'), count, 'ticket');
+        button.setAttribute('aria-label', title + (count > 0 ? ', ' + unreadLabel(count, 'ticket') : ''));
+    }
+
+    function applyUnread(scope, data = {}) {
+        const employee = scope !== 'it';
+        if (employee) {
+            setNavigationUnread('my-tickets', 'My Tickets', data.combined || 0);
+            for (const audience of ['personal','department']) {
+                setUnreadBadge(document.querySelector('[data-ticket-scope="' + audience + '"] [data-unread-scope-count]'),
+                    data[audience], 'ticket');
+            }
+        } else setNavigationUnread('service-desk', 'Service Desk', data.it || 0);
+        for (const audience of employee ? ['personal','department'] : ['it']) {
+            const tickets = data.tickets?.[audience] || {};
+            for (const badge of document.querySelectorAll('[data-unread-ticket][data-unread-scope="' + audience + '"]'))
+                setUnreadBadge(badge, tickets[badge.dataset.unreadTicket], 'reply');
+            const dialog = currentDialog;
+            if (dialog?.scope === audience && dialog.ticket && ticketDialogActive(dialog)) {
+                dialog.ticket.unreadCount = tickets[dialog.id] || 0;
+                setUnreadBadge(dialog.root.querySelector('[data-unread-updates]'), dialog.ticket.unreadCount, 'reply');
+            }
+        }
+    }
+
+    async function refreshUnread() {
+        if (!config || unreadStopped || document.hidden || window.caffootSessionRedirectPending) return;
+        unreadRequest?.abort();
+        unreadRequest = new AbortController();
+        const signal = unreadRequest.signal;
+        await Promise.all(['personal','it'].map(async scope => {
+            const allowed = () => scope === 'it' ? config.canRead() : config.canUseEmployee();
+            if (!allowed()) { applyUnread(scope); return; }
+            try {
+                const data = await requestTickets('unread', undefined, signal, scope);
+                if (!signal.aborted && !unreadStopped && !document.hidden)
+                    applyUnread(scope, allowed() ? data : {});
+            } catch (error) {
+                if (!signal.aborted && !unreadStopped && [401,403].includes(error.status))
+                    applyUnread(scope);
+            }
+        }));
+    }
+
+    function stopUnread() {
+        unreadStopped = true;
+        unreadRequest?.abort();
+        clearInterval(unreadTimer);
+        applyUnread('personal');
+        applyUnread('it');
+    }
+
+    function startUnread() {
+        clearInterval(unreadTimer);
+        unreadStopped = false;
+        unreadTimer = setInterval(() => void refreshUnread(), 30000);
+    }
+
+    document.addEventListener('visibilitychange', () => {
+        if (document.hidden) unreadRequest?.abort();
+        else if (!unreadStopped) {
+            void refreshUnread();
+            const dialog = currentDialog;
+            if (dialog?.pendingRead) void acknowledgeDisplayed(dialog, dialog.pendingRead);
+        }
+    });
+    window.addEventListener('pagehide', () => {
+        unreadRequest?.abort();
+        applyUnread('personal');
+        applyUnread('it');
+    });
+    window.addEventListener('pageshow', () => void refreshUnread());
 
     function ticketNumber(id) {
         return 'SD-' + String(id).padStart(4, '0');
@@ -71,7 +169,7 @@ window.caffootServiceDesk = (() => {
         const employee = scope !== 'it';
         const assignment = scope === 'personal' ? 'Assigned to Me' : 'Shared with My Department';
         return tickets.map(ticket => `<tr>
-          <td><button class="device-name" type="button" data-ticket-open="${ticket.id}">${ticketNumber(ticket.id)}</button><div class="device-detail">${escapeHtml(ticket.subject)}</div></td>
+          <td><div class="ticket-number-line"><button class="device-name" type="button" data-ticket-open="${ticket.id}">${ticketNumber(ticket.id)}</button>${unreadBadge(ticket.unreadCount, 'reply', `data-unread-ticket="${ticket.id}" data-unread-scope="${scope}"`)}</div><div class="device-detail">${escapeHtml(ticket.subject)}</div></td>
           <td>${escapeHtml(ticket.employee || ticket.author)}</td><td>${escapeHtml(ticket.equipmentLabel || ticket.equipmentId)}
             ${employee ? `<div class="device-detail">${assignment}</div>` : ''}</td>
           <td>${ticketTag(ticket.priority)}</td><td>${ticketTag(ticket.status)}</td>
@@ -433,6 +531,7 @@ window.caffootServiceDesk = (() => {
                         <strong>${data.workloadCounts[status]}</strong><small>${employee ? shortcuts[index] : 'View Matching Tickets →'}</small>
                     </button>`).join('');
                 rows.innerHTML = renderTicketRows(data.tickets, scope);
+                void refreshUnread();
                 const first = data.tickets.length ? offset + 1 : 0;
                 const total = Object.values(data.workloadCounts).reduce((sum, value) => sum + value, 0);
                 count.textContent = employee && data.filteredTotal <= pageSize
@@ -899,6 +998,7 @@ window.caffootServiceDesk = (() => {
         const ticket = dialog.ticket;
         const tab = dialog.tab;
         dialog.action = null;
+        dialog.pendingRead = null;
         const root = dialog.root;
         const nav = root.querySelector('[data-ticket-tabs]');
         const body = root.querySelector('[data-ticket-body]');
@@ -906,7 +1006,7 @@ window.caffootServiceDesk = (() => {
         nav.hidden = false;
         nav.innerHTML = tabs.map(name => `<button type="button" class="device-review-tab" role="tab"
           id="ticket-tab-${name.toLowerCase()}" aria-controls="service-desk-tab-panel" data-ticket-tab="${name}"
-          tabindex="${name === tab ? 0 : -1}" aria-selected="${name === tab}">${name}</button>`).join('');
+          tabindex="${name === tab ? 0 : -1}" aria-selected="${name === tab}">${name}${name === 'Updates' ? unreadBadge(ticket.unreadCount, 'reply', 'data-unread-updates') : ''}</button>`).join('');
         if (focusTab) nav.querySelector('[aria-selected="true"]').focus();
         const close = `<button type="button" class="btn btn-outline" data-ticket-dismiss>${dialog.employee ? 'Close Window' : 'Close'}</button>`;
         const employeeAction = ticket.status === 'Closed'
@@ -945,11 +1045,37 @@ window.caffootServiceDesk = (() => {
             if (tab === 'Updates') dialog.updates = data;
             body.innerHTML = tab === 'Updates' ? renderTicketUpdates(ticket, data.messages, data.attachments, dialog.scope)
                 : renderTicketHistory(data.history, dialog.employee);
+            if (tab === 'Updates' && data.readProof) {
+                dialog.pendingRead = {load, proof:data.readProof};
+                void acknowledgeDisplayed(dialog, dialog.pendingRead);
+            }
         } catch (error) {
             if (ticketDialogActive(dialog) && dialog.tab === tab && load === dialog.tabLoad && !dialog.action) {
                 body.replaceChildren();
                 showTicketError(dialog, error.message);
             }
+        }
+    }
+
+    async function acknowledgeDisplayed(dialog, pending) {
+        if (unreadStopped || document.hidden || window.caffootSessionRedirectPending ||
+            !ticketDialogActive(dialog) || dialog.tab !== 'Updates' || dialog.action ||
+            dialog.tabLoad !== pending.load || dialog.pendingRead !== pending) return;
+        // Only the successful Updates render supplies this proof. Overview and
+        // background requests never acknowledge a conversation.
+        dialog.pendingRead = null;
+        try {
+            const result = await requestTickets('tickets/' + dialog.id + '/read',
+                {proof:pending.proof}, undefined, dialog.scope);
+            if (ticketDialogActive(dialog)) {
+                dialog.ticket.unreadCount = result.unreadCount;
+                setUnreadBadge(dialog.root.querySelector('[data-unread-updates]'), result.unreadCount, 'reply');
+            }
+            void refreshUnread();
+        } catch (error) {
+            if (ticketDialogActive(dialog) && dialog.tabLoad === pending.load && dialog.tab === 'Updates' && !dialog.action)
+                showTicketError(dialog, 'Unable to mark replies as read. Reopen Updates to try again.');
+            if ([401,403,404].includes(error.status)) void refreshUnread();
         }
     }
 
@@ -1103,6 +1229,7 @@ window.caffootServiceDesk = (() => {
                 else if (!dialog.employee && action !== 'edit-message' && action !== 'remove-file') payload.expectedUpdatedAt = dialog.ticket.updatedAt;
             }
             const result = await requestTickets(path, payload, undefined, scope);
+            void refreshUnread();
             dialog.root.dataset.saving = 'false';
             if (!ticketDialogActive(dialog)) return;
             if (action === 'create') {
@@ -1192,7 +1319,8 @@ window.caffootServiceDesk = (() => {
     }
 
     return {
-        configure: options => { config = options; },
+        configure: options => { stopUnread(); config = options; startUnread(); },
+        refreshUnread, stopUnread,
         canRead: () => !!config?.canRead(),
         canUseEmployee: () => !!config?.canUseEmployee(),
         render: renderTicketQueue,

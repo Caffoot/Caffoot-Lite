@@ -259,3 +259,30 @@ html.dark .service-desk-settings [data-support-confirm-error] { color: #ffb7b3; 
 
 .service-desk-confidentiality { margin: 0 0 .85rem; }
 .service-desk-confidentiality p { margin: .3rem 0 0; }
+
+/* #461 frozen unread indicators: zero counts remain hidden. */
+.ticket-number-line { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.service-desk-unread {
+    display: inline-flex; align-items: center; justify-content: center;
+    min-width: 21px; height: 21px; border-radius: 20px; padding: 0 6px;
+    background: #a94b13; color: #fff; font-weight: 800; font-size: 11px;
+    line-height: 1; white-space: nowrap; flex: none;
+}
+.service-desk-unread[hidden] { display: none; }
+html.dark .service-desk-unread, #sidebar .service-desk-unread { background: #ed8532; color: #142b43; }
+#sidebar .nav-item:is([data-tab="my-tickets"],[data-tab="service-desk"]) { position: relative; }
+#sidebar .nav-item:is([data-tab="my-tickets"],[data-tab="service-desk"]) .nav-text { flex: 1; }
+#sidebar .service-desk-unread { margin-left: auto; }
+.shell.collapsed #sidebar .service-desk-unread {
+    position: absolute; right: 1px; top: 0; min-width: 16px; height: 16px;
+    font-size: 9px; padding: 0 4px;
+}
+.employee-ticket-tab, .service-desk-dialog .device-review-tab {
+    display: flex; align-items: center; gap: 8px;
+}
+@media (max-width: 720px) {
+    #sidebar .service-desk-unread {
+        position: absolute; right: 1px; top: 0; min-width: 16px; height: 16px;
+        font-size: 9px; padding: 0 4px;
+    }
+}

@@ -80,7 +80,7 @@ from .suppliers import (read_directory as read_supplier_directory, read_supplier
                         read_issue, read_issues, read_purchasing_dashboard, read_supply_impact,
                         save_supplier_operation, supplier_access)
 from .request_auth import authorised_mutation
-from .http_security import require_same_origin
+from .http_security import check_csrf, require_same_origin
 from .tls import ensure_certificate
 from .deployment_settings import validate_published_port
 from .shared_devices import manage_departments
@@ -1072,6 +1072,9 @@ class Handler(BaseHTTPRequestHandler):
                         save_report_period(connection, actor_id, payload)
                     result = read_service_desk_report(connection, actor_id)
                 elif collection == 'unread':
+                    # A stale application tab must not display counts for a different session.
+                    if not check_csrf(csrf_for_session(read_session_cookie(cookie)), csrf):
+                        raise PermissionError()
                     result = read_unread_counts(connection, actor_id, scope)
                 elif collection == 'categories':
                     result = read_ticket_categories(connection, actor_id, scope)
