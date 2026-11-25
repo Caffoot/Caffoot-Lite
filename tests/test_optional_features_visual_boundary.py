@@ -83,4 +83,20 @@ class OptionalFeaturesVisualBoundaryTests(unittest.TestCase):
             if path.endswith('/dashboard.html'):
                 current = current.split('\n<!-- interface-template:dashboard/lifecycle-panel -->', 1)[0]
                 current = current.replace('                {{slot:28}}\n', '', 1)
+            # #454 explicitly removes these redundant main-page eyebrows.
+            # Preserve the exact comparison of every other byte.
+            approved_removals = {
+                'interface/screens/dashboard.html': (
+                    ('YOUR INFRASTRUCTURE AT A GLANCE', 1),
+                ),
+                'interface/screens/shared.html': (
+                    ('INFRASTRUCTURE INVENTORY', 2),
+                    ('NETWORK ADDRESS MANAGEMENT', 1),
+                    ('ACCOUNT ADMINISTRATION', 1),
+                ),
+            }
+            for label, count in approved_removals[path]:
+                line = '                    <div class="eyebrow">' + label + '</div>\n'
+                self.assertEqual(original.count(line), count, label)
+                original = original.replace(line, '')
             self.assertEqual(re.sub(r' data-dashboard-sections="[^"]*"', '', current), original)
