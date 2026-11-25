@@ -185,6 +185,11 @@ class ServiceDeskHttpTests(unittest.TestCase):
         self.assertEqual(self.save('it', ticket, 'read', {'proof': technician['readProof']}, actor=3)[1],
                          {'unreadCount': 0})
         self.assertEqual(unread(personal, 4)[1]['combined'], 1)
+        with sqlite3.connect(self.path) as connection:
+            connection.execute("UPDATE account_permission_overrides SET level='deny' "
+                               "WHERE account_id=3 AND section='Service Desk'")
+        self.assertEqual(unread(it, 3)[0], 403)
+        self.assertEqual(self.save('it', ticket, 'read', {'proof': technician['readProof']}, actor=3)[0], 403)
         latest = self.request(path+'/messages', actor=4)[1]
         self.hand_over('department', 'dept')
         self.assertEqual(self.save('personal', ticket, 'read', {'proof': latest['readProof']}, actor=4)[0], 404)

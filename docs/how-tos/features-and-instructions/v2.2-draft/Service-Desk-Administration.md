@@ -51,9 +51,9 @@ Unread indicators in draft v2.2 are personal to the signed-in account. They coun
 5. When checking a failed conversation load, confirm its unread indication is retained. A later reply must remain unread if it arrived after the loaded snapshot. An account that loses access through a Department membership, custody, role or feature change must not receive counts for the restricted records or be able to acknowledge them using an earlier conversation.
 6. Use the existing sign-in and access troubleshooting if badges do not appear. Zero indicators are hidden. Check filters, both employee tabs and other pages before assuming a ticket is missing. Do not grant additional permissions just to make a badge appear. See [Recognise And Read New Replies](Service-Desk-Tickets.md#recognise-and-read-new-replies).
 
-The read state is stored in the application database as separate account/message receipts (development schema 31). Published v2.1 does not contain Service Desk ticket history. The schema 31 development migration is additive; it does not initialise existing private-development messages as read or change existing ticket history. Actual supported upgrade, persistence, Clean Start, runtime security and visual acceptance remain to be verified before publication.
+The read state is stored in the application database as separate account/message receipts (development schema 31). Published v2.1 does not contain Service Desk ticket history. The schema 31 development migration is additive; it does not initialise existing private-development messages as read or change existing ticket history. Focused checks verified schema 30→31 and a fictional database from published v2.1, receipt persistence across an application restart, and Clean Start clearing receipts with their tickets. Native and full deployment acceptance remain pending.
 
-> **Draft evidence outstanding:** the unread-reply implementation is in development. Genuine application screenshots and the relevant verification evidence will be added after execution and review.
+Focused permission, database and browser evidence is available in the [Batch 2 verification record](../../../development-handovers/evidence/stage-6-6-batch-2/README.md).
 
 ## Configure The IT Support Mailbox
 

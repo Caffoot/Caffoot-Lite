@@ -1,0 +1,309 @@
+{
+  "sourceRevision": "2acae4c0a2f58ec9b2d48efead481f3d39cd02f4",
+  "schema": 31,
+  "runtime": "Local HTTPS backend, isolated SQLite and headless Chromium. Application theme controls and emulated desktop and mobile-sized viewports.",
+  "captureRuns": {
+    "feature-walkthrough": {
+      "capturedAtUtc": "2026-11-25T14:54:10.930Z",
+      "chromium": "156.0.8078.79",
+      "playwright": "1.62.1",
+      "fixture": "Fictional records using the existing Shared Devices browser fixture, ordinary application writes and explicitly seeded legacy audit events."
+    },
+    "unread-badge-follow-up": {
+      "capturedAtUtc": "2026-11-25T15:53:11.141Z",
+      "chromium": "156.0.8078.79",
+      "playwright": "1.62.1",
+      "fixture": "Fictional personal and Department tickets, created and updated through live HTTPS routes with the shared-device fixture."
+    }
+  },
+  "captures": {
+    "audit-all-activity-desktop-dark.png": {
+      "width": 1440,
+      "height": 960,
+      "theme": "dark",
+      "sha256": "50c602d45ef86241296e03562dc341d60873f678912fbaac7ed15ce54073b332",
+      "imageWidth": 1440,
+      "imageHeight": 960,
+      "captureRun": "feature-walkthrough"
+    },
+    "audit-all-activity-desktop-light.png": {
+      "width": 1440,
+      "height": 960,
+      "theme": "light",
+      "sha256": "06bb6d22a8d1152e9067563874ebfd979bef976d9e887dc4da99a68e917662bf",
+      "imageWidth": 1440,
+      "imageHeight": 960,
+      "captureRun": "feature-walkthrough"
+    },
+    "audit-all-activity-mobile-dark.png": {
+      "width": 390,
+      "height": 844,
+      "theme": "dark",
+      "sha256": "3a1fdb8f3c10e96bbbca8a36a7eb0719e492eb0b2f8e1371bd71777fbf92ec6b",
+      "imageWidth": 390,
+      "imageHeight": 1983,
+      "captureRun": "feature-walkthrough"
+    },
+    "audit-all-activity-mobile-light.png": {
+      "width": 390,
+      "height": 844,
+      "theme": "light",
+      "sha256": "74da816259ab9f550332989de6cba415180f1466ab774dec291f35c0fa173d78",
+      "imageWidth": 390,
+      "imageHeight": 1983,
+      "captureRun": "feature-walkthrough"
+    },
+    "audit-asset-history-desktop-dark.png": {
+      "width": 1440,
+      "height": 960,
+      "theme": "dark",
+      "sha256": "d212db8b28919b854bc96a0ebf047e592905bd494d5906bc6e1aea603d5db7a9",
+      "imageWidth": 1440,
+      "imageHeight": 960,
+      "captureRun": "feature-walkthrough"
+    },
+    "audit-asset-history-desktop-light.png": {
+      "width": 1440,
+      "height": 960,
+      "theme": "light",
+      "sha256": "13393c961d28e6dc5c06ad4585f7ced9bdbf859ca6e0f2708a337e7d94c44ed9",
+      "imageWidth": 1440,
+      "imageHeight": 960,
+      "captureRun": "feature-walkthrough"
+    },
+    "audit-asset-history-mobile-dark.png": {
+      "width": 390,
+      "height": 844,
+      "theme": "dark",
+      "sha256": "3046d0c4437a8325c82a36fe5772d6f328a979cbebc189a044cf8a92105f4d4d",
+      "imageWidth": 390,
+      "imageHeight": 1374,
+      "captureRun": "feature-walkthrough"
+    },
+    "audit-asset-history-mobile-light.png": {
+      "width": 390,
+      "height": 844,
+      "theme": "light",
+      "sha256": "ac786e2ba57f5a505a0beefc15d6f05aa0ea25ce8515d216bc8dfa1a884eed0d",
+      "imageWidth": 390,
+      "imageHeight": 1374,
+      "captureRun": "feature-walkthrough"
+    },
+    "audit-view-details-desktop-dark.png": {
+      "width": 1440,
+      "height": 960,
+      "theme": "dark",
+      "sha256": "a6696629f28474bc3dfaa24693ba0ccf650ea3bd208fcdca2dba8102fcb2cdee",
+      "imageWidth": 1440,
+      "imageHeight": 960,
+      "captureRun": "feature-walkthrough"
+    },
+    "audit-view-details-desktop-light.png": {
+      "width": 1440,
+      "height": 960,
+      "theme": "light",
+      "sha256": "a0b1f9a10502d4395fe404affea9b6a41bda701f621af16a27f2d29948ec6118",
+      "imageWidth": 1440,
+      "imageHeight": 960,
+      "captureRun": "feature-walkthrough"
+    },
+    "audit-view-details-mobile-dark.png": {
+      "width": 390,
+      "height": 844,
+      "theme": "dark",
+      "sha256": "5ad63215939a3d4ab3928eab200173facc70340add9d081f3605a4e32c5e5328",
+      "imageWidth": 390,
+      "imageHeight": 844,
+      "captureRun": "feature-walkthrough"
+    },
+    "audit-view-details-mobile-light.png": {
+      "width": 390,
+      "height": 844,
+      "theme": "light",
+      "sha256": "567be811756a31e5e05781b829254e9a524ed47b99311782e2563104e3defffc",
+      "imageWidth": 390,
+      "imageHeight": 844,
+      "captureRun": "feature-walkthrough"
+    },
+    "equipment-details-desktop-dark.png": {
+      "width": 1440,
+      "height": 960,
+      "theme": "dark",
+      "sha256": "3f6479a762273f32456041904b49d2206a85a8d2002ead1107651e23e996a4d8",
+      "imageWidth": 1440,
+      "imageHeight": 960,
+      "captureRun": "feature-walkthrough"
+    },
+    "equipment-details-desktop-light.png": {
+      "width": 1440,
+      "height": 960,
+      "theme": "light",
+      "sha256": "24460c55c141af89ca2fbe74d3b4d18990d5434cc55cb3377944f6dc5d01c6e4",
+      "imageWidth": 1440,
+      "imageHeight": 960,
+      "captureRun": "feature-walkthrough"
+    },
+    "equipment-details-mobile-dark.png": {
+      "width": 390,
+      "height": 844,
+      "theme": "dark",
+      "sha256": "22f7c1bd67261cc9cce899b521f7652ea82ba7b5789787c3b06f3aa6371c7d9b",
+      "imageWidth": 390,
+      "imageHeight": 844,
+      "captureRun": "feature-walkthrough"
+    },
+    "equipment-details-mobile-light.png": {
+      "width": 390,
+      "height": 844,
+      "theme": "light",
+      "sha256": "bc4e59e201dbc7c5a24e2cb96bfcd984965fec47ca9eb64a7dc402201ca04ff5",
+      "imageWidth": 390,
+      "imageHeight": 844,
+      "captureRun": "feature-walkthrough"
+    },
+    "my-equipment-desktop-dark.png": {
+      "width": 1440,
+      "height": 960,
+      "theme": "dark",
+      "sha256": "8ebd8aecfc3b64cfc2158e1c96f24fcbe31bce3c8b17f142a1cbc857bc5b0ba6",
+      "imageWidth": 1440,
+      "imageHeight": 960,
+      "captureRun": "feature-walkthrough"
+    },
+    "my-equipment-desktop-light.png": {
+      "width": 1440,
+      "height": 960,
+      "theme": "light",
+      "sha256": "f97ac8638e04d24e085f197bea9273397b555fd7eb839b9386fb700f516200e0",
+      "imageWidth": 1440,
+      "imageHeight": 960,
+      "captureRun": "feature-walkthrough"
+    },
+    "my-equipment-mobile-dark.png": {
+      "width": 390,
+      "height": 844,
+      "theme": "dark",
+      "sha256": "02b4caa8cffc04058b8a901a174ba36a6bdc74cca61465d7f0b85f45a546d4f8",
+      "imageWidth": 390,
+      "imageHeight": 1274,
+      "captureRun": "feature-walkthrough"
+    },
+    "my-equipment-mobile-light.png": {
+      "width": 390,
+      "height": 844,
+      "theme": "light",
+      "sha256": "73182dade8563255d27f94b1f55f76b7626cf6362829cb991bc915fb4dc5613e",
+      "imageWidth": 390,
+      "imageHeight": 1274,
+      "captureRun": "feature-walkthrough"
+    },
+    "unread-department-tickets-desktop-dark.png": {
+      "width": 1440,
+      "height": 960,
+      "theme": "dark",
+      "sha256": "601187419b6b1e00fd5debb7caf225cec43ffc4ddb10d67b78a2921bbf22e07f",
+      "imageWidth": 1440,
+      "imageHeight": 1059,
+      "captureRun": "unread-badge-follow-up"
+    },
+    "unread-department-tickets-desktop-light.png": {
+      "width": 1440,
+      "height": 960,
+      "theme": "light",
+      "sha256": "ff3ef9b62fc1e58c1e74dfb0cf1f10781599f8c29acafbd5bd1744c95c45b0b1",
+      "imageWidth": 1440,
+      "imageHeight": 1059,
+      "captureRun": "unread-badge-follow-up"
+    },
+    "unread-department-tickets-mobile-dark.png": {
+      "width": 390,
+      "height": 844,
+      "theme": "dark",
+      "sha256": "eb89da7e8140d533ad4a0abee5a8420d9a6a7f6276d0f10ee8e2a43c92322346",
+      "imageWidth": 390,
+      "imageHeight": 1357,
+      "captureRun": "unread-badge-follow-up"
+    },
+    "unread-department-tickets-mobile-light.png": {
+      "width": 390,
+      "height": 844,
+      "theme": "light",
+      "sha256": "69352dea17040de0fd8ea23ddc7f6f61609d7c52745f17aae03493bc5f93f2e4",
+      "imageWidth": 390,
+      "imageHeight": 1357,
+      "captureRun": "unread-badge-follow-up"
+    },
+    "unread-it-queue-desktop-dark.png": {
+      "width": 1440,
+      "height": 960,
+      "theme": "dark",
+      "sha256": "3c598c50892d2c0a2ccee37d6e10fe35c93bb4d657ba8fc4340e2f8f1f54a85b",
+      "imageWidth": 1440,
+      "imageHeight": 1386,
+      "captureRun": "unread-badge-follow-up"
+    },
+    "unread-it-queue-desktop-light.png": {
+      "width": 1440,
+      "height": 960,
+      "theme": "light",
+      "sha256": "0780219467894e79677de352206b18dcb34e7cfd98915b9c3d38e2c2c2d8730f",
+      "imageWidth": 1440,
+      "imageHeight": 1386,
+      "captureRun": "unread-badge-follow-up"
+    },
+    "unread-it-queue-mobile-dark.png": {
+      "width": 390,
+      "height": 844,
+      "theme": "dark",
+      "sha256": "868a4ac628de1d6b1b563ea2663d7fe64cdc66a2da72bb6efcddbf0ad7f3b360",
+      "imageWidth": 390,
+      "imageHeight": 2032,
+      "captureRun": "unread-badge-follow-up"
+    },
+    "unread-it-queue-mobile-light.png": {
+      "width": 390,
+      "height": 844,
+      "theme": "light",
+      "sha256": "885d924919727efdc264446a0fa8891116abb32965f7d2cdbaea0523c4a26584",
+      "imageWidth": 390,
+      "imageHeight": 2032,
+      "captureRun": "unread-badge-follow-up"
+    },
+    "unread-updates-tab-desktop-dark.png": {
+      "width": 1440,
+      "height": 960,
+      "theme": "dark",
+      "sha256": "1e6c702f660e668ff77998839a66c4acd5e9200a0791c651d2076c10167c2d80",
+      "imageWidth": 1440,
+      "imageHeight": 960,
+      "captureRun": "feature-walkthrough"
+    },
+    "unread-updates-tab-desktop-light.png": {
+      "width": 1440,
+      "height": 960,
+      "theme": "light",
+      "sha256": "b4133d22daa0764300633b8991a358738052e43f3c55c07a334e9ba4d83b0019",
+      "imageWidth": 1440,
+      "imageHeight": 960,
+      "captureRun": "feature-walkthrough"
+    },
+    "unread-updates-tab-mobile-dark.png": {
+      "width": 390,
+      "height": 844,
+      "theme": "dark",
+      "sha256": "a9e18d28650db53d0276dde207be4a9fcbf4c03ed440caf7137b24d36d2d1119",
+      "imageWidth": 390,
+      "imageHeight": 844,
+      "captureRun": "feature-walkthrough"
+    },
+    "unread-updates-tab-mobile-light.png": {
+      "width": 390,
+      "height": 844,
+      "theme": "light",
+      "sha256": "faf893fb28669f36035d83689320bd4c19b15bf880185de9dafc16b03ac4cc0f",
+      "imageWidth": 390,
+      "imageHeight": 844,
+      "captureRun": "feature-walkthrough"
+    }
+  }
+}

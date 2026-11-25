@@ -1,6 +1,6 @@
 # Read The Audit Trail
 
-> **Draft v2.2 — Unreleased.** Stage 6.6 Batch 2, [#458](https://github.com/Caffoot/Caffoot-Lite/issues/458), [draft PR #466](https://github.com/Caffoot/Caffoot-Lite/pull/466). Actual application verification, genuine screenshots and owner acceptance remain outstanding. Examples below are fictional.
+> **Draft v2.2 — Unreleased.** Stage 6.6 Batch 2, [#458](https://github.com/Caffoot/Caffoot-Lite/issues/458), [draft PR #466](https://github.com/Caffoot/Caffoot-Lite/pull/466). Owner acceptance remains outstanding. Examples and screenshots use fictional data.
 
 The Audit Trail helps you establish what changed, who performed the recorded action and when. An affected-record name describes the record at the time of the saved event, not necessarily its current name. This is a read-only view: searching, opening details or viewing a timeline does not edit the original events.
 
@@ -43,4 +43,16 @@ If you cannot find a change, clear filters, check the date in UTC and verify per
 
 Related: [Roles, Section Permissions And MFA](Roles-Section-Permissions-and-MFA.md), [Staff Members](Staff-Members.md), [Legacy Import And Docker Upgrade](Legacy-Import-and-Docker-Upgrade.md).
 
-**Evidence gap:** capture actual application All Activity, View Details and Asset History in light/dark at desktop and mobile widths, with fictional data, pinned revision and provenance. Verify restricted access and historical fallback before final review.
+## Application Screenshots
+
+![All Activity in desktop light mode showing saved Staff events for Alex Reed and Alex Morgan.](../../../development-handovers/evidence/stage-6-6-batch-2/screenshots/audit-all-activity-desktop-light.png)
+
+*Search finds the saved event-time names and the affected-record row identifies the Staff events.*
+
+![View Details in dark mode showing the event-time name, original label and canonical record ID.](../../../development-handovers/evidence/stage-6-6-batch-2/screenshots/audit-view-details-mobile-dark.png)
+
+*Use the canonical record ID to refer to the specific record in an investigation.*
+
+![Asset History showing Alex Reed and Alex Morgan as two names recorded for one verified Staff record.](../../../development-handovers/evidence/stage-6-6-batch-2/screenshots/audit-asset-history-desktop-light.png)
+
+*The timeline keeps the saved name for each event.* [Desktop and mobile captures and provenance](../../../development-handovers/evidence/stage-6-6-batch-2/README.md#application-screenshots)

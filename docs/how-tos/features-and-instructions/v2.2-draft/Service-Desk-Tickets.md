@@ -76,7 +76,13 @@ For example, Casey and Jordan are both current members of a Department with a sh
 
 If your Department membership or equipment custody changes, the same existing access rules determine which tickets and replies can appear. An unread badge cannot provide access to an earlier holder's conversation. See [Who Can See A Ticket?](#who-can-see-a-ticket) and [Unread Reply Administration](Service-Desk-Administration.md#verify-unread-reply-indicators).
 
-> **Draft evidence outstanding:** the unread indicators and read acknowledgement have been implemented on the development branch. Genuine desktop and mobile light/dark application screenshots and runtime acceptance are not yet available. The existing screenshots elsewhere in this guide predate these indicators.
+![Department Tickets with an unread count beside My Tickets, the Department Tickets tab and the ticket number.](../../../development-handovers/evidence/stage-6-6-batch-2/screenshots/unread-department-tickets-desktop-light.png)
+
+*The sidebar and tab count tickets. The number beside the ticket reference counts replies on that ticket.*
+
+![Ticket Overview on a mobile-sized dark screen with an unread reply badge beside Updates.](../../../development-handovers/evidence/stage-6-6-batch-2/screenshots/unread-updates-tab-mobile-dark.png)
+
+*The unread reply remains while Overview is open. Select Updates to load the conversation.* [Desktop and mobile captures and provenance](../../../development-handovers/evidence/stage-6-6-batch-2/README.md#application-screenshots)
 
 ## Reply To IT Or Reopen A Ticket
 
@@ -154,6 +160,10 @@ In **IT → Service Desk**, the sidebar badge counts distinct accessible tickets
 2. Select the ticket number or **Open Details**. The window opens on **Overview**; the number beside **Updates** is still present.
 3. Select **Updates** and read the permitted employee replies, technician updates and resolution notes. Only the successfully loaded conversation is acknowledged for your account. Your own replies do not count, and reading as IT does not clear an employee's or another technician's badges.
 4. If a further reply arrives after that conversation was loaded, its unread number remains until you select Updates again. Use the existing technician actions only if you have the applicable editing permission. A technician with read-only access can read and acknowledge their own permitted replies without being able to edit the ticket.
+
+![Service Desk shows one unread ticket beside the sidebar entry and one unread reply beside its ticket reference.](../../../development-handovers/evidence/stage-6-6-batch-2/screenshots/unread-it-queue-desktop-light.png)
+
+*The IT sidebar counts accessible tickets with unread replies across all queue pages and filters.* [Capture provenance](../../../development-handovers/evidence/stage-6-6-batch-2/README.md#application-screenshots)
 
 For sign-in, feature, equipment and custody checks see [Administer The Service Desk](Service-Desk-Administration.md#verify-unread-reply-indicators). The IT count does not grant permission to see any restricted tickets or notes.
 

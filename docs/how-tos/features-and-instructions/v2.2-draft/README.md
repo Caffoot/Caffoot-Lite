@@ -1,6 +1,6 @@
 # Draft v2.2 User And Administrator Guides
 
-> **Draft v2.2 — Unreleased.** Stage 6.6 Batch 2 adds My Equipment, unread Service Desk replies and readable Audit Trail records in the schema 31 draft candidate. Application verification and owner acceptance are outstanding. The [development handover](../../../development-handovers/milestone-01.md) records the checks and acceptance gates. Use the [published v2.1 guides](https://github.com/Caffoot/Caffoot-Lite/tree/v2.1/docs/how-tos/features-and-instructions) for the current release.
+> **Draft v2.2 — Unreleased.** Stage 6.6 Batch 2 adds My Equipment, unread Service Desk replies and readable Audit Trail records in the schema 31 draft candidate. The [Batch 2 verification record](../../../development-handovers/evidence/stage-6-6-batch-2/README.md) lists completed focused checks, application screenshots and remaining acceptance gates. Use the [published v2.1 guides](https://github.com/Caffoot/Caffoot-Lite/tree/v2.1/docs/how-tos/features-and-instructions) for the current release.
 
 Caffoot Lite brings accounts, Staff Members, Departments, Devices and optional IT Assets together so your team can record who holds equipment, what is physically in stock and what is ready to issue. These guides explain workflows for ordinary users, IT technicians and administrators, including Suppliers and Equipment Lifecycle in Stage 4. Examples use fictional people, organisations and equipment.
 
