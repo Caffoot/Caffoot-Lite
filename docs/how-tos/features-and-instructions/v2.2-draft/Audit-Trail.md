@@ -49,9 +49,9 @@ Related: [Roles, Section Permissions And MFA](Roles-Section-Permissions-and-MFA.
 
 *Search finds the saved event-time names and the affected-record row identifies the Staff events.*
 
-![View Details in dark mode showing the event-time name, original label and canonical record ID.](../../../development-handovers/evidence/stage-6-6-batch-2/screenshots/audit-view-details-mobile-dark.png)
+![View Details in dark mode with its affected-record fields and a classic scrollbar inside the rounded dialogue.](../../../development-handovers/evidence/stage-6-6-batch-3/screenshots/classic-audit-dark-390.png)
 
-*Use the canonical record ID to refer to the specific record in an investigation.*
+*Use the canonical record ID to refer to the specific record in an investigation. Scroll within the dialogue to read the full field list. Escape returns focus to **View Details**.* [Capture provenance](../../../development-handovers/evidence/stage-6-6-batch-3/README.md#capture-provenance)
 
 ![Asset History showing Alex Reed and Alex Morgan as two names recorded for one verified Staff record.](../../../development-handovers/evidence/stage-6-6-batch-2/screenshots/audit-asset-history-desktop-light.png)
 

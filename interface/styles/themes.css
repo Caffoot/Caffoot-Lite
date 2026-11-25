@@ -50,6 +50,7 @@ html.dark :is(#app,#modal-container) :is(.device-review-dialog,.device-review-bo
 html.dark #modal-container .device-review-dialog {border-color:var(--line);}
 html.dark #modal-container :is(.ipam-modal-head,.catalog-manager-list,.catalog-manager-row) {border-color:var(--line);}
 html.dark #app .racks-hub-bar p {color:var(--muted);}
+html.dark #app .ipam-overview-group small {color:var(--muted);}
 html.dark :is(#app,#modal-container) .device-review-inline-explain {color:var(--muted)!important;}
 html.dark :is(#app,#modal-container) .device-review-danger {background:var(--theme-danger-bg)!important;color:var(--theme-danger-text)!important;}
 html.dark :is(#app,#modal-container) :is(.rack-danger,.danger-action) {background:var(--theme-danger-bg);color:var(--theme-danger-text);border-color:#9f1239;}

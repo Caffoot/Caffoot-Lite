@@ -161,6 +161,8 @@ My Equipment is for a person signing in with a login linked to an active Staff M
 
 *The dialogue shows the fields this account can see. Network configuration, licence keys, credentials, private notes, stock totals and former holders are excluded.* [Desktop and mobile captures and provenance](../../../development-handovers/evidence/stage-6-6-batch-2/README.md#application-screenshots)
 
+If the recorded software list is long, scroll inside **Details** to reach the actions. Escape closes the details and returns keyboard focus to the equipment row's **Details** button. [Long software list on mobile](../../../development-handovers/evidence/stage-6-6-batch-3/screenshots/classic-equipment-details-dark-390.png)
+
 The server checks the active Staff link and current custody on every request. Without a current Department there is no Department-shared list. An inactive or unlinked Staff record gives no self-service equipment visibility. Authorised IT staff can still resolve outstanding assignments. A current Department member can see equipment still shared with their archived Department until an authorised change ends that relationship.
 
 Devices and IT Assets obey independent feature switches. Disabling one hides its equipment and blocks its protected actions while preserving saved relationships. Ordinary baseline Staff access therefore exposes personal/shared equipment without opening the organisation's inventory pages.
