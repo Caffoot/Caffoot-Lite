@@ -77,7 +77,8 @@ function renderStaffForm(record, createLogin=false, draft=null) {
   else if(record.accountId)loginContent=`<div class="linked-account">${badge('Linked Account','green')}<strong>${escapeHtml(record.username||'Account Recorded')}</strong><p>First name, surname and email are shared with the account. Manage account access from Staff Details.</p></div>`;
   else loginContent=`<label class="switch-row-staff" for="staff-create-login"><span><strong>Create Caffoot Login</strong><small>Enable this if the person needs to sign in to Caffoot Lite.</small></span><span class="switch-control"><input type="checkbox" id="staff-create-login" ${createLogin?'checked':''} aria-controls="staff-login-fields"><span class="switch-slider" aria-hidden="true"></span></span></label>
     <div class="staff-account-fields" id="staff-login-fields" ${createLogin?'':'hidden'}><div class="divider"></div>
-    ${field('Username','username',draft?.values.username||'','text',createLogin,'A unique username used to sign in.',true)}
+    ${field('Username','username',draft?.values.username||'','text',createLogin,
+      '<span id="staff-username-error" role="alert" hidden></span>A unique username used to sign in.',true)}
     ${field('Initial Password','password',draft?.values.password||'','password',createLogin,'Share the password using a secure channel.',true)}
     ${field('Confirm Initial Password','confirmPassword',draft?.values.confirmPassword||'','password',createLogin,'',true)}
     <div class="staff-role-note"><span class="role-name">Staff Member</span><strong>Default Role</strong><p>The baseline role is assigned to every new ordinary login. It does not grant general Devices, IT Assets, IPAM or Network Racks access.</p><p>After saving, use Manage Permissions in Staff Details to review individual access.</p></div>
@@ -413,11 +414,27 @@ function renderDepartments() {
     const button=form.querySelector('button[type="submit"]'),feedback=form.querySelector('[role="status"]');
     if(button)button.disabled=true;
     void (form.id==='staff-record-form'?saveStaff(form):saveDepartment(form)).catch(error=>{
+      const username=form.elements.username, usernameError=form.querySelector('#staff-username-error');
+      if(error.code==='duplicate_username'&&username&&usernameError){
+        form.elements.password.value='';form.elements.confirmPassword.value='';
+        usernameError.hidden=false;usernameError.textContent=error.message;
+        username.setAttribute('aria-invalid','true');
+        username.setAttribute('aria-describedby',usernameError.id);
+        feedback.textContent='';username.focus();
+        return;
+      }
       showStaffConflict(error,feedback,form.dataset.id);
       config.notify(error.message,'error');
     }).finally(()=>{if(button?.isConnected)button.disabled=false;});
   },true);
   document.addEventListener('input',event=>{
+    if(event.target?.id==='preview-username'){
+      const error=event.target.form.querySelector('#staff-username-error');
+      error.hidden=true;error.textContent='';
+      event.target.removeAttribute('aria-invalid');
+      event.target.removeAttribute('aria-describedby');
+      return;
+    }
     if(event.target?.id!=='staff-directory-search')return;
     searchText=event.target.value;
     const input=event.target,selection=input.selectionStart;

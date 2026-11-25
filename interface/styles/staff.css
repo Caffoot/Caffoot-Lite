@@ -74,6 +74,9 @@
 .staff-permissions-action{margin-top:16px}
 .user-sign-in-field{margin-bottom:13px}
 .staff-live .staff-restricted,.staff-live .staff-account-fields{line-height:1.5}
+#staff-username-error{display:block;color:var(--theme-danger,#a52626);font-weight:650}
+#preview-username[aria-invalid="true"]{outline:2px solid var(--theme-danger,#a52626);outline-offset:1px}
+.dark #staff-username-error{color:#ffb4b4}
 
 /* Department Details reuse the existing cards, tabs and assignment table layout. */
 .department-details .info-row{border-color:var(--line)}

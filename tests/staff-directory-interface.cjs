@@ -189,6 +189,49 @@ async function test(){
  await page.getByRole('heading',{name:'Staff Details'}).waitFor();
  assert.ok(await page.getByText('taylor.cole').count()>0);
  await page.screenshot({path:path.join(output,'staff-details-light-desktop.png'),fullPage:true});
+ await page.locator('[data-staff-action="staff-back"]').click();
+ await page.locator('[data-staff-action="staff-add"]').click();
+ await page.locator('#preview-firstName').fill('Jamie');
+ await page.locator('#preview-lastName').fill('Rivers');
+ await page.locator('#preview-location').fill('Workshop');
+ await page.locator('#staff-create-login').check();
+ const username=page.locator('#preview-username');
+ await username.fill('TAYLOR.COLE');
+ for(const name of ['password','confirmPassword'])await page.locator('#preview-'+name).fill('Fictional-Pass-2026!');
+ await page.locator('#staff-record-form [type="submit"]').click();
+ const duplicate=page.locator('#staff-username-error');
+ await duplicate.waitFor();
+ assert.equal(await duplicate.textContent(),'This username is already in use. Please choose another username.');
+ assert.equal(await username.getAttribute('aria-invalid'),'true');
+ assert.ok(await username.evaluate(element=>element===document.activeElement));
+ assert.equal(await page.locator('#preview-firstName').inputValue(),'Jamie');
+ assert.equal(await page.locator('#preview-location').inputValue(),'Workshop');
+ for(const name of ['password','confirmPassword'])assert.equal(await page.locator('#preview-'+name).inputValue(),'');
+ for(const [theme,width,height] of [['light',1440,960],['dark',1440,960],['light',390,844],['dark',390,844]]){
+  await page.setViewportSize({width,height});
+  await page.evaluate(selected=>{
+   localStorage.setItem('caffoot_theme_preference',selected);
+   caffootApplyTheme();
+  },theme);
+  await duplicate.scrollIntoViewIfNeeded();
+  assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
+  await page.screenshot({path:path.join(output,`duplicate-username-${theme}-${width}.png`)});
+ }
+ await page.setViewportSize({width:1440,height:950});
+ await page.evaluate(()=>{
+  localStorage.setItem('caffoot_theme_preference','light');
+  caffootApplyTheme();
+ });
+ await username.fill('jamie.rivers');
+ assert.ok(await duplicate.isHidden());
+ for(const name of ['password','confirmPassword'])await page.locator('#preview-'+name).fill('Fictional-Pass-2026!');
+ await page.locator('#staff-record-form [type="submit"]').click();
+ await page.getByRole('heading',{name:'Staff Details'}).waitFor();
+ assert.match(await page.locator('.staff-login-details').innerText(),/jamie\.rivers/);
+ await page.locator('[data-staff-action="staff-back"]').click();
+ await page.locator('#staff-directory-search').fill('taylor.cole');
+ await page.locator('[data-staff-id]').filter({has:page.getByText('Username: taylor.cole',{exact:true})})
+  .getByRole('button',{name:'View Details'}).click();
  await page.locator('[data-staff-action="staff-edit"]').click();
  await page.locator('#staff-record-form').waitFor();
  assert.equal(await page.locator('.staff-main-grid').evaluate(e=>getComputedStyle(e).gridTemplateColumns.split(' ').length),2);
