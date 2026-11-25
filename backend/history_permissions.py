@@ -5,6 +5,7 @@ changes apply immediately without a schema migration or history rewrite.
 """
 import json
 
+from .audit_events import audit_subject
 from .email_templates import EMAIL_SETTINGS_AUDIT_REASONS
 from .equipment_lifecycle import DEVICE_AUDIT_REASON, FIRST_SERVICE_AUDIT_REASON, SETTINGS_AUDIT_REASON
 from .equipment_suppliers import SUPPLIER_AUDIT_REASON
@@ -152,7 +153,14 @@ def visible_change_history(connection, account_id):
                             continue
                 # Never forward unrecognised historical payload properties.
                 fields = change.get("fields")
+                # Only an already-authorised Device subject may pass this
+                # restricted projection. Never copy nested arbitrary metadata.
+                metadata = change.get('recordSubject')
+                subject = (audit_subject('Device', metadata.get('id'), metadata.get('name'))
+                           if kind == 'Device' and isinstance(metadata, dict)
+                           and metadata.get('kind') == 'Device' else {})
                 changes.append({
+                    **subject,
                     "kind": kind,
                     "action": change.get("action") if isinstance(change.get("action"), str) else "",
                     "label": change.get("label") if isinstance(change.get("label"), str) else "",

@@ -58,6 +58,24 @@ class HistoryPermissionProjectionTests(unittest.TestCase):
             self.db.execute("INSERT INTO inventory_change_history(record_json) VALUES(?)",(json.dumps(event),))
         self.assertTrue(all("reason" not in e for e in visible_change_history(self.db,2)))
 
+    def test_subject_projection_preserves_original_labels_and_section_boundary(self):
+        from backend.audit_events import audit_subject
+        event = self.add('Device', 'Staff Member', 'IT Assets')
+        event['changes'][0].update(audit_subject('Device', 'device-id', 'Event-time Laptop'))
+        event['changes'][0]['recordSubject']['extra'] = 'private extension'
+        event['changes'][1].update(audit_subject('Staff Member', 'staff-id', 'Private Staff'))
+        event['changes'][2].update(audit_subject('Stock Item', 'stock-id', 'Private Stock'))
+        self.db.execute('UPDATE inventory_change_history SET record_json=?', (json.dumps(event),))
+        stored = self.db.execute('SELECT record_json FROM inventory_change_history').fetchone()
+        result = visible_change_history(self.db, 2)
+        self.assertEqual(result[0]['changes'], [{
+            'kind': 'Device', 'action': 'Updated', 'label': 'label-Device', 'fields': [],
+            'recordSubject': {'kind': 'Device', 'id': 'device-id', 'name': 'Event-time Laptop'},
+        }])
+        self.assertEqual(self.db.execute('SELECT record_json FROM inventory_change_history').fetchone(), stored)
+        self.assertEqual(audit_subject('Device', 'device-id', 'bad\\nname'),
+                         {'recordSubject': {'kind': 'Device', 'id': 'device-id'}})
+
     def test_mixed_event_excludes_disallowed_changes_and_counts(self):
         self.add("Device", "IPAM", "Rack", omitted=9)
         result = visible_change_history(self.db, 2)

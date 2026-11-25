@@ -1,6 +1,6 @@
 """Reserved device record saves against the authoritative SQLite inventory."""
 import json
-from .audit_events import attribute_event, safe_device_differences
+from .audit_events import attribute_event, safe_device_differences, audit_subject
 import time
 from datetime import datetime, timezone
 
@@ -128,7 +128,7 @@ def _persist_related_guests(connection, updates):
             (record["name"], json.dumps(record, ensure_ascii=False, allow_nan=False), record["id"]),
         )
         changes.append({"action": "Updated", "kind": "Device",
-                        "label": str(record["name"])[:100], "fields": sorted(changed)[:16],
+                        "label": str(record["name"])[:100], **audit_subject("Device", record["id"], record["name"]), "fields": sorted(changed)[:16],
                         **safe_device_differences(previous, record)})
     return changes
 
@@ -253,7 +253,7 @@ def save_reserved_device(connection, account_id, device_id, revision, record, se
             fields = [key for key in dict.fromkeys((*previous, *record))
                       if key != "id" and previous.get(key) != record.get(key)]
             changes.append({"action": "Updated", "kind": "Device",
-                            "label": str(record["name"])[:100], "fields": fields[:16],
+                            "label": str(record["name"])[:100], **audit_subject("Device", record["id"], record["name"]), "fields": fields[:16],
                             **safe_device_differences(previous, record)})
         for ip in dict.fromkeys((old_ip, new_ip)):
             if not ip:
@@ -351,7 +351,7 @@ def create_device_in_transaction(connection, account_id, record):
                                 ensure_ascii=False, allow_nan=False)),
         )
     changes = [{"action": "Created", "kind": "Device",
-                "label": record["name"][:100], "fields": []}]
+                "label": record["name"][:100], **audit_subject("Device", record["id"], record["name"]), "fields": []}]
     if new_ip and not is_basic_address(record):
         changes.append({"action": "Updated", "kind": "IPAM",
                         "label": new_ip, "fields": ["deviceId", "status", "hostname"]})
@@ -450,10 +450,10 @@ def delete_reserved_device(connection, account_id, device_id, revision, related_
                 (json.dumps(allocation, ensure_ascii=False, allow_nan=False), ip),
             )
         changes = [{"action": "Deleted", "kind": "Device",
-                    "label": previous["name"][:100], "fields": []}]
+                    "label": previous["name"][:100], **audit_subject("Device", previous["id"], previous["name"]), "fields": []}]
         for old_guest, new_guest, fields in related_updates:
             changes.append({"action":"Updated", "kind":"Device",
-                            "label":new_guest["name"][:100], "fields":sorted(fields)[:16]})
+                            "label":new_guest["name"][:100], **audit_subject("Device", new_guest["id"], new_guest["name"]), "fields":sorted(fields)[:16]})
         for ip, (before, after) in allocation_updates.items():
             fields = [key for key in dict.fromkeys((*before, *after))
                       if before.get(key) != after.get(key)]

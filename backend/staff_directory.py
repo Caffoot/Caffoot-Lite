@@ -243,8 +243,10 @@ def save_staff_member(connection, actor_id, session_token, payload, *, staff_id=
                 raise ValueError('An existing Staff Member is required')
             _admin(connection, actor_id)
             _create_login(connection, actor_id, staff_id, payload)
+            staff = _staff_record(connection, staff_id)
             record_actor_event(connection, actor_id, kind='Staff Member', action='Updated',
-                label=staff_id, reason='Staff directory updated', fields=['Caffoot Login'])
+                label=staff_id, reason='Staff directory updated', fields=['Caffoot Login'],
+                subject=('Staff Member', staff_id, ' '.join(filter(None, (staff['firstName'], staff['lastName'])))))
         else:
             values = _validate_staff(payload, creating=creating)
             before = {} if creating else _staff_record(connection, staff_id)
@@ -273,6 +275,7 @@ def save_staff_member(connection, actor_id, session_token, payload, *, staff_id=
             record_actor_event(connection, actor_id, kind='Staff Member',
                 action='Created' if creating else 'Updated', label=staff_id,
                 reason='Staff directory updated', fields=list(columns),
+                subject=('Staff Member', staff_id, ' '.join(filter(None, (after['firstName'], after['lastName'])))),
                 before={'Department': before.get('departmentId'), 'Active': before.get('active')},
                 after={'Department': after['departmentId'], 'Active': bool(after['active'])})
             if 'login' in payload:
@@ -318,6 +321,7 @@ def save_department(connection, actor_id, session_token, payload, *, department_
         record_actor_event(connection, actor_id, kind='Department',
             action='Deleted' if delete else ('Created' if creating else 'Updated'),
             label=department_id, reason='Department directory updated', fields=['Department'],
+            subject=('Department', department_id, (before if delete else result).get('name')),
             before={key: before.get(key) for key in ('name', 'archived')},
             after={key: result.get(key) for key in ('name', 'archived')})
         connection.commit()

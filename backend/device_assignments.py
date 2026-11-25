@@ -214,9 +214,11 @@ def assign_devices(connection, actor_id, session_token, payload):
         assigned_at = datetime.now(timezone.utc).isoformat().replace('+00:00', 'Z')
         for device in devices:
             insert_device_custody(connection, device['id'], recipient, departments, assigned_at, actor_id, actor_label)
-            # The general Device audit contains IDs only, never employee names or contacts.
+            # Record the Device name, never the recipient's name or contacts.
+            name = connection.execute('SELECT name FROM inventory_devices WHERE id=?', (device['id'],)).fetchone()[0]
             record_actor_event(connection, actor_id, kind='Device', action='Assigned', label=device['id'],
                 reason='Initial equipment allocation', fields=['Assignment'],
+                subject=('Device', device['id'], name),
                 after={**recipient_audit(payload), 'assignedAt': assigned_at})
         connection.commit()
         return {'assigned': len(devices), 'assignedAt': assigned_at}
