@@ -140,26 +140,102 @@
       window.caffootStockIntake.openWorkflow('issue',{association:result.context,existingIssues:result.existingIssues});
     }catch(error){config.notify(error.message,'error');}
   }
+
   function renderMyEquipment(){
-    return '<div class="account-page my-equipment"><div class="main"><div class="header"><div><div class="eyebrow">YOUR WORKSPACE</div><h1>My Equipment</h1><p>Your personally assigned Devices and equipment shared with your current Department.</p></div></div><section class="card card-padded" aria-labelledby="my-equipment-personal-heading"><div class="card-head"><div><h3 id="my-equipment-personal-heading">Assigned to Me</h3></div></div><div data-personal-equipment role="status">Loading equipment…</div></section><section class="card card-padded" style="margin-top:17px" aria-labelledby="my-equipment-shared-heading"><div class="card-head"><div><h3 id="my-equipment-shared-heading">Shared with My Department</h3><p>Shared equipment remains assigned to your Department.</p></div></div><div data-shared-equipment role="status">Loading equipment…</div></section></div></div>';
+    const section=(scope,heading,helper='')=>`<section aria-labelledby="my-equipment-${scope}-heading">
+      <div class="device-results-head"><div><h2 id="my-equipment-${scope}-heading">${heading}</h2>${helper}
+      <p data-equipment-count="${scope}" aria-live="polite"></p></div></div>
+      <p class="my-equipment-scroll-tip" hidden>Scroll the table horizontally to see all columns and actions.</p>
+      <div class="device-table-card" data-${scope}-equipment><p class="device-empty" role="status">Loading equipment…</p></div></section>`;
+    return `<div class="account-page my-equipment"><div class="main"><div class="header"><div><div class="eyebrow">YOUR WORKSPACE</div><h1>My Equipment</h1><p>Your personally assigned Devices and equipment shared with your current Department.</p></div></div>
+      <section class="device-toolbar" aria-labelledby="my-equipment-filter-heading"><div class="device-toolbar-head"><div><h2 id="my-equipment-filter-heading">Search &amp; Filter Equipment</h2><p>Narrow your equipment by name, hardware or type.</p></div><button type="button" class="btn btn-outline" data-equipment-clear disabled>Clear Filters</button></div>
+      <div><label class="device-search-label" for="my-equipment-search">Search Equipment</label><div class="device-search-wrap"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="10" cy="10" r="6"/><path d="m15 15 6 6"/></svg><input class="device-search" id="my-equipment-search" type="search" autocomplete="off" placeholder="Search by name, type, manufacturer, model or operating system" disabled></div></div>
+      <div class="device-filters"><label class="device-filter">Equipment Type<select data-equipment-type disabled><option value="">All types</option></select></label><label class="device-filter">Equipment Kind<select data-equipment-kind disabled><option value="">All equipment</option><option>Device</option><option>IT Asset</option></select></label></div></section>
+      <div class="my-equipment-error" data-equipment-error hidden role="alert">Equipment could not be loaded. Please try again. <button type="button" class="btn btn-outline" data-equipment-retry>Try Again</button></div>
+      <div data-equipment-sections>${section('personal','Assigned to Me')}${section('shared','Shared with My Department','<p>Shared equipment remains assigned to your Department.</p>')}</div>
+      <dialog class="my-equipment-details" aria-labelledby="my-equipment-detail-title"><header class="my-equipment-detail-head"><div><div class="eyebrow">EQUIPMENT DETAILS</div><h2 id="my-equipment-detail-title"></h2><p data-equipment-detail-scope></p></div><button type="button" class="btn btn-outline" data-equipment-detail-close aria-label="Close equipment details">Close ×</button></header><div class="my-equipment-detail-body" data-equipment-detail-body></div><footer class="my-equipment-detail-actions"><button type="button" class="btn btn-outline" data-equipment-detail-close>Close</button><span data-equipment-detail-report></span></footer></dialog>
+      </div></div>`;
   }
+  const equipmentKind=item=>item.equipmentKind==='IT Asset'?'IT Asset':'Device';
+  const equipmentType=item=>item.type?displayDeviceType(item.type):'Not recorded';
+  const equipmentOS=item=>equipmentKind(item)==='IT Asset'?'Not applicable':item.operatingSystem||'Not recorded';
+  const equipmentDate=item=>item.assignedAt?dateLabel(item.assignedAt):'Not recorded';
+  function equipmentReport(item,scope,primary=false){
+    if(!window.caffootServiceDesk.canUseEmployee())return '';
+    return `<button type="button" class="btn ${primary?'btn-primary':'btn-outline'}" data-ticket-report-equipment="${escapeHtml(item.id)}" data-equipment-scope="${scope}" ${equipmentKind(item)==='IT Asset'?'data-ticket-report-asset':''} aria-label="Report A Problem With ${escapeHtml(item.name)}">Report A Problem</button>`;
+  }
+  const equipmentViews=new WeakSet();
   async function loadMyEquipment(container){
-    const personal=container.querySelector('[data-personal-equipment]'),shared=container.querySelector('[data-shared-equipment]');
-    if(!personal||!shared)return;
-    const list = (items, empty, scope) => items.length ? items.map(item => `<div class="info-row">
-      <b>${escapeHtml(item.name)}</b>
-      <span>${escapeHtml([item.type,item.manufacturer,item.model,item.quantity?'Quantity: '+item.quantity:''].filter(Boolean).join(' · '))}<br>Assigned: ${escapeHtml(dateLabel(item.assignedAt))}</span>
-      ${window.caffootServiceDesk.canUseEmployee() ? `<button type="button" class="btn btn-small btn-outline"
-        data-ticket-report-equipment="${escapeHtml(item.id)}" data-equipment-scope="${scope}"
-        ${item.equipmentKind === 'IT Asset' ? 'data-ticket-report-asset' : ''}
-        aria-label="Report A Problem With ${escapeHtml(item.name)}">Report A Problem</button>` : ''}
-      </div>`).join('') : '<p>' + empty + '</p>';
-    try{
-      const result=await request('/api/my-equipment');
-      if(!personal.isConnected)return;
-      personal.innerHTML=list(result.assignedToMe,'No equipment is currently assigned to you.','personal');
-      shared.innerHTML=list(result.sharedWithMyDepartment,'No shared equipment is currently available for your Department.','department');
-    }catch(error){if(personal.isConnected){personal.textContent=error.message;shared.textContent=error.message;}}
+    const root=container.querySelector('.my-equipment');
+    if(!root||equipmentViews.has(root))return;
+    equipmentViews.add(root);
+    const search=root.querySelector('#my-equipment-search'),type=root.querySelector('[data-equipment-type]'),kind=root.querySelector('[data-equipment-kind]'),clear=root.querySelector('[data-equipment-clear]');
+    const sections=root.querySelector('[data-equipment-sections]'),error=root.querySelector('[data-equipment-error]'),dialog=root.querySelector('.my-equipment-details');
+    const hosts={personal:root.querySelector('[data-personal-equipment]'),department:root.querySelector('[data-shared-equipment]')};
+    let data={personal:[],department:[]},loading=false,detailGeneration=0;
+    const heading=scope=>scope==='personal'?'Assigned to Me':'Shared with My Department';
+    const empty=scope=>scope==='personal'?'No equipment is currently assigned to you.':'No shared equipment is currently available for your Department.';
+    const controls=disabled=>[search,type,kind,clear].forEach(control=>control.disabled=disabled);
+    const read=async()=>{const result=await request('/api/my-equipment');return {personal:result.assignedToMe,department:result.sharedWithMyDepartment};};
+    const rows=(items,scope)=>items.map(item=>`<tr><td><b class="device-name">${escapeHtml(item.name)}</b><div class="device-detail">${equipmentKind(item)}${item.quantity?' · Quantity: '+escapeHtml(item.quantity):''}</div></td><td><span class="device-chip">${escapeHtml(equipmentType(item))}</span></td><td>${escapeHtml([item.manufacturer,item.model].filter(Boolean).join(' · ')||'Not recorded')}</td><td>${escapeHtml(equipmentOS(item))}</td><td class="my-equipment-date">${escapeHtml(equipmentDate(item))}</td><td><div class="device-actions"><button type="button" class="device-action-details" data-my-equipment-detail="${escapeHtml(item.id)}" data-equipment-scope="${scope}" aria-label="Details for ${escapeHtml(item.name)}">Details</button>${equipmentReport(item,scope)}</div></td></tr>`).join('');
+    function render(){
+      const query=search.value.trim().toLowerCase();
+      for(const [scope,host] of Object.entries(hosts)){
+        const all=data[scope],matches=all.filter(item=>(!type.value||equipmentType(item)===type.value)&&(!kind.value||equipmentKind(item)===kind.value)&&[item.name,equipmentType(item),item.manufacturer,item.model,item.operatingSystem].filter(Boolean).join(' ').toLowerCase().includes(query));
+        host.parentElement.querySelector('[data-equipment-count]').textContent=`Showing ${matches.length} of ${all.length} equipment records`;
+        host.parentElement.querySelector('.my-equipment-scroll-tip').hidden=!matches.length;
+        host.innerHTML=matches.length?`<div class="device-table-scroll" tabindex="0" role="region" aria-label="${heading(scope)} equipment table"><table class="device-table"><thead><tr><th scope="col">Name</th><th scope="col">Type</th><th scope="col">Hardware</th><th scope="col">Operating System</th><th scope="col">Assigned date</th><th scope="col" class="my-equipment-actions-heading">Actions</th></tr></thead><tbody>${rows(matches,scope)}</tbody></table></div>`:`<div class="device-empty"><strong>${all.length?'No matching equipment':'No equipment available'}</strong>${all.length?'Try a different search or clear your filters.':empty(scope)}</div>`;
+      }
+    }
+    async function refresh(){
+      if(loading)return;
+      loading=true;controls(true);
+      try{
+        const next=await read();if(!root.isConnected)return;
+        data=next;
+        const previous=type.value,types=[...new Set([...data.personal,...data.department].map(equipmentType))].sort();
+        type.innerHTML='<option value="">All types</option>'+types.map(value=>`<option value="${escapeHtml(value)}">${escapeHtml(value)}</option>`).join('');
+        type.value=types.includes(previous)?previous:'';
+        error.hidden=true;sections.hidden=false;controls(false);render();
+      }catch(err){if(root.isConnected){data={personal:[],department:[]};Object.values(hosts).forEach(host=>host.replaceChildren());sections.hidden=true;error.hidden=false;}}
+      finally{loading=false;}
+    }
+    function closeDetails(){++detailGeneration;if(dialog.open)dialog.close();dialog.querySelector('[data-equipment-detail-body]').replaceChildren();dialog.querySelector('[data-equipment-detail-report]').replaceChildren();}
+    async function openDetails(trigger){
+      const generation=++detailGeneration,scope=trigger.dataset.equipmentScope,id=trigger.dataset.myEquipmentDetail;
+      const title=dialog.querySelector('#my-equipment-detail-title'),body=dialog.querySelector('[data-equipment-detail-body]'),report=dialog.querySelector('[data-equipment-detail-report]');
+      title.textContent='Equipment Details';dialog.querySelector('[data-equipment-detail-scope]').textContent=heading(scope);
+      body.innerHTML='<p role="status">Loading equipment…</p>';report.replaceChildren();dialog.showModal();dialog.querySelector('[data-equipment-detail-close]').focus();
+      try{
+        const next=await read();if(!root.isConnected||!dialog.open||generation!==detailGeneration)return;
+        const item=next[scope].find(entry=>entry.id===id);
+        if(!item)throw Error('This equipment is no longer available.');
+        title.textContent=item.name;
+        const fields=[['Equipment Type',equipmentType(item)],['Equipment Kind',equipmentKind(item)],['Manufacturer',item.manufacturer||'Not recorded'],['Model',item.model||'Not recorded']];
+        if(equipmentKind(item)==='Device')fields.push(['Serial Number',item.serialNumber||'Not recorded']);
+        fields.push(['Operating System',equipmentOS(item)],['Assigned date',equipmentDate(item)]);
+        if(item.quantity)fields.push(['Outstanding Quantity',item.quantity]);
+        const apps=item.installedSoftware||[];
+        body.innerHTML=`<dl class="my-equipment-facts">${fields.map(([key,value])=>`<div><dt>${key}</dt><dd>${escapeHtml(value)}</dd></div>`).join('')}</dl>${equipmentKind(item)==='Device'&&['Laptop','Desktop'].includes(item.type)?`<section class="my-equipment-software"><h3>Recorded Installed Software</h3><p>${apps.length?'Software names recorded against this Device. This is not a live scan.':'No installed software is recorded for this Device.'}</p>${apps.length?'<ul>'+apps.map(app=>`<li><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m5 12 4 4L19 6"/></svg>${escapeHtml(app)}</li>`).join('')+'</ul>':''}</section>`:''}`;
+        report.innerHTML=equipmentReport(item,scope,true);
+      }catch(err){if(root.isConnected&&dialog.open&&generation===detailGeneration){title.textContent='Equipment Details';body.textContent='Equipment details could not be loaded or are no longer available.';report.replaceChildren();}}
+    }
+    search.addEventListener('input',render);type.addEventListener('change',render);kind.addEventListener('change',render);
+    clear.addEventListener('click',()=>{search.value=type.value=kind.value='';render();});
+    error.querySelector('[data-equipment-retry]').addEventListener('click',refresh);
+    root.addEventListener('click',event=>{
+      const trigger=event.target.closest('[data-my-equipment-detail]');
+      if(trigger)void openDetails(trigger);
+      if(event.target.closest('[data-equipment-detail-close]'))closeDetails();
+      // Keep the existing delegated Service Desk handler and fresh ticket eligibility checks.
+      if(dialog.open&&event.target.closest('[data-equipment-detail-report] [data-ticket-report-equipment]')){
+        // Closing removes the top-layer barrier, but leave the clicked control attached
+        // until the existing document-level handler has consumed its attributes.
+        ++detailGeneration;dialog.close();
+      }
+    });
+    dialog.addEventListener('cancel',event=>{event.preventDefault();closeDetails();});
+    await refresh();
   }
   function hydrate(container){
     container.querySelectorAll('[data-equipment-staff]').forEach(host=>void loadStaffEquipment(host));

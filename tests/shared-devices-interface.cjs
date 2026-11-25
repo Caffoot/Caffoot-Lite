@@ -242,17 +242,25 @@ async function main() {
             documentWidth:document.documentElement.scrollWidth,
             buttons:[...element.querySelectorAll('[data-ticket-report-equipment]')].map(button => {
                 const {left,right} = button.getBoundingClientRect();
-                const row = button.closest('.info-row');
-                return {left,right,rowRight:row.getBoundingClientRect().right,scope:button.dataset.equipmentScope};
+                const cell = button.closest('td');
+                const scroll = button.closest('.device-table-scroll');
+                return {left,right,cellRight:cell.getBoundingClientRect().right,
+                    cellPadding:parseFloat(getComputedStyle(cell).paddingRight),
+                    scrollWidth:scroll.scrollWidth,clientWidth:scroll.clientWidth,scope:button.dataset.equipmentScope};
             })
         }));
         assert.ok(layout.buttons.some(button => button.scope==='personal'));
         assert.ok(layout.buttons.some(button => button.scope==='department'));
         assert.ok(layout.documentWidth<=width, `My Equipment overflows at ${width}px`);
-        for (const {left,right,rowRight} of layout.buttons) {
-            assert.ok(left>=0 && right<=width, `Report A Problem overflows at ${width}px`);
-            assert.ok(Math.abs(right-rowRight)<1 && Math.abs(right-layout.buttons[0].right)<1,
-                `Report A Problem is not right-aligned across both cards at ${width}px`);
+        for (const {left,right,cellRight,cellPadding,scrollWidth,clientWidth} of layout.buttons) {
+            assert.ok(Math.abs(right-cellRight+cellPadding)<2, `Report A Problem not right-aligned at ${width}px`);
+            if(width===1440)assert.ok(left>=0 && right<=width, 'Desktop action must remain visible');
+            else assert.ok(scrollWidth>clientWidth, 'Mobile table must scroll within its container');
+        }
+        for(const action of await employee.locator('[data-equipment-sections] [data-ticket-report-equipment]').all()){
+            await action.scrollIntoViewIfNeeded();
+            const bounds=await action.boundingBox();
+            assert.ok(bounds && bounds.x>=0 && bounds.x+bounds.width<=width+1, `Action cannot be reached at ${width}px`);
         }
     }
     await employee.setViewportSize({width:1440,height:960});

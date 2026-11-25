@@ -322,9 +322,22 @@ async function test(){
  await employeePage.locator('.account-screen .subnav [data-section="security"]').click();
  await employeePage.locator('#next-account-mfa-start').waitFor();
  await employeePage.locator('#sidebar [data-tab="equipment"]').click();
- await employeePage.locator('[data-personal-equipment] .info-row').first().waitFor();
- assert.equal(await employeePage.locator('[data-personal-equipment] .info-row').count(),2);
- assert.equal(await employeePage.locator('[data-shared-equipment] .info-row').count(),1);
+ await employeePage.locator('[data-personal-equipment] tbody tr').first().waitFor();
+ assert.equal(await employeePage.locator('[data-personal-equipment] tbody tr').count(),2);
+ assert.equal(await employeePage.locator('[data-shared-equipment] tbody tr').count(),1);
+ const equipmentSearch=employeePage.locator('#my-equipment-search');
+ await equipmentSearch.fill('no-matching-equipment-demo');
+ assert.equal(await employeePage.locator('[data-personal-equipment] tbody tr').count(),0);
+ await employeePage.locator('[data-equipment-clear]').click();
+ assert.equal(await employeePage.locator('[data-personal-equipment] tbody tr').count(),2);
+ const details=employeePage.locator('[data-personal-equipment] [data-my-equipment-detail]').first();
+ await details.click();
+ const detailDialog=employeePage.locator('.my-equipment-details');
+ await detailDialog.getByText('Serial Number',{exact:true}).waitFor();
+ await detailDialog.getByText('Recorded Installed Software',{exact:true}).waitFor();
+ await employeePage.keyboard.press('Escape');
+ await detailDialog.waitFor({state:'hidden'});
+ assert.equal(await details.evaluate(element=>document.activeElement===element),true);
  assert.equal(inventoryRequests.length,0);
  assert.equal((await employee.request.get(address+'/api/inventory/state')).status(),403);
  for(const width of [1440,390]){
@@ -340,7 +353,8 @@ async function test(){
  await save('/api/staff-members/'+person.id,{departmentId:null,active:false,revision:currentPerson.revision});
  await employeePage.locator('#sidebar [data-tab="equipment"]').click();
  await employeePage.getByText('No shared equipment is currently available for your Department.').waitFor();
- assert.equal(await employeePage.locator('[data-personal-equipment] .info-row').count(),2);
+ await employeePage.getByText('No equipment is currently assigned to you.').waitFor();
+ assert.equal(await employeePage.locator('[data-personal-equipment] tbody tr').count(),0);
  await employee.close();
  assert.deepEqual(errors,[]);
  fs.writeFileSync(path.join(output,'results.json'),JSON.stringify({passed:true,errors,measurements:report},null,2));
