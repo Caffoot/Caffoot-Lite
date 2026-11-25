@@ -18,13 +18,14 @@ from backend.equipment_supplier_schema import migrate_equipment_suppliers
 from backend.equipment_lifecycle_schema import migrate_equipment_lifecycle
 
 from backend.service_desk_schema import (migrate_service_desk, migrate_service_desk_reporting,
-                                         migrate_ticket_software)
+                                         migrate_ticket_software, migrate_message_reads,
+                                         validate_message_reads)
 
 from backend.email_templates import migrate_email_templates
 
 from backend.shared_device_schema import migrate_shared_devices, validate_relationships
 
-SCHEMA_VERSION = 30
+SCHEMA_VERSION = 31
 
 DDL = """
 CREATE TABLE IF NOT EXISTS inventory_devices (
@@ -326,6 +327,11 @@ def _initialise_database(connection):
         elif SCHEMA_VERSION >= 30:
             connection.execute("SELECT must_change_password FROM accounts LIMIT 0")
             connection.execute("SELECT token_hash,account_state,expires_at FROM account_password_change_proofs LIMIT 0")
+        if SCHEMA_VERSION >= 31:
+            if 31 not in versions:
+                migrate_message_reads(connection)
+                connection.execute("INSERT INTO schema_migrations(version) VALUES(31)")
+            validate_message_reads(connection)
         connection.commit()
     except BaseException:
         connection.rollback()

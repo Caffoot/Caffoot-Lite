@@ -188,3 +188,38 @@ def migrate_service_desk_reporting(connection):
             end_date TEXT
         )
     """)
+
+
+
+def migrate_message_reads(connection):
+    """Add private per-account message receipts without altering any existing messages."""
+    connection.execute("""
+        CREATE TABLE service_desk_message_reads (
+            account_id INTEGER NOT NULL REFERENCES accounts(id) ON DELETE CASCADE,
+            message_id INTEGER NOT NULL REFERENCES service_desk_messages(id) ON DELETE CASCADE,
+            PRIMARY KEY(account_id,message_id)
+        ) WITHOUT ROWID
+    """)
+    connection.execute("""
+        CREATE INDEX service_desk_message_reads_message ON service_desk_message_reads(message_id)
+    """)
+
+
+def validate_message_reads(connection):
+    """Fail closed if the schema marker exists without the required relationships."""
+    columns = connection.execute("PRAGMA table_info(service_desk_message_reads)").fetchall()
+    if [(row[1], row[2], row[3], row[5]) for row in columns] != [
+            ('account_id', 'INTEGER', 1, 1), ('message_id', 'INTEGER', 1, 2)]:
+        raise RuntimeError('Invalid Service Desk read receipt schema')
+    references = connection.execute("PRAGMA foreign_key_list(service_desk_message_reads)").fetchall()
+    if {(row[2], row[3], row[4], row[6]) for row in references} != {
+            ('accounts', 'account_id', 'id', 'CASCADE'),
+            ('service_desk_messages', 'message_id', 'id', 'CASCADE')} or len(references) != 2:
+        raise RuntimeError('Invalid Service Desk read receipt relationships')
+    index = connection.execute("PRAGMA index_info(service_desk_message_reads_message)").fetchall()
+    if [row[2] for row in index] != ['message_id'] or not any(
+            row[1] == 'service_desk_message_reads_message' and row[4] == 0
+            for row in connection.execute("PRAGMA index_list(service_desk_message_reads)")):
+        raise RuntimeError('Missing Service Desk read receipt index')
+    if connection.execute("PRAGMA foreign_key_check(service_desk_message_reads)").fetchone():
+        raise RuntimeError('Invalid Service Desk read receipt data')
