@@ -90,3 +90,5 @@
 .audit-modal .identity-grid dt { display:block; font-size:10px; color:var(--muted); margin-bottom:6px; }
 .audit-modal .identity-grid dd { margin:0; font-size:12px; font-weight:650; overflow-wrap:anywhere; }
 @media(max-width:730px) { .audit-modal .identity-grid { grid-template-columns:1fr; } }
+
+.audit-screen #activity-results tr[hidden] { display:none!important; }

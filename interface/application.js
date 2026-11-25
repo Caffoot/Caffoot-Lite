@@ -679,6 +679,7 @@ function hierarchyValidateTypes(subnets) {
         const auditMarkup=renderInterfaceTemplate("audit-trail/audit-markup-1",[]);
         let activeAuditTab='activity';
         let selectedAuditAsset='';
+        let auditAssetQuery='';
         let auditLastFocus=null;
         // Read only recorded names: never resolve a historical label against today's data.
         function auditRecordPresentation(change, reason, index){
@@ -693,7 +694,7 @@ function hierarchyValidateTypes(subnets) {
             kind==='Rack'&&metadata.kind==='Rack Accessory' ||
             kind==='IT Assets'&&['Stock Item','Stock Unit','Stock Movement','Device'].includes(metadata.kind) ||
             kind==='Suppliers'&&['Supplier','Supplier Location','Supplier Contact','Supplier Note','Supplier Issue','Supplier Category','Supplier Issue Category','Supplier Issue Update'].includes(metadata.kind));
-          const recordKind=compatible?metadata.kind:kind;
+          let recordKind=compatible?metadata.kind:kind;
           let id=compatible&&safe(metadata.id)?metadata.id:'';
           let name=compatible&&safe(metadata.name)?metadata.name:'';
           let source=name?'Name recorded at event':'Original recorded label';
@@ -705,6 +706,22 @@ function hierarchyValidateTypes(subnets) {
           if(!id&&kind==='Device'){
             if(['Initial equipment allocation','Direct Device reassignment after confirmed preparation','Reissued equipment'].includes(reason)&&safe(originalLabel))id=originalLabel;
             else if(['Equipment Lifecycle dates changed','Original In Service Date recorded at first stock issue'].includes(reason)&&safe(change.after?.deviceId))id=change.after.deviceId;
+          }
+          // Historic values are used only from the known event's explicit fields.
+          const recordedId=value=>Number.isSafeInteger(value)&&value>0?String(value):safe(value)?value:'';
+          if(kind==='Role'&&reason==='Roles or individual permissions changed'){
+            const historical=(change.action==='Deleted'?change.before:change.after)?.['Roles and permissions'];
+            if(!id)id=recordedId(historical?.id);
+            if(!name&&safe(historical?.name)){name=historical.name;source='Name from recorded event values';}
+          }
+          if(kind==='Settings'&&reason==='Ticket category changed'){
+            const historical=change.after;
+            if(!id&&recordedId(historical?.id))id='service-desk:category:'+recordedId(historical.id);
+            if(!name&&safe(historical?.name)){name=historical.name;source='Name from recorded event values';}
+          }
+          if(kind==='Security'&&reason==='Administrator reset a password'&&!id){
+            id=recordedId(change.after?.['Account ID']);
+            if(id)recordKind='Account';
           }
           if(!name&&id===originalLabel&&['Staff Member','Department','Device','Stock Item','Stock Unit','Stock Movement'].includes(recordKind))source='Historical name not recorded';
           // Only server-generated directory IDs and non-reused account IDs
@@ -743,16 +760,32 @@ function hierarchyValidateTypes(subnets) {
           const d=new Date(value);
           return Number.isNaN(d.getTime())?'Not recorded':d.toISOString().replace('T',' ').slice(0,19);
         }
-        function renderAuditHTML() {
-          const rows=auditVisibleRows();
-          const names=[...new Set(rows.map(r=>r.actor).filter(n=>n!=='Not recorded'))].sort();
+        function auditAssetPanels(rows){
           const assetGroups=new Map();
           for(const row of rows){
             if(!assetGroups.has(row.recordKey))assetGroups.set(row.recordKey,[]);
             assetGroups.get(row.recordKey).push(row);
           }
-          const assets=[...assetGroups.entries()].map(([key,history])=>[key,history[0]]);
+          const query=auditAssetQuery.trim().toLowerCase();
+          const assets=[...assetGroups.entries()].filter(([,history])=>!query||history.some(r=>
+            [r.label,r.originalLabel,r.canonicalId,r.area,r.actor,r.reason].join(' ').toLowerCase().includes(query)))
+            .map(([key,history])=>[key,history[0]]);
           if(!assets.some(([key])=>key===selectedAuditAsset))selectedAuditAsset=assets[0]?.[0]||'';
+          const list=assets.map(([key,asset])=>{
+            const history=assetGroups.get(key);
+            const search=history.map(r=>[r.label,r.originalLabel,r.canonicalId,r.area,r.actor,r.reason].join(' ')).join(' ').toLowerCase();
+            return '<button class="asset-item '+(key===selectedAuditAsset?'selected':'')+'" type="button" data-action="audit-select-asset" data-key="'+escapeHtml(key)+'" data-search="'+escapeHtml(search)+'"><span><b>'+escapeHtml(asset.label)+'</b><small>'+escapeHtml(asset.area)+(asset.verifiedIdentity?' · Saved history':' · Identity not verified')+'</small></span><span class="num">'+history.length+'</span></button>';
+          }).join('')||'<p class="audit-empty">No authorised records to display.</p>';
+          const chosen=assets.find(([key])=>key===selectedAuditAsset)?.[1];
+          const timeline=chosen?assetGroups.get(selectedAuditAsset):[];
+          const timelineHtml=timeline.length?'<h3>'+escapeHtml(chosen.label)+'</h3><p class="subtitle">'+timeline.length+' saved changes'+(chosen.verifiedIdentity?' · Latest recorded label':' · No verified link to other events')+'</p>' +
+            '<div class="timeline-list">'+timeline.map(r=>'<div class="timeline-entry"><strong>'+escapeHtml(r.kind+' '+r.action.toLowerCase())+'</strong><p>'+escapeHtml(r.actor)+' · '+escapeHtml(auditDate(r.at))+' UTC<br>'+escapeHtml(r.label)+' · '+escapeHtml(r.labelSource)+'</p><button type="button" class="audit-row-button" data-action="audit-view-detail" data-index="'+r.index+'">View event details</button></div>').join('')+'</div>':
+            '<p class="audit-empty">Select a record to view its history.</p>';
+          return {list,timelineHtml};
+        }
+        function renderAuditHTML() {
+          const rows=auditVisibleRows();
+          const names=[...new Set(rows.map(r=>r.actor).filter(n=>n!=='Not recorded'))].sort();
           const tr=rows.map(r=>'<tr data-audit-index="'+r.index+'" data-area="'+escapeHtml(r.area)+'" data-verb="'+escapeHtml(r.action)+'" data-actor="'+escapeHtml(r.actor)+'" data-search="'+escapeHtml([r.actor,r.area,r.action,r.kind,r.label,r.originalLabel,r.canonicalId,r.labelSource,r.reason].join(' ').toLowerCase())+'">' +
             '<td><div class="time">'+escapeHtml(auditDate(r.at))+'</div><div class="secondary">UTC</div></td>' +
             '<td><strong>'+escapeHtml(r.actor)+'</strong></td>' +
@@ -761,20 +794,12 @@ function hierarchyValidateTypes(subnets) {
             '<td><div class="subject">'+escapeHtml(r.label)+'</div><div class="secondary">'+escapeHtml(r.area)+(r.labelSource==='Historical name not recorded'?' · Historical name not recorded':'')+'</div></td>' +
             '<td><button class="audit-row-button" type="button" data-action="audit-view-detail" data-index="'+r.index+'">View Details</button></td></tr>').join('')||
             '<tr><td colspan="6" class="audit-empty">No authorised audit events are recorded yet.</td></tr>';
-          const list=assets.map(([key,asset])=>{
-            const history=assetGroups.get(key);
-            const search=history.map(r=>[r.label,r.originalLabel,r.canonicalId,r.area,r.actor,r.reason].join(' ')).join(' ').toLowerCase();
-            return '<button class="asset-item '+(key===selectedAuditAsset?'selected':'')+'" type="button" data-action="audit-select-asset" data-key="'+escapeHtml(key)+'" data-search="'+escapeHtml(search)+'"><span><b>'+escapeHtml(asset.label)+'</b><small>'+escapeHtml(asset.area)+(asset.verifiedIdentity?' · Saved history':' · Identity not verified')+'</small></span><span class="num">'+history.length+'</span></button>';
-          }).join('')||'<p class="audit-empty">No authorised records to display.</p>';
-          const chosen=assets.find(([key])=>key===selectedAuditAsset)?.[1];
-          const timeline=assetGroups.get(selectedAuditAsset)||[];
-          const timelineHtml=timeline.length?'<h3>'+escapeHtml(chosen.label)+'</h3><p class="subtitle">'+timeline.length+' saved changes'+(chosen.verifiedIdentity?' · Latest recorded label':' · No verified link to other events')+'</p>' +
-            '<div class="timeline-list">'+timeline.map(r=>'<div class="timeline-entry"><strong>'+escapeHtml(r.kind+' '+r.action.toLowerCase())+'</strong><p>'+escapeHtml(r.actor)+' · '+escapeHtml(auditDate(r.at))+' UTC<br>'+escapeHtml(r.label)+' · '+escapeHtml(r.labelSource)+'</p><button type="button" class="audit-row-button" data-action="audit-view-detail" data-index="'+r.index+'">View event details</button></div>').join('')+'</div>':
-            '<p class="audit-empty">Select a record to view its history.</p>';
+          const noMatches=rows.length?'<tr id="audit-no-matches" hidden><td colspan="6" class="audit-empty">No events match the selected filters.</td></tr>':'';
+          const {list,timelineHtml}=auditAssetPanels(rows);
           return auditMarkup
             .replace('<!--AUDIT_AREAS-->',[...new Set(rows.map(r=>r.area))].sort().map(area=>'<option>'+escapeHtml(area)+'</option>').join(''))
             .replace('<!--AUDIT_ACTORS-->',names.map(n=>'<option value="'+escapeHtml(n)+'">'+escapeHtml(n)+'</option>').join(''))
-            .replace('<tbody id="activity-results"></tbody>','<tbody id="activity-results">'+tr+'</tbody>')
+            .replace('<tbody id="activity-results"></tbody>','<tbody id="activity-results">'+tr+noMatches+'</tbody>')
             .replace('<div class="card asset-list" id="asset-list"></div>','<div class="card asset-list" id="asset-list">'+list+'</div>')
             .replace('<div class="card timeline" id="asset-timeline"></div>','<div class="card timeline" id="asset-timeline">'+timelineHtml+'</div>')
             .replace('id="stat-total">0','id="stat-total">'+rows.length)
@@ -790,6 +815,7 @@ function hierarchyValidateTypes(subnets) {
             b.classList.toggle('active',on);b.setAttribute('aria-selected',String(on));
           });
           root.querySelectorAll('.audit-pane').forEach(p=>p.hidden=p.id!=='pane-'+activeAuditTab);
+          root.querySelector('#asset-search').value=auditAssetQuery;
         }
         function applyAuditFilters(){
           const root=document.querySelector('#main-content .audit-screen');if(!root)return;
@@ -804,6 +830,8 @@ function hierarchyValidateTypes(subnets) {
               (!actor||(actor==='unknown'?row.dataset.actor==='Not recorded':row.dataset.actor===actor));
             row.hidden=!show;if(show)matching++;
           });
+          const empty=root.querySelector('#audit-no-matches');
+          if(empty)empty.hidden=matching!==0;
           root.querySelector('#result-count').textContent=matching+' matching events';
         }
         document.addEventListener('input',event=>{
@@ -816,10 +844,11 @@ function hierarchyValidateTypes(subnets) {
         },true);
         document.addEventListener('input',event=>{
           if(event.target.id!=='asset-search'||!event.target.closest('.audit-screen'))return;
-          const q=event.target.value.trim().toLowerCase();
-          event.target.closest('.audit-screen').querySelectorAll('.asset-item').forEach(button=>{
-            button.hidden=!button.dataset.search.includes(q);
-          });
+          auditAssetQuery=event.target.value;
+          const root=event.target.closest('.audit-screen');
+          const {list,timelineHtml}=auditAssetPanels(auditVisibleRows());
+          root.querySelector('#asset-list').innerHTML=list;
+          root.querySelector('#asset-timeline').innerHTML=timelineHtml;
         },true);
         document.addEventListener('keydown',event=>{
           if(event.key==='Escape'&&!document.getElementById('audit-detail-layer')?.hidden){
@@ -9099,7 +9128,8 @@ function openIpModal(ip) {
                     closeAuditDetail(); break;
                 case 'audit-select-asset':
                     selectedAuditAsset=target.dataset.key;
-                    renderContent(); break;
+                    renderContent();
+                    document.querySelector('#asset-list .selected')?.focus(); break;
                 case 'audit-reset-filters': {
                     const root=document.querySelector('#main-content .audit-screen');
                     if(root){
