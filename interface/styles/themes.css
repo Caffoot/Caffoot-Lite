@@ -67,16 +67,16 @@ html.dark .caffoot-search-options button:is(:hover,:focus-visible,[aria-selected
 :is(#app,#modal-container) .device-review-smallbtn.primary:hover:not(:disabled) {background:var(--orange2,#d87327);}
 html:not(.dark) :is(#app,#modal-container) :is(.header p,.formhint,.switch-row small,.device-review-facts dt) {color:#4e6981;}
 
-/* Keep focus visible on light surfaces and on the always-navy navigation. */
+/* Keep focus visible on light surfaces and on the always-navy UI surfaces. */
 html:not(.dark) {
  --light-focus:#142b43;
  --light-selected:#ad5010;
 }
 html:not(.dark) :is(#app,#modal-container,.caffoot-search-popup,.caffoot-uk-date-picker)
- :is(button,input,select,textarea,summary,a[href],[tabindex]):focus-visible:not(.rack-elevation *,#sidebar *) {
+ :is(button,input,select,textarea,summary,a[href],[tabindex]):focus-visible:not(.rack-elevation *,#sidebar *,.settings-screen .command *) {
  outline:2px solid var(--light-focus);outline-offset:2px;
 }
-html:not(.dark) #sidebar :is(button,a[href],[tabindex]):focus-visible {
+html:not(.dark) :is(#sidebar,.settings-screen .command) :is(button,a[href],[tabindex]):focus-visible {
  outline:2px solid #f4a569;outline-offset:-2px;
 }
 html:not(.dark) :is(#app,#modal-container,.caffoot-search-popup) :is(.tabs,.subnav,.audit-tabs,.ipam-tabs,.racks-tabs,.device-review-tabs,.employee-ticket-tabs,.caffoot-search-options)

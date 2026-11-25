@@ -91,13 +91,17 @@ Fresh installations create IT Staff enabled but unassigned. Newly created ordina
 2. Select **View Details** and check **Caffoot Login** for the username, account status, authenticator state and assigned roles.
 3. Select **Manage Permissions** under **Assigned Roles**. Confirm the read-only **Sign-in Username** and review **Assigned Roles** and the **Inherited**, **Override** and **Effective** values under **Section permissions**.
 4. Check for **Feature Disabled** beside any relevant section. A valid grant can be saved while an organisation switch prevents the section from being used. **MFA Required · Setup Pending** means the person needs to complete enrolment before normal sign-in.
-5. Use **Done**, **Close** or Escape to return to the same Staff Details.
+5. If the dialogue scrolls, use Tab to reach controls further down. Scroll to **Done** or use **Close** or Escape to return to the same Staff Details.
 
 Your own administrator account has protected controls. Use **My Account** for your personal and security settings. Ask the affected person to sign in and confirm their access with their own credentials.
 
 ![The Manage Permissions dialogue in desktop light mode with the read-only sign-in username and the existing personal details and role controls.](screenshots/staff-administration/manage-permissions-light-1440.png)
 
 *The account dialogue opened from Staff Details for fictional user taylor.cole.* [Desktop dark](screenshots/staff-administration/manage-permissions-dark-1440.png) · [Mobile light](screenshots/staff-administration/manage-permissions-light-390.png) · [Mobile dark](screenshots/staff-administration/manage-permissions-dark-390.png)
+
+![Manage Permissions on a narrow screen with a classic scrollbar inside the rounded dialogue.](../../../development-handovers/evidence/stage-6-6-batch-3/screenshots/classic-manage-dark-390.png)
+
+*Scroll within Manage Permissions to reach the section and account controls.* [Scrollbar capture provenance](../../../development-handovers/evidence/stage-6-6-batch-3/README.md#capture-provenance)
 
 ### Save Personal Details
 
