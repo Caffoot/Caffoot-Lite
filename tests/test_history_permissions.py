@@ -73,7 +73,7 @@ class HistoryPermissionProjectionTests(unittest.TestCase):
             'recordSubject': {'kind': 'Device', 'id': 'device-id', 'name': 'Event-time Laptop'},
         }])
         self.assertEqual(self.db.execute('SELECT record_json FROM inventory_change_history').fetchone(), stored)
-        self.assertEqual(audit_subject('Device', 'device-id', 'bad\\nname'),
+        self.assertEqual(audit_subject('Device', 'device-id', 'bad\nname'),
                          {'recordSubject': {'kind': 'Device', 'id': 'device-id'}})
 
     def test_mixed_event_excludes_disallowed_changes_and_counts(self):

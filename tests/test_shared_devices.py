@@ -1,5 +1,6 @@
 """Exercise shared custody through the established equipment and Service Desk routes."""
 import base64
+import json
 import sqlite3
 import unittest
 
@@ -169,6 +170,11 @@ class SharedDeviceHttpTests(unittest.TestCase):
         self.assign_device('department', 'dept')
         self.assertEqual(self.manage(['dept','other'])[0], 200)
         with sqlite3.connect(self.path) as connection:
+            event, = connection.execute("SELECT record_json FROM inventory_change_history "
+                                        "WHERE json_extract(record_json,'$.reason')='Device Departments changed'").fetchone()
+            change, = json.loads(event)['changes']
+            self.assertEqual(change['label'], 'device')
+            self.assertEqual(change['recordSubject'], {'kind': 'Device', 'id': 'device', 'name': 'Laptop'})
             connection.execute("UPDATE departments SET archived=1 WHERE id='other'")
         self.assertEqual(self.manage(['dept','other'])[0], 200)
         self.assertEqual(self.request('/api/my-equipment', actor=5)[1]['sharedWithMyDepartment'][0]['id'], 'device')

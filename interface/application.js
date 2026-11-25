@@ -704,7 +704,7 @@ function hierarchyValidateTypes(subnets) {
             if(safe(historical)){name=historical;source='Name from recorded event values';}
           }
           if(!id&&kind==='Device'){
-            if(['Initial equipment allocation','Direct Device reassignment after confirmed preparation','Reissued equipment'].includes(reason)&&safe(originalLabel))id=originalLabel;
+            if(['Initial equipment allocation','Direct Device reassignment after confirmed preparation','Reissued equipment','Device Departments changed'].includes(reason)&&safe(originalLabel))id=originalLabel;
             else if(['Equipment Lifecycle dates changed','Original In Service Date recorded at first stock issue'].includes(reason)&&safe(change.after?.deviceId))id=change.after.deviceId;
           }
           // Historic values are used only from the known event's explicit fields.
@@ -852,7 +852,8 @@ function hierarchyValidateTypes(subnets) {
           root.querySelector('#asset-timeline').innerHTML=timelineHtml;
         },true);
         document.addEventListener('keydown',event=>{
-          if(event.key==='Escape'&&!document.getElementById('audit-detail-layer')?.hidden){
+          const layer=document.getElementById('audit-detail-layer');
+          if(event.key==='Escape'&&layer&&!layer.hidden){
             event.preventDefault();closeAuditDetail();
           }
         },true);
@@ -1382,7 +1383,7 @@ function hierarchyValidateTypes(subnets) {
             const previousStrips=container.dataset.renderedTab===currentTab
                 ? [...container.querySelectorAll('.subnav,.tabs,.audit-tabs,.intelligence-tabs')].map(strip=>strip.scrollLeft) : [];
             const deviceDesign=activeDeviceDetailsTab==='overview'?'devices':activeDeviceDetailsTab==='inventory'?'device-inventory':'device-management';
-            const design = {devices:deviceDesign, audit:'audit-trail', account:'my-account',equipment:'my-account',
+            const design = {devices:deviceDesign, audit:'audit-trail', account:'my-account',equipment:'device-inventory',
                 'service-desk':'service-desk-queue','my-tickets':'service-desk-queue'}[currentTab] || currentTab;
             document.getElementById('interface-page-style').textContent = interfaceStyles.get(design);
             // replace the view once, avoiding an extra DOM teardown.

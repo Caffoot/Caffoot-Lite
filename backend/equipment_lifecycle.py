@@ -183,6 +183,7 @@ def save_lifecycle_settings(connection, actor, token, payload):
                 'ON CONFLICT(name) DO UPDATE SET years=excluded.years', (name, years))
             record_actor_event(connection, actor, kind='Settings', action='Updated', label=label,
                 reason=SETTINGS_AUDIT_REASON, fields=['Expected Equipment Lifespan'],
+                subject=('Settings', 'equipment-lifecycle:lifespan:' + name, label),
                 before={'Expected Equipment Lifespan': kind['years']},
                 after={'Expected Equipment Lifespan': years})
 
@@ -190,7 +191,9 @@ def save_lifecycle_settings(connection, actor, token, payload):
         if before:
             after = {label: payload[key] for key, label in warning_fields.items() if label in before}
             record_actor_event(connection, actor, kind='Settings', action='Updated', label='Warning Periods',
-                reason=SETTINGS_AUDIT_REASON, fields=before, before=before, after=after)
+                reason=SETTINGS_AUDIT_REASON, fields=before,
+                subject=('Settings', 'equipment-lifecycle:warning-periods', 'Warning Periods'),
+                before=before, after=after)
         connection.execute(
             'UPDATE equipment_lifecycle_settings SET warranty_days=?,replacement_days=?,revision=revision+1',
             (payload['warrantyDays'], payload['replacementDays']))

@@ -123,7 +123,7 @@ def manage_departments(connection, actor, token, payload):
             raise PermissionError('Verified session required.')
         require_assignment_access(connection, actor, edit=True)
         device_id, identity, revision = payload['deviceId'], payload['assignmentId'], payload['revision']
-        row = connection.execute("""SELECT d.record_json,d.revision,a.id,a.staff_id
+        row = connection.execute("""SELECT d.record_json,d.revision,a.id,a.staff_id,d.name
             FROM inventory_devices d LEFT JOIN device_assignments a ON a.device_id=d.id AND a.ended_at IS NULL
             WHERE d.id=?""", (device_id,)).fetchone()
         if row is None or row[1:3] != (revision, identity):
@@ -150,6 +150,7 @@ def manage_departments(connection, actor, token, payload):
             revision += 1
             record_actor_event(connection, actor, kind='Device', action='Updated', label=device_id,
                 reason='Device Departments changed', fields=['Assignment'],
+                subject=('Device', device_id, row[4]),
                 after=dict(assignmentId=identity, addedDepartmentIds=added, removedDepartmentIds=removed))
         connection.commit()
         return dict(assignmentId=identity, revision=revision, addedDepartmentIds=added, removedDepartmentIds=removed)

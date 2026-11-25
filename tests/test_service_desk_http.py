@@ -1119,6 +1119,8 @@ class ServiceDeskHttpTests(unittest.TestCase):
         reply = self.save('department', ticket, 'messages', {'body': 'Staff reply'}, actor=4)[1]['id']
         self.assertTrue(reply)
         message = self.save('it', ticket, 'messages', {'body': 'Private ticket content'})[1]['id']
+        snapshot = self.request(self.ticket_path('it', f'/{ticket}/messages'), actor=3)[1]
+        self.assertEqual(self.save('it', ticket, 'read', {'proof': snapshot['readProof']}, actor=3)[0], 200)
         self.assertEqual(self.save('it', ticket, 'close', {'resolutionNote': 'Checked'})[0], 200)
         self.assertEqual(self.save('it', ticket, 'reopen', {})[0], 200)
         self.assertEqual(self.save('it', ticket, 'close', {'resolutionNote': 'Checked again'})[0], 200)
@@ -1126,7 +1128,7 @@ class ServiceDeskHttpTests(unittest.TestCase):
                            'account_email_attempts', 'roles', 'role_grants', 'account_roles',
                            'account_permission_overrides', 'organisation_features')
         cleared_tables = (
-            'service_desk_tickets', 'service_desk_events', 'service_desk_messages',
+            'service_desk_tickets', 'service_desk_events', 'service_desk_messages', 'service_desk_message_reads',
             'service_desk_attachments', 'service_desk_closures', 'inventory_devices', 'inventory_racks',
             'inventory_rack_accessories', 'inventory_subnets', 'inventory_vlans', 'inventory_ip_allocations',
             'device_assignments', 'device_equipment_associations',
