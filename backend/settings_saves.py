@@ -1,6 +1,6 @@
 """Persist existing v1.3.3 managed inventory settings in SQLite."""
 import json
-from .audit_events import attribute_event
+from .audit_events import attribute_event, audit_subject
 from datetime import datetime, timezone
 
 from .inventory import SETTINGS
@@ -45,7 +45,15 @@ def save_inventory_setting(connection, account_id, key, value):
             event = {"at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
                      "reason": "Inventory saved",
                      "changes": [{"action": action, "kind": "Settings",
-                                  "label": key, "fields": []}], "omitted": 0}
+                                  "label": key, "fields": [],
+                                  **audit_subject("Settings", "inventory:" + key, {
+                                      "deviceTypes": "Device Types", "deviceTypeGraphics": "Device Type Graphics",
+                                      "deviceLocations": "Locations", "serverFunctions": "Server Services",
+                                      "installedSoftware": "Installed Software", "managedOptionsCleared": "Managed Options",
+                                      "stateVersion": "Inventory State Version", "hardwareCatalogue": "Hardware Catalogue",
+                                      "hardwareSeedPreferences": "Hardware Catalogue Preferences",
+                                      "softwareTypeExclusions": "Software Type Exclusions",
+                                  }[key])}], "omitted": 0}
             connection.execute(
                 "INSERT INTO inventory_change_history(record_json) VALUES(?)",
                 (json.dumps(attribute_event(connection, account_id, event), ensure_ascii=False),),

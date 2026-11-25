@@ -98,7 +98,8 @@ def save_email_template(connection, actor, action, payload):
     template = TEMPLATES[template_id]
     if action == 'restore' and payload.keys() == {'action', 'id'}:
         record_actor_event(connection, actor, kind='Settings', action='Updated', label=template['name'],
-                           reason='Email template default loaded into editor', fields=['Email Template'])
+                           reason='Email template default loaded into editor', fields=['Email Template'],
+                           subject=('Settings', 'email-template:' + template_id, template['name']))
         return current['default']
     fields = {'action', 'id', 'revision'}
     if action == 'draft':
@@ -122,7 +123,8 @@ def save_email_template(connection, actor, action, payload):
             'draft_subject=NULL,draft_body=NULL WHERE id=?', (draft['subject'], draft['body'], template_id))
         reason = 'Email template published'
     record_actor_event(connection, actor, kind='Settings', action='Updated', label=template['name'],
-                       reason=reason, fields=['Email Template'])
+                       reason=reason, fields=['Email Template'],
+                       subject=('Settings', 'email-template:' + template_id, template['name']))
     return email_template_state(connection, template_id)
 
 
@@ -159,7 +161,8 @@ def save_email_branding(connection, actor, payload):
         (revision, *branding.values(), *((logo['mime'], logo['data'], logo['width'], logo['height'])
                                         if logo else (None, None, None, None))))
     record_actor_event(connection, actor, kind='Settings', action='Updated', label='Company Branding',
-                       reason='Company branding saved', fields=['Company Branding'])
+                       reason='Company branding saved', fields=['Company Branding'],
+                       subject=('Settings', 'company-branding', 'Company Branding'))
     return public_email_branding({**branding, 'logo': logo, 'revision': revision})
 
 

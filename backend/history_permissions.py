@@ -162,6 +162,7 @@ def visible_change_history(connection, account_id):
                     'Subnet': {'Subnet'}, 'VLAN': {'VLAN'},
                     'Rack': {'Rack', 'Rack Accessory'},
                     'Account': {'Account'}, 'Security': {'Account'}, 'Role': {'Role'},
+                    'Settings': {'Settings'},
                     'IT Assets': {'Stock Item', 'Stock Unit', 'Stock Movement'},
                     'Suppliers': {'Supplier', 'Supplier Location', 'Supplier Contact',
                                   'Supplier Note', 'Supplier Issue', 'Supplier Category', 'Supplier Issue Category', 'Supplier Issue Update'},

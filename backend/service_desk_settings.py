@@ -87,6 +87,8 @@ def save_support_calendar(connection, actor, payload):
         append_support_calendar(connection, at, updated_hours, updated_exclusions, name, rules, actor)
         record_actor_event(connection, actor, kind='Settings', action='Updated', label=label,
                            reason=CALENDAR_AUDIT_REASON, fields=fields,
+                           subject=('Settings', 'service-desk:working-hours' if action == 'working-hours' else 'service-desk:excluded-date:' + day,
+                                    label if action == 'working-hours' else 'Excluded date ' + day),
                            before={'value': before}, after={'value': after, 'effectiveAt': at})
 
 
@@ -122,6 +124,7 @@ def save_ticket_category(connection, actor, payload):
         connection.execute('UPDATE service_desk_categories SET name=?,hidden=? WHERE id=?', (name, hidden, identity))
     record_actor_event(connection, actor, kind='Settings', action='Created' if previous is None else 'Updated',
                        label='Ticket Categories', reason=CATEGORY_AUDIT_REASON, fields=['Category'],
+                       subject=('Settings', 'service-desk:category:' + str(identity), name),
                        before=None if previous is None else {'name': previous[1], 'hidden': bool(previous[2])},
                        after={'id': identity, 'name': name, 'hidden': bool(hidden)})
 

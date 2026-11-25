@@ -269,7 +269,7 @@ def save_reserved_device(connection, account_id, device_id, revision, record, se
                 if (before_ip or {}).get(key) != (after_ip or {}).get(key)][:16]
                 if action == "Updated" else [])
             changes.append({"action": action, "kind": "IPAM",
-                            "label": ip, "fields": fields})
+                            "label": ip, "fields": fields, **audit_subject("IPAM", ip, ip)})
         if changes:
             event = {"at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
                      "reason": "Inventory saved", "changes": changes[:60],
@@ -354,7 +354,7 @@ def create_device_in_transaction(connection, account_id, record):
                 "label": record["name"][:100], **audit_subject("Device", record["id"], record["name"]), "fields": []}]
     if new_ip and not is_basic_address(record):
         changes.append({"action": "Updated", "kind": "IPAM",
-                        "label": new_ip, "fields": ["deviceId", "status", "hostname"]})
+                        "label": new_ip, "fields": ["deviceId", "status", "hostname"], **audit_subject("IPAM", new_ip, new_ip)})
     event = {"at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
              "reason": "Inventory saved", "changes": changes, "omitted": 0}
     connection.execute(
@@ -458,7 +458,7 @@ def delete_reserved_device(connection, account_id, device_id, revision, related_
             fields = [key for key in dict.fromkeys((*before, *after))
                       if before.get(key) != after.get(key)]
             changes.append({"action": "Updated", "kind": "IPAM",
-                            "label": ip, "fields": fields[:16]})
+                            "label": ip, "fields": fields[:16], **audit_subject("IPAM", ip, ip)})
         event = {"at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
                  "reason": "Inventory saved", "changes": changes, "omitted": 0}
         connection.execute(

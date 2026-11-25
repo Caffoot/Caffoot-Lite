@@ -118,7 +118,7 @@ def audit_subject(kind, identity, name):
     The original audit label remains unchanged.
     """
     if not isinstance(kind, str) or kind not in (
-            'Staff Member', 'Department', 'Device', 'Account', 'Role',
+            'Staff Member', 'Department', 'Device', 'Account', 'Role', 'Settings',
             'Subnet', 'VLAN', 'Rack', 'Rack Accessory', 'IPAM', 'Stock Item',
             'Stock Unit', 'Stock Movement', 'Supplier', 'Supplier Location',
             'Supplier Contact', 'Supplier Note', 'Supplier Issue', 'Supplier Category', 'Supplier Issue Category', 'Supplier Issue Update'):
