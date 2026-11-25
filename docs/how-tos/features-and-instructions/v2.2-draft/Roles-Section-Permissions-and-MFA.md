@@ -166,11 +166,46 @@ Account controls are separate from role previews. Check the account identity bef
 1. Open **Staff → Staff Members → Staff Details → Manage Permissions** for the person.
 2. To stop sign-in while retaining the account, select **Disable**. This ends its sessions and prevents sign-in until re-enabled.
 3. To restore login eligibility, select **Enable**, then review the current roles, permissions and MFA requirements. Enabling does not remove those safeguards.
-4. To appoint an Administrator, first ensure the account has completed MFA enrolment, then select **Make Admin**. Appointment before confirmed MFA is rejected.
+4. To appoint an Administrator, review the eligibility checks and select **Make admin** once the account qualifies. See [Make An Existing User An Administrator](#make-an-existing-user-an-administrator).
 5. To remove independent Administrator status, select **Remove Admin**. Remaining ordinary access comes from the account's roles and overrides. The account must sign in again after Administrator status changes.
 6. To remove the account permanently, select **Delete User** and read its confirmation. Confirm only if deletion is intended; cancelling keeps the account. Prefer disabling when the requirement is simply to prevent sign-in while retaining the login.
 
 You cannot disable, demote or delete your own signed-in administrator account, and the last active administrator is protected. Deleting a login does not delete its Staff directory identity or return its equipment; review those separately in the [Staff lifecycle](Staff-Members.md). These controls do not provide an administrator bypass for a forgotten password or authenticator.
+
+## Make An Existing User An Administrator
+
+Use an existing administrator session protected by MFA. The proposed administrator must have confirmed their authenticator, verified the email address saved in **My Account** and completed any required temporary password change. Saving an email address alone does not verify it.
+
+1. Open **Staff → Staff Members → Staff Details → Manage Permissions** for the intended account. Confirm the **Sign-in Username**, for example `alex.morgan`.
+2. Under **Account controls → Make administrator**, review **Authenticator** and **Email Address**. If Alex sees **Not Enrolled** or **Not Verified**, ask them to [complete MFA enrolment](#required-enrolment-at-sign-in) or [verify their email](#prepare-verified-email-recovery). If Alex still uses a temporary password, ask them to [change it](#after-an-administrator-gives-you-a-temporary-password).
+3. Reopen **Manage Permissions** after the person completes the checks. With **Enrolled** and **Verified** displayed and the password change complete, select **Make admin**. The choice takes effect immediately and ends that person’s existing sessions. They must sign in again with their authenticator.
+4. Confirm that the account now shows **Administrator · All Sections**. Enabled features determine which sections they can use. **Done** closes the dialogue.
+
+If **Make admin** stays disabled, check the guidance beside it. If an email address was just changed, the user must verify the new address. The server checks eligibility again when it receives the promotion request.
+
+![Manage Permissions in desktop light mode. Alex’s authenticator is enrolled, the email address is unverified and Make admin is disabled.](screenshots/stage-6-6-batch-1/administrator-eligibility-light-1440.png)
+
+*The guidance beside Make administrator explains which step Alex needs to complete.*
+
+On a fresh installation, the first administrator can finish setup before outgoing email is configured. They must still enrol their authenticator. After configuring outgoing email, they can verify their address in **My Account → Overview → Personal Details**. Existing administrators keep their access if an address is missing or loses verification. The warning below their email settings explains how to restore eligibility for password recovery. Outgoing email remains optional for everyday operation, and the protected [host-only first-administrator recovery procedure](../../../development-guide/Account-Recovery.md) remains available to the system operator when its conditions are met.
+
+![My Account in mobile light mode. The email verification warning is below Email Address and Verify Email.](screenshots/stage-6-6-batch-1/my-account-administrator-warning-light-390.png)
+
+## Reset A Staff Member’s Password
+
+Use an assisted reset when a non-administrator needs a temporary password. You need a signed-in administrator account with confirmed MFA. Staff directory editing access alone cannot reset passwords. You can reset Staff Members, IT Staff and users with custom roles, including a disabled user. An administrator changes their own password in **My Account** or uses [account recovery](#recover-your-password-from-sign-in).
+
+1. Open **Staff → Staff Members**. Find the person by name or sign-in username, for example **Jamie Taylor** (`jamie.taylor`). Choose **View Details → Manage Permissions** and check the **Sign-in Username**.
+2. Under **Account controls**, select **Reset Password**. Enter a long, unique **Temporary Password** and repeat it exactly in **Confirm Temporary Password**. Use a password manager or another approved secure method to generate it.
+3. Review the warning, then select **Reset Password** in the dialogue to confirm. **Cancel**, **Close** and Escape discard the temporary entries. If the passwords differ, correct the confirmation before submitting. If the reset reports a failure, refresh the account and verify its current state before trying again.
+4. Wait for the confirmation beneath the reset control. The target’s existing sessions and recovery codes have ended. Their roles, Staff link, authenticator and verified email stay in place. A disabled account stays disabled and must be enabled separately before the person can sign in.
+5. Give Jamie the temporary password using a secure channel outside Caffoot Lite. The person must still complete their own authenticator checks and choose a new password. Confirm that they can complete a fresh sign-in without asking them to disclose their new password.
+
+Caffoot Lite records the administrator, affected account and change in the audit trail. Passwords and authenticator values stay out of the audit record.
+
+![The Reset Password dialogue for Jamie Taylor in desktop light mode with two empty password fields and the warning about ending sessions and recovery codes.](screenshots/stage-6-6-batch-1/reset-password-light-1440.png)
+
+*Review the warning, then confirm the reset or select Cancel.*
 
 ## Set Up And Use MFA
 
@@ -182,7 +217,17 @@ You cannot disable, demote or delete your own signed-in administrator account, a
 4. Enter the app's current six-digit code and select **Confirm MFA Setup**.
 5. After confirmation, sign in again using your password and a current authenticator code. Enrolment itself does not create a normal application session.
 
-For an already-enrolled account, enter username and password first, then provide the six-digit code when prompted by **Verify Your Identity**. Use **Verify & Sign In** if the completed code has not already submitted. Keep the authenticator device's date and time accurate; if a code has expired, use the next one rather than repeatedly submitting the old code.
+### Sign In After Enrolment
+
+1. Enter your **Username** and **Password**, then select **Sign In**. The authenticator field appears after Caffoot Lite verifies the password for an active account that requires a code. A Staff Member such as Jamie Taylor, with no authenticator or MFA requirement, can enter the workspace with their password.
+2. On **Verify Your Identity**, enter the current six-digit **Authenticator Code** from your app. Select **Verify & Sign In** if entering the sixth digit did not submit the form. Select **Back to Sign In** to start again with your username and password.
+3. After successful sign-in, wait for the menu to load. The available destinations depend on your effective permissions. If permissions fail to load, reload the page or sign in again. Contact your administrator if the problem continues.
+
+If you see **Unable to sign in. Please check your credentials or contact your administrator.**, check your username and password. The same message covers incorrect credentials and unavailable accounts. At **Verify Your Identity**, check the time on your authenticator device and try the next code if the previous one expired. After repeated failures, wait for the temporary sign-in limit to expire. For lost credentials, see [Account Recovery](../../../development-guide/Account-Recovery.md) or contact your administrator.
+
+![The desktop light sign-in form shows Username and Password.](screenshots/stage-6-6-batch-1/sign-in-light-1440.png)
+
+![The mobile dark Verify Your Identity form shows the authenticator code after a valid password.](screenshots/stage-6-6-batch-1/authenticator-dark-390.png)
 
 ### Voluntary Enrolment And Eligible Removal
 
@@ -198,6 +243,21 @@ Once enrolled, MFA remains required at sign-in even if a role is disabled or rem
 Removal is unavailable for Administrators, accounts with any enabled additional role, or accounts with wider effective Read/Edit access. The server rechecks eligibility and credentials before saving. Losing an authenticator does not make required MFA optional; contact the administrator and use maintained recovery guidance where applicable.
 
 ## Change Your Password Safely
+
+### After An Administrator Gives You A Temporary Password
+
+1. At **Sign In**, enter your username and the temporary password. For example, Jamie Taylor enters `jamie.taylor` and the password their administrator supplied privately.
+2. If prompted, enter the six-digit authenticator code. If **Secure Your Account** appears first, [complete enrolment](#required-enrolment-at-sign-in) and sign in again with the temporary password and your authenticator.
+3. On **Change Your Password**, enter a personal **New Password** and repeat it in **Confirm New Password**. Select **Change Password**. Use a password different from the temporary password. Correct any mismatch and submit again.
+4. When you see **Password changed successfully. Sign in again with your new password.**, enter the new password on the sign-in screen and provide your authenticator code if prompted. Only that fresh sign-in opens the workspace.
+
+**Back to Sign In** clears the form. The password change remains required the next time you sign in with the temporary password. If the change screen expires, begin again at sign-in. If the administrator resets the account again, use the latest temporary password. If the account is disabled, ask your administrator to check its status. A verified-email recovery can also complete the required password change when recovery is available and you choose a different password.
+
+![Change Your Password in mobile dark mode with empty New Password and Confirm New Password fields.](screenshots/stage-6-6-batch-1/change-temporary-password-dark-390.png)
+
+*The same sign-in page returns after a successful change and prompts you to use your new password.* [Capture variants and provenance](screenshots/stage-6-6-batch-1/README.md)
+
+### Change Your Password From My Account
 
 1. Open **My Account → Security → Change Password**.
 2. Enter **Current Password**.
@@ -224,6 +284,8 @@ You need an active Caffoot Lite account, a verified email address saved to that 
 4. If you have enrolled MFA, enter the current six-digit **Authenticator Code (If Enrolled)**. This is the code from your authenticator app.
 5. Select **Recover Password**. If the passwords differ, the form shows **The new passwords do not match.** and returns focus to **Confirm New Password**. Correct the entries and try again. A mismatch or empty field leaves your password and recovery challenge unchanged. The confirmation entry stays in the browser and is cleared with the new password when the form is reset.
 6. When Caffoot Lite reports that the password was updated, both password fields clear and your existing sessions end. Use **Back To Sign In** and sign in with the new password and your authenticator if required.
+
+If an administrator has set a temporary password, successful recovery also clears the required password change. Enter a different password at step 3 and still complete all recovery and authenticator checks.
 
 ![The Request a Recovery Code step on desktop with the recovery Username, Request Recovery Code and Back To Sign In.](screenshots/recovery-request-desktop.png)
 

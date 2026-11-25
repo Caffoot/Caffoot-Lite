@@ -1,6 +1,6 @@
 # Draft v2.2 User And Administrator Guides
 
-> **Draft v2.2 — Unreleased.** The Stage 6.2 starting integration checkpoint is `2107de3668b08c5abdfdae6fe231a3114bbfc380` (schema 28), after the Stage 5.1–5.6 merges. The [Development Status](../../../development-guide/Development-Status.md) records the remaining checks. Use the [published v2.1 guides](https://github.com/Caffoot/Caffoot-Lite/tree/v2.1/docs/how-tos/features-and-instructions) for the current release.
+> **Draft v2.2 — Unreleased.** Stage 6.6 Batch 1 adds account and Device handover changes in the schema 30 review candidate. The [development handover](../../../development-handovers/milestone-01.md) records the checks and acceptance gates. Use the [published v2.1 guides](https://github.com/Caffoot/Caffoot-Lite/tree/v2.1/docs/how-tos/features-and-instructions) for the current release.
 
 Caffoot Lite brings accounts, Staff Members, Departments, Devices and optional IT Assets together so your team can record who holds equipment, what is physically in stock and what is ready to issue. These guides explain workflows for ordinary users, IT technicians and administrators, including Suppliers and Equipment Lifecycle in Stage 4. Examples use fictional people, organisations and equipment.
 
@@ -27,6 +27,8 @@ This is a change to how dates are **entered and shown**, not to the dates alread
 | Understand Staff Member, IT Staff, shared roles and individual overrides | [Roles, Section Permissions And MFA](Roles-Section-Permissions-and-MFA.md) |
 | Add a login, resolve linked profile differences or open Manage Permissions | [Staff Members](Staff-Members.md) |
 | Enrol MFA, recover a password or understand a session ending | [Roles, Section Permissions And MFA](Roles-Section-Permissions-and-MFA.md) |
+| Reset an ordinary user’s password or sign in with a temporary password | [Reset a Staff Member’s password](Roles-Section-Permissions-and-MFA.md#reset-a-staff-members-password) · [Change a temporary password](Roles-Section-Permissions-and-MFA.md#after-an-administrator-gives-you-a-temporary-password) |
+| Check eligibility and promote an existing user to Administrator | [Make an existing user an Administrator](Roles-Section-Permissions-and-MFA.md#make-an-existing-user-an-administrator) |
 | Edit, preview, test and publish email wording or set shared branding | [Email Templates And Company Branding](Email-Templates-and-Company-Branding.md) |
 | Enable sections, preserve Rack information or record/link basic IPv4 addresses | [Optional Features, Basic IPv4 And Link To IPAM](Optional-Features-and-Link-To-IPAM.md) |
 

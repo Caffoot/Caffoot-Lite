@@ -38,6 +38,15 @@ module.exports=async function verifySubnetFirstIpam({page,reference,sourceBase,c
  let failedReadback=false;await context.route('**/api/inventory/state',route=>{if(!failedReadback){failedReadback=true;return route.fulfill({status:503,contentType:'application/json',body:JSON.stringify({error:'Fictional unavailable readback'})});}return route.continue();});
  await page.locator('#subnet-batch-preview [type=submit]').click();await saved();await context.unroute('**/api/inventory/state');assert(failedReadback);snapshot=await state();const parent=snapshot.subnets.find(s=>s.name==='Fictional office');assert(parent);const children=snapshot.subnets.filter(s=>s.parentId===parent.id);assert.equal(children.length,10);assert(!('gateway'in children.find(s=>s.purpose==='VPN')));assert.equal(snapshot.vlans.find(v=>v.parentId===parent.id).vlanId,11);
  check('New parent and ten individually reviewed networks save atomically; row errors block all writes and Back/recalculation preserves manual gateways');
+ // The deliberately failed readback also leaves effective permissions unconfirmed (#455).
+ assert.equal(await page.locator('#sidebar[data-inventory-permissions-pending]').count(),1);
+ assert.equal(await page.locator('#sidebar [data-action=tab-ipam]').isVisible(),false);
+ assert.equal(await page.locator('#sidebar [data-action=tab-devices]').isVisible(),false);
+ await page.reload();await page.locator('#app[aria-busy=false]').waitFor();
+ assert.equal(await page.locator('#sidebar[data-inventory-permissions-pending]').count(),0);
+ await page.locator('#sidebar [data-action=tab-ipam]').waitFor({state:'visible'});
+ await page.locator('#sidebar [data-action=tab-devices]').waitFor({state:'visible'});
+ check('Failed inventory readback hides restricted navigation; successful reload restores authorised navigation');
  await generator({mode:'existing',parent:parent.id,start:'10.81.10.0',count:'50',convention:'Last usable IP'});await preview();assert.equal(await page.locator('[data-subnet-row]').count(),50);assert.equal(await page.locator('#subnet-row-49-gateway').inputValue(),'10.81.59.254');
  for(const [width,height]of [[1440,950],[1366,600],[390,844],[320,568]])for(const theme of ['light','dark']){
   await page.setViewportSize({width,height});await page.evaluate(theme=>document.documentElement.classList.toggle('dark',theme==='dark'),theme);await page.bringToFront();await page.screenshot({path:path.join(folder,`preview-${width}-${theme}.png`),animations:'disabled'});

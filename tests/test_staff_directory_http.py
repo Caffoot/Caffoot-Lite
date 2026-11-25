@@ -142,7 +142,7 @@ class StaffDirectoryHttpTests(unittest.TestCase):
                 ('Alex', 'Rivers', 'Alex R', 'verified@example.test', 1))
             self.assertEqual(db.execute('SELECT token_hash FROM account_email_proofs WHERE account_id=4').fetchone(), ('existing-proof',))
             self.assertIsNone(db.execute('SELECT 1 FROM account_profiles WHERE account_id=5').fetchone())
-            self.assertEqual(db.execute('SELECT max(version) FROM schema_migrations').fetchone(), (29,))
+            self.assertEqual(db.execute('SELECT max(version) FROM schema_migrations').fetchone(), (30,))
             preserved = list(db.iterdump())
         initialise_server_database()
         with sqlite3.connect(self.path) as db:
@@ -322,9 +322,18 @@ class StaffDirectoryHttpTests(unittest.TestCase):
         self.assertEqual(status, 200, response)
         staff = response['staffMember']
         self.assertTrue(staff['accountId'])
-        status, response, _ = self.request(method='POST', payload=payload)
+        with sqlite3.connect(self.path) as db:
+            accounts = db.execute('SELECT id,username,password_hash FROM accounts ORDER BY id').fetchall()
+            staff_members = db.execute('SELECT id,account_id FROM staff_members ORDER BY id').fetchall()
+        duplicate = {**payload, 'firstName': 'Another', 'login': {'username': 'NeW', 'password': 'different-password'}}
+        self.assertEqual(self.request(method='POST', actor=2, payload=duplicate)[0], 403)
+        status, response, _ = self.request(method='POST', payload=duplicate)
         self.assertEqual(status, 409)
-        self.assertEqual(response, {'error': 'Directory record conflict'})
+        self.assertEqual(response, {'error': 'This username is already in use. Please choose another username.',
+                                    'code': 'duplicate_username'})
+        with sqlite3.connect(self.path) as db:
+            self.assertEqual(db.execute('SELECT id,username,password_hash FROM accounts ORDER BY id').fetchall(), accounts)
+            self.assertEqual(db.execute('SELECT id,account_id FROM staff_members ORDER BY id').fetchall(), staff_members)
         status, response, _ = self.request('/api/staff-members/person/login', method='POST', actor=2, payload=payload['login'])
         self.assertEqual(status, 403)
         self.assertEqual(self.request('/api/staff-members/person/login', method='POST', payload=payload['login'])[0], 409)
@@ -340,7 +349,8 @@ class StaffDirectoryHttpTests(unittest.TestCase):
         self.assertEqual(self.request('/api/departments/' + identifier + '/delete', method='POST', actor=5, payload={})[0], 200)
         self.assertEqual(self.request('/api/departments/' + identifier)[0], 404)
         self.assertEqual(self.request('/api/departments/dept', method='POST', actor=5, payload={'archived': True})[0], 200)
-        self.assertEqual(self.request(method='POST', actor=2, payload=dict(firstName='A', lastName='B', departmentId='dept'))[0], 409)
+        status, body, _ = self.request(method='POST', actor=2, payload=dict(firstName='A', lastName='B', departmentId='dept'))
+        self.assertEqual((status, body), (409, {'error': 'Directory record conflict'}))
         self.assertEqual(self.request('/api/departments/dept', method='POST', actor=5, payload={'archived': False})[0], 200)
         for department in ('dept', None):
             revision = self.request('/api/staff-members/person', actor=2)[1]['staffMember']['revision']

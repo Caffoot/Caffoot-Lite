@@ -45,7 +45,7 @@ class SharedDeviceSchemaTests(unittest.TestCase):
         schema.initialise_database(self.db)
         self.assertCountEqual(self.db.execute('SELECT name,seq FROM sqlite_sequence').fetchall(),
                               [*sequence, ('device_assignment_departments', 1)])
-        self.assertEqual(self.db.execute('SELECT max(version) FROM schema_migrations').fetchone(), (29,))
+        self.assertEqual(self.db.execute('SELECT max(version) FROM schema_migrations').fetchone(), (30,))
         for table, (columns, rows) in originals.items():
             if table != 'schema_migrations':
                 self.assertCountEqual(self.db.execute(f'SELECT {columns} FROM {table}').fetchall(), rows, table)

@@ -52,13 +52,13 @@ from .audit_events import record_actor_event
 from .account_email import (MAIL_REQUESTS, REQUEST_MESSAGE, issue_email_proof,
                             confirm_email_proof, queue_email, security_recipients,
                             notify_security_change, record_blocked_sign_in,
-                            role_change_notifications)
+                            role_change_notifications, TemporaryPasswordReuse)
 from .profiles import (read_profile, save_profile, read_profile_photo,
                        save_profile_photo, remove_profile_photo, reconcile_saved_staff_profiles,
                        StaleProfileEdit, MAX_PHOTO_BYTES)
 from .schema import initialise_database as migrate_database
 from .accounts import bootstrap_first_admin, confirm_admin_mfa, verify_password, hash_password
-from .authentication import MFAEnrolmentRequired
+from .authentication import MFACodeRequired, MFAEnrolmentRequired
 from .account_security import (start_required_mfa_enrolment,
                                confirm_required_mfa_enrolment, remove_own_mfa)
 from .mfa import new_secret, provisioning_uri, verify_code
@@ -67,7 +67,9 @@ from .request_auth import authenticated_account, csrf_for_session
 from .http_security import read_session_cookie, session_cookie, clear_session_cookie
 from .request_auth import login, logout, THROTTLE
 from .permissions import (can_access, feature_enabled, create_user,
-                          set_account_active, set_administrator, delete_user)
+                          set_account_active, set_administrator, delete_user,
+                          reset_user_password)
+from .sessions import PasswordChangeRequired, complete_password_change
 from .role_policy import evaluate_role_policy
 from .roles import (preview_role_change, confirm_role_change, role_catalogue,
                     account_access_details)
@@ -86,7 +88,8 @@ from .equipment_associations import read_equipment_associations, add_associated_
 from .device_handovers import reassign_device
 from .staff_directory import (require_directory_access, list_directory,
                                read_staff_member, read_department,
-                               save_staff_member, save_department, unique_directory_fields, StaleStaffEdit,
+                               save_staff_member, save_department, unique_directory_fields,
+                               DuplicateStaffLoginUsername, StaleStaffEdit,
                                list_staff_department_choices)
 
 DB_PATH = Path(os.environ.get("CAFFOOT_DB_PATH", "/data/caffoot.sqlite3"))
@@ -354,14 +357,15 @@ class Handler(BaseHTTPRequestHandler):
                     self.respond(403, {"error": "forbidden"})
                     return
                 users = []
-                for user_id, username, is_admin, active, mfa_confirmed in connection.execute(
-                    "SELECT id,username,is_admin,active,mfa_confirmed FROM accounts ORDER BY id"
+                for user_id, username, is_admin, active, mfa_confirmed, must_change in connection.execute(
+                    "SELECT id,username,is_admin,active,mfa_confirmed,must_change_password FROM accounts ORDER BY id"
                 ):
                     permissions = evaluate_role_policy(connection, user_id).permissions
                     users.append({
                         "id": user_id, "username": username,
                         "isAdmin": bool(is_admin), "active": bool(active),
                         "mfaEnrolled": bool(mfa_confirmed),
+                        "mustChangePassword": bool(must_change),
                         "permissions": permissions,
                         "accessDetails": account_access_details(connection, user_id),
                         "profile": read_profile(connection, account_id, user_id),
@@ -603,7 +607,7 @@ class Handler(BaseHTTPRequestHandler):
             return
         if self.path in ("/api/account/profile", "/api/account/photo/remove",
                          "/api/users/create", "/api/users/profile", "/api/users/active",
-                         "/api/users/admin", "/api/users/delete", "/api/settings/email",
+                         "/api/users/admin", "/api/users/delete", "/api/users/reset-password", "/api/settings/email",
                          "/api/settings/email/test", "/api/account/password",
                          "/api/account/mfa/start", "/api/account/mfa/confirm", "/api/account/mfa/remove",
                          "/api/devices/edit/start", "/api/devices/edit/cancel",
@@ -620,7 +624,7 @@ class Handler(BaseHTTPRequestHandler):
         if self.path in IMPORT_ROUTES:
             self.handle_import()
             return
-        if self.path not in ("/api/login", "/api/login/mfa/start", "/api/login/mfa/confirm",
+        if self.path not in ("/api/login", "/api/login/mfa/start", "/api/login/mfa/confirm", "/api/login/change-password",
                              "/api/logout", "/api/setup", "/api/setup/mfa", "/api/setup/mfa-secret"):
             self.respond(404, {"error": "not found"})
             return
@@ -648,9 +652,28 @@ class Handler(BaseHTTPRequestHandler):
             self.respond(415, {"error": "JSON required"})
             return
         try:
-            payload = json.loads(self.rfile.read(int(length)))
+            duplicate_check = unique_directory_fields if self.path == "/api/login/change-password" else None
+            payload = json.loads(self.rfile.read(int(length)), object_pairs_hook=duplicate_check)
         except (UnicodeDecodeError, ValueError):
             self.respond(400, {"error": "invalid JSON"})
+            return
+        if self.path == "/api/login/change-password":
+            if (not isinstance(payload, dict) or set(payload) != {"proof", "password", "confirmation"}
+                    or not all(isinstance(value, str) for value in payload.values())):
+                self.respond(400, {"error": "invalid request"})
+                return
+            try:
+                with connect() as connection:
+                    complete_password_change(connection, payload["proof"], payload["password"], payload["confirmation"])
+            except PermissionError:
+                self.respond(401, {"error": "Sign in again to change your temporary password.",
+                                   "code": "password_change_expired"})
+            except ValueError as exc:
+                self.respond(400, {"error": str(exc)})
+            except sqlite3.Error:
+                self.respond(503, {"error": "database unavailable"})
+            else:
+                self.respond(200, {"status": "password changed"})
             return
         if not isinstance(payload, dict) or not isinstance(payload.get("username"), str) or not isinstance(payload.get("password"), str):
             self.respond(400, {"error": "invalid credentials"})
@@ -748,6 +771,12 @@ class Handler(BaseHTTPRequestHandler):
                 )
         except MFAEnrolmentRequired:
             self.respond(200, {"status": "mfa enrolment required"})
+            return
+        except MFACodeRequired:
+            self.respond(401, {"error": "invalid credentials", "code": "mfa_required"})
+            return
+        except PasswordChangeRequired as exc:
+            self.respond(200, {"status": "password change required", "proof": exc.proof})
             return
         if token is None:
             if not THROTTLE.allowed(self.client_address[0], payload["username"]):
@@ -1250,6 +1279,8 @@ class Handler(BaseHTTPRequestHandler):
             self.respond(404, {'error': str(exc)})
         except StaleStaffEdit as exc:
             self.respond(409, {'error': str(exc), 'code': 'stale_staff_edit'})
+        except DuplicateStaffLoginUsername as exc:
+            self.respond(409, {'error': str(exc), 'code': 'duplicate_username'})
         except (FileExistsError, sqlite3.IntegrityError):
             self.respond(409, {'error': 'Directory record conflict'})
         except (ValueError, TypeError) as exc:
@@ -1424,7 +1455,8 @@ class Handler(BaseHTTPRequestHandler):
             "/api/users/admin", "/api/users/create", "/api/users/delete")
         try:
             duplicate_check = {"/api/devices/ipam/link": unique_link_fields,
-                               "/api/devices/edit/save": unique_feature_fields}.get(self.path)
+                               "/api/devices/edit/save": unique_feature_fields,
+                               "/api/users/reset-password": unique_directory_fields}.get(self.path)
             payload = json.loads(self.rfile.read(int(length)), object_pairs_hook=duplicate_check)
             if not isinstance(payload, dict):
                 raise ValueError("Invalid user request")
@@ -1765,8 +1797,15 @@ class Handler(BaseHTTPRequestHandler):
                     elif self.path == "/api/users/admin":
                         if set(payload) != {"userId", "isAdmin"}:
                             raise ValueError("Invalid administrator request")
-                        set_administrator(connection, actor, payload["userId"], payload["isAdmin"])
+                        set_administrator(connection, actor, payload["userId"], payload["isAdmin"],
+                                          session_token=read_session_cookie(self.headers.get("Cookie")))
                         result = {"status": "updated"}
+                    elif self.path == "/api/users/reset-password":
+                        if set(payload) != {"userId", "password", "confirmation"}:
+                            raise ValueError("Temporary password and confirmation required")
+                        active = reset_user_password(connection, actor, read_session_cookie(self.headers.get("Cookie")),
+                                                     payload["userId"], payload["password"], payload["confirmation"])
+                        result = {"status": "password reset", "active": active}
                     else:
                         raise ValueError("Unknown account operation")
 
@@ -1873,6 +1912,8 @@ class Handler(BaseHTTPRequestHandler):
                 recipients.update(security_recipients(connection, administrators=True))
             notify_security_change(smtp_config_path(DB_PATH), recipients, database_path=DB_PATH)
             self.respond(200, {"status": "Email verified" if private else "Password updated; sign in with your authenticator if required"})
+        except TemporaryPasswordReuse as exc:
+            self.respond(400, {"error": str(exc)})
         except (ValueError, TypeError):
             self.respond(400, {"error": "Invalid or expired confirmation"})
         except (OSError, smtplib.SMTPException):

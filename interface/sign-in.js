@@ -18,6 +18,16 @@ else if(signInThemeMedia?.addListener)signInThemeMedia.addListener(applySignInTh
 let mode='login';
 let setupWelcomeAcknowledged=false;
 let csrfToken='';
+let pendingCredentials=null;
+let passwordChangeProof='';
+const neutralSignInFailure='Unable to sign in. Please check your credentials or contact your administrator.';
+function clearPasswordField(id){
+ $(id).value='';$(id).type='password';
+ document.querySelector('[data-reveal="'+id+'"]').textContent='Show';
+}
+function clearPasswordChange(){
+ passwordChangeProof='';clearPasswordField('new-password');clearPasswordField('confirm-new-password');
+}
 function showMfaQr(id,uri){
  const holder=$(id);holder.replaceChildren();
  try{
@@ -44,7 +54,9 @@ async function showSession(){
 }
 async function request(path,data){
  const r=await fetch(path,{method:'POST',headers:{'Content-Type':'application/json',...(csrfToken?{'X-CSRF-Token':csrfToken}:{})},body:JSON.stringify(data)});
- const payload=await r.json();if(!r.ok)throw Error(payload.error||'Request failed');return payload;
+ const payload=await r.json();
+ if(!r.ok)throw Object.assign(Error(payload.error||'Request failed'),{code:payload.code});
+ return payload;
 }
 function display(){
  $('password-recovery').hidden=!['login','login-mfa'].includes(mode);
@@ -52,6 +64,7 @@ function display(){
  const welcomeIsVisible=mode==='setup'&&!setupWelcomeAcknowledged;
  const complete=mode==='complete';
  const enrolling=mode==='enrol'||mode==='required-enrol';
+ const changingPassword=mode==='change-password';
  $('setup-complete').hidden=!complete;
  $('resume-hint').hidden=mode!=='resume';
  for(const id of ['auth-heading','auth-eyebrow','intro'])$(id).hidden=complete;
@@ -64,21 +77,26 @@ function display(){
  $('back-to-welcome').hidden=mode!=='setup';
  $('welcome-flow').hidden=!welcomeIsVisible;
  $('form').hidden=welcomeIsVisible||complete;
- $('credentials').hidden=enrolling||mode==='login-mfa';
- $('back-to-login').hidden=!['login-mfa','required-enrol'].includes(mode);
+ $('credentials').hidden=enrolling||mode==='login-mfa'||changingPassword;
+ $('username').required=$('password').required=!$('credentials').hidden;
+ $('change-password-fields').hidden=!changingPassword;
+ $('new-password').required=$('confirm-new-password').required=changingPassword;
+ $('back-to-login').hidden=!['login-mfa','required-enrol','change-password'].includes(mode);
  $('auth-heading').textContent=welcomeIsVisible?'Welcome to Caffoot Lite':
    mode==='setup'?'Create Your Administrator':
    enrolling?'Secure Your Account':
    mode==='resume'?'Finish Administrator Setup':
+   changingPassword?'Change Your Password':
    mode==='login-mfa'?'Verify Your Identity':'Welcome Back';
  $('auth-eyebrow').textContent=mode==='setup'?'First-Time Setup':
-   enrolling||mode==='login-mfa'?'Account Security':'Welcome to Caffoot Lite';
+   enrolling||mode==='login-mfa'||changingPassword?'Account Security':'Welcome to Caffoot Lite';
  $('message').textContent='';
+ $('message').classList.remove('good');
  $('enrolment').hidden=!enrolling;
  $('enrolment').classList.toggle('required-mfa-enrolment',mode==='required-enrol');
  $('code-field').hidden=!enrolling&&mode!=='login-mfa';
- $('intro').textContent=welcomeIsVisible?'Your self-hosted workspace is ready to configure. Two essential steps will secure your first administrator account.':mode==='setup'?'Choose a username and password for your first administrator account. Authenticator enrolment follows.':mode==='required-enrol'?'Your assigned roles or access require MFA. Add this account to your authenticator, confirm its code, then sign in again.':mode==='enrol'?'Add the administrator account to your authenticator app, then confirm the six-digit code it generates.':mode==='resume'?'Sign in with your administrator credentials to resume MFA enrolment.':mode==='login-mfa'?'Enter the six-digit code from your authenticator app to finish signing in.':'Sign in with your Caffoot Lite account to access your infrastructure workspace.';
- $('submit').textContent=mode==='setup'?'Continue To Authenticator Setup':enrolling?'Confirm MFA Setup':mode==='resume'?'Continue Enrolment':mode==='login-mfa'?'Verify & Sign In':'Sign In';
+ $('intro').textContent=welcomeIsVisible?'Your self-hosted workspace is ready to configure. Two essential steps will secure your first administrator account.':mode==='setup'?'Choose a username and password for your first administrator account. Authenticator enrolment follows.':mode==='required-enrol'?'Your assigned roles or access require MFA. Add this account to your authenticator, confirm its code, then sign in again.':mode==='enrol'?'Add the administrator account to your authenticator app, then confirm the six-digit code it generates.':mode==='resume'?'Sign in with your administrator credentials to resume MFA enrolment.':mode==='login-mfa'?'Enter the six-digit code from your authenticator app to finish signing in.':changingPassword?'Your administrator has reset your password. Choose a new password before you can access Caffoot Lite.':'Sign in with your Caffoot Lite account to access your infrastructure workspace.';
+ $('submit').textContent=mode==='setup'?'Continue To Authenticator Setup':enrolling?'Confirm MFA Setup':mode==='resume'?'Continue Enrolment':mode==='login-mfa'?'Verify & Sign In':changingPassword?'Change Password':'Sign In';
  $('password').autocomplete=mode==='setup'?'new-password':'current-password';
  $('code').required=enrolling||mode==='login-mfa';
 }
@@ -97,7 +115,7 @@ function display(){
   history.replaceState(null,'','/setup'+window.location.search);
  }
  if(window.location.hash==='#mfa-removed'){
-  $('message').style.color='#166534';$('message').textContent='MFA removed. All sessions have ended. Sign in again.';
+  $('message').classList.add('good');$('message').textContent='MFA removed. All sessions have ended. Sign in again.';
   history.replaceState(null,'','/setup');
  }
 }catch(e){$('intro').textContent=e.message}})();
@@ -105,7 +123,7 @@ $('get-started').addEventListener('click',()=>{
  setupWelcomeAcknowledged=true;display();$('username').focus();
 });
 $('back-to-login').addEventListener('click',()=>{
- clearRequiredMfaDisplay();mode='login';display();$('username').focus();
+ pendingCredentials=null;clearPasswordField('password');clearPasswordChange();clearRequiredMfaDisplay();mode='login';display();$('username').focus();
 });
 document.querySelectorAll('[data-reveal]').forEach(button=>{
  button.addEventListener('click',()=>{
@@ -114,15 +132,15 @@ document.querySelectorAll('[data-reveal]').forEach(button=>{
   button.textContent=input.type==='password'?'Show':'Hide';
  });
 });
-$('username').addEventListener('input',()=>{if(mode==='login-mfa'){mode='login';$('code').value='';display();}});
-$('password').addEventListener('input',()=>{if(mode==='login-mfa'){mode='login';$('code').value='';display();}});
 $('code').addEventListener('input',()=>{
  if(mode==='login-mfa' && /^[0-9]{6}$/.test($('code').value) && !$('submit').disabled)
    $('form').requestSubmit();
 });
 $('form').addEventListener('submit',async e=>{
- e.preventDefault();$('submit').disabled=true;$('message').textContent='';
- const data={username:$('username').value,password:$('password').value};
+ e.preventDefault();
+ if($('submit').disabled)return;
+ $('submit').disabled=$('back-to-login').disabled=true;$('message').textContent='';$('message').classList.remove('good');
+ const data=pendingCredentials||{username:$('username').value,password:$('password').value};
  try{
  if(mode==='setup'){
    if($('password').value!==$('confirm-password').value)throw Error('The passwords do not match.');
@@ -131,31 +149,56 @@ $('form').addEventListener('submit',async e=>{
    const r=await request('/api/setup/mfa-secret',data);$('secret').textContent=r.mfaSecret;mode='enrol';display();showMfaQr('setup-qr',r.mfaUri);
  }else if(mode==='required-enrol'){
    await request('/api/login/mfa/confirm',{...data,mfa_code:$('code').value});
-   clearRequiredMfaDisplay();$('password').value='';mode='login';display();
-   $('message').style.color='#166534';$('message').textContent='MFA enrolled. Sign in again with your password and authenticator code.';
+   pendingCredentials=null;clearRequiredMfaDisplay();clearPasswordField('password');mode='login';display();
+   $('message').classList.add('good');$('message').textContent='MFA enrolled. Sign in again with your password and authenticator code.';
    $('username').focus();
  }else if(mode==='enrol'){
    await request('/api/setup/mfa',{...data,mfa_code:$('code').value});
    $('code').value='';$('confirm-password').value='';$('secret').replaceChildren();$('setup-qr').replaceChildren();
    mode='complete';display();
+ }else if(mode==='change-password'){
+   const password=$('new-password').value,confirmation=$('confirm-new-password').value;
+   if(password!==confirmation){$('confirm-new-password').focus();throw Error('The passwords do not match.');}
+   try{
+     await request('/api/login/change-password',{proof:passwordChangeProof,password,confirmation});
+   }catch(error){
+     if(error.code==='password_change_expired'){
+       clearPasswordChange();mode='login';display();$('password').focus();
+     }else $('new-password').focus();
+     throw error;
+   }
+   clearPasswordChange();mode='login';display();$('password').focus();
+   $('message').classList.add('good');$('message').textContent='Password changed successfully. Sign in again with your new password.';
  }else{
    try{
      const result=await request('/api/login',{...data,...(mode==='login-mfa'?{mfa_code:$('code').value}:{})});
      if(result.status==='mfa enrolment required'){
        const enrolment=await request('/api/login/mfa/start',data);
+       pendingCredentials=data;clearPasswordField('password');
        mode='required-enrol';$('code').value='';display();
        $('secret').textContent=enrolment.mfaSecret;showMfaQr('setup-qr',enrolment.mfaUri);$('code').focus();return;
      }
+     pendingCredentials=null;clearPasswordField('password');$('code').value='';
+     if(result.status==='password change required'){
+       passwordChangeProof=result.proof;mode='change-password';display();$('new-password').focus();return;
+     }
      if(!await showSession())throw Error('Unable to load session');
    }catch(error){
-     if(mode==='login' && error.message==='invalid credentials'){
+     if(mode==='login' && error.code==='mfa_required'){
+       pendingCredentials=data;clearPasswordField('password');
        mode='login-mfa';display();$('code').focus();
-       $('message').textContent='If your account uses an authenticator, enter its code. Otherwise check your username and password.';
-     }else throw error;
+       return;
+     }
+     if(mode==='login'){
+       clearPasswordField('password');$('password').focus();
+     }else if(mode==='login-mfa'){
+       $('code').value='';$('code').focus();
+     }
+     throw error.message==='invalid credentials'?Error(neutralSignInFailure):error;
    }
  }
- }catch(err){$('message').style.color='#b91c1c';$('message').textContent=err.message}
- finally{$('submit').disabled=false}
+ }catch(err){$('message').textContent=err.message}
+ finally{$('submit').disabled=$('back-to-login').disabled=false}
 });
 
 // Trim pasted padding before the browser applies the eight-character limit.
@@ -253,11 +296,11 @@ for(const id of ['recovery-request-form','recovery-confirm-form']){
 
 $('back-to-welcome').addEventListener('click',()=>{setupWelcomeAcknowledged=false;display();});
 $('setup-continue-sign-in').addEventListener('click',()=>{
- mode='login';$('code').value='';display();$('message').style.color='#166534';$('message').textContent='MFA enrolled. Sign in to continue.';
+ mode='login';$('code').value='';display();$('message').classList.add('good');$('message').textContent='MFA enrolled. Sign in to continue.';
 });
 
 // Clear the displayed key when an existing-account enrolment is left or completed.
 function clearRequiredMfaDisplay(){
  $('code').value='';$('secret').replaceChildren();$('setup-qr').replaceChildren();
 }
-window.addEventListener('pagehide',()=>{clearRequiredMfaDisplay();$('password').value='';});
+window.addEventListener('pagehide',()=>{pendingCredentials=null;clearRequiredMfaDisplay();clearPasswordField('password');clearPasswordChange();});

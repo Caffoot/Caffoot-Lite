@@ -102,7 +102,9 @@ async function confirm(page){
   await checked(page,'Role create uses preview then confirmation and leaves the new role unassigned');
   await openStaffAccount(page,'colleague');
   assert.equal(await page.locator('#user-first-name').inputValue(),'Test');assert.ok(await page.locator('#user-first-name').isEditable());
-  await page.locator('#user-first-name').fill('Updated');await page.locator('#next-user-profile-form [type="submit"]').click();
+  await page.locator('#user-first-name').fill('Updated');
+  await page.locator('#user-email').fill('colleague@example.test');
+  await page.locator('#next-user-profile-form [type="submit"]').click();
   await page.waitForFunction(()=>document.querySelector('#user-first-name')?.value==='Updated'&&!document.querySelector('#next-user-profile-form [type="submit"]').disabled);
   await audit(page,'user-additions',{include:['.role-memberships','.role-permission-summary']});
   const member=page.locator('[data-role-membership="'+role.id+'"]');await member.click();
@@ -152,7 +154,10 @@ async function confirm(page){
   await page.waitForFunction(()=>document.querySelector('[data-next-user-operation="active"]')?.textContent==='Enable');
   await page.locator('[data-next-user-operation="active"]').click();
   await page.waitForFunction(()=>document.querySelector('[data-next-user-operation="active"]')?.textContent==='Disable');
-  assert.ok(await page.locator('[data-next-user-operation="admin"]').isEnabled());assert.ok(await page.locator('[data-next-user-operation="delete"]').isEnabled());
+  const administratorAction=page.locator('[data-next-user-operation="admin"]');
+  assert.equal(await administratorAction.textContent(),'Make admin');
+  assert.ok(await administratorAction.isDisabled());
+  assert.ok(await page.locator('[data-next-user-operation="delete"]').isEnabled());
   for(const width of [320,390,768,1440]){
    await page.setViewportSize({width,height:950});
    assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'Document overflow at '+width);
@@ -201,14 +206,32 @@ async function confirm(page){
   assert.equal(await signIn.locator('.optional-mfa-removal').count(),0);
   const requiredSession=await (await workerContext.request.get(address+'/api/session')).json();assert.equal(requiredSession.mfa_removal_eligible,false);
   assert.equal((await workerContext.request.post(address+'/api/account/mfa/remove',{headers:{Origin:address,'X-CSRF-Token':requiredSession.csrf_token},data:{password:'Test-Colleague-2026!',code:code(secret)}})).status(),403);
+  await openStaffAccount(page,'colleague');
+  assert.ok(await administratorAction.isDisabled());
+  await page.getByText('The user must verify their email address in My Account before becoming an administrator.',{exact:true}).waitFor();
+  // Issue the fixture's confirmation code directly, then verify it through the live account endpoint.
+  const [token,email,challengeId]=JSON.parse(python(`
+import json, sqlite3, sys
+from backend.account_email import issue_email_proof
+with sqlite3.connect(sys.argv[1]) as db:
+    print(json.dumps(issue_email_proof(db, int(sys.argv[2]), 'verify')))
+`,[path.join(tmp,'inventory.sqlite3'),String(worker.id)]));
+  assert.equal(email,'colleague@example.test');
+  const verification=await workerContext.request.post(address+'/api/account/email/confirm',{
+   headers:{Origin:address,'X-CSRF-Token':requiredSession.csrf_token},
+   data:{password:'Test-Colleague-2026!',token,challengeId},
+  });
+  assert.equal(verification.status(),200);
+  assert.deepEqual(await verification.json(),{status:'Email verified'});
   await workerContext.close();
   await openStaffAccount(page,'colleague');
-  await page.locator('[data-next-user-operation="admin"]').click();await page.waitForFunction(()=>document.querySelector('[data-next-user-operation="admin"]')?.textContent==='Remove admin');
+  assert.ok(await administratorAction.isEnabled());
+  await administratorAction.click();await page.waitForFunction(()=>document.querySelector('[data-next-user-operation="admin"]')?.textContent==='Remove admin');
   assert.ok((await catalogue(context)).users.find(user=>user.id===worker.id).isAdmin);
-  await page.locator('[data-next-user-operation="admin"]').click();await page.waitForFunction(()=>document.querySelector('[data-next-user-operation="admin"]')?.textContent==='Make admin');
+  await administratorAction.click();await page.waitForFunction(()=>document.querySelector('[data-next-user-operation="admin"]')?.textContent==='Make admin');
   assert.equal((await catalogue(context)).users.find(user=>user.id===worker.id).isAdmin,false);
   await page.locator('[data-action="users-close-editor"]').first().click();await page.locator('#sidebar [data-tab="users"]').click();await page.locator('[data-action="select-users-section"][data-tab="roles"]').click();
-  await checked(page,'Retained independent Administrator promotion and demotion work after confirmed MFA without replacing role controls');
+  await checked(page,'Promotion requires both confirmed MFA and verified email. Eligible promotion and demotion retain the existing role controls.');
 
   await page.locator('[data-role-command="edit"][data-role-id="'+role.id+'"]').click();await page.locator('[data-role-command="delete"]').click();await confirm(page);
   assert.ok(!(await catalogue(context)).roles.some(r=>r.id===role.id));

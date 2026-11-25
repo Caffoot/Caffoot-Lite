@@ -10,6 +10,8 @@ on:
       - "tests/service-desk-reporting-interface.cjs"
       - "tests/fixtures/service_desk_reporting.py"
       - "tests/session-expiry-interface.cjs"
+      - "tests/stage-6-6-sign-in-interface.cjs"
+      - "tests/stage-6-6-account-security-interface.cjs"
       - "tests/department-details-interface.cjs"
       - "tests/stock-intake-interface.cjs"
       - "tests/stock-circulation-interface.cjs"
@@ -46,6 +48,8 @@ on:
       - "tests/service-desk-reporting-interface.cjs"
       - "tests/fixtures/service_desk_reporting.py"
       - "tests/session-expiry-interface.cjs"
+      - "tests/stage-6-6-sign-in-interface.cjs"
+      - "tests/stage-6-6-account-security-interface.cjs"
       - "tests/department-details-interface.cjs"
       - "tests/stock-intake-interface.cjs"
       - "tests/stock-circulation-interface.cjs"
@@ -291,6 +295,12 @@ jobs:
         env:
           NODE_PATH: ${{ runner.temp }}/caffoot-browser-tests/node_modules
         run: node tests/browser-compat.cjs
+      - name: Verify Stage 6.6 sign-in and account security over HTTPS
+        env:
+          NODE_PATH: ${{ runner.temp }}/caffoot-browser-tests/node_modules
+        run: |
+          node tests/stage-6-6-sign-in-interface.cjs
+          node tests/stage-6-6-account-security-interface.cjs
       - name: Check approved Device editor forms and capture full scroll comparisons
         env:
           NODE_PATH: ${{ runner.temp }}/caffoot-browser-tests/node_modules

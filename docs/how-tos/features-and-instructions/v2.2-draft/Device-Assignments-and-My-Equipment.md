@@ -115,13 +115,17 @@ Return Equipment also supports eligible previously deployed physical Devices tha
 
 1. Open **Associated Equipment** and resolve every outstanding explicitly linked accessory through actual return/disposition or an appropriate Write Off. Accessories do not transfer automatically.
 2. Open **Assigned To → Reassign Device** when eligible.
-3. Choose **Recipient Type**. For an eligible shared Device, search and tick the new Department selection under **Departments**. For a Staff Member, choose the new holder under **Find A Recipient**.
+3. Choose **Recipient Type**. For a single holder, use **Find A Recipient** to choose the new Staff Member or Department. The current holder is omitted from that list. For an eligible shared Device, search and tick the new Department selection under **Departments**. You can retain a Department as part of a changed shared selection, for example by selecting Finance and Facilities when Finance currently holds the Device.
 4. Enter **Date Reassigned** and any **Reassignment Note (Optional)**. The date cannot precede the original issue or be in the future.
 5. Complete the displayed **Preparation Checks** for that Device type. Computers require **Checked Working** and **Data Wiped / Reset**; other equipment uses its applicable working, condition and data-clearing checks.
 6. Choose **Confirm Ready And Reassign** only after completing those checks.
 7. Review the new current holder and closed previous assignment.
 
 The old holder stays recorded until the complete save succeeds. Cancellation or rejection leaves that holder unchanged. Successful handover retains identity and saves checks, dates, actors and old/new relationships together. It creates no storeroom receipt, held-stock increase or fictional Ready stock.
+
+If the Device or current holder changes while the form is open, reopen **Reassign Device** from the refreshed **Assigned To** tab. Check current custody before choosing the new recipient. The server rejects an unchanged selection.
+
+![Reassign Device in desktop light mode. The form shows the fictional laptop, the selected new Staff holder and the preparation checks.](screenshots/stage-6-6-batch-1/direct-handover-devices-only-desktop-light.png)
 
 Devices-only handover needs Devices Edit. A Device with recorded stock history also requires IT Assets enabled and IT Assets Edit. Use [Associated Equipment And Direct Handover](Associated-Equipment.md#reassign-a-workstation-directly) for the full missing-accessory scenario and recovery guidance. [Correct Movement](IT-Assets-Correct-Movement.md) handles eligible stock-recording mistakes separately. A new holder can raise a separate ticket after a valid assignment. [Ticket privacy after handover](Service-Desk-Administration.md#what-happens-to-service-desk-tickets-when-equipment-changes-hands)
 

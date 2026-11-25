@@ -692,8 +692,9 @@ async function run(){
     'Owner workspace must use the approved full-width layout');
   assert.equal(await ownerWorkspace.locator('.profile-modal-grid .input:disabled').count(),4,
     'Owner personal details must remain protected in the approved workspace');
-  assert.equal(await ownerWorkspace.locator('[data-next-user-operation]:disabled').count(),3,
-    'Owner disable, demote and delete safeguards must remain');
+  assert.deepEqual(await ownerWorkspace.locator('[data-next-user-operation]:disabled').evaluateAll(
+    controls=>controls.map(control=>control.dataset.nextUserOperation).sort()),
+  ['active','admin','delete','reset-password'], 'Owner disable, demote, delete and assisted reset controls are protected');
   await page.setViewportSize({width:390,height:844});
   assert.equal(await ownerWorkspace.locator('.profile-modal-grid').evaluate(el=>getComputedStyle(el).gridTemplateColumns.split(' ').length),1,
     'Approved user profile fields must stack on mobile');

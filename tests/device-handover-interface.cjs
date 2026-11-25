@@ -37,6 +37,12 @@ async function main(){
   'computers=f.receipt(quantity=1,model="Handover Desktop Batch",category="Desktop")',
   'computer=register_stock_device(f.db,1,f.token,registration_payload(f.db,computers))',
   'reissue_stock_device(f.db,1,f.token,reissue_payload(f.db,computer["deviceId"]))',
+  'f.db.execute("INSERT INTO departments(id,name) VALUES(?,?)",("facilities","Fictional Facilities"))',
+  'f.db.commit()',
+  'servers=f.receipt(quantity=1,model="Handover Server Batch",category="Server - Physical")',
+  'server_draft=registration_payload(f.db,servers);server_draft["record"].update(id="server-handover",name="Fictional Server")',
+  'registered=register_stock_device(f.db,1,f.token,server_draft)',
+  'reissue_stock_device(f.db,1,f.token,reissue_payload(f.db,registered["deviceId"],recipientKind="department",recipientId="department"))',
   'f.db.execute("INSERT INTO accounts(id,username,password_hash,mfa_secret,mfa_confirmed) VALUES(3,?,?,?,1)",("Fictional Device Editor","fixture hash","fixture secret"))',
   'assign_staff_member(f.db,3)',
   'f.db.execute("INSERT INTO account_permission_overrides VALUES(3,?,?)",("Devices","edit"))',
@@ -150,6 +156,8 @@ async function main(){
  await page.locator('#stock-recipientKind').selectOption('staff');
  await page.locator('#stock-recipientId option[value="other"]').waitFor({state:'attached'});
  assert.equal(await page.locator('#stock-recipientId option[value="department"]').count(),0,'Staff list must not show departments');
+ assert.equal(await page.locator('#stock-recipientId option[value="person"]').count(),0,'The current Staff holder is omitted');
+ await captureChangedScreen('reassignment-staff-choices','#stock-recipientId');
  const actions=page.locator('#stock-reissue-form > .assignment-modal-actions');
  assert.deepEqual((await actions.locator('button').allTextContents()).map(value=>value.trim()),['Cancel','Confirm Ready And Reassign']);
  const confirmAction=actions.locator('button[type="submit"]');
@@ -225,6 +233,17 @@ async function main(){
  // Escape from a direct handover must clear context even when Cancel was never clicked.
  await page.locator('[data-equipment-action="reassign-device"]').click();
  await page.locator('#stock-reissue-form[data-direct-handover]').waitFor();
+ await chooseRecipient('department','department');
+ await page.locator('#stock-reissue-form [name="cleanedWorking"]').check();
+ await page.locator('#stock-reissue-form [name="dataPreparationConfirmed"]').check();
+ assert.ok(await page.getByRole('button',{name:'Confirm Ready And Reassign',exact:true}).isDisabled());
+ await page.locator('[data-department-choice][value="facilities"]').check();
+ assert.ok(await page.getByRole('button',{name:'Confirm Ready And Reassign',exact:true}).isEnabled(),
+  'A changed shared selection may retain the current Department');
+ await saveHandover();
+ await page.locator('#device-details-panel-assigned .assignment-main strong').getByText('Fictional Department, Fictional Facilities',{exact:true}).waitFor();
+ await page.locator('[data-equipment-action="reassign-device"]').click();
+ await page.locator('#stock-reissue-form[data-direct-handover]').waitFor();
  await page.keyboard.press('Escape');
  await page.locator('#modal-container.hidden').waitFor({state:'attached'});
  assert.equal(await page.locator('#stock-reissue-form').count(),0,'Closed direct handover must leave no duplicate reissue form in the page');
@@ -234,8 +253,15 @@ async function main(){
  assert.equal(await page.locator('#stock-reissue-form').count(),1,'Only the actual stock reissue form remains');
  assert.equal(await page.locator('#stock-reissueDevice').count(),1,'Escape must clear prior Device handover context');
  await page.getByRole('tab',{name:'Movement History',exact:true}).click();
- await page.getByRole('cell',{name:'Reassigned',exact:true}).waitFor();
+ await page.waitForFunction(()=>[...document.querySelectorAll('#stock-panel td')].filter(cell=>cell.textContent==='Reassigned').length===2);
  await captureChangedScreen('stock-custody-history','#stock-panel');
+ await openDevice('server-handover');
+ await page.locator('[data-equipment-action="reassign-device"]').click();
+ await chooseRecipient('department','facilities');
+ assert.equal(await page.locator('#stock-recipientId option[value="department"]').count(),0,'The sole Department holder is omitted from the single-recipient dropdown');
+ await confirmChecks();
+ await saveHandover();
+ await page.locator('#device-details-panel-assigned .assignment-main strong').getByText('Fictional Facilities',{exact:true}).waitFor();
  await personal.close();await editor.close();assert.deepEqual(errors,[]);
  const sourceFiles=['interface/application.js','interface/equipment.js','interface/stock-intake.js','interface/screens/devices.html','interface/styles/equipment.css','interface/styles/stock.css','interface/styles/staff.css','backend/device_handovers.py','backend/handover_schema.py','backend/device_assignments.py','backend/stock_circulation.py','backend/device_stock.py','backend/assignment_closure.py','backend/stock_schema.py','backend/schema.py','backend/server.py'];
  const crypto=require('node:crypto'),sourceHashes=Object.fromEntries(sourceFiles.map(file=>[file,crypto.createHash('sha256').update(fs.readFileSync(path.join(root,file))).digest('hex')]));

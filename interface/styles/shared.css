@@ -123,6 +123,11 @@ body{font-size:14px}
 .header-account-photo{width:32px;height:32px;display:grid;place-items:center;flex-shrink:0;border-radius:50%;overflow:hidden;background:#f6e5d6;color:#a85d25;font-size:14px;font-weight:800}
 .header-account-photo img{display:block;width:100%;height:100%;object-fit:cover}
 .header-account-photo img[hidden]{display:none}
+
+#app[aria-busy="true"] #sidebar :is([data-nav-group],[data-tab]:not([data-tab="equipment"])),
+#sidebar:is([data-session-permissions-pending],[data-inventory-permissions-pending]) :is([data-nav-group],[data-tab]:not([data-tab="equipment"])) {
+  display: none !important;
+}
 .header-account-text{color:#29445e}
 @media(max-width:720px){.header-account{padding:4px;border-radius:50%;min-height:40px}.header-account-text{display:none}.header-account-photo{width:32px;height:32px}}
 

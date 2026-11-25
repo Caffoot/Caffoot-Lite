@@ -33,6 +33,10 @@ MAIL_CAPACITY = threading.BoundedSemaphore(16)
 REQUEST_MESSAGE = "If recovery is available, instructions will be emailed. Otherwise, contact your Caffoot Lite administrator."
 
 
+class TemporaryPasswordReuse(ValueError):
+    """A verified recovery request must choose a new personal password."""
+
+
 def queue_mail_task(send):
     """Use the shared bounded queue without logging recipients or message content."""
     if not MAIL_CAPACITY.acquire(blocking=False):
@@ -205,8 +209,15 @@ def confirm_email_proof(connection, token, purpose, *, challenge_id, account_id=
             connection.execute("UPDATE account_profiles SET email_verified=1 WHERE account_id=?", (target,))
             reason = "Email ownership verified"
         else:
-            connection.execute("UPDATE accounts SET password_hash=? WHERE id=?", (hash_password(password), target))
+            password_hash, pending_change = connection.execute(
+                "SELECT password_hash,must_change_password FROM accounts WHERE id=?", (target,)
+            ).fetchone()
+            if pending_change and verify_password(password, password_hash):
+                raise TemporaryPasswordReuse("Choose a password different from your temporary password.")
+            connection.execute("UPDATE accounts SET password_hash=?,must_change_password=0 WHERE id=?",
+                               (hash_password(password), target))
             connection.execute("DELETE FROM account_sessions WHERE account_id=?", (target,))
+            connection.execute("DELETE FROM account_password_change_proofs WHERE account_id=?", (target,))
             reason = "Password recovered using verified email and required authenticator proof"
         connection.execute("DELETE FROM account_email_proofs WHERE account_id=?", (target,))
         record_actor_event(connection, target, kind="Security", action="Updated", label=username, reason=reason,

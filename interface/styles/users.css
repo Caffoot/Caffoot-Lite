@@ -26,6 +26,16 @@
 .profile-modal-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
 .profile-modal-grid .field{margin:0}
 .profile-preview-note{border-radius:9px;padding:10px 12px;background:#f4f8fb;color:#647d93;font-size:11px;line-height:1.5;margin-top:12px}
+#staff-password-reset .modal-warning{margin-top:14px}
+[data-password-reset-dialog] .users-management-modal .modal{width:min(490px,100%)}
+[data-password-reset-dialog] .modal-actions{justify-content:flex-end;gap:10px;flex-wrap:wrap}
+.reset-password-fields{display:grid;gap:15px}
+#staff-password-reset-error{color:var(--theme-danger-text,#a52626);font-weight:650}
+#staff-confirm-temporary-password[aria-invalid="true"]{outline:2px solid var(--theme-danger-text,#a52626);outline-offset:1px}
+.account-reset-result{margin:12px 0 0;padding:12px;border:1px solid #c4e3d6;border-radius:9px;background:#eef8f3;color:#266c52;font-size:12px;line-height:1.5}
+.dark .account-reset-result{background:var(--theme-good-bg);color:var(--theme-good-text);border-color:#065f46}
+.administrator-eligibility{display:grid;gap:5px;margin-top:8px;color:var(--muted);font-size:11px}
+.administrator-eligibility>div{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 @media(max-width:730px){
  .shell,.shell.collapsed{grid-template-columns:65px minmax(0,1fr)}
  .sidebar{position:sticky;top:0;width:65px;height:100vh;min-height:100vh;display:flex;flex-direction:column;padding:16px 8px;gap:12px;overflow:auto}

@@ -1,6 +1,7 @@
 """Protected Staff and Department operations, including linked personal details."""
 import hashlib
 import json
+import sqlite3
 
 from backend.audit_events import record_actor_event
 from backend.permissions import can_access, _admin, create_user_in_transaction
@@ -19,6 +20,10 @@ STAFF_FIELDS = {
 
 class StaleStaffEdit(FileExistsError):
     """Keep a newer Staff record when an older form is submitted."""
+
+
+class DuplicateStaffLoginUsername(ValueError):
+    """The authorised Staff login save conflicts with an existing username."""
 
 
 def _staff_revision(connection, record):
@@ -212,8 +217,16 @@ def _create_login(connection, actor_id, staff_id, login):
     # than becoming an additional required field or an invented personal name.
     profile = dict(firstName=record['firstName'], lastName=record['lastName'],
                    email=record['email'], displayName='')
-    return create_user_in_transaction(connection, actor_id, login['username'], login['password'],
-                                      profile, staff_id=staff_id)
+    try:
+        return create_user_in_transaction(connection, actor_id, login['username'], login['password'],
+                                          profile, staff_id=staff_id)
+    except sqlite3.IntegrityError as exc:
+        if (exc.sqlite_errorcode == sqlite3.SQLITE_CONSTRAINT_UNIQUE
+                and str(exc) == 'UNIQUE constraint failed: accounts.username'):
+            raise DuplicateStaffLoginUsername(
+                'This username is already in use. Please choose another username.'
+            ) from exc
+        raise
 
 
 def save_staff_member(connection, actor_id, session_token, payload, *, staff_id=None, login_only=False,

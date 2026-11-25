@@ -1,5 +1,11 @@
 # Milestone 01 Development Handover — v2.2 Target
 
+## Stage 6.6 Batch 1 — 25 November 2026
+
+PR #465 targets `milestone-1` from `66917d12a79dbc232596b2ce8416841e82868c00`. It covers the six authorised navigation, sign-in, account administration and Device reassignment issues. The verified application source is `20cb447458065196a01fbca871d79c2c9f771af2` with schema 30. [PR #465](https://github.com/Caffoot/Caffoot-Lite/pull/465) · [Scope and authorisation](https://github.com/Caffoot/Caffoot-Lite/issues/351#issuecomment-7160163762)
+
+The local verification record covers authentication and permission checks, fresh and supported upgrade fixtures, Compose volume persistence, Device custody and Service Desk privacy. It links to the four approved design comparisons and genuine application screenshots in the draft guides. [Test results and acceptance gates](evidence/stage-6-6-batch-1/README.md) · [Draft user and administrator guides](../how-tos/features-and-instructions/v2.2-draft/README.md)
+
 ## Stage 6.6 Staff Administration Finding — 24 November 2026
 
 The owner paused native acceptance after finding that linked Staff records with blank names were hard to identify and individual login administration was split across screens. PR #453 implements the approved Staff Members workflow and shares personal details across the existing links. Schema 29 is sufficient. The original acceptance evidence remains available. [Finding #452](https://github.com/Caffoot/Caffoot-Lite/issues/452) · [Implementation and local verification](https://github.com/Caffoot/Caffoot-Lite/pull/453)
