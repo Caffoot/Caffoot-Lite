@@ -8,6 +8,7 @@ from backend.service_desk_access import (EQUIPMENT_COLUMNS, employee_ticket_equi
                                         ticket_equipment_for_creation, ticket_scope_filter)
 from backend.service_desk_attachments import insert_ticket_attachments
 from backend.service_desk_calendar import measure_resolution_attempt, utc_timestamp
+from backend.service_desk_reads import UNREAD_COUNT, unread_parameters
 from backend.service_desk_schema import OTHER_TICKET_CATEGORY_ID, SOFTWARE_TICKET_CATEGORY_ID
 from backend.shared_devices import current_departments
 from backend.stock_circulation import associated_issue_custodies, stock_issue_records
@@ -142,9 +143,10 @@ def read_ticket_list(connection, actor_id, scope, *, status=None, search='', lim
     if assignment == 'unassigned':
         allowed += ' AND ticket.technician_id IS NULL'
     tickets = ticket_rows(connection.execute(f"""
-        SELECT {TICKET_SUMMARY} FROM service_desk_tickets ticket WHERE {allowed}
+        SELECT {TICKET_SUMMARY}, {UNREAD_COUNT} AS unreadCount
+        FROM service_desk_tickets ticket WHERE {allowed}
         ORDER BY {orders[sort or 'newest']} LIMIT ? OFFSET ?
-    """, (*values, limit, offset)))
+    """, (*unread_parameters(actor_id, scope), *values, limit, offset)))
     workload_counts = dict.fromkeys(STATUSES, 0)
     workload_counts.update(connection.execute(
         'SELECT ticket.status,count(*) FROM service_desk_tickets ticket WHERE ' + scoped + ' GROUP BY ticket.status',
@@ -275,9 +277,10 @@ def read_ticket(connection, actor_id, scope, ticket_id, resource=None):
             """, (ticket_id,)))
         return result
     ticket, = ticket_rows(connection.execute(f"""
-        SELECT {TICKET_SUMMARY},ticket.description,ticket.affected_software AS affectedSoftware
+        SELECT {TICKET_SUMMARY},ticket.description,ticket.affected_software AS affectedSoftware,
+               {UNREAD_COUNT} AS unreadCount
         FROM service_desk_tickets ticket WHERE ticket.id=?
-    """, (ticket_id,)))
+    """, (*unread_parameters(actor_id, scope), ticket_id)))
     if scope == 'it':
         ticket.update(technicianId=access[3], statusBeforeHold=access[2],
                       canEdit=can_access(connection, actor_id, SERVICE_DESK_SECTION, edit=True))

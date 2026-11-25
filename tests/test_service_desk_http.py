@@ -145,6 +145,42 @@ class ServiceDeskHttpTests(unittest.TestCase):
             self.assertNotIn(content, str(mail['Subject']))
         return mail
 
+    def test_unread_snapshot_counts_isolation_and_later_reply(self):
+        self.assign_device()
+        ticket = self.create(attachments=[{'filename': 'initial.txt',
+                                            'contents': base64.b64encode(b'original').decode()}])
+        personal = f'{SERVICE_DESK}/personal/unread'
+        it = f'{SERVICE_DESK}/it/unread'
+        self.assertEqual(self.request(personal, actor=4)[1], {'personal': 0, 'department': 0, 'combined': 0})
+        self.assertEqual(self.request(it, actor=3)[1], {'it': 0})
+        self.assertEqual(self.save('personal', ticket, 'messages', {'body': 'My reply'}, actor=4)[0], 200)
+        self.assertEqual(self.save('it', ticket, 'messages', {'body': 'Internal note'})[0], 200)
+        self.assertEqual(self.save('it', ticket, 'messages', {'body': 'Visible reply', 'employeeVisible': True})[0], 200)
+        self.assertEqual(self.request(personal, actor=4)[1], {'personal': 1, 'department': 0, 'combined': 1})
+        self.assertEqual(self.request(it, actor=3)[1], {'it': 1})
+        self.assertEqual(self.request(it, actor=4)[0], 403)
+        path = self.ticket_path('personal', f'/{ticket}')
+        self.assertEqual(self.request(path, actor=4)[1]['unreadCount'], 1)
+        self.assertEqual(self.request(self.ticket_path('personal')+'?status=Closed', actor=4)[1]['tickets'], [])
+        self.assertEqual(self.request(personal, actor=4)[1]['combined'], 1)
+        snapshot = self.request(path+'/messages', actor=4)[1]
+        self.assertNotIn('Internal note', [message['body'] for message in snapshot['messages']])
+        self.assertEqual(self.request(path, actor=4)[1]['unreadCount'], 1)
+        self.assertEqual(self.save('it', ticket, 'messages', {'body': 'Later reply', 'employeeVisible': True})[0], 200)
+        self.assertEqual(self.save('it', ticket, 'read', {'proof': snapshot['readProof']}, actor=3)[0], 403)
+        self.assertEqual(self.save('personal', ticket, 'read', {'proof': snapshot['readProof']}, actor=4)[1],
+                         {'unreadCount': 1})
+        self.assertEqual(self.save('personal', ticket, 'read', {'proof': snapshot['readProof']}, actor=4)[1],
+                         {'unreadCount': 1})
+        technician = self.request(self.ticket_path('it', f'/{ticket}/messages'), actor=3)[1]
+        self.assertEqual(self.save('it', ticket, 'read', {'proof': technician['readProof']}, actor=3)[1],
+                         {'unreadCount': 0})
+        self.assertEqual(self.request(personal, actor=4)[1]['combined'], 1)
+        latest = self.request(path+'/messages', actor=4)[1]
+        self.hand_over('department', 'dept')
+        self.assertEqual(self.save('personal', ticket, 'read', {'proof': latest['readProof']}, actor=4)[0], 404)
+        self.assertEqual(self.request(personal, actor=4)[1]['combined'], 0)
+
     def test_created_mail_scope_device_and_asset_published_wording_and_sign_in(self):
         self.capture_ticket_mail()
         self.assign_device()
