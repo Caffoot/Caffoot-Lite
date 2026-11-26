@@ -262,6 +262,7 @@ async function test(){
  await page.locator('#staff-record-form [data-staff-action="staff-back"]').click();
  await page.locator(`[data-staff-action="staff-details"][data-id="${person.id}"]`).click();
  await page.locator('[data-staff-action="manage-login"]').click();
+ await page.locator('[data-account-tab="permissions"]').click();
  await page.locator('[data-next-user-permission][data-section="Devices"]').waitFor();
  await page.locator('[data-action="users-close-editor"]').first().click();
  console.log('Staff status, restricted views, editing and Manage Login preservation passed');
