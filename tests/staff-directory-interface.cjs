@@ -106,7 +106,35 @@ async function test(){
  await page.locator('#preview-active').selectOption('false');
  await page.locator('#preview-departmentId').selectOption('');
  await page.locator('#preview-jobTitle').fill('Current Engineer');
+ const beforeCancellation=(await (await context.request.get(address+staffPath)).json()).staffMember;
+ let employmentPosts=0;
+ const countEmploymentPosts=request=>{if(request.url()===address+staffPath&&request.method()==='POST')employmentPosts++;};
+ page.on('request',countEmploymentPosts);
+ const cancelledConfirmation=new Promise(resolve=>page.once('dialog',async dialog=>{
+  assert.equal(dialog.type(),'confirm');
+  assert.match(dialog.message(),/^Mark As Left Company\?/);
+  assert.match(dialog.message(),/linked login will be disabled and active sessions ended/);
+  assert.match(dialog.message(),/Equipment, tickets and history are retained/);
+  await dialog.dismiss();resolve();
+ }));
  await page.locator('#staff-record-form [type="submit"]').click();
+ await cancelledConfirmation;
+ assert.ok(await page.locator('#staff-record-form').isVisible());
+ assert.equal(await page.locator('#preview-active').inputValue(),'false');
+ assert.equal(await page.locator('#preview-jobTitle').inputValue(),'Current Engineer');
+ assert.deepEqual((await (await context.request.get(address+staffPath)).json()).staffMember,beforeCancellation);
+ assert.equal(employmentPosts,0,'Cancelling offboarding must not submit a Staff change');
+ const acceptedConfirmation=new Promise(resolve=>page.once('dialog',async dialog=>{
+  assert.equal(dialog.type(),'confirm');
+  assert.match(dialog.message(),/^Mark As Left Company\?/);
+  await dialog.accept();resolve();
+ }));
+ const employmentSave=page.waitForResponse(response=>response.url()===address+staffPath&&response.request().method()==='POST');
+ await page.locator('#staff-record-form [type="submit"]').click();
+ await acceptedConfirmation;
+ assert.equal((await employmentSave).status(),200);
+ page.off('request',countEmploymentPosts);
+ assert.equal(employmentPosts,1,'Accepting offboarding must submit exactly one Staff change');
  await page.getByRole('heading',{name:'Staff Details'}).waitFor();
  assert.equal((await (await context.request.get(address+'/api/staff-members/'+person.id)).json()).staffMember.active,false);
  await otherEditor.locator('#preview-location').fill('Unsaved location');
