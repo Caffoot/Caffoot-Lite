@@ -352,19 +352,37 @@ async function test(){
   }
  }
  // A current Department move removes shared visibility on the next request.
+ const personalBeforeRemoval=(await (await employee.request.get(address+'/api/my-equipment')).json()).assignedToMe;
  const currentPerson=(await (await context.request.get(address+'/api/staff-members/'+person.id)).json()).staffMember;
- await save('/api/staff-members/'+person.id,{departmentId:null,active:false,revision:currentPerson.revision});
+ await save('/api/staff-members/'+person.id,{departmentId:null,revision:currentPerson.revision});
  await employeePage.locator('#sidebar [data-tab="equipment"]').click();
  await employeePage.getByText('No shared equipment is currently available for your Department.').waitFor();
- await employeePage.getByText('No equipment is currently assigned to you.').waitFor();
- assert.equal(await employeePage.locator('[data-personal-equipment] tbody tr').count(),0);
+ assert.equal(await employeePage.locator('[data-personal-equipment] tbody tr').count(),2);
+ const afterRemoval=await employee.request.get(address+'/api/my-equipment');
+ assert.equal(afterRemoval.status(),200);
+ const equipmentAfterRemoval=await afterRemoval.json();
+ assert.deepEqual(equipmentAfterRemoval.assignedToMe,personalBeforeRemoval);
+ assert.deepEqual(equipmentAfterRemoval.sharedWithMyDepartment,[]);
+ assert.equal((await employee.request.get(address+'/api/session')).status(),200,'Department removal must retain the employee session');
+ const removedPerson=(await (await context.request.get(address+'/api/staff-members/'+person.id)).json()).staffMember;
+ assert.equal(removedPerson.active,true);
+ assert.equal((await (await context.request.get(address+'/api/users')).json()).users.find(user=>user.id===person.accountId).active,true);
+ // Offboarding is a separate operation: custody remains, but all login access ends.
+ const custodyBefore=(await (await context.request.get(address+'/api/equipment/assignments?staffId='+person.id)).json());
+ await save('/api/staff-members/'+person.id,{active:false,revision:removedPerson.revision});
+ assert.equal((await employee.request.get(address+'/api/session')).status(),401,'Left Company must revoke the existing session');
+ assert.equal((await employee.request.get(address+'/api/my-equipment')).status(),401);
+ assert.equal((await (await context.request.get(address+'/api/users')).json()).users.find(user=>user.id===person.accountId).active,false);
+ const custodyAfter=(await (await context.request.get(address+'/api/equipment/assignments?staffId='+person.id)).json());
+ assert.deepEqual(custodyAfter.current,custodyBefore.current);
+ assert.deepEqual(custodyAfter.history,custodyBefore.history);
+ const disabledLogin=await employee.request.post(address+'/api/login',{headers:{Origin:address},data:{username:'alex.morgan',password:'Fictional-Pass-2026!'}});
+ assert.equal(disabledLogin.status(),401,'An offboarded employee must not sign in again');
  await employeePage.goto(address+'/account');
- await employeePage.locator('#app[aria-busy="false"]').waitFor();
- assert.equal(await employeePage.getByRole('button',{name:'Open My Equipment',exact:true}).count(),0,
-  'The equipment shortcut is hidden when the Staff link is no longer active');
+ await employeePage.waitForURL('**/setup#session-ended');
  await employee.close();
  assert.deepEqual(errors,[]);
  fs.writeFileSync(path.join(output,'results.json'),JSON.stringify({passed:true,errors,measurements:report},null,2));
- console.log('PASS: Staff status placement/confirmation/reactivation, administrator and restricted views, unchanged assignments/login, canonical allocation/history, private personal/shared sections, My Account, 1440/390px light/dark and modal keyboard containment.');
+ console.log('PASS: Staff status placement/confirmation/reactivation, administrator and restricted views, retained custody, Department-only visibility removal, offboarding login/session revocation, canonical allocation/history, private personal/shared sections, My Account, 1440/390px light/dark and modal keyboard containment.');
 }
 (async()=>{try{await test();}finally{if(browser)await browser.close();if(server){server.kill('SIGTERM');if(server.exitCode===null)await new Promise(r=>server.once('exit',r));}}})().catch(e=>{console.error(e);process.exitCode=1});
