@@ -51,7 +51,7 @@ Open this report at its evidence commit SHA to keep every relative screenshot li
 
 ## Delivery And Remaining Gates
 
-The correction branch is pushed. The requested draft PR targets `milestone-1`; it must remain draft for independent review and product owner visual acceptance. Automatic approval review initially rejected PR creation because it did not recognise authorisation in the uploaded request. The explicit Delivery instructions are being checked for an authorisation-evidence retry; no bypass or alternative publication route is used.
+The correction branch is pushed and [draft PR #470](https://github.com/Caffoot/Caffoot-Lite/pull/470) targets `milestone-1`. It must remain draft for independent review and product owner visual acceptance. Automatic approval review initially rejected PR creation because it did not recognise authorisation in the uploaded request. A retry after checking the explicit user-provided Delivery instructions succeeded; no bypass or alternative publication route was used.
 
 No merge, deployment, image publication, release or acceptance issue closure was performed. Native acceptance remains **paused after Test 69; Test 70 is next**. Native Safari, actual mobile hardware, ARM64/Pi checks, supported production upgrades and complete-volume backup/restore remain in their separately authorised stages. No full regression or CI polling was performed. Preserve all outstanding [#366 release requirements](https://github.com/Caffoot/Caffoot-Lite/issues/366) and [#443 final comprehensive audit](https://github.com/Caffoot/Caffoot-Lite/issues/443).
 
