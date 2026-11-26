@@ -167,7 +167,14 @@ async function confirm(page){
    await page.setViewportSize({width,height:950});
    assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'Document overflow at '+width);
    assert.ok(await page.locator('#user-first-name').isEditable());
-   assert.equal(await page.locator('.users-management-modal .modal').evaluate(e=>Math.round(e.getBoundingClientRect().width)),Math.min(710,width-20));
+   const gutter=width<=600?10:20;
+   const dialog=await page.locator('.account-management-modal .modal').evaluate(element=>{
+    const rect=element.getBoundingClientRect();
+    return {width:rect.width,left:rect.left,right:rect.right,scrollWidth:element.scrollWidth,clientWidth:element.clientWidth};
+   });
+   assert.equal(Math.round(dialog.width),Math.min(980,width-2*gutter),'Responsive Manage Permissions width at '+width);
+   assert.ok(dialog.left>=gutter&&dialog.right<=width-gutter,'Dialogue must fit within its screen gutters at '+width);
+   assert.ok(dialog.scrollWidth<=dialog.clientWidth,'Dialogue content must not overflow horizontally at '+width);
    await page.locator('.users-modal-scroll').evaluate(element=>{element.scrollTop=0;});
    await screenshot(page,'manage-'+width);
    await page.locator('[data-next-user-operation="delete"]').scrollIntoViewIfNeeded();await screenshot(page,'account-controls-'+width);

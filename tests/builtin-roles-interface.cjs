@@ -110,6 +110,7 @@ module.exports=async({page,context,address,catalogue,confirmedAction,confirm,scr
 
  await page.goto(address+'/inventory#users');
  await manageUser('dave');
+ await page.locator('[data-account-tab="permissions"]').click();
  await modal.getByLabel('Service Desk',{exact:true}).scrollIntoViewIfNeeded();
  await screenshot(page,'it-staff-dave-dark-1440');
  await page.setViewportSize({width:390,height:844});
