@@ -1,0 +1,44 @@
+name: Optional Features supplemental verification
+
+on:
+  pull_request:
+    branches: [milestone-1]
+    types: [opened, synchronize, reopened, ready_for_review]
+
+permissions:
+  contents: read
+
+jobs:
+  optional-features:
+    if: github.head_ref == 'issue-468-optional-features-test' && github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - name: Install isolated Chromium test tools
+        run: |
+          npm install --prefix "$RUNNER_TEMP/caffoot-browser-tests" --no-save --no-package-lock --no-audit --no-fund playwright@1.56.1
+          "$RUNNER_TEMP/caffoot-browser-tests/node_modules/.bin/playwright" install --with-deps chromium
+      - name: Run supplemental Optional Features test
+        env:
+          NODE_PATH: ${{ runner.temp }}/caffoot-browser-tests/node_modules
+          CAFFOOT_VISUAL_OUTPUT: ${{ runner.temp }}/optional-features
+        run: |
+          export CAFFOOT_CHROMIUM_PATH="$(node -p "require('playwright').chromium.executablePath()")"
+          node tests/optional-features-interface.cjs
+      - name: Save failure diagnostics
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: optional-features-diagnostics
+          path: ${{ runner.temp }}/optional-features/failure.txt
+          if-no-files-found: warn
+          retention-days: 7
