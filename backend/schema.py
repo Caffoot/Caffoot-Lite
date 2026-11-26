@@ -23,6 +23,8 @@ from backend.service_desk_schema import (migrate_service_desk, migrate_service_d
 
 from backend.email_templates import migrate_email_templates
 
+from backend.staff_employment import reconcile_employment_logins
+
 from backend.shared_device_schema import migrate_shared_devices, validate_relationships
 
 SCHEMA_VERSION = 31
@@ -332,6 +334,8 @@ def _initialise_database(connection):
                 migrate_message_reads(connection)
                 connection.execute("INSERT INTO schema_migrations(version) VALUES(31)")
             validate_message_reads(connection)
+        if SCHEMA_VERSION >= 31:
+            reconcile_employment_logins(connection)
         connection.commit()
     except BaseException:
         connection.rollback()

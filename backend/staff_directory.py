@@ -10,6 +10,7 @@ from backend.profiles import (FIELD_LABELS, read_personal_details, validate_prof
 from backend.staff_identity import (SHARED_PROFILE_FIELDS, fill_shared_profile_blanks,
                                     shared_profile_conflicts, staff_history_revision)
 from backend.sessions import session_account
+from backend.staff_employment import disable_employment_login
 
 STAFF_FIELDS = {
     'firstName': ('first_name', 100), 'lastName': ('last_name', 100),
@@ -83,6 +84,7 @@ def read_staff_member(connection, actor_id, staff_id, *, include_conflicts=True)
     record = _staff_record(connection, staff_id)
     record['active'] = bool(record['active'])
     record['revision'] = _staff_revision(connection, record)
+    record['canChangeEmploymentStatus'] = (record['accountId'] is None or _is_administrator(connection, actor_id))
     if not _is_administrator(connection, actor_id):
         record.pop('accountId')
     elif record['accountId'] is not None:
@@ -252,6 +254,10 @@ def save_staff_member(connection, actor_id, session_token, payload, *, staff_id=
             before = {} if creating else _staff_record(connection, staff_id)
             if not creating and payload['revision'] != _staff_revision(connection, before):
                 raise StaleStaffEdit('This Staff Member was changed elsewhere. Refresh the current details before editing again.')
+            if before.get('accountId') is not None and 'active' in payload and payload['active'] != bool(before['active']):
+                _admin(connection, actor_id)
+                if not payload['active']:
+                    disable_employment_login(connection, before['accountId'], actor_id=actor_id)
             if 'resolveProfile' in payload:
                 _admin(connection, actor_id)
             if before.get('accountId') is not None:

@@ -336,7 +336,7 @@ class StaffDirectoryTests(unittest.TestCase):
         with self.assertRaises(sqlite3.IntegrityError):
             self.department({'name': 'production'})
 
-    def test_combined_login_shares_details_and_keeps_independent_status(self):
+    def test_combined_login_shares_details_and_offboards_login(self):
         staff = self.staff(dict(firstName='A', lastName='B', email='', login=dict(username='new', password='test-password')))
         account = staff['accountId']
         self.assertEqual(self.db.execute('SELECT count(*) FROM staff_members WHERE account_id=?', (account,)).fetchone(), (1,))
@@ -350,7 +350,7 @@ class StaffDirectoryTests(unittest.TestCase):
         self.assertEqual(read_staff_member(self.db, 1, staff['id'])['lastName'], '')
         self.staff({'firstName': 'Directory', 'active': False}, staff_id=staff['id'])
         self.assertEqual(read_profile(self.db, 1, account)['firstName'], 'Directory')
-        self.assertEqual(self.db.execute('SELECT active FROM accounts WHERE id=?', (account,)).fetchone(), (1,))
+        self.assertEqual(self.db.execute('SELECT active FROM accounts WHERE id=?', (account,)).fetchone(), (0,))
         set_account_active(self.db, 1, account, False)
         delete_user(self.db, 1, account)
         self.assertIsNone(read_staff_member(self.db, 1, staff['id'])['accountId'])
@@ -365,7 +365,8 @@ class StaffDirectoryTests(unittest.TestCase):
                       jobTitle='Technician', active=True)
         current = self.staff(update, staff_id=staff['id'])
         self.assertNotEqual(current['revision'], staff['revision'])
-        self.assertEqual(read_profile(self.db, account_id), original)
+        self.assertEqual(read_profile(self.db, 1, account_id), original)
+        set_account_active(self.db, 1, account_id, True)
         values = {field: original[field] for field in ('firstName', 'lastName', 'email', 'revision')}
         saved = save_profile(self.db, account_id, dict(values, displayName='Alex R'))
         self.assertEqual(saved['displayName'], 'Alex R')
@@ -551,3 +552,107 @@ class StaffDirectoryTests(unittest.TestCase):
             with self.assertRaises(RuntimeError):
                 self.department(dict(name='Changed', archived=True), department_id=department['id'])
         self.assertEqual(before, self.snapshot())
+
+    def linked_staff(self):
+        return self.staff(dict(firstName='Morgan', lastName='Example',
+            login=dict(username='linked-employment', password='test-password')))
+
+    def test_employment_editor_boundary_and_atomic_disable(self):
+        unlinked = self.staff()
+        save_staff_member(self.db, 2, self.tokens[2], dict(active=False, revision=unlinked['revision']), staff_id=unlinked['id'])
+        linked = self.linked_staff()
+        self.assertFalse(read_staff_member(self.db, 2, linked['id'])['canChangeEmploymentStatus'])
+        before = self.snapshot()
+        with self.assertRaises(PermissionError):
+            save_staff_member(self.db, 2, self.tokens[2], dict(active=False, jobTitle='Forbidden', revision=linked['revision']), staff_id=linked['id'])
+        self.assertEqual(self.snapshot(), before)
+        # Ordinary employment details remain editable for linked Staff.
+        save_staff_member(self.db, 2, self.tokens[2], dict(jobTitle='Technician', active=True, revision=linked['revision']), staff_id=linked['id'])
+        account = linked['accountId']
+        self.db.execute('INSERT INTO account_sessions VALUES(?,?,9999999999,1)', (_digest('employment-session'), account))
+        self.db.execute("INSERT INTO account_email_proofs(account_id,purpose,token_hash,email,expires_at) VALUES(?,'verify','employment-proof','morgan@example.test',9999999999)", (account,))
+        self.db.execute("INSERT INTO account_password_change_proofs VALUES(?,'password-proof','state',9999999999)", (account,))
+        self.db.commit()
+        self.staff(dict(active=False), staff_id=linked['id'])
+        for table in ('account_sessions', 'account_email_proofs', 'account_password_change_proofs'):
+            self.assertEqual(self.db.execute('SELECT count(*) FROM '+table+' WHERE account_id=?', (account,)).fetchone(), (0,))
+        self.assertEqual(self.db.execute('SELECT active FROM accounts WHERE id=?', (account,)).fetchone(), (0,))
+        with self.assertRaises(ValueError):
+            set_account_active(self.db, 1, account, True)
+        self.staff(dict(active=True), staff_id=linked['id'])
+        self.assertEqual(self.db.execute('SELECT active FROM accounts WHERE id=?', (account,)).fetchone(), (0,))
+        set_account_active(self.db, 1, account, True)
+        self.assertEqual(self.db.execute('SELECT active FROM accounts WHERE id=?', (account,)).fetchone(), (1,))
+
+    def test_employment_requires_staff_edit_even_for_administrator(self):
+        linked = self.linked_staff()
+        with patch('backend.staff_directory.can_access', return_value=False):
+            with self.assertRaises(PermissionError):
+                self.staff(dict(active=False), staff_id=linked['id'])
+        self.assertTrue(read_staff_member(self.db, 1, linked['id'])['active'])
+
+    def test_self_and_last_administrator_offboarding_roll_back(self):
+        own = self.staff()
+        self.db.execute('UPDATE staff_members SET account_id=1 WHERE id=?', (own['id'],))
+        self.db.commit()
+        before = self.snapshot()
+        with self.assertRaisesRegex(ValueError, 'themselves'):
+            self.staff(dict(active=False, jobTitle='Must Roll Back'), staff_id=own['id'])
+        self.assertEqual(self.snapshot(), before)
+        # A second actor with administrator authority still cannot remove the last active admin.
+        with patch('backend.staff_directory._admin'), patch('backend.permissions._admin'):
+            current = read_staff_member(self.db, 2, own['id'])
+            with self.assertRaisesRegex(ValueError, 'last active administrator'):
+                save_staff_member(self.db, 2, self.tokens[2], dict(active=False, revision=current['revision']), staff_id=own['id'])
+        self.assertEqual(self.snapshot(), before)
+
+    def test_offboarding_failure_rolls_back_account_and_proofs(self):
+        linked = self.linked_staff()
+        before = self.snapshot()
+        with self.assertRaises(LookupError):
+            self.staff(dict(active=False, departmentId='missing'), staff_id=linked['id'])
+        self.assertEqual(self.snapshot(), before)
+
+    def test_cannot_create_or_link_enabled_login_for_left_company(self):
+        from backend.staff_identity import link_account_staff
+        inactive = self.staff(dict(firstName='Former', lastName='Colleague', active=False))
+        before = self.snapshot()
+        with self.assertRaises(ValueError):
+            self.staff(dict(username='must-not-exist', password='test-password'), staff_id=inactive['id'], login_only=True)
+        self.assertEqual(self.snapshot(), before)
+        with self.assertRaises(ValueError):
+            self.staff(dict(firstName='Former', lastName='Colleague', active=False,
+                login=dict(username='must-not-exist', password='test-password')))
+        self.assertEqual(self.snapshot(), before)
+        self.db.execute('BEGIN IMMEDIATE')
+        with self.assertRaises(ValueError):
+            link_account_staff(self.db, 3, staff_id=inactive['id'])
+        self.db.rollback()
+        self.assertEqual(self.snapshot(), before)
+
+    def test_legacy_employment_reconciliation_is_safe_and_idempotent(self):
+        linked = self.linked_staff()
+        account = linked['accountId']
+        self.db.execute('UPDATE staff_members SET active=0 WHERE id=?', (linked['id'],))
+        self.db.execute('INSERT INTO account_sessions VALUES(?,?,9999999999,1)', (_digest('legacy-session'), account))
+        self.db.commit()
+        history = self.db.execute('SELECT record_json FROM inventory_change_history ORDER BY id').fetchall()
+        initialise_database(self.db)
+        self.assertEqual(self.db.execute('SELECT active FROM accounts WHERE id=?', (account,)).fetchone(), (0,))
+        self.assertEqual(self.db.execute('SELECT count(*) FROM account_sessions WHERE account_id=?', (account,)).fetchone(), (0,))
+        self.assertEqual(self.db.execute('SELECT record_json FROM inventory_change_history ORDER BY id').fetchall()[:len(history)], history)
+        reconciled = self.snapshot()
+        initialise_database(self.db)
+        self.assertEqual(self.snapshot(), reconciled)
+        self.assertEqual(self.db.execute('SELECT max(version) FROM schema_migrations').fetchone(), (31,))
+
+    def test_legacy_last_administrator_conflict_stops_entire_upgrade(self):
+        linked = self.linked_staff()
+        own = self.staff()
+        self.db.execute('UPDATE staff_members SET account_id=1,active=0 WHERE id=?', (own['id'],))
+        self.db.execute('UPDATE staff_members SET active=0 WHERE id=?', (linked['id'],))
+        self.db.commit()
+        before = self.snapshot()
+        with self.assertRaisesRegex(RuntimeError, 'product owner approval'):
+            initialise_database(self.db)
+        self.assertEqual(self.snapshot(), before)
