@@ -2,6 +2,8 @@
 
 > **Draft v2.2 — Unreleased.** This guide covers the Staff account workflow in [PR #453](https://github.com/Caffoot/Caffoot-Lite/pull/453). Use the [published v2.1 guides](../README.md) for released installations.
 
+> **Written/source reconciliation:** Batch 3, application baseline `fdc677920bfc52f48f641b3d6d1344c902a6a9b0` (schema 31). Awaiting independent ChatGPT review and separate owner acceptance. Desktop screenshot reconciliation is deferred to Batch 7; existing images retain their original provenance and are not certified current by this pass. [Source review and exact screenshot requirements](../../../development-guide/Milestone-01-Batch-3-Review.md).
+
 [← Draft v2.2 Guides](README.md)
 
 Caffoot Lite links a person’s sign-in account to their Staff directory record. The account controls sign-in and access. The Staff record holds their Department, Staff status and equipment relationships. A receptionist may need only their own equipment list; a technician may edit Devices; an administrator manages accounts and organisation settings. Roles let an administrator reuse a set of permissions, while individual overrides provide deliberate exceptions for one person.
@@ -14,7 +16,7 @@ To manage an individual account, sign in as an active **Administrator** with MFA
 
 For your own settings, open **My Account**. You do not need general inventory permission to update your own profile, change your password, manage eligible MFA settings or use [My Equipment](Device-Assignments-and-My-Equipment.md). Keep your username, password and authenticator available before changing security settings.
 
-There is no public registration. An administrator creates a login, either here or through the authorised [Staff Members](Staff-Members.md) workflow. A Staff record can exist without a login. Making Staff inactive does not disable its linked login; disabling a login does not return equipment or change the person's Staff status.
+There is no public registration. An administrator creates a login, either here or through the authorised [Staff Members](Staff-Members.md) workflow. A Staff record can exist without a login. **Mark As Left Company** disables the linked login and revokes sessions and outstanding verification, recovery and temporary-password change proofs in the same save. **Reactivate** restores Staff eligibility but leaves that login disabled until an administrator separately selects **Enable Login**. Disabling a login alone does not return equipment or change employment status. See [employment changes](#employment-status-and-linked-login-security).
 
 ## Understand The Three Access Decisions
 
@@ -36,7 +38,7 @@ Enabling a feature does not grant permissions. Granting a permission does not en
 | **Read** | View permitted records and information; no authority to change that section |
 | **Edit** | View and change permitted records, subject to the workflow's other permissions and safeguards |
 
-The independent section controls are **Devices**, **IPAM**, **Racks**, **Staff Members**, **Departments** and **IT Assets**. The [Batch 4.1 draft](Supplier-Management.md) adds **Suppliers**. The Racks permission governs **Network Racks** in navigation. Staff Members and Departments are core sections, still protected by their own permissions. Devices, IPAM, Network Racks, IT Assets and Suppliers have independent organisation switches in the Batch 4.1 draft.
+The eight section controls are **Devices**, **IPAM**, **Racks**, **Staff Members**, **Departments**, **IT Assets**, **Suppliers** and **Service Desk**. Racks governs **Network Racks** in navigation. Staff Members, Departments and Service Desk are core functions protected by their own section permissions. Devices, IPAM, Network Racks, IT Assets and Suppliers have independent organisation switches. **Equipment Lifecycle** is the sixth optional feature and uses the applicable equipment permissions rather than a separate section grant. Service Desk permissions govern the IT workspace; employee ticket eligibility is separate. See [Optional Features](Optional-Features-and-Link-To-IPAM.md) and [Service Desk administration](Service-Desk-Administration.md).
 
 Forms can involve several sections. Devices Edit does not authorise changing protected IPAM links or rack placement; those actions need the applicable IPAM or Racks authority. IT Assets Edit permits stock operations, while registering or changing a canonical Device also needs Devices Edit and the Devices feature. See [Optional Features And Link To IPAM](Optional-Features-and-Link-To-IPAM.md) and [Device Stock Registration And Reissue](Device-Stock-Registration-and-Reissue.md) for the exact workflows.
 
@@ -124,13 +126,13 @@ Closing the dialogue discards unsaved profile typing. Changes you already saved 
 3. In **Review Access Change**, inspect the before/after roles, section inheritance, overrides, effective levels and MFA status.
 4. Check **Affected Accounts** and **Sessions To End**. Assigning or removing a membership ends that account's sessions, even when its effective rights would stay the same.
 5. Select **Confirm Change** to save, or **Cancel** to leave the saved membership unchanged.
-6. After success, review the refreshed account. If MFA enrolment is pending, the warning appears immediately above **Section Permissions**. Tell the person to sign in again and complete enrolment.
+6. After success, review the refreshed account. If MFA enrolment is pending, the current tabbed dialogue shows its warning in **Roles**. Review effective levels in the separate **Permissions** tab. Tell the person to sign in again and complete enrolment.
 
 Staff Member cannot be removed. An additional role may be assigned before MFA enrolment, but cannot be used to bypass enrolment. Removing a role does not automatically remove an enrolled authenticator or erase individual overrides.
 
 ![Manage Permissions with the mandatory MFA warning directly above Section Permissions.](../../../development-handovers/evidence/stage-6-6-batch-3/screenshots/manage-permissions-warning-dark-390.png)
 
-*When the account requires enrolment, the warning appears before the section controls.* [Light view and capture provenance](../../../development-handovers/evidence/stage-6-6-batch-3/README.md#application-screenshots)
+*Historical pre-tabbed narrow capture: the MFA warning preceded the section controls. The current four-tab dialogue places that warning in Roles; current desktop suitability remains a Batch 7 requirement.* [Light view and capture provenance](../../../development-handovers/evidence/stage-6-6-batch-3/README.md#application-screenshots)
 
 ## Set An Individual Section Override
 
@@ -147,8 +149,8 @@ An Edit override may increase access above the roles, so it needs the same care 
 
 ### Create A Custom Role
 
-1. Open **Staff → Permissions → Manage Roles** and select **Create Role**.
-2. Enter a descriptive **Role Name**, for example the fictional **Equipment Auditors**.
+1. Open **Staff → Permissions → Manage Roles** and select **+ Create Role**.
+2. Enter a unique **Role Name** of 1–80 printable characters, for example the fictional **Equipment Auditors**. Empty, overlong or conflicting names are rejected.
 3. Choose the required section grants. For an audit-only example, select **Read** for IT Assets and leave unrelated sections at **No Access**.
 4. Select **Review Changes**, then inspect the role definition and consequences in **Review Access Change**.
 5. Select **Confirm Change** to create it, or **Cancel** to save nothing.
@@ -174,13 +176,13 @@ Notification feedback is separate from saving access. **Notices Queued** means a
 
 ## Enable, Disable Or Delete A Login
 
-Account controls are separate from role previews. Check the account identity before selecting them: **Disable Login**, **Enable Login**, **Make Admin** and **Remove Admin** apply their own operation directly when selected. **Done** closes the editor; it is not a final save for these earlier actions.
+Account controls are separate from role previews. Check the account identity before selecting them: **Disable Login**, **Enable Login**, **Make admin** and **Remove admin** apply their own operation directly when selected. **Done** closes the editor; it is not a final save for these earlier actions.
 
 1. Open **Staff → Staff Members → Staff Details → Manage Permissions → Account Controls** for the person.
 2. An active account has a green status panel. In **Account Controls**, select **Disable Login** to end its sessions and prevent sign-in while retaining the account.
 3. A disabled account has a red status panel. Select **Enable Login** to restore login eligibility after the Staff Member is Active, then review the current roles, permissions and MFA requirements.
 4. To appoint an Administrator, review the eligibility checks and select **Make admin** once the account qualifies. See [Make An Existing User An Administrator](#make-an-existing-user-an-administrator).
-5. To remove independent Administrator status, select **Remove Admin**. Remaining ordinary access comes from the account's roles and overrides. The account must sign in again after Administrator status changes.
+5. To remove independent Administrator status, select **Remove admin**. Remaining ordinary access comes from the account's roles and overrides. The account must sign in again after Administrator status changes.
 6. To remove the account permanently, select **Delete User** and read its confirmation. Confirm only if deletion is intended; cancelling keeps the account. Prefer disabling when the requirement is simply to prevent sign-in while retaining the login.
 
 You cannot disable, demote or delete your own signed-in administrator account, and the last active administrator is protected. Deleting a login does not delete its Staff directory identity or return its equipment; review those separately in the [Staff lifecycle](Staff-Members.md). These controls do not provide an administrator bypass for a forgotten password or authenticator.
@@ -188,6 +190,17 @@ You cannot disable, demote or delete your own signed-in administrator account, a
 ![Account Controls showing Employment Status and the green Disable Login panel.](../../../development-handovers/evidence/native-acceptance-corrections/screenshots/permissions-controls-1440-light.png)
 
 *Left Company disables the linked login and ends its sessions atomically. Reactivate does not enable the login. **Enable Login** is unavailable while Staff remain Left Company. [Employment policy and permissions](Staff-Members.md#mark-as-left-company-or-reactivate) · [Dark narrow capture](../../../development-handovers/evidence/native-acceptance-corrections/screenshots/permissions-controls-390-dark.png)*
+
+## Employment Status And Linked Login Security
+
+Employment has two current choices: **Active** and **Left Company**. Older evidence may call the latter inactive; this is not a separate temporary-absence status.
+
+1. Check the person in **Staff → Staff Members → View Details**. Review outstanding equipment using the necessary equipment permissions.
+2. With **Staff Members Edit** and administrator authority for a linked person, select **Mark As Left Company**, or use **Manage Permissions → Account Controls → Employment Status**. Read and confirm the warning; **Cancel** saves nothing. The Add/Edit Staff form applies the same policy.
+3. Verify **Left Company** and linked account **Disabled**. The save ends existing sessions and revokes email verification/recovery and temporary-password change proofs. Account credentials, enrolled MFA, roles and retained records are not erased. Existing equipment remains outstanding; no return, stock movement or ticket deletion is created.
+4. If the employee returns, select **Reactivate** and confirm. Then review account access and separately choose **Enable Login** in Account Controls if authorised. Enabling or linking a login while Staff remain Left Company is rejected with **Reactivate the Staff Member before enabling their login** for the enable operation.
+
+For example, Alex Morgan leaves with laptop **AC-LAP-07** still recorded against them. Offboarding blocks Alex's login while IT resolves the actual equipment. On Alex's return, Reactivate permits new assignments but does not restore login access. An administrator deliberately enables it after reviewing Alex's current roles. Self-offboarding and disabling the remaining active administrator are rejected, with both Staff and account changes rolled back. [Full Staff procedure](Staff-Members.md#mark-as-left-company-or-reactivate)
 
 ## Make An Existing User An Administrator
 
@@ -268,7 +281,7 @@ Removal is unavailable for Administrators, accounts with any enabled additional 
 3. On **Change Your Password**, enter a personal **New Password** and repeat it in **Confirm New Password**. Select **Change Password**. Use a password different from the temporary password. Correct any mismatch and submit again.
 4. When you see **Password changed successfully. Sign in again with your new password.**, enter the new password on the sign-in screen and provide your authenticator code if prompted. Only that fresh sign-in opens the workspace.
 
-**Back to Sign In** clears the form. The password change remains required the next time you sign in with the temporary password. If the change screen expires, begin again at sign-in. If the administrator resets the account again, use the latest temporary password. If the account is disabled, ask your administrator to check its status. A verified-email recovery can also complete the required password change when recovery is available and you choose a different password.
+**Back to Sign In** clears the form. The restricted password-change screen expires after five minutes and cannot open normal application pages. The password change remains required the next time you sign in with the temporary password. If the change screen expires, begin again at sign-in. If the administrator resets the account again, use the latest temporary password. If the account is disabled, ask your administrator to check its status. A verified-email recovery can also complete the required password change when recovery is available and you choose a different password.
 
 ![Change Your Password in mobile dark mode with empty New Password and Confirm New Password fields.](screenshots/stage-6-6-batch-1/change-temporary-password-dark-390.png)
 
@@ -293,14 +306,14 @@ Typing values without submitting does not change the password. Follow the result
 
 ### Recover Your Password From Sign-In
 
-You need an active Caffoot Lite account, a verified email address saved to that account and outgoing email configured by your administrator. If you have enrolled an authenticator, keep it to hand. You can start recovery from the sign-in page without an active session.
+You need an active Caffoot Lite account, a verified email address saved to that account and outgoing email configured by your administrator. If you have enrolled an authenticator, keep it to hand. Recovery cannot remove or bypass MFA. If roles require MFA but you have not yet enrolled, complete the required enrolment through sign-in using known credentials; ask an administrator for an assisted password reset if you cannot do that. You can start recovery from the sign-in page without an active session.
 
-1. Select **Forgot Password?** on the sign-in page. **Request a Recovery Code** replaces the sign-in form. Enter your recovery **Username**, for example `recovery-owner`, and select **Request Recovery Code**. The same message appears for every request to protect account privacy.
+1. Select **Forgot Password?** on the sign-in page. **Request a Recovery Code** replaces the sign-in form. Enter your recovery **Username**, for example `recovery-owner`, and select **Request Recovery Code**. The response is **If recovery is available, instructions will be emailed. Otherwise, contact your Caffoot Lite administrator.** It protects account privacy and does not confirm that mail was sent.
 2. When **Reset Your Password** opens, check your verified mailbox and enter the emailed **Recovery Code (8 Digits)**, including any leading zeroes. Use the most recent code. Codes work once and expire after 15 minutes.
 3. Enter a long, unique **New Password** and repeat it exactly in **Confirm New Password**, including capital letters and any spaces. If you use a password manager, check that it filled both fields with the same generated password.
 4. If you have enrolled MFA, enter the current six-digit **Authenticator Code (If Enrolled)**. This is the code from your authenticator app.
 5. Select **Recover Password**. If the passwords differ, the form shows **The new passwords do not match.** and returns focus to **Confirm New Password**. Correct the entries and try again. A mismatch or empty field leaves your password and recovery challenge unchanged. The confirmation entry stays in the browser and is cleared with the new password when the form is reset.
-6. When Caffoot Lite reports that the password was updated, both password fields clear and your existing sessions end. Use **Back To Sign In** and sign in with the new password and your authenticator if required.
+6. When **Password Updated** appears, both password fields clear and your existing sessions end. Use **Back To Sign In** and sign in with the new password and your authenticator if required.
 
 If an administrator has set a temporary password, successful recovery also clears the required password change. Enter a different password at step 3 and still complete all recovery and authenticator checks.
 
@@ -316,9 +329,15 @@ If an administrator has set a temporary password, successful recovery also clear
 
 *Step 2 shows the neutral request response, code, password and authenticator fields, and recovery actions.* [Screenshot provenance](screenshots/Recovery-Provenance.md)
 
-Select **Back To Sign In** from either step to clear recovery and restore the original sign-in screen. **Request Another Code** clears the reset fields and takes you back to **Request a Recovery Code** with your username filled in. Making that request replaces the previous code and keeps the existing failed-attempt limits. Five failed confirmations can exhaust a challenge, and the rolling account limit can require a wait of up to 15 minutes.
+Select **Back To Sign In** from either step to clear recovery and restore the preceding sign-in step. If recovery was opened from **Verify Your Identity**, it returns to that authenticator challenge with focus on its code field; otherwise it returns to Username. Closing clears the local recovery fields and does not change your saved password. **Request Another Code** clears the reset fields and takes you back to **Request a Recovery Code** with your username filled in. Making that request replaces the previous code and keeps the existing failed-attempt limits. Five failed confirmations can exhaust a challenge, and the rolling account limit can require a wait of up to 15 minutes.
 
 If no email arrives, check the junk folder and ask your administrator to check your verification and outgoing mail privately. The request message confirms neither eligibility nor delivery. If confirmation is rejected, check that the recovery code is current and that you used the correct authenticator. For delivery and administrator troubleshooting, see [Account Recovery](../../../development-guide/Account-Recovery.md).
+
+### Password Values And Lost Authenticators
+
+Use long, unique passwords and communicate initial or temporary values privately. The current implementation rejects an empty password; it does not display or enforce a documented minimum length, complexity score or mandatory expiry period. Password and confirmation must match exactly. A mandatory replacement must differ from the temporary password. Initial account creation does not itself set the assisted-reset mandatory-change flag; ask the new user to change their initial password in My Account.
+
+An emailed eight-digit recovery code is a password-recovery proof, not a backup authenticator code. There is no user-facing set of downloadable MFA recovery codes or administrator MFA-reset button in these account controls. A lost required authenticator prevents email recovery as well as normal sign-in. Contact the system operator privately; the [host-only recovery reference](../../../development-guide/Account-Recovery.md) has limited eligibility and is not a general account bypass. Do not delete an account, create duplicate Staff or remove permissions as an improvised recovery procedure.
 
 ## Sessions, Sign-Out And Unsaved Work
 

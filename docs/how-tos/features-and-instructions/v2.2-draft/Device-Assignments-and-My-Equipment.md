@@ -2,6 +2,8 @@
 
 > **Draft v2.2 — Unreleased.** This guide includes the Stage 6.4 Shared Devices review changes. It is for development review, not production installation, upgrade or restore. Use the [published v2.1 guides](../README.md) for the released application. Batch 3.4 native/manual acceptance remains deferred; release acceptance is separate.
 
+> **Written/source reconciliation:** Batch 3, application baseline `fdc677920bfc52f48f641b3d6d1344c902a6a9b0` (schema 31). Awaiting independent ChatGPT review and separate owner acceptance. Desktop screenshot reconciliation is deferred to Batch 7; existing images retain their original provenance and are not certified current by this pass. [Source review and exact screenshot requirements](../../../development-guide/Milestone-01-Batch-3-Review.md).
+
 An assignment records one Staff Member or one or more Departments using an existing Device during a single physical custody period. Staff Details, Department Details and Device Details read the same saved relationship. My Equipment gives a linked person a limited view of their personal assignments and their Department's shared equipment.
 
 The Device remains the authoritative inventory record throughout issue, return and reassignment. Do not create a second Device to change its holder or make it visible to a person.
@@ -163,9 +165,19 @@ My Equipment is for a person signing in with a login linked to an active Staff M
 
 If the recorded software list is long, scroll inside **Details** to reach the actions. Escape closes the details and returns keyboard focus to the equipment row's **Details** button. [Long software list on mobile](../../../development-handovers/evidence/stage-6-6-batch-3/screenshots/classic-equipment-details-dark-390.png)
 
-The server checks the active Staff link and current custody on every request. Without a current Department there is no Department-shared list. An inactive or unlinked Staff record gives no self-service equipment visibility. Authorised IT staff can still resolve outstanding assignments. A current Department member can see equipment still shared with their archived Department until an authorised change ends that relationship.
+The server checks the active Staff link and current custody on every request. Without a current Department there is no Department-shared list. A Left Company or unlinked Staff record gives no self-service equipment visibility. Left Company also disables its linked login and revokes sessions/proofs; reactivation leaves login enabling as a separate administrator decision. Authorised IT staff can still resolve outstanding assignments. A current Department member can see equipment still shared with their archived Department until an authorised change ends that relationship.
 
 Devices and IT Assets obey independent feature switches. Disabling one hides its equipment and blocks its protected actions while preserving saved relationships. Ordinary baseline Staff access therefore exposes personal/shared equipment without opening the organisation's inventory pages.
+
+### Visibility, Empty Results And Permission Changes
+
+**No matching equipment** means the filters excluded the records already available to you: select **Clear Filters**. **No equipment available** means no current records were returned for that personal or Department section. Missing manufacturer/model/serial fields show **Not recorded**; a Laptop/Desktop with no eligible recorded software shows **No installed software is recorded for this Device.** These are recorded inventory facts, not live detection results.
+
+Details reloads authorised equipment before displaying it. A changed assignment or Department membership can produce **Equipment details could not be loaded or are no longer available.** Close it, reopen My Equipment and check with IT. Old rows in an already-open page do not preserve access; already displayed information cannot be recalled from the viewer's memory or screenshots.
+
+Removing general Devices/IT Assets Read does not, by itself, remove an active linked person's personal My Equipment access. It removes the corresponding general inventory permission; self-service still follows current custody, membership, feature switches and valid sign-in. Role/permission changes can revoke sessions, requiring a fresh sign-in. Disabling the account ends its sessions and blocks all authenticated access. Disabling Devices hides Device records and Device-linked accessories; independently issued IT Assets remain subject to IT Assets being enabled. Disabling IT Assets hides its issues while enabled Devices can remain visible.
+
+Only the permitted Device name/type, manufacturer/model, serial number, recorded operating system, assignment date and eligible Laptop/Desktop software names are returned for self-service. IT Asset rows expose their permitted description, issue date and outstanding quantity. IP/MAC addresses, network settings, licence keys, credentials, private notes, Supplier/purchase details, lifecycle records, stock totals and former-holder history are not supplied by this view. Software names come from recognised saved catalogue flags; orphan fields and **Other / Not Listed** are not presented as an installed-application inventory.
 
 ### Example: A Partial Return And Department Move
 
@@ -173,7 +185,7 @@ This example is fictional. **Priya Shah** in Accounts holds one laptop and two q
 
 IT records one adapter's actual return. Priya's next My Equipment request shows one outstanding adapter, rather than the original two. If Priya moves to Sales, the Accounts printer disappears from the shared list. The remaining adapter and laptop stay personally assigned to Priya, and the printer remains assigned to Accounts. Nothing is duplicated or physically returned by the membership change.
 
-Marking Priya Inactive removes her self-service equipment visibility and retains the outstanding assignments for authorised IT staff. Her login status is managed separately. Administrators handle login access separately, and IT resolves equipment through actual return, write-off or handover workflows.
+Marking Priya **Left Company** disables her linked login, revokes its sessions/proofs and removes self-service equipment visibility while retaining outstanding assignments for authorised IT staff. **Reactivate** alone does not enable the login. IT records actual return, write-off or handover separately. [Linked account security](Roles-Section-Permissions-and-MFA.md#employment-status-and-linked-login-security)
 
 ## Troubleshooting And Recovery
 

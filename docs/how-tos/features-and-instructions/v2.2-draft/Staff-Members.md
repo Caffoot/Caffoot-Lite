@@ -2,6 +2,8 @@
 
 > **Draft v2.2 — Unreleased.** This guide covers Unified Staff Administration in [PR #453](https://github.com/Caffoot/Caffoot-Lite/pull/453). Use the [published v2.1 guides](../README.md) for the released application.
 
+> **Written/source reconciliation:** Batch 3, application baseline `fdc677920bfc52f48f641b3d6d1344c902a6a9b0` (schema 31). Awaiting independent ChatGPT review and separate owner acceptance. Desktop screenshot reconciliation is deferred to Batch 7; existing images retain their original provenance and are not certified current by this pass. [Source review and exact screenshot requirements](../../../development-guide/Milestone-01-Batch-3-Review.md).
+
 Staff Members is the directory of people who may hold equipment. Use it to record a person’s contact details, Department and Staff status, review their assigned equipment and, with administrator access, manage their optional login and individual permissions. A person can hold equipment without a Caffoot login.
 
 | Record | Purpose |
@@ -25,10 +27,12 @@ Collect known work details before starting. Do not enter passwords, recovery cod
 
 1. Expand **Staff** in the sidebar and choose **Staff Members**.
 2. Enter part of the person’s name or Department in **Find A Staff Member**. Administrators can also enter part of the linked sign-in username.
-3. Use **Staff Status** to choose **All Statuses**, **Active** or **Inactive**. Clear the search and check All Statuses if a person seems missing.
+3. Use **Staff Status** to choose **All Statuses**, **Active** or **Left Company**. Clear the search and check All Statuses if a person seems missing.
 4. Scroll the table sideways on a narrow screen to reach **View Details** and **Edit**. Choose **View Details** beside the correct person. If names are similar, check their Department and, if you are an administrator, their username.
 5. Read **Personal Details**, **Organisation** and, where authorised, **Caffoot Login**. Equipment panels require independent equipment access.
 6. Choose **Back To Staff Members** to return to the list.
+
+**No matching Staff Members.** means the current search/status combination has no rows; clear the search and choose All Statuses before adding another record.
 
 **No Department**, **No Email Recorded** and **Name Not Recorded** describe missing details. Administrators see linked usernames and **Linked Login** or **No Login** beside the Staff status. Account status, authenticator enrolment and assigned roles appear in the administrator’s Caffoot Login card.
 
@@ -43,7 +47,7 @@ Collect known work details before starting. Do not enter passwords, recovery cod
 1. Open **Staff → Staff Members → + Add Staff Member**.
 2. Enter **First Name** and **Surname**. Both are required for a new person.
 3. Complete any known optional fields described below.
-4. Check **Staff Status**. **Active** permits eligible new equipment assignments; **Inactive** retains a person and their existing relationships without permitting new assignments.
+4. Check **Staff Status**. **Active** permits eligible new equipment assignments; **Left Company** retains a person and their existing relationships without permitting new assignments.
 5. Leave **Create Caffoot Login** switched off when no login is needed. A non-administrator cannot enable account creation here.
 6. Choose **Save Staff Member**. A successful save opens Staff Details and reports that the Staff Member was saved.
 7. Check the saved name, Department and status. Choose **Edit Staff Member** if a correction is needed.
@@ -58,6 +62,8 @@ Collect known work details before starting. Do not enter passwords, recovery cod
 | Location | Optional directory location. It does not move assigned Devices or change their Location field. |
 | Staff Status | Active or Left Company. Left Company disables a linked login; reactivation leaves it disabled. |
 
+Names allow up to 100 characters each; Job Title 120, Telephone Number 100, Location 200 and Email Address 254. Use printable text without control characters. A nonblank email needs an address in a valid form such as `alex.morgan@example.org`; `alex@` is invalid. Existing migrated blank names may remain blank until the true name is known.
+
 **Cancel** or **Back To Staff Members** leaves the form without saving. If validation rejects a save, correct the displayed problem and try again. A failed save does not leave a partial Staff record.
 
 For a fictional example, create **Alex Morgan**, select **Accounts**, enter `alex.morgan@example.org`, leave Create Caffoot Login off and save. Alex can now receive eligible equipment but has no credentials and cannot open My Equipment. Department membership has granted no application access.
@@ -67,7 +73,7 @@ For a fictional example, create **Alex Morgan**, select **Accounts**, enter `ale
 The combined form reuses existing account security and links the login to the person holding their equipment.
 
 1. As an authorised administrator with Staff Members Edit, start **+ Add Staff Member**, or open an existing unlinked person's **Staff Details → Create Login**.
-2. Review the Staff details. For an existing person, confirm this is the record holding their equipment.
+2. Review the Staff details and confirm **Staff Status: Active**. Creating or linking a login for Left Company Staff is rejected. For an existing person, confirm this is the record holding their equipment.
 3. Enable **Create Caffoot Login** if the Create Login action has not already enabled it.
 4. Enter a unique **Username**, an **Initial Password** and the same value in **Confirm Initial Password**. Follow the existing [password rules](Roles-Section-Permissions-and-MFA.md).
 5. Review the **Staff Member** default-role explanation. New logins start with the baseline role and have no general inventory access.
@@ -86,7 +92,7 @@ The **Caffoot Login** card shows **Username**, **Account Status**, **Authenticat
 
 *The Staff Details entry point for the fictional account taylor.cole.*
 
-If Service Desk is enabled, eligible linked users can work with permitted equipment in [My Tickets and Department Tickets](Service-Desk-Tickets.md). Wider IT Service Desk or inventory access requires the relevant section permissions.
+When their Staff link and current equipment make them eligible, linked users can work with permitted equipment in [My Tickets and Department Tickets](Service-Desk-Tickets.md). Wider IT Service Desk or inventory access requires the relevant section permissions.
 
 The Staff form offers no general merge or relink control for existing accounts. If an account is already linked to a different record, refer the discrepancy to an administrator; do not create a duplicate login or rewrite names to disguise the conflict.
 
@@ -103,7 +109,7 @@ A Staff email with a blank account email still needs an administrator’s decisi
 3. Change an unlinked contact email with Staff Members Edit. For a linked account email, sign in as an authorised administrator or ask the account owner to change it in **My Account → Personal Details**. The account owner must verify a changed email to use it for password recovery.
 4. Choose **Save Staff Member** and check the saved Staff Details. **Cancel** or **Back To Staff Members** discards unsaved edits.
 
-Changing Department, Staff Status or other directory fields leaves login access alone. Account owners can edit shared names and email in **My Account → Personal Details → Save Personal Details**. Account display name and photo belong to My Account. The sign-in username stays fixed.
+Changing Department, job title or location does not change account permissions or move equipment. **Left Company** disables a linked login and revokes sessions/proofs; **Reactivate** leaves it disabled, as explained below. Account owners can edit shared names and email in **My Account → Personal Details → Save Personal Details**. Account display name and photo belong to My Account. The sign-in username stays fixed.
 
 ### Resolve A Difference Between Staff And Account Details
 

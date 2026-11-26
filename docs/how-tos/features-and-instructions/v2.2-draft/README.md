@@ -29,7 +29,7 @@ This is a change to how dates are **entered and shown**, not to the dates alread
 | Record racks, inspect elevations, place equipment and manage shelves/accessories | [Network Racks](Racks.md) |
 | Enable optional features, record basic IPv4 or explicitly link to IPAM | [Optional Features, Basic IPv4 And Link To IPAM](Optional-Features-and-Link-To-IPAM.md) |
 
-These infrastructure drafts have completed the Batch 2 text/source pass at the recorded baseline. Current desktop screenshot suitability/approval and independent review remain outstanding; see the [Batch 2 evidence and limitations](../../../development-guide/Milestone-01-Batch-2-Review.md).
+These infrastructure drafts have completed the Batch 2 text/source pass at the recorded baseline. The owner approved Batch 2 written/source work; desktop screenshot suitability/approval remains outstanding; see the [Batch 2 evidence and limitations](../../../development-guide/Milestone-01-Batch-2-Review.md).
 
 ### A Sensible Infrastructure Setup Order
 
@@ -53,6 +53,8 @@ These infrastructure drafts have completed the Batch 2 text/source pass at the r
 | Enable sections, preserve Rack information or record/link basic IPv4 addresses | [Optional Features, Basic IPv4 And Link To IPAM](Optional-Features-and-Link-To-IPAM.md) |
 
 An application account is the identity used to sign in. A Staff Member is a person in your organisation; that person may have a linked account or no login at all. Roles determine section access, while an organisation's Optional Features switches determine whether optional functions are available. A role does not switch a feature on.
+
+Batch 3 accounts, Staff, Departments and My Equipment have completed written/source reconciliation at the recorded baseline, **awaiting independent ChatGPT review and separate owner acceptance**. Desktop requirements are deferred to Batch 7. [Batch 3 source, validation and screenshot record](../../../development-guide/Milestone-01-Batch-3-Review.md).
 
 ## People And Equipment
 

@@ -2,6 +2,8 @@
 
 > **Draft v2.2 — Unreleased.** This guide includes the Stage 6.4 Shared Devices review changes. It is for development review, not production installation, upgrade or restore. Use the [published v2.1 guides](../README.md) for the released application. Native/manual and release acceptance remain separate.
 
+> **Written/source reconciliation:** Batch 3, application baseline `fdc677920bfc52f48f641b3d6d1344c902a6a9b0` (schema 31). Awaiting independent ChatGPT review and separate owner acceptance. Desktop screenshot reconciliation is deferred to Batch 7; existing images retain their original provenance and are not certified current by this pass. [Source review and exact screenshot requirements](../../../development-guide/Milestone-01-Batch-3-Review.md).
+
 Departments group Staff Members and provide a holder for equipment used collectively, such as an Accounts printer. They are simple independent groups, without subdepartments or management trees. Membership is optional and grants no application permissions.
 
 An eligible Desktop, Laptop or Printer can be shared by several Departments in one physical custody period. Every assigned Department has equal access through its existing membership. Personally assigned equipment and standalone IT Asset issues keep their existing recipient rules.
@@ -18,7 +20,13 @@ An eligible Desktop, Laptop or Printer can be shared by several Departments in o
 | Initially assign an eligible existing Device or manage its assigned Departments | Devices Edit, with Devices enabled. |
 | Issue or return IT Assets stock | IT Assets Edit, with IT Assets enabled. Canonical Device stock work also requires Devices Edit and Devices enabled. |
 
-Staff Members and Departments are core sections and do not depend on the IT Assets switch. Account administration remains separate in **Staff → Permissions**; Departments Edit does not grant it. See [Roles, Section Permissions And MFA](Roles-Section-Permissions-and-MFA.md) and [Optional Features](Optional-Features-and-Link-To-IPAM.md) if controls are unavailable.
+Staff Members and Departments are core sections and do not depend on the IT Assets switch. Individual account administration uses **Staff Members → Staff Details → Manage Permissions**, while reusable roles use **Staff → Permissions → Manage Roles**; Departments Edit does not grant it. See [Roles, Section Permissions And MFA](Roles-Section-Permissions-and-MFA.md) and [Optional Features](Optional-Features-and-Link-To-IPAM.md) if controls are unavailable.
+
+## Find Departments And Interpret Empty Panels
+
+Open **Staff → Departments** to see the list, including **Active** and **Archived** records. The current directory has no search or status-filter control; review the displayed names and status badges. A new installation can show **0 Departments**. Create one only when it represents a real group.
+
+Details can show **No Staff Members In This Department** or **No Recorded Activity Available**. Equipment has its own empty and restricted states. A missing permission or failed load is not evidence that there are no members or equipment. Check the selected tab, feature switches and relevant access, then reopen Details to retry.
 
 ## Add A Department
 
@@ -62,7 +70,7 @@ Moving someone from Accounts to Sales changes their Department-shared equipment 
 | Tab | What it shows |
 | --- | --- |
 | Overview | Name, status, independent structure and New Membership availability. Staff, Shared Devices and IT Assets summaries require independent access. **Not Available** is not a zero count. |
-| Staff Members | Current members, including inactive Staff whose membership is retained. Change membership through the Staff form. |
+| Staff Members | Current members, including Left Company Staff whose membership is retained. Change membership through the Staff form. |
 | Equipment | Devices shared with the Department and outstanding IT Assets issued to it, followed by recorded equipment history. A Device shared with Sales and Accounts appears in both Departments and opens the same inventory record. Its outstanding explicitly associated accessories appear with the same current Departments when you have Devices and IT Assets access. Personally assigned Staff equipment is excluded. |
 | History | Available recorded Department changes and authorised equipment activity, with dates and responsible accounts. Visibility depends on access to the existing history/equipment services. An empty state does not prove no changes have occurred. |
 
