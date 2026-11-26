@@ -1,0 +1,823 @@
+{
+  "engine": "chromium",
+  "checks": [
+    "Four ordered tabs retain unsaved fields through tab and immediate account changes; Save Personal Details still saves explicitly",
+    "All four tabs fit desktop and narrow screens in both themes, with aligned inputs, fixed controls and keyboard tab navigation",
+    "Friendly optional-feature audit labels prefer recorded names; original records, event details and JSON export stay intact",
+    "Related Staff, Device and My Equipment views retain the authorised personal assignment and reflect the returned shared Device",
+    "Department equipment and history update after assignment, shared Department reassignment and return; delayed older responses cannot replace newer data"
+  ],
+  "captures": [
+    {
+      "file": "permissions-personal-1440-light.png",
+      "geometry": {
+        "viewport": {
+          "width": 1440,
+          "height": 1000
+        },
+        "dialog": {
+          "x": 230,
+          "y": 133.84375,
+          "width": 980,
+          "height": 732.3125,
+          "bottom": 866.15625,
+          "right": 1210
+        },
+        "head": {
+          "x": 230,
+          "y": 133.84375,
+          "width": 980,
+          "height": 125.8125,
+          "bottom": 259.65625,
+          "right": 1210
+        },
+        "tabs": {
+          "x": 230,
+          "y": 286.65625,
+          "width": 980,
+          "height": 43,
+          "bottom": 329.65625,
+          "right": 1210
+        },
+        "footer": {
+          "x": 230,
+          "y": 791.15625,
+          "width": 980,
+          "height": 75,
+          "bottom": 866.15625,
+          "right": 1210
+        },
+        "done": {
+          "x": 1125.640625,
+          "y": 810.15625,
+          "width": 60.359375,
+          "height": 40,
+          "bottom": 850.15625,
+          "right": 1186
+        },
+        "overflow": false
+      }
+    },
+    {
+      "file": "permissions-roles-1440-light.png",
+      "geometry": {
+        "viewport": {
+          "width": 1440,
+          "height": 1000
+        },
+        "dialog": {
+          "x": 230,
+          "y": 250.5,
+          "width": 980,
+          "height": 499,
+          "bottom": 749.5,
+          "right": 1210
+        },
+        "head": {
+          "x": 230,
+          "y": 250.5,
+          "width": 980,
+          "height": 125.8125,
+          "bottom": 376.3125,
+          "right": 1210
+        },
+        "tabs": {
+          "x": 230,
+          "y": 403.3125,
+          "width": 980,
+          "height": 43,
+          "bottom": 446.3125,
+          "right": 1210
+        },
+        "footer": {
+          "x": 230,
+          "y": 674.5,
+          "width": 980,
+          "height": 75,
+          "bottom": 749.5,
+          "right": 1210
+        },
+        "done": {
+          "x": 1125.640625,
+          "y": 693.5,
+          "width": 60.359375,
+          "height": 40,
+          "bottom": 733.5,
+          "right": 1186
+        },
+        "overflow": false
+      }
+    },
+    {
+      "file": "permissions-permissions-1440-light.png",
+      "geometry": {
+        "viewport": {
+          "width": 1440,
+          "height": 1000
+        },
+        "dialog": {
+          "x": 230,
+          "y": 32.75,
+          "width": 980,
+          "height": 934.5,
+          "bottom": 967.25,
+          "right": 1210
+        },
+        "head": {
+          "x": 230,
+          "y": 32.75,
+          "width": 980,
+          "height": 125.8125,
+          "bottom": 158.5625,
+          "right": 1210
+        },
+        "tabs": {
+          "x": 230,
+          "y": 185.5625,
+          "width": 980,
+          "height": 43,
+          "bottom": 228.5625,
+          "right": 1210
+        },
+        "footer": {
+          "x": 230,
+          "y": 892.25,
+          "width": 980,
+          "height": 75,
+          "bottom": 967.25,
+          "right": 1210
+        },
+        "done": {
+          "x": 1125.640625,
+          "y": 911.25,
+          "width": 60.359375,
+          "height": 40,
+          "bottom": 951.25,
+          "right": 1186
+        },
+        "overflow": false
+      }
+    },
+    {
+      "file": "permissions-controls-1440-light.png",
+      "geometry": {
+        "viewport": {
+          "width": 1440,
+          "height": 1000
+        },
+        "dialog": {
+          "x": 230,
+          "y": 58.21875,
+          "width": 980,
+          "height": 883.5625,
+          "bottom": 941.78125,
+          "right": 1210
+        },
+        "head": {
+          "x": 230,
+          "y": 58.21875,
+          "width": 980,
+          "height": 125.8125,
+          "bottom": 184.03125,
+          "right": 1210
+        },
+        "tabs": {
+          "x": 230,
+          "y": 211.03125,
+          "width": 980,
+          "height": 43,
+          "bottom": 254.03125,
+          "right": 1210
+        },
+        "footer": {
+          "x": 230,
+          "y": 866.78125,
+          "width": 980,
+          "height": 75,
+          "bottom": 941.78125,
+          "right": 1210
+        },
+        "done": {
+          "x": 1125.640625,
+          "y": 885.78125,
+          "width": 60.359375,
+          "height": 40,
+          "bottom": 925.78125,
+          "right": 1186
+        },
+        "overflow": false
+      }
+    },
+    {
+      "file": "permissions-personal-1440-dark.png",
+      "geometry": {
+        "viewport": {
+          "width": 1440,
+          "height": 1000
+        },
+        "dialog": {
+          "x": 230,
+          "y": 133.84375,
+          "width": 980,
+          "height": 732.3125,
+          "bottom": 866.15625,
+          "right": 1210
+        },
+        "head": {
+          "x": 230,
+          "y": 133.84375,
+          "width": 980,
+          "height": 125.8125,
+          "bottom": 259.65625,
+          "right": 1210
+        },
+        "tabs": {
+          "x": 230,
+          "y": 286.65625,
+          "width": 980,
+          "height": 43,
+          "bottom": 329.65625,
+          "right": 1210
+        },
+        "footer": {
+          "x": 230,
+          "y": 791.15625,
+          "width": 980,
+          "height": 75,
+          "bottom": 866.15625,
+          "right": 1210
+        },
+        "done": {
+          "x": 1125.640625,
+          "y": 810.15625,
+          "width": 60.359375,
+          "height": 40,
+          "bottom": 850.15625,
+          "right": 1186
+        },
+        "overflow": false
+      }
+    },
+    {
+      "file": "permissions-roles-1440-dark.png",
+      "geometry": {
+        "viewport": {
+          "width": 1440,
+          "height": 1000
+        },
+        "dialog": {
+          "x": 230,
+          "y": 250.5,
+          "width": 980,
+          "height": 499,
+          "bottom": 749.5,
+          "right": 1210
+        },
+        "head": {
+          "x": 230,
+          "y": 250.5,
+          "width": 980,
+          "height": 125.8125,
+          "bottom": 376.3125,
+          "right": 1210
+        },
+        "tabs": {
+          "x": 230,
+          "y": 403.3125,
+          "width": 980,
+          "height": 43,
+          "bottom": 446.3125,
+          "right": 1210
+        },
+        "footer": {
+          "x": 230,
+          "y": 674.5,
+          "width": 980,
+          "height": 75,
+          "bottom": 749.5,
+          "right": 1210
+        },
+        "done": {
+          "x": 1125.640625,
+          "y": 693.5,
+          "width": 60.359375,
+          "height": 40,
+          "bottom": 733.5,
+          "right": 1186
+        },
+        "overflow": false
+      }
+    },
+    {
+      "file": "permissions-permissions-1440-dark.png",
+      "geometry": {
+        "viewport": {
+          "width": 1440,
+          "height": 1000
+        },
+        "dialog": {
+          "x": 230,
+          "y": 32.75,
+          "width": 980,
+          "height": 934.5,
+          "bottom": 967.25,
+          "right": 1210
+        },
+        "head": {
+          "x": 230,
+          "y": 32.75,
+          "width": 980,
+          "height": 125.8125,
+          "bottom": 158.5625,
+          "right": 1210
+        },
+        "tabs": {
+          "x": 230,
+          "y": 185.5625,
+          "width": 980,
+          "height": 43,
+          "bottom": 228.5625,
+          "right": 1210
+        },
+        "footer": {
+          "x": 230,
+          "y": 892.25,
+          "width": 980,
+          "height": 75,
+          "bottom": 967.25,
+          "right": 1210
+        },
+        "done": {
+          "x": 1125.640625,
+          "y": 911.25,
+          "width": 60.359375,
+          "height": 40,
+          "bottom": 951.25,
+          "right": 1186
+        },
+        "overflow": false
+      }
+    },
+    {
+      "file": "permissions-controls-1440-dark.png",
+      "geometry": {
+        "viewport": {
+          "width": 1440,
+          "height": 1000
+        },
+        "dialog": {
+          "x": 230,
+          "y": 58.21875,
+          "width": 980,
+          "height": 883.5625,
+          "bottom": 941.78125,
+          "right": 1210
+        },
+        "head": {
+          "x": 230,
+          "y": 58.21875,
+          "width": 980,
+          "height": 125.8125,
+          "bottom": 184.03125,
+          "right": 1210
+        },
+        "tabs": {
+          "x": 230,
+          "y": 211.03125,
+          "width": 980,
+          "height": 43,
+          "bottom": 254.03125,
+          "right": 1210
+        },
+        "footer": {
+          "x": 230,
+          "y": 866.78125,
+          "width": 980,
+          "height": 75,
+          "bottom": 941.78125,
+          "right": 1210
+        },
+        "done": {
+          "x": 1125.640625,
+          "y": 885.78125,
+          "width": 60.359375,
+          "height": 40,
+          "bottom": 925.78125,
+          "right": 1186
+        },
+        "overflow": false
+      }
+    },
+    {
+      "file": "permissions-personal-390-light.png",
+      "geometry": {
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "dialog": {
+          "x": 10,
+          "y": 10,
+          "width": 370,
+          "height": 824,
+          "bottom": 834,
+          "right": 380
+        },
+        "head": {
+          "x": 10,
+          "y": 10,
+          "width": 370,
+          "height": 133.625,
+          "bottom": 143.625,
+          "right": 380
+        },
+        "tabs": {
+          "x": 10,
+          "y": 170.625,
+          "width": 370,
+          "height": 42,
+          "bottom": 212.625,
+          "right": 380
+        },
+        "footer": {
+          "x": 10,
+          "y": 763,
+          "width": 370,
+          "height": 71,
+          "bottom": 834,
+          "right": 380
+        },
+        "done": {
+          "x": 311.640625,
+          "y": 782,
+          "width": 52.359375,
+          "height": 40,
+          "bottom": 822,
+          "right": 364
+        },
+        "overflow": false
+      }
+    },
+    {
+      "file": "permissions-roles-390-light.png",
+      "geometry": {
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "dialog": {
+          "x": 10,
+          "y": 151.90625,
+          "width": 370,
+          "height": 540.1875,
+          "bottom": 692.09375,
+          "right": 380
+        },
+        "head": {
+          "x": 10,
+          "y": 151.90625,
+          "width": 370,
+          "height": 133.625,
+          "bottom": 285.53125,
+          "right": 380
+        },
+        "tabs": {
+          "x": 10,
+          "y": 312.53125,
+          "width": 370,
+          "height": 42,
+          "bottom": 354.53125,
+          "right": 380
+        },
+        "footer": {
+          "x": 10,
+          "y": 621.09375,
+          "width": 370,
+          "height": 71,
+          "bottom": 692.09375,
+          "right": 380
+        },
+        "done": {
+          "x": 311.640625,
+          "y": 640.09375,
+          "width": 52.359375,
+          "height": 40,
+          "bottom": 680.09375,
+          "right": 364
+        },
+        "overflow": false
+      }
+    },
+    {
+      "file": "permissions-permissions-390-light.png",
+      "geometry": {
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "dialog": {
+          "x": 10,
+          "y": 10,
+          "width": 370,
+          "height": 824,
+          "bottom": 834,
+          "right": 380
+        },
+        "head": {
+          "x": 10,
+          "y": 10,
+          "width": 370,
+          "height": 133.625,
+          "bottom": 143.625,
+          "right": 380
+        },
+        "tabs": {
+          "x": 10,
+          "y": 170.625,
+          "width": 370,
+          "height": 42,
+          "bottom": 212.625,
+          "right": 380
+        },
+        "footer": {
+          "x": 10,
+          "y": 763,
+          "width": 370,
+          "height": 71,
+          "bottom": 834,
+          "right": 380
+        },
+        "done": {
+          "x": 311.640625,
+          "y": 782,
+          "width": 52.359375,
+          "height": 40,
+          "bottom": 822,
+          "right": 364
+        },
+        "overflow": false
+      }
+    },
+    {
+      "file": "permissions-controls-390-light.png",
+      "geometry": {
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "dialog": {
+          "x": 10,
+          "y": 10,
+          "width": 370,
+          "height": 824,
+          "bottom": 834,
+          "right": 380
+        },
+        "head": {
+          "x": 10,
+          "y": 10,
+          "width": 370,
+          "height": 133.625,
+          "bottom": 143.625,
+          "right": 380
+        },
+        "tabs": {
+          "x": 10,
+          "y": 170.625,
+          "width": 370,
+          "height": 42,
+          "bottom": 212.625,
+          "right": 380
+        },
+        "footer": {
+          "x": 10,
+          "y": 763,
+          "width": 370,
+          "height": 71,
+          "bottom": 834,
+          "right": 380
+        },
+        "done": {
+          "x": 311.640625,
+          "y": 782,
+          "width": 52.359375,
+          "height": 40,
+          "bottom": 822,
+          "right": 364
+        },
+        "overflow": false
+      }
+    },
+    {
+      "file": "permissions-personal-390-dark.png",
+      "geometry": {
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "dialog": {
+          "x": 10,
+          "y": 10,
+          "width": 370,
+          "height": 824,
+          "bottom": 834,
+          "right": 380
+        },
+        "head": {
+          "x": 10,
+          "y": 10,
+          "width": 370,
+          "height": 133.625,
+          "bottom": 143.625,
+          "right": 380
+        },
+        "tabs": {
+          "x": 10,
+          "y": 170.625,
+          "width": 370,
+          "height": 42,
+          "bottom": 212.625,
+          "right": 380
+        },
+        "footer": {
+          "x": 10,
+          "y": 763,
+          "width": 370,
+          "height": 71,
+          "bottom": 834,
+          "right": 380
+        },
+        "done": {
+          "x": 311.640625,
+          "y": 782,
+          "width": 52.359375,
+          "height": 40,
+          "bottom": 822,
+          "right": 364
+        },
+        "overflow": false
+      }
+    },
+    {
+      "file": "permissions-roles-390-dark.png",
+      "geometry": {
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "dialog": {
+          "x": 10,
+          "y": 151.90625,
+          "width": 370,
+          "height": 540.1875,
+          "bottom": 692.09375,
+          "right": 380
+        },
+        "head": {
+          "x": 10,
+          "y": 151.90625,
+          "width": 370,
+          "height": 133.625,
+          "bottom": 285.53125,
+          "right": 380
+        },
+        "tabs": {
+          "x": 10,
+          "y": 312.53125,
+          "width": 370,
+          "height": 42,
+          "bottom": 354.53125,
+          "right": 380
+        },
+        "footer": {
+          "x": 10,
+          "y": 621.09375,
+          "width": 370,
+          "height": 71,
+          "bottom": 692.09375,
+          "right": 380
+        },
+        "done": {
+          "x": 311.640625,
+          "y": 640.09375,
+          "width": 52.359375,
+          "height": 40,
+          "bottom": 680.09375,
+          "right": 364
+        },
+        "overflow": false
+      }
+    },
+    {
+      "file": "permissions-permissions-390-dark.png",
+      "geometry": {
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "dialog": {
+          "x": 10,
+          "y": 10,
+          "width": 370,
+          "height": 824,
+          "bottom": 834,
+          "right": 380
+        },
+        "head": {
+          "x": 10,
+          "y": 10,
+          "width": 370,
+          "height": 133.625,
+          "bottom": 143.625,
+          "right": 380
+        },
+        "tabs": {
+          "x": 10,
+          "y": 170.625,
+          "width": 370,
+          "height": 42,
+          "bottom": 212.625,
+          "right": 380
+        },
+        "footer": {
+          "x": 10,
+          "y": 763,
+          "width": 370,
+          "height": 71,
+          "bottom": 834,
+          "right": 380
+        },
+        "done": {
+          "x": 311.640625,
+          "y": 782,
+          "width": 52.359375,
+          "height": 40,
+          "bottom": 822,
+          "right": 364
+        },
+        "overflow": false
+      }
+    },
+    {
+      "file": "permissions-controls-390-dark.png",
+      "geometry": {
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "dialog": {
+          "x": 10,
+          "y": 10,
+          "width": 370,
+          "height": 824,
+          "bottom": 834,
+          "right": 380
+        },
+        "head": {
+          "x": 10,
+          "y": 10,
+          "width": 370,
+          "height": 133.625,
+          "bottom": 143.625,
+          "right": 380
+        },
+        "tabs": {
+          "x": 10,
+          "y": 170.625,
+          "width": 370,
+          "height": 42,
+          "bottom": 212.625,
+          "right": 380
+        },
+        "footer": {
+          "x": 10,
+          "y": 763,
+          "width": 370,
+          "height": 71,
+          "bottom": 834,
+          "right": 380
+        },
+        "done": {
+          "x": 311.640625,
+          "y": 782,
+          "width": 52.359375,
+          "height": 40,
+          "bottom": 822,
+          "right": 364
+        },
+        "overflow": false
+      }
+    }
+  ],
+  "errors": [],
+  "browser": "155.0.8059.79",
+  "sourceRevision": "bf5a016039b9812c0825644b47c6b619bbad653e",
+  "sourceHashes": {
+    "interface/application.js": "8ca59a037f34ca270fb96510dc7abaeb18a9d5155f95cd6e449920069170170e",
+    "interface/staff-directory.js": "f4c09bc1cd227cdd3fe4d9d32d3d84a8c8477fac697dadff57d06cc7fbd117c1",
+    "interface/equipment.js": "c275129388239e96317474ead283ee7f850506baff43fd7fb57a7641818f63f0",
+    "interface/stock-intake.js": "460efcc34eec3e5955b10c06d74f970d066ede78fa461b4407e50ce578cb251f",
+    "interface/screens/users.html": "51953ba4560c4c77fd6774101d01f50f2d96bf2970b2b4d2632b1179579fc5a6",
+    "interface/styles/components.css": "94e46674732479d9ee421ab7d8781c264e39fc8bc948031fb1b52b5d4ba9f61a"
+  }
+}

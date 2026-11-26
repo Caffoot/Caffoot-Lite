@@ -168,7 +168,9 @@ with sqlite3.connect(sys.argv[1]) as db:
  await page.evaluate(()=>closeModal(true));
  const employee=await browser.newContext({ignoreHTTPSErrors:true});
  const employeeLogin=await employee.request.post(address+'/api/login',{headers:{Origin:address},data:{username:'morgan.reed',password:'Fictional-Password-2026!'}});assert.equal(employeeLogin.status(),200,await employeeLogin.text());
- const employeePage=await employee.newPage();await employeePage.goto(address+'/inventory#equipment');
+ const employeePage=await employee.newPage();await employeePage.goto(address+'/account');
+ await employeePage.locator('#app[aria-busy="false"]').waitFor();
+ await employeePage.getByRole('button',{name:'Open My Equipment',exact:true}).click();
  await employeePage.locator('[data-personal-equipment]').getByText('Fictional Personal Laptop',{exact:true}).waitFor();
  assert.equal(await employeePage.getByText('Fictional Shared Printer',{exact:true}).count(),0);
  await employee.close();

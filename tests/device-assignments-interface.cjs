@@ -248,6 +248,7 @@ async function test(){
  await page.locator('[data-equipment-action="assign-staff"]').waitFor();
  assert.deepEqual(await (await context.request.get(address+'/api/equipment/assignments?staffId='+person.id)).json(),assignmentsBefore);
  assert.deepEqual((await (await context.request.get(address+'/api/users')).json()).users.find(user=>user.id===person.accountId),{...accountBefore,active:false,accessDetails:{...accountBefore.accessDetails,active:false}});
+ await save('/api/users/active',{userId:person.accountId,active:true});
  const readerSession=await (await restricted.request.get(address+'/api/session')).json();
  assert.equal(readerSession.mfa_enrolled,true);
  assert.equal((await restricted.request.post(address+'/api/staff-members/'+person.id,{headers:{Origin:address,'X-CSRF-Token':readerSession.csrf_token},data:{active:false}})).status(),403);

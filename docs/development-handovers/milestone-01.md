@@ -1,5 +1,11 @@
 # Milestone 01 Development Handover — v2.2 Target
 
+## Native Acceptance Corrections — 26 November 2026
+
+The five approved corrections are implemented on `fix/native-acceptance-corrections`, from verified baseline `eff18a7acc2ec78e251562882c41af154bd929ed`, schema 31. Application source is `bf5a016039b9812c0825644b47c6b619bbad653e`. Friendly audit labels preserve recorded evidence; Manage Permissions has aligned fields and four fixed-navigation tabs; linked offboarding is atomic with administrator safeguards and safe legacy reconciliation; equipment mutations refresh/invalidate Department data with request-order protection. [Full changes, focused verification and genuine screenshots](evidence/native-acceptance-corrections/README.md).
+
+129 focused host tests and the 43 focused Docker tests passed; the real Chromium correction fixture passed in desktop/narrow light/dark with 16 captures and no page errors. These are development checks. Independent review and owner visual acceptance remain pending; the requested PR must stay draft. Native acceptance remains paused after Test 69, with Test 70 next. No merge, deployment or release; #366 and #443 remain protected. Earlier dated checkpoints below remain historical evidence.
+
 ## Stage 6.6 Batch 1 — 25 November 2026
 
 PR #465 targets `milestone-1` from `66917d12a79dbc232596b2ce8416841e82868c00`. It covers the six authorised navigation, sign-in, account administration and Device reassignment issues. The verified application source is `20cb447458065196a01fbca871d79c2c9f771af2` with schema 30. [PR #465](https://github.com/Caffoot/Caffoot-Lite/pull/465) · [Scope and authorisation](https://github.com/Caffoot/Caffoot-Lite/issues/351#issuecomment-7160163762)
