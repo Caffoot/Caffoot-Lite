@@ -2,6 +2,8 @@
 
 > **Draft v2.2 — Unreleased.** This guide covers employee and technician access, ticket email, the support calendar, categories, reporting and the effect of equipment changes on stored tickets and files.
 
+> **Written/source reconciliation:** Documentation Batch 5, application baseline `fdc677920bfc52f48f641b3d6d1344c902a6a9b0` (schema 31). Awaiting independent ChatGPT review and separate owner written acceptance. Current desktop screenshot reconciliation is deferred to Batch 7; existing historical/mobile images retain their original provenance. [Source review and exact screenshot requirements](../../../development-guide/Milestone-01-Batch-5-Review.md).
+
 ## Verify Employee Access
 
 1. In **Staff → Staff Members**, open the employee’s record and check that it is active and linked to the correct enabled sign-in account. Review **Department** if the employee needs shared equipment. Keep the account’s existing sign-in and MFA requirements. [Staff Members](Staff-Members.md)
@@ -20,7 +22,7 @@ An employee needs no general inventory, directory or Service Desk grant for thes
 
 Sign in as an administrator using your authenticator. Check that the prospective technician has an enabled account and the required access to the equipment they support. Devices and IT Assets have independent feature switches and permissions.
 
-1. Open **Staff → Permissions → Manage Roles**. Select **Manage** beside the role you want to change. To grant access to just one authorised person, open **Manage Permissions** in their **Staff Details** and review their section permissions instead.
+1. Open **Staff → Permissions → Manage Roles**. Select **Manage** beside the role you want to change. To grant access to just one authorised person, open **Staff Details → Manage Permissions → Permissions** and review their **Inherited**, **Override** and **Effective** section levels instead.
 2. Find **Service Desk**. Choose **Read** for someone who may review the technician queue or **Edit** for someone who may record technician actions. Review their effective **Devices** and **IT Assets** access as well. Each ticket is subject to its equipment section's enabled state and effective Read permission.
 3. Review the proposed changes and the accounts affected. The IT Staff role was assigned automatically during an earlier upgrade, so check the actual list before granting access to the whole role. Use an individual grant if the role has members who should have employee access only.
 4. Confirm the change when the preview is correct or cancel it to keep the current permissions. Review any individual **No Access** override if an expected inherited permission is missing. The application applies its existing account, MFA and session rules to the change.
@@ -60,7 +62,7 @@ Focused permission, database and browser evidence is available in the [Batch 2 v
 The **Ticket Created** email alerts IT when someone raises a request for their own or their Department’s assigned Device or IT Asset. It contains the ticket reference, its initial **Open** status and a link to the authorised IT ticket view. The description, attachments and request subject stay inside Caffoot Lite.
 
 1. Sign in as an administrator with your authenticator. Open **Settings & Data → Email Settings**.
-2. Under **Outgoing Email Settings**, enter the **Server Address**, **Port**, **Connection Security**, SMTP authentication details and **Sender Identity** supplied by your mail administrator. Keep credentials private. If you are editing an existing installation and the SMTP username stays the same, leave **Password** blank to keep the saved password. Select the TLS option your provider requires. [SMTP fields and security](../Settings-and-Change-History.md#email-and-the-audit-trail)
+2. Under **Outgoing Email Settings**, enter the **Server Address**, **Port**, **Connection Security**, SMTP authentication details and **Sender Identity** supplied by your mail administrator. Keep credentials private. If you are editing an existing installation and the SMTP username stays the same, leave **Password** blank to keep the saved password. Select the TLS option your provider requires. [Complete v2.2 SMTP fields and security](Email-Templates-and-Company-Branding.md#configure-outgoing-email-smtp)
 3. Under **Service Desk Notifications**, enter one mailbox in **IT Support Email Address**. For example, use `it-support@example.invalid` for a shared mailbox, or enter the address of the administrator who checks new requests. Give the people who monitor a shared mailbox their own authorised Caffoot Lite accounts. Enter the address alone, without a display name or a list of mailboxes.
 4. Select **Save Email Settings**. If the address is rejected, correct it and save again. **Discard Changes** reloads the last saved settings. To stop **Ticket Created** mail, clear the address and save. The other approved events use their own eligible recipients.
 5. Under **Send A Test Email**, enter your IT mailbox in **Recipient Email Address** and select **Send Test Email**. Check the mailbox and its junk folder. A successful connection test means your mail server accepted the test for sending. It can still take time to reach the mailbox. Wait at least 30 seconds between tests.
@@ -150,7 +152,7 @@ For reporting periods, attribution and display examples, see [Read Service Desk 
 1. Tell technicians to check the audience before attaching files. Files on the original report follow the verified equipment assignment. The **Updates** composer starts internal, and files inherit each update’s visibility.
 2. Select a filename in **Ticket Details → Updates** to download it. The server rechecks the signed-in account, equipment access, ticket scope and parent message on every request. A saved link does not grant access.
 3. With Service Desk Edit, choose **Remove** beside an attachment and confirm **Remove Attachment**. The file is removed from the ticket’s retained quota. The attributed removal appears in the ticket’s **History**, under the visibility of the parent message. A file already downloaded or captured in a backup can still exist in that copy.
-4. Use the organisation’s rules for offline handling and backups. Files are stored with the database. Caffoot Lite checks file contents and sizes and serves them as downloads. Malware scanning is scheduled outside this milestone.
+4. Use the organisation’s rules for offline handling and backups. Ticket attachment bytes are stored in the SQLite database; protect the complete persistent installation when backing up. Caffoot Lite checks file contents and sizes and serves them as downloads. Malware scanning is scheduled outside this milestone.
 
 Up to 10 MB is allowed per file and 100 MB retained per ticket. If two technicians upload at the same time and their combined files would exceed the limit, only the first update that fits is saved. The rejected technician can retry after reducing the selection or after an authorised removal. [Technician instructions](Service-Desk-Tickets.md#add-a-note-share-an-update-or-manage-files)
 
@@ -162,7 +164,7 @@ Up to 10 MB is allowed per file and 100 MB retained per ticket. If two technicia
 
 Caffoot Lite records the equipment and its assignment when a ticket is raised. The original Device or IT Asset keeps its identity as it changes hands. Authorised IT can still review the ticket, its replies, attachments and attributed history under the equipment's section permissions.
 
-After a physical transfer, **My Tickets** shows eligible tickets from each employee’s current personal assignment. **Department Tickets** uses live Staff membership and the Departments assigned to the Device’s current physical custody period. IT-created and employee-created Device tickets and new associated accessory tickets follow the same rule. An associated accessory ticket also requires the original accessory issue to remain in custody. The ticket number and all original records remain in **IT → Service Desk** for technicians with access.
+After a physical transfer, **My Tickets** shows eligible tickets from each employee’s current personal assignment. **Department Tickets** uses live Staff membership and the Departments assigned to the Device’s current physical custody period. All current Department relationships are equal: there is no primary or owning Department with extra historical rights. Adding/removing Departments during continuing custody is not a physical stock movement. IT-created and employee-created Device tickets and new associated accessory tickets follow the same rule. An associated accessory ticket also requires the original accessory issue to remain in custody. The ticket number and all original records remain in **IT → Service Desk** for technicians with access.
 
 | Change | Worked example |
 | --- | --- |
@@ -218,7 +220,9 @@ Clean Start returns Caffoot Lite to an empty operational starting point. Before 
 
 The reset restores the standard inventory options, category lists and lifecycle defaults. User accounts, roles, permission overrides, sign-in safeguards, Optional Features choices and central **Change History** are retained. The central reset entry records the action without copying ticket contents.
 
-The reset is one database operation, including attachments. An error rolls back the entire operation. Equipment assignments and returns are part of the reset. Ordinary deletion and legacy inventory import continue to protect referenced equipment. [Device Assignments And My Equipment](Device-Assignments-and-My-Equipment.md)
+Service Desk message read receipts are cleared with their tickets. Central Audit Trail records are retained; there is no ordinary ticket-delete or automatic ticket-expiry control in this baseline.
+
+The reset is one database operation, including ticket attachments. An error rolls back the entire operation. Equipment assignments and returns are part of the reset. Ordinary deletion and legacy inventory import continue to protect referenced equipment. [Device Assignments And My Equipment](Device-Assignments-and-My-Equipment.md)
 
 ![System Maintenance shows Review Clear System with an explanation that the operation clears operational records and restores default catalogues.](../../../development-handovers/evidence/service-desk-foundation/clean-start-1440.png)
 
@@ -234,3 +238,5 @@ The reset is one database operation, including attachments. An error rolls back 
 | Clean Start is rejected | Review the confirmation and administrator permissions first. If the reset reports a database error, the operational records are still available. |
 
 For employee-facing explanations, see [Service Desk Tickets](Service-Desk-Tickets.md). For source and test coverage, see [Service Desk Foundation](../../../development-guide/Service-Desk-Foundation.md).
+
+[Follow the connected Aster Services support request](Connected-Service-Desk-Journey.md) · [Draft v2.2 guides](README.md)

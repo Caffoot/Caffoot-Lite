@@ -2,6 +2,8 @@
 
 > **Draft v2.2 — Unreleased.** Use **My Tickets** to raise and follow requests for equipment assigned to you or your Department. Technicians use **IT → Service Desk**. See [Find Tickets In The IT Queue](#find-tickets-in-the-it-queue) and [Read Service Desk Activity](#read-service-desk-activity).
 
+> **Written/source reconciliation:** Documentation Batch 5, application baseline `fdc677920bfc52f48f641b3d6d1344c902a6a9b0` (schema 31). Awaiting independent ChatGPT review and separate owner written acceptance. Current desktop screenshot reconciliation is deferred to Batch 7; existing historical/mobile images retain their original provenance. [Source review and exact screenshot requirements](../../../development-guide/Milestone-01-Batch-5-Review.md).
+
 ## Check Which Equipment Is Assigned To You
 
 A service ticket records a problem or a piece of support work on an existing Device or IT Asset. A laptop might be assigned directly to you, while a shared printer might be assigned to your Department.
@@ -99,7 +101,7 @@ For Department tickets, other authorised current members can read your replies a
 
 ## Follow Service Desk Emails
 
-1. Check that the email address in **My Account** is correct and verified. Use the account linked to your active Staff record. [Account email and security](../Users-Permissions-and-MFA.md)
+1. Check that the email address in **My Account** is correct and verified. Use the account linked to your active Staff record. [Account email and security](Roles-Section-Permissions-and-MFA.md)
 2. When IT adds an update marked visible, puts a ticket **On Hold** or **Closes** it, you may receive an email with the permitted update, hold reason or resolution. For shared equipment, the email goes separately to each eligible current Department member. Your colleague’s address stays private.
 3. Select **Open Ticket in Caffoot Lite**. Sign in and complete any required authenticator step. The link opens the permitted ticket view. Use **Updates** to see the conversation and download any file you can access there.
 4. If the link no longer opens the ticket, check you signed in with the right account. You can also go to **My Tickets**, choose the personal or Department tab and use **Clear Filters** to find the reference. If your Department or the equipment assignment has changed, ask IT to review the original ticket.
@@ -228,8 +230,8 @@ On desktop, **Close Ticket** appears at the left of the footer when completion i
 | Action | Steps and result |
 | --- | --- |
 | **Assign Ticket** | Open an Open ticket, select **Assign Ticket**, choose yourself or another eligible technician in **Assign To**, and confirm. The status moves to **In Progress**. |
-| **Reassign Ticket** | Select **Reassign Ticket**, choose a different technician, select a **Reason For Reassignment**, and optionally add an explanation. Confirm to save it. The reason and explanation stay within IT. Assigning a reopened Open ticket moves it to **In Progress**. |
-| **Place On Hold** | Choose **Place On Hold** on an Open or In Progress ticket. Select **Waiting for User**, **Waiting for Supplier**, **Waiting for Parts** or **Other**. The reason is employee-visible. If you add an explanation, select **Make Explanation Visible To Employee** only if the authorised audience should see it. Confirm **Place On Hold**. |
+| **Reassign Ticket** | Select **Reassign Ticket**, choose a different technician in **Reassign To**, select a **Reason For Reassignment**, and optionally add an explanation. Confirm to save it. The reason and explanation stay within IT. Assigning a reopened Open ticket moves it to **In Progress**. |
+| **Place On Hold** | Choose **Place On Hold** on an Open or In Progress ticket. In **Reason For On Hold**, select **Waiting for User**, **Waiting for Supplier**, **Waiting for Parts** or **Other**. The reason is employee-visible. If you add an explanation, select **Make Explanation Visible To Employee** only if the authorised audience should see it. Confirm **Place On Hold**. |
 | **Resume Ticket** | Open an On Hold ticket and choose **Resume Ticket**. Check the status shown in the confirmation. Confirm to restore the exact previous status, **Open** or **In Progress**. Resume first if you intend to close the ticket. |
 | **Close Ticket** | Select **Close Ticket** and enter a meaningful **Resolution Note**, for example *Reconnected the mapped drive and verified it after sign-in*. Confirm **Close Ticket**. The note is employee-visible and the closure is recorded as a separate resolution attempt. |
 | **Reopen Ticket** | Open the Closed ticket, choose **Reopen Ticket**, and confirm. It returns to **Open** with the same ticket number, previous technician and all earlier closure attempts. |
@@ -257,3 +259,5 @@ Files must be genuine PNG, JPEG, PDF, TXT, DOCX or XLSX. Each file may be up to 
 - The Device **Tickets** tab and stock item **Linked Tickets** section require Service Desk Read as well as access to the equipment. If the list is empty, check the equipment record before asking an administrator to review access.
 
 The [administrator guide](Service-Desk-Administration.md) covers access, historical privacy and retention.
+
+[Follow the connected Aster Services support request](Connected-Service-Desk-Journey.md) · [Draft v2.2 guides](README.md)

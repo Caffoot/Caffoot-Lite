@@ -113,3 +113,5 @@ Suppose the laptop later suffers irreparable damage and physically comes back on
 The saved balances describe what has been recorded. Verify uncertain saves by inspecting original references before repeating an operation. This example creates no records and claims no newly executed runtime verification or publication approval.
 
 [← Draft v2.2 Guides](README.md)
+
+For a support request while Alex holds AST-LAP-014, follow the [Connected Service Desk Journey](Connected-Service-Desk-Journey.md). It uses the same fictional organisation and equipment and preserves the custody boundary on later handover.

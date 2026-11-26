@@ -54,7 +54,7 @@ These infrastructure drafts have completed the Batch 2 text/source pass at the r
 
 An application account is the identity used to sign in. A Staff Member is a person in your organisation; that person may have a linked account or no login at all. Roles determine section access, while an organisation's Optional Features switches determine whether optional functions are available. A role does not switch a feature on.
 
-Batch 3 accounts, Staff, Departments and My Equipment have completed written/source reconciliation at the recorded baseline, **focused independent ChatGPT review recorded; separate owner written acceptance pending**. Desktop requirements are deferred to Batch 7. [Batch 3 source, validation and screenshot record](../../../development-guide/Milestone-01-Batch-3-Review.md).
+Batch 3 accounts, Staff, Departments and My Equipment have completed written/source reconciliation at the recorded baseline, **focused independent ChatGPT review recorded and owner written acceptance recorded**. Desktop requirements are deferred to Batch 7. [Batch 3 source, validation and screenshot record](../../../development-guide/Milestone-01-Batch-3-Review.md).
 
 ## People And Equipment
 
@@ -110,12 +110,13 @@ Suppliers starts switched off and uses its own section permissions. Supplier Man
 
 Equipment Lifecycle is independently optional and starts switched off. Stage 4.4 is owner-accepted and merged via PR #418 into the unreleased development branch; these instructions remain draft v2.2, not published v2.1 features.
 
-Batch 4's ten equipment/Supplier/Lifecycle guides and linked example have completed written/source reconciliation at the stated baseline, **focused independent ChatGPT review recorded; separate owner written acceptance pending**. [Batch 4 source, validation and outstanding desktop requirements](../../../development-guide/Milestone-01-Batch-4-Review.md). Batches 5–8 and all release/visual gates remain outstanding.
+Batch 4's ten equipment/Supplier/Lifecycle guides and linked example have completed written/source reconciliation at the stated baseline, **focused independent ChatGPT review recorded and owner written acceptance recorded**. [Batch 4 source, validation and outstanding desktop requirements](../../../development-guide/Milestone-01-Batch-4-Review.md). Batches 5–6 have separate review boundaries below; Batches 7–8 and all release/visual gates remain outstanding.
 
 ## Service Desk
 
 | Task | Guide |
 | --- | --- |
+| Follow Alex and Sam through one connected support request | [Connected Service Desk Journey](Connected-Service-Desk-Journey.md) |
 | Raise, find, reply to and reopen tickets for personal and Department equipment | [Employee ticket instructions](Service-Desk-Tickets.md#raise-a-support-request) |
 | Use the IT queue, record tickets, handle technician actions and attachments, and understand equipment privacy | [Service Desk Tickets](Service-Desk-Tickets.md) |
 | Grant technician access, configure Working Hours, Excluded Dates and Ticket Categories, and protect ticket-linked records | [Administer The Service Desk](Service-Desk-Administration.md) |
@@ -124,13 +125,15 @@ Batch 4's ten equipment/Supplier/Lifecycle guides and linked example have comple
 | Configure the IT support mailbox, check notification recipients and troubleshoot missing mail | [Service Desk email settings](Service-Desk-Administration.md#configure-the-it-support-mailbox) |
 | Edit and publish templates, set company branding and send a sample | [Email Templates And Company Branding](Email-Templates-and-Company-Branding.md) |
 
-The foundation, IT queue and employee ticket workflows are integrated through [PRs #437](https://github.com/Caffoot/Caffoot-Lite/pull/437), [#438](https://github.com/Caffoot/Caffoot-Lite/pull/438) and [#439](https://github.com/Caffoot/Caffoot-Lite/pull/439). Service Desk settings and reporting are integrated through [PR #440](https://github.com/Caffoot/Caffoot-Lite/pull/440), and Email Templates and Company Branding through [PR #441](https://github.com/Caffoot/Caffoot-Lite/pull/441). The notification instructions cover the Stage 5.6 development changes submitted in [PR #442](https://github.com/Caffoot/Caffoot-Lite/pull/442).
+The foundation, IT queue and employee ticket workflows are integrated through [PRs #437](https://github.com/Caffoot/Caffoot-Lite/pull/437), [#438](https://github.com/Caffoot/Caffoot-Lite/pull/438) and [#439](https://github.com/Caffoot/Caffoot-Lite/pull/439). Service Desk settings and reporting are integrated through [PR #440](https://github.com/Caffoot/Caffoot-Lite/pull/440), and Email Templates and Company Branding through [PR #441](https://github.com/Caffoot/Caffoot-Lite/pull/441). The notification instructions cover the Stage 5.6 development changes integrated through [PR #442](https://github.com/Caffoot/Caffoot-Lite/pull/442).
+
+Batch 5 written/source reconciliation is complete; independent ChatGPT review and separate owner written acceptance remain outstanding. [Source, validation, findings and 35 additional screenshot groups](../../../development-guide/Milestone-01-Batch-5-Review.md). Desktop work is deferred to Batch 7; none of the previous 82 groups is waived.
 
 ## Audit Trail
 
 Use [Read The Audit Trail](Audit-Trail.md) to search authorised event-time names and original references, inspect label provenance and export the history available to your account.
 
-The dated independent review additions in the Batch 3 and Batch 4 records supersede the original Codex review-pending status in the guide reconciliation banners. Visual approval remains outstanding.
+The dated independent review additions in the Batch 3 and Batch 4 records supersede the original Codex review-pending status in the guide reconciliation banners. [Separate owner written acceptance](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7199742131) is recorded for both batches at `5969d35c4df5f69f138372b51adc9fe5a972837d`; the dated earlier banners retain their checkpoint context. Visual approval remains outstanding.
 
 ## Publication And Acceptance
 

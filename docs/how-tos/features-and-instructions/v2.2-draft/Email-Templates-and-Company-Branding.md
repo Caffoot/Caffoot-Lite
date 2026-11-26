@@ -2,7 +2,33 @@
 
 > **Draft v2.2 — Unreleased.** These instructions describe the Email Templates settings in the v2.2 development application. For the published release, see the [v2.1 Settings guide](../Settings-and-Change-History.md).
 
-Use **Email Templates** to change the words and formatting in seven Service Desk notifications and three account and security emails. Use **Company Branding** to give supported emails a shared company name, colours, footer and optional logo. [Approved Service Desk events and recipients](Service-Desk-Administration.md#check-which-service-desk-emails-are-sent)
+> **Written/source reconciliation:** Documentation Batch 5, application baseline `fdc677920bfc52f48f641b3d6d1344c902a6a9b0` (schema 31). Awaiting independent ChatGPT review and separate owner written acceptance. Current desktop screenshot reconciliation is deferred to Batch 7; existing historical/mobile images retain their original provenance. [Source review and exact screenshot requirements](../../../development-guide/Milestone-01-Batch-5-Review.md).
+
+Use **Email Templates** to change the words and formatting in seven Service Desk notifications and three account and security emails. Use **Company Branding** to give supported emails a shared company name, colours, footer and optional logo. Changing wording never changes notification events, recipients, access rules or required system-managed ticket/security details. [Approved Service Desk events and recipients](Service-Desk-Administration.md#check-which-service-desk-emails-are-sent)
+
+## Configure Outgoing Email (SMTP)
+
+SMTP is the outgoing mail service. Obtain its server, port, transport and relay/sender requirements from your mail administrator before saving. Email is optional: sign-in, inventory and permitted ticket operations continue without it. These are unreleased v2.2 instructions; the published v2.1 guide remains a separate version reference.
+
+1. Sign in as an active administrator with confirmed MFA. Open **Settings & Data → Email Settings → Outgoing Email Settings**.
+2. Under **SMTP Server**, complete the following fields. For fictional Aster Services, the server might be `smtp.example.invalid`; this example cannot deliver mail.
+
+   | Field | What to enter |
+   | --- | --- |
+   | **Server Address** | The SMTP hostname or IP address supplied by the mail administrator; not a web URL or browser address. |
+   | **Port** | The provider's port, a whole number from 1 to 65535. The initial setting is 587; do not assume it suits every provider. |
+   | **Connection Security** | **STARTTLS** upgrades the SMTP connection to TLS; **SSL / TLS** uses TLS from connection start. Use the exact option and port required by the provider. Certificate validation applies. |
+   | **SMTP Authentication** | Enable if the relay requires a username and password. Enter **Username** and **Password**. With authentication enabled and the same saved username, a blank Password retains the saved secret. A changed username requires its password. Disabling authentication clears the saved username/password. |
+   | **From Name** | The recognisable sender label, such as `Aster Services IT` (up to 120 characters). |
+   | **From Email Address** | One valid sender address authorised by the relay, such as `caffoot@example.invalid`. This is distinct from the receiving support mailbox and an employee's verified account address. |
+   | **IT Support Email Address** | One shared or individual IT destination, such as `it-support@example.invalid`, without a display name or address list. Blank skips employee-created new-ticket mail; other approved events retain their own recipient rules. |
+
+3. If considering **Unencrypted (Requires Review)**, obtain the mail administrator's assessment of the actual network. The form requires explicit acknowledgement that contents may be exposed and forbids SMTP authentication without TLS. Prefer the provider's encrypted transport. Do not send credentials through an unencrypted relay.
+4. Select **Save Email Settings**. Correct any rejected host, address, port or authentication value before saving again. **Discard Changes** reloads the saved settings. Passwords are kept in a private server-side file beside the database and are never returned to the browser; a blank field is not evidence that no password is stored. Protect host access and backups, and never put credentials in screenshots, ticket text or template wording.
+5. Under **Send A Test Email**, enter **Recipient Email Address** for a mailbox you control and choose **Send Test Email**. Save configuration first: this control uses saved SMTP settings. Wait at least 30 seconds between tests, including template tests. Check the real inbox, junk folder and relay delivery records.
+6. To change the appearance or wording, use the separate **Email Templates** area below. To investigate eligible ticket alerts, use [events and recipients](Service-Desk-Administration.md#check-which-service-desk-emails-are-sent).
+
+A successful test means SMTP accepted that test message for sending. It does not verify anyone's saved account email address, issue an account recovery code, or establish recovery eligibility. The person verifies their own saved address through **My Account**. Recovery separately requires an active eligible account, a verified saved address and the applicable MFA. A fictional template code cannot verify or recover an account.
 
 ## Open Email Templates
 
@@ -101,7 +127,7 @@ A variable is a token in double braces. For example, `{{ticket_number}}` becomes
 
 *The code and security instructions are generated by Caffoot Lite.* [Account verification capture](../../../development-handovers/evidence/email-templates-branding/account-verification-desktop-light.png) · [Account security notice capture](../../../development-handovers/evidence/email-templates-branding/account-security-desktop-light.png)
 
-For the sign-in and recovery steps, see [Users, Permissions And MFA](../Users-Permissions-and-MFA.md) and [Account Recovery](../../../development-guide/Account-Recovery.md).
+For the sign-in and recovery steps, see [Roles, Section Permissions And MFA](Roles-Section-Permissions-and-MFA.md) and [Account Recovery](../../../development-guide/Account-Recovery.md).
 
 ## Set Company Branding
 
@@ -130,7 +156,7 @@ For the sign-in and recovery steps, see [Users, Permissions And MFA](../Users-Pe
 
 SMTP is the service Caffoot Lite uses to send email. To check the connection first, use the existing **Settings & Data → Email Settings** tab.
 
-1. Enter or check your SMTP server, port, transport security, authentication settings and sender details with your mail administrator. Use **Save Email Settings**, then send a connection test from that tab. Keep credentials private. [Outgoing email settings](../Settings-and-Change-History.md#email-and-the-audit-trail)
+1. Enter or check your SMTP server, port, transport security, authentication settings and sender details with your mail administrator. Use **Save Email Settings**, then send a connection test from that tab. Keep credentials private. [Outgoing email settings](#configure-outgoing-email-smtp)
 2. Return to **Email Templates** and select a template. Review the current **Live Email Preview**. You can test unsaved wording or a saved draft. Save any new **Company Branding** first if you want it included.
 3. In **Send Test Email To**, enter one mailbox you are authorised to use. Choose **Send Test Email**. The service uses your existing SMTP sender and fictional substitutions, including the sample security code for verification or recovery.
 4. Wait for **Test email sent**. That message means your SMTP server accepted the test for sending. Check the destination inbox or junk folder for a subject beginning with **[Test]**. If the client offers a plain-text view, check that the wording and protected details are legible there too. Sending a test leaves the saved and published versions in place.
@@ -150,3 +176,5 @@ SMTP is the service Caffoot Lite uses to send email. To check the connection fir
 | Someone reports missing verification or recovery mail | Check the SMTP connection separately. For recovery, ask the person to use their username and check whether their saved address is verified. The request screen uses a generic response. Treat real codes and mail account details as private. |
 
 [Settings and Audit Trail](../Settings-and-Change-History.md) · [Roles, Section Permissions And MFA](Roles-Section-Permissions-and-MFA.md) · [Service Desk Administration](Service-Desk-Administration.md)
+
+[Follow the connected Aster Services support request](Connected-Service-Desk-Journey.md) · [Draft v2.2 guides](README.md)
