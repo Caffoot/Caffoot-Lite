@@ -4,7 +4,8 @@ const fs=require('node:fs'),os=require('node:os'),path=require('node:path'),http
 const {spawn,spawnSync}=require('node:child_process');
 const {chromium}=require('playwright');
 const root=path.resolve(__dirname,'..'),temporary=fs.mkdtempSync(path.join(os.tmpdir(),'caffoot-feature-ui-'));
-const database=path.join(temporary,'inventory.sqlite3'),address='https://127.0.0.1:8080';
+const port=process.env.CAFFOOT_OPTIONAL_FEATURES_PORT||'8487';
+const database=path.join(temporary,'inventory.sqlite3'),address='https://127.0.0.1:'+port;
 const output=process.env.CAFFOOT_VISUAL_OUTPUT||path.join(root,'work','batch4-browser');fs.mkdirSync(output,{recursive:true});
 const python=(code,args=[])=>{
  const result=spawnSync('python3',['-c',code,...args],{cwd:root,encoding:'utf8'});
@@ -45,7 +46,7 @@ with sqlite3.connect(sys.argv[1]) as db:
 `,[database]));
 const records=()=>Object.fromEntries(snapshot().inventory_devices.map(row=>[row[0],JSON.parse(row[2])]));
 const log=fs.openSync(path.join(temporary,'server.log'),'a');
-const server=spawn('python3',['-m','backend.server'],{cwd:root,stdio:['ignore',log,log],env:{...process.env,CAFFOOT_DB_PATH:database,CAFFOOT_TLS_DIR:path.join(temporary,'tls'),CAFFOOT_WEB_ADDRESS:address,CAFFOOT_SERVER_ADDRESS:'127.0.0.1',CAFFOOT_HOST:'127.0.0.1'}});
+const server=spawn('python3',['-c','from backend import server; import sys; server.PORT=int(sys.argv[1]); server.main()',port],{cwd:root,stdio:['ignore',log,log],env:{...process.env,CAFFOOT_DB_PATH:database,CAFFOOT_TLS_DIR:path.join(temporary,'tls'),CAFFOOT_WEB_ADDRESS:address,CAFFOOT_SERVER_ADDRESS:'127.0.0.1',CAFFOOT_HOST:'127.0.0.1',CAFFOOT_PORT:port}});
 const revision='c26db4a56bbc30f95b56201e81a7a76d13c6037b';
 const sources=['settings-data-draft-02','ipam-draft-01','devices-details-forms-batch-04'];
 const originals=Object.fromEntries(sources.map(name=>{
@@ -74,10 +75,18 @@ const errors=[],metrics=[],screens=[];
    await context.route(/https:\/\/(fonts\.googleapis|fonts\.gstatic|cdnjs\.cloudflare)\.com\//,route=>route.abort());
    contexts[name]=context;
   }
-  for(let attempt=0;attempt<40;attempt++){
-   try{if((await contexts.owner.request.get(address+'/health')).ok())break;}catch{}
-   await new Promise(resolve=>setTimeout(resolve,100));
+  let healthy=false;
+  for(let attempt=0;attempt<60&&server.exitCode===null;attempt++){
+   try{if((await contexts.owner.request.get(address+'/health',{timeout:750})).ok()){healthy=true;break;}}catch{}
+   await new Promise(resolve=>setTimeout(resolve,150));
   }
+  assert.ok(healthy&&server.exitCode===null,'Optional Features test server did not become ready');
+  for(const name of Object.keys(contexts)){
+   const session=await contexts[name].request.get(address+'/api/session',{timeout:5000});
+   assert.equal(session.status(),200,'Fixture session rejected for '+name);
+   assert.equal((await session.json()).username,name,'Unexpected fixture session identity');
+  }
+  console.log('PASS: test server ready and all five fixture sessions authenticated.');
   const open=async(name='owner',hash='')=>{
    const page=await contexts[name].newPage();page.setDefaultTimeout(12000);page.on('pageerror',error=>errors.push(error.message));
    await page.goto(address+'/inventory'+hash);await page.locator('#app[aria-busy="false"]').waitFor();return page;
@@ -107,7 +116,7 @@ const errors=[],metrics=[],screens=[];
    },{feature,enabled});
   };
   await featurePanel();
-  assert.deepEqual(await owner.locator('.settings-screen .subnav [role="tab"]').allTextContents(),[' Data & Backups',' Email Settings',' System Maintenance',' Optional Features']);
+  assert.deepEqual(await owner.locator('.settings-screen nav[aria-label="Settings and Data Sections"] > [role="tab"]').allTextContents(),[' Data & Backups',' Email Settings',' Email Templates',' System Maintenance',' Optional Features',' Service Desk']);
   const approvedFeatures=await contexts.owner.newPage();
   await approvedFeatures.goto('http://127.0.0.1:'+reference.address().port+'/optional-features-integrated.html');
   assert.equal(await owner.locator('.optional-features-panel .panel-heading>div').textContent(),await approvedFeatures.locator('.panel-heading>div').textContent());
