@@ -184,7 +184,7 @@ These lists provide reusable classifications and location names. A Location is d
 
 1. Open **IT → Devices → Device Types** or **Locations** and its manager. Search for an existing value before adding one.
 2. Enter **Add Device Type** or **Add Location**, for example *Training Room*, and choose **Add Type** or **Add Location**. The individual operation saves immediately. **Done** closes the manager; its **Cancel** button does not undo an already completed operation.
-3. To correct a name, use its rename action, edit the name and select **Save**. This updates affected Device records together. Cancelling an unsaved rename returns to the list, with the discard prompt if needed.
+3. To correct a name, use its rename action, edit the name and select **Save Changes**. This updates affected Device records together. Cancelling an unsaved rename returns to the list, with the discard prompt if needed.
 4. To stop offering a Device Type for new selections, choose **Archive**. Existing Devices keep the type, and it remains selectable on their edits. **Unarchive** restores it for new selections. Virtual Machine deployment cannot be archived this way.
 5. To delete a list entry, read **Delete Device Type?** or **Delete Location?**. It shows the affected Device count and warns that their value will become **Unknown**. Choose **Cancel** to retain everything, or **Delete** only if that reclassification is intended.
 6. Reopen affected Devices after a successful rename/deletion and check the result. The server rejects a stale affected-device list, active affected Device edit or invalid resulting relationship instead of applying only some changes.
@@ -229,4 +229,4 @@ For example, a returned laptop retains the original Device identity and its prev
 | Save refused | Review the field/revision error, duplicate address, incompatible placement, protected identity or dependency. Keep the original record and retry only after resolving the stated problem. |
 | Colleague sees old details | Reopen the device or navigate to the section; no continuous background polling |
 
-Related: [Optional Features and Link to IPAM](Optional-Features-and-Link-To-IPAM.md), [Roles, Section Permissions And MFA](Roles-Section-Permissions-and-MFA.md), [Draft v2.2 guide index](README.md). Standalone v2.2 IPAM and Network Racks guides follow in this Batch 2 work block.
+Related: [Optional Features and Link to IPAM](Optional-Features-and-Link-To-IPAM.md), [Roles, Section Permissions And MFA](Roles-Section-Permissions-and-MFA.md), [Draft v2.2 guide index](README.md). See also [IPAM](IPAM.md) and [Network Racks](Racks.md) for complete network and placement procedures.

@@ -25,9 +25,11 @@ This is a change to how dates are **entered and shown**, not to the dates alread
 | Task | Guide |
 | --- | --- |
 | Find, record, edit and manage physical Devices or virtual machines | [Devices — Creating, Editing and Managing Equipment](Devices.md) |
+| Manage subnets, address blocks, VLANs, reservations and address allocations | [IPAM — Subnets, VLANs and Individual Addresses](IPAM.md) |
+| Record racks, inspect elevations, place equipment and manage shelves/accessories | [Network Racks](Racks.md) |
 | Enable optional features, record basic IPv4 or explicitly link to IPAM | [Optional Features, Basic IPv4 And Link To IPAM](Optional-Features-and-Link-To-IPAM.md) |
 
-The Devices guide is a working draft undergoing source and screenshot reconciliation. Dedicated IPAM and Network Racks instructions will be linked here after their initial reconciliation.
+These infrastructure drafts have completed the Batch 2 text/source pass at the recorded baseline. Current desktop screenshot suitability/approval and independent review remain outstanding; see the [Batch 2 evidence and limitations](../../../development-guide/Milestone-01-Batch-2-Review.md).
 
 ## Accounts And Access
 
