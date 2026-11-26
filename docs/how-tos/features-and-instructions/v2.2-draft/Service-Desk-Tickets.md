@@ -148,6 +148,7 @@ Sign in with **Service Desk Read** or **Edit**. You also need Read access to **D
 
 1. Expand **IT** in the sidebar and select **Service Desk**. **Ticket Queue** initially shows **Open** tickets.
 2. Select **Open**, **In Progress** or **On Hold** under **Current Workload** to select that status, clear the Assignment filter and jump to the matching part of the Ticket Queue. The cards show totals for your authorised scope, even while a search narrows the table.
+   In light mode, the orange border identifies the selected status. Tab adds a navy outline to the control that currently has keyboard focus. [Desktop and mobile examples](../../../development-handovers/evidence/stage-6-6-batch-3/README.md#application-screenshots)
 3. Enter a ticket number such as `SD-0001`, subject, requester or equipment name in **Search Tickets**. Use **Status**, **Priority**, **Assignment** or **Assigned Technician** for a more specific view. **All Tickets** includes Closed tickets. **Assigned To Me** uses your signed-in account.
 4. Use **Sort By** to order the results by newest update, oldest update or descending ticket number. Use **Previous** and **Next** when the results span more than one page. On a narrow screen, scroll the table horizontally to reach all eight columns.
 5. Select a ticket number or **Open Details**. **Clear Filters** restores the default Open queue and newest-first sort.
@@ -208,19 +209,21 @@ If the equipment disappears or the category is unavailable, reopen the form and 
 ## Review And Correct Ticket Details
 
 1. Open a ticket. **Overview** shows its status, category, priority, technician, linked equipment, requester and original problem.
-2. With **Service Desk Edit**, choose **Edit** beside **Ticket Category** or **Priority** in **Ticket Information**. Select an available category or **Low**, **Medium** or **High**.
+2. With **Service Desk Edit**, choose the pencil **Edit** button to the right of **Ticket Category** or **Priority** in **Ticket Information**. The saved value appears below its heading. Select an available category or **Low**, **Medium** or **High**.
 3. Choose **Save** to record the correction in **History**. **Cancel** leaves the saved classification in place. Changing a software ticket to a category where its software selection does not apply clears the current **Affected Software** field. The original category and software label remain in the attributed history.
-4. Open **Updates** for the conversation and **History** for attributed changes. Use **Close** or Escape to dismiss the details window.
+4. Open **Updates** for the conversation and **History** for attributed changes. Use **Close Window** or Escape to dismiss the details window. The ticket keeps its saved status.
 
 If a colleague changes the ticket while a technician action is open, the application reloads the current details and shows a conflict message. Review the latest status or classification before trying again.
 
-![Ticket Details Overview with the Ticket Information, Equipment and Requester, and Original Problem panels.](../../../development-handovers/evidence/it-service-desk/overview-desktop-light.png)
+![Ticket Details Overview showing Close Ticket on the left and Close Window on the right. Ticket Category and Priority have pencil Edit buttons beside their headings.](../../../development-handovers/evidence/stage-6-6-batch-3/screenshots/ticket-details-light-1440.png)
 
-*Overview presents the three tabs and groups technician actions in the footer. Priority and category are corrected within Ticket Information.* [Capture details](../../../development-handovers/evidence/it-service-desk/README.md)
+*Overview presents the three tabs and groups technician actions in the footer. Priority and category are corrected within Ticket Information.* [Dark and mobile captures](../../../development-handovers/evidence/stage-6-6-batch-3/README.md#application-screenshots)
 
 ## Assign, Pause, Resolve Or Reopen A Ticket
 
 An authorised technician can update or close tickets handled by a colleague. Actions retain the account that performed them.
+
+On desktop, **Close Ticket** appears at the left of the footer when completion is available. The other available actions sit at the right, followed by **Close Window**. On a narrow screen, the buttons can wrap. To resolve the ticket, choose **Close Ticket** and submit its Resolution Note.
 
 | Action | Steps and result |
 | --- | --- |

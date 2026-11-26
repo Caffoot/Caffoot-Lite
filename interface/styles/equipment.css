@@ -27,6 +27,8 @@
 .equipment-staff .small-table th,.equipment-staff .small-table td,.device-details-dialog .small-table th,.device-details-dialog .small-table td{padding:12px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top;overflow-wrap:anywhere}
 .equipment-staff .table-scroll,.device-details-dialog .table-scroll{overflow:auto}
 .equipment-dialog{background:var(--white,#fff);color:var(--ink);border-radius:14px}
+#modal-content:has(> .equipment-dialog){display:flex;flex-direction:column;overflow:hidden}
+#modal-content > .equipment-dialog{min-height:0;overflow-y:auto}
 .equipment-dialog .input{width:100%;min-height:40px;border:1px solid var(--line);border-radius:8px;padding:9px;background:var(--white,#fff);color:var(--ink)}
 .equipment-dialog fieldset{min-width:0;border:1px solid var(--line);border-radius:10px;padding:12px}
 .equipment-dialog .device-review-check-item{display:flex;gap:9px;align-items:center;padding:8px 0}
@@ -51,7 +53,8 @@
 .my-equipment-date{white-space:nowrap}
 .my-equipment-scroll-tip{display:none;margin:8px 0;color:var(--muted);font-size:11px}
 .my-equipment-error{margin-top:15px;padding:12px 14px;border:1px solid #c98778;border-radius:10px;color:var(--ink);background:var(--white)}
-.my-equipment-details{position:fixed;inset:0;margin:auto;width:min(680px,calc(100% - 36px));max-height:calc(100dvh - 36px);overflow:auto;border:1px solid var(--line);border-radius:15px;padding:0;color:var(--ink);background:var(--white);box-shadow:0 30px 80px #0003}
+.my-equipment-details{position:fixed;inset:0;margin:auto;width:min(680px,calc(100% - 36px));max-height:calc(100dvh - 36px);overflow:hidden;border:1px solid var(--line);border-radius:15px;padding:0;color:var(--ink);background:var(--white);box-shadow:0 30px 80px #0003}
+.my-equipment-details[open]{display:flex;flex-direction:column}
 .my-equipment-details::backdrop{background:#10253dbb}
 .my-equipment-detail-head{padding:20px 22px;border-bottom:1px solid var(--line);display:flex;align-items:start;justify-content:space-between;gap:12px}
 .my-equipment-detail-head h2{font-size:21px;color:var(--ink);margin:0 0 5px;overflow-wrap:anywhere}

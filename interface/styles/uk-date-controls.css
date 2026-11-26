@@ -46,7 +46,7 @@
 }
 .caffoot-uk-date-trigger:focus-visible,
 .caffoot-uk-date-picker button:focus-visible {
-  outline: 2px solid #e77e2d;
+  outline: 2px solid var(--light-focus,#e77e2d);
   outline-offset: 1px;
 }
 .caffoot-uk-date-trigger:disabled {
@@ -140,12 +140,15 @@
   border-color: #e77e2d;
 }
 .caffoot-uk-date-day.is-selected {
-  background: #d15d16;
+  background: var(--light-selected,#d15d16);
   color: #fff;
 }
 .caffoot-uk-date-day:disabled {
   opacity: .28;
   cursor: not-allowed;
+}
+html.dark :is(.caffoot-uk-date-trigger,.caffoot-uk-date-picker button):focus-visible {
+  outline-color: var(--theme-focus);
 }
 html.dark .caffoot-uk-date-picker {
   background: var(--theme-control,#0f172a);
@@ -157,8 +160,8 @@ html.dark .caffoot-uk-date-day {
   color: inherit;
 }
 html.dark .caffoot-uk-date-day.is-selected {
-  background: #e77e2d;
-  color: #111827;
+  background: var(--orange);
+  color: #142b43;
 }
 html.dark .caffoot-uk-date-nav {
   background: var(--theme-control,#0f172a);

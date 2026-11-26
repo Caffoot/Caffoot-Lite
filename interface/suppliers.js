@@ -36,7 +36,7 @@
     return `<button class="device-name" type="button" data-supplier-action="${action}" data-id="${id}">${safe(label)}</button>`;
   }
   function header(title, heading, actions = '', actionExplanation = '') {
-    return `<div class="section-page-header"><div class="eyebrow">Purchasing</div>
+    return `<div class="section-page-header">
       <div class="header"><div><h1 tabindex="-1" id="supplier-page-heading">${safe(title)}</h1><p>${safe(heading)}</p></div>
       ${actions ? `<div class="preview-page-actions">${actions}
         ${actionExplanation ? `<p class="sub supplier-header-retention">${safe(actionExplanation)}</p>` : ''}

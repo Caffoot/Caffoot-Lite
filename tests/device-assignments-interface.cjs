@@ -321,7 +321,8 @@ async function test(){
  }
  await employeePage.locator('.account-screen .subnav [data-section="security"]').click();
  await employeePage.locator('#next-account-mfa-start').waitFor();
- await employeePage.locator('#sidebar [data-tab="equipment"]').click();
+ await employeePage.locator('.account-screen .subnav [data-section="overview"]').click();
+ await employeePage.getByRole('button',{name:'Open My Equipment',exact:true}).click();
  await employeePage.locator('[data-personal-equipment] tbody tr').first().waitFor();
  assert.equal(await employeePage.locator('[data-personal-equipment] tbody tr').count(),2);
  assert.equal(await employeePage.locator('[data-shared-equipment] tbody tr').count(),1);
@@ -355,6 +356,10 @@ async function test(){
  await employeePage.getByText('No shared equipment is currently available for your Department.').waitFor();
  await employeePage.getByText('No equipment is currently assigned to you.').waitFor();
  assert.equal(await employeePage.locator('[data-personal-equipment] tbody tr').count(),0);
+ await employeePage.goto(address+'/account');
+ await employeePage.locator('#app[aria-busy="false"]').waitFor();
+ assert.equal(await employeePage.getByRole('button',{name:'Open My Equipment',exact:true}).count(),0,
+  'The equipment shortcut is hidden when the Staff link is no longer active');
  await employee.close();
  assert.deepEqual(errors,[]);
  fs.writeFileSync(path.join(output,'results.json'),JSON.stringify({passed:true,errors,measurements:report},null,2));

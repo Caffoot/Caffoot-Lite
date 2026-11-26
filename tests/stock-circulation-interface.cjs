@@ -117,7 +117,11 @@ async function main(){
  const readerPage=await reader.newPage();readerPage.on('pageerror',failure=>errors.push(String(failure)));await readerPage.goto(address+'/inventory#it-assets');await readerPage.locator('#stock-tab-inventory').waitFor();assert.equal(await readerPage.locator('#stock-tab-issue,#stock-tab-return,#stock-tab-writeoff').count(),0);
  await captures('stock-inventory',ownerPage,()=>tab(ownerPage,'inventory'));await captures('movement-history',ownerPage,()=>tab(ownerPage,'movements'));
  const staffPage=await staff.newPage();staffPage.on('pageerror',failure=>errors.push(String(failure)));
- async function employeeEquipment(){await staffPage.goto(address+'/account');await staffPage.locator('[data-action="tab-equipment"]').click();await staffPage.locator('[data-personal-equipment]').locator('b').filter({hasText:'Mouse'}).first().waitFor();}
+ async function employeeEquipment(){
+  await staffPage.goto(address+'/account');
+  await staffPage.getByRole('button',{name:'My Equipment',exact:true}).click();
+  await staffPage.locator('[data-personal-equipment]').locator('b').filter({hasText:'Mouse'}).first().waitFor();
+ }
  await employeeEquipment();assert.match(await staffPage.locator('[data-personal-equipment]').innerText(),/Quantity: 3/);assert.match(await staffPage.locator('[data-shared-equipment]').innerText(),/Quantity: 1/);assert.ok(!(await staffPage.locator('#main-content').innerText()).includes('PRIVATE'));assert.equal(await staffPage.locator('[data-stock-action]').count(),0);
  await captures('my-equipment',staffPage,employeeEquipment);
  async function staffEquipment(){await ownerPage.locator('[data-action="tab-staff"]').click();if(!await ownerPage.locator('.equipment-staff[data-equipment-staff="'+employee.staff+'"]').count()){const back=ownerPage.locator('[data-staff-action="staff-back"]');if(await back.count())await back.click();await ownerPage.locator('[data-staff-action="staff-details"][data-id="'+employee.staff+'"]').click();}await ownerPage.locator('.equipment-staff').getByText('IT Asset · Quantity: 3',{exact:true}).waitFor();}

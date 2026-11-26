@@ -11,6 +11,7 @@ const root = path.resolve(__dirname, '..');
 const temporary = fs.mkdtempSync(path.join(os.tmpdir(), 'caffoot-service-desk-'));
 const screenshotFolder = process.env.CAFFOOT_SERVICE_DESK_SCREENSHOTS;
 const settingsUrl = '/api/settings/service-desk';
+const categoryName = 'Remote Access Support for Shared Workstations and Department Equipment';
 
 async function startServer(zone, label) {
     const port = await new Promise(resolve => {
@@ -118,14 +119,92 @@ async function editSettings(page) {
     await page.locator('[data-support-form="add-category"]').getByLabel('Category Name').fill('VPN Issues');
     await page.getByRole('button', {name:'Add Category', exact:true}).click();
     await page.getByRole('button', {name:'Rename VPN Issues'}).click();
-    await page.getByRole('dialog').getByLabel('Category Name').fill('Remote Access Support');
+    await page.getByRole('dialog').getByLabel('Category Name').fill(categoryName);
     await page.getByRole('button', {name:'Save Category'}).click();
-    await page.getByRole('button', {name:'Hide Remote Access Support'}).click();
+    await page.getByRole('button', {name:'Hide ' + categoryName, exact:true}).click();
     await page.getByRole('dialog').getByRole('button', {name:'Hide Category'}).click();
-    await page.getByRole('button', {name:'Restore Remote Access Support'}).click();
+    await page.getByRole('button', {name:'Restore ' + categoryName, exact:true}).click();
     await page.getByRole('dialog').getByRole('button', {name:'Restore Category'}).click();
-    await page.getByRole('button', {name:'Hide Remote Access Support'}).waitFor();
+    await page.getByRole('button', {name:'Hide ' + categoryName, exact:true}).waitFor();
     assert.match(await page.locator('[data-support-categories] tr').last().innerText(), /Other \/ Not Listed\s+Active\s+Fixed/);
+}
+
+async function verifyTicketDetails(page) {
+    await openServiceDesk(page);
+    await page.locator('#ticket-queue-filters [name="status"]').selectOption('');
+    const dialog = page.locator('.service-desk-dialog');
+    const footer = dialog.locator('[data-ticket-footer]');
+    const closeWindow = footer.getByRole('button', {name:'Close Window', exact:true});
+    const openTicket = subject => page.getByRole('row').filter({hasText:subject}).locator('[data-ticket-open]').first();
+
+    for (const [subject, actions] of [
+        ['Shared portal sign-in fails', ['Reopen Ticket']],
+        ['Office printer leaves streaks', ['Close Ticket','Reassign Ticket','Place On Hold']],
+        ['Stores laptop display flickers', ['Resume Ticket']],
+        ['Laptop Wi-Fi keeps disconnecting', ['Close Ticket','Assign Ticket','Place On Hold']],
+    ]) {
+        const trigger = openTicket(subject);
+        await trigger.click();
+        await dialog.getByRole('heading', {name:'Ticket Information', exact:true}).waitFor();
+        assert.deepEqual(await footer.getByRole('button').allTextContents(), [...actions,'Close Window']);
+        await closeWindow.click();
+        await dialog.waitFor({state:'hidden'});
+        assert.ok(await trigger.evaluate(button => button === document.activeElement));
+    }
+
+    await openTicket('Laptop Wi-Fi keeps disconnecting').click();
+    const editCategory = dialog.getByRole('button', {name:'Edit Ticket Category', exact:true});
+    const editPriority = dialog.getByRole('button', {name:'Edit Priority', exact:true});
+    await editCategory.click();
+    const form = dialog.locator('[data-ticket-form="category"]');
+    await form.getByLabel('Ticket Category').selectOption({label:categoryName});
+    await form.getByRole('button', {name:'Save', exact:true}).click();
+    await dialog.getByText(categoryName, {exact:true}).waitFor();
+    await editPriority.click();
+    await dialog.locator('[data-ticket-form="priority"]').getByRole('button', {name:'Cancel'}).click();
+    await editPriority.waitFor();
+
+    for (const width of [1440,390]) for (const theme of ['light','dark']) {
+        await page.setViewportSize({width,height:width===1440?960:844});
+        await page.evaluate(theme => caffootSetTheme(theme), theme);
+        for (const edit of [editCategory,editPriority]) {
+            const layout = await edit.evaluate(button => {
+                const heading = button.closest('dt');
+                return {
+                    rightGap:heading.getBoundingClientRect().right-button.getBoundingClientRect().right,
+                    valueTop:heading.nextElementSibling.getBoundingClientRect().top,
+                    headingBottom:heading.getBoundingClientRect().bottom,
+                    pencil:button.querySelector('svg')?.getAttribute('aria-hidden')
+                };
+            });
+            assert.ok(Math.abs(layout.rightGap) < 1 && layout.valueTop >= layout.headingBottom);
+            assert.equal(layout.pencil,'true');
+        }
+        const closeTicket = footer.getByRole('button', {name:'Close Ticket', exact:true});
+        const colours = await closeTicket.evaluate(button => {
+            const style = getComputedStyle(button);
+            return [style.backgroundColor, style.color];
+        });
+        assert.deepEqual(colours,['rgb(237, 133, 50)','rgb(20, 43, 67)']);
+        const [completion, dismissal] = await Promise.all([closeTicket.boundingBox(),closeWindow.boundingBox()]);
+        if (width === 1440) {
+            assert.ok(completion.x < dismissal.x);
+            assert.equal(completion.y,dismissal.y);
+        } else {
+            assert.ok(completion.y < dismissal.y || (completion.y === dismissal.y && completion.x < dismissal.x));
+        }
+        assert.ok(await footer.evaluate(element => element.scrollWidth <= element.clientWidth));
+        if (screenshotFolder) {
+            fs.mkdirSync(screenshotFolder,{recursive:true});
+            await page.screenshot({path:path.join(screenshotFolder,`ticket-details-${theme}-${width}.png`)});
+        }
+    }
+    await footer.getByRole('button', {name:'Close Ticket', exact:true}).click();
+    await dialog.locator('[data-ticket-form="close"]').getByRole('button', {name:'Cancel', exact:true}).click();
+    await footer.getByRole('button', {name:'Close Ticket', exact:true}).waitFor();
+    await closeWindow.click();
+    assert.ok(await openTicket('Laptop Wi-Fi keeps disconnecting').locator('xpath=ancestor::tr')
+        .getByText('Open', {exact:true}).isVisible());
 }
 
 async function verifyReport(page, date) {
@@ -190,6 +269,7 @@ async function run() {
         const admin = await openWorkspace(browser, valid);
         await editSettings(admin.page);
         await verifyReport(admin.page, valid.date);
+        await verifyTicketDetails(admin.page);
         assert.deepEqual(admin.errors, []);
         await admin.context.close();
 

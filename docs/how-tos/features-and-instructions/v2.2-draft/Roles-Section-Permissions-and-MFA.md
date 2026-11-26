@@ -91,13 +91,17 @@ Fresh installations create IT Staff enabled but unassigned. Newly created ordina
 2. Select **View Details** and check **Caffoot Login** for the username, account status, authenticator state and assigned roles.
 3. Select **Manage Permissions** under **Assigned Roles**. Confirm the read-only **Sign-in Username** and review **Assigned Roles** and the **Inherited**, **Override** and **Effective** values under **Section permissions**.
 4. Check for **Feature Disabled** beside any relevant section. A valid grant can be saved while an organisation switch prevents the section from being used. **MFA Required · Setup Pending** means the person needs to complete enrolment before normal sign-in.
-5. Use **Done**, **Close** or Escape to return to the same Staff Details.
+5. If the dialogue scrolls, use Tab to reach controls further down. Scroll to **Done** or use **Close** or Escape to return to the same Staff Details.
 
 Your own administrator account has protected controls. Use **My Account** for your personal and security settings. Ask the affected person to sign in and confirm their access with their own credentials.
 
 ![The Manage Permissions dialogue in desktop light mode with the read-only sign-in username and the existing personal details and role controls.](screenshots/staff-administration/manage-permissions-light-1440.png)
 
 *The account dialogue opened from Staff Details for fictional user taylor.cole.* [Desktop dark](screenshots/staff-administration/manage-permissions-dark-1440.png) · [Mobile light](screenshots/staff-administration/manage-permissions-light-390.png) · [Mobile dark](screenshots/staff-administration/manage-permissions-dark-390.png)
+
+![Manage Permissions on a narrow screen with a classic scrollbar inside the rounded dialogue.](../../../development-handovers/evidence/stage-6-6-batch-3/screenshots/classic-manage-dark-390.png)
+
+*Scroll within Manage Permissions to reach the section and account controls.* [Scrollbar capture provenance](../../../development-handovers/evidence/stage-6-6-batch-3/README.md#capture-provenance)
 
 ### Save Personal Details
 
@@ -115,9 +119,13 @@ Closing the dialogue discards unsaved profile typing. Changes you already saved 
 3. In **Review Access Change**, inspect the before/after roles, section inheritance, overrides, effective levels and MFA status.
 4. Check **Affected Accounts** and **Sessions To End**. Assigning or removing a membership ends that account's sessions, even when its effective rights would stay the same.
 5. Select **Confirm Change** to save, or **Cancel** to leave the saved membership unchanged.
-6. After success, review the refreshed account. Tell the person to sign in again and complete MFA enrolment if required.
+6. After success, review the refreshed account. If MFA enrolment is pending, the warning appears immediately above **Section Permissions**. Tell the person to sign in again and complete enrolment.
 
 Staff Member cannot be removed. An additional role may be assigned before MFA enrolment, but cannot be used to bypass enrolment. Removing a role does not automatically remove an enrolled authenticator or erase individual overrides.
+
+![Manage Permissions with the mandatory MFA warning directly above Section Permissions.](../../../development-handovers/evidence/stage-6-6-batch-3/screenshots/manage-permissions-warning-dark-390.png)
+
+*When the account requires enrolment, the warning appears before the section controls.* [Light view and capture provenance](../../../development-handovers/evidence/stage-6-6-batch-3/README.md#application-screenshots)
 
 ## Set An Individual Section Override
 
@@ -164,13 +172,17 @@ Notification feedback is separate from saving access. **Notices Queued** means a
 Account controls are separate from role previews. Check the account identity before selecting them: **Disable**, **Enable**, **Make Admin** and **Remove Admin** apply their own operation directly when selected. **Done** closes the editor; it is not a final save for these earlier actions.
 
 1. Open **Staff → Staff Members → Staff Details → Manage Permissions** for the person.
-2. To stop sign-in while retaining the account, select **Disable**. This ends its sessions and prevents sign-in until re-enabled.
-3. To restore login eligibility, select **Enable**, then review the current roles, permissions and MFA requirements. Enabling does not remove those safeguards.
+2. An active account has a green status panel. Select **Disable** to end its sessions and prevent sign-in while retaining the account.
+3. A disabled account has a red status panel. Select **Enable** to restore login eligibility, then review the current roles, permissions and MFA requirements.
 4. To appoint an Administrator, review the eligibility checks and select **Make admin** once the account qualifies. See [Make An Existing User An Administrator](#make-an-existing-user-an-administrator).
 5. To remove independent Administrator status, select **Remove Admin**. Remaining ordinary access comes from the account's roles and overrides. The account must sign in again after Administrator status changes.
 6. To remove the account permanently, select **Delete User** and read its confirmation. Confirm only if deletion is intended; cancelling keeps the account. Prefer disabling when the requirement is simply to prevent sign-in while retaining the login.
 
 You cannot disable, demote or delete your own signed-in administrator account, and the last active administrator is protected. Deleting a login does not delete its Staff directory identity or return its equipment; review those separately in the [Staff lifecycle](Staff-Members.md). These controls do not provide an administrator bypass for a forgotten password or authenticator.
+
+![Manage Permissions account controls showing a green active-account panel and Disable button.](../../../development-handovers/evidence/stage-6-6-batch-3/screenshots/account-active-light-1440.png)
+
+*The panel colour follows the current status. A disabled account has a red panel with an Enable button.* [Disabled account and dark-mode captures](../../../development-handovers/evidence/stage-6-6-batch-3/README.md#application-screenshots)
 
 ## Make An Existing User An Administrator
 

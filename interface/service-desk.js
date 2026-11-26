@@ -853,18 +853,18 @@ window.caffootServiceDesk = (() => {
             if (ticketDialogActive(dialog)) {
                 dialog.root.querySelector('[data-ticket-body]').replaceChildren();
                 dialog.root.querySelector('[data-ticket-tabs]').hidden = true;
-                dialog.root.querySelector('[data-ticket-footer]').innerHTML = '<button type="button" class="btn btn-outline" data-ticket-dismiss>Close</button>';
+                dialog.root.querySelector('[data-ticket-footer]').innerHTML = closeTicketWindowButton;
                 showTicketError(dialog, error.message);
             }
         }
     }
 
     function ticketFact(label, value, edit = '') {
-        return `<div><dt>${label}</dt><dd>${escapeHtml(value)}${edit}</dd></div>`;
+        return `<div><dt${edit ? ' class="service-desk-edit-heading"' : ''}>${label}${edit}</dt><dd>${escapeHtml(value)}</dd></div>`;
     }
 
     function renderTicketOverview(ticket) {
-        const edit = (key, label) => ticket.canEdit ? ` <button type="button" class="device-review-smallbtn" data-ticket-edit-field="${key}" aria-label="Edit ${label}">Edit</button>` : '';
+        const edit = (key, label) => ticket.canEdit ? ` <button type="button" class="device-review-smallbtn" data-ticket-edit-field="${key}" aria-label="Edit ${label}"><svg aria-hidden="true" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 5 4 4M4 20l1-5L16 4a2.8 2.8 0 0 1 4 4L9 19l-5 1z"/></svg> Edit</button>` : '';
         return `<div class="device-review-grid">
           <section class="device-review-panel"><h3>Ticket Information</h3><p>Current support request and classification.</p>
             <dl class="device-review-facts">
@@ -988,11 +988,13 @@ window.caffootServiceDesk = (() => {
           <small>${ticketDate(event.at)}</small></li>`).join('')}</ol></section></div>`;
     }
 
+    const closeTicketWindowButton = '<button type="button" class="btn btn-outline" data-ticket-dismiss>Close Window</button>';
+
     function ticketActions(ticket) {
         if (!ticket.canEdit) return [];
         if (ticket.status === 'Closed') return [['reopen','Reopen Ticket']];
         if (ticket.status === 'On Hold') return [['resume','Resume Ticket']];
-        return [['assign',ticket.technicianId ? 'Reassign Ticket' : 'Assign Ticket'], ['hold','Place On Hold'], ['close','Close Ticket']];
+        return [['close','Close Ticket'], ['assign',ticket.technicianId ? 'Reassign Ticket' : 'Assign Ticket'], ['hold','Place On Hold']];
     }
 
     async function showTicketTab(dialog, focusTab = false) {
@@ -1009,12 +1011,12 @@ window.caffootServiceDesk = (() => {
           id="ticket-tab-${name.toLowerCase()}" aria-controls="service-desk-tab-panel" data-ticket-tab="${name}"
           tabindex="${name === tab ? 0 : -1}" aria-selected="${name === tab}">${name}${name === 'Updates' ? unreadBadge(ticket.unreadCount, 'reply', 'data-unread-updates') : ''}</button>`).join('');
         if (focusTab) nav.querySelector('[aria-selected="true"]').focus();
-        const close = `<button type="button" class="btn btn-outline" data-ticket-dismiss>${dialog.employee ? 'Close Window' : 'Close'}</button>`;
         const employeeAction = ticket.status === 'Closed'
             ? '<form id="reopen-employee-ticket" data-ticket-form="reopen"></form><button type="submit" form="reopen-employee-ticket" class="btn btn-primary">Reopen Ticket</button>'
             : tab !== 'Updates' ? '<button type="button" class="btn btn-primary" data-ticket-reply>Reply To IT</button>' : '';
-        root.querySelector('[data-ticket-footer]').innerHTML = close + (dialog.employee ? employeeAction
-            : ticketActions(ticket).map(([action, label]) => `<button type="button" class="btn ${action === 'close' ? 'btn-primary' : 'btn-outline'}" data-ticket-start="${action}">${label}</button>`).join(''));
+        root.querySelector('[data-ticket-footer]').innerHTML = dialog.employee
+            ? closeTicketWindowButton + employeeAction
+            : ticketActions(ticket).map(([action, label]) => `<button type="button" class="btn ${action === 'close' ? 'btn-primary' : 'btn-outline'}" data-ticket-start="${action}">${label}</button>`).join('') + closeTicketWindowButton;
         body.id = 'service-desk-tab-panel';
         body.setAttribute('role', 'tabpanel');
         body.setAttribute('aria-labelledby', 'ticket-tab-' + tab.toLowerCase());
@@ -1100,7 +1102,7 @@ window.caffootServiceDesk = (() => {
         dialog.action = {action, id};
         const requestedAction = dialog.action;
         showTicketError(dialog);
-        footer.innerHTML = '<button type="button" class="btn btn-outline" data-ticket-dismiss>Close</button>';
+        footer.innerHTML = closeTicketWindowButton;
         let fields = '', title = label;
         const explanation = '<label class="service-desk-field">Additional Explanation (Optional)<textarea name="explanation" rows="3" maxlength="2000"></textarea></label>';
         if (action === 'assign') {

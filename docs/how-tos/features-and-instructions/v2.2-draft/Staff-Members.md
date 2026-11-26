@@ -132,12 +132,16 @@ An existing archived Department membership can be retained during an edit. An ar
 Staff status and account status are separate. Inactivating a leaver neither disables their login nor records equipment physically coming back.
 
 1. Open **Staff Details** and review **Assigned Equipment** and **Assignment History**, with the necessary equipment access.
-2. Choose **Mark Inactive**, read the prompt and confirm. Cancelling the prompt makes no change.
+2. Choose the orange outlined **Mark Inactive** button, read the prompt and confirm. Cancelling the prompt makes no change.
 3. Check the **Inactive** badge. The person is excluded from new equipment-recipient choices; outstanding assignments and original dates remain visible to authorised IT users.
 4. Resolve equipment through its actual [return/write-off](IT-Assets-Issue-Return-and-Write-Off.md) or [handover](Associated-Equipment.md#reassign-a-workstation-directly) workflow.
 5. If login access should end, an authorised administrator must open **Staff Details → Manage Permissions** and select **Disable** under **Account controls**.
 
-To restore eligibility, open the inactive person's Staff Details, choose **Reactivate** and confirm. This retains history and does not enable a disabled login. The Staff form's **Staff Status** also changes directory status when saved. The directory offers no permanent-delete action for Staff.
+To restore eligibility, open the inactive person's Staff Details, choose the solid orange **Reactivate** button and confirm. This retains history and does not enable a disabled login. The Staff form's **Staff Status** also changes directory status when saved. The directory offers no permanent-delete action for Staff.
+
+![Staff Details with an outlined orange Mark Inactive button for the active Staff Member.](../../../development-handovers/evidence/stage-6-6-batch-3/screenshots/staff-1440-light.png)
+
+*Mark Inactive applies to the Staff record. Account controls are in Manage Permissions.* [Capture provenance](../../../development-handovers/evidence/stage-6-6-batch-3/README.md#capture-provenance)
 
 For example, fictional Alex leaves with a laptop and two adapters still recorded against them. Marking Alex Inactive leaves all three outstanding. IT records items actually returned, resolves any missing item through the appropriate Write Off procedure, and separately disables Alex's account. No stock balance increases merely because Staff status changes.
 

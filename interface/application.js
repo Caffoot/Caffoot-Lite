@@ -4286,20 +4286,33 @@ function openIpModal(ip) {
             if (typeof onClosed === 'function') onClosed();
         }
 
+        function containModalScrolling(shell) {
+            const scroll = document.createElement('div');
+            scroll.className = 'modal-scroll-body';
+            scroll.append(...shell.childNodes);
+            shell.append(scroll);
+            shell.classList.add('modal-scroll-shell');
+        }
+
         function openModal(htmlContent) {
             const container = document.getElementById('modal-container');
             const content = document.getElementById('modal-content');
             if (container.classList.contains('hidden')) modalReturnFocus = document.activeElement;
             content.classList.remove('rack-balanced-modal', 'settings-access-point-review', 'settings-legacy-review', 'ipam-record-modal','ipam-subnet-preview','ipam-subnet-generator', 'catalogue-modal', 'device-review-container', 'ipam-modal', 'catalog-modal');
+            content.classList.remove('modal-scroll-shell');
             container.classList.remove('catalog-modal-overlay', 'device-review-overlay', 'ipam-modal-overlay', 'rack-modal-shade');
             content.innerHTML = htmlContent;
             if(content.querySelector('.ipam-modal-head')){
                 content.classList.add('ipam-modal');container.classList.add('ipam-modal-overlay');
+                if (!content.querySelector('#subnet-batch-generator,#subnet-batch-preview')) containModalScrolling(content);
             }
             if(content.querySelector('.catalog-modal-head')){
                 content.classList.add('catalog-modal','catalogue-modal');container.classList.add('catalog-modal-overlay');
             }
-            if(content.querySelector(':scope > .rack-modal'))container.classList.add('rack-modal-shade');
+            const rackModal = content.querySelector(':scope > .rack-modal');
+            if (rackModal) container.classList.add('rack-modal-shade');
+            const paddedModal = rackModal || content.querySelector(':scope > .catalog-modal');
+            if (paddedModal) containModalScrolling(paddedModal);
             container.classList.remove('hidden');
             container.classList.add('flex');
             const heading = content.querySelector('h1,h2,h3,h4');
@@ -8474,8 +8487,9 @@ function openIpModal(ip) {
             const height = Number.isInteger(safeHeight) && safeHeight >= 1 && safeHeight <= (rackAccessoryTypeDefinitions[type]?.vertical?rackLimit:12) ? safeHeight : 1;
             const modal=document.getElementById('modal-container');
             const modalContent = document.getElementById('modal-content');
-            modalContent.classList.remove('rack-balanced-modal');
+            modalContent.classList.remove('rack-balanced-modal', 'modal-scroll-shell');
             modalContent.innerHTML=renderInterfaceTemplate("racks/open-rack-accessory-editor-2",[existing?(verticalWorkflow?'Edit Vertical 0U Accessory':'Edit Horizontal Accessory Placement'):verticalWorkflow?'Add Vertical 0U Accessory':'Place Horizontal Accessory',verticalWorkflow?'Manage a vertical 0U accessory on the left or right rail. Rail accessories do not occupy central rack U slots.':'Place a horizontal rack accessory into free U positions on the selected face.',verticalWorkflow?'Vertical Accessory Type':'Horizontal Accessory Type',Object.entries(rackAccessoryTypeDefinitions).filter(([key,item])=>!!item.vertical===verticalWorkflow).map(([key,item])=>`<option value="${key}" ${type===key?'selected':''}>${item.label}</option>`).join(''),type==='patch'?'':'display:none;',type==='patch'?'required':'disabled',Number(existing?.portCount)===12?'selected':'',![12,48].includes(Number(existing?.portCount))?'selected':'',Number(existing?.portCount)===48?'selected':'',escapeHtml(existing?.name||''),face==='front'?'selected':'',face==='rear'?'selected':'',rackAccessoryTypeDefinitions[type]?.vertical?'':'display:none;',existing?.side==='left'?'selected':'',existing?.side==='right'?'selected':'',verticalWorkflow?'Vertical Span (U)':'Height (U)',rackAccessoryTypeDefinitions[type]?.vertical?rackLimit:12,height,existing?renderInterfaceTemplate("racks/open-rack-accessory-editor-1",[]):'',existing?'Save changes':'Place accessory']);
+            containModalScrolling(modalContent.firstElementChild);
             modal.classList.remove('hidden');
             modal.classList.add('flex');
             const form=modal.querySelector('#rack-accessory-form');
@@ -9513,6 +9527,9 @@ void (async () => {
     if(stockControls)stockControls.hidden=!editPermissions.Devices||!editPermissions['IT Assets'];
     const accountTickets=document.querySelector('[data-account-my-tickets]');
     if(accountTickets)accountTickets.hidden=!sessionCanUseMyTickets;
+    // Both self-service cards require an active Staff link and an enabled equipment feature.
+    const accountEquipment=document.querySelector('[data-account-my-equipment]');
+    if(accountEquipment)accountEquipment.hidden=!sessionCanUseMyTickets;
     applyNavigationVisibility();
     const featureActions={Devices:['tab-devices','open-device-modal'],IPAM:['tab-ipam'],Racks:['tab-racks','dashboard-racks-overview','open-rack-modal']};
     for(const [area,actions] of Object.entries(featureActions)){
@@ -10935,7 +10952,7 @@ void (async () => {
     const previous=[...host.children,document.getElementById('sidebar'),document.querySelector('.topbar')].filter(Boolean).map(element=>[element,element.inert]);
     previous.forEach(([element])=>element.inert=true);
     const layer=document.createElement('div');layer.className='users-live';layer.dataset.roleLayer='';
-    layer.innerHTML='<div class="modal-layer users-management-modal"><div class="modal" role="dialog" aria-modal="true" aria-labelledby="role-dialog-title-'+roleLayers.length+'"><div class="modal-head"><div><h2 id="role-dialog-title-'+roleLayers.length+'">'+escapeHtml(title)+'</h2><p>'+escapeHtml(description)+'</p></div><button type="button" class="close app-modal-close" data-role-command="close" aria-label="Close Dialog">Close ×</button></div><div class="modal-body">'+body+'<p class="formhint" role="status" data-role-feedback tabindex="-1"></p><div class="modal-actions">'+actions+'</div></div></div></div>';
+    layer.innerHTML='<div class="modal-layer users-management-modal"><div class="modal" role="dialog" aria-modal="true" aria-labelledby="role-dialog-title-'+roleLayers.length+'"><div class="users-modal-scroll"><div class="modal-head"><div><h2 id="role-dialog-title-'+roleLayers.length+'">'+escapeHtml(title)+'</h2><p>'+escapeHtml(description)+'</p></div><button type="button" class="close app-modal-close" data-role-command="close" aria-label="Close Dialog">Close ×</button></div><div class="modal-body">'+body+'<p class="formhint" role="status" data-role-feedback tabindex="-1"></p><div class="modal-actions">'+actions+'</div></div></div></div></div>';
     const state={layer,previous,opener,overflow:document.body.style.overflow};
     roleLayers.push(state);host.append(layer);document.body.style.overflow='hidden';
     layer.querySelector('[data-role-command="close"]').focus();return layer;
@@ -11104,8 +11121,9 @@ void (async () => {
       const profileHTML=renderInterfaceTemplate("users/source-profile",[editingUser.id,...['firstName','lastName','displayName','email'].map(key=>escapeHtml(profile[key]||'')),own?'Edit your own personal details through My Account.':'Shared personal details also appear in Staff Details. Resolve differences in Edit Staff Member. A changed email address needs to be verified again.',own?'disabled':'',escapeHtml(editingUser.username),escapeHtml(profile.revision||''),emailBadge,emailWarning]);
       const meta=renderInterfaceTemplate("users/source-user-meta",[editingUser.active?'green':'red',editingUser.active?'Active':'Disabled',editingUser.isAdmin?'blue':'dark',editingUser.isAdmin?'Administrator · All Sections':'Staff Member',editingUser.mfaEnrolled?'green':'amber',accountMfaLabel(editingUser)]);
       const administratorNote=editingUser.isAdmin?'<div class="note-row" style="margin-bottom:13px">Administrators retain configured access to all inventory sections. Disabled features remain unavailable. Their per-section permissions are not individually configured.</div>':'';
-      const warnings=own?'<div class="modal-warning">You cannot disable, demote or delete your own signed-in administrator account. These controls are intentionally unavailable.</div>':editingUser.accessDetails.mfaPending?'<div class="modal-warning">MFA enrolment is required before wider Read/Edit access or enabled additional roles can be used. The user will be guided through enrolment before normal sign-in.</div>':'';
-      const activeControl=renderInterfaceTemplate("users/source-account-control",[editingUser.active?'Disable account':'Enable account',editingUser.active?'Prevent this person signing in until the account is enabled again.':'Allow this person to sign in again.',operation('active',editingUser.active?'Disable':'Enable'),'']);
+      const selfProtectionWarning=own?'<div class="modal-warning">You cannot disable, demote or delete your own signed-in administrator account. These controls are intentionally unavailable.</div>':'';
+      const mfaWarning=!own&&editingUser.accessDetails.mfaPending?'<div class="modal-warning">MFA enrolment is required before wider Read/Edit access or enabled additional roles can be used. The user will be guided through enrolment before normal sign-in.</div>':'';
+      const activeControl=renderInterfaceTemplate("users/source-account-status-control",[editingUser.active?'Disable account':'Enable account',editingUser.active?'Prevent this person signing in until the account is enabled again.':'Allow this person to sign in again.',operation('active',editingUser.active?'Disable':'Enable'),editingUser.active?'active':'disabled']);
       const promotionBlocked=editingUser.mustChangePassword||!enrolled||!verified;
       const promotionHelp=editingUser.isAdmin?(own?'You cannot demote your own signed-in administrator account.':'Return this account to standard-user status.'):
         editingUser.mustChangePassword?'The user must change their temporary password before becoming an administrator.':
@@ -11122,7 +11140,7 @@ void (async () => {
       const resetControl=renderInterfaceTemplate('users/source-account-control',[
         'Reset Password',resetHelp,operation('reset-password','Reset Password',editingUser.isAdmin),'',
       ])+'<p class="account-reset-result" role="status" data-password-reset-result hidden></p>';
-      return renderInterfaceTemplate("users/account-management-dialog",[own?'Your administrator account':'Manage '+escapeHtml(editingUser.username),own?'Self-protection prevents account changes here. Use My Account for your own security settings.':'Review access and account controls for this user.',meta,profileHTML+renderRoleMemberships(editingUser,own),administratorNote,'<p class="formhint">Permissions from assigned roles can be customised for each user. Select <strong>Inherit</strong> to use the permissions provided by their roles. Select <strong>No Access</strong>, <strong>Read</strong> or <strong>Edit</strong> to set an individual override. Individual overrides take precedence, including when a role’s permissions change.</p>'+renderInterfaceTemplate("users/access-summary",[permissionControls]),warnings,activeControl,administratorControl,resetControl+renderInterfaceTemplate("users/source-delete-control",[operation('delete','Delete User')])]);
+      return renderInterfaceTemplate("users/account-management-dialog",[own?'Your administrator account':'Manage '+escapeHtml(editingUser.username),own?'Self-protection prevents account changes here. Use My Account for your own security settings.':'Review access and account controls for this user.',meta,profileHTML+renderRoleMemberships(editingUser,own),administratorNote,'<p class="formhint">Permissions from assigned roles can be customised for each user. Select <strong>Inherit</strong> to use the permissions provided by their roles. Select <strong>No Access</strong>, <strong>Read</strong> or <strong>Edit</strong> to set an individual override. Individual overrides take precedence, including when a role’s permissions change.</p>'+renderInterfaceTemplate("users/access-summary",[permissionControls]),selfProtectionWarning,activeControl,administratorControl,resetControl+renderInterfaceTemplate("users/source-delete-control",[operation('delete','Delete User')]),mfaWarning]);
   }
   function openStaffPasswordReset(user){
     const body=renderInterfaceTemplate('users/password-reset-form',[user.active?'':'<br>This account will remain disabled.']);
@@ -11173,9 +11191,9 @@ void (async () => {
     const {layer,accountId}=staffAccountEditor;
     const user=users.find(item=>item.id===accountId);
     if(!user){closeUserWorkspace();return;}
-    const scroll=layer.querySelector('.modal')?.scrollTop||0;
+    const scroll=layer.querySelector('.users-modal-scroll')?.scrollTop||0;
     layer.innerHTML=renderUserWorkspace(user);
-    layer.querySelector('.modal').scrollTop=scroll;
+    layer.querySelector('.users-modal-scroll').scrollTop=scroll;
     layer.querySelector('[data-action="users-close-editor"]')?.focus({preventScroll:true});
   }
   function openUserWorkspace(accountId,trigger){

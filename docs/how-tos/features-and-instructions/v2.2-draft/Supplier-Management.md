@@ -114,16 +114,14 @@ See [Optional Features](Optional-Features-and-Link-To-IPAM.md) for organisation-
 
 ## Application Screenshots
 
-These historical Batch 4.1 captures show the same Supplier forms with the earlier sidebar and Notes tab. See the [Batch 4.1 capture provenance](../../../development-handovers/evidence/stage-4-batch-41/README.md) and [current Batch 4.2 application evidence](../../../development-handovers/evidence/stage-4-batch-42/README.md).
+These desktop and mobile examples use fictional Supplier records. See the [Batch 3 capture record](../../../development-handovers/evidence/stage-6-6-batch-3/README.md).
 
-![Desktop light Supplier Directory with search, the category filter, and Northlight Technology Ltd in the results](../../../development-handovers/evidence/stage-4-batch-41/images/directory-light-1440.png)
+![Desktop light Supplier Directory with search and category filters](../../../development-handovers/evidence/stage-6-6-batch-3/screenshots/supplier-directory-light-1440.png)
 
 The Supplier Directory presents the main office town alongside each company and provides the live category filter.
 
-![Mobile dark Add Supplier form scrolled to the first Contact, with the Add Another Contact, Cancel and Add Supplier controls](../../../development-handovers/evidence/stage-4-batch-41/images/add-supplier-contact-dark-390.png)
+![Mobile dark Add Supplier form showing the first Contact and the form actions](../../../development-handovers/evidence/stage-6-6-batch-3/screenshots/supplier-add-contact-dark-390.png)
 
-Scroll down to reach the initially open Contact entry and save controls on a narrow screen.
+Scroll down to reach the Contact entry and save controls on a narrow screen.
 
-![Desktop light Supplier Details header on the Notes tab with Back To Suppliers, Edit Supplier and Archive above the Note-history explanation](../../../development-handovers/evidence/stage-4-batch-41/header-correction/notes-light-1440.png)
-
-The Supplier Details header groups company actions above the explanation of why Delete is unavailable.
+![Desktop light Supplier Details on the Overview tab with the company actions beside the heading](../../../development-handovers/evidence/stage-6-6-batch-3/screenshots/supplier-details-light-1440.png)

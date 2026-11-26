@@ -1,7 +1,6 @@
 /* Service Desk uses the Device Inventory toolbar and the shared Device Details window. */
 .service-desk-page { min-width: 0; }
 .service-desk-page-head { justify-content: space-between; align-items: flex-end; }
-.service-desk-page-head .device-review-eyebrow { color: #ab5316; margin-bottom: .4rem; }
 .service-desk-page-head h1 { overflow-wrap: anywhere; }
 .service-desk-page-head > .btn { flex: 0 0 auto; }
 .service-desk-workload-heading {
@@ -46,15 +45,14 @@
 .service-desk-tag[data-ticket-tag="In Progress"], .service-desk-tag[data-ticket-tag="Low"] { background: #e6f4ed; color: #216f51; }
 .service-desk-tag[data-ticket-tag="On Hold"] { background: #fcefe4; color: #86501f; }
 .service-desk-tag[data-ticket-tag="High"] { background: #fae9e8; color: #983d40; }
-.service-desk-tag[data-ticket-tag="Medium"] { background: #faf1dd; color: #755415; }
-html.dark .service-desk-page-head .device-review-eyebrow { color: #ffad72; }
-html.dark .service-desk-stat-head > span { background: #553b2a; color: #ffc69b; }
-html.dark .service-desk-tag { background: #344557; color: #c8d8e8; }
+.service-desk-tag[data-ticket-tag="Medium"] { background: #faf1dd; color: #ad5010; }
+html.dark .service-desk-stat-head > span { background: var(--theme-warning-bg); color: var(--theme-warning-text); }
+html.dark .service-desk-tag { background: var(--theme-disabled); color: var(--theme-secondary); }
 html.dark .service-desk-tag[data-ticket-tag="Open"] { background: #29475e; color: #acd7ff; }
-html.dark .service-desk-tag[data-ticket-tag="In Progress"], html.dark .service-desk-tag[data-ticket-tag="Low"] { background: #254a3e; color: #a8f0c9; }
-html.dark .service-desk-tag[data-ticket-tag="On Hold"] { background: #543c2b; color: #f3c28e; }
-html.dark .service-desk-tag[data-ticket-tag="High"] { background: #553537; color: #f5b7b7; }
-html.dark .service-desk-tag[data-ticket-tag="Medium"] { background: #55472d; color: #f0d5a5; }
+html.dark .service-desk-tag[data-ticket-tag="In Progress"], html.dark .service-desk-tag[data-ticket-tag="Low"] { background: var(--theme-good-bg); color: var(--theme-good-text); }
+html.dark .service-desk-tag[data-ticket-tag="On Hold"] { background: var(--theme-warning-bg); color: var(--theme-warning-text); }
+html.dark .service-desk-tag[data-ticket-tag="High"] { background: var(--theme-danger-bg); color: var(--theme-danger-text); }
+html.dark .service-desk-tag[data-ticket-tag="Medium"] { background: var(--theme-warning-bg); color: var(--theme-warning-text); }
 .service-desk-dialog { height: auto; max-height: min(870px,calc(100dvh - 40px)); }
 .service-desk-dialog .device-review-headline h2 { overflow-wrap: anywhere; }
 html.dark .service-desk-dialog .device-review-close { background: var(--white); color: var(--ink); border-color: var(--line); }
@@ -70,6 +68,11 @@ html.dark .service-desk-dialog .device-review-facts > div { border-color: var(--
 }
 .service-desk-field textarea { resize: vertical; }
 .service-desk-form-actions { display: flex; justify-content: flex-end; gap: .55rem; margin-top: .8rem; flex-wrap: wrap; }
+.service-desk-dialog .service-desk-edit-heading {display:flex;align-items:center;justify-content:space-between;gap:.5rem}
+.service-desk-edit-heading .device-review-smallbtn {display:inline-flex;align-items:center;gap:.3rem;flex:none}
+@media (min-width: 731px) {
+    .service-desk-dialog [data-ticket-start="close"] {margin-inline-end:auto}
+}
 .service-desk-classification { padding-top: .5rem; border-top: 1px solid var(--line); }
 .service-desk-action, .service-desk-dialog .device-review-panel .service-desk-info {
     border-color: var(--line); background: var(--soft); color: var(--ink);
@@ -94,8 +97,8 @@ html.dark .service-desk-error { color: #ffb7b3; }
     background: #e6f4ed; color: #21634b; font-size: .68rem; font-weight: 750;
 }
 .service-desk-visibility[data-internal="true"] { background: #faefdf; color: #795022; }
-html.dark .service-desk-visibility { background: #254a3e; color: #a8f0c9; }
-html.dark .service-desk-visibility[data-internal="true"] { background: #543c2b; color: #f3c28e; }
+html.dark .service-desk-visibility { background: var(--theme-good-bg); color: var(--theme-good-text); }
+html.dark .service-desk-visibility[data-internal="true"] { background: var(--theme-warning-bg); color: var(--theme-warning-text); }
 .service-desk-files, .service-desk-equipment ul { list-style: none; margin: .6rem 0 0; padding: 0; }
 .service-desk-files li, .service-desk-equipment li {
     display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap;
@@ -127,9 +130,6 @@ html.dark .service-desk-visibility[data-internal="true"] { background: #543c2b; 
     line-height: 1.6; overflow-wrap: anywhere;
 }
 .employee-tickets .service-desk-page-head { align-items: flex-start; }
-.employee-tickets .service-desk-page-head .device-review-eyebrow {
-    font-size: .68rem; font-weight: 800; letter-spacing: .12em; text-transform: uppercase;
-}
 .employee-tickets .employee-ticket-list { margin-top: 1.65rem; }
 .employee-tickets .device-filters { grid-template-columns: repeat(2,minmax(0,1fr)); }
 .employee-tickets .device-table { min-width: 1000px; }

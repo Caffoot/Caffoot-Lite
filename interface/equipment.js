@@ -147,13 +147,17 @@
       <p data-equipment-count="${scope}" aria-live="polite"></p></div></div>
       <p class="my-equipment-scroll-tip" hidden>Scroll the table horizontally to see all columns and actions.</p>
       <div class="device-table-card" data-${scope}-equipment><p class="device-empty" role="status">Loading equipment…</p></div></section>`;
-    return `<div class="account-page my-equipment"><div class="main"><div class="header"><div><div class="eyebrow">YOUR WORKSPACE</div><h1>My Equipment</h1><p>Your personally assigned Devices and equipment shared with your current Department.</p></div></div>
+    return `<div class="account-page my-equipment"><div class="main"><div class="header"><div><h1>My Equipment</h1><p>Your personally assigned Devices and equipment shared with your current Department.</p></div></div>
       <section class="device-toolbar" aria-labelledby="my-equipment-filter-heading"><div class="device-toolbar-head"><div><h2 id="my-equipment-filter-heading">Search &amp; Filter Equipment</h2><p>Narrow your equipment by name, hardware or type.</p></div><button type="button" class="btn btn-outline" data-equipment-clear disabled>Clear Filters</button></div>
       <div><label class="device-search-label" for="my-equipment-search">Search Equipment</label><div class="device-search-wrap"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="10" cy="10" r="6"/><path d="m15 15 6 6"/></svg><input class="device-search" id="my-equipment-search" type="search" autocomplete="off" placeholder="Search by name, type, manufacturer, model or operating system" disabled></div></div>
       <div class="device-filters"><label class="device-filter">Equipment Type<select data-equipment-type disabled><option value="">All types</option></select></label><label class="device-filter">Equipment Kind<select data-equipment-kind disabled><option value="">All equipment</option><option>Device</option><option>IT Asset</option></select></label></div></section>
       <div class="my-equipment-error" data-equipment-error hidden role="alert">Equipment could not be loaded. Please try again. <button type="button" class="btn btn-outline" data-equipment-retry>Try Again</button></div>
       <div data-equipment-sections>${section('personal','Assigned to Me')}${section('shared','Shared with My Department','<p>Shared equipment remains assigned to your Department.</p>')}</div>
-      <dialog class="my-equipment-details" aria-labelledby="my-equipment-detail-title"><header class="my-equipment-detail-head"><div><div class="eyebrow">EQUIPMENT DETAILS</div><h2 id="my-equipment-detail-title"></h2><p data-equipment-detail-scope></p></div><button type="button" class="btn btn-outline" data-equipment-detail-close aria-label="Close equipment details">Close ×</button></header><div class="my-equipment-detail-body" data-equipment-detail-body></div><footer class="my-equipment-detail-actions"><button type="button" class="btn btn-outline" data-equipment-detail-close>Close</button><span data-equipment-detail-report></span></footer></dialog>
+      <dialog class="my-equipment-details" aria-labelledby="my-equipment-detail-title"><div class="modal-scroll-body">
+        <header class="my-equipment-detail-head"><div><div class="eyebrow">EQUIPMENT DETAILS</div><h2 id="my-equipment-detail-title"></h2><p data-equipment-detail-scope></p></div><button type="button" class="btn btn-outline" data-equipment-detail-close aria-label="Close equipment details">Close ×</button></header>
+        <div class="my-equipment-detail-body" data-equipment-detail-body></div>
+        <footer class="my-equipment-detail-actions"><button type="button" class="btn btn-outline" data-equipment-detail-close>Close</button><span data-equipment-detail-report></span></footer>
+      </div></dialog>
       </div></div>`;
   }
   const equipmentKind=item=>item.equipmentKind==='IT Asset'?'IT Asset':'Device';

@@ -125,6 +125,8 @@ The old holder stays recorded until the complete save succeeds. Cancellation or 
 
 If the Device or current holder changes while the form is open, reopen **Reassign Device** from the refreshed **Assigned To** tab. Check current custody before choosing the new recipient. The server rejects an unchanged selection.
 
+On a narrow screen, scroll inside **Reassign Device** to reach the preparation checks and the **Cancel** and **Confirm Ready And Reassign** buttons. [Mobile view with a classic scrollbar](../../../development-handovers/evidence/stage-6-6-batch-3/screenshots/classic-reassign-dark-390x844.png)
+
 ![Reassign Device in desktop light mode. The form shows the fictional laptop, the selected new Staff holder and the preparation checks.](screenshots/stage-6-6-batch-1/direct-handover-devices-only-desktop-light.png)
 
 Devices-only handover needs Devices Edit. A Device with recorded stock history also requires IT Assets enabled and IT Assets Edit. Use [Associated Equipment And Direct Handover](Associated-Equipment.md#reassign-a-workstation-directly) for the full missing-accessory scenario and recovery guidance. [Correct Movement](IT-Assets-Correct-Movement.md) handles eligible stock-recording mistakes separately. A new holder can raise a separate ticket after a valid assignment. [Ticket privacy after handover](Service-Desk-Administration.md#what-happens-to-service-desk-tickets-when-equipment-changes-hands)
@@ -134,13 +136,17 @@ Devices-only handover needs Devices Edit. A Device with recorded stock history a
 My Equipment is for a person signing in with a login linked to an active Staff Member. It does not require or grant general inventory or directory rights.
 
 1. Sign in using your own linked login.
-2. Open **My Equipment** at the top of the sidebar, beneath **Workspace** on desktop.
+2. Open **My Account → Overview**, then select **Open My Equipment** in the **My Equipment** card. The same destination is available from **Workspace → My Equipment** in the sidebar. If the card is missing, ask your administrator to check that your login is linked to an active Staff Member and that Devices or IT Assets is enabled.
 3. Read **Assigned to Me** for Devices and outstanding IT Assets assigned directly to you.
 4. Read **Shared with My Department** for equipment assigned to your current Department. Viewing it does not make you the personal holder.
 5. Report an incorrect item or quantity to an authorised IT user, using its name and the relevant facts. This personal screen has no Issue, Return, Reassign or Write Off controls.
 6. To ask IT for help with listed equipment, select **Report A Problem** on the item. Confirm the preselected **Device / Asset**. On a Department Device or its associated accessory, read the confidentiality warning before completing **Subject**, **Description** or adding a file. Complete **Ticket Category** and the required fields. Add a permitted file if helpful. Select **Create Ticket** to save, or **Cancel** to return to My Equipment. Follow the saved reference in **My Tickets** for personal equipment or **Department Tickets** for shared equipment. [Full ticket instructions](Service-Desk-Tickets.md#raise-a-support-request)
 
 ### Find Equipment And Open Details
+
+![My Account Overview for a fictional Staff Member with the Open My Equipment shortcut.](../../../development-handovers/evidence/stage-6-6-batch-3/screenshots/my-account-1440-light.png)
+
+*Open My Equipment brings you to the personal and Department lists.* [Mobile view and capture provenance](../../../development-handovers/evidence/stage-6-6-batch-3/README.md#application-screenshots)
 
 1. In **Search Equipment**, enter part of a name, type, manufacturer, model or operating system. Use **Equipment Type** or **Equipment Kind** to narrow both tables. **Clear Filters** restores the full list your account can see.
 2. On a narrow screen, scroll each table horizontally to reach **Assigned date**, **Details** and **Report A Problem**.
@@ -154,6 +160,8 @@ My Equipment is for a person signing in with a login linked to an active Staff M
 ![Studio Laptop Details in mobile dark mode showing recorded hardware, serial number and Microsoft Teams.](../../../development-handovers/evidence/stage-6-6-batch-2/screenshots/equipment-details-mobile-dark.png)
 
 *The dialogue shows the fields this account can see. Network configuration, licence keys, credentials, private notes, stock totals and former holders are excluded.* [Desktop and mobile captures and provenance](../../../development-handovers/evidence/stage-6-6-batch-2/README.md#application-screenshots)
+
+If the recorded software list is long, scroll inside **Details** to reach the actions. Escape closes the details and returns keyboard focus to the equipment row's **Details** button. [Long software list on mobile](../../../development-handovers/evidence/stage-6-6-batch-3/screenshots/classic-equipment-details-dark-390.png)
 
 The server checks the active Staff link and current custody on every request. Without a current Department there is no Department-shared list. An inactive or unlinked Staff record gives no self-service equipment visibility. Authorised IT staff can still resolve outstanding assignments. A current Department member can see equipment still shared with their archived Department until an authorised change ends that relationship.
 

@@ -19,19 +19,19 @@
 }
 
 html.dark .email-template-settings {
-    --email-ink: #d7e3ef;
-    --email-heading: #eff6fb;
-    --email-muted: #9bb0c3;
-    --email-line: #334a60;
-    --email-white: #1c3042;
+    --email-ink: var(--theme-text);
+    --email-heading: var(--theme-text);
+    --email-muted: var(--theme-secondary);
+    --email-line: var(--theme-border);
+    --email-white: var(--white);
     --email-orange: #ed8532;
-    --email-orange2: #ff9c49;
+    --email-orange2: var(--orange2);
     --email-shadow: 0 7px 26px rgba(0,0,0,.18);
-    --email-soft: #23384b;
-    --email-field: #17293b;
-    --email-pillbg: #304458;
-    --email-shade: #263b4d;
-    --email-teal: #79d2ad;
+    --email-soft: var(--theme-control);
+    --email-field: var(--theme-control);
+    --email-pillbg: var(--theme-disabled);
+    --email-shade: var(--theme-hover);
+    --email-teal: var(--theme-good-text);
 }
 
 .email-template-settings .email-tabs {

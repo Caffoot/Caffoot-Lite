@@ -12,22 +12,29 @@ main.auth-shell{max-width:1096px;margin:0;padding:0}
 #auth-live-screen #signed-in>p{margin:8px 0}
 #auth-live-screen #signed-in>button{width:100%;min-height:42px}
 
-/* The public authentication flow shares the established slate dark palette.
+/* The public authentication flow shares the approved softer navy dark palette.
    Keep the brand panel and the QR's white scan surface unchanged. */
-html.dark {color-scheme:dark;--canvas:#0f172a;--ink:#f1f5f9;--muted:#cbd5e1;--line:#475569;}
+html.dark {color-scheme:dark;--canvas:#172536;--ink:#f1f5f9;--muted:#c0cddd;--line:#3b4e62;}
 html.dark body,html.dark .canvas {background:var(--canvas);color:var(--ink);}
-html.dark .auth-shell {background:#1e293b;border-color:var(--line);}
+html.dark .auth-shell {background:#223448;border-color:var(--line);}
 html.dark :is(.screen h1,.field,.welcome-item h3,.qr-copy b,.key summary,.inline-note strong,#auth-live-screen .panel h2) {color:var(--ink);}
 html.dark :is(.form-upper,.secure,.app-version,.subtitle,.inline-note,.form-foot,.form-foot a,.steps-head,.welcome-item p,.qr-copy p,.small,.resume-hint,.key,.show-password,.success-list li) {color:var(--muted);}
-html.dark :is(.field input,.secondary,#auth-live-screen .panel input,.welcome-item,.preview-note,.resume-hint,.key) {background:#0f172a;color:var(--ink);border-color:#64748b;}
+html.dark :is(.field input,.secondary,#auth-live-screen .panel input,.welcome-item,.preview-note,.resume-hint,.key) {background:#1b2c3e;color:var(--ink);border-color:#72869a;}
 html.dark :is(.field input)::placeholder {color:var(--muted);}
 html.dark :is(.form-foot,.divider,#auth-live-screen .panel) {border-color:var(--line);}
-html.dark :is(.welcome-number,.steps-track span:not(.complete)) {background:#334155;color:var(--muted);}
-html.dark .secondary:hover {background:#334155;}
-html.dark .status {background:#451a03;color:#fde68a;border-color:#92400e;}
-html.dark .status.good {background:#022c22;color:#a7f3d0;border-color:#065f46;}
-html.dark :is(.primary,#auth-live-screen .panel button) {color:#0f172a;}
-html.dark .eyebrow {color:#fb923c;}
+html.dark :is(.welcome-number,.steps-track span:not(.complete)) {background:#34485c;color:var(--muted);}
+html.dark .secondary:hover {background:#30465c;}
+html.dark .status {background:#503b28;color:#fde68a;border-color:var(--line);}
+html.dark .status.good {background:#234b40;color:#b0ebcd;border-color:var(--line);}
+html:not(.dark) :is(.primary,#auth-live-screen .panel button):not(:disabled),
+html.dark :is(.primary,#auth-live-screen .panel button):not(:disabled) {color:#142b43;}
+html :is(.primary,#auth-live-screen .panel button):hover:not(:disabled) {color:#0f172a;}
+html.dark :is(.primary,#auth-live-screen .panel button):hover:not(:disabled) {background:#d87327;}
+html.dark :is(button,input,select,summary,a[href]):focus-visible {outline:2px solid #9dc9ff;outline-offset:2px;}
+html:not(.dark) .form-side :is(button,input,select,summary,a[href]):focus-visible {outline:2px solid #142b43;outline-offset:2px;}
+html.dark :is(.primary,#auth-live-screen .panel button):disabled {background:#34485c;color:var(--muted);}
+html.dark .form-foot a {color:#ffb77d;}
+html.dark .eyebrow {color:#ed8532;}
 
 /* Keep the full brand message readable within the existing responsive panel. */
 .brand-content .brand-tagline-heading{font-size:clamp(1.25rem,2.5vw,1.875rem);font-weight:800;line-height:1.25;letter-spacing:-.8px;margin-bottom:8px}
@@ -42,4 +49,4 @@ html.dark .eyebrow {color:#fb923c;}
 
 /* Keep the added mandatory-enrolment instructions readable without restyling first-run setup. */
 .required-mfa-enrolment .qr-copy p{color:#344f67}
-.dark .required-mfa-enrolment .qr-copy p{color:#c5d4e0}
+.dark .required-mfa-enrolment .qr-copy p{color:var(--muted)}
