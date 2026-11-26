@@ -2,12 +2,15 @@
 
 > **Draft v2.2 — Unreleased.** Use these instructions on an authorised v2.2 review installation. For the published v2.1 release, use its [installation guide](../../../../INSTALLATION.md).
 
+> **Documentation Batch 6:** source-inspected at `fdc677920bfc52f48f641b3d6d1344c902a6a9b0` (schema 31). Written/source reconciliation awaits independent ChatGPT review and separate owner written acceptance. Desktop work remains deferred to Batch 7. [Evidence states and screenshot record](../../../development-guide/Milestone-01-Batch-6-Review.md). These are current draft instructions, not newly executed deployment checks.
+
 The Service Desk uses one installation time zone for working hours, excluded dates and reporting dates. A named time zone follows local clock changes automatically. Ticket creation, updates and the live queue remain available while the time zone needs attention.
 
 ## Before You Start
 
 - You need permission to edit the existing Portainer stack or Compose configuration. You also need a Caffoot Lite administrator account to verify the setting in the app.
 - Find the name for your organisation in the [IANA Time Zone Database](https://www.iana.org/time-zones). Ask whoever manages your server if you are unsure of the right zone. `Europe/London` is an example for the UK. Choose the zone where your support calendar operates.
+- Use [draft Installation](Installation.md) for a new isolated review instance. For existing data, record the original matching image/configuration and protect a complete stopped backup before changes that need recovery. Do not replace an existing stack with a new-install template.
 - Identify the current stack or Compose project and the existing mount ending in `:/data`. That mount holds the SQLite database and your accounts. Keep the same project, mount, image or build source, HTTPS address, server address, ports and network settings when changing the time zone.
 
 ## Update A Portainer Stack
@@ -20,7 +23,7 @@ The Service Desk uses one installation time zone for working hours, excluded dat
    ```
 
 3. Check that there is one `TZ` entry and that the current `volumes` mapping still points to the same `/data` storage. Check the existing addresses, ports and networks.
-4. Use **Update the stack** to apply the edited configuration. For a Git-managed stack, make the equivalent edit in its actual source and apply it using the stack’s existing update method. The service may be briefly unavailable while the container is recreated.
+4. Keep the verified current image; a time-zone correction does not need a new public image or a fresh volume. Use **Update the stack** to apply the edited configuration. For a Git-managed stack, make the equivalent edit in its actual source and apply it using the stack’s existing update method. The service may be briefly unavailable while the container is recreated.
 5. Use [Check The Result](#check-the-result) after Caffoot Lite comes back.
 
 The [draft Portainer example](portainer-v2.2-draft.yaml) shows where `TZ` goes. Its empty entry is intended for you to edit. The example takes an authorised private review image through `CAFFOOT_V22_PREVIEW_IMAGE`.
@@ -50,6 +53,14 @@ For a separate review checkout, the [draft Docker Compose example](compose-v2.2-
 
 *Set a valid IANA zone in the deployment configuration and recreate the service to clear this warning.* [Capture details](../../../development-handovers/evidence/service-desk-reporting/README.md)
 
+## Automatic Clock Changes And Effective History
+
+Working Hours and Excluded Dates use the chosen installation-wide zone, not each employee's browser zone. IANA rules handle daylight saving automatically; do not manually move the weekly opening times when clocks change. Under the UK example `Europe/London`, Sunday 01:00–03:00 includes **one actual eligible hour in spring** and **three in autumn**. Sunday 01:30–02:30 includes **30 eligible minutes in spring** and **90 in autumn**: each real occurrence of the repeated eligible part counts. Ordinary weekdays remain as configured.
+
+A valid changed `TZ` takes effect when applied at startup. Earlier known calendar/zone portions and completed measurements remain unchanged. Saved Working Hours/Excluded Dates changes similarly apply prospectively: the approved 10:00 opening, 13:00 calendar change and 18:00 closure gives **3 original + 5 new = 8 hours**, without holds/exclusions. A period with unknown/invalid timezone history cannot be reconstructed after correction; an attempt spanning that interval has no complete trustworthy duration. A new valid setting supports future accounting, not retrospective invention.
+
+No completed closures (**—**), a genuine measured zero (**0h 0m**) and an unavailable/incomplete measurement are distinct. Missing/invalid TZ also makes period counts unavailable while ordinary ticket creation, updates, reopening and live workload continue. [Calendar and reporting examples](Service-Desk-Administration.md#understand-working-time-measurements)
+
 ## If The Warning Persists
 
 - Check the exact spelling and capitalisation of the IANA name, the indentation and whether the entry is under the Caffoot Lite service. Check that you edited and updated the actual running stack or project.
@@ -57,3 +68,5 @@ For a separate review checkout, the [draft Docker Compose example](compose-v2.2-
 - A valid zone takes effect when the application applies it during startup. Eligible elapsed time already measured under known settings is retained. A closure that spans a period whose time zone was unknown has no complete duration. Later corrections allow accurate future measurements, including a new resolution attempt if the ticket is reopened.
 
 See [set working hours and excluded dates](Service-Desk-Administration.md#configure-working-hours) for examples of calendar changes and clock changes.
+
+[Draft Installation](Installation.md) · [Service Desk Administration](Service-Desk-Administration.md) · [Backup and recovery](Legacy-Import-and-Docker-Upgrade.md) · [Draft guides](README.md)

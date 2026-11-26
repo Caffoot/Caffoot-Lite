@@ -8,6 +8,8 @@ Start with the task you need to complete. Each feature guide explains its permis
 
 ## Import, Upgrade And Recovery
 
+Use [Installation — isolated private review](Installation.md) for the separate draft v2.2 Docker/Portainer/Compose setup, storage, HTTPS and first-administrator steps. There is no public v2.2 image or production deployment procedure established here.
+
 Use [Import Legacy Inventory Or Upgrade Docker](Legacy-Import-and-Docker-Upgrade.md) to review a standalone v1.3.3 export, understand protected Device conflicts, rehearse a v2.1 Docker upgrade on an isolated copy, or recover a complete Docker installation with its matching image.
 
 ## UK Date Entry And Calendar Controls
@@ -137,8 +139,12 @@ The dated independent review additions in the Batch 3 and Batch 4 records supers
 
 ## Publication And Acceptance
 
-Stages 1–5 are integrated into `milestone-1`. Stage 6.2 import protection and its draft guide are under review. Batch 3.4 manual/native acceptance, broader Raspberry Pi/native Safari and private-installation checks, and Stage 6.3 complete-volume restoration remain deferred. [Stage 6.2 evidence](../../../development-handovers/evidence/stage-6-2/README.md)
+Stages 1–5 are integrated into `milestone-1`. Stage 6.2 import protection is integrated; its historical schema-28 evidence is distinct from the current schema-31 draft instructions. Batch 3.4 manual/native acceptance, broader Raspberry Pi/native Safari and private-installation checks, and current supported-upgrade and complete-volume restoration acceptance remain outstanding. The historical Stage 6.3/schema-28 and Stage 6.4/schema-29 exercises do not complete those current gates. [Stage 6.2 evidence](../../../development-handovers/evidence/stage-6-2/README.md)
 
 Images used here are genuine application captures with an identified approval source and captions describing their scope. Functional HTML previews are retained as development references, never presented as application screenshots. Missing or outdated images and remaining wording discrepancies are listed in the [documentation review record](../../../development-guide/Stage-1-3-Documentation-Review.md).
 
 For implementation checkpoints and dated evidence, see [Development Status](../../../development-guide/Development-Status.md), the [active milestone handover](../../../development-handovers/milestone-01.md), [documentation plan #366](https://github.com/Caffoot/Caffoot-Lite/issues/366), [master tracker #351](https://github.com/Caffoot/Caffoot-Lite/issues/351) and [Stage 3 decisions #368](https://github.com/Caffoot/Caffoot-Lite/issues/368).
+
+## Installation And Recovery Documentation Checkpoint
+
+Batch 6 written/source reconciliation covers [Installation](Installation.md), [Legacy Import, Docker Upgrade, Backup And Recovery](Legacy-Import-and-Docker-Upgrade.md) and [Service Desk Time Zone](Service-Desk-Time-Zone.md). [Separate Batch 6 review](../../../development-guide/Milestone-01-Batch-6-Review.md) records pinned sources, historical versions, limitations, static checks and **21 additional screenshot groups**. Independent ChatGPT review and separate owner written acceptance remain outstanding. All 82 earlier + 35 Batch 5 + 21 Batch 6 = **138 gross desktop groups** remain deferred to Batch 7 before overlap reconciliation, none waived. No deployment/rehearsal, current upgrade/restore acceptance or release approval follows from written completion. Stop after Batch 6; no Batch 7/8 commencement.
