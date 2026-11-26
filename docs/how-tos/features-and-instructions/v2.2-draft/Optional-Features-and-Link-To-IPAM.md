@@ -1,6 +1,6 @@
 # Optional Features, Basic IPv4 And Link To IPAM
 
-> **Draft v2.2 — Unreleased.** The Stage 2 and 3 procedures describe `milestone-1` at `753b3266893987addb11406ef8303adb03c3c112`. Use the [published v2.1 guides](../README.md) for the current release. This is not an installation, upgrade or restore procedure.
+> **Draft v2.2 — Unreleased.** These instructions are being reconciled against the 26 November 2026 application baseline, `fdc677920bfc52f48f641b3d6d1344c902a6a9b0` (schema 31). Use the [published v2.1 guides](https://github.com/Caffoot/Caffoot-Lite/tree/c3237114108cad9f7d4e57657b6aed5e0091a5ef/docs/how-tos/features-and-instructions) for the current release. Optional Features and basic-IP linking are v2.2 functionality, not v2.1 instructions. Current desktop illustrations and final acceptance remain outstanding. This is not an installation, upgrade or restore procedure.
 
 ## Choose The Features Your Organisation Uses
 
@@ -27,20 +27,22 @@ Open **Settings & Data → Optional Features**. The cards are grouped as follows
 | Infrastructure | **Devices** | The Device inventory and its permitted workflows, including optional basic IP information |
 | Infrastructure | **IP Address Management** | IPAM subnets, address allocations and VLANs |
 | Infrastructure | **Network Racks** | Rack records, accessories and permitted placement workflows |
-| Additional Features | **Suppliers** | Company records, categories, locations, contacts and notes in the [Batch 4.1 draft](Supplier-Management.md) |
-| Additional Features | **Equipment Lifecycle** | Physical Device dates, warranty and replacement warnings and lifespan settings in the [Batch 4.4 draft](Equipment-Lifecycle.md) |
+| Additional Features | **Suppliers** | Company records, categories, locations, contacts and notes in [Supplier Management](Supplier-Management.md) |
+| Additional Features | **Equipment Lifecycle** | Physical Device dates, warranty and replacement warnings and lifespan settings in [Equipment Lifecycle](Equipment-Lifecycle.md) |
 | Additional Features | **IT Assets** | Stock receipts, inventory, readiness checks, equipment issue and return, write-offs and related stock reporting |
 
 An available card shows **Enabled** or **Disabled**. A disabled card has an **Enable Feature** switch; an enabled card's switch is labelled **Enabled**. The switch's accessible name identifies the feature being enabled or disabled.
 
-**Staff Members** and **Departments** are core areas, subject to their permissions. They have no Optional Features switch and do not have to be populated. **Settings & Data**, account administration and **My Account** remain available under their respective authorisation rules even if every optional area is off. This does not give ordinary users administrator access.
+**Staff Members** and **Departments** are core areas, subject to their permissions. They have no Optional Features switch and do not have to be populated. **Settings & Data**, account administration and **My Account** remain available under their respective authorisation rules even if every optional area is off. This does not give ordinary users administrator access. **Service Desk has no separate Optional Features switch.** Technician access requires the relevant Service Desk permission and access to Devices or IT Assets. My Tickets and My Equipment have separate eligibility: a linked active Staff Member and at least one of Devices or IT Assets enabled; they do not confer IT inventory access. See [Service Desk Tickets](Service-Desk-Tickets.md) and [Device Assignments And My Equipment](Device-Assignments-and-My-Equipment.md).
+
+If none of Devices, IPAM or Network Racks is readable, the Dashboard and Audit Trail navigation are unavailable, including when all optional features are disabled. The authorised administrator's account, role and security history summaries remain available to the underlying history API; this is not a promise that an all-off Audit Trail screen is available. See [Read The Audit Trail](Audit-Trail.md) for the normal authorised screen workflow.
 
 ### Enable A Feature
 
 1. Open **Settings & Data → Optional Features** as an administrator.
 2. Find the relevant card, for example **Devices** under **Infrastructure**.
 3. Turn on its **Enable Feature** switch.
-4. Wait for the save to finish. The interface reports **Optional feature setting saved.** and the card displays **Enabled**. There is no separate page-wide Save button.
+4. Wait for the save to finish. The interface reports **Optional feature setting saved.** and the card displays **Enabled**. There is no separate page-wide Save button. When Equipment Lifecycle is enabled, its card also offers **Lifecycle Settings**; enabling the card alone does not configure warranty or replacement warning periods.
 5. Open the feature from the navigation and check that the intended accounts have the necessary section permissions. Change those permissions separately through **Staff → Permissions** if required.
 
 Controls are temporarily unavailable while a setting is being saved. If saving fails, read the error and check the reloaded card state before trying again. A failed request does not justify assuming the feature is enabled.
@@ -57,7 +59,7 @@ Disabling does not delete inventory, stock, placements, address relationships or
 
 ### Defaults And Independent Use
 
-In the unreleased implementation, a genuinely new installation starts with all optional areas disabled. The existing-installation migration preserves prior Devices, IPAM and Network Racks availability by initially enabling those three, even when the existing inventory is empty. IT Assets and Suppliers are added disabled. Later restarts and upgrades retain saved choices. These are descriptions of the implementation, not a verified production-upgrade procedure.
+In the unreleased implementation, a genuinely new installation starts with all optional areas disabled. The existing-installation migration preserves prior Devices, IPAM and Network Racks availability by initially enabling those three, even when the existing inventory is empty. IT Assets, Suppliers and Equipment Lifecycle are initially disabled. Later restarts and upgrades retain saved choices. These are descriptions of the implementation, not a verified production-upgrade procedure.
 
 | Intended Use | Feature Choices And Practical Effect |
 | --- | --- |
@@ -156,7 +158,7 @@ When Rack information is unavailable, related views may show **Rack information 
 | --- | --- |
 | A feature is enabled but absent from my navigation | Check your section permission, MFA and account status with an administrator. Enabling a feature grants no account access. |
 | I cannot change Optional Features | The controls require an active, MFA-verified administrator. Ordinary section Edit rights are insufficient. |
-| Suppliers is missing | Verify that your build includes Batch 4.1, then check the Suppliers switch and effective section access. |
+| Suppliers is missing | Check the Suppliers switch and effective section access. Suppliers is part of the unreleased v2.2 candidate, not published v2.1. |
 | A feature switch appears to revert | Wait for the pending save, read its error and check the reloaded saved state. Verify your session before trying again. |
 | I cannot edit the Device's IP | Determine whether it is managed. Managed changes require enabled IPAM and IPAM Edit; turning IPAM off preserves the address read-only. |
 | I cannot start a new basic address with IPAM on | The basic entry route starts with IPAM disabled. A previously basic Device remains editable after re-enabling; a new managed address uses the normal subnet workflow. |
@@ -178,4 +180,4 @@ Feature and permission restrictions apply to direct requests as well as visible 
 - [Device Stock Registration And Reissue](Device-Stock-Registration-and-Reissue.md) — when stock work also needs canonical Device access.
 - [Optional Features — Development Foundation](../../../development-guide/Optional-Features.md) — the maintained technical contract and evidence references.
 
-[← Draft v2.2 Guides](README.md) · [Published v2.1 Guides](../README.md)
+[← Draft v2.2 Guides](README.md) · [Published v2.1 Guides](https://github.com/Caffoot/Caffoot-Lite/tree/c3237114108cad9f7d4e57657b6aed5e0091a5ef/docs/how-tos/features-and-instructions)
