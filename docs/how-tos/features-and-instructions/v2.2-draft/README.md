@@ -20,6 +20,15 @@ Only real calendar dates are accepted: **29/02/2024** is valid, but **29/02/2023
 
 This is a change to how dates are **entered and shown**, not to the dates already saved, the actual event times, the configured timezone, lifecycle calculations, or stock movement history. Existing published v2.1 instructions and records are unchanged.
 
+## Infrastructure
+
+| Task | Guide |
+| --- | --- |
+| Find, record, edit and manage physical Devices or virtual machines | [Devices — Creating, Editing and Managing Equipment](Devices.md) |
+| Enable optional features, record basic IPv4 or explicitly link to IPAM | [Optional Features, Basic IPv4 And Link To IPAM](Optional-Features-and-Link-To-IPAM.md) |
+
+The Devices guide is a working draft undergoing source and screenshot reconciliation. Dedicated IPAM and Network Racks instructions will be linked here after their initial reconciliation.
+
 ## Accounts And Access
 
 | Task | Guide |
