@@ -2,7 +2,15 @@
 
 > **Draft v2.2 — Unreleased.** This guide describes Stage 4 Batch 4.2 on the development branch. Use the [published v2.1 guides](../README.md) for the current release.
 
-Use Purchasing to track problems with companies you buy from. A Supplier Issue has a title, a main description and a current status. It belongs to the Supplier company for its entire life. You can link the people handling it and keep a dated record of what happened. For an observation that needs no tracked status, use a [Supplier or Contact Note](Supplier-Management.md#keep-supplier-and-contact-notes).
+> **Written/source reconciliation:** Batch 4, application baseline `fdc677920bfc52f48f641b3d6d1344c902a6a9b0` (schema 31). Awaiting independent ChatGPT review and separate owner acceptance. Desktop screenshot reconciliation is deferred to Batch 7; existing images retain their original provenance and are not certified current by this pass. [Source review and exact screenshot requirements](../../../development-guide/Milestone-01-Batch-4-Review.md).
+
+Use Purchasing to track problems with companies you buy from. A Supplier Issue has a title, a main description and a current status. It belongs to the Supplier company for its entire life. You can link the people handling it and keep a dated record of what happened. For an observation that needs no tracked status, use a [Supplier or Contact Note](Supplier-Management.md#record-correct-or-delete-notes).
+
+## What Purchasing Covers
+
+This area is the Supplier directory, Supplier Issues, contacts, notes and their reporting. It does not create purchase orders, budgets, invoices, payment records, approval chains, accounts or automated replenishment. A Billing Issue is a tracked problem category, not an accounting transaction. Keep financial and procurement processing in the organisation's appropriate systems.
+
+Supplier Issues concern the Supplier company and its contacts. Employee **My Tickets / Department Tickets** and the IT **Service Desk** concern support work on permitted equipment, with separate permissions, status rules and privacy. Creating or resolving a Supplier Issue does not create, close or transfer a Service Desk ticket, receive replacement equipment or alter stock. [Service Desk instructions](Service-Desk-Tickets.md)
 
 ## Get Access
 
@@ -86,6 +94,12 @@ The Issue Category catalogue classifies Issues. Supplier company Categories are 
 
 The same catalogue keeps retired categories visible for review and reactivation.
 
+## Validation, Empty Lists And Cancellation
+
+Issue Title is required and allows up to 160 characters. Main Description and each dated Issue Update allow up to 12,000 characters; the description and a corrected update cannot be blank. A new dated update is optional when saving other Issue changes. Issue Category names allow up to 70 characters. New category/contact assignments must be active and contacts must belong to the same Supplier. There is no Issue deletion, move-to-another-company or update-deletion control.
+
+**No Issues Match These Filters** is different from **No Active Supplier Issues** on the recent Dashboard. Clear both status/category filters to inspect completed records. **No Contacts Available.** does not prevent an otherwise valid Issue with no contact links. **No Updates Yet.** is valid before a dated update is added. Cancelling an unsaved Issue or update leaves saved records unchanged, while an inline category already saved remains in its separate catalogue. Reopen after a stale-save rejection and review the current version before reapplying text; do not create another Issue to bypass it.
+
 ## Review Retention And Audit
 
 - Supplier Issues and their dated updates are retained, including when a company is archived or disabled. Use status and corrections to keep the record accurate. A Supplier or Contact with protected Issue history can be archived rather than permanently deleted.
@@ -105,3 +119,5 @@ The same catalogue keeps retired categories visible for review and reactivation.
 ![Mobile dark Supplier Issue Details showing the Issue status and details](../../../development-handovers/evidence/stage-6-6-batch-3/screenshots/supplier-issue-details-dark-390.png)
 
 See the [Batch 3 capture record](../../../development-handovers/evidence/stage-6-6-batch-3/README.md), [Supplier Management](Supplier-Management.md) and [Batch 4.2 approval](https://github.com/Caffoot/Caffoot-Lite/issues/411).
+
+[Connected example: a laptop from Supplier and stock to its final write-off](Connected-Equipment-Journey.md).

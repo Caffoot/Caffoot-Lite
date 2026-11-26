@@ -2,13 +2,15 @@
 
 > **Draft v2.2 — unreleased.** These instructions describe the Stage 4 development application. The examples use fictional companies and equipment. For the published release, use the [v2.1 guides](../README.md).
 
+> **Written/source reconciliation:** Batch 4, application baseline `fdc677920bfc52f48f641b3d6d1344c902a6a9b0` (schema 31). Awaiting independent ChatGPT review and separate owner acceptance. Desktop screenshot reconciliation is deferred to Batch 7; existing images retain their original provenance and are not certified current by this pass. [Source review and exact screenshot requirements](../../../development-guide/Milestone-01-Batch-4-Review.md).
+
 A purchasing Supplier is the company that provided equipment. A Manufacturer identifies who made it. For example, a laptop manufactured by Dell might be purchased from Northlight Technology Ltd. Record Dell under Manufacturer and Northlight Technology Ltd under Supplier.
 
 ## Enable Suppliers And Check Access
 
 1. An administrator signs in using an authenticator and opens **Settings & Data → Optional Features**.
 2. In **Additional Features**, enable **Suppliers**. Enable **Devices** or **IT Assets** as appropriate for the workflows your organisation uses.
-3. In **Permissions**, check the user's role and account overrides. The switches and effective permissions apply independently. See [Roles, Section Permissions And MFA](Roles-Section-Permissions-and-MFA.md).
+3. In **Staff → Permissions → Manage Roles**, check reusable grants; use **Staff Members → Staff Details → Manage Permissions → Permissions** for individual overrides. The switches and effective permissions apply independently. See [Roles, Section Permissions And MFA](Roles-Section-Permissions-and-MFA.md).
 4. Ask the colleague to open the relevant equipment workflow. Devices Edit allows the chooser on the Device form, and IT Assets Edit allows it on the receiving form. The chooser gives authorised equipment editors available company names even if they have no Supplier Directory access. Suppliers Edit is needed to add a company.
 
 Devices Read lets a colleague see the recorded Supplier name on Device Details while Suppliers is enabled. To open the full company record from Device Details they also need Suppliers Read. IT Assets receipt history keeps the originally recorded Supplier text available to authorised IT Assets readers.
@@ -107,6 +109,14 @@ A delivery keeps its original quantity after issue, return, preparation or write
 
 If **Supplied Equipment** and **Supplier Equipment** are both absent, check whether you can read at least one enabled equipment section. A Supplier reader with only Devices Read sees only Device rows and their permitted quantities. A Supplier reader with only IT Assets Read sees only permitted receipt rows. If a company or equipment record becomes unavailable, reopen its current list and check your permissions and feature switches.
 
+### Interpret Totals And Separate Associations
+
+**Supplier Equipment** measures original associated supply, not current held, Ready or outstanding stock. A quantity correction changes effective stock calculations; this Supplier view still uses the immutable original receipt quantity. For example, a recorded receipt originally containing 20 later corrected to ten contributes 20 to this historical Supplier metric while effective stock is ten. Review Movement History for effective balances rather than using this metric as a stocktake or financial total.
+
+Registration does not automatically copy a receipt's Supplier association onto its new Device. Record a Device association explicitly if appropriate. A stock-derived Device explicitly linked later is listed without another quantity contribution; its original supply belongs to its receipt. An equipment editor's minimal chooser is not permission to read contacts, notes or Issues. A reader lacking Devices access may have Device-related source rows withheld, so permitted source totals can differ between users.
+
+**No Supplied Equipment Recorded** means no readable associated source rows for this Supplier; **No Equipment Matches This Type** means its current type filter has no rows. Clear All Equipment Types and check the independent feature/read permissions before inferring that a Supplier has never supplied equipment. Existing original receipt text remains even when Suppliers is off; canonical chooser and associated displays are hidden and records retained.
+
 ## Manage Supplier Availability And Retention
 
 1. With an administrator account and Suppliers enabled, open the company under **Purchasing → Suppliers**. Review its status and the explanation beside the available actions.
@@ -127,3 +137,5 @@ For company, location and contact lifecycle actions, see [Supplier Management](S
 | The Supplier Equipment total differs between two authorised accounts | Compare effective Devices Read and IT Assets Read and the switches. Each total uses only the source records the signed-in account can read. |
 
 More desktop and mobile captures, their exact source revision, and verification details are available in the [Batch 4.3 application evidence](../../../development-handovers/evidence/stage-4-batch-43/Application-Report.md).
+
+[Connected example: a laptop from Supplier and stock to its final write-off](Connected-Equipment-Journey.md).

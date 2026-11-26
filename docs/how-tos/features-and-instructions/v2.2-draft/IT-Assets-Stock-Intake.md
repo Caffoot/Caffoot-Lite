@@ -1,6 +1,8 @@
 # IT Assets: Receive Stock And Stock Inventory
 
-> **Draft v2.2 — Not Yet Published.** This guide describes the implementation on `milestone-1` at `753b3266893987addb11406ef8303adb03c3c112`. It is for review of unreleased functionality. Use the [published v2.1 guides](../README.md) for current production instructions. Native/manual and release acceptance remain separate; these are not installation, upgrade or restore instructions.
+> **Draft v2.2 — Not Yet Published.** This guide describes the implementation on `milestone-1` at the application baseline identified below. It is for review of unreleased functionality. Use the [published v2.1 guides](../README.md) for current production instructions. Native/manual and release acceptance remain separate; these are not installation, upgrade or restore instructions.
+
+> **Written/source reconciliation:** Batch 4, application baseline `fdc677920bfc52f48f641b3d6d1344c902a6a9b0` (schema 31). Awaiting independent ChatGPT review and separate owner acceptance. Desktop screenshot reconciliation is deferred to Batch 7; existing images retain their original provenance and are not certified current by this pass. [Source review and exact screenshot requirements](../../../development-guide/Milestone-01-Batch-4-Review.md).
 
 > For the Supplier selector and retrospective receipt corrections added in Stage 4 Batch 4.3, see [Equipment Supplier Integration](Equipment-Supplier-Integration.md#record-a-supplier-when-equipment-arrives).
 
@@ -23,7 +25,7 @@ An administrator enables the feature as follows:
 1. Open **Settings & Data → Optional Features**.
 2. Under **Additional Features**, find **IT Assets**. It starts disabled.
 3. Turn on **Enable Feature** and wait for the saved confirmation. The switch saves the change immediately; there is no separate Save button.
-4. Grant the relevant role or individual the required IT Assets permission through **Staff → Permissions**, following the [roles and access guide](Roles-Section-Permissions-and-MFA.md).
+4. Grant the relevant role or individual the required IT Assets permission through **Staff → Permissions → Manage Roles**, or **Staff Members → Staff Details → Manage Permissions** for an individual override, following the [roles and access guide](Roles-Section-Permissions-and-MFA.md).
 5. Open **IT → IT Assets**. Its **Overview** is the reporting entry point; choose **Receive Stock**, **Stock Inventory** or **Receipt History** for the procedures below.
 
 Enabling the feature makes it available to authorised accounts; it does not give every account access. Devices, IPAM and Network Racks have independent switches and permissions. Ordinary stock receipts do not require those sections. Creating or reissuing a managed Device requires the additional access explained in the [registration guide](Device-Stock-Registration-and-Reissue.md).
@@ -36,13 +38,13 @@ Choose the tracking method before recording the first receipt. Category alone do
 
 | Field Or Choice | How To Use It |
 | --- | --- |
-| **Equipment Type** | Choose **Desktop**, **Laptop**, **Physical Server**, **Monitor**, **Keyboard**, **Mouse**, **Docking Station** or **Other / Not Listed**, as appropriate |
+| **Equipment Type** | Choose **Desktop**, **Laptop**, **Server**, **Monitor**, **Keyboard**, **Mouse**, **Docking Station** or **Other / Not Listed**, as appropriate |
 | **Quantity-Based Stock** | Keep one stock item and quantities for interchangeable units with the same recorded specification. This is also the source used to register new Desktop, Laptop and Physical Server Devices |
 | **Individually Tracked** | Keep a distinct identity for each physical unit. Receive one unit at a time, with its own optional Serial Number and Asset Tag |
 | **Manufacturer (Optional)** | The maker of the equipment. Leave it blank if unknown |
 | **Model / Description** | Identify the model or describe the equipment clearly enough for another technician to select the right item |
 | **Shared Computer Specifications** | For Desktop, Laptop and Physical Server stock, record common Processor, Memory Size and Unit, Storage Capacity and Unit, and Storage Type where known |
-| **Supplier (Optional)** | The purchasing or delivery source for this particular receipt. It is separate from Manufacturer and does not require the future Suppliers directory |
+| **Supplier (Optional)** | The purchasing or delivery source for this particular receipt. It is separate from Manufacturer and can remain free text without the Suppliers directory. With Suppliers enabled, explicitly select an available company to make a canonical link; exact typed text alone does not link it |
 
 Use separate stock items for materially different recorded specifications. Five fictional Aster desktop computers with 8 GB memory and five with 16 GB memory need separate entries. Different delivery dates or Suppliers alone do not require duplicate items: record another receipt against the matching existing item.
 
@@ -52,7 +54,7 @@ Shared fields must describe every unit represented by the item. Do not put an em
 
 ![Accepted Receive Stock screen showing a new Desktop stock entry, shared specifications, receipt details and checks](../../../development-handovers/evidence/stage-4-batch-44-corrected/stock/stock-receive-new-light-1440.png)
 
-*Genuine application capture accepted with [PR #388](https://github.com/Caffoot/Caffoot-Lite/pull/388#issuecomment-6899646571), using fictional data. The current application also has Overview and circulation tabs, and the unsaved-form action is now Cancel rather than the pictured Reset. Receipt fields and checks remain as shown.*
+*Corrected application capture at `8e25fd1451d3297cfa34b2d8c37bbee5ec4878bf`, from the [19 November PR #428 gallery](../../../development-handovers/evidence/stage-4-batch-44-corrected/README.md), using fictional data and UK date controls. Its visual approval applies to that historical capture, not a current publication certification. Earlier PR #388 images remain separate historical evidence.*
 
 Have the actual equipment, delivery information and any completed checks available before submitting the form.
 
@@ -97,6 +99,14 @@ Open **Stock Inventory** to compare recorded balances. **View / Update** opens a
 
 **Registered Devices In Stock History** shows individual managed machines and their genuine stock states. A Device registered from an item is already included in that item's totals. The Device row explains the same unit; do not add it to the item's count again. Existing, imported, unassigned or directly created Devices do not become held stock merely because they exist in the Devices inventory.
 
+### Find A Stock Item And Recognise An Empty View
+
+Stock Inventory currently has no standalone text-search or category-filter toolbar. Use **Overview → Equipment Category** and an authorised card/category drill-down to open a filtered stock list. Read **Dashboard selection**, then choose **Clear Dashboard Filters** to remove that selection. A Stock Inventory table showing **No Stock Received** has no rows in its current view; check any dashboard selection, permissions and the registered-Device table before concluding that no equipment is held. The existing-item chooser can show **No Stock Items Recorded**; do not enter a second receipt to recover a hidden or failed-to-load record.
+
+The receiving form requires Model / Description (up to 120 characters), a recognised Equipment Type and Tracking Method, positive whole Quantity Received, valid Date Received and explicit check/ready values. Manufacturer allows 120 characters; Processor 200; Supplier text, Serial Number and Asset Tag 200 each; Receipt Notes 2,000. Nonblank memory/storage must be positive finite values with the displayed unit. Blank is unknown; zero or a negative capacity is invalid. Quantity Received and Minimum Stock Level use whole numbers up to 9,007,199,254,740,991, with the corresponding stock limits also checked at save. Minimum permits zero; receipt quantity does not. Dates must describe completed physical receipt; the ordinary receipt field does not impose a universal no-future-date rule.
+
+Shared specifications and tracking are not a general editable catalogue in this screen. The backend's foundation for attributed metadata corrections is not an available user-facing **Edit Specifications** procedure. Correct a supported movement quantity through its specialised workflow and a Supplier association through Receipt History; refer other factual metadata problems to the administrator with the receipt reference.
+
 ## Complete Receipt Checks Later
 
 The readiness form is for receipt checks on stock that has not yet passed them. Returned equipment uses **Prepare Returned Equipment**, described in the [return and preparation guide](IT-Assets-Issue-Return-and-Write-Off.md).
@@ -135,7 +145,7 @@ Minimums apply separately to **Quantity-Based Stock** items.
 
 For a minimum of five, five ready is sufficient and four ready produces a warning. Ten physically held with only four ready still produces that warning: awaiting equipment is not available. A threshold-only save records an attributed setting change without inventing a stock movement. There is no compulsory global minimum, automatic purchase or email alert.
 
-The current readiness form still contains an older hint saying that Low Stock warnings are unavailable. The implemented inventory and Overview show them. This wording discrepancy is recorded for review; do not use it to infer that awaiting equipment counts as available.
+The current readiness hint states that Low Stock compares Ready To Issue with this item's configured minimum. An earlier report records a superseded unavailable-warning hint; it is historical, not a current limitation.
 
 ## Check History And Resolve Mistakes
 
@@ -159,4 +169,6 @@ Keep notes factual and relevant to equipment handling. Supplier names, serials, 
 
 Continue with [Device registration and reissue](Device-Stock-Registration-and-Reissue.md), [Issue, Return and Write Off](IT-Assets-Issue-Return-and-Write-Off.md), [Associated Equipment](Associated-Equipment.md), [dashboard reporting](IT-Assets-Dashboard.md), [Optional Features](Optional-Features-and-Link-To-IPAM.md) and [roles and MFA](Roles-Section-Permissions-and-MFA.md).
 
-The [stock-intake evidence](../../../development-handovers/evidence/stock-intake/Report.md) preserves genuine application captures and source checks. The accepted receipt capture above is reused with its differences stated. A refreshed capture showing the complete current tab set, Cancel action and minimum-stock presentation remains a documentation acceptance item. Functional HTML previews are not application screenshots.
+The [stock-intake evidence](../../../development-handovers/evidence/stock-intake/Report.md) preserves genuine application captures and source checks. The corrected PR #428 receipt capture above is retained with its provenance stated. A refreshed capture showing the complete current tab set, Cancel action and minimum-stock presentation remains a documentation acceptance item. Functional HTML previews are not application screenshots.
+
+[Connected example: a laptop from Supplier and stock to its final write-off](Connected-Equipment-Journey.md).

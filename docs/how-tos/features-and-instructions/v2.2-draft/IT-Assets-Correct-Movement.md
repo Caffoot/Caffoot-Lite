@@ -1,6 +1,8 @@
 # Correct Stock Movement
 
-> **Draft v2.2 — Unreleased.** These instructions describe the implementation on `milestone-1` at `753b3266893987addb11406ef8303adb03c3c112`. v2.1 remains the published release.
+> **Draft v2.2 — Unreleased.** These instructions describe the implementation on `milestone-1` at the application baseline identified below. v2.1 remains the published release.
+
+> **Written/source reconciliation:** Batch 4, application baseline `fdc677920bfc52f48f641b3d6d1344c902a6a9b0` (schema 31). Awaiting independent ChatGPT review and separate owner acceptance. Desktop screenshot reconciliation is deferred to Batch 7; existing images retain their original provenance and are not certified current by this pass. [Source review and exact screenshot requirements](../../../development-guide/Milestone-01-Batch-4-Review.md).
 
 Use **Correct Movement** when a receipt, issue, return or write-off quantity was recorded incorrectly. For example, a technician might have entered 20 keyboards received when the delivery actually contained ten. The correction keeps the original transaction and adds a dated record containing the correct total, your name and an explanation.
 
@@ -82,9 +84,9 @@ If the corrected issue is no longer eligible, the form explains the change and r
 
 ## Why A Correction May Be Blocked
 
-The corrected total must be a changed positive whole number. Zero, negative amounts, decimals and the existing effective total cannot be saved as a quantity correction.
+The corrected total must be a changed positive whole number up to 9,007,199,254,740,991, with all resulting balances also within the supported range. Reason For Correction is required and allows up to 2,000 characters. Zero, negative amounts, decimals and the existing effective total cannot be saved as a quantity correction.
 
-The application checks the complete subsequent movement sequence, not just today's total. In particular:
+The application replays the subsequent saved movement sequence in publication order, not just today's total or a sort of user-entered business dates. A later receipt cannot supply an earlier saved issue retroactively. In particular:
 
 - A receipt cannot be reduced below quantities already checked, registered or used by dependent movements.
 - An issue cannot be reduced below its later returns or direct write-offs.
@@ -102,6 +104,10 @@ If another technician changes stock, Device details, assignments or equipment li
 
 If a Device edit reservation blocks a cross-feature correction, let the existing edit finish or be cancelled, then reload. If your session ends or permissions change, sign in and check your effective access before reopening the workflow. A connection failure should be followed by a check of **Correction History** and movement references before starting a separate correction.
 
+## What This Form Cannot Correct
+
+The supported kinds are an original Received, Issued, Returned or Written Off quantity entry. Individual-unit and canonical-Device quantity changes are blocked, even if an entry can be opened for inspection. This form does not edit a date, original recipient, reason, serial, specification, Supplier association, registration, readiness-change record or direct handover. Use the dedicated Supplier-association controls for that relationship. For an unsupported factual correction, retain the original references and seek an administrator decision; do not fabricate physical movement.
+
 ## Related Guides And Screenshots
 
 [Issue, Return And Write Off](IT-Assets-Issue-Return-and-Write-Off.md) · [Receive Stock And Stock Inventory](IT-Assets-Stock-Intake.md) · [Associated Equipment](Associated-Equipment.md) · [IT Assets Overview](IT-Assets-Dashboard.md).
@@ -109,3 +115,5 @@ If a Device edit reservation blocks a cross-feature correction, let the existing
 The [original correction evidence](../../../development-handovers/evidence/stock-corrections/Report.md) and [Return Equipment integration evidence](../../../development-handovers/evidence/stock-corrections/return-equipment/Report.md) preserve genuine screenshots and their capture context. Later integration screenshots requiring owner approval remain an item in the [documentation review items](../../../development-guide/Stage-1-3-Documentation-Review.md). Physical verification and Stocktakes remain separate work; this guide does not claim native Safari, private-installation, upgrade/restore or release acceptance.
 
 [← Draft v2.2 Guides](README.md) · [Published v2.1 Guides](../README.md)
+
+[Connected example: a laptop from Supplier and stock to its final write-off](Connected-Equipment-Journey.md).

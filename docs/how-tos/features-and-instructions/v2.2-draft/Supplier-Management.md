@@ -1,6 +1,8 @@
 # Supplier Management
 
-> **Draft v2.2 — unreleased.** These instructions describe Supplier Management in the Stage 4 development application through Batch 4.3, schema 23. Continue to use the [v2.1 guides](../README.md) for the published version. The examples here use fictional businesses and contacts.
+> **Draft v2.2 — unreleased.** These instructions describe Supplier Management in the current integrated development application. Continue to use the [v2.1 guides](../README.md) for the published version. The examples here use fictional businesses and contacts.
+
+> **Written/source reconciliation:** Batch 4, application baseline `fdc677920bfc52f48f641b3d6d1344c902a6a9b0` (schema 31). Awaiting independent ChatGPT review and separate owner acceptance. Desktop screenshot reconciliation is deferred to Batch 7; existing images retain their original provenance and are not certified current by this pass. [Source review and exact screenshot requirements](../../../development-guide/Milestone-01-Batch-4-Review.md).
 
 Suppliers holds the companies your organisation buys from. A company can have several offices and contacts, one shared company address and separate notes about the company or individual people. Supplier access is independent of Devices and IT Assets. Open **Purchasing → Suppliers** from the workspace sidebar. Supplier Details provides **Overview**, **Locations**, **Contacts** and **Notes & Issues**. If you can read an enabled equipment section, **Supplied Equipment** and the **Supplier Equipment** Overview metric also appear. See [Supplier Issues And Purchasing](Supplier-Issues-and-Purchasing.md) for the tracked Issues workflow.
 
@@ -41,6 +43,14 @@ You need Suppliers Edit and the feature enabled.
 8. To correct an existing company, choose **Edit Supplier** in its details or **Edit** in Company Information. Change the necessary values and select **Save Supplier**. Corrections to the company address update the same location shown in Locations.
 
 **Example.** Add Northlight Technology Ltd with Hardware and Networking. Record Manchester as its Main Office. Enter Kim Cooper as a company-wide account manager and Jo Patel as a Main Office technical support contact. Add a Leeds branch later and assign Jo to both locations.
+
+### Valid Fields And Empty Results
+
+Supplier Name, Location Name and Contact Name are required in their respective forms and allow up to 160 characters. Supplier/Contact role and town/country fields allow 160; Category Name allows 70, Address 400, Postcode 40, Supplier Description 4,000 and notes 12,000. Telephone entries allow 80 characters each; email entries 254 each. Use one valid email per line; `jo@` is invalid. Website/professional-link URLs allow up to 2,048 characters and must begin with HTTP or HTTPS, include a host and contain no embedded username/password or spaces. `example.org` alone and `javascript:` links are rejected. Professional links need both a label and URL.
+
+Choose company-wide scope **or** one or more locations; neither and conflicting scope are rejected. Newly linked categories/locations must be active. Existing archived assignments can remain when editing the same record. A case-only spelling change does not free a name used by another Supplier/category. Invalid values or stale revisions save none of the requested operation.
+
+**No Suppliers Match These Filters**, **No Contacts Match These Filters** and **No Notes Match Your Filter** refer to the current list/filter. Clear the relevant filter and check retained archived records before creating another company or person. A company with no recorded contacts can still be a valid Supplier.
 
 ## Manage Supplier Categories
 
@@ -125,3 +135,5 @@ The Supplier Directory presents the main office town alongside each company and 
 Scroll down to reach the Contact entry and save controls on a narrow screen.
 
 ![Desktop light Supplier Details on the Overview tab with the company actions beside the heading](../../../development-handovers/evidence/stage-6-6-batch-3/screenshots/supplier-details-light-1440.png)
+
+[Connected example: a laptop from Supplier and stock to its final write-off](Connected-Equipment-Journey.md).

@@ -181,3 +181,5 @@ The server rechecks permissions, status and associations at save time. A button 
 The reused image belongs to the [owner-approved Batch 3.8 application captures](https://github.com/Caffoot/Caffoot-Lite/pull/389#issuecomment-6908629303). The [Department Details evidence](../../../development-handovers/evidence/department-details/Report.md) preserves earlier application captures and their original limitations. Functional previews are not substituted as approved screenshots.
 
 [← Draft v2.2 Guides](README.md) · [Published v2.1 Guides](../README.md)
+
+[Connected equipment example — Supplier, stock, assignment and later use](Connected-Equipment-Journey.md).

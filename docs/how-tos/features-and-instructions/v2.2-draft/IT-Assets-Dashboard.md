@@ -1,6 +1,8 @@
 # IT Assets Overview And Low Stock Warnings
 
-> **Draft v2.2 — Unreleased.** These instructions describe the implementation on `milestone-1` at `753b3266893987addb11406ef8303adb03c3c112`. v2.1 remains the published release.
+> **Draft v2.2 — Unreleased.** These instructions describe the implementation on `milestone-1` at the application baseline identified below. v2.1 remains the published release.
+
+> **Written/source reconciliation:** Batch 4, application baseline `fdc677920bfc52f48f641b3d6d1344c902a6a9b0` (schema 31). Awaiting independent ChatGPT review and separate owner acceptance. Desktop screenshot reconciliation is deferred to Batch 7; existing images retain their original provenance and are not certified current by this pass. [Source review and exact screenshot requirements](../../../development-guide/Milestone-01-Batch-4-Review.md).
 
 The IT Assets **Overview** brings together the organisation's current equipment balances, preparation backlog, stock movements and optional Low Stock warnings. It helps a technician answer practical questions: what is held, what can be issued now, which items need checks and which quantity-based items are below their configured minimum?
 
@@ -46,7 +48,7 @@ If the cards show 25 Physically Held, 15 Ready and ten Awaiting Checks / Prepara
 3. Review the refreshed selection. The category applies to the stock and activity selection. The period applies to **Stock Movements**, **Recent Activity** and the **Written Off** card.
 4. Keep the distinction between current balances and activity over time: changing the period does not turn Physically Held, Ready or Currently Issued into historical snapshots.
 
-Movement reporting uses effective corrected quantities against the original business date. A correction entered today for a receipt from two months ago affects the reporting interval containing that receipt's date. Direct Device reassignment is shown in its custody history; it does not invent a new physical stock receipt or appear as a fresh stock issue in the movement totals.
+The reporting window includes today and the preceding 29 or 89 UTC calendar dates. It uses recorded business dates, rather than the time you opened the page. Movement reporting uses effective corrected quantities against the original business date. A correction entered today for a receipt from two months ago affects the reporting interval containing that receipt's date. Direct Device reassignment is shown in its custody history; it does not invent a new physical stock receipt or appear as a fresh stock issue in the movement totals.
 
 For example, fictional Harbour View Library currently holds 18 keyboards. A write-off 45 days ago appears in **Last 90 Days** but not **Last 30 Days**. Switching between those periods does not change the current 18 held keyboards. A filter with no qualifying activity can show an empty movement table while current stock remains positive.
 
@@ -63,6 +65,10 @@ With the required Devices access:
 5. Read the selection explanation above the destination table. Choose **Clear Dashboard Filters** to return that table to its full existing view. The Overview's own category/period selectors remain separate controls.
 
 **Held Stock Classification**, when permitted, distinguishes **Unregistered Quantity Stock**, **Registered Canonical Devices** and **Individually Tracked IT Assets**. These describe how the same held equipment is represented. Registering one of ten held desktops changes it from unregistered to registered-held; Physically Held stays ten. Physically issuing that registered Device reduces held by one. Stock item totals can already include their registered units: the separate Device rows are not additional stock.
+
+### Empty Selections And Saving
+
+**No stock categories recorded.**, **No equipment is physically held.** and **No Data For This Selection** describe different parts of the report. **No items below minimum or awaiting checks in this selection.** means no attention rows for that selection; it does not certify that every physical item has been inspected. Use All Categories and both permitted reporting periods when investigating missing activity. The category/period selectors refresh reporting; there is no reporting Save or Cancel and they make no stock changes. A failed load is not a zero-stock result.
 
 ## Configure An Optional Minimum Stock Level
 
@@ -115,3 +121,5 @@ Read-only access offers no stock-changing controls. Changing a feature switch or
 The [genuine dashboard evidence](../../../development-handovers/evidence/stock-dashboard/Report.md) records the existing checks and capture provenance. Owner approval of those images does not establish native Safari, private-installation, full upgrade/restore or release acceptance. Remaining documentation and manual acceptance items are recorded in the [documentation review items](../../../development-guide/Stage-1-3-Documentation-Review.md).
 
 [← Draft v2.2 Guides](README.md) · [Published v2.1 Guides](../README.md)
+
+[Connected example: a laptop from Supplier and stock to its final write-off](Connected-Equipment-Journey.md).

@@ -1,6 +1,8 @@
 # Associated Equipment And Direct Device Handover
 
-> **Draft v2.2 — Unreleased.** These instructions describe the implementation on `milestone-1` at `753b3266893987addb11406ef8303adb03c3c112`. v2.1 remains the published release.
+> **Draft v2.2 — Unreleased.** These instructions describe the implementation on `milestone-1` at the application baseline identified below. v2.1 remains the published release.
+
+> **Written/source reconciliation:** Batch 4, application baseline `fdc677920bfc52f48f641b3d6d1344c902a6a9b0` (schema 31). Awaiting independent ChatGPT review and separate owner acceptance. Desktop screenshot reconciliation is deferred to Batch 7; existing images retain their original provenance and are not certified current by this pass. [Source review and exact screenshot requirements](../../../development-guide/Milestone-01-Batch-4-Review.md).
 
 Associated Equipment records which accessories belong with a particular Device's assignment. For example, a technician can explicitly link a monitor, keyboard and mouse to a workstation issued to Alex. Equipment issued to the same person or Department is not linked automatically: Alex's other monitor may belong with a different workstation.
 
@@ -9,7 +11,7 @@ The association refers to the original equipment issue and the Device's actual h
 ## Before You Start
 
 - **Devices** and **IT Assets** must both be enabled. Viewing the tab needs effective **Devices Read** and **IT Assets Read**; adding equipment needs **Devices Edit** and **IT Assets Edit**.
-- The Device must have a current Staff Member or Department assignment before you can add accessories. New equipment cannot be issued to an inactive Staff Member or archived Department.
+- The Device must have a current Staff Member or Department assignment before you can add accessories. New equipment cannot be issued to a Left Company Staff Member or archived Department.
 - To issue and associate new equipment, the particular stock item or individual unit must already be **Ready To Issue**. Held equipment awaiting checks or preparation is unavailable.
 - To associate an existing issue, it must still be outstanding, belong to the exact current holder and be eligible for association. An issue already associated with another Device cannot be linked again.
 
@@ -78,7 +80,7 @@ Direct reassignment records a prepared Device moving from its current holder str
 
 1. Resolve **all** explicitly associated outstanding equipment first using the actual returns, damage dispositions or missing-equipment write-offs above. Accessories do not follow the workstation to its next holder automatically.
 2. Open **Device Details → Assigned To → Reassign Device** for the currently assigned physical Device. The selected Device is fixed on the existing form; it is not a bulk reassignment screen.
-3. Choose **Recipient Type**. Select the new Staff Member under **Find A Recipient**, or search and tick the applicable Departments for an eligible shared Device.
+3. Choose **Recipient Type**. Select the new Staff Member under **Find A Recipient**, or search and tick the applicable Departments for an eligible shared Device. The current single holder is omitted. A changed shared selection can retain one current Department, but an unchanged selection is rejected.
 4. Enter the actual **Date Reassigned** and an optional **Reassignment Note**. The date cannot precede the current issue or be in the future.
 5. Physically check and prepare the workstation. Complete its displayed **Preparation Checks** only after doing the work. These checks start unchecked.
 6. Choose **Confirm Ready And Reassign** as the explicit confirmation that the Device is ready for its new holder.
@@ -91,6 +93,12 @@ For Desktop, Laptop and physical Server, preparation requires **Checked Working*
 ### Permissions For A Direct Handover
 
 Direct reassignment requires effective **Devices Edit**. A Device with recorded stock history additionally requires enabled **IT Assets** and **IT Assets Edit**. Devices-only reassignment remains available for eligible Devices without stock history when IT Assets is off. Switching IT Assets off never bypasses outstanding accessory resolution or grants stock access. Read-only users cannot reassign.
+
+## Relationship And Cancellation Limits
+
+**Add Equipment** links the original outstanding issue as a whole; it has no partial-line split, generic unlink or accessory transfer button. Use actual returns/write-offs and new issues when physical custody changes. A current empty table can coexist with outstanding history from an earlier holder. Successful association changes no Device identity, and linking an already-issued line changes no Ready or held quantity. All saved returns/write-offs remain even if a later Add Equipment or handover is cancelled.
+
+A shared Device has one custody period. An already-issued standalone accessory must belong to an eligible Department currently sharing it; a new Issue And Associate for multiple Departments uses that Device custody as its recipient. The association follows the current Department selection during that custody, while the original issue label remains historical. It does not make separate physical copies or move old tickets to the new holder. Employee visibility is restricted through [My Equipment](Device-Assignments-and-My-Equipment.md#visibility-empty-results-and-permission-changes); full ticket instructions remain in their specialised guide.
 
 ## Worked Example: Alex Leaves And Sarah Receives The Workstation
 
@@ -125,3 +133,5 @@ If step 5 fails, Alex stays the workstation's recorded holder. The accessory ret
 The [genuine Associated Equipment and handover gallery](../../../development-handovers/evidence/associated-equipment-final/Report.md) preserves development evidence. Its report distinguishes agent inspection from owner visual acceptance. No standalone HTML preview is presented here as an approved application screenshot; outstanding image approval is tracked in the [documentation review items](../../../development-guide/Stage-1-3-Documentation-Review.md).
 
 [← Draft v2.2 Guides](README.md) · [Published v2.1 Guides](../README.md)
+
+[Connected example: a laptop from Supplier and stock to its final write-off](Connected-Equipment-Journey.md).

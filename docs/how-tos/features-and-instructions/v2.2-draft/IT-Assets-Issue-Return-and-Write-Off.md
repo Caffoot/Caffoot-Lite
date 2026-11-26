@@ -1,6 +1,8 @@
 # IT Assets: Issue, Return And Write Off
 
-> **Draft v2.2 — Unreleased.** These instructions describe the implementation on `milestone-1` at `753b3266893987addb11406ef8303adb03c3c112`. v2.1 remains the published release. Use these feature instructions on an authorised development or acceptance instance; they are not installation, upgrade or restore instructions.
+> **Draft v2.2 — Unreleased.** These instructions describe the implementation on `milestone-1` at the application baseline identified below. v2.1 remains the published release. Use these feature instructions on an authorised development or acceptance instance; they are not installation, upgrade or restore instructions.
+
+> **Written/source reconciliation:** Batch 4, application baseline `fdc677920bfc52f48f641b3d6d1344c902a6a9b0` (schema 31). Awaiting independent ChatGPT review and separate owner acceptance. Desktop screenshot reconciliation is deferred to Batch 7; existing images retain their original provenance and are not certified current by this pass. [Source review and exact screenshot requirements](../../../development-guide/Milestone-01-Batch-4-Review.md).
 
 Use IT Assets to record who has equipment, what has physically returned and which items can safely be issued again. An issue reduces available stock; a genuine return records what came back; preparation confirms which returned items are ready; a write-off records equipment that must leave usable inventory. Each action keeps the original equipment identity and a permanent movement record.
 
@@ -9,6 +11,20 @@ This guide follows equipment after [receipt and checking](IT-Assets-Stock-Intake
 ## Date Format For Stock Movements
 
 Use UK **DD/MM/YYYY** for Date Issued, Date Returned, Date Checked, Date Reassigned and Date Written Off (for example, **18/11/2026**), or choose from the calendar button. Caffoot Lite preserves the event as an ISO `YYYY-MM-DD` value internally and retains the original stock movement, validation, future-date and handover safeguards. An invalid typed date cannot be saved. For accessibility and calendar-keyboard help, see [UK Date Entry And Calendar Controls](README.md#uk-date-entry-and-calendar-controls).
+
+### Date Validation Depends On The Action
+
+Always enter the actual date of a completed event. The date control rejects impossible dates such as 31/11/2026. The implemented additional rules are:
+
+| Operation | Additional Date Restriction |
+| --- | --- |
+| Return against an original issue | Date Returned cannot precede that issue's date. |
+| First return of an eligible unassigned Device with no stock history | Date Returned cannot be later than today's UTC calendar date. |
+| Direct handover | Date Reassigned cannot precede the current issue or be later than today's UTC date. |
+| Issue which first captures Original In Service Date | Date Issued cannot be later than today's UTC date, including while Lifecycle is off. |
+| Write-off of outstanding issued equipment | Date Written Off cannot precede the original issue. |
+
+Ordinary receipts, ordinary stock issues, preparation and other write-offs do not acquire all of those extra restrictions. Later reissues which do not capture first service retain their existing date validation. An accepted field is not proof that equipment physically moved or that checks were completed. See [first-service eligibility](Equipment-Lifecycle.md#record-first-service-from-stock).
 
 ## Before You Start
 
@@ -84,7 +100,7 @@ The three remaining issued mice are still with Learning. The two physically retu
 
 Do not enter eight as returned simply to close the original issue. An item which has not come back must remain outstanding or, if genuinely missing and authorised for write-off, follow [Write Off Missing Issued Equipment](#write-off-missing-issued-equipment).
 
-Individual units keep their permanent identities. Equipment can return from an inactive Staff Member or archived Department; their status does not erase the original issue.
+Individual units keep their permanent identities. Equipment can return from a Left Company Staff Member or archived Department; their status does not erase the original issue.
 
 If the recorded original issue quantity is wrong, choose **Correct Movement**
 beside the selected issue information. The [existing correction workflow](IT-Assets-Correct-Movement.md#correct-an-issue-while-returning-equipment)
@@ -185,6 +201,12 @@ For one missing mouse from an outstanding quantity of three, the result is two s
 
 With independent access, Staff/Department equipment shows actual outstanding Asset quantities and original Device relationships. **My Equipment** shows only the signed-in person's safe personal equipment and **Shared with My Department**, including remaining quantities. It grants no stock, directory or Device administration rights. Membership changes and independent feature switches apply on the next request; disabling a feature retains its data and history.
 
+### Empty Choices And Rejected Operations
+
+**No Outstanding Equipment**, **No Ready Registered Devices** or **No Eligible Equipment** can mean no current selection satisfies the particular workflow. A Device being unassigned does not make it Ready. Reopen the original issue or Device, check the saved holder/state and use **Reload Stock** after a failed load. Never choose a similar item simply to make a form submit.
+
+All issue/return/preparation/write-off quantities are whole units: positive for an actual movement, zero allowed for optional Ready/damaged dispositions, and no more than the relevant current balance. Ready plus damaged cannot exceed returned. Notes and mandatory reasons allow up to 2,000 characters. Blank mandatory reasons, insufficient checks, excessive quantities, duplicate units, stale versions, ended sessions and revoked permissions reject the operation. For partial returns, check the outstanding remainder before closing the form. Returning or writing off a Device leaves its accessory issues outstanding until resolved separately.
+
 ## Troubleshooting And Recovery
 
 | What You See | What To Check Or Do |
@@ -213,3 +235,5 @@ Genuine development screenshots are retained in the linked evidence reports. App
 More current examples show [writing off an issued device in mobile dark](../../../development-handovers/evidence/stage-6-6-batch-3/screenshots/stock-issued-writeoff-dark-390.png) and [reviewing Movement History in desktop light](../../../development-handovers/evidence/stage-6-6-batch-3/screenshots/stock-movement-history-light-1440.png).
 
 [Implementation And Screenshots](../../../development-handovers/evidence/stock-circulation/Report.md) · [Roles And MFA](Roles-Section-Permissions-and-MFA.md) · [← Draft v2.2 Guides](README.md) · [Published v2.1 Guides](../README.md)
+
+[Connected example: a laptop from Supplier and stock to its final write-off](Connected-Equipment-Journey.md).

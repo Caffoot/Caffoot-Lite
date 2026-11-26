@@ -372,3 +372,5 @@ Essential **Account**, **Role** and **Security** audit events remain available t
 [Optional Features And Link To IPAM](Optional-Features-and-Link-To-IPAM.md) · [Staff Members](Staff-Members.md) · [Departments And Shared Equipment](Departments-and-Shared-Equipment.md) · [Device Assignments And My Equipment](Device-Assignments-and-My-Equipment.md) · [IT Assets Stock Intake](IT-Assets-Stock-Intake.md)
 
 Administrators and maintainers can consult the [role and account contract](../../../development-guide/Role-Permissions.md), [authentication and permission reference](../../../development-guide/04-Authentication-and-Permissions.md), [accepted IT Staff decisions](https://github.com/Caffoot/Caffoot-Lite/issues/365) and [later IT Assets default decision](https://github.com/Caffoot/Caffoot-Lite/issues/396). Current acceptance and release boundaries belong in [Development Status](../../../development-guide/Development-Status.md).
+
+[Connected equipment example — Supplier, stock, assignment and later use](Connected-Equipment-Journey.md).

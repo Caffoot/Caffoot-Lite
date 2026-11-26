@@ -187,3 +187,5 @@ A linked person opens **My Equipment** for limited personal/shared information w
 The illustrations were captured from the running v2.2 development application with fictional data. See the [capture record](screenshots/staff-administration/README.md) for dimensions, source revision and review status.
 
 [← Draft v2.2 Guides](README.md) · [Published v2.1 Guides](../README.md)
+
+[Connected equipment example — Supplier, stock, assignment and later use](Connected-Equipment-Journey.md).

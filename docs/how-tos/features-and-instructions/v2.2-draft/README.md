@@ -16,7 +16,7 @@ In v2.2, Caffoot Lite's date-entry controls show and accept **DD/MM/YYYY** regar
 
 Type a date with slashes, or enter eight consecutive digits (for example, `15032023`), which are formatted as `15/03/2023`. Use the calendar button on the same field if you prefer not to type. The calendar begins each week on Monday and includes the month, year and labelled days. With keyboard focus inside the calendar, use the arrow keys to move by day or week, Home/End for the beginning/end of the week, Page Up/Down to move months, Shift+Page Up/Down to move years, Enter to select and Escape to close it.
 
-Only real calendar dates are accepted: **29/02/2024** is valid, but **29/02/2023** is not. Fields with existing restrictions, such as no future Purchase Date or Date Issued, keep those restrictions. An invalid date is shown with a validation message and is not submitted as a replacement for the previous recorded value. Clearing an optional date remains possible. The calendar preserves existing permissions, readonly fields, Cancel and unsaved-change/discard behaviour.
+Only real calendar dates are accepted: **29/02/2024** is valid, but **29/02/2023** is not. Fields with existing restrictions, such as no future Purchase Date or qualifying first-service Date Issued, keep those restrictions. An invalid date is shown with a validation message and is not submitted as a replacement for the previous recorded value. Clearing an optional date remains possible. The calendar preserves existing permissions, readonly fields, Cancel and unsaved-change/discard behaviour.
 
 This is a change to how dates are **entered and shown**, not to the dates already saved, the actual event times, the configured timezone, lifecycle calculations, or stock movement history. Existing published v2.1 instructions and records are unchanged.
 
@@ -66,6 +66,10 @@ Batch 3 accounts, Staff, Departments and My Equipment have completed written/sou
 
 Staff Members and Departments are core functions, with independent section permissions. You do not need to populate them to use Caffoot Lite's infrastructure inventory. **My Equipment** gives linked Staff an appropriately restricted view of their equipment; it does not grant access to IT inventory or another person's private details.
 
+## Connected Equipment Example
+
+[Follow Aster Services and laptop AST-LAP-014](Connected-Equipment-Journey.md) from Supplier information and physical receipt to Device registration, personal/Department visibility, return/reissue or direct handover, lifecycle review and eventual write-off. The example links the detailed instructions; it is not a compulsory application sequence.
+
 ## Stock And Technician Workflows
 
 | Task | Guide |
@@ -105,6 +109,8 @@ Suppliers starts switched off and uses its own section permissions. Supplier Man
 | Record dates, review Dashboard warnings, configure warning periods and lifespans, archive or restore types | [Equipment Lifecycle](Equipment-Lifecycle.md) |
 
 Equipment Lifecycle is independently optional and starts switched off. Stage 4.4 is owner-accepted and merged via PR #418 into the unreleased development branch; these instructions remain draft v2.2, not published v2.1 features.
+
+Batch 4's ten equipment/Supplier/Lifecycle guides and linked example have completed written/source reconciliation at the stated baseline, **awaiting independent ChatGPT review and separate owner acceptance**. [Batch 4 source, validation and outstanding desktop requirements](../../../development-guide/Milestone-01-Batch-4-Review.md). Batches 5–8 and all release/visual gates remain outstanding.
 
 ## Service Desk
 
