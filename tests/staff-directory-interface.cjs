@@ -157,7 +157,7 @@ async function test(){
  await otherEditor.getByRole('heading',{name:'Staff Details'}).waitFor();
  await otherEditor.close();
  await page.evaluate(()=>caffootSetTheme('light'));
- for(const action of ['Reactivate','Mark Inactive']){
+ for(const action of ['Reactivate','Mark As Left Company']){
   await saveCurrentStaff({telephone:action==='Reactivate'?'+44 123':'+44 456'});
   responsePromise=page.waitForResponse(r=>r.url()===address+staffPath&&r.request().method()==='POST');
   page.once('dialog',dialog=>dialog.accept());
@@ -172,7 +172,7 @@ async function test(){
   page.once('dialog',dialog=>dialog.accept());
   await page.getByRole('button',{name:action,exact:true}).click();
   assert.equal((await responsePromise).status(),200);
-  await page.waitForFunction(label=>document.querySelector('[data-staff-action="staff-status"]')?.textContent===label,action==='Reactivate'?'Mark Inactive':'Reactivate');
+  await page.waitForFunction(label=>document.querySelector('[data-staff-action="staff-status"]')?.textContent===label,action==='Reactivate'?'Mark As Left Company':'Reactivate');
  }
  await page.locator('[data-staff-action="staff-back"]').click();
  await page.locator('#staff-directory-search').fill('Production');

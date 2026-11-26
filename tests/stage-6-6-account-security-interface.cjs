@@ -115,7 +115,7 @@ print(json.dumps({'owner': owner_secret, 'staff': staff_secret}))
   });
   assert.equal(login.status(), 200, await login.text());
   await admin.page.goto(origin + '/inventory#staff');
-  await openStaffAccount(admin.page, 'jamie.taylor');
+  await openStaffAccount(admin.page, 'jamie.taylor', 'controls');
   const manage = admin.page.locator('[data-staff-account-modal] [role="dialog"]');
   const reset = manage.getByRole('button', {name: 'Reset Password', exact: true});
   const dialog = admin.page.getByRole('dialog', {name: 'Reset Password', exact: true});
@@ -165,7 +165,7 @@ print(json.dumps({'owner': owner_secret, 'staff': staff_secret}))
   await staff.page.waitForURL('**/account');
   await staff.page.locator('#app[aria-busy="false"]').waitFor();
 
-  await openStaffAccount(admin.page, 'alex.morgan');
+  await openStaffAccount(admin.page, 'alex.morgan', 'controls');
   const makeAdmin = manage.getByRole('button', {name: 'Make admin', exact: true});
   assert.ok(await makeAdmin.isDisabled());
   const eligibility = manage.locator('.administrator-eligibility');
@@ -178,7 +178,7 @@ import sqlite3, sys
 with sqlite3.connect(sys.argv[1]) as db:
     db.execute("UPDATE account_profiles SET email_verified=1 WHERE account_id=(SELECT id FROM accounts WHERE username='alex.morgan')")
 `, database);
-  await openStaffAccount(admin.page, 'alex.morgan');
+  await openStaffAccount(admin.page, 'alex.morgan', 'controls');
   assert.ok(await makeAdmin.isEnabled());
   await captureThemes(admin.page, 'administrator-eligible', eligibility);
   await reset.click();
@@ -199,20 +199,21 @@ with sqlite3.connect(sys.argv[1]) as db:
   await it.page.locator('#confirm-new-password').fill(personalPassword);
   await it.page.getByRole('button', {name: 'Change Password', exact: true}).click();
   await it.page.getByText('Password changed successfully. Sign in again with your new password.').waitFor();
-  await openStaffAccount(admin.page, 'alex.morgan');
+  await openStaffAccount(admin.page, 'alex.morgan', 'controls');
   assert.ok(await makeAdmin.isEnabled());
   await makeAdmin.click();
   await manage.getByRole('button', {name: 'Remove admin', exact: true}).waitFor();
   assert.ok(await reset.isDisabled());
 
-  await openStaffAccount(admin.page, 'sam.ellis');
+  await openStaffAccount(admin.page, 'sam.ellis', 'controls');
   await reset.click();
   await dialog.getByText('This account will remain disabled.', {exact: false}).waitFor();
   await fillPasswords(dialog, temporaryPassword);
   await dialog.getByRole('button', {name: 'Reset Password', exact: true}).click();
   await resetResult.getByText(/Account remains disabled/).waitFor();
-  await openStaffAccount(admin.page, 'local-admin');
+  await openStaffAccount(admin.page, 'local-admin', 'controls');
   assert.ok(await reset.isDisabled());
+  await admin.page.locator('[data-account-tab="personal"]').click();
   await captureThemes(admin.page, 'existing-administrator-warning', manage.locator('.administrator-email-warning'));
   await manage.getByRole('button', {name: 'Done', exact: true}).click();
   await admin.page.getByRole('button', {name: 'Open My Account'}).click();

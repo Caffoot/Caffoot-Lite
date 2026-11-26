@@ -100,13 +100,14 @@ async function confirm(page){
   await screenshot(page,'create-preview-1440');await audit(page,'role-preview','[data-role-layer]');await confirm(page);
   data=await catalogue(context);let role=data.roles.find(role=>role.name==='Inventory Readers');assert.ok(role);assert.equal(role.accountCount,0);
   await checked(page,'Role create uses preview then confirmation and leaves the new role unassigned');
-  await openStaffAccount(page,'colleague');
+  await openStaffAccount(page,'colleague','personal');
   assert.equal(await page.locator('#user-first-name').inputValue(),'Test');assert.ok(await page.locator('#user-first-name').isEditable());
   await page.locator('#user-first-name').fill('Updated');
   await page.locator('#user-email').fill('colleague@example.test');
   await page.locator('#next-user-profile-form [type="submit"]').click();
   await page.waitForFunction(()=>document.querySelector('#user-first-name')?.value==='Updated'&&!document.querySelector('#next-user-profile-form [type="submit"]').disabled);
   await audit(page,'user-additions',{include:['.role-memberships','.role-permission-summary']});
+  await page.locator('[data-account-tab="roles"]').click();
   const member=page.locator('[data-role-membership="'+role.id+'"]');await member.click();
   await page.locator('[data-role-command="confirm"]').waitFor();
   assert.equal((await catalogue(context)).users.find(user=>user.id===worker.id).accessDetails.roles.length,1);
@@ -116,7 +117,7 @@ async function confirm(page){
   data=await catalogue(context);worker=data.users.find(user=>user.id===worker.id);assert.equal(worker.permissions.Devices,'read');assert.ok(worker.accessDetails.mfaPending);
   const mfaWarning=page.getByText('MFA enrolment is required before wider Read/Edit access',{exact:false});
   await mfaWarning.waitFor();
-  assert.equal(await mfaWarning.evaluate(warning=>warning.nextElementSibling?.textContent.trim()),'Section permissions');
+  assert.equal(await mfaWarning.evaluate(warning=>warning.closest('[role="tabpanel"]').id),'account-panel-roles');
   await checked(page,'Membership cancellation saves nothing; confirmation uses live inheritance and pending MFA');
   // Give the same role to a second real test account to check shared impact.
   const adminSession=await (await context.request.get(address+'/api/session')).json();
@@ -130,7 +131,7 @@ async function confirm(page){
   await page.locator('[data-role-command="create"]').click();await page.locator('#role-name').fill('Device Editors');await page.locator('#role-grant-Devices').selectOption('edit');await page.locator('[form="role-definition-form"]').click();await confirm(page);
   const additionalRole=(await catalogue(context)).roles.find(role=>role.name==='Device Editors');
   await screenshot(page,'notification-feedback-1440',true);await screenshot(page,'roles-list-1440');
-  await openStaffAccount(page,'colleague');
+  await openStaffAccount(page,'colleague','roles');
   await page.locator('[data-role-membership="'+additionalRole.id+'"]').click();await confirm(page);
   let multiple=(await catalogue(context)).users.find(user=>user.id===worker.id);
   assert.equal(multiple.accessDetails.roles.length,3);assert.equal(multiple.accessDetails.sections.Devices.inherited,'edit');
@@ -138,7 +139,7 @@ async function confirm(page){
   await page.locator('[data-role-membership="'+additionalRole.id+'"]').click();await confirm(page);
   multiple=(await catalogue(context)).users.find(user=>user.id===worker.id);assert.equal(multiple.accessDetails.sections.Devices.inherited,'read');
   await page.locator('[data-action="users-close-editor"]').first().click();await page.locator('#sidebar [data-tab="users"]').click();await page.locator('[data-action="select-users-section"][data-tab="roles"]').click();await page.locator('[data-role-command="edit"][data-role-id="'+additionalRole.id+'"]').click();await page.locator('[data-role-command="delete"]').click();await confirm(page);
-  await openStaffAccount(page,'colleague');
+  await openStaffAccount(page,'colleague','permissions');
   await checked(page,'Multiple role assignments display the server-provided highest inherited grant and retain the other role when one is removed');
   const select=page.locator('#live-user-permission-Devices');assert.equal(await select.inputValue(),'');
   await select.selectOption('deny');await page.locator('[data-role-command="confirm"]').waitFor();
@@ -152,11 +153,12 @@ async function confirm(page){
   assert.equal((await catalogue(context)).users.find(user=>user.id===worker.id).accessDetails.sections.Devices.override,'deny');
   await select.selectOption('');await confirm(page);
   await checked(page,'Stale real-backend confirmation saves nothing and requires explicit renewed confirmation; Inherit removes an override');
+  await page.locator('[data-account-tab="controls"]').click();
   // Exercise the full retained account controls, without changing the last administrator.
   await page.locator('[data-account-status="active"] [data-next-user-operation="active"]').click();
-  await page.waitForFunction(()=>document.querySelector('[data-next-user-operation="active"]')?.textContent==='Enable');
+  await page.waitForFunction(()=>document.querySelector('[data-next-user-operation="active"]')?.textContent==='Enable Login');
   await page.locator('[data-account-status="disabled"] [data-next-user-operation="active"]').click();
-  await page.waitForFunction(()=>document.querySelector('[data-next-user-operation="active"]')?.textContent==='Disable');
+  await page.waitForFunction(()=>document.querySelector('[data-next-user-operation="active"]')?.textContent==='Disable Login');
   const administratorAction=page.locator('[data-next-user-operation="admin"]');
   assert.equal(await administratorAction.textContent(),'Make admin');
   assert.ok(await administratorAction.isDisabled());
@@ -209,7 +211,7 @@ async function confirm(page){
   assert.equal(await signIn.locator('.optional-mfa-removal').count(),0);
   const requiredSession=await (await workerContext.request.get(address+'/api/session')).json();assert.equal(requiredSession.mfa_removal_eligible,false);
   assert.equal((await workerContext.request.post(address+'/api/account/mfa/remove',{headers:{Origin:address,'X-CSRF-Token':requiredSession.csrf_token},data:{password:'Test-Colleague-2026!',code:code(secret)}})).status(),403);
-  await openStaffAccount(page,'colleague');
+  await openStaffAccount(page,'colleague','controls');
   assert.ok(await administratorAction.isDisabled());
   await page.getByText('The user must verify their email address in My Account before becoming an administrator.',{exact:true}).waitFor();
   // Issue the fixture's confirmation code directly, then verify it through the live account endpoint.
@@ -227,7 +229,7 @@ with sqlite3.connect(sys.argv[1]) as db:
   assert.equal(verification.status(),200);
   assert.deepEqual(await verification.json(),{status:'Email verified'});
   await workerContext.close();
-  await openStaffAccount(page,'colleague');
+  await openStaffAccount(page,'colleague','controls');
   assert.ok(await administratorAction.isEnabled());
   await administratorAction.click();await page.waitForFunction(()=>document.querySelector('[data-next-user-operation="admin"]')?.textContent==='Remove admin');
   assert.ok((await catalogue(context)).users.find(user=>user.id===worker.id).isAdmin);
@@ -239,7 +241,7 @@ with sqlite3.connect(sys.argv[1]) as db:
   await page.locator('[data-role-command="edit"][data-role-id="'+role.id+'"]').click();await page.locator('[data-role-command="delete"]').click();await confirm(page);
   assert.ok(!(await catalogue(context)).roles.some(r=>r.id===role.id));
   await checked(page,'Role deletion uses reviewed impact and leaves accounts intact');
-  await openStaffAccount(page,'second-colleague');
+  await openStaffAccount(page,'second-colleague','controls');
   page.once('dialog',dialog=>dialog.accept());await page.locator('[data-next-user-operation="delete"]').click();
   await page.waitForFunction(()=>!document.querySelector('.users-management-modal'));
   await page.locator('#sidebar [data-tab="users"]').click();

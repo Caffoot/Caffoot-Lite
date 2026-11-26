@@ -20,7 +20,7 @@ async function startStaffLoginForm(page) {
  return form;
 }
 
-async function openStaffAccount(page,username) {
+async function openStaffAccount(page,username,tab='personal') {
  await openStaffList(page);
  await page.locator('#staff-directory-search').fill(username);
  await page.locator('[data-staff-id]').filter({has:page.getByText('Username: '+username,{exact:true})})
@@ -28,6 +28,7 @@ async function openStaffAccount(page,username) {
  const button=page.getByRole('button',{name:'Manage Permissions'});
  await button.click();
  await page.locator('[data-staff-account-modal] [role="dialog"]').waitFor();
+ await page.locator('[data-account-tab="'+tab+'"]').click();
  return button;
 }
 

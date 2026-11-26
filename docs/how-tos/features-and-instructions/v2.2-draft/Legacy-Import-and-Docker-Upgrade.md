@@ -84,6 +84,14 @@ Follow [Back up a complete installation](#back-up-a-complete-installation) while
 4. Verify representative Devices, linked IPAM and Racks records, preferences and Audit Trail entries. Check a saved profile, existing Read and Edit access, Administrator sign-in and private email settings. For a populated v2.2 review source, compare Department assignments, original stock recipients and quantities, associated equipment, ticket visibility and attachments. The upgrade maintains configured section permissions while applying the new MFA requirements and the historical accessory ticket restriction above.
 5. Recreate the isolated container again against the same mount and repeat the health, sign-in and sample record checks. The rehearsal also checked SQLite integrity, foreign keys and unchanged rows on repeat startup. If startup fails, preserve the stopped copy and review the container log before trying again.
 
+### Left Company Linked Login Reconciliation
+
+The native acceptance correction build retains schema 31. On startup it checks for existing inactive/Left Company Staff with enabled linked logins. Within the upgrade transaction, it disables those logins and revokes their sessions, email verification/recovery proofs and temporary-password change proofs. Staff identities, assignments, equipment custody, tickets, MFA enrolment and historical records are retained. A new Audit Trail event identifies **Application upgrade** as the actor; original events remain unchanged. Repeated startup does not add duplicate reconciliation events.
+
+If the affected accounts include every active administrator, startup stops with an explicit last-active-administrator conflict and rolls back the transaction. Keep the complete pre-upgrade backup and matching image. Report the conflict to the product owner for an approved resolution; do not edit database flags or bypass the safeguard. No running installation or private customer data was reconciled as part of development verification.
+
+Reactivation later leaves the login disabled. An administrator must first reactivate Staff and then explicitly use **Enable Login** after reviewing access. See [Staff lifecycle](Staff-Members.md#mark-as-left-company-or-reactivate). This isolated development check does not complete the outstanding supported-upgrade, complete-volume backup/restore, native or publication gates.
+
 ### Roll Back Using The Complete Pre-Upgrade Backup
 
 1. Stop the upgraded container. If you need its data for investigation or later recovery, back up its complete stopped mount separately and label that copy with its v2.2 image and schema.

@@ -87,25 +87,30 @@ Fresh installations create IT Staff enabled but unassigned. Newly created ordina
 
 ## Review An Account
 
-1. Open **Staff → Staff Members** and enter the sign-in username in **Find A Staff Member**.
+1. Open **Staff → Staff Members** and enter the username in **Find A Staff Member**.
 2. Select **View Details** and check **Caffoot Login** for the username, account status, authenticator state and assigned roles.
-3. Select **Manage Permissions** under **Assigned Roles**. Confirm the read-only **Sign-in Username** and review **Assigned Roles** and the **Inherited**, **Override** and **Effective** values under **Section permissions**.
-4. Check for **Feature Disabled** beside any relevant section. A valid grant can be saved while an organisation switch prevents the section from being used. **MFA Required · Setup Pending** means the person needs to complete enrolment before normal sign-in.
-5. If the dialogue scrolls, use Tab to reach controls further down. Scroll to **Done** or use **Close** or Escape to return to the same Staff Details.
+3. Select **Manage Permissions** below **Assigned Roles**. The dialogue is wider on desktop and adapts to smaller screens. Its heading, account badges, **Close**, tabs and footer stay visible; only the selected tab content scrolls.
+4. Choose a tab using the mouse or keyboard. Arrow keys, Home and End move between tabs; Tab reaches the selected tab's controls. On narrow screens, the tab row can scroll sideways.
+5. Use **Done**, **Close** or Escape to return to Staff Details. **Done** closes the dialogue. Save or confirm each change using its existing control before closing.
 
-Your own administrator account has protected controls. Use **My Account** for your personal and security settings. Ask the affected person to sign in and confirm their access with their own credentials.
+| Tab | What to review or change |
+| --- | --- |
+| Personal Details | Read-only Sign-in Username, First Name, Last Name, Display Name and E-Mail Address, with verification shown below the email input. **Save Personal Details** saves this form. |
+| Roles | Assigned Roles and the existing individual role-change previews and confirmations. |
+| Permissions | Inherited, Override and Effective section levels. Individual changes still require the existing review and confirmation. |
+| Account Controls | Employment Status, Enable Login/Disable Login, administrator eligibility, Reset Password and Delete User, with their existing restrictions. |
 
-![The Manage Permissions dialogue in desktop light mode with the read-only sign-in username and the existing personal details and role controls.](screenshots/staff-administration/manage-permissions-light-1440.png)
+Switching tabs retains personal details you have typed. Immediate account changes and role confirmations also retain an unsaved personal-details draft. If another writer changes those saved personal details, the original revision is retained so a stale save is rejected; reopen the dialogue and review the newer values. Closing discards unsaved typing, while already saved or confirmed changes remain effective. There is no global Save button.
 
-*The account dialogue opened from Staff Details for fictional user taylor.cole.* [Desktop dark](screenshots/staff-administration/manage-permissions-dark-1440.png) · [Mobile light](screenshots/staff-administration/manage-permissions-light-390.png) · [Mobile dark](screenshots/staff-administration/manage-permissions-dark-390.png)
+Check **Feature Disabled** beside a section: configured rights remain subject to its organisation switch. **MFA Required · Setup Pending** means the person must enrol before normal sign-in. Your own administrator account retains its protected controls; use **My Account** for your own personal and security settings.
 
-![Manage Permissions on a narrow screen with a classic scrollbar inside the rounded dialogue.](../../../development-handovers/evidence/stage-6-6-batch-3/screenshots/classic-manage-dark-390.png)
+![Personal Details in the wider dialogue with aligned Display Name and E-Mail Address fields.](../../../development-handovers/evidence/native-acceptance-corrections/screenshots/permissions-personal-1440-light.png)
 
-*Scroll within Manage Permissions to reach the section and account controls.* [Scrollbar capture provenance](../../../development-handovers/evidence/stage-6-6-batch-3/README.md#capture-provenance)
+*Fictional user morgan.reed. [Roles](../../../development-handovers/evidence/native-acceptance-corrections/screenshots/permissions-roles-1440-light.png) · [Permissions](../../../development-handovers/evidence/native-acceptance-corrections/screenshots/permissions-permissions-1440-light.png) · [Account Controls](../../../development-handovers/evidence/native-acceptance-corrections/screenshots/permissions-controls-1440-light.png) · [Narrow dark view](../../../development-handovers/evidence/native-acceptance-corrections/screenshots/permissions-personal-390-dark.png) · [All captures and provenance](../../../development-handovers/evidence/native-acceptance-corrections/README.md)*
 
 ### Save Personal Details
 
-1. In **Manage Permissions**, check the read-only username. Update **First Name**, **Last Name**, **Display Name** or **E-Mail Address** as needed.
+1. In **Manage Permissions → Personal Details**, check the read-only username. Update **First Name**, **Last Name**, **Display Name** or **E-Mail Address** as needed.
 2. Select **Save Personal Details**. First name, surname and email are shared with the linked Staff Member. Display name applies to the account only.
 3. If told to reconcile a saved difference, close the dialogue and use [Edit Staff Member](Staff-Members.md#resolve-a-difference-between-staff-and-account-details). If told the profile changed elsewhere, reopen **Manage Permissions**, review the latest values and try again.
 4. Ask the owner to verify a changed email in My Account before using password recovery. A changed account address clears prior verification and outstanding proofs. Saving the existing address retains them.
@@ -115,7 +120,7 @@ Closing the dialogue discards unsaved profile typing. Changes you already saved 
 ## Assign Or Remove An Additional Role
 
 1. Open the correct account through **Staff Details → Manage Permissions**.
-2. Under **Assigned Roles**, select the role's checkbox to propose adding it, or clear it to propose removing it. Each checkbox change is reviewed separately.
+2. In the **Roles** tab, under **Assigned Roles**, select the role's checkbox to propose adding it, or clear it to propose removing it. Each checkbox change is reviewed separately.
 3. In **Review Access Change**, inspect the before/after roles, section inheritance, overrides, effective levels and MFA status.
 4. Check **Affected Accounts** and **Sessions To End**. Assigning or removing a membership ends that account's sessions, even when its effective rights would stay the same.
 5. Select **Confirm Change** to save, or **Cancel** to leave the saved membership unchanged.
@@ -169,20 +174,20 @@ Notification feedback is separate from saving access. **Notices Queued** means a
 
 ## Enable, Disable Or Delete A Login
 
-Account controls are separate from role previews. Check the account identity before selecting them: **Disable**, **Enable**, **Make Admin** and **Remove Admin** apply their own operation directly when selected. **Done** closes the editor; it is not a final save for these earlier actions.
+Account controls are separate from role previews. Check the account identity before selecting them: **Disable Login**, **Enable Login**, **Make Admin** and **Remove Admin** apply their own operation directly when selected. **Done** closes the editor; it is not a final save for these earlier actions.
 
-1. Open **Staff → Staff Members → Staff Details → Manage Permissions** for the person.
-2. An active account has a green status panel. Select **Disable** to end its sessions and prevent sign-in while retaining the account.
-3. A disabled account has a red status panel. Select **Enable** to restore login eligibility, then review the current roles, permissions and MFA requirements.
+1. Open **Staff → Staff Members → Staff Details → Manage Permissions → Account Controls** for the person.
+2. An active account has a green status panel. In **Account Controls**, select **Disable Login** to end its sessions and prevent sign-in while retaining the account.
+3. A disabled account has a red status panel. Select **Enable Login** to restore login eligibility after the Staff Member is Active, then review the current roles, permissions and MFA requirements.
 4. To appoint an Administrator, review the eligibility checks and select **Make admin** once the account qualifies. See [Make An Existing User An Administrator](#make-an-existing-user-an-administrator).
 5. To remove independent Administrator status, select **Remove Admin**. Remaining ordinary access comes from the account's roles and overrides. The account must sign in again after Administrator status changes.
 6. To remove the account permanently, select **Delete User** and read its confirmation. Confirm only if deletion is intended; cancelling keeps the account. Prefer disabling when the requirement is simply to prevent sign-in while retaining the login.
 
 You cannot disable, demote or delete your own signed-in administrator account, and the last active administrator is protected. Deleting a login does not delete its Staff directory identity or return its equipment; review those separately in the [Staff lifecycle](Staff-Members.md). These controls do not provide an administrator bypass for a forgotten password or authenticator.
 
-![Manage Permissions account controls showing a green active-account panel and Disable button.](../../../development-handovers/evidence/stage-6-6-batch-3/screenshots/account-active-light-1440.png)
+![Account Controls showing Employment Status and the green Disable Login panel.](../../../development-handovers/evidence/native-acceptance-corrections/screenshots/permissions-controls-1440-light.png)
 
-*The panel colour follows the current status. A disabled account has a red panel with an Enable button.* [Disabled account and dark-mode captures](../../../development-handovers/evidence/stage-6-6-batch-3/README.md#application-screenshots)
+*Left Company disables the linked login and ends its sessions atomically. Reactivate does not enable the login. **Enable Login** is unavailable while Staff remain Left Company. [Employment policy and permissions](Staff-Members.md#mark-as-left-company-or-reactivate) · [Dark narrow capture](../../../development-handovers/evidence/native-acceptance-corrections/screenshots/permissions-controls-390-dark.png)*
 
 ## Make An Existing User An Administrator
 

@@ -182,7 +182,7 @@ async function test(){
      headingRightInset:parseFloat(getComputedStyle(heading).paddingRight)+parseFloat(getComputedStyle(card).borderRightWidth)};
    }));
    for(const item of notice){
-    assert.equal(item.text,'Inactive Staff Member — outstanding assignments are retained. New assignments are unavailable.');
+    assert.equal(item.text,'Staff Member Has Left Company — outstanding assignments are retained. New assignments are unavailable.');
     assert.ok(Math.abs(item.left-item.headingLeft)<1,'Inactive notice must align with its heading');
     assert.ok(Math.abs(item.rightInset-item.headingRightInset)<1,'Inactive notice must retain the matching right inset');
    }
@@ -218,7 +218,7 @@ async function test(){
   await restrictedPage.locator('.equipment-staff [data-equipment-action="view-device"]').first().waitFor();
   assert.equal(await restrictedPage.locator('[data-staff-action="staff-status"],[data-staff-action="staff-edit"],[data-staff-action="manage-login"],[data-equipment-action="assign-staff"]').count(),0);
   assert.equal(await restrictedPage.locator('.staff-live').getByRole('heading',{name:'Caffoot Login',exact:true}).count(),0);
-  assert.equal(await restrictedPage.locator('.staff-live .section-heading .badge').textContent(),active?'Active':'Inactive');
+  assert.equal(await restrictedPage.locator('.staff-live .section-heading .badge').textContent(),active?'Active':'Left Company');
   for(const width of [1440,390]){
    await restrictedPage.setViewportSize({width,height:width===390?844:950});
    for(const theme of ['light','dark']){
@@ -229,10 +229,10 @@ async function test(){
  }
  await restrictedStaff(true);
  // Cancel preserves the Staff status and the existing confirmation wording.
- page.once('dialog',dialog=>{assert.match(dialog.message(),/^Mark Inactive Alex Morgan\?/);void dialog.dismiss();});
+ page.once('dialog',dialog=>{assert.match(dialog.message(),/^Mark As Left Company Alex Morgan\?/);void dialog.dismiss();});
  await page.locator('[data-staff-action="staff-status"]').click();
  assert.equal((await (await context.request.get(address+'/api/staff-members/'+person.id)).json()).staffMember.active,true);
- page.once('dialog',dialog=>{assert.match(dialog.message(),/^Mark Inactive Alex Morgan\?/);void dialog.accept();});
+ page.once('dialog',dialog=>{assert.match(dialog.message(),/^Mark As Left Company Alex Morgan\?/);void dialog.accept();});
  await page.locator('[data-staff-action="staff-status"]').click();
  await page.locator('[data-staff-action="staff-status"]').filter({hasText:'Reactivate'}).waitFor();
  for(const width of [1440,390]){
@@ -244,10 +244,10 @@ async function test(){
  await restrictedStaff(false);
  page.once('dialog',dialog=>{assert.match(dialog.message(),/^Reactivate Alex Morgan\?/);void dialog.accept();});
  await page.locator('[data-staff-action="staff-status"]').click();
- await page.locator('[data-staff-action="staff-status"]').filter({hasText:'Mark Inactive'}).waitFor();
+ await page.locator('[data-staff-action="staff-status"]').filter({hasText:'Mark As Left Company'}).waitFor();
  await page.locator('[data-equipment-action="assign-staff"]').waitFor();
  assert.deepEqual(await (await context.request.get(address+'/api/equipment/assignments?staffId='+person.id)).json(),assignmentsBefore);
- assert.deepEqual((await (await context.request.get(address+'/api/users')).json()).users.find(user=>user.id===person.accountId),accountBefore);
+ assert.deepEqual((await (await context.request.get(address+'/api/users')).json()).users.find(user=>user.id===person.accountId),{...accountBefore,active:false,accessDetails:{...accountBefore.accessDetails,active:false}});
  const readerSession=await (await restricted.request.get(address+'/api/session')).json();
  assert.equal(readerSession.mfa_enrolled,true);
  assert.equal((await restricted.request.post(address+'/api/staff-members/'+person.id,{headers:{Origin:address,'X-CSRF-Token':readerSession.csrf_token},data:{active:false}})).status(),403);

@@ -2,7 +2,7 @@
 import json
 from datetime import datetime, timezone
 
-from backend.audit_events import record_actor_event
+from backend.audit_events import audit_subject, record_actor_event
 from backend.sessions import revoke_password_change_proof
 
 
@@ -38,7 +38,7 @@ def disable_employment_login(connection, account_id, *, actor_id=None):
             subject=('Account', account_id, username))
     else:
         # An upgrade has no signed-in actor. Keep that provenance explicit.
-        values['recordSubject'] = {'kind': 'Account', 'id': str(account_id), 'name': username}
+        values.update(audit_subject('Account', account_id, username))
         event = dict(at=datetime.now(timezone.utc).isoformat().replace('+00:00', 'Z'),
                      actor='Application upgrade', outcome='Succeeded',
                      reason='Left Company linked login reconciled during upgrade', changes=[values], omitted=0)
