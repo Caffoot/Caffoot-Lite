@@ -49,7 +49,7 @@ The application refuses invalid addresses, incompatible rack positions and other
 | Offline equipment or no address yet | Leave **Primary IP Address (Optional)** blank. No subnet or allocation is required; Devices Edit is sufficient for ordinary non-Rack creation. |
 | New basic IPv4 | With IPAM disabled, enter a valid unused IPv4 address. No subnet/allocation is created. |
 | Existing basic IPv4 after enabling IPAM | Edit it as basic or clear it; ordinary Save never links it automatically. |
-| Managed IP | With IPAM enabled and IPAM Edit, select a matching managed subnet and an available address. Use the reservation control only when a reservation for this same Device is intended. |
+| Managed IP | With IPAM enabled and IPAM Edit, select a matching managed subnet and an available address. Use **Reserve this IP address for this device** to keep this same managed primary address linked but show it as Reserved. See [managed primary-IP reservation](IPAM.md#reserve-the-same-managed-primary-ip). |
 | Existing managed IP with IPAM off or without IPAM Edit | The saved address is protected from editing. Turning IPAM off does not clear the relationship. |
 
 For the basic-IP example, record a fictional offline printer without an address, or with 192.0.2.20 while IPAM is off. When IPAM is enabled later and the correct subnet exists, use **Device Details → Network → Link to IPAM** with both Edit permissions. Read the full [Optional Features and Link to IPAM procedure](Optional-Features-and-Link-To-IPAM.md#deliberately-link-a-saved-basic-address) for the dialog, conflicts and cancellation. A hidden allocation can still prevent use of an address.
@@ -182,7 +182,7 @@ Historical missing/retired hosts may be retained on existing records; this does 
 
 These lists provide reusable classifications and location names. A Location is descriptive text, whereas a Rack/shelf placement is a separate protected relationship. Devices must be enabled and you need Devices Edit for these changes.
 
-1. Open **IT → Devices → Device Types** or **Locations** and its manager. Search for an existing value before adding one.
+1. Open **IT → Devices → Device Types** or **Locations**, then **Manage Device Types** or **Manage Locations** respectively. Search for an existing value before adding one.
 2. Enter **Add Device Type** or **Add Location**, for example *Training Room*, and choose **Add Type** or **Add Location**. The individual operation saves immediately. **Done** closes the manager; its **Cancel** button does not undo an already completed operation.
 3. To correct a name, use its rename action, edit the name and select **Save Changes**. This updates affected Device records together. Cancelling an unsaved rename returns to the list, with the discard prompt if needed.
 4. To stop offering a Device Type for new selections, choose **Archive**. Existing Devices keep the type, and it remains selectable on their edits. **Unarchive** restores it for new selections. Virtual Machine deployment cannot be archived this way.

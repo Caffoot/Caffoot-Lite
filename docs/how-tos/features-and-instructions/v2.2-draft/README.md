@@ -31,6 +31,15 @@ This is a change to how dates are **entered and shown**, not to the dates alread
 
 These infrastructure drafts have completed the Batch 2 text/source pass at the recorded baseline. Current desktop screenshot suitability/approval and independent review remain outstanding; see the [Batch 2 evidence and limitations](../../../development-guide/Milestone-01-Batch-2-Review.md).
 
+### A Sensible Infrastructure Setup Order
+
+1. Agree which infrastructure areas the organisation uses. An administrator enables the required Optional Features and grants access separately.
+2. If using managed IPAM, record the real addressable subnets first, with their purpose and gateway/VLAN where applicable. An Address Block is optional and cannot substitute for a subnet.
+3. If recording rack-mounted or shelf equipment, add the measured rack and any actual shelf accessories. Check the intended face and free span.
+4. Search Devices before adding equipment. Save it with no address, an eligible basic IPv4 address, or a managed allocation using the corresponding guide.
+5. Reopen the Device and related IPAM/Rack records to verify the saved result. Use the specialised assignment/stock guides for custody or physical issue; Add Device alone does not complete those tasks.
+6. Review authorised Audit Trail records where navigation is available. An audit entry explains a change; it is not a backup or proof of a physical action.
+
 ## Accounts And Access
 
 | Task | Guide |

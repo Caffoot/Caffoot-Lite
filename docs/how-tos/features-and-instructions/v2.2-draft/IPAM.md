@@ -88,6 +88,14 @@ On an independent, unassigned address, select **Reserved**, write why it is rese
 
 A managed-IP change requires IPAM Edit even if started in Devices. The established IPAM-owned edit route does not grant permission to change unrelated Device properties. If IPAM is disabled or your account lacks IPAM Edit, existing managed addresses are protected; ordinary unrelated Device edits may still be saved. See [Devices](Devices.md) for its full editor, duplicate, protected identity and cancellation procedures.
 
+### Reserve The Same Managed Primary IP
+
+1. In the authorised Device editor's **Networking** tab, keep the intended managed primary IP and tick **Reserve this IP address for this device**.
+2. Select **Save Device** and reopen IPAM. The same address remains linked to the same Device, but displays **Reserved** instead of Assigned. This does not request a second IP address or make it available to somebody else.
+3. To return that same allocation to Assigned, untick the control in the authorised Device editor and save. To release/change the primary address, change or clear it there with IPAM Edit and enabled IPAM, then save and check both records. Cancel/discard leaves the existing allocation unchanged.
+
+Changing or clearing a managed primary IP releases its previous Device ownership and clears the Device-derived hostname when saved; address-specific IPAM Notes are retained. A separately retained reservation/reference still needs investigation. This differs from changing an independent spare address's status in Configure IP, and is not available for a basic IPv4 record.
+
 ### Basic Addresses And Explicit Linking
 
 A Device can have no primary IP. A new basic IPv4 address is entered with IPAM off and Devices Edit; it has no allocation or subnet link. An existing basic record stays basic after enabling IPAM, even inside a newly created subnet. Ordinary Device Save never converts it.
@@ -138,6 +146,15 @@ Deletion is permanent and can remove active address relationships. It is not a w
 6. Reopen the remaining network and Device records to check the outcome. Current permissions, enabled Devices where detachment is needed, dependency sets, VLAN ownership and active Device edits are rechecked. Stale/changed previews or another editor's reservation reject the entire operation; refresh and review again.
 
 Basic Device addresses are not detached by subnet deletion. They remain basic and may then contribute to Basic IPs Outside Subnets. Do not infer that deleting a subnet releases every address recorded elsewhere.
+
+## Investigate A Consistency Warning
+
+1. An administrator can open **Settings & Data → System Maintenance → Inventory Safety Check** and choose **Check Inventory Safety**. Devices, IPAM and Network Racks must all be enabled/readable for this whole-inventory check.
+2. Read the result: **PASSED** reports the loaded record counts, **ACTION REQUIRED** lists consistency findings, and **FAILED** reports why the check could not complete. It reloads and checks saved inventory without repairing it.
+3. Investigate the named Device, address or Rack through the appropriate authorised editor. Duplicate owners, orphaned references and missing networks need deliberate review; do not release another Device's address or run Clean Start to suppress a warning. A basic address is not an out-of-sync managed allocation merely because it has no managed link.
+4. Close the message without changing anything if uncertain and retain the exact finding for your administrator. Running a check or restarting never links basic addresses automatically.
+
+The safety-check screen reports problems; it does not provide an automatic repair procedure. Ask an administrator to investigate using the visible supported editors. A check is not a reason to delete inventory or bypass an address conflict.
 
 ## Common questions
 

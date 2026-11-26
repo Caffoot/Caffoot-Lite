@@ -1,6 +1,6 @@
 # Optional Features, Basic IPv4 And Link To IPAM
 
-> **Draft v2.2 — Unreleased.** These instructions are being reconciled against the 26 November 2026 application baseline, `fdc677920bfc52f48f641b3d6d1344c902a6a9b0` (schema 31). Use the [published v2.1 guides](https://github.com/Caffoot/Caffoot-Lite/tree/c3237114108cad9f7d4e57657b6aed5e0091a5ef/docs/how-tos/features-and-instructions) for the current release. Optional Features and basic-IP linking are v2.2 functionality, not v2.1 instructions. Current desktop illustrations and final acceptance remain outstanding. This is not an installation, upgrade or restore procedure.
+> **Draft v2.2 — Unreleased.** Text and controls have been reconciled against the 26 November 2026 application baseline, `fdc677920bfc52f48f641b3d6d1344c902a6a9b0` (schema 31). Use the [published v2.1 guides](https://github.com/Caffoot/Caffoot-Lite/tree/c3237114108cad9f7d4e57657b6aed5e0091a5ef/docs/how-tos/features-and-instructions) for the current release. Optional Features and basic-IP linking are v2.2 functionality, not v2.1 instructions. Current desktop illustrations and final acceptance remain outstanding. This is not an installation, upgrade or restore procedure.
 
 ## Choose The Features Your Organisation Uses
 
@@ -31,6 +31,21 @@ Open **Settings & Data → Optional Features**. The cards are grouped as follows
 | Additional Features | **Equipment Lifecycle** | Physical Device dates, warranty and replacement warnings and lifespan settings in [Equipment Lifecycle](Equipment-Lifecycle.md) |
 | Additional Features | **IT Assets** | Stock receipts, inventory, readiness checks, equipment issue and return, write-offs and related stock reporting |
 
+### Feature Access And Retained Information
+
+The six switches do not create six new permission roles. Check the appropriate effective grant independently:
+
+| Switch | Access When Enabled | What Turning It Off Preserves |
+| --- | --- | --- |
+| Devices | Devices Read to inspect; Devices Edit for ordinary permitted changes | Canonical Device identity, details, custody/stock references and history; other features do not gain general Device access |
+| IP Address Management | IPAM Read/Edit; related Device edits and explicit linking have their additional requirements | Subnets, VLANs, address notes, allocations and managed/basic distinctions; saved managed Device IPs become protected from editing |
+| Network Racks | Racks Read/Edit; linked Device operations still require Devices enabled and applicable access | Enclosures, accessories, faces/U spans and shelf associations; protected mounted/shelf Device location survives unrelated edits |
+| Suppliers | Suppliers Read/Edit; viewing/associating equipment also respects Devices or IT Assets access and action-specific administrator restrictions | Companies, categories, contacts, locations, notes, Issues and saved equipment/receipt associations |
+| Equipment Lifecycle | Devices Read for permitted physical Device lifecycle information; Devices Edit to change ordinary lifecycle dates; administrator for Lifecycle Settings and manual replacement overrides | Recorded dates, lifespan configuration, warning periods and manual overrides; it has no independent section-permission column |
+| IT Assets | IT Assets Read/Edit; registering/reissuing a Device also requires its relevant Devices rights | Receipts, stock units, movements, readiness, issue/return/write-off records, associations and canonical Device references |
+
+Equipment Lifecycle can be enabled independently, but it does not make hidden Devices readable. Supplier/stock work also does not reveal hidden equipment merely because its own switch is enabled. [Equipment Supplier Integration](Equipment-Supplier-Integration.md) and [Device Stock Registration And Reissue](Device-Stock-Registration-and-Reissue.md) give the precise cross-section procedures.
+
 An available card shows **Enabled** or **Disabled**. A disabled card has an **Enable Feature** switch; an enabled card's switch is labelled **Enabled**. The switch's accessible name identifies the feature being enabled or disabled.
 
 **Staff Members** and **Departments** are core areas, subject to their permissions. They have no Optional Features switch and do not have to be populated. **Settings & Data**, account administration and **My Account** remain available under their respective authorisation rules even if every optional area is off. This does not give ordinary users administrator access. **Service Desk has no separate Optional Features switch.** Technician access requires the relevant Service Desk permission and access to Devices or IT Assets. My Tickets and My Equipment have separate eligibility: a linked active Staff Member and at least one of Devices or IT Assets enabled; they do not confer IT inventory access. See [Service Desk Tickets](Service-Desk-Tickets.md) and [Device Assignments And My Equipment](Device-Assignments-and-My-Equipment.md).
@@ -43,7 +58,7 @@ If none of Devices, IPAM or Network Racks is readable, the Dashboard and Audit T
 2. Find the relevant card, for example **Devices** under **Infrastructure**.
 3. Turn on its **Enable Feature** switch.
 4. Wait for the save to finish. The interface reports **Optional feature setting saved.** and the card displays **Enabled**. There is no separate page-wide Save button. When Equipment Lifecycle is enabled, its card also offers **Lifecycle Settings**; enabling the card alone does not configure warranty or replacement warning periods.
-5. Open the feature from the navigation and check that the intended accounts have the necessary section permissions. Change those permissions separately through **Staff → Permissions** if required.
+5. Open the feature from the navigation and check that the intended accounts have the necessary section permissions. An administrator can change those permissions separately through **Staff → Permissions** if required.
 
 Controls are temporarily unavailable while a setting is being saved. If saving fails, read the error and check the reloaded card state before trying again. A failed request does not justify assuming the feature is enabled.
 
@@ -70,6 +85,12 @@ In the unreleased implementation, a genuinely new installation starts with all o
 | Record Devices without stock management | Enable Devices and leave IT Assets off. The ordinary Add Device route remains available. |
 
 Enabling one area never silently enables another. Some linked operations need both areas, while their independent records remain usable. Import and Clean Start have their own existing safeguards, including the required enabled inventory sections; they are not ways to bypass a disabled feature. Use the relevant maintained procedure before attempting either operation.
+
+### Worked Example: Independent Infrastructure
+
+A fictional training team wants to record printers and enclosures without managing addresses. Enable Devices and Network Racks, leaving IPAM off. Give its inventory editor Devices Edit and Racks Edit through the separate permission workflow. Record an address-free printer and an actual shelf association. Enabling IPAM later will not create subnets or link any basic addresses; an IPAM editor must prepare the networks and a user with both Edit grants must deliberately link a saved basic address.
+
+For a lifecycle review, enable Equipment Lifecycle and use **Lifecycle Settings** to open its administrator configuration. Follow [Equipment Lifecycle](Equipment-Lifecycle.md) for warning periods/lifespans, physical Device dates, manual override permissions and Save/Cancel behaviour. Enabling the switch does not fill missing dates or automatically retire, return or replace equipment. While Lifecycle is off, authorised stock transactions still capture eligible first-service dates; the switch hides lifecycle controls/warnings rather than preventing that provenance from being recorded.
 
 ## Understand Basic And Managed IP Addresses
 
@@ -173,6 +194,8 @@ When Rack information is unavailable, related views may show **Rack information 
 Feature and permission restrictions apply to direct requests as well as visible controls. Hidden stock, Rack and subnet collections are not made available merely by opening a linked Device. A Device's own saved primary address may remain visible as Device information; that does not grant access to the wider IPAM inventory. IPAM-only views also avoid exposing Device-derived names without Device access.
 
 ## Related Guides
+
+- [Devices](Devices.md), [IPAM](IPAM.md) and [Network Racks](Racks.md) — complete infrastructure procedures.
 
 - [Roles, Section Permissions And MFA](Roles-Section-Permissions-and-MFA.md) — account access, overrides and authenticator requirements.
 - [Receive Stock And Stock Inventory](IT-Assets-Stock-Intake.md) — configure and receive equipment with IT Assets enabled.
