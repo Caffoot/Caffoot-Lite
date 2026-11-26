@@ -106,7 +106,35 @@ async function test(){
  await page.locator('#preview-active').selectOption('false');
  await page.locator('#preview-departmentId').selectOption('');
  await page.locator('#preview-jobTitle').fill('Current Engineer');
+ const beforeCancellation=(await (await context.request.get(address+staffPath)).json()).staffMember;
+ let employmentPosts=0;
+ const countEmploymentPosts=request=>{if(request.url()===address+staffPath&&request.method()==='POST')employmentPosts++;};
+ page.on('request',countEmploymentPosts);
+ const cancelledConfirmation=new Promise(resolve=>page.once('dialog',async dialog=>{
+  assert.equal(dialog.type(),'confirm');
+  assert.match(dialog.message(),/^Mark As Left Company\?/);
+  assert.match(dialog.message(),/linked login will be disabled and active sessions ended/);
+  assert.match(dialog.message(),/Equipment, tickets and history are retained/);
+  await dialog.dismiss();resolve();
+ }));
  await page.locator('#staff-record-form [type="submit"]').click();
+ await cancelledConfirmation;
+ assert.ok(await page.locator('#staff-record-form').isVisible());
+ assert.equal(await page.locator('#preview-active').inputValue(),'false');
+ assert.equal(await page.locator('#preview-jobTitle').inputValue(),'Current Engineer');
+ assert.deepEqual((await (await context.request.get(address+staffPath)).json()).staffMember,beforeCancellation);
+ assert.equal(employmentPosts,0,'Cancelling offboarding must not submit a Staff change');
+ const acceptedConfirmation=new Promise(resolve=>page.once('dialog',async dialog=>{
+  assert.equal(dialog.type(),'confirm');
+  assert.match(dialog.message(),/^Mark As Left Company\?/);
+  await dialog.accept();resolve();
+ }));
+ const employmentSave=page.waitForResponse(response=>response.url()===address+staffPath&&response.request().method()==='POST');
+ await page.locator('#staff-record-form [type="submit"]').click();
+ await acceptedConfirmation;
+ assert.equal((await employmentSave).status(),200);
+ page.off('request',countEmploymentPosts);
+ assert.equal(employmentPosts,1,'Accepting offboarding must submit exactly one Staff change');
  await page.getByRole('heading',{name:'Staff Details'}).waitFor();
  assert.equal((await (await context.request.get(address+'/api/staff-members/'+person.id)).json()).staffMember.active,false);
  await otherEditor.locator('#preview-location').fill('Unsaved location');
@@ -157,7 +185,7 @@ async function test(){
  await otherEditor.getByRole('heading',{name:'Staff Details'}).waitFor();
  await otherEditor.close();
  await page.evaluate(()=>caffootSetTheme('light'));
- for(const action of ['Reactivate','Mark Inactive']){
+ for(const action of ['Reactivate','Mark As Left Company']){
   await saveCurrentStaff({telephone:action==='Reactivate'?'+44 123':'+44 456'});
   responsePromise=page.waitForResponse(r=>r.url()===address+staffPath&&r.request().method()==='POST');
   page.once('dialog',dialog=>dialog.accept());
@@ -172,7 +200,7 @@ async function test(){
   page.once('dialog',dialog=>dialog.accept());
   await page.getByRole('button',{name:action,exact:true}).click();
   assert.equal((await responsePromise).status(),200);
-  await page.waitForFunction(label=>document.querySelector('[data-staff-action="staff-status"]')?.textContent===label,action==='Reactivate'?'Mark Inactive':'Reactivate');
+  await page.waitForFunction(label=>document.querySelector('[data-staff-action="staff-status"]')?.textContent===label,action==='Reactivate'?'Mark As Left Company':'Reactivate');
  }
  await page.locator('[data-staff-action="staff-back"]').click();
  await page.locator('#staff-directory-search').fill('Production');

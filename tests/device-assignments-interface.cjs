@@ -182,7 +182,7 @@ async function test(){
      headingRightInset:parseFloat(getComputedStyle(heading).paddingRight)+parseFloat(getComputedStyle(card).borderRightWidth)};
    }));
    for(const item of notice){
-    assert.equal(item.text,'Inactive Staff Member — outstanding assignments are retained. New assignments are unavailable.');
+    assert.equal(item.text,'Staff Member Has Left Company — outstanding assignments are retained. New assignments are unavailable.');
     assert.ok(Math.abs(item.left-item.headingLeft)<1,'Inactive notice must align with its heading');
     assert.ok(Math.abs(item.rightInset-item.headingRightInset)<1,'Inactive notice must retain the matching right inset');
    }
@@ -218,7 +218,7 @@ async function test(){
   await restrictedPage.locator('.equipment-staff [data-equipment-action="view-device"]').first().waitFor();
   assert.equal(await restrictedPage.locator('[data-staff-action="staff-status"],[data-staff-action="staff-edit"],[data-staff-action="manage-login"],[data-equipment-action="assign-staff"]').count(),0);
   assert.equal(await restrictedPage.locator('.staff-live').getByRole('heading',{name:'Caffoot Login',exact:true}).count(),0);
-  assert.equal(await restrictedPage.locator('.staff-live .section-heading .badge').textContent(),active?'Active':'Inactive');
+  assert.equal(await restrictedPage.locator('.staff-live .section-heading .badge').textContent(),active?'Active':'Left Company');
   for(const width of [1440,390]){
    await restrictedPage.setViewportSize({width,height:width===390?844:950});
    for(const theme of ['light','dark']){
@@ -229,10 +229,10 @@ async function test(){
  }
  await restrictedStaff(true);
  // Cancel preserves the Staff status and the existing confirmation wording.
- page.once('dialog',dialog=>{assert.match(dialog.message(),/^Mark Inactive Alex Morgan\?/);void dialog.dismiss();});
+ page.once('dialog',dialog=>{assert.match(dialog.message(),/^Mark As Left Company Alex Morgan\?/);void dialog.dismiss();});
  await page.locator('[data-staff-action="staff-status"]').click();
  assert.equal((await (await context.request.get(address+'/api/staff-members/'+person.id)).json()).staffMember.active,true);
- page.once('dialog',dialog=>{assert.match(dialog.message(),/^Mark Inactive Alex Morgan\?/);void dialog.accept();});
+ page.once('dialog',dialog=>{assert.match(dialog.message(),/^Mark As Left Company Alex Morgan\?/);void dialog.accept();});
  await page.locator('[data-staff-action="staff-status"]').click();
  await page.locator('[data-staff-action="staff-status"]').filter({hasText:'Reactivate'}).waitFor();
  for(const width of [1440,390]){
@@ -244,10 +244,11 @@ async function test(){
  await restrictedStaff(false);
  page.once('dialog',dialog=>{assert.match(dialog.message(),/^Reactivate Alex Morgan\?/);void dialog.accept();});
  await page.locator('[data-staff-action="staff-status"]').click();
- await page.locator('[data-staff-action="staff-status"]').filter({hasText:'Mark Inactive'}).waitFor();
+ await page.locator('[data-staff-action="staff-status"]').filter({hasText:'Mark As Left Company'}).waitFor();
  await page.locator('[data-equipment-action="assign-staff"]').waitFor();
  assert.deepEqual(await (await context.request.get(address+'/api/equipment/assignments?staffId='+person.id)).json(),assignmentsBefore);
- assert.deepEqual((await (await context.request.get(address+'/api/users')).json()).users.find(user=>user.id===person.accountId),accountBefore);
+ assert.deepEqual((await (await context.request.get(address+'/api/users')).json()).users.find(user=>user.id===person.accountId),{...accountBefore,active:false,accessDetails:{...accountBefore.accessDetails,active:false}});
+ await save('/api/users/active',{userId:person.accountId,active:true});
  const readerSession=await (await restricted.request.get(address+'/api/session')).json();
  assert.equal(readerSession.mfa_enrolled,true);
  assert.equal((await restricted.request.post(address+'/api/staff-members/'+person.id,{headers:{Origin:address,'X-CSRF-Token':readerSession.csrf_token},data:{active:false}})).status(),403);
@@ -261,6 +262,7 @@ async function test(){
  await page.locator('#staff-record-form [data-staff-action="staff-back"]').click();
  await page.locator(`[data-staff-action="staff-details"][data-id="${person.id}"]`).click();
  await page.locator('[data-staff-action="manage-login"]').click();
+ await page.locator('[data-account-tab="permissions"]').click();
  await page.locator('[data-next-user-permission][data-section="Devices"]').waitFor();
  await page.locator('[data-action="users-close-editor"]').first().click();
  console.log('Staff status, restricted views, editing and Manage Login preservation passed');
@@ -350,19 +352,37 @@ async function test(){
   }
  }
  // A current Department move removes shared visibility on the next request.
+ const personalBeforeRemoval=(await (await employee.request.get(address+'/api/my-equipment')).json()).assignedToMe;
  const currentPerson=(await (await context.request.get(address+'/api/staff-members/'+person.id)).json()).staffMember;
- await save('/api/staff-members/'+person.id,{departmentId:null,active:false,revision:currentPerson.revision});
+ await save('/api/staff-members/'+person.id,{departmentId:null,revision:currentPerson.revision});
  await employeePage.locator('#sidebar [data-tab="equipment"]').click();
  await employeePage.getByText('No shared equipment is currently available for your Department.').waitFor();
- await employeePage.getByText('No equipment is currently assigned to you.').waitFor();
- assert.equal(await employeePage.locator('[data-personal-equipment] tbody tr').count(),0);
+ assert.equal(await employeePage.locator('[data-personal-equipment] tbody tr').count(),2);
+ const afterRemoval=await employee.request.get(address+'/api/my-equipment');
+ assert.equal(afterRemoval.status(),200);
+ const equipmentAfterRemoval=await afterRemoval.json();
+ assert.deepEqual(equipmentAfterRemoval.assignedToMe,personalBeforeRemoval);
+ assert.deepEqual(equipmentAfterRemoval.sharedWithMyDepartment,[]);
+ assert.equal((await employee.request.get(address+'/api/session')).status(),200,'Department removal must retain the employee session');
+ const removedPerson=(await (await context.request.get(address+'/api/staff-members/'+person.id)).json()).staffMember;
+ assert.equal(removedPerson.active,true);
+ assert.equal((await (await context.request.get(address+'/api/users')).json()).users.find(user=>user.id===person.accountId).active,true);
+ // Offboarding is a separate operation: custody remains, but all login access ends.
+ const custodyBefore=(await (await context.request.get(address+'/api/equipment/assignments?staffId='+person.id)).json());
+ await save('/api/staff-members/'+person.id,{active:false,revision:removedPerson.revision});
+ assert.equal((await employee.request.get(address+'/api/session')).status(),401,'Left Company must revoke the existing session');
+ assert.equal((await employee.request.get(address+'/api/my-equipment')).status(),401);
+ assert.equal((await (await context.request.get(address+'/api/users')).json()).users.find(user=>user.id===person.accountId).active,false);
+ const custodyAfter=(await (await context.request.get(address+'/api/equipment/assignments?staffId='+person.id)).json());
+ assert.deepEqual(custodyAfter.current,custodyBefore.current);
+ assert.deepEqual(custodyAfter.history,custodyBefore.history);
+ const disabledLogin=await employee.request.post(address+'/api/login',{headers:{Origin:address},data:{username:'alex.morgan',password:'Fictional-Pass-2026!'}});
+ assert.equal(disabledLogin.status(),401,'An offboarded employee must not sign in again');
  await employeePage.goto(address+'/account');
- await employeePage.locator('#app[aria-busy="false"]').waitFor();
- assert.equal(await employeePage.getByRole('button',{name:'Open My Equipment',exact:true}).count(),0,
-  'The equipment shortcut is hidden when the Staff link is no longer active');
+ await employeePage.waitForURL('**/setup#session-ended');
  await employee.close();
  assert.deepEqual(errors,[]);
  fs.writeFileSync(path.join(output,'results.json'),JSON.stringify({passed:true,errors,measurements:report},null,2));
- console.log('PASS: Staff status placement/confirmation/reactivation, administrator and restricted views, unchanged assignments/login, canonical allocation/history, private personal/shared sections, My Account, 1440/390px light/dark and modal keyboard containment.');
+ console.log('PASS: Staff status placement/confirmation/reactivation, administrator and restricted views, retained custody, Department-only visibility removal, offboarding login/session revocation, canonical allocation/history, private personal/shared sections, My Account, 1440/390px light/dark and modal keyboard containment.');
 }
 (async()=>{try{await test();}finally{if(browser)await browser.close();if(server){server.kill('SIGTERM');if(server.exitCode===null)await new Promise(r=>server.once('exit',r));}}})().catch(e=>{console.error(e);process.exitCode=1});

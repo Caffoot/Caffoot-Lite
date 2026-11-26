@@ -511,3 +511,24 @@ html.dark #account-mfa-removal-form .btn-primary{background:var(--orange,#ed8532
 .equipment-dialog #stock-reissue-form[data-direct-handover="true"] .preview-details-actions .btn{min-height:42px;padding:10px 18px}
 .equipment-dialog #stock-reissue-form[data-direct-handover="true"] > .assignment-modal-actions{display:flex;justify-content:flex-end;align-items:center;gap:16px;flex-wrap:wrap;margin-top:22px;padding:18px 0 0;border-top:1px solid var(--line)}
 .equipment-dialog #stock-reissue-form[data-direct-handover="true"] > .assignment-modal-actions .btn{min-height:42px;padding:10px 18px}
+
+/* Keep account navigation and dismissal visible while the selected content scrolls. */
+#main-content .account-management-modal .modal{width:min(980px,100%);max-height:calc(100dvh - 32px)}
+.account-management-modal .modal-head,.account-management-tabs,.account-management-footer{flex:none}
+.account-management-modal .modal-head{align-items:flex-start}
+.account-management-modal .manage-meta{margin:12px 0 0;gap:6px}
+.account-management-tabs{margin:0;padding:0 24px;gap:24px}
+.account-management-tabs .tab{padding-top:12px;padding-bottom:12px}
+.account-management-content{flex:1;overscroll-behavior:contain}
+.account-management-content [role="tabpanel"][hidden]{display:none}
+.account-management-footer{margin:0;padding:16px 24px;border-top:1px solid var(--theme-border,#e0e8ee)}
+.account-management-modal .profile-modal-grid{align-items:start}
+.account-management-modal .profile-modal-grid .field{align-content:start}
+@media(max-width:600px){
+ #main-content .account-management-modal{padding:10px}
+ #main-content .account-management-modal .modal{max-height:calc(100dvh - 20px)}
+ .account-management-modal .modal-head{padding:16px}
+ .account-management-tabs{padding:0 16px;gap:16px}
+ .account-management-footer{padding:12px 16px;gap:12px}
+ .account-management-modal .manage-meta .badge{white-space:normal}
+}

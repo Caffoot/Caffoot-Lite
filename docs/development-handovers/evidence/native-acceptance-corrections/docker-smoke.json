@@ -1,0 +1,8 @@
+{
+  "revision": "bf5a016039b9812c0825644b47c6b619bbad653e",
+  "imageId": "sha256:bb1a5c4f7a477cfa2e2301d68d00270b06e6bdf1447ce913e19fcbe8d57f374b",
+  "user": "10001:10001",
+  "health": "{\"status\": \"ok\"}",
+  "bundledSource": "Bundled source hashes match the pinned checkout",
+  "scope": "Disposable AMD64 local container; no published image, Compose/ARM64/production upgrade claim"
+}

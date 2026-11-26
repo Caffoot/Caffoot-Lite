@@ -290,7 +290,7 @@ class StaffDirectoryHttpTests(unittest.TestCase):
         self.assertEqual(response, {'staffMembers': [expected]})
         self.assertEqual(cache, 'no-store')
         self.assertEqual(set(expected), {'id', 'firstName', 'lastName', 'email', 'jobTitle',
-            'telephone', 'location', 'departmentId', 'active', 'revision'})
+            'telephone', 'location', 'departmentId', 'active', 'revision', 'canChangeEmploymentStatus'})
         for query in ('Unstaffed', 'account-4', 'PRIVATE-MFA-SECRET', 'private-hash'):
             self.assertEqual(self.request('/api/staff-members?' + urlencode({'query': query}), actor=3)[1], {'staffMembers': []})
         for path in ('/api/departments', '/api/departments/dept', '/api/departments?query=Production'):
@@ -363,7 +363,7 @@ class StaffDirectoryHttpTests(unittest.TestCase):
         original = self.request(path)[1]['staffMember']
         editor = self.request(path, actor=2)[1]['staffMember']
         self.assertEqual(original['revision'], editor['revision'])
-        status, response, _ = self.request(path, method='POST', actor=2,
+        status, response, _ = self.request(path, method='POST', actor=1,
             payload=dict(departmentId='dept', active=False, jobTitle='New title', revision=editor['revision']))
         self.assertEqual(status, 200, response)
         with sqlite3.connect(self.path) as db:
@@ -386,9 +386,11 @@ class StaffDirectoryHttpTests(unittest.TestCase):
         self.assertEqual((refreshed['departmentId'], refreshed['active'], refreshed['jobTitle']), ('dept', False, 'New title'))
         status, response, _ = self.request(path, method='POST', actor=2,
             payload=dict(active=True, revision=refreshed['revision']))
+        self.assertEqual(status, 403, response)
+        status, response, _ = self.request(path, method='POST', actor=1,
+            payload=dict(active=True, revision=refreshed['revision']))
         self.assertEqual(status, 200, response)
         self.assertTrue(response['staffMember']['active'])
-        self.assertNotIn('accountId', response['staffMember'])
 
     def test_revision_validation_keeps_authentication_and_permission_guards(self):
         path = '/api/staff-members/person'
@@ -446,5 +448,27 @@ class StaffDirectoryHttpTests(unittest.TestCase):
             self.assertEqual(db.execute('SELECT record_json FROM inventory_change_history ORDER BY id LIMIT 1').fetchone()[0], event)
         status, response, _ = self.request(path, method='POST', actor=2,
             payload=dict(active=False, revision=updated['revision']))
+        self.assertEqual(status, 403, response)
+        status, response, _ = self.request(path, method='POST', actor=1,
+            payload=dict(active=False, revision=updated['revision']))
         self.assertEqual(status, 200, response)
         self.assertFalse(response['staffMember']['active'])
+
+    def test_linked_offboarding_revokes_http_session_and_cannot_be_bypassed(self):
+        path = '/api/staff-members/person'
+        staff = self.request(path)[1]['staffMember']
+        self.assertEqual(self.request('/api/session', actor=4)[0], 200)
+        self.assertEqual(self.request(path, method='POST', actor=2,
+            payload=dict(active=False, revision=staff['revision']))[0], 403)
+        status, body, _ = self.request(path, method='POST',
+            payload=dict(active=False, revision=staff['revision']))
+        self.assertEqual(status, 200, body)
+        self.assertEqual(self.request('/api/session', actor=4)[0], 401)
+        self.assertEqual(self.request('/api/users/active', method='POST',
+            payload=dict(userId=4, active=True))[0], 400)
+        current = self.request(path)[1]['staffMember']
+        self.assertEqual(self.request(path, method='POST',
+            payload=dict(active=True, revision=current['revision']))[0], 200)
+        self.assertEqual(self.request('/api/session', actor=4)[0], 401)
+        with sqlite3.connect(self.path) as db:
+            self.assertEqual(db.execute('SELECT active FROM accounts WHERE id=4').fetchone(), (0,))

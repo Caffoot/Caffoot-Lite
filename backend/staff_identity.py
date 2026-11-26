@@ -62,10 +62,10 @@ def link_account_staff(connection, account_id, details=None, *, staff_id=None):
         raise RuntimeError("Account linking requires an active transaction")
     if staff_id is not None:
         updated = connection.execute(
-            'UPDATE staff_members SET account_id=? WHERE id=? AND account_id IS NULL',
+            'UPDATE staff_members SET account_id=? WHERE id=? AND account_id IS NULL AND active=1',
             (account_id, staff_id))
         if updated.rowcount != 1:
-            raise ValueError("Staff Member is missing or already linked")
+            raise ValueError("Staff Member is missing, has left the company or is already linked")
         return staff_id
     details = details or {}
     return connection.execute(

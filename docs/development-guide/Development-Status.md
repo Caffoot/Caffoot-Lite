@@ -1,5 +1,11 @@
 # Published And Development Versions
 
+## Native Acceptance Correction Review — 26 November 2026
+
+The authoritative starting checkpoint is `milestone-1` at `eff18a7acc2ec78e251562882c41af154bd929ed`, schema 31. The five approved native corrections are implemented on a dedicated correction branch; application source is `bf5a016039b9812c0825644b47c6b619bbad653e`. Schema remains 31. [Changes, tests, screenshot provenance and delivery status](../development-handovers/evidence/native-acceptance-corrections/README.md).
+
+Focused local development verification passed. Independent review and product owner visual acceptance remain pending; keep [PR #470](https://github.com/Caffoot/Caffoot-Lite/pull/470) in draft. Native acceptance is paused after Test 69, with Test 70 next. Published v2.1, production and release requirements under #366 and the final comprehensive audit under #443 are unchanged. Older dated checkpoints below are retained as historical evidence.
+
 ## Current Integration — 24 November 2026
 
 Caffoot Lite **v2.1 remains the published release**, at tagged source `c3237114108cad9f7d4e57657b6aed5e0091a5ef` (schema 10). Use the [published user guides](../how-tos/features-and-instructions/README.md) and [installation instructions](../../INSTALLATION.md) for that release.

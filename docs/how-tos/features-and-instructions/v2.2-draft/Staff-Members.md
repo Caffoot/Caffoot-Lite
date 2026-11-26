@@ -14,7 +14,7 @@ Linked records share first name, surname and email after any saved differences h
 
 ## Before You Start
 
-- **Staff Members Read** permits directory viewing. **Staff Members Edit** permits adding people, changing their details and changing Staff status.
+- **Staff Members Read** permits directory viewing. **Staff Members Edit** permits adding people and managing employment details. It permits employment status changes for people without linked logins. Changing linked Staff status also requires administrator authority.
 - Staff Members and Departments are core sections, subject to permissions. They do not depend on the optional IT Assets switch and need not be populated to use Devices or IPAM.
 - Creating a login, reviewing individual permissions or resolving linked profile differences requires an active administrator who has enrolled in MFA. Creating or resolving a difference from the Staff form also requires Staff Members Edit. A directory editor can change shared names and unlinked contact emails. Use an administrator or the account owner’s My Account for a linked email change.
 - Devices and IT Assets have independent rights and switches. Read access shows the corresponding equipment on Staff Details; Edit permits its authorised actions. See [Roles, Section Permissions And MFA](Roles-Section-Permissions-and-MFA.md).
@@ -56,7 +56,7 @@ Collect known work details before starting. Do not enter passwords, recovery cod
 | Job Title | Optional description such as Service Coordinator. It grants no security role. |
 | Telephone Number | Optional work contact number. |
 | Location | Optional directory location. It does not move assigned Devices or change their Location field. |
-| Staff Status | The person's directory status, independently of any login's active/disabled state. |
+| Staff Status | Active or Left Company. Left Company disables a linked login; reactivation leaves it disabled. |
 
 **Cancel** or **Back To Staff Members** leaves the form without saving. If validation rejects a save, correct the displayed problem and try again. A failed save does not leave a partial Staff record.
 
@@ -80,7 +80,7 @@ If **This username is already in use. Please choose another username.** appears 
 
 *The saved username `taylor.cole` conflicts with `TAYLOR.COLE`. The Staff details remain in the form.* [Capture variants and provenance](screenshots/stage-6-6-batch-1/README.md)
 
-The **Caffoot Login** card shows **Username**, **Account Status**, **Authenticator** and **Assigned Roles**. Select **Manage Permissions** just below Assigned Roles to open the account dialogue. It displays the read-only **Sign-in Username**. Use it to review permissions or change the account’s status, role memberships and individual overrides. Close it with **Close**, **Done** or Escape to return to the same Staff Details. See the [account review procedure](Roles-Section-Permissions-and-MFA.md#review-an-account).
+The **Caffoot Login** card shows **Username**, **Account Status**, **Authenticator** and **Assigned Roles**. Select **Manage Permissions** just below Assigned Roles to open the account dialogue. Its four tabs are **Personal Details**, **Roles**, **Permissions** and **Account Controls**. Personal Details displays the read-only **Sign-in Username**. Account Controls brings together employment status, login status and the existing security controls. Switching tabs preserves unsaved personal details; use **Save Personal Details** to save them. The header, tabs and **Done** stay visible while the selected content scrolls. Close it with **Close**, **Done** or Escape to return to the same Staff Details. See the [account review procedure](Roles-Section-Permissions-and-MFA.md#review-an-account).
 
 ![Staff Details in desktop light mode. The Caffoot Login card shows the username, account status, authenticator, assigned roles and Manage Permissions.](screenshots/staff-administration/staff-details-light-1440.png)
 
@@ -127,29 +127,34 @@ For example, the Staff record for fictional Taylor Cole might still show Taylor 
 
 An existing archived Department membership can be retained during an edit. An archived Department is unavailable for a new membership.
 
-## Mark Inactive Or Reactivate
+<a id="mark-inactive-or-reactivate"></a>
+## Mark As Left Company Or Reactivate
 
-Staff status and account status are separate. Inactivating a leaver neither disables their login nor records equipment physically coming back.
+Use **Left Company** when someone has left, rather than to record a temporary absence. Staff Members Edit permits employment details management and status changes for people without linked logins. A linked person's employment status requires both Staff Members Edit and administrator authority. A directory editor can still save permitted employment details, but the linked status control is unavailable.
 
-1. Open **Staff Details** and review **Assigned Equipment** and **Assignment History**, with the necessary equipment access.
-2. Choose the orange outlined **Mark Inactive** button, read the prompt and confirm. Cancelling the prompt makes no change.
-3. Check the **Inactive** badge. The person is excluded from new equipment-recipient choices; outstanding assignments and original dates remain visible to authorised IT users.
-4. Resolve equipment through its actual [return/write-off](IT-Assets-Issue-Return-and-Write-Off.md) or [handover](Associated-Equipment.md#reassign-a-workstation-directly) workflow.
-5. If login access should end, an authorised administrator must open **Staff Details → Manage Permissions** and select **Disable** under **Account controls**.
+1. Open **Staff Details**, confirm the person and review **Assigned Equipment** and **Assignment History** with the necessary equipment access.
+2. Choose **Mark As Left Company**, or, for a linked login, open **Manage Permissions → Account Controls** and use the same action under **Employment Status**.
+3. Read the confirmation. Confirming sets **Left Company**, disables any linked login and revokes its existing sessions and outstanding email verification, recovery and temporary-password change proofs together. Cancelling makes no change. The server rejects unauthorised or stale changes without saving part of the operation.
+4. Check the **Left Company** status. A linked login shows **Disabled**. Existing assignments, equipment custody, tickets and historical records are retained; no physical return or stock increase is invented. New equipment assignments to this person are rejected.
+5. Record the equipment actually returned through the existing [return/write-off](IT-Assets-Issue-Return-and-Write-Off.md) or [handover](Associated-Equipment.md#reassign-a-workstation-directly) workflow. Authorised IT retains the relevant history.
 
-To restore eligibility, open the inactive person's Staff Details, choose the solid orange **Reactivate** button and confirm. This retains history and does not enable a disabled login. The Staff form's **Staff Status** also changes directory status when saved. The directory offers no permanent-delete action for Staff.
+To restore employment eligibility, select **Reactivate** and confirm. Reactivation preserves history and leaves the login disabled. An administrator must then explicitly choose **Enable Login** in **Manage Permissions → Account Controls** if sign-in is appropriate. The server prevents enabling a login or creating a new linked login while the Staff Member remains Left Company. Add/Edit Staff uses the same server policy; changing that form does not bypass it. Staff records have no permanent-delete action.
 
-![Staff Details with an outlined orange Mark Inactive button for the active Staff Member.](../../../development-handovers/evidence/stage-6-6-batch-3/screenshots/staff-1440-light.png)
+You cannot mark your own signed-in administrator account as Left Company, and the last active administrator cannot be disabled. If a safeguard rejects the action, keep the records intact and ask the product owner to resolve the administrator arrangements; do not work around the rejection.
 
-*Mark Inactive applies to the Staff record. Account controls are in Manage Permissions.* [Capture provenance](../../../development-handovers/evidence/stage-6-6-batch-3/README.md#capture-provenance)
+![Manage Permissions Account Controls showing Employment Status and Disable Login in desktop light mode.](../../../development-handovers/evidence/native-acceptance-corrections/screenshots/permissions-controls-1440-light.png)
 
-For example, fictional Alex leaves with a laptop and two adapters still recorded against them. Marking Alex Inactive leaves all three outstanding. IT records items actually returned, resolves any missing item through the appropriate Write Off procedure, and separately disables Alex's account. No stock balance increases merely because Staff status changes.
+*The same protected employment action is available from Staff Details. [Narrow dark-mode view](../../../development-handovers/evidence/native-acceptance-corrections/screenshots/permissions-controls-390-dark.png) · [Capture provenance](../../../development-handovers/evidence/native-acceptance-corrections/README.md)*
+
+For example, fictional Alex leaves with a laptop and two adapters recorded against them. Mark As Left Company disables Alex's linked login and ends its sessions, while all three items remain outstanding. IT records only the items physically returned. If Alex returns to the company, Reactivate restores assignment eligibility; the administrator reviews access before explicitly enabling the login.
+
+During an authorised review upgrade, existing Left Company/inactive Staff with enabled logins are reconciled to disabled logins with session and proof revocation. If this would disable every active administrator, startup stops and rolls back the transaction for product owner approval. This is a tested data rule, not an approved production upgrade procedure. See [upgrade safeguards](Legacy-Import-and-Docker-Upgrade.md#left-company-linked-login-reconciliation).
 
 ## Work With Equipment
 
 **Assigned Equipment** shows Devices and outstanding IT Assets assigned directly to the person, according to your access. **Assignment History** retains the original relationships and responsible accounts.
 
-With Devices Edit, **Assign Equipment** records an eligible initial Device allocation to an active person. With IT Assets Edit, **Issue Equipment** opens stock issue for them. **Return Equipment** beside outstanding stock remains available for inactive holders. Device returns require both relevant equipment permissions. Follow [Device Assignments And My Equipment](Device-Assignments-and-My-Equipment.md) and the linked stock guides for the full checks.
+With Devices Edit, **Assign Equipment** records an eligible initial Device allocation to an active person. With IT Assets Edit, **Issue Equipment** opens stock issue for them. **Return Equipment** beside outstanding stock remains available for Staff who have left. Device returns require both relevant equipment permissions. Follow [Device Assignments And My Equipment](Device-Assignments-and-My-Equipment.md) and the linked stock guides for the full checks.
 
 A linked person opens **My Equipment** for limited personal/shared information without gaining general inventory rights. Changing their Department changes Department-shared visibility on the next request; it does not move personally assigned equipment or reassign the Department's Devices.
 
@@ -163,7 +168,7 @@ A linked person opens **My Equipment** for limited personal/shared information w
 | The initial password is rejected | Follow the password rules, match both entries and check that the username is unused. Retry on the same Staff record. |
 | A Department is missing | Check whether it is archived; do not create a duplicate Department. |
 | Equipment is absent | Check independent Devices/IT Assets permissions and switches, then the actual holder. A restricted panel does not prove no equipment exists. |
-| A leaver can still sign in | Ask an administrator to review account status. Staff inactivation does not disable the login. |
+| A leaver can still sign in | Check the saved employment and login statuses with an administrator. Left Company disables a linked login; a rejected change leaves both records unchanged. |
 | The connection fails during save | Reopen the record to establish what was saved before retrying. A missing success message does not prove failure. |
 
 ## Related Guides And Acceptance Items

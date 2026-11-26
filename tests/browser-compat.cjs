@@ -30,6 +30,7 @@ async function state(page){
   });
 }
 async function confirmPermission(page,userId,section,level){
+  await page.locator('[data-account-tab="permissions"]').click();
   // Prepare test accounts through the confirmed API while the approved Users
   // interface waits for its separately authorised integration.
   await page.evaluate(async action=>{
@@ -690,7 +691,7 @@ async function run(){
   assert.equal(await page.locator('#page-title').textContent(),'Permissions');
   await openStaffAccount(page,(await (await page.request.get(address+'/api/session')).json()).username);
   const ownerWorkspace=page.locator('.users-management-modal .modal');
-  assert.equal(await ownerWorkspace.evaluate(el=>Math.round(el.getBoundingClientRect().width)),710,
+  assert.equal(await ownerWorkspace.evaluate(el=>Math.round(el.getBoundingClientRect().width)),980,
     'Owner workspace must use the approved full-width layout');
   assert.equal(await ownerWorkspace.locator('.profile-modal-grid .input:disabled').count(),4,
     'Owner personal details must remain protected in the approved workspace');
@@ -2238,7 +2239,7 @@ async function run(){
     return (await r.json()).users.find(u=>u.username==='viewer')?.id;
   });
   assert.ok(Number.isInteger(viewerId));
-  await openStaffAccount(page,'viewer');
+  await openStaffAccount(page,'viewer','permissions');
   const blockedEdit=page.locator('[data-next-user-permission][data-user-id="'+viewerId+'"][data-section="Devices"]');
   await blockedEdit.selectOption('edit');
   await page.locator('[data-role-command="confirm"]').waitFor();

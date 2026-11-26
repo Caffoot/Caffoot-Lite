@@ -723,6 +723,12 @@ function hierarchyValidateTypes(subnets) {
             id=recordedId(change.after?.['Account ID']);
             if(id)recordKind='Account';
           }
+          if(!name&&kind==='Settings'&&reason==='Optional feature setting changed'){
+            const featureNames={it_assets:'IT Assets',equipment_lifecycle:'Equipment Lifecycle',suppliers:'Suppliers'};
+            if(Object.hasOwn(featureNames,originalLabel)){
+              name=featureNames[originalLabel];source='Friendly feature name for recorded identifier';
+            }
+          }
           if(!name&&id===originalLabel&&['Staff Member','Department','Device','Stock Item','Stock Unit','Stock Movement'].includes(recordKind))source='Historical name not recorded';
           // Only server-generated directory IDs and non-reused account IDs
           // are grouped here. Reusable inventory IDs require lifetime proof.
@@ -11123,7 +11129,9 @@ void (async () => {
       const administratorNote=editingUser.isAdmin?'<div class="note-row" style="margin-bottom:13px">Administrators retain configured access to all inventory sections. Disabled features remain unavailable. Their per-section permissions are not individually configured.</div>':'';
       const selfProtectionWarning=own?'<div class="modal-warning">You cannot disable, demote or delete your own signed-in administrator account. These controls are intentionally unavailable.</div>':'';
       const mfaWarning=!own&&editingUser.accessDetails.mfaPending?'<div class="modal-warning">MFA enrolment is required before wider Read/Edit access or enabled additional roles can be used. The user will be guided through enrolment before normal sign-in.</div>':'';
-      const activeControl=renderInterfaceTemplate("users/source-account-status-control",[editingUser.active?'Disable account':'Enable account',editingUser.active?'Prevent this person signing in until the account is enabled again.':'Allow this person to sign in again.',operation('active',editingUser.active?'Disable':'Enable'),editingUser.active?'active':'disabled']);
+      const staffRecord=window.caffootStaffDirectory.getStaffMember(staffAccountEditor?.staffId);
+      const employmentControl=staffRecord?window.caffootStaffDirectory.employmentControl(staffRecord,own):'';
+      const activeControl=renderInterfaceTemplate("users/source-account-status-control",[editingUser.active?'Disable Login':'Enable Login',editingUser.active?'Prevent this person signing in until an administrator enables the login again.':staffRecord?.active===false?'Reactivate this Staff Member before enabling their login.':'Allow this person to sign in again.',operation('active',editingUser.active?'Disable Login':'Enable Login',!editingUser.active&&staffRecord?.active===false),editingUser.active?'active':'disabled']);
       const promotionBlocked=editingUser.mustChangePassword||!enrolled||!verified;
       const promotionHelp=editingUser.isAdmin?(own?'You cannot demote your own signed-in administrator account.':'Return this account to standard-user status.'):
         editingUser.mustChangePassword?'The user must change their temporary password before becoming an administrator.':
@@ -11140,7 +11148,7 @@ void (async () => {
       const resetControl=renderInterfaceTemplate('users/source-account-control',[
         'Reset Password',resetHelp,operation('reset-password','Reset Password',editingUser.isAdmin),'',
       ])+'<p class="account-reset-result" role="status" data-password-reset-result hidden></p>';
-      return renderInterfaceTemplate("users/account-management-dialog",[own?'Your administrator account':'Manage '+escapeHtml(editingUser.username),own?'Self-protection prevents account changes here. Use My Account for your own security settings.':'Review access and account controls for this user.',meta,profileHTML+renderRoleMemberships(editingUser,own),administratorNote,'<p class="formhint">Permissions from assigned roles can be customised for each user. Select <strong>Inherit</strong> to use the permissions provided by their roles. Select <strong>No Access</strong>, <strong>Read</strong> or <strong>Edit</strong> to set an individual override. Individual overrides take precedence, including when a role’s permissions change.</p>'+renderInterfaceTemplate("users/access-summary",[permissionControls]),selfProtectionWarning,activeControl,administratorControl,resetControl+renderInterfaceTemplate("users/source-delete-control",[operation('delete','Delete User')]),mfaWarning]);
+      return renderInterfaceTemplate("users/account-management-dialog",[own?'Your administrator account':'Manage '+escapeHtml(editingUser.username),own?'Self-protection prevents account changes here. Use My Account for your own security settings.':'Review access and account controls for this user.',meta,profileHTML,administratorNote,'<p class="formhint">Permissions from assigned roles can be customised for each user. Select <strong>Inherit</strong> to use the permissions provided by their roles. Select <strong>No Access</strong>, <strong>Read</strong> or <strong>Edit</strong> to set an individual override. Individual overrides take precedence, including when a role’s permissions change.</p>'+renderInterfaceTemplate("users/access-summary",[permissionControls]),selfProtectionWarning,activeControl,administratorControl,resetControl+renderInterfaceTemplate("users/source-delete-control",[operation('delete','Delete User')]),mfaWarning,renderRoleMemberships(editingUser,own),employmentControl]);
   }
   function openStaffPasswordReset(user){
     const body=renderInterfaceTemplate('users/password-reset-form',[user.active?'':'<br>This account will remain disabled.']);
@@ -11186,13 +11194,43 @@ void (async () => {
     });
     password.focus();
   }
-  function updateUserWorkspace(){
+  function selectAccountTab(tab,focus=false){
+    const layer=staffAccountEditor?.layer;
+    if(!layer?.querySelector('[data-account-tab="'+tab+'"]'))return;
+    staffAccountEditor.tab=tab;
+    layer.querySelectorAll('[data-account-tab]').forEach(button=>{
+      const selected=button.dataset.accountTab===tab;
+      button.classList.toggle('active',selected);button.setAttribute('aria-selected',String(selected));
+      button.tabIndex=selected?0:-1;
+      layer.querySelector('#'+button.getAttribute('aria-controls')).hidden=!selected;
+      if(selected&&focus)button.focus({preventScroll:true});
+    });
+  }
+  document.addEventListener('click',event=>{
+    const button=event.target.closest('[data-account-tab]');
+    if(button)selectAccountTab(button.dataset.accountTab);
+  });
+  document.addEventListener('keydown',event=>{
+    const button=event.target.closest('[data-account-tab]');if(!button)return;
+    const tabs=['personal','roles','permissions','controls'],index=tabs.indexOf(button.dataset.accountTab);
+    const next=event.key==='ArrowRight'?(index+1)%4:event.key==='ArrowLeft'?(index+3)%4:event.key==='Home'?0:event.key==='End'?3:null;
+    if(next!==null){event.preventDefault();selectAccountTab(tabs[next],true);}
+  });
+  function updateUserWorkspace(preserveProfile=true){
     if(!staffAccountEditor)return;
     const {layer,accountId}=staffAccountEditor;
     const user=users.find(item=>item.id===accountId);
     if(!user){closeUserWorkspace();return;}
     const scroll=layer.querySelector('.users-modal-scroll')?.scrollTop||0;
+    const profileForm=layer.querySelector('#next-user-profile-form');
+    const draft=preserveProfile&&profileForm?{values:Object.fromEntries(new FormData(profileForm)),revision:profileForm.dataset.revision}:null;
     layer.innerHTML=renderUserWorkspace(user);
+    if(draft){
+      const form=layer.querySelector('#next-user-profile-form');
+      for(const [name,value] of Object.entries(draft.values))form.elements[name].value=value;
+      form.dataset.revision=draft.revision;
+    }
+    selectAccountTab(staffAccountEditor.tab||'personal');
     layer.querySelector('.users-modal-scroll').scrollTop=scroll;
     layer.querySelector('[data-action="users-close-editor"]')?.focus({preventScroll:true});
   }
@@ -11245,17 +11283,17 @@ void (async () => {
     if(event.key==='Escape'&&staffAccountEditor){event.preventDefault();closeUserWorkspace();}
   });
   let signedInUsername = '';
-  async function loadCentralUsers() {
+  async function loadCentralUsers(preserveProfile=true) {
     const response=await fetch('/api/users',{cache:'no-store'});
     if (!response.ok) throw new Error('Unable to load users.');
     const data=await response.json();users=data.users;roleCatalogue=data.roles;
     if (currentTab === 'users') renderContent();
-    updateUserWorkspace();
+    updateUserWorkspace(preserveProfile);
   }
   async function changeCentralUser(path,payload) {
     await postInventory(path,payload);
     if(['/api/users/profile','/api/users/delete'].includes(path))await window.caffootStaffDirectory.refresh(false);
-    await loadCentralUsers();
+    await loadCentralUsers(path!=='/api/users/profile');
     showToast('Account updated.');
   }
 
@@ -11740,6 +11778,7 @@ void (async () => {
       }
     });
     window.caffootEquipment.configure({
+      equipmentChanged:()=>window.caffootStaffDirectory.equipmentChanged(),
       csrf:csrfToken,canRead:()=>!!permissions.Devices||!!permissions['IT Assets'],canEdit:()=>!!editPermissions.Devices,
       canReadAssociations:()=>!!permissions.Devices&&!!permissions['IT Assets'],
       canIssueStock:()=>!!editPermissions['IT Assets'],
@@ -11748,7 +11787,7 @@ void (async () => {
       redraw:()=>renderContent(),notify:(message,type)=>showToast(message,type)
     });
     window.caffootStaffDirectory.configure({
-      rights:sessionDirectoryPermissions,admin:sessionIsAdmin,csrf:csrfToken,
+      isActive:()=>currentTab==='departments',rights:sessionDirectoryPermissions,admin:sessionIsAdmin,csrf:csrfToken,
       canReadDevices:()=>!!permissions.Devices,canReadAssets:()=>!!permissions['IT Assets'],canEditAssets:()=>!!editPermissions['IT Assets'],
       canReadHistory:()=>inventorySectionAccess(),openStaff:()=>switchTab('staff'),
       accountList:()=>users||[],accountMfaLabel,reloadAccounts:async()=>{if(sessionIsAdmin)await loadCentralUsers();},
@@ -11766,7 +11805,7 @@ void (async () => {
       redraw:()=>{if(isSupplierPage(currentTab))renderContent();},
       notify:(message,type)=>showToast(message,type)
     });
-    window.caffootStockIntake.configure({csrf:csrfToken,canRead:()=>!!permissions['IT Assets'],
+    window.caffootStockIntake.configure({equipmentChanged:()=>window.caffootStaffDirectory.equipmentChanged(),csrf:csrfToken,canRead:()=>!!permissions['IT Assets'],
       canEdit:()=>!!editPermissions['IT Assets'],suppliersEnabled:()=>suppliersEnabled,canEditDevices:()=>!!editPermissions.Devices,refreshAccess:refreshStockAccess,
       navigate:()=>{closeModal(true);switchTab('it-assets');},viewDevice:id=>openDeviceDetailView(id),
       viewAssociations:id=>{closeModal(true);switchTab('devices');openDeviceDetailView(id);selectDeviceDetailsTab('associated');},

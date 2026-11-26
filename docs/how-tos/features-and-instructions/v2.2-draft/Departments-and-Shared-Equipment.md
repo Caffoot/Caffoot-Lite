@@ -68,6 +68,8 @@ Moving someone from Accounts to Sales changes their Department-shared equipment 
 
 The IT Assets summary counts outstanding issued quantities; it is not stock physically held by IT. Equipment dates and history remain on their original records, rather than being copied into a separate Department inventory.
 
+After a successful equipment assignment, change of shared Departments, reassignment, issue or return in this browser, an open Department view reloads its authorised equipment and history data automatically. Reopening Department Details also requests current data. An older response cannot overwrite a newer reload. No browser refresh or background polling is needed. Changes made in another browser become visible when you reopen Details.
+
 If a panel could not load, reopen Details to retry. Check your access before interpreting a missing count or panel. Devices and IT Assets follow their own switches: disabling one hides its information without removing relationships or preventing authorised use of the other.
 
 ![Department Details Equipment tab showing a fictional Department's outstanding dock quantity and genuine issue and return history](../../../development-handovers/evidence/stock-circulation/screenshots/department-equipment-light-1440.png)

@@ -14,7 +14,7 @@ module.exports=async({page,context,address,catalogue,confirmedAction,confirm,scr
   const user=(await catalogue(context)).users.find(user=>user.username===name);accounts[name]=user.id;
   assert.equal(user.accessDetails.roles.length,1);assert.equal(user.accessDetails.roles[0].roleKey,'staff_member');
  }
- async function manageUser(name){await openStaffAccount(page,name);}
+ async function manageUser(name){await openStaffAccount(page,name,'roles');}
  for(const name of ['dave','tim']){
   await manageUser(name);
   assert.equal(await page.locator('[data-role-membership="1"]').isDisabled(),true);
@@ -30,6 +30,7 @@ module.exports=async({page,context,address,catalogue,confirmedAction,confirm,scr
  // A setup-required response must not replace the administrator's existing session.
  assert.equal((await (await context.request.get(address+'/api/session')).json()).username,session.username);
  await manageUser('dave');
+ await page.locator('[data-account-tab="permissions"]').click();
  const modal=page.locator('.users-management-modal');
  assert.match(await modal.innerText(),/Individual overrides take precedence/);
  assert.deepEqual(await modal.locator('.access-grid [data-next-user-permission]').evaluateAll(selects=>selects.map(item=>item.dataset.section)),['Devices','IPAM','Racks','Staff Members','Departments','IT Assets','Suppliers','Service Desk']);
@@ -109,6 +110,7 @@ module.exports=async({page,context,address,catalogue,confirmedAction,confirm,scr
 
  await page.goto(address+'/inventory#users');
  await manageUser('dave');
+ await page.locator('[data-account-tab="permissions"]').click();
  await modal.getByLabel('Service Desk',{exact:true}).scrollIntoViewIfNeeded();
  await screenshot(page,'it-staff-dave-dark-1440');
  await page.setViewportSize({width:390,height:844});

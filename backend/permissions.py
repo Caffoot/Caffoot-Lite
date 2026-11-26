@@ -7,6 +7,7 @@ from backend.audit_events import record_actor_event
 from backend.profiles import validate_profile_details
 from backend.role_policy import assign_staff_member, evaluate_role_policy, LEVELS, SERVICE_DESK_SECTION
 from backend.sessions import password_change_state_available, revoke_password_change_proof, session_account
+from backend.staff_employment import require_active_staff_login
 from backend.staff_identity import link_account_staff, read_linked_staff
 
 
@@ -113,6 +114,8 @@ def set_account_active(connection, actor_id, target_id, active):
     try:
         _admin(connection, actor_id)
         _target(connection, target_id)
+        if active:
+            require_active_staff_login(connection, target_id)
         if actor_id == target_id:
             raise ValueError("Administrators cannot disable themselves")
         target_admin, target_active = _target(connection, target_id)
