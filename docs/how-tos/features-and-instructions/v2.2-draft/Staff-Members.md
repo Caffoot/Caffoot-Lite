@@ -106,10 +106,10 @@ A Staff email with a blank account email still needs an administrator’s decisi
 
 1. Choose **Edit** in the directory or **Edit Staff Member** on Staff Details.
 2. Change the intended fields. For a linked record, a new first name or surname updates both records. For example, changing fictional Alex Morgan’s surname to Rivers updates the Staff name and their personal details in My Account.
-3. Change an unlinked contact email with Staff Members Edit. For a linked account email, sign in as an authorised administrator or ask the account owner to change it in **My Account → Personal Details**. The account owner must verify a changed email to use it for password recovery.
+3. Change an unlinked contact email with Staff Members Edit. For a linked account email, sign in as an authorised administrator or ask the account owner to change it in **My Account → Overview → Personal Details**. The account owner must verify a changed email to use it for password recovery.
 4. Choose **Save Staff Member** and check the saved Staff Details. **Cancel** or **Back To Staff Members** discards unsaved edits.
 
-Changing Department, job title or location does not change account permissions or move equipment. **Left Company** disables a linked login and revokes sessions/proofs; **Reactivate** leaves it disabled, as explained below. Account owners can edit shared names and email in **My Account → Personal Details → Save Personal Details**. Account display name and photo belong to My Account. The sign-in username stays fixed.
+Changing Department, job title or location does not change account permissions or move equipment. **Left Company** disables a linked login and revokes sessions/proofs; **Reactivate** leaves it disabled, as explained below. Account owners can edit shared names and email in **My Account → Overview → Personal Details → Save Personal Details**. Account display name and photo belong to My Account. The sign-in username stays fixed.
 
 ### Resolve A Difference Between Staff And Account Details
 

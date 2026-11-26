@@ -136,7 +136,7 @@ Staff Member cannot be removed. An additional role may be assigned before MFA en
 
 ## Set An Individual Section Override
 
-1. Open **Staff Details → Manage Permissions** for the ordinary account.
+1. Open **Staff Details → Manage Permissions → Permissions** for the ordinary account.
 2. Find the section and read its **Inherited** and **Effective** summaries.
 3. Choose **Inherit**, **No Access**, **Read** or **Edit** from that section's selector.
 4. Review the consequences in **Review Access Change**, including MFA and session effects. Changing the selector proposes a change; it is not the final save.

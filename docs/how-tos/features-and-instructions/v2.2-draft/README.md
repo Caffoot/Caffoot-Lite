@@ -54,7 +54,7 @@ These infrastructure drafts have completed the Batch 2 text/source pass at the r
 
 An application account is the identity used to sign in. A Staff Member is a person in your organisation; that person may have a linked account or no login at all. Roles determine section access, while an organisation's Optional Features switches determine whether optional functions are available. A role does not switch a feature on.
 
-Batch 3 accounts, Staff, Departments and My Equipment have completed written/source reconciliation at the recorded baseline, **awaiting independent ChatGPT review and separate owner acceptance**. Desktop requirements are deferred to Batch 7. [Batch 3 source, validation and screenshot record](../../../development-guide/Milestone-01-Batch-3-Review.md).
+Batch 3 accounts, Staff, Departments and My Equipment have completed written/source reconciliation at the recorded baseline, **focused independent ChatGPT review recorded; separate owner written acceptance pending**. Desktop requirements are deferred to Batch 7. [Batch 3 source, validation and screenshot record](../../../development-guide/Milestone-01-Batch-3-Review.md).
 
 ## People And Equipment
 
@@ -110,7 +110,7 @@ Suppliers starts switched off and uses its own section permissions. Supplier Man
 
 Equipment Lifecycle is independently optional and starts switched off. Stage 4.4 is owner-accepted and merged via PR #418 into the unreleased development branch; these instructions remain draft v2.2, not published v2.1 features.
 
-Batch 4's ten equipment/Supplier/Lifecycle guides and linked example have completed written/source reconciliation at the stated baseline, **awaiting independent ChatGPT review and separate owner acceptance**. [Batch 4 source, validation and outstanding desktop requirements](../../../development-guide/Milestone-01-Batch-4-Review.md). Batches 5–8 and all release/visual gates remain outstanding.
+Batch 4's ten equipment/Supplier/Lifecycle guides and linked example have completed written/source reconciliation at the stated baseline, **focused independent ChatGPT review recorded; separate owner written acceptance pending**. [Batch 4 source, validation and outstanding desktop requirements](../../../development-guide/Milestone-01-Batch-4-Review.md). Batches 5–8 and all release/visual gates remain outstanding.
 
 ## Service Desk
 
@@ -129,6 +129,8 @@ The foundation, IT queue and employee ticket workflows are integrated through [P
 ## Audit Trail
 
 Use [Read The Audit Trail](Audit-Trail.md) to search authorised event-time names and original references, inspect label provenance and export the history available to your account.
+
+The dated independent review additions in the Batch 3 and Batch 4 records supersede the original Codex review-pending status in the guide reconciliation banners. Visual approval remains outstanding.
 
 ## Publication And Acceptance
 
