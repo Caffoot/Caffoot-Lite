@@ -2,7 +2,7 @@
 
 [← All feature guides](README.md)
 
-> **Draft v2.2 — Unreleased.** Core Device instructions are being reconciled against `fdc677920bfc52f48f641b3d6d1344c902a6a9b0` (schema 31), 26 November 2026. For v2.1, use the [guide at the published release tag](https://github.com/Caffoot/Caffoot-Lite/blob/c3237114108cad9f7d4e57657b6aed5e0091a5ef/docs/how-tos/features-and-instructions/Devices.md). Current approved desktop illustrations, remaining detailed source checks and final acceptance are outstanding. All examples are fictional.
+> **Draft v2.2 — Unreleased.** Text and controls have been reconciled against `fdc677920bfc52f48f641b3d6d1344c902a6a9b0` (schema 31), 26 November 2026. For v2.1, use the [guide at the published release tag](https://github.com/Caffoot/Caffoot-Lite/blob/c3237114108cad9f7d4e57657b6aed5e0091a5ef/docs/how-tos/features-and-instructions/Devices.md). Current approved desktop illustrations and final acceptance are outstanding; see the [Batch 2 review record](../../../development-guide/Milestone-01-Batch-2-Review.md). All examples are fictional.
 
 ## What a device record represents
 
@@ -32,7 +32,7 @@ The Devices section also provides **Device Types**, **Locations**, **Manufacture
 Imagine recording *lab-switch-01*, a fictional switch on documentation subnet 192.0.2.0/24. For this worked managed-IP example, an authorised IPAM editor has already configured the subnet and checked that 192.0.2.10 is available. Use approved real records, not the example addresses, for your equipment.
 
 1. Open **IT → Devices → Device Inventory** and select **Add Device**. The dialog heading is **Add New Device**.
-2. Enter a unique **Device Name**, such as *lab-switch-01*. On **General**, select the physical deployment and supported device type under **Device Identity**, and choose **Device Status** (such as Active).
+2. Enter a unique **Device Name**, such as *lab-switch-01*. On **General**, select the physical deployment and supported device type under **Device Identity**, The new record starts **Active**; an existing record offers **Device Status** (Active, Maintenance or Retired).
 3. On **Hardware**, under **Hardware & Lifecycle**, supply manufacturer, model and serial number if known. **Manage Hardware Catalogue** maintains reusable manufacturer/model suggestions.
 4. Complete any relevant **Additional details for this device type**, such as hardware properties, installed software or supported service flags. These vary by device type.
 5. On **General**, choose **Location Area** under **Device Identity**, then **Device Mounting** under **Mounting & Rack Configuration**. For rack-mounted equipment, select the rack, **Face**, **Start U** and **U Height**. Use a free position for the entire height.
@@ -142,9 +142,67 @@ The catalogue describes choices offered during Device recording. It does not ins
 - **Device Types** and **Locations**: manage the available categories. Review the number of affected Devices before confirming changes to in-use categories. Protected Unknown entries and identity/relationship safeguards still apply.
 - **Manufacturers** and **Models**: use search and filters to locate built-in, custom or inventory-derived suggestions. Use **Add Manufacturer** or **Add Model** for genuine missing suggestions and review the applicable Device types. Do not alter recorded hardware merely to tidy a suggestion list.
 - **Software**: use **Add Custom Software** for an appropriate missing option. A hidden suggestion is not an uninstalled application. To record actual removal of archived software, use its **Mark as Uninstalled** action and review the confirmation. This changes the inventory record only, not the real computer.
-- **Server Services**: manage available service suggestions. Archiving preserves existing recorded services; restoring makes a service available for new selections.
+- **Server Services**: manage available service suggestions. The current **Archive Service** action refuses a service still assigned to a Device. Existing archived records remain readable; restoring makes a service available for new selections.
 
-Check the saved Device after a permitted catalogue change. Cancel a change you do not intend; if rejected, investigate the affected records rather than forcing a deletion. Detailed catalogue and storage-specific controls still require the focused Batch 2 source pass recorded in the documentation register.
+Check the saved Device after a permitted catalogue change. Cancel a change you do not intend; if rejected, investigate the affected records rather than forcing a deletion. The following procedures explain the catalogue and storage controls in more detail.
+
+## Record Storage, ZFS Pools And Boot Drives
+
+Storage fields document the equipment you have. Saving them does not partition a disk, create a pool, install an operating system or calculate usable storage. **Storage Type (Optional)** is available for physical Desktop, Laptop and Server equipment, with HDD, SATA SSD, NVMe SSD and Other choices. Record the actual medium, leaving it blank if unknown.
+
+A **ZFS pool** groups storage; a **VDEV** is one recorded group of drives within that pool. These optional detailed controls are for physical Servers. Existing **RAID type**, **Number of hard drives**, **Storage size** and **Storage unit** remain independent fields. Adding a pool does not recalculate or overwrite them.
+
+1. Add a physical Server, or open its **Details → Edit device**. Open **Hardware** and find **ZFS Pools (Optional)**.
+2. Select **Add Pool**. Enter a **Pool Name**, for example fictional *Training Data*. Pool names must be unique within this Device, ignoring case and surrounding spaces.
+3. For its first VDEV, choose **VDEV Layout**, **Number Of Drives**, **Capacity Per Drive**, **Capacity Unit** (GB or TB) and **Drive Type**. For example, record Mirror, 2 drives, 960 GB each and SATA SSD.
+4. Use **Add VDEV** for further groups or **Add Pool** for another named pool. Every pool needs at least one complete VDEV. **Remove VDEV** and **Remove Pool** change the draft; review before saving.
+5. To record boot drives, tick **Record Boot Storage** under **Boot Storage (Optional)**. Choose **Boot Storage Source**:
+   - **Independent Boot Drives (ZFS Not Required)**: record **Boot Drive Type**, **Number Of Boot Drives**, **Capacity Per Drive**, **Capacity Unit**, **Boot Configuration** (Single, Mirror or Other) and optional **Boot Pool Name**.
+   - **Use An Existing ZFS Pool**: choose **Existing ZFS Boot Pool** from this Device's recorded pools. Do not duplicate that pool's drives as independent boot drives.
+6. Select **Save Device**, then reopen **Details → Hardware** to verify the pool, VDEVs and boot information. **Cancel** on Add, or **Back to Details** and **Discard Changes** on Edit, leaves the saved Device unchanged.
+
+Drive counts must be positive whole numbers; capacities must be positive finite numbers. VDEV minimum drive counts are Single 1, Mirror 2, RAIDZ1 3, RAIDZ2 4 and RAIDZ3 5. Independent mirrored boot storage needs at least two drives. A linked boot pool must still exist when saving; choose another boot source before removing it. A Device supports up to 100 pools and 100 VDEVs per pool. These are record-validation limits, not a storage design recommendation. Correct an incomplete or conflicting field after rejection; no new pool is configured on the actual server.
+
+For example, *training-host-01* can record two 240 GB SATA SSD independent boot drives in Mirror and a separate *Training Data* pool with two 960 GB SATA SSD drives in one Mirror VDEV. Verify its actual capacity separately; the application does not infer a total from this example.
+
+## Complete A Host And Guest Inventory
+
+A physical hypervisor host runs virtual machines. A guest is its separately recorded VM. Recording a relationship does not provision or move either machine.
+
+1. Create or edit a physical Server. On **General**, tick **This physical server hosts virtual machines**, select **Hypervisor software** and optionally enter **Hypervisor version (optional)**. Save and check the host's **Virtual Machines** tab.
+2. Select **Add Device**. With an eligible non-retired physical host recorded, choose **Virtual Machine (VM)** as deployment. Choose the virtual purpose (Server, Desktop, Firewall, Router, NAS or Wireless LAN Controller, subject to available types).
+3. Choose **Physical Hypervisor Host**; the virtualisation platform is inherited from that host. Record **vCPU count**, **Allocated RAM (GB)**, **Virtual disk (GB)** and **Virtual network adapters** as appropriate. Complete its own guest software and optional networking information. Physical hardware and mounting controls do not apply to the guest.
+4. Save the VM and reopen both records. The guest's recorded location follows its selected host. Its own OS drives its software suggestions, rather than the host's hypervisor.
+5. Before retiring the host or disabling hosting, save any other work and review every affected guest. Choose an eligible replacement host, unassign while preserving history, or retire each guest. **Keep Editing** cancels the review. Confirm only when every choice reflects the real inventory.
+6. A change to a host's hypervisor platform presents a guest-platform review. Review the listed old/new platforms before confirming; cancelling preserves the current saved records.
+
+Historical missing/retired hosts may be retained on existing records; this does not make them eligible for new assignments. Stale records, another editor's reservation and protected Device identities can reject the combined change. Resolve that reason and reopen the review; do not delete guests to bypass it.
+
+## Manage Device Types And Locations
+
+These lists provide reusable classifications and location names. A Location is descriptive text, whereas a Rack/shelf placement is a separate protected relationship. Devices must be enabled and you need Devices Edit for these changes.
+
+1. Open **IT → Devices → Device Types** or **Locations** and its manager. Search for an existing value before adding one.
+2. Enter **Add Device Type** or **Add Location**, for example *Training Room*, and choose **Add Type** or **Add Location**. The individual operation saves immediately. **Done** closes the manager; its **Cancel** button does not undo an already completed operation.
+3. To correct a name, use its rename action, edit the name and select **Save**. This updates affected Device records together. Cancelling an unsaved rename returns to the list, with the discard prompt if needed.
+4. To stop offering a Device Type for new selections, choose **Archive**. Existing Devices keep the type, and it remains selectable on their edits. **Unarchive** restores it for new selections. Virtual Machine deployment cannot be archived this way.
+5. To delete a list entry, read **Delete Device Type?** or **Delete Location?**. It shows the affected Device count and warns that their value will become **Unknown**. Choose **Cancel** to retain everything, or **Delete** only if that reclassification is intended.
+6. Reopen affected Devices after a successful rename/deletion and check the result. The server rejects a stale affected-device list, active affected Device edit or invalid resulting relationship instead of applying only some changes.
+
+Names must be non-empty, at most 100 characters and unique without case differences. **Unknown** is protected; **Racked** is not a valid new managed Location. A catalogue rename is a shared inventory change, so use it for a real correction rather than to move one Device. Ordinary Device identity protection remains in force for individual edits; do not assume a catalogue action is an authorised way to convert assigned equipment into a different kind of item.
+
+## Maintain Hardware, Software And Service Catalogues
+
+1. Open **IT → Devices → Manufacturers** or **Models**. Search and filter by the available type/source/usage controls. **View Devices** opens matching inventory. **Built-in**, **Custom** and **Recorded** describe where a suggestion came from, not its support or warranty status.
+2. Use **Add Manufacturer** for a missing maker and associate the applicable physical Device types. Add a model under its manufacturer and type using **Add Model**. Save the dialog, then check that the choice appears for that type. Duplicate names/associations are rejected; choose an existing suggestion where appropriate.
+3. Use **Edit** for custom entries or **Manage Suggestion** for a built-in suggestion's label/availability. Removing a custom suggestion, or hiding a built-in one, preserves existing Device hardware text. Use the hidden built-in list's **Manage / Restore** to restore availability. Cancel an unsaved dialog to keep its prior value.
+4. Within a Device editor, the manufacturer/model quick-add offers **Add & Select**. Select a physical type first; a model also needs a manufacturer associated with that type. Successful quick-add saves the catalogue item immediately, even if you later discard the Device draft. It does not save the Device itself.
+5. Open **Software → Add Custom Software** for a missing title. Enter its name and at least one applicable Device type, then **Save Software**. Use **Manage** or **Edit** for availability and associations. Software availability is independent of whether it is installed.
+6. Use **Remove** to review removal from available software choices. If any Device still records it, the operation is blocked: correct the actual installation records first. Unused entries are archived for recovery. **Restore** makes an archived entry available again, subject to name conflicts.
+7. For an actual historical archived installation, use **Overview → Software** and its **Mark as Uninstalled** action, reviewing the named Device/title before confirming. This removes the recorded installation flag, not software on the computer. Cancel preserves it.
+8. Open **Server Services** to add or edit a service and use **Save Service**. A service describes an enabled role such as DNS or File Server, separate from a software product. **Archive Service** is blocked while the service is assigned; an archived service's restore action makes it available again.
+
+Record actual software and services by editing the Device and saving the relevant selections. Changing suggestions or type/OS filters never proves installation or removal. **Previously recorded — review** selections remain saved until deliberately unticked. A failed catalogue save restores the prior catalogue state; check feedback and reopen before retrying. Use fictional *Training Tools* as a planning example, but record only real verified titles on your equipment.
 
 ## Choose the next task after recording equipment
 
@@ -171,4 +229,4 @@ For example, a returned laptop retains the original Device identity and its prev
 | Save refused | Review the field/revision error, duplicate address, incompatible placement, protected identity or dependency. Keep the original record and retry only after resolving the stated problem. |
 | Colleague sees old details | Reopen the device or navigate to the section; no continuous background polling |
 
-Related: [Optional Features and Link to IPAM](Optional-Features-and-Link-To-IPAM.md), [Roles, Section Permissions And MFA](Roles-Section-Permissions-and-MFA.md), [Draft v2.2 guide index](README.md). Dedicated v2.2 IPAM and Network Racks guides are being reconciled separately.
+Related: [Optional Features and Link to IPAM](Optional-Features-and-Link-To-IPAM.md), [Roles, Section Permissions And MFA](Roles-Section-Permissions-and-MFA.md), [Draft v2.2 guide index](README.md). Standalone v2.2 IPAM and Network Racks guides follow in this Batch 2 work block.
