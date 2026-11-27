@@ -284,6 +284,8 @@ Caffoot Lite records the administrator, affected account and change in the audit
 
 If you see **Unable to sign in. Please check your credentials or contact your administrator.**, check your username and password. The same message covers incorrect credentials and unavailable accounts. At **Verify Your Identity**, check the time on your authenticator device and try the next code if the previous one expired. After repeated failures, wait for the temporary sign-in limit to expire. For lost credentials, see [Account Recovery](../../../development-guide/Account-Recovery.md) or contact your administrator.
 
+**Draft screenshot refresh pending:** the sign-in, authenticator challenge and mandatory password-change illustrations below retain their original provenance and predate the approved branding punctuation correction (#476). Refresh these three affected views from the corrected application before publication; the separately approved recovery captures are updated below.
+
 ![Desktop light Welcome Back sign-in screen with empty Username and Password fields, Sign In and Forgot Password.](screenshots/batch-7b/sign-in.png)
 
 *Draft v2.2 — The sign-in form starts with empty Username and Password fields. Independent and owner visual acceptance pending.*
@@ -371,23 +373,34 @@ You need an active Caffoot Lite account, a verified email address saved to that 
 2. When **Reset Your Password** opens, check your verified mailbox and enter the emailed **Recovery Code (8 Digits)**, including any leading zeroes. Use the most recent code. Codes work once and expire after 15 minutes.
 3. Enter a long, unique **New Password** and repeat it exactly in **Confirm New Password**, including capital letters and any spaces. If you use a password manager, check that it filled both fields with the same generated password.
 4. If you have enrolled MFA, enter the current six-digit **Authenticator Code (If Enrolled)**. This is the code from your authenticator app.
-5. Select **Recover Password**. If the passwords differ, the form shows **The new passwords do not match.** and returns focus to **Confirm New Password**. Correct the entries and try again. A mismatch or empty field leaves your password and recovery challenge unchanged. The confirmation entry stays in the browser and is cleared with the new password when the form is reset.
+5. Select **Reset Password**. If the passwords differ, the form shows **The new passwords do not match.** and returns focus to **Confirm New Password**. Correct the entries and try again. A mismatch or empty field leaves your password and recovery challenge unchanged. The confirmation entry stays in the browser and is cleared with the new password when the form is reset.
 6. When **Password Updated** appears, both password fields clear and your existing sessions end. Use **Back To Sign In** and sign in with the new password and your authenticator if required.
 
 If an administrator has set a temporary password, successful recovery also clears the required password change. Enter a different password at step 3 and still complete all recovery and authenticator checks.
 
 Select **Back To Sign In** from either step to clear recovery and restore the preceding sign-in step. If recovery was opened from **Verify Your Identity**, it returns to that authenticator challenge with focus on its code field; otherwise it returns to Username. Closing clears the local recovery fields and does not change your saved password. **Request Another Code** clears the reset fields and takes you back to **Request a Recovery Code** with your username filled in. Making that request replaces the previous code and keeps the existing failed-attempt limits. Five failed confirmations can exhaust a challenge, and the rolling account limit can require a wait of up to 15 minutes.
 
-If no email arrives, check the junk folder and ask your administrator to check your verification and outgoing mail privately. The request message confirms neither eligibility nor delivery. If confirmation is rejected, check that the recovery code is current and that you used the correct authenticator. For delivery and administrator troubleshooting, see [Account Recovery](../../../development-guide/Account-Recovery.md).
+If no email arrives, check the junk folder and ask your administrator to check your verification and outgoing mail privately. The request message confirms neither eligibility nor delivery. If confirmation is rejected, the highlighted error panel distinguishes the message from neutral instructions. Check that the recovery code is current and that you used the correct authenticator. For delivery and administrator troubleshooting, see [Account Recovery](../../../development-guide/Account-Recovery.md).
 
-![Request a Recovery Code screen with empty Username, Request Recovery Code and Back To Sign In.](screenshots/batch-7b/recovery-request.png)
+![Request a Recovery Code on desktop, with empty Username and Request Recovery Code. ](screenshots/milestone-01-authentication-corrections/recovery-request-desktop.png)
 
-*Draft v2.2 — Request a Recovery Code starts with an empty Username field. Recovery prerequisites and the administrator fallback remain visible. Independent and owner visual acceptance pending.*
+![Request a Recovery Code on mobile.](screenshots/milestone-01-authentication-corrections/recovery-request-mobile.png)
 
+*Request step, with recovery prerequisites and administrator fallback.*
 
-![Reset Your Password with neutral request response, empty recovery code, new password, confirmation and authenticator fields, Recover Password, Request Another Code and Back To Sign In.](screenshots/batch-7b/recovery-reset.png)
+![Reset Your Password on desktop, with empty recovery fields and Reset Password.](screenshots/milestone-01-authentication-corrections/recovery-reset-desktop.png)
 
-*Draft v2.2 — The neutral response after requesting recovery for fictional recovery-owner confirms neither eligibility nor delivery. All recovery, password and authenticator fields are empty. Independent and owner visual acceptance pending.*
+![Reset Your Password on mobile, with the confirmation field below New Password.](screenshots/milestone-01-authentication-corrections/recovery-reset-mobile.png)
+
+*Reset step, showing the neutral request response and the approved Reset Password label.*
+
+![Invalid or expired confirmation in desktop light mode, highlighted with an exclamation indicator.](screenshots/milestone-01-authentication-corrections/recovery-rejected-desktop-light.png)
+
+![Invalid or expired confirmation in desktop dark mode.](screenshots/milestone-01-authentication-corrections/recovery-rejected-desktop-dark.png)
+
+[Mobile light rejection](screenshots/milestone-01-authentication-corrections/recovery-rejected-mobile-light.png) · [Mobile dark rejection](screenshots/milestone-01-authentication-corrections/recovery-rejected-mobile-dark.png)
+
+*The generic rejection is highlighted; recovery inputs were cleared for these captures. These eight Chromium captures were independently reviewed and owner-approved on 27 November 2026 at revision `abd311a2e49e3f1ec666b0f0b99bf4973230ce58`. [Capture provenance and SHA-256 hashes](screenshots/milestone-01-authentication-corrections/Provenance.txt). Native reacceptance remains separate.*
 
 ### Password Values And Lost Authenticators
 
