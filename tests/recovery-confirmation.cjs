@@ -141,7 +141,7 @@ async function main() {
   const confirmation = form.getByLabel('Confirm New Password', {exact: true});
   const token = form.getByLabel('Recovery Code (8 Digits)');
   const mfa = form.getByLabel('Authenticator Code (If Enrolled)');
-  const recover = form.getByRole('button', {name: 'Recover Password'});
+  const recover = form.getByRole('button', {name: 'Reset Password', exact: true});
   const feedback = recovery.locator('#recovery-message');
   const requestForm = recovery.locator('#recovery-request-form');
   const summary = recovery.getByText('Forgot Password?', {exact: true});
@@ -153,6 +153,7 @@ async function main() {
     const {challengeId, message} = await response.json();
     assert.equal(message, 'If recovery is available, instructions will be emailed. Otherwise, contact your Caffoot Lite administrator.');
     assert.equal(await feedback.textContent(), message);
+    assert.equal(await feedback.evaluate(el => el.classList.contains('status')), false);
     return challengeId;
   }
   async function cleared() {
@@ -208,6 +209,7 @@ async function main() {
 
   await recovery.goto(origin + '/setup');
   await loginForm.waitFor();
+  assert.equal(await recovery.locator('.brand-content > p').last().textContent(), 'A beautifully straightforward home for the devices, networks and racks that matter. Self-hosted, secure and entirely yours.');
   await summary.focus();
   await recovery.keyboard.press('Enter');
   await recovery.waitForFunction(() => document.querySelector('#recovery-request-form input') === document.activeElement);
@@ -252,6 +254,29 @@ async function main() {
   await mfa.fill('');
   await postFromPage(recovery, '/api/recovery/confirm', () => recover.press('Enter'), 400);
   await feedback.filter({hasText: 'Invalid or expired confirmation'}).waitFor();
+  assert.equal(await feedback.textContent(), 'Invalid or expired confirmation');
+  for (const [width, height] of [[1440, 950], [390, 844]]) {
+    await recovery.setViewportSize({width, height});
+    for (const theme of ['light', 'dark']) {
+      await recovery.evaluate(theme => {
+        localStorage.setItem('caffoot_theme_preference', theme);
+        applySignInTheme();
+      }, theme);
+      const style = await feedback.evaluate(el => {
+        const css = getComputedStyle(el), indicator = getComputedStyle(el, '::before');
+        return {error: el.classList.contains('status'), color: css.color, background: css.backgroundColor,
+          indicator: indicator.content, border: indicator.borderTopWidth, fits: document.documentElement.scrollWidth <= innerWidth};
+      });
+      assert.equal(style.error, true);
+      assert.equal(style.color, theme === 'dark' ? 'rgb(254, 205, 211)' : 'rgb(165, 38, 38)');
+      assert.equal(style.background, theme === 'dark' ? 'rgb(76, 45, 58)' : 'rgb(252, 236, 233)');
+      assert.match(style.indicator, /!/);
+      assert.equal(style.border, '1px');
+      assert.equal(style.fits, true);
+    }
+  }
+  await recovery.setViewportSize({width: 1440, height: 950});
+  await recovery.evaluate(() => { localStorage.setItem('caffoot_theme_preference', 'light'); applySignInTheme(); });
   assert.equal((await login(changed)).status(), 200);
   const mfaCode = authenticator(secret);
   await mfa.fill(mfaCode);
@@ -262,6 +287,7 @@ async function main() {
   assert.deepEqual(await result.json(), {status: 'Password updated; sign in with your authenticator if required'});
   await form.waitFor({state: 'hidden'});
   await cleared();
+  assert.equal(await feedback.evaluate(el => el.classList.contains('status')), false);
   assert.equal((await context.request.get(origin + '/api/session')).status(), 401);
   assert.equal((await login(changed)).status(), 401);
   assert.equal((await api(guest.request, '/api/login', {username, password: recovered})).status(), 401);

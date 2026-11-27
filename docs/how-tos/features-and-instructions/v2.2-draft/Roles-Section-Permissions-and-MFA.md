@@ -299,10 +299,12 @@ You need an active Caffoot Lite account, a verified email address saved to that 
 2. When **Reset Your Password** opens, check your verified mailbox and enter the emailed **Recovery Code (8 Digits)**, including any leading zeroes. Use the most recent code. Codes work once and expire after 15 minutes.
 3. Enter a long, unique **New Password** and repeat it exactly in **Confirm New Password**, including capital letters and any spaces. If you use a password manager, check that it filled both fields with the same generated password.
 4. If you have enrolled MFA, enter the current six-digit **Authenticator Code (If Enrolled)**. This is the code from your authenticator app.
-5. Select **Recover Password**. If the passwords differ, the form shows **The new passwords do not match.** and returns focus to **Confirm New Password**. Correct the entries and try again. A mismatch or empty field leaves your password and recovery challenge unchanged. The confirmation entry stays in the browser and is cleared with the new password when the form is reset.
+5. Select **Reset Password**. If the passwords differ, the form shows **The new passwords do not match.** and returns focus to **Confirm New Password**. Correct the entries and try again. A mismatch or empty field leaves your password and recovery challenge unchanged. The confirmation entry stays in the browser and is cleared with the new password when the form is reset.
 6. When Caffoot Lite reports that the password was updated, both password fields clear and your existing sessions end. Use **Back To Sign In** and sign in with the new password and your authenticator if required.
 
 If an administrator has set a temporary password, successful recovery also clears the required password change. Enter a different password at step 3 and still complete all recovery and authenticator checks.
+
+**Screenshot update pending:** the authentication illustrations in this draft predate the approved branding punctuation and Reset Password label corrections (#476 and #479). They retain their original provenance and must be refreshed from the corrected application before publication. The corrected rejection styling (#480) also requires genuine visual evidence.
 
 ![The Request a Recovery Code step on desktop with the recovery Username, Request Recovery Code and Back To Sign In.](screenshots/recovery-request-desktop.png)
 
@@ -318,7 +320,7 @@ If an administrator has set a temporary password, successful recovery also clear
 
 Select **Back To Sign In** from either step to clear recovery and restore the original sign-in screen. **Request Another Code** clears the reset fields and takes you back to **Request a Recovery Code** with your username filled in. Making that request replaces the previous code and keeps the existing failed-attempt limits. Five failed confirmations can exhaust a challenge, and the rolling account limit can require a wait of up to 15 minutes.
 
-If no email arrives, check the junk folder and ask your administrator to check your verification and outgoing mail privately. The request message confirms neither eligibility nor delivery. If confirmation is rejected, check that the recovery code is current and that you used the correct authenticator. For delivery and administrator troubleshooting, see [Account Recovery](../../../development-guide/Account-Recovery.md).
+If no email arrives, check the junk folder and ask your administrator to check your verification and outgoing mail privately. The request message confirms neither eligibility nor delivery. If confirmation is rejected, the highlighted error panel distinguishes the message from neutral instructions. Check that the recovery code is current and that you used the correct authenticator. For delivery and administrator troubleshooting, see [Account Recovery](../../../development-guide/Account-Recovery.md).
 
 ## Sessions, Sign-Out And Unsaved Work
 
