@@ -91,6 +91,178 @@ async function waitForPreference(page, instance, expected) {
     assert.fail('Saved reporting preference did not match ' + JSON.stringify(expected));
 }
 
+
+async function verifyQueueRefresh(page, browser, instance, screenshot) {
+    const second = await browser.newContext({ignoreHTTPSErrors:true, viewport:{width:1440,height:960}});
+    const sam = await second.newPage();
+    const errors = [];
+    sam.on('pageerror', error=>errors.push(error.message));
+    const queueURL = url => new URL(url).pathname === '/api/service-desk/it/tickets';
+    const reportURL = url => new URL(url).pathname === '/api/service-desk/it/report';
+    const rows = page.locator('[data-ticket-rows]');
+    const count = page.locator('[data-ticket-count]');
+    const open = page.locator('[data-workload-status="Open"] strong');
+    const status = page.locator('#ticket-queue-filters [name="status"]');
+    const sort = page.locator('[name="sort"][form="ticket-queue-filters"]');
+    const search = page.locator('#service-desk-search');
+    const report = page.locator('.service-desk-report');
+    const subject = 'Batch 3 external ticket';
+    let queueRequests = 0, reportRequests = 0;
+    const returnToTab = target => target.evaluate(()=>document.dispatchEvent(new Event('visibilitychange')));
+    const blur = target => target.evaluate(()=>document.activeElement?.blur());
+    const nextQueue = target => target.waitForResponse(response=>queueURL(response.url()) && response.request().method()==='GET');
+    const waitIdle = target => target.locator('.service-desk-page:not([aria-busy])').waitFor();
+    const change = async (locator,value) => {
+        const done = nextQueue(page);
+        await locator.selectOption(value);
+        await done;
+        await waitIdle(page);
+        await blur(page);
+    };
+    async function mutate(path, payload) {
+        // Execute the same protected API used by the UI, in the genuine second session.
+        return sam.evaluate(async ({path,payload})=>{
+            const session = await fetch('/api/session',{cache:'no-store'});
+            if (!session.ok) throw Error('Second session unavailable: '+session.status);
+            const {csrf_token} = await session.json();
+            const response = await fetch('/api/service-desk/it/'+path,{method:'POST',
+                headers:{'Content-Type':'application/json','X-CSRF-Token':csrf_token},body:JSON.stringify(payload)});
+            if (!response.ok) throw Error('Ticket mutation failed: '+response.status+' '+(await response.json()).error);
+            return response.json();
+        },{path,payload});
+    }
+    try {
+        await signIn(sam,instance,'Sam Taylor');
+        await page.bringToFront();
+        await waitIdle(page);
+        await change(sort,'oldest');
+        await change(status,'Open');
+        assert.equal(await page.evaluate(()=>document.hidden),false);
+        const before = Number(await open.innerText());
+        const historical = await report.locator('[data-report-metric]').allTextContents();
+        const savedDates = await report.locator('.caffoot-uk-date-text').evaluateAll(inputs=>inputs.map(input=>input.value));
+        const track = request=>{
+            if (request.method()!=='GET') return;
+            if (queueURL(request.url())) queueRequests++;
+            if (reportURL(request.url())) reportRequests++;
+        };
+        page.on('request',track);
+        const ticket = await mutate('tickets',{equipmentKind:'device',equipmentId:'equipment-0',categoryId:4,
+            subject,description:'Created in the second authenticated session.'});
+        assert.ok(ticket.id);
+        // A real 30-second interval updates the first session, without any navigation or manual refresh.
+        await rows.getByText(subject,{exact:true}).waitFor({timeout:45000});
+        assert.equal(Number(await open.innerText()),before+1);
+        assert.equal(await status.inputValue(),'Open');
+        assert.equal(await sort.inputValue(),'oldest');
+        assert.deepEqual(await report.locator('[data-report-metric]').allTextContents(),historical);
+        assert.deepEqual(await report.locator('.caffoot-uk-date-text').evaluateAll(inputs=>inputs.map(input=>input.value)),savedDates);
+        await screenshot('workload-auto-created');
+        // Hidden tab: suspend queue requests through a full refresh interval.
+        await page.evaluate(()=>{
+            Object.defineProperty(document,'hidden',{configurable:true,get:()=>true});
+            document.dispatchEvent(new Event('visibilitychange'));
+        });
+        const hiddenCount = queueRequests;
+        const detail = await sam.evaluate(async id=>await (await fetch('/api/service-desk/it/tickets/'+id,{cache:'no-store'})).json(),ticket.id);
+        await mutate('tickets/'+ticket.id+'/close',{resolutionNote:'Resolved in the second authenticated session.',expectedUpdatedAt:detail.updatedAt});
+        await page.waitForTimeout(31000);
+        assert.equal(queueRequests,hiddenCount,'Hidden page must not poll the queue');
+        assert.equal(Number(await open.innerText()),before+1);
+        await page.evaluate(()=>{
+            delete document.hidden;
+            document.dispatchEvent(new Event('visibilitychange'));
+        });
+        await rows.getByText(subject,{exact:true}).waitFor({state:'hidden',timeout:5000});
+        assert.equal(Number(await open.innerText()),before);
+        await screenshot('workload-auto-closed');
+        // A search control in use and an open Create Ticket draft must not be disrupted.
+        await search.focus();
+        let requests = queueRequests;
+        await returnToTab(page);
+        await page.waitForTimeout(500);
+        assert.equal(queueRequests,requests,'Do not refresh while editing a filter');
+        assert.equal(await search.evaluate(el=>document.activeElement===el),true);
+        await blur(page);
+        await page.locator('[data-ticket-create]').click();
+        const draft = page.locator('#service-desk-create-form [name="subject"]');
+        await draft.fill('Unsaved draft must remain');
+        requests = queueRequests;
+        await returnToTab(page);
+        await page.waitForTimeout(500);
+        assert.equal(queueRequests,requests,'Do not refresh under an open ticket form');
+        assert.equal(await draft.inputValue(),'Unsaved draft must remain');
+        // Discard the fixture draft through the normal cancel/confirmation path.
+        page.on('dialog',dialog=>dialog.accept());
+        await page.locator('.service-desk-dialog [data-ticket-footer]').getByRole('button',{name:'Cancel',exact:true}).click();
+        const discard = page.getByRole('button',{name:/Discard/i});
+        if (await discard.isVisible()) await discard.click();
+        await page.locator('.service-desk-dialog').waitFor({state:'hidden'});
+        await blur(page);
+        // Failed automatic request leaves the last successful rows and workload intact.
+        const beforeFailure = await rows.innerText();
+        const workload = await page.locator('[data-ticket-workload]').innerText();
+        await page.route(url=>queueURL(url.href),route=>route.fulfill({status:503,json:{error:'Fictional transient failure'}}),{times:1});
+        await returnToTab(page);
+        await page.getByText('Automatic refresh failed. Retrying…',{exact:false}).waitFor();
+        assert.equal(await rows.innerText(),beforeFailure);
+        assert.equal(await page.locator('[data-ticket-workload]').innerText(),workload);
+        await screenshot('workload-refresh-retry');
+        await returnToTab(page);
+        await page.getByText('Automatic refresh failed. Retrying…',{exact:false}).waitFor({state:'hidden'});
+        // A delayed older background result must not overwrite a newer filter response.
+        let release, started, completed;
+        const gate = new Promise(resolve=>{release=resolve;});
+        const requested = new Promise(resolve=>{started=resolve;});
+        const finished = new Promise(resolve=>{completed=resolve;});
+        await page.route(url=>queueURL(url.href),async route=>{
+            try {
+                const response = await route.fetch();
+                started();
+                await gate;
+                try { await route.fulfill({response}); } catch (_) { /* superseded request aborted */ }
+            } finally { completed(); }
+        },{times:1});
+        await returnToTab(page);
+        try {
+            await Promise.race([requested,new Promise((_,reject)=>setTimeout(()=>reject(Error('Delayed queue request not started')),10000))]);
+            await change(status,'Closed');
+            await rows.getByText(subject,{exact:true}).waitFor();
+        } finally { release(); }
+        await finished;
+        assert.equal(await status.inputValue(),'Closed');
+        assert.ok(await rows.getByText(subject,{exact:true}).isVisible());
+        assert.equal(reportRequests,0,'Queue refresh must not request historical reports');
+        // Leaving Service Desk removes the timer; returning to the browser tab does not restart it.
+        await page.getByRole('button',{name:'Open My Account'}).click();
+        await page.locator('.service-desk-page').waitFor({state:'detached'});
+        requests = queueRequests;
+        await returnToTab(page);
+        await page.waitForTimeout(31000);
+        assert.equal(queueRequests,requests,'Departed Service Desk page must not poll');
+        page.off('request',track);
+        // Actual permission withdrawal from Sam's isolated fixture account.
+        await sam.bringToFront();
+        await waitIdle(sam);
+        await blur(sam);
+        python("import sqlite3,sys\nwith sqlite3.connect(sys.argv[1]) as db:\n    db.execute(\"DELETE FROM account_permission_overrides WHERE account_id=2 AND section='Service Desk'\")",instance.database);
+        const denied = await second.request.get(instance.base+'/api/service-desk/it/tickets');
+        assert.equal(denied.status(),403,'Protected endpoint must deny withdrawn rights');
+        await returnToTab(sam);
+        await sam.getByText('You no longer have permission for this Service Desk action.',{exact:true}).first().waitFor();
+        assert.equal(await sam.locator('[data-ticket-rows] tr').count(),0);
+        assert.equal(await sam.locator('[data-ticket-workload] button').count(),0);
+        assert.ok(await sam.locator('[data-ticket-create]').isHidden());
+        const samQueueRequests = [];
+        sam.on('request',request=>{if(queueURL(request.url())) samQueueRequests.push(request.url());});
+        await returnToTab(sam);
+        await sam.waitForTimeout(1000);
+        assert.deepEqual(samQueueRequests,[]);
+        assert.deepEqual(errors,[]);
+        console.log('Automatic IT queue/workload refresh passed: genuine two-session mutations, real interval, hidden/departed page pause, return refresh, retained filters/report/draft, transient failure recovery, stale-response cancellation and actual permission withdrawal.');
+    } finally { await second.close(); }
+}
+
 async function run() {
     let instance, browser;
     try {
@@ -172,6 +344,7 @@ async function run() {
             assert.deepEqual(await report.locator('[data-report-metric]').allTextContents(),['0','0','0','—']);
             assert.deepEqual((await waitForPreference(page,instance,saved)).counts,{created:0,closed:0,reopened:0});
             console.log('Empty and populated custom dates restored after real sign-out and sign-in; independent technician preferences verified.');
+            await verifyQueueRefresh(page,browser,instance,screenshot);
         }
         assert.deepEqual(errors,[]);
         await context.close();

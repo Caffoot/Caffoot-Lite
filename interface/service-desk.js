@@ -108,7 +108,13 @@ window.caffootServiceDesk = (() => {
         }));
     }
 
+    function stopQueue() {
+        queueRefresh?.stop();
+        queueRefresh = undefined;
+    }
+
     function stopUnread() {
+        stopQueue();
         unreadStopped = true;
         unreadRequest?.abort();
         clearInterval(unreadTimer);
@@ -123,19 +129,26 @@ window.caffootServiceDesk = (() => {
     }
 
     document.addEventListener('visibilitychange', () => {
-        if (document.hidden) unreadRequest?.abort();
-        else if (!unreadStopped) {
+        if (document.hidden) {
+            unreadRequest?.abort();
+            queueRefresh?.pause();
+        } else if (!unreadStopped) {
+            queueRefresh?.resume();
             void refreshUnread();
             const dialog = currentDialog;
             if (dialog?.pendingRead) void acknowledgeDisplayed(dialog, dialog.pendingRead);
         }
     });
     window.addEventListener('pagehide', () => {
+        queueRefresh?.pause();
         unreadRequest?.abort();
         applyUnread('personal');
         applyUnread('it');
     });
-    window.addEventListener('pageshow', () => void refreshUnread());
+    window.addEventListener('pageshow', () => {
+        queueRefresh?.resume();
+        void refreshUnread();
+    });
 
     function ticketNumber(id) {
         return 'SD-' + String(id).padStart(4, '0');
@@ -421,13 +434,14 @@ window.caffootServiceDesk = (() => {
         const notice = panel.querySelector('[data-report-notice]');
         const values = Object.fromEntries([...panel.querySelectorAll('[data-report-metric]')]
             .map(element => [element.dataset.reportMetric, element]));
-        let latest = 0, pending = Promise.resolve(), initialised = false, today;
+        let latest = 0, pending = Promise.resolve(), initialised = false, today, stopped = false;
 
         function requestReport(payload) {
+            if (stopped) return;
             const version = ++latest;
             panel.setAttribute('aria-busy', 'true');
             pending = pending.then(async () => {
-                if (!page.isConnected) return;
+                if (stopped || !page.isConnected) return;
                 try {
                     const report = await requestTickets('report', payload);
                     if (!page.isConnected || version !== latest) return;
@@ -455,6 +469,7 @@ window.caffootServiceDesk = (() => {
         }
 
         function selectReportPeriod() {
+            if (stopped) return;
             const custom = period.value === 'custom';
             dates.hidden = !custom;
             if (!custom) return requestReport({period: period.value});
@@ -475,12 +490,26 @@ window.caffootServiceDesk = (() => {
         period.addEventListener('change', selectReportPeriod);
         dates.addEventListener('change', selectReportPeriod);
         requestReport();
-        return () => {
-            if (page.isConnected && (dates.hidden || (from.value && to.value && from.value <= to.value))) requestReport();
+        return {
+            refresh() {
+                if (!stopped && page.isConnected && (dates.hidden || (from.value && to.value && from.value <= to.value))) requestReport();
+            },
+            stop(message) {
+                stopped = true;
+                ++latest;
+                if (!message || !page.isConnected) return;
+                panel.removeAttribute('aria-busy');
+                period.disabled = true;
+                from.value = to.value = '';
+                dates.hidden = true;
+                window.caffootUkDates?.sync(dates);
+                renderReportActivity(null, values, rows, notice, message);
+            }
         };
     }
 
     function hydrateTicketQueue(container) {
+        stopQueue();
         const page = container.querySelector('.service-desk-page');
         const employee = page.classList.contains('employee-tickets');
         const filters = page.querySelector('form[role="search"]');
@@ -491,13 +520,83 @@ window.caffootServiceDesk = (() => {
         const shortcuts = ['Awaiting IT attention', 'Being worked on', 'Waiting for the next step'];
         const shortcutIcons = ['i-box', 'i-tool', 'i-history'];
         let scope = employee ? 'personal' : 'it';
-        let offset = 0, pendingSearch, request;
-        async function refreshQueue() {
-            if (!page.isConnected) return;
+        let offset = 0, pendingSearch, request, backgroundRequest = false;
+        let timer, stopped = false, report, observer, lastCount = '';
+
+        function pause() {
+            clearInterval(timer);
+            timer = undefined;
+            if (backgroundRequest) {
+                request?.abort();
+                request = undefined;
+                backgroundRequest = false;
+            }
+        }
+
+        function stop(message) {
+            stopped = true;
+            pause();
+            observer?.disconnect();
             clearTimeout(pendingSearch);
+            pendingSearch = undefined;
             request?.abort();
-            request = new AbortController();
-            const signal = request.signal;
+            page.removeAttribute('aria-busy');
+            report?.stop(message);
+            if (queueRefresh?.stop === stop) queueRefresh = undefined;
+        }
+
+        function deny(message) {
+            stop(message);
+            counts.replaceChildren();
+            rows.replaceChildren();
+            pagination.hidden = true;
+            count.textContent = message;
+            filters.elements.technician.innerHTML = ticketOptions([['', 'All Technicians']]);
+            page.querySelector('[data-ticket-create]').hidden = true;
+        }
+
+        function accessLost() {
+            if (window.caffootSessionRedirectPending || unreadStopped) {
+                deny('Sign in again to use Service Desk.');
+                return true;
+            }
+            if (!config?.canRead()) {
+                deny('You no longer have permission for this Service Desk action.');
+                return true;
+            }
+            return false;
+        }
+
+        function safeToRefresh() {
+            const focused = document.activeElement;
+            return !document.hidden && !document.getElementById('app')?.inert &&
+                !document.querySelector('#modal-container:not(.hidden)') && !pendingSearch &&
+                !(page.contains(focused) && (focused.matches('input,select,textarea,[contenteditable="true"]') ||
+                    rows.contains(focused) || pagination.contains(focused)));
+        }
+
+        function autoRefresh() {
+            if (stopped) return;
+            if (!page.isConnected) return stop();
+            if (accessLost()) return;
+            if (!request && safeToRefresh()) void refreshQueue(true);
+        }
+
+        function resume(immediate = true) {
+            if (stopped || document.hidden) return;
+            if (!timer) timer = setInterval(autoRefresh, 30000);
+            if (immediate) autoRefresh();
+        }
+
+        async function refreshQueue(background = false) {
+            if (stopped || !page.isConnected || (!employee && accessLost())) return;
+            clearTimeout(pendingSearch);
+            pendingSearch = undefined;
+            request?.abort();
+            const controller = new AbortController();
+            request = controller;
+            backgroundRequest = background;
+            const signal = controller.signal;
             const params = new URLSearchParams();
             for (const [key, value] of new FormData(filters)) {
                 if (!value) continue;
@@ -508,13 +607,15 @@ window.caffootServiceDesk = (() => {
                 } else params.set(key, value);
             }
             params.set('offset', offset);
-            page.setAttribute('aria-busy', 'true');
+            if (!background) page.setAttribute('aria-busy', 'true');
             try {
                 const data = await requestTickets('tickets?' + params, undefined, signal, scope);
-                if (signal.aborted || !page.isConnected) return;
+                if (signal.aborted || stopped || !page.isConnected) return;
+                if (!employee && accessLost()) return;
+                if (background && !safeToRefresh()) return;
                 if (offset > 0 && !data.tickets.length) {
                     offset = Math.max(0, offset - pageSize);
-                    void refreshQueue();
+                    void refreshQueue(background);
                     return;
                 }
                 if (!employee) {
@@ -526,7 +627,13 @@ window.caffootServiceDesk = (() => {
                     }
                     technician.innerHTML = ticketOptions([['', 'All Technicians'], ...choices], selected);
                 }
-                counts.innerHTML = statuses.slice(0, 3).map((status, index) => `
+                if (background && counts.children.length === 3) {
+                    for (const button of counts.querySelectorAll('[data-workload-status]')) {
+                        const strong = button.querySelector('strong');
+                        const value = String(data.workloadCounts[button.dataset.workloadStatus]);
+                        if (strong.textContent !== value) strong.textContent = value;
+                    }
+                } else counts.innerHTML = statuses.slice(0, 3).map((status, index) => `
                     <button type="button" class="service-desk-workload-card" data-workload-status="${status}" aria-pressed="${status === filters.elements.status.value}">
                         <span class="service-desk-stat-head">${status}<span aria-hidden="true">${employee
                             ? `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><use href="#${shortcutIcons[index]}"/></svg>`
@@ -534,24 +641,37 @@ window.caffootServiceDesk = (() => {
                         <strong>${data.workloadCounts[status]}</strong><small>${employee ? shortcuts[index] : 'View Matching Tickets →'}</small>
                     </button>`).join('');
                 rows.innerHTML = renderTicketRows(data.tickets, scope);
-                void refreshUnread();
+                if (!background) void refreshUnread();
                 const first = data.tickets.length ? offset + 1 : 0;
                 const total = Object.values(data.workloadCounts).reduce((sum, value) => sum + value, 0);
-                count.textContent = employee && data.filteredTotal <= pageSize
+                lastCount = employee && data.filteredTotal <= pageSize
                     ? `Showing ${data.tickets.length} of ${total} Tickets`
                     : `Showing ${first}–${offset + data.tickets.length} of ${data.filteredTotal} Tickets`;
+                if (count.textContent !== lastCount) count.textContent = lastCount;
                 pagination.hidden = data.filteredTotal <= pageSize;
                 pagination.querySelector('[data-ticket-page="-1"]').disabled = offset === 0;
                 pagination.querySelector('[data-ticket-page="1"]').disabled = offset + pageSize >= data.filteredTotal;
             } catch (error) {
-                if (signal.aborted || !page.isConnected) return;
+                if (signal.aborted || stopped || !page.isConnected) return;
+                if (!employee && [401,403].includes(error.status)) return deny(error.message);
+                if (background) {
+                    if (!safeToRefresh()) return;
+                    const message = (lastCount ? lastCount + ' · ' : '') + 'Automatic refresh failed. Retrying…';
+                    if (count.textContent !== message) count.textContent = message;
+                    return;
+                }
+                lastCount = '';
                 counts.replaceChildren();
                 rows.replaceChildren();
                 pagination.hidden = true;
                 count.textContent = error.message;
                 if (error.status === 403) page.querySelector('[data-ticket-create],[data-employee-ticket-create]').hidden = true;
             } finally {
-                if (!signal.aborted) page.removeAttribute('aria-busy');
+                if (request === controller) {
+                    request = undefined;
+                    backgroundRequest = false;
+                    page.removeAttribute('aria-busy');
+                }
             }
         }
         function changeTicketFilters() {
@@ -598,8 +718,12 @@ window.caffootServiceDesk = (() => {
             }
         });
         if (!employee) {
-            queueRefresh = {refresh:refreshQueue, reset:resetTicketFilters, report:hydrateTicketReporting(page)};
+            report = hydrateTicketReporting(page);
+            queueRefresh = {refresh:refreshQueue, reset:resetTicketFilters, report:report.refresh, stop, pause, resume};
+            observer = new MutationObserver(() => { if (!page.isConnected) stop(); });
+            observer.observe(container, {childList:true});
             void refreshQueue();
+            resume(false);
             return;
         }
         const scopeTabs = [...page.querySelectorAll('[data-ticket-scope]')];
