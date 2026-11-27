@@ -211,8 +211,8 @@ $('recovery-confirm-form').elements.token.addEventListener('paste',event=>{
 });
 let recoveryRequestVersion=0;
 let recoveryChallengeId='';
-function showRecoveryFeedback(message,focusNext){
- const status=$('recovery-message');status.textContent=message;
+function showRecoveryFeedback(message,focusNext,rejected=false){
+ const status=$('recovery-message');status.classList.toggle('status',rejected);status.textContent=message;
  status.scrollIntoView({block:'center',behavior:'auto'});
  if(focusNext)focusNext.focus({preventScroll:true});
 }
@@ -225,7 +225,7 @@ function resetRecoveryFlow(){
  $('recovery-request-form').hidden=false;$('recovery-resend').hidden=true;$('recovery-resend').disabled=false;
  $('recovery-heading').textContent='Request a Recovery Code';
  $('recovery-guidance').hidden=false;$('recovery-reset-guidance').hidden=true;
- $('recovery-message').textContent='';
+ $('recovery-message').classList.remove('status');$('recovery-message').textContent='';
 }
 window.addEventListener('pagehide',resetRecoveryFlow);
 $('password-recovery').addEventListener('toggle',()=>{
@@ -287,7 +287,7 @@ for(const id of ['recovery-request-form','recovery-confirm-form']){
     showRecoveryFeedback(result.status||result.message,$('recovery-back'));
    }
   }catch(error){
-   if(version===recoveryRequestVersion)showRecoveryFeedback(error.message,$('recovery-message'));
+   if(version===recoveryRequestVersion)showRecoveryFeedback(error.message,$('recovery-message'),!requesting);
   }finally{
    if(version===recoveryRequestVersion){button.disabled=false;form.removeAttribute('aria-busy');$('recovery-resend').disabled=false;}
   }
