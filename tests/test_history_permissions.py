@@ -151,6 +151,40 @@ class HistoryPermissionProjectionTests(unittest.TestCase):
         self.assertEqual(len(admin), 2)
         self.assertEqual(admin[0]["changes"][0]["kind"], "Account")
 
+    def test_new_association_names_respect_supplier_access_without_rewriting_history(self):
+        from backend.equipment_suppliers import SUPPLIER_AUDIT_REASON
+        event = {"reason": SUPPLIER_AUDIT_REASON, "changes": [
+            {"kind": "Device", "label": "Laptop", "fields": ["Supplier"],
+             "before": {"deviceId": "d", "supplierId": None, "supplierText": ""},
+             "after": {"deviceId": "d", "supplierId": 7, "supplierText": "",
+                       "supplierName": "Historical company"}},
+            {"kind": "IT Assets", "label": "Receipt #1", "fields": ["Supplier"],
+             "before": {"movementId": 1, "supplierId": 7, "supplierName": "Historical company"},
+             "after": {"movementId": 1, "supplierId": None}},
+        ]}
+        legacy = {"reason": SUPPLIER_AUDIT_REASON, "changes": [
+            {"kind": "Device", "before": {"supplierId": None, "supplierText": ""},
+             "after": {"supplierId": 7, "supplierText": ""}}]}
+        self.db.executemany("INSERT INTO inventory_change_history(record_json) VALUES(?)",
+                            [(json.dumps(item),) for item in (event, legacy)])
+        stored = self.db.execute("SELECT * FROM inventory_change_history ORDER BY id").fetchall()
+        self.allowed = dict.fromkeys(("Devices", "IPAM", "Racks", "IT Assets", "Suppliers"), True)
+        with patch("backend.history_permissions.feature_enabled", return_value=True):
+            self.assertEqual(visible_change_history(self.db, 1), [event, legacy])
+            self.allowed["Suppliers"] = False
+            expected = json.loads(json.dumps(event))
+            del expected["changes"][0]["after"]["supplierName"]
+            del expected["changes"][1]["before"]["supplierName"]
+            self.assertEqual(visible_change_history(self.db, 1), [expected, legacy])
+            self.allowed["Suppliers"] = True
+            restricted = visible_change_history(self.db, 2)
+            self.assertNotIn("supplierName", json.dumps(restricted))
+            self.assertTrue(all("before" not in change and "after" not in change
+                                for item in restricted for change in item["changes"]))
+        with patch("backend.history_permissions.feature_enabled", return_value=False):
+            self.assertEqual(visible_change_history(self.db, 1), [])
+        self.assertEqual(self.db.execute("SELECT * FROM inventory_change_history ORDER BY id").fetchall(), stored)
+
     def test_admin_retains_unchanged_history(self):
         events = [self.add(kind, omitted=21, reason="Historical free-form reason")
                   for kind in ("Account", "Role", "Security", "Device", "IPAM",

@@ -51,6 +51,18 @@ def device_supplier_values(connection, selection):
     return None, text.strip()
 
 
+def supplier_audit_name(connection, identity):
+    """Capture the linked company name at this event, never from later history."""
+    if type(identity) is not int or identity <= 0:
+        return {}
+    row = connection.execute("SELECT name FROM suppliers WHERE id=?", (identity,)).fetchone()
+    name = row[0] if row else None
+    if (isinstance(name, str) and name.strip() and len(name) <= 160
+            and all(ord(char) >= 32 and ord(char) != 127 for char in name)):
+        return {"supplierName": name}
+    return {}
+
+
 def write_device_supplier(connection, actor, device_id, label, supplier_id, supplier_text):
     previous = connection.execute(
         "SELECT supplier_id,supplier_text FROM device_suppliers WHERE device_id=?", (device_id,)
@@ -68,8 +80,10 @@ def write_device_supplier(connection, actor, device_id, label, supplier_id, supp
     record_actor_event(connection, actor, kind="Device", action="Updated", label=label[:100],
                        reason=SUPPLIER_AUDIT_REASON, fields=["Supplier"],
                        subject=("Device", device_id, label),
-                       before={"deviceId": device_id, "supplierId": previous[0], "supplierText": previous[1]},
-                       after={"deviceId": device_id, "supplierId": supplier_id, "supplierText": supplier_text})
+                       before={"deviceId": device_id, "supplierId": previous[0], "supplierText": previous[1],
+                               **supplier_audit_name(connection, previous[0])},
+                       after={"deviceId": device_id, "supplierId": supplier_id, "supplierText": supplier_text,
+                              **supplier_audit_name(connection, supplier_id)})
 
 
 def read_device_suppliers(connection, actor):
@@ -110,8 +124,10 @@ def write_receipt_supplier(connection, actor, receipt_id, supplier_id, previous=
     record_actor_event(connection, actor, kind="IT Assets", action="Updated", label=f"Receipt #{receipt_id}",
                        reason=SUPPLIER_AUDIT_REASON, fields=["Supplier"],
                        subject=("Stock Movement", receipt_id, f"Receipt #{receipt_id}"),
-                       before={"movementId": receipt_id, "supplierId": previous},
-                       after={"movementId": receipt_id, "supplierId": supplier_id})
+                       before={"movementId": receipt_id, "supplierId": previous,
+                               **supplier_audit_name(connection, previous)},
+                       after={"movementId": receipt_id, "supplierId": supplier_id,
+                              **supplier_audit_name(connection, supplier_id)})
 
 def assign_equipment_supplier(connection, actor, token, section, payload):
     """Revalidate confirmed selections under the same lock as every association and audit."""
