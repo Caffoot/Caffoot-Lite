@@ -1,5 +1,7 @@
 # Correct Stock Movement
 
+> **Current Batch 7D capture status — 27 November 2026:** [New desktop light illustrations](screenshots/batch-7d/README.md) use the approved merged schema-31 baseline. Independent ChatGPT review and separate owner visual/privacy/caption/alt acceptance remain pending. Earlier written/source and capture-status paragraphs retain their dated scope; the current pack status controls these new images. Published v2.1 and targeted correction-refresh requirements remain unchanged.
+
 > **Draft v2.2 — Unreleased.** These instructions describe the implementation on `milestone-1` at the application baseline identified below. v2.1 remains the published release.
 
 > **Written/source reconciliation:** Batch 4, application baseline `fdc677920bfc52f48f641b3d6d1344c902a6a9b0` (schema 31). Focused independent reviews are recorded and [owner written/source acceptance of Batches 1–6](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7200681167) is recorded. Current visual/privacy/caption/alt approval remains outstanding; [Batch 7 reconciliation and proposed capture packs](../../../development-guide/Milestone-01-Batch-7-Review.md) await independent review and owner acceptance. Capture scope and method need separate authorisation. Desktop capture remains deferred; existing images retain their original provenance and are not certified current by this pass. [Source review and exact screenshot requirements](../../../development-guide/Milestone-01-Batch-4-Review.md).
@@ -117,3 +119,23 @@ The [original correction evidence](../../../development-handovers/evidence/stock
 [← Draft v2.2 Guides](README.md) · [Published v2.1 Guides](../README.md)
 
 [Connected example: a laptop from Supplier and stock to its final write-off](Connected-Equipment-Journey.md).
+
+## Batch 7D Desktop Illustrations
+
+These images follow the fictional training journey. Read the caption to distinguish a draft, a cancelled preview and a saved outcome. [Complete original coverage and limits](screenshots/batch-7d/Coverage.md).
+
+![Correct Movement showing original twenty, proposed ten, reason, impact balances and readiness to save.](screenshots/batch-7d/correction-twenty-to-ten.png)
+
+*Draft v2.2 — The original receipt remains twenty. This preview proposes effective quantity ten with a reason and before/after balances; Save Correction is still required. Independent review and owner visual acceptance pending.*
+
+![Correct Movement blocked preview where the proposed quantity conflicts with later dependent stock history.](screenshots/batch-7d/correction-dependent-history-blocked.png)
+
+*Draft v2.2 — Five would contradict later issue/return history, so the correction is blocked. Do not invent a compensating receipt or delete the original movement. Independent review and owner visual acceptance pending.*
+
+![Correct Movement showing stock-history-changed rejection after a concurrent correction.](screenshots/batch-7d/correction-stale-rejected.png)
+
+*Draft v2.2 — A separately saved interim correction invalidates the earlier preview. The stale Save Correction is rejected and the user must review the refreshed history. Independent review and owner visual acceptance pending.*
+
+![Movement History with original receipt twenty, effective ten and appended reasoned correction records.](screenshots/batch-7d/correction-attributed-history.png)
+
+*Draft v2.2 — The original twenty-unit receipt and both attributed corrections remain. Its effective quantity is ten; prior issue/return facts and physical Device identities are preserved. Independent review and owner visual acceptance pending.*

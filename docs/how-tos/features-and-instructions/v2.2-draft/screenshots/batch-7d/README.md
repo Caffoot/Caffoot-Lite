@@ -1,0 +1,87 @@
+# Batch 7D — Desktop Instructional Screenshots
+
+**27 November 2026. 36 new desktop light images, maximum 36; 21 groups and 114 owned specifications retained, with shared references.** Independent ChatGPT review and separate product-owner visual/privacy/caption/alt acceptance remain pending. No publication approval.
+
+Authority: [consolidated owner approval](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7217032947). [Coverage](Coverage.md) · [provenance manifest](manifest.json) · [verification](Verification.md). The category ceilings are ceilings, not quotas.
+
+| Allocation | New images |
+| --- | --- |
+| Device assignments and custody | 5 |
+| Associated equipment and handover | 6 |
+| Equipment issue, return and write-off | 8 |
+| Departments and membership | 7 |
+| Stock movement corrections | 4 |
+| Lifecycle management | 6 |
+
+## Fixture, Sequence And Provenance
+
+Application `000818f42e854e4a1fee8692b9ffaaa52b5c788d`, schema 31, from the exact approved merged branch; documentation reconciliation checkpoint `19e148efc866c054842c628ea2a6fde4420e2347`. All non-documentation mode/blob identities match that application baseline. No unmerged correction branch was integrated. Genuine disposable SQLite and local loopback HTTPS application on Linux, using existing installed Playwright 1.62.0 and Chromium 156.0.8078.79; no extra packages, browser, virtual display, cloud desktop or private deployment. No screenshot editing, cropping, masking, compositing or fabricated application UI.
+
+The fixture reuses repository schema, account/MFA/role/Staff helpers and the existing Supplier, stock, Device and equipment browser-navigation patterns. Accounts, Sales and IT are fictional Departments. Sam Taylor has effective Devices, IT Assets, Suppliers, Staff Members, Departments and Service Desk Edit overrides on the protected baseline Staff Member role. training-admin is an active MFA-confirmed administrator; equipment.editor has only Devices/IT Assets Edit; equipment.reader has Devices/IT Assets Read; assets.reader has IT Assets Read alone; supplier.reader has Suppliers Read alone. Alex Morgan, Sarah Lewis and Priya Shah have only baseline Staff Member access and linked Active Staff records. All six optional features are enabled unless the per-image manifest records otherwise. Read/Edit grants apply only with the feature enabled; administrator access is independent of ordinary overrides. Baseline employees use /account, not the protected /inventory route.
+
+All fixture credentials, enrolled-MFA material, session/cookie/CSRF values, SQLite files, TLS keys, capture drivers and disposable fixture snapshots remain untracked outside the repository. They are never included in guide images or manifests. Each image records its actor, actual account state, exact role memberships/overrides and feature snapshot, timestamp, browser, viewport, full-page raster dimensions and SHA-256. Most viewports are 1440 × 1050; the long Supplier company/contact draft uses 1440 × 1750. Full-page raster height is explicitly separate from viewport height. Images are retained at original resolution without page reduction.
+
+Northlight has a Main Office, Leeds Branch, Jo Patel and Kim Cooper. Jo’s contact note and the company’s DEMO-104 note have distinct owners. Mouse delivery query moves to In Progress, its update is corrected with attribution, Kim replaces Jo, and Delivery Documentation is retired while its existing Issue remains. A concurrent separately saved Supplier note supplies the stale-revision rejection, where pictured.
+
+The connected delivery is two Ready laptops and two quantity-based mice on 03/11/2026; a separately labelled one-unit individually tracked mouse demonstrates the other tracking mode. Fifty USB Keyboards (eight Ready, minimum ten) provide a separate arithmetic example. AST-LAP-014 is registered from one laptop without changing held total, issued to Alex on 05/11, explicitly associated with one mouse, then returned on 12/11 after the mouse’s separate return. Its working/data-preparation checks precede reissue to Sarah on 13/11. The same canonical identity, earlier holder, original movements and first-service date are retained. A direct-handover preview is cancelled and does not invent a second physical event. The independent AST-LAP-015 and shared Accounts printer AST-PRN-01 are separately identified fixtures.
+
+Pre-handover employee views and support requests were captured before the return and retained with their original timestamps. They are not relabelled as later outcomes. Disposable fixture snapshots preserve those states for narrow later illustrations, not a product backup/restore or upgrade rehearsal. Later packs reuse genuinely matching original bytes.
+
+The 51-original-supply illustration deliberately links the fifty-keyboard receipt, independent AST-LAP-015 and stock-derived AST-LAP-014 while the laptop/mouse receipt associations are temporarily removed. The stock-derived Device adds no receipt quantity. Both receipt links are then restored explicitly; original Supplier strings and receipt facts remain throughout. The quantity is not a current held-stock total.
+
+## New Images
+
+| Image | Caption |
+| --- | --- |
+| [assign-printer-department.png](assign-printer-department.png) | This unsaved assignment selects Accounts for one shared physical printer. Membership affects access, rather than creating another physical issue. |
+| [associate-mouse-draft.png](associate-mouse-draft.png) | Issue And Associate will give one Ready mouse to the laptop’s existing Alex custody. The holder is derived from that custody and cannot be freely changed here. |
+| [associated-mouse-saved.png](associated-mouse-saved.png) | The mouse issue is now explicitly linked to this Device custody. It is not inferred from the same holder, name or purchase. |
+| [handover-blocked-by-accessory.png](handover-blocked-by-accessory.png) | Alex still holds the laptop. Outstanding associated equipment prevents direct reassignment until each accessory is resolved; changing a person’s Department does not resolve it. |
+| [canonical-device-return.png](canonical-device-return.png) | The laptop’s real physical return closes Alex’s original custody and enters Awaiting Preparation with Ready zero. It is not a mere unassignment. |
+| [returned-device-preparation.png](returned-device-preparation.png) | The original laptop is checked working and its data wiped/reset before becoming Ready. Preparation changes readiness without adding another held unit or new Device. |
+| [direct-handover-checks.png](direct-handover-checks.png) | This separate direct-handover draft leaves Sarah as current holder until the complete save succeeds. Working and data-preparation checks are mandatory. It is cancelled, so no new handover is recorded. |
+| [department-directory.png](department-directory.png) | Accounts, Sales and IT are independent flat Departments. Membership grants no security role, and Archive preserves current/history associations. |
+| [department-protected-management.png](department-protected-management.png) | Accounts has membership/equipment history. The management dialog explains retention; permanent deletion is unavailable where associations must remain. This draft is cancelled. |
+| [department-staff-members.png](department-staff-members.png) | Authorised Staff Members Read exposes the Department’s current people. Personally held equipment is not the Department’s shared stock. |
+| [department-current-equipment.png](department-current-equipment.png) | Accounts shared equipment contains the original AST-PRN-01 assignment. A member’s personally held laptop is not copied into this Department table. |
+| [department-selection-protection.png](department-selection-protection.png) | Manage Departments rejects an empty selection. This is a selection change within the same physical custody, not a return/reissue or transfer of the printer. |
+| [priya-department-change.png](priya-department-change.png) | Priya’s unsaved Staff edit selects Sales instead of Accounts. Saving membership changes shared visibility but does not assign or move a Device or change her baseline security role. |
+| [department-permission-boundary.png](department-permission-boundary.png) | Departments Read alone does not disclose Staff or equipment counts. Not Available means missing independent permission, rather than an empty Department. |
+| [quantity-issue-draft.png](quantity-issue-draft.png) | Eight of ten Ready units are proposed for Alex from a separate twenty-keyboard demonstration receipt. Nothing is issued until the confirmation succeeds. |
+| [quantity-issue-confirmation.png](quantity-issue-confirmation.png) | Confirm Issue Equipment retains the exact equipment, quantity and recipient. Back To Edit returns to the draft; Cancel records no issue. |
+| [partial-return-five-three-two.png](partial-return-five-three-two.png) | Return five against the original issue: three checked Ready and two damaged/written off. The other three stay outstanding with Alex. This is the unsaved disposition. |
+| [individual-issue-selection.png](individual-issue-selection.png) | An individually tracked mouse is selected by its own identity. This draft is cancelled, so it does not add another issue to the connected journey. |
+| [correction-twenty-to-ten.png](correction-twenty-to-ten.png) | The original receipt remains twenty. This preview proposes effective quantity ten with a reason and before/after balances; Save Correction is still required. |
+| [correction-dependent-history-blocked.png](correction-dependent-history-blocked.png) | Five would contradict later issue/return history, so the correction is blocked. Do not invent a compensating receipt or delete the original movement. |
+| [correction-stale-rejected.png](correction-stale-rejected.png) | A separately saved interim correction invalidates the earlier preview. The stale Save Correction is rejected and the user must review the refreshed history. |
+| [correction-attributed-history.png](correction-attributed-history.png) | The original twenty-unit receipt and both attributed corrections remain. Its effective quantity is ten; prior issue/return facts and physical Device identities are preserved. |
+| [unused-device-unassigned.png](unused-device-unassigned.png) | AST-LAP-015 is an independent Device with no current holder or physical stock receipt. Initial allocation is available only while it remains eligible. |
+| [initial-allocation-rejected.png](initial-allocation-rejected.png) | A real edit reservation invalidates this initial allocation. The complete selection is rejected; Alex does not receive a partially saved assignment. |
+| [direct-handover-saved.png](direct-handover-saved.png) | This separate AST-LAP-015 demonstration records a checked direct handover from Alex to Sarah on 27/11. It has no storeroom return and does not replace the AST-LAP-014 return/reissue journey. |
+| [read-only-current-and-history.png](read-only-current-and-history.png) | Devices/IT Assets Read can review AST-LAP-014’s current Sarah custody and earlier Alex history, without assignment, return, write-off or editing controls. |
+| [lifecycle-date-editor.png](lifecycle-date-editor.png) | Purchase and evidenced Warranty Expiry are proposed alongside the retained first-service date. A manual replacement override is shown as an unsaved example, then cleared before saving the calculated-date journey. |
+| [lifecycle-saved-first-service.png](lifecycle-saved-first-service.png) | Saved AST-LAP-014 dates retain first service 05/11/2026 after reissue. Purchase 03/11 and warranty 15/12 are evidenced fictional dates; the Laptop lifespan calculates replacement in 2029 rather than restarting at Sarah’s issue. |
+| [lifecycle-settings.png](lifecycle-settings.png) | Administrator settings keep independent default 90-day warning periods and per-type lifespans. A blank lifespan is different from a numeric year count. This view makes no settings change. |
+| [first-service-future-rejected-while-off.png](first-service-future-rejected-while-off.png) | With Lifecycle disabled, the qualifying first issue still rejects a future first-service date. No custody or first-service save occurred from this rejected proposal. |
+| [first-service-visible-after-reenable.png](first-service-visible-after-reenable.png) | After the valid first issue to Priya was saved while Lifecycle was off, re-enabling it reveals Original In Service Date 27/11/2026. This is the distinct AST-LAP-016 example. |
+| [unassigned-return-physical-protection.png](unassigned-return-physical-protection.png) | This existing unassigned Device has no recorded issue to close. Its fixed one-unit physical return would enter Awaiting Preparation; a future return is rejected and records nothing. |
+| [associate-entire-existing-issue.png](associate-entire-existing-issue.png) | Associate Already Issued Equipment links the entire two-keyboard outstanding issue for Sarah’s AST-LAP-015 custody. It does not issue stock or deduct quantity again. |
+| [damaged-canonical-return.png](damaged-canonical-return.png) | AST-LAP-014 physically returns damaged: returned one, Ready zero and damaged/write-off one. This actual return/disposition closes Sarah’s custody and adds no usable held laptop; a genuinely missing Device would use the separate Write Off route. |
+| [final-canonical-custody-history.png](final-canonical-custody-history.png) | The final Retired Device keeps its identity and Alex/Sarah history. Physical return, damaged write-off and operational Retired are distinct recorded facts; nothing was deleted or generally reactivated. |
+| [lifecycle-boundaries-and-retired.png](lifecycle-boundaries-and-retired.png) | Named warranty examples distinguish yesterday, today, day 90 and day 91 under the 90-day rule. Include Retired with All Conditions retains AST-LAP-014 and its 15/12 warranty for historical review, while Retired Devices stay outside the four active counters. |
+
+## Shared Earlier Illustrations
+
+Reuse the exact earlier Batch 7C bytes with their original caption, actor, timestamp and still-pending acceptance. These are references, not new screenshots or later relabelled outcomes.
+
+- [Shared-7C-same-device-sarah-history](../batch-7c/same-device-sarah-history.png): Sarah now holds the same AST-LAP-014. Alex’s ended custody and actual return remain in its history; preparation and reissue did not create a replacement identity or restart first service.
+- [Shared-7C-returned-device-readiness-protection](../batch-7c/returned-device-readiness-protection.png): The returned registered Device cannot be made Ready by increasing the stock item’s receipt-readiness total. Its own Prepare Returned Equipment checks are required; this out-of-range draft is discarded.
+- [Shared-7C-alex-saved-custody](../batch-7c/alex-saved-custody.png): Saved current custody belongs to Alex. The original Device and assignment history remain the authoritative identity; registration was a different event.
+
+## Written Coverage And Delivery Boundary
+
+Coverage retains every original group, owned state, original contract and shared reference. Routine validation, Cancel/Back, repetitive filters/status variants, no-match/empty alternatives and repeated stale-state remedies are written in the existing accepted guides. The precise map identifies every unpictured variant; images do not imply an unobserved saved outcome or exhaustive runtime acceptance. Important permission, retained-history, stock arithmetic, protected readiness and distinct transactional rejection illustrations are identified explicitly. Separate application functional/security acceptance remains intact.
+
+Correction Batches 1–2 targeted refresh backlog, original correction evidence and accepted 7A/7B bytes/provenance remain preserved. No extra authentication, Staff, virtual-Device or sidebar refresh captures. Batches 7F–7H/8, cloud desktop, full regression, CI monitoring, private deployment, native acceptance, upgrade/recovery, private exports, security audit and website work remain excluded. PR #472 remains draft/open/unmerged; #366 open. No release or publication. Each pack requires its separate committed, pushed and remotely verified checkpoint before the next pack’s documentation delivery; final independent review and separate owner acceptance remain mandatory.
+
+Additional fixture context: department.reader has Departments Read only and confirmed MFA. The separate twenty-unit Correction Training Keyboard receipt has ten initially Ready units, an eight-unit Alex issue and a five-unit return (three Ready, two damaged); its original twenty quantity remains while reasoned corrections set effective quantity nineteen then ten. AST-LAP-015 supplies a separate checked direct-handover and whole-existing-issue association example; it does not replace the main AST-LAP-014 journey. AST-LAP-016 demonstrates first-service capture with Lifecycle disabled. Named warranty boundary Devices use 26/11/2026, 27/11/2026, day 90 and day 91 from 27/11/2026, plus a separately identified Retired historical Desktop. Their lifecycle dates are seeded fictional fixtures using the existing schema, rather than a real customer history. Two redundant new frames were retained untracked and replaced by genuinely matching attributed-history and association illustrations; they are not duplicate deliverables.

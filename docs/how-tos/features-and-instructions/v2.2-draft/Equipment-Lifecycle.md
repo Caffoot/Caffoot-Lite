@@ -1,5 +1,7 @@
 # Equipment Lifecycle
 
+> **Current Batch 7D capture status — 27 November 2026:** [New desktop light illustrations](screenshots/batch-7d/README.md) use the approved merged schema-31 baseline. Independent ChatGPT review and separate owner visual/privacy/caption/alt acceptance remain pending. Earlier written/source and capture-status paragraphs retain their dated scope; the current pack status controls these new images. Published v2.1 and targeted correction-refresh requirements remain unchanged.
+
 > **Draft v2.2 — Unreleased.** This guide describes the development version integrated through [merged PR #418](https://github.com/Caffoot/Caffoot-Lite/pull/418). Use the [published v2.1 guides](../README.md) for the released application.
 
 > **Written/source reconciliation:** Batch 4, application baseline `fdc677920bfc52f48f641b3d6d1344c902a6a9b0` (schema 31). Focused independent reviews are recorded and [owner written/source acceptance of Batches 1–6](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7200681167) is recorded. Current visual/privacy/caption/alt approval remains outstanding; [Batch 7 reconciliation and proposed capture packs](../../../development-guide/Milestone-01-Batch-7-Review.md) await independent review and owner acceptance. Capture scope and method need separate authorisation. Desktop capture remains deferred; existing images retain their original provenance and are not certified current by this pass. [Source review and exact screenshot requirements](../../../development-guide/Milestone-01-Batch-4-Review.md).
@@ -158,3 +160,31 @@ Related procedures include [Optional Features](Optional-Features-and-Link-To-IPA
 See [the corrected application evidence](../../../development-handovers/evidence/stage-4-batch-44-corrected/README.md) for desktop/mobile, light/dark and open-calendar screenshots. The [original pre-correction evidence](../../../development-handovers/evidence/stage-4-batch-44/Application-Report.md) is preserved as historical evidence.
 
 [Connected example: a laptop from Supplier and stock to its final write-off](Connected-Equipment-Journey.md).
+
+## Batch 7D Desktop Illustrations
+
+These images follow the fictional training journey. Read the caption to distinguish a draft, a cancelled preview and a saved outcome. [Complete original coverage and limits](screenshots/batch-7d/Coverage.md).
+
+![AST-LAP-014 Hardware lifecycle editor with dates, original first service and administrator replacement override draft.](screenshots/batch-7d/lifecycle-date-editor.png)
+
+*Draft v2.2 — Purchase and evidenced Warranty Expiry are proposed alongside the retained first-service date. A manual replacement override is shown as an unsaved example, then cleared before saving the calculated-date journey. Independent review and owner visual acceptance pending.*
+
+![AST-LAP-014 Hardware with retained original first-service date, saved purchase/warranty dates and calculated replacement.](screenshots/batch-7d/lifecycle-saved-first-service.png)
+
+*Draft v2.2 — Saved AST-LAP-014 dates retain first service 05/11/2026 after reissue. Purchase 03/11 and warranty 15/12 are evidenced fictional dates; the Laptop lifespan calculates replacement in 2029 rather than restarting at Sarah’s issue. Independent review and owner visual acceptance pending.*
+
+![Lifecycle Settings showing warranty and replacement warning days, per-type lifespans, Save Settings and Cancel.](screenshots/batch-7d/lifecycle-settings.png)
+
+*Draft v2.2 — Administrator settings keep independent default 90-day warning periods and per-type lifespans. A blank lifespan is different from a numeric year count. This view makes no settings change. Independent review and owner visual acceptance pending.*
+
+![AST-LAP-016 Reissue Existing Device showing future first-service date rejection with Lifecycle disabled.](screenshots/batch-7d/first-service-future-rejected-while-off.png)
+
+*Draft v2.2 — With Lifecycle disabled, the qualifying first issue still rejects a future first-service date. No custody or first-service save occurred from this rejected proposal. Independent review and owner visual acceptance pending.*
+
+![AST-LAP-016 Hardware showing the first-service date recorded while Lifecycle was disabled.](screenshots/batch-7d/first-service-visible-after-reenable.png)
+
+*Draft v2.2 — After the valid first issue to Priya was saved while Lifecycle was off, re-enabling it reveals Original In Service Date 27/11/2026. This is the distinct AST-LAP-016 example. Independent review and owner visual acceptance pending.*
+
+![Lifecycle Dashboard with warning counters, named date-boundary examples and Include Retired showing historical AST-LAP-014.](screenshots/batch-7d/lifecycle-boundaries-and-retired.png)
+
+*Draft v2.2 — Named warranty examples distinguish yesterday, today, day 90 and day 91 under the 90-day rule. Include Retired with All Conditions retains AST-LAP-014 and its 15/12 warranty for historical review, while Retired Devices stay outside the four active counters. Independent review and owner visual acceptance pending.*

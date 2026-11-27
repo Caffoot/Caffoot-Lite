@@ -1,5 +1,7 @@
 # Associated Equipment And Direct Device Handover
 
+> **Current Batch 7D capture status — 27 November 2026:** [New desktop light illustrations](screenshots/batch-7d/README.md) use the approved merged schema-31 baseline. Independent ChatGPT review and separate owner visual/privacy/caption/alt acceptance remain pending. Earlier written/source and capture-status paragraphs retain their dated scope; the current pack status controls these new images. Published v2.1 and targeted correction-refresh requirements remain unchanged.
+
 > **Draft v2.2 — Unreleased.** These instructions describe the implementation on `milestone-1` at the application baseline identified below. v2.1 remains the published release.
 
 > **Written/source reconciliation:** Batch 4, application baseline `fdc677920bfc52f48f641b3d6d1344c902a6a9b0` (schema 31). Focused independent reviews are recorded and [owner written/source acceptance of Batches 1–6](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7200681167) is recorded. Current visual/privacy/caption/alt approval remains outstanding; [Batch 7 reconciliation and proposed capture packs](../../../development-guide/Milestone-01-Batch-7-Review.md) await independent review and owner acceptance. Capture scope and method need separate authorisation. Desktop capture remains deferred; existing images retain their original provenance and are not certified current by this pass. [Source review and exact screenshot requirements](../../../development-guide/Milestone-01-Batch-4-Review.md).
@@ -135,3 +137,31 @@ The [genuine Associated Equipment and handover gallery](../../../development-han
 [← Draft v2.2 Guides](README.md) · [Published v2.1 Guides](../README.md)
 
 [Connected example: a laptop from Supplier and stock to its final write-off](Connected-Equipment-Journey.md).
+
+## Batch 7D Desktop Illustrations
+
+These images follow the fictional training journey. Read the caption to distinguish a draft, a cancelled preview and a saved outcome. [Complete original coverage and limits](screenshots/batch-7d/Coverage.md).
+
+![Add Equipment form selecting one Office Mouse for Alex’s AST-LAP-014.](screenshots/batch-7d/associate-mouse-draft.png)
+
+*Draft v2.2 — Issue And Associate will give one Ready mouse to the laptop’s existing Alex custody. The holder is derived from that custody and cannot be freely changed here. Independent review and owner visual acceptance pending.*
+
+![AST-LAP-014 Associated Equipment showing the saved current Office Mouse issue.](screenshots/batch-7d/associated-mouse-saved.png)
+
+*Draft v2.2 — The mouse issue is now explicitly linked to this Device custody. It is not inferred from the same holder, name or purchase. Independent review and owner visual acceptance pending.*
+
+![AST-LAP-014 current Alex custody with outstanding-accessory handover protection.](screenshots/batch-7d/handover-blocked-by-accessory.png)
+
+*Draft v2.2 — Alex still holds the laptop. Outstanding associated equipment prevents direct reassignment until each accessory is resolved; changing a person’s Department does not resolve it. Independent review and owner visual acceptance pending.*
+
+![Reassignment Details for AST-LAP-014 with current-holder protection and preparation checks.](screenshots/batch-7d/direct-handover-checks.png)
+
+*Draft v2.2 — This separate direct-handover draft leaves Sarah as current holder until the complete save succeeds. Working and data-preparation checks are mandatory. It is cancelled, so no new handover is recorded. Independent review and owner visual acceptance pending.*
+
+![AST-LAP-015 showing current Sarah custody and retained ended Alex assignment after confirmed preparation and reassignment.](screenshots/batch-7d/direct-handover-saved.png)
+
+*Draft v2.2 — This separate AST-LAP-015 demonstration records a checked direct handover from Alex to Sarah on 27/11. It has no storeroom return and does not replace the AST-LAP-014 return/reissue journey. Independent review and owner visual acceptance pending.*
+
+![Add Equipment showing the original two-unit outstanding keyboard issue and No Stock Deduction.](screenshots/batch-7d/associate-entire-existing-issue.png)
+
+*Draft v2.2 — Associate Already Issued Equipment links the entire two-keyboard outstanding issue for Sarah’s AST-LAP-015 custody. It does not issue stock or deduct quantity again. Independent review and owner visual acceptance pending.*

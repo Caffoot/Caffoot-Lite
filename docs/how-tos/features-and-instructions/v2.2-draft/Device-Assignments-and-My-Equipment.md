@@ -1,5 +1,7 @@
 # Device Assignments And My Equipment
 
+> **Current Batch 7D capture status — 27 November 2026:** [New desktop light illustrations](screenshots/batch-7d/README.md) use the approved merged schema-31 baseline. Independent ChatGPT review and separate owner visual/privacy/caption/alt acceptance remain pending. Earlier written/source and capture-status paragraphs retain their dated scope; the current pack status controls these new images. Published v2.1 and targeted correction-refresh requirements remain unchanged.
+
 > **Draft v2.2 — Unreleased.** This guide includes the Stage 6.4 Shared Devices review changes. It is for development review, not production installation, upgrade or restore. Use the [published v2.1 guides](../README.md) for the released application. Batch 3.4 native/manual acceptance remains deferred; release acceptance is separate.
 
 > **Written/source reconciliation:** Batch 3, application baseline `fdc677920bfc52f48f641b3d6d1344c902a6a9b0` (schema 31). Focused independent reviews are recorded and [owner written/source acceptance of Batches 1–6](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7200681167) is recorded. Current visual/privacy/caption/alt approval remains outstanding; [Batch 7 reconciliation and proposed capture packs](../../../development-guide/Milestone-01-Batch-7-Review.md) await independent review and owner acceptance. Capture scope and method need separate authorisation. Desktop capture remains deferred; existing images retain their original provenance and are not certified current by this pass. [Source review and exact screenshot requirements](../../../development-guide/Milestone-01-Batch-3-Review.md).
@@ -226,3 +228,39 @@ The reused image belongs to the [owner-approved Batch 3.8 application captures](
 [← Draft v2.2 Guides](README.md) · [Published v2.1 Guides](../README.md)
 
 [Connected equipment example — Supplier, stock, assignment and later use](Connected-Equipment-Journey.md).
+
+## Batch 7D Desktop Illustrations
+
+These images follow the fictional training journey. Read the caption to distinguish a draft, a cancelled preview and a saved outcome. [Complete original coverage and limits](screenshots/batch-7d/Coverage.md).
+
+![Assign Device dialog selecting Department custody and Accounts for AST-PRN-01.](screenshots/batch-7d/assign-printer-department.png)
+
+*Draft v2.2 — This unsaved assignment selects Accounts for one shared physical printer. Membership affects access, rather than creating another physical issue. Independent review and owner visual acceptance pending.*
+
+![AST-LAP-015 Assigned To with Unassigned status and Assign Device action.](screenshots/batch-7d/unused-device-unassigned.png)
+
+*Draft v2.2 — AST-LAP-015 is an independent Device with no current holder or physical stock receipt. Initial allocation is available only while it remains eligible. Independent review and owner visual acceptance pending.*
+
+![Assign Device recipient selection with a changed or reserved Device rejection.](screenshots/batch-7d/initial-allocation-rejected.png)
+
+*Draft v2.2 — A real edit reservation invalidates this initial allocation. The complete selection is rejected; Alex does not receive a partially saved assignment. Independent review and owner visual acceptance pending.*
+
+![AST-LAP-015 showing current Sarah custody and retained ended Alex assignment after confirmed preparation and reassignment.](screenshots/batch-7d/direct-handover-saved.png)
+
+*Draft v2.2 — This separate AST-LAP-015 demonstration records a checked direct handover from Alex to Sarah on 27/11. It has no storeroom return and does not replace the AST-LAP-014 return/reissue journey. Independent review and owner visual acceptance pending.*
+
+![Read-only AST-LAP-014 Assigned To with current Sarah and ended Alex custody and dated movement history.](screenshots/batch-7d/read-only-current-and-history.png)
+
+*Draft v2.2 — Devices/IT Assets Read can review AST-LAP-014’s current Sarah custody and earlier Alex history, without assignment, return, write-off or editing controls. Independent review and owner visual acceptance pending.*
+
+![Retired AST-LAP-014 Assigned To with closed Alex and Sarah assignments and retained return/preparation/write-off movements.](screenshots/batch-7d/final-canonical-custody-history.png)
+
+*Draft v2.2 — The final Retired Device keeps its identity and Alex/Sarah history. Physical return, damaged write-off and operational Retired are distinct recorded facts; nothing was deleted or generally reactivated. Independent review and owner visual acceptance pending.*
+
+![AST-LAP-014 Assigned To showing current Sarah Lewis and closed Alex Morgan physical custody.](screenshots/batch-7c/same-device-sarah-history.png)
+
+*Draft v2.2 — Sarah now holds the same AST-LAP-014. Alex’s ended custody and actual return remain in its history; preparation and reissue did not create a replacement identity or restart first service. Independent review and owner visual acceptance pending.*
+
+![AST-LAP-014 Assigned To showing Alex Morgan and its assignment history.](screenshots/batch-7c/alex-saved-custody.png)
+
+*Draft v2.2 — Saved current custody belongs to Alex. The original Device and assignment history remain the authoritative identity; registration was a different event. Independent review and owner visual acceptance pending.*

@@ -1,5 +1,7 @@
 # A Connected Equipment Example — Aster Services
 
+> **Current Batch 7D capture status — 27 November 2026:** [New desktop light illustrations](screenshots/batch-7d/README.md) use the approved merged schema-31 baseline. Independent ChatGPT review and separate owner visual/privacy/caption/alt acceptance remain pending. Earlier written/source and capture-status paragraphs retain their dated scope; the current pack status controls these new images. Published v2.1 and targeted correction-refresh requirements remain unchanged.
+
 > **Current Batch 7C capture status — 27 November 2026:** [New desktop light illustrations](screenshots/batch-7c/README.md) use the approved merged schema-31 baseline. Independent ChatGPT review and separate owner visual/privacy/caption/alt acceptance remain pending. Earlier written/source and capture-status paragraphs retain their dated scope; the current pack status controls these new images. Published v2.1 and targeted correction-refresh requirements remain unchanged.
 
 > **Draft v2.2 — Unreleased.** Written/source reconciliation for documentation Batches 3 and 4, application baseline `fdc677920bfc52f48f641b3d6d1344c902a6a9b0`, schema 31. Focused independent reviews are recorded and [owner written/source acceptance of Batches 1–6](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7200681167) is recorded. Current visual/privacy/caption/alt approval remains outstanding; [Batch 7 reconciliation and proposed capture packs](../../../development-guide/Milestone-01-Batch-7-Review.md) await independent review and owner acceptance. Capture scope and method need separate authorisation. Desktop capture remains deferred. [Source and screenshot record](../../../development-guide/Milestone-01-Batch-4-Review.md).
@@ -145,3 +147,35 @@ These images follow the fictional training journey. Read the caption to distingu
 ![Original Supplier Directory with active Northlight, two locations, two contacts, search and category filter.](../../../development-handovers/evidence/stage-6-6-batch-3/screenshots/supplier-directory-light-1440.png)
 
 *Draft v2.2 — Original Supplier Directory only: active Northlight, two locations and two contacts. Retain the original fixture, category choices and provenance; this is not a later capture. Independent review and owner visual acceptance pending.*
+
+## Batch 7D Desktop Illustrations
+
+These images follow the fictional training journey. Read the caption to distinguish a draft, a cancelled preview and a saved outcome. [Complete original coverage and limits](screenshots/batch-7d/Coverage.md).
+
+![Return form for AST-LAP-014 from Alex, one returned and zero Ready or damaged.](screenshots/batch-7d/canonical-device-return.png)
+
+*Draft v2.2 — The laptop’s real physical return closes Alex’s original custody and enters Awaiting Preparation with Ready zero. It is not a mere unassignment. Independent review and owner visual acceptance pending.*
+
+![Prepare Returned Equipment for AST-LAP-014 with working and data-preparation checks confirmed.](screenshots/batch-7d/returned-device-preparation.png)
+
+*Draft v2.2 — The original laptop is checked working and its data wiped/reset before becoming Ready. Preparation changes readiness without adding another held unit or new Device. Independent review and owner visual acceptance pending.*
+
+![AST-LAP-014 Hardware with retained original first-service date, saved purchase/warranty dates and calculated replacement.](screenshots/batch-7d/lifecycle-saved-first-service.png)
+
+*Draft v2.2 — Saved AST-LAP-014 dates retain first service 05/11/2026 after reissue. Purchase 03/11 and warranty 15/12 are evidenced fictional dates; the Laptop lifespan calculates replacement in 2029 rather than restarting at Sarah’s issue. Independent review and owner visual acceptance pending.*
+
+![AST-LAP-014 return from Sarah with one damaged/write-off unit, zero Ready and a factual fictional reason.](screenshots/batch-7d/damaged-canonical-return.png)
+
+*Draft v2.2 — AST-LAP-014 physically returns damaged: returned one, Ready zero and damaged/write-off one. This actual return/disposition closes Sarah’s custody and adds no usable held laptop; a genuinely missing Device would use the separate Write Off route. Independent review and owner visual acceptance pending.*
+
+![Retired AST-LAP-014 Assigned To with closed Alex and Sarah assignments and retained return/preparation/write-off movements.](screenshots/batch-7d/final-canonical-custody-history.png)
+
+*Draft v2.2 — The final Retired Device keeps its identity and Alex/Sarah history. Physical return, damaged write-off and operational Retired are distinct recorded facts; nothing was deleted or generally reactivated. Independent review and owner visual acceptance pending.*
+
+![Lifecycle Dashboard with warning counters, named date-boundary examples and Include Retired showing historical AST-LAP-014.](screenshots/batch-7d/lifecycle-boundaries-and-retired.png)
+
+*Draft v2.2 — Named warranty examples distinguish yesterday, today, day 90 and day 91 under the 90-day rule. Include Retired with All Conditions retains AST-LAP-014 and its 15/12 warranty for historical review, while Retired Devices stay outside the four active counters. Independent review and owner visual acceptance pending.*
+
+![AST-LAP-014 Assigned To showing current Sarah Lewis and closed Alex Morgan physical custody.](screenshots/batch-7c/same-device-sarah-history.png)
+
+*Draft v2.2 — Sarah now holds the same AST-LAP-014. Alex’s ended custody and actual return remain in its history; preparation and reissue did not create a replacement identity or restart first service. Independent review and owner visual acceptance pending.*

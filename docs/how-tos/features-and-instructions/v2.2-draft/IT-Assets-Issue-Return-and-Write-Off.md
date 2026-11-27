@@ -1,5 +1,7 @@
 # IT Assets: Issue, Return And Write Off
 
+> **Current Batch 7D capture status — 27 November 2026:** [New desktop light illustrations](screenshots/batch-7d/README.md) use the approved merged schema-31 baseline. Independent ChatGPT review and separate owner visual/privacy/caption/alt acceptance remain pending. Earlier written/source and capture-status paragraphs retain their dated scope; the current pack status controls these new images. Published v2.1 and targeted correction-refresh requirements remain unchanged.
+
 > **Draft v2.2 — Unreleased.** These instructions describe the implementation on `milestone-1` at the application baseline identified below. v2.1 remains the published release. Use these feature instructions on an authorised development or acceptance instance; they are not installation, upgrade or restore instructions.
 
 > **Written/source reconciliation:** Batch 4, application baseline `fdc677920bfc52f48f641b3d6d1344c902a6a9b0` (schema 31). Focused independent reviews are recorded and [owner written/source acceptance of Batches 1–6](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7200681167) is recorded. Current visual/privacy/caption/alt approval remains outstanding; [Batch 7 reconciliation and proposed capture packs](../../../development-guide/Milestone-01-Batch-7-Review.md) await independent review and owner acceptance. Capture scope and method need separate authorisation. Desktop capture remains deferred; existing images retain their original provenance and are not certified current by this pass. [Source review and exact screenshot requirements](../../../development-guide/Milestone-01-Batch-4-Review.md).
@@ -237,3 +239,51 @@ More current examples show [writing off an issued device in mobile dark](../../.
 [Implementation And Screenshots](../../../development-handovers/evidence/stock-circulation/Report.md) · [Roles And MFA](Roles-Section-Permissions-and-MFA.md) · [← Draft v2.2 Guides](README.md) · [Published v2.1 Guides](../README.md)
 
 [Connected example: a laptop from Supplier and stock to its final write-off](Connected-Equipment-Journey.md).
+
+## Batch 7D Desktop Illustrations
+
+These images follow the fictional training journey. Read the caption to distinguish a draft, a cancelled preview and a saved outcome. [Complete original coverage and limits](screenshots/batch-7d/Coverage.md).
+
+![Return form for AST-LAP-014 from Alex, one returned and zero Ready or damaged.](screenshots/batch-7d/canonical-device-return.png)
+
+*Draft v2.2 — The laptop’s real physical return closes Alex’s original custody and enters Awaiting Preparation with Ready zero. It is not a mere unassignment. Independent review and owner visual acceptance pending.*
+
+![Prepare Returned Equipment for AST-LAP-014 with working and data-preparation checks confirmed.](screenshots/batch-7d/returned-device-preparation.png)
+
+*Draft v2.2 — The original laptop is checked working and its data wiped/reset before becoming Ready. Preparation changes readiness without adding another held unit or new Device. Independent review and owner visual acceptance pending.*
+
+![Issue Equipment draft with eight keyboards, Alex Morgan and the original issue date.](screenshots/batch-7d/quantity-issue-draft.png)
+
+*Draft v2.2 — Eight of ten Ready units are proposed for Alex from a separate twenty-keyboard demonstration receipt. Nothing is issued until the confirmation succeeds. Independent review and owner visual acceptance pending.*
+
+![Confirm Issue Equipment summary for eight Correction Training Keyboards to Alex, with Back To Edit and Confirm Issue.](screenshots/batch-7d/quantity-issue-confirmation.png)
+
+*Draft v2.2 — Confirm Issue Equipment retains the exact equipment, quantity and recipient. Back To Edit returns to the draft; Cancel records no issue. Independent review and owner visual acceptance pending.*
+
+![Return Equipment showing five returned, three Ready, two damaged, reason and outstanding remainder.](screenshots/batch-7d/partial-return-five-three-two.png)
+
+*Draft v2.2 — Return five against the original issue: three checked Ready and two damaged/written off. The other three stay outstanding with Alex. This is the unsaved disposition. Independent review and owner visual acceptance pending.*
+
+![Issue Equipment with the individual mouse serial/asset identity and Sarah as proposed recipient.](screenshots/batch-7d/individual-issue-selection.png)
+
+*Draft v2.2 — An individually tracked mouse is selected by its own identity. This draft is cancelled, so it does not add another issue to the connected journey. Independent review and owner visual acceptance pending.*
+
+![Movement History with original receipt twenty, effective ten and appended reasoned correction records.](screenshots/batch-7d/correction-attributed-history.png)
+
+*Draft v2.2 — The original twenty-unit receipt and both attributed corrections remain. Its effective quantity is ten; prior issue/return facts and physical Device identities are preserved. Independent review and owner visual acceptance pending.*
+
+![Fixed unassigned Device return with physical-return statement and Date Returned cannot be in the future rejection.](screenshots/batch-7d/unassigned-return-physical-protection.png)
+
+*Draft v2.2 — This existing unassigned Device has no recorded issue to close. Its fixed one-unit physical return would enter Awaiting Preparation; a future return is rejected and records nothing. Independent review and owner visual acceptance pending.*
+
+![AST-LAP-014 return from Sarah with one damaged/write-off unit, zero Ready and a factual fictional reason.](screenshots/batch-7d/damaged-canonical-return.png)
+
+*Draft v2.2 — AST-LAP-014 physically returns damaged: returned one, Ready zero and damaged/write-off one. This actual return/disposition closes Sarah’s custody and adds no usable held laptop; a genuinely missing Device would use the separate Write Off route. Independent review and owner visual acceptance pending.*
+
+![Retired AST-LAP-014 Assigned To with closed Alex and Sarah assignments and retained return/preparation/write-off movements.](screenshots/batch-7d/final-canonical-custody-history.png)
+
+*Draft v2.2 — The final Retired Device keeps its identity and Alex/Sarah history. Physical return, damaged write-off and operational Retired are distinct recorded facts; nothing was deleted or generally reactivated. Independent review and owner visual acceptance pending.*
+
+![Laptop stock readiness editor showing one unregistered Ready unit, one returned registered unit and the registered-Device readiness safeguard.](screenshots/batch-7c/returned-device-readiness-protection.png)
+
+*Draft v2.2 — The returned registered Device cannot be made Ready by increasing the stock item’s receipt-readiness total. Its own Prepare Returned Equipment checks are required; this out-of-range draft is discarded. Independent review and owner visual acceptance pending.*

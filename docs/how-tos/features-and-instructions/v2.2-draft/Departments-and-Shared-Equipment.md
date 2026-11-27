@@ -1,5 +1,7 @@
 # Departments And Shared Equipment
 
+> **Current Batch 7D capture status — 27 November 2026:** [New desktop light illustrations](screenshots/batch-7d/README.md) use the approved merged schema-31 baseline. Independent ChatGPT review and separate owner visual/privacy/caption/alt acceptance remain pending. Earlier written/source and capture-status paragraphs retain their dated scope; the current pack status controls these new images. Published v2.1 and targeted correction-refresh requirements remain unchanged.
+
 > **Draft v2.2 — Unreleased.** This guide includes the Stage 6.4 Shared Devices review changes. It is for development review, not production installation, upgrade or restore. Use the [published v2.1 guides](../README.md) for the released application. Native/manual and release acceptance remain separate.
 
 > **Written/source reconciliation:** Batch 3, application baseline `fdc677920bfc52f48f641b3d6d1344c902a6a9b0` (schema 31). Focused independent reviews are recorded and [owner written/source acceptance of Batches 1–6](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7200681167) is recorded. Current visual/privacy/caption/alt approval remains outstanding; [Batch 7 reconciliation and proposed capture packs](../../../development-guide/Milestone-01-Batch-7-Review.md) await independent review and owner acceptance. Capture scope and method need separate authorisation. Desktop capture remains deferred; existing images retain their original provenance and are not certified current by this pass. [Source review and exact screenshot requirements](../../../development-guide/Milestone-01-Batch-3-Review.md).
@@ -183,3 +185,35 @@ The reused image belongs to the [owner-approved Batch 3.8 application captures](
 [← Draft v2.2 Guides](README.md) · [Published v2.1 Guides](../README.md)
 
 [Connected equipment example — Supplier, stock, assignment and later use](Connected-Equipment-Journey.md).
+
+## Batch 7D Desktop Illustrations
+
+These images follow the fictional training journey. Read the caption to distinguish a draft, a cancelled preview and a saved outcome. [Complete original coverage and limits](screenshots/batch-7d/Coverage.md).
+
+![Department directory showing Accounts, Sales and IT with active status, current membership and management actions.](screenshots/batch-7d/department-directory.png)
+
+*Draft v2.2 — Accounts, Sales and IT are independent flat Departments. Membership grants no security role, and Archive preserves current/history associations. Independent review and owner visual acceptance pending.*
+
+![Manage Accounts Department with name, Archive and save/cancel actions and protected deletion policy.](screenshots/batch-7d/department-protected-management.png)
+
+*Draft v2.2 — Accounts has membership/equipment history. The management dialog explains retention; permanent deletion is unavailable where associations must remain. This draft is cancelled. Independent review and owner visual acceptance pending.*
+
+![Accounts Department Staff Members tab listing Alex and Priya with current eligibility.](screenshots/batch-7d/department-staff-members.png)
+
+*Draft v2.2 — Authorised Staff Members Read exposes the Department’s current people. Personally held equipment is not the Department’s shared stock. Independent review and owner visual acceptance pending.*
+
+![Accounts Equipment tab showing shared AST-PRN-01 and its original assignment history.](screenshots/batch-7d/department-current-equipment.png)
+
+*Draft v2.2 — Accounts shared equipment contains the original AST-PRN-01 assignment. A member’s personally held laptop is not copied into this Department table. Independent review and owner visual acceptance pending.*
+
+![Manage Departments with no selected Department and Select at least one Department rejection.](screenshots/batch-7d/department-selection-protection.png)
+
+*Draft v2.2 — Manage Departments rejects an empty selection. This is a selection change within the same physical custody, not a return/reissue or transfer of the printer. Independent review and owner visual acceptance pending.*
+
+![Edit Priya Shah with Department Sales selected while the saved Accounts membership is unchanged until Save.](screenshots/batch-7d/priya-department-change.png)
+
+*Draft v2.2 — Priya’s unsaved Staff edit selects Sales instead of Accounts. Saving membership changes shared visibility but does not assign or move a Device or change her baseline security role. Independent review and owner visual acceptance pending.*
+
+![Accounts Department Overview with Staff and equipment Not Available for the Departments-only reader.](screenshots/batch-7d/department-permission-boundary.png)
+
+*Draft v2.2 — Departments Read alone does not disclose Staff or equipment counts. Not Available means missing independent permission, rather than an empty Department. Independent review and owner visual acceptance pending.*
