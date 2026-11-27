@@ -4,6 +4,8 @@
 
 > **Draft v2.2 — Unreleased.** Text and controls have been reconciled against `fdc677920bfc52f48f641b3d6d1344c902a6a9b0` (schema 31), 26 November 2026. For v2.1, use the [guide at the published release tag](https://github.com/Caffoot/Caffoot-Lite/blob/c3237114108cad9f7d4e57657b6aed5e0091a5ef/docs/how-tos/features-and-instructions/Devices.md). Current approved desktop illustrations and final acceptance are outstanding; see the [Batch 2 review record](../../../development-guide/Milestone-01-Batch-2-Review.md). All examples are fictional.
 
+> **Documentation status — 27 November 2026:** Focused independent reviews are recorded and [owner written/source acceptance of Batches 1–6](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7200681167) is recorded. Current visual/privacy/caption/alt approval remains outstanding; [Batch 7 reconciliation and proposed capture packs](../../../development-guide/Milestone-01-Batch-7-Review.md) await independent review and owner acceptance. Capture scope and method need separate authorisation.
+
 ## What a device record represents
 
 A device can describe a physical server, switch, workstation, printer or another supported type, with its network address, status, location, optional rack position and type-specific hardware/software information. Supported virtual machines have their own host-related details. A Device is the canonical record for a managed piece of equipment. Keep the same record through assignment, return, preparation and reissue. A Device is not a stock balance, a login account, a subnet or a support ticket. **Not every Device type presents the same additional fields.**

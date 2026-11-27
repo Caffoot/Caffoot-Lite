@@ -2,7 +2,7 @@
 
 > **Draft v2.2 — Unreleased.** Use these instructions on an authorised v2.2 review installation. For the published v2.1 release, use its [installation guide](../../../../INSTALLATION.md).
 
-> **Documentation Batch 6:** source-inspected at `fdc677920bfc52f48f641b3d6d1344c902a6a9b0` (schema 31). Written/source reconciliation awaits independent ChatGPT review and separate owner written acceptance. Desktop work remains deferred to Batch 7. [Evidence states and screenshot record](../../../development-guide/Milestone-01-Batch-6-Review.md). These are current draft instructions, not newly executed deployment checks.
+> **Documentation Batch 6:** source-inspected at `fdc677920bfc52f48f641b3d6d1344c902a6a9b0` (schema 31). Focused independent reviews are recorded and [owner written/source acceptance of Batches 1–6](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7200681167) is recorded. Current visual/privacy/caption/alt approval remains outstanding; [Batch 7 reconciliation and proposed capture packs](../../../development-guide/Milestone-01-Batch-7-Review.md) await independent review and owner acceptance. Capture scope and method need separate authorisation. Desktop capture remains deferred. [Evidence states and screenshot record](../../../development-guide/Milestone-01-Batch-6-Review.md). These are current draft instructions, not newly executed deployment checks.
 
 The Service Desk uses one installation time zone for working hours, excluded dates and reporting dates. A named time zone follows local clock changes automatically. Ticket creation, updates and the live queue remain available while the time zone needs attention.
 

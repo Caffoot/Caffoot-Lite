@@ -2,6 +2,8 @@
 
 > **Draft v2.2 — Unreleased.** Text and controls have been reconciled against the 26 November 2026 application baseline, `fdc677920bfc52f48f641b3d6d1344c902a6a9b0` (schema 31). Use the [published v2.1 guides](https://github.com/Caffoot/Caffoot-Lite/tree/c3237114108cad9f7d4e57657b6aed5e0091a5ef/docs/how-tos/features-and-instructions) for the current release. Optional Features and basic-IP linking are v2.2 functionality, not v2.1 instructions. Current desktop illustrations and final acceptance remain outstanding. This is not an installation, upgrade or restore procedure.
 
+> **Documentation status — 27 November 2026:** Focused independent reviews are recorded and [owner written/source acceptance of Batches 1–6](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7200681167) is recorded. Current visual/privacy/caption/alt approval remains outstanding; [Batch 7 reconciliation and proposed capture packs](../../../development-guide/Milestone-01-Batch-7-Review.md) await independent review and owner acceptance. Capture scope and method need separate authorisation.
+
 ## Choose The Features Your Organisation Uses
 
 Caffoot Lite lets an administrator decide which areas the whole organisation uses. You can record Devices without managing subnets, manage IP addresses without a Device inventory, or document Network Racks independently. **IT Assets** has its own switch for equipment stock and circulation. **Suppliers** has an independent switch for Supplier Management. Turning an area off retains its records so that you can use it again later.

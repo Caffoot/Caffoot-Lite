@@ -4,6 +4,8 @@
 
 > **Draft v2.2 — Unreleased.** Reconciled against application baseline `fdc677920bfc52f48f641b3d6d1344c902a6a9b0` (schema 31), 26 November 2026. Use the [published v2.1 guide](https://github.com/Caffoot/Caffoot-Lite/blob/c3237114108cad9f7d4e57657b6aed5e0091a5ef/docs/how-tos/features-and-instructions/IPAM.md) for that release. Approved current desktop illustrations and final acceptance remain outstanding; see the [Batch 2 review record](../../../development-guide/Milestone-01-Batch-2-Review.md). Examples are fictional and use documentation address ranges.
 
+> **Documentation status — 27 November 2026:** Focused independent reviews are recorded and [owner written/source acceptance of Batches 1–6](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7200681167) is recorded. Current visual/privacy/caption/alt approval remains outstanding; [Batch 7 reconciliation and proposed capture packs](../../../development-guide/Milestone-01-Batch-7-Review.md) await independent review and owner acceptance. Capture scope and method need separate authorisation.
+
 ## Understand the records
 
 An **IP Address Block** optionally groups address space. An addressable **subnet** has a CIDR and name; new subnets also require an explicitly selected purpose: **LAN**, **Management** or **VPN**. A VLAN is optional. LAN and Management need a usable gateway; VPN may omit one. Existing subnets without a purpose display **Not assigned** and remain editable without reclassification. The individual IP address grid records **Available**, **Assigned** and **Reserved** states along with an optional hostname and **IPAM Notes**. IPAM notes are about the *address*, not about one particular device.

@@ -1,6 +1,6 @@
 # A Connected Equipment Example — Aster Services
 
-> **Draft v2.2 — Unreleased.** Written/source reconciliation for documentation Batches 3 and 4, application baseline `fdc677920bfc52f48f641b3d6d1344c902a6a9b0`, schema 31. Awaiting independent ChatGPT review and separate owner acceptance. Desktop illustrations remain deferred to Batch 7. [Source and screenshot record](../../../development-guide/Milestone-01-Batch-4-Review.md).
+> **Draft v2.2 — Unreleased.** Written/source reconciliation for documentation Batches 3 and 4, application baseline `fdc677920bfc52f48f641b3d6d1344c902a6a9b0`, schema 31. Focused independent reviews are recorded and [owner written/source acceptance of Batches 1–6](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7200681167) is recorded. Current visual/privacy/caption/alt approval remains outstanding; [Batch 7 reconciliation and proposed capture packs](../../../development-guide/Milestone-01-Batch-7-Review.md) await independent review and owner acceptance. Capture scope and method need separate authorisation. Desktop capture remains deferred. [Source and screenshot record](../../../development-guide/Milestone-01-Batch-4-Review.md).
 
 This fictional example connects tasks that already exist. It is not a new application workflow or a compulsory order for every organisation. Follow the detailed linked guide for each form, required field, confirmation and rejection. Record only real physical events and checks in your own installation.
 

@@ -2,7 +2,7 @@
 
 > **Draft v2.2 — Unreleased.** These instructions are for authorised isolated v2.2 review installations. For a live v2.1 installation, use the [published v2.1 guidance](https://github.com/Caffoot/Caffoot-Lite/blob/c3237114108cad9f7d4e57657b6aed5e0091a5ef/docs/how-tos/features-and-instructions/Migration-Backup-and-Restore.md).
 
-> **Documentation Batch 6:** source-inspected at `fdc677920bfc52f48f641b3d6d1344c902a6a9b0`, schema 31, after verified Batch 5 checkpoint `f84b3acd7f90e69c8e33ded8e4d59b6a84fb8e41`. Written/source completion awaits independent ChatGPT review and separate owner written acceptance. Current supported-upgrade and complete-volume restoration acceptance remain outstanding. [Sources, historical evidence, limitations and screenshots](../../../development-guide/Milestone-01-Batch-6-Review.md).
+> **Documentation Batch 6:** source-inspected at `fdc677920bfc52f48f641b3d6d1344c902a6a9b0`, schema 31, after verified Batch 5 checkpoint `f84b3acd7f90e69c8e33ded8e4d59b6a84fb8e41`. Focused independent reviews are recorded and [owner written/source acceptance of Batches 1–6](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7200681167) is recorded. Current visual/privacy/caption/alt approval remains outstanding; [Batch 7 reconciliation and proposed capture packs](../../../development-guide/Milestone-01-Batch-7-Review.md) await independent review and owner acceptance. Capture scope and method need separate authorisation. Current supported-upgrade and complete-volume restoration acceptance remain outstanding. [Sources, historical evidence, limitations and screenshots](../../../development-guide/Milestone-01-Batch-6-Review.md).
 
 Choose the procedure for the installation you already have.
 

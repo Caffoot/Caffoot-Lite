@@ -4,6 +4,8 @@
 
 > **Draft v2.2 — Unreleased.** Reconciled against `fdc677920bfc52f48f641b3d6d1344c902a6a9b0` (schema 31), 26 November 2026. These instructions build on the preserved [published v2.1 guide](https://github.com/Caffoot/Caffoot-Lite/blob/c3237114108cad9f7d4e57657b6aed5e0091a5ef/docs/how-tos/features-and-instructions/Racks.md). Approved current desktop illustrations and final acceptance remain outstanding; see the [Batch 2 review record](../../../development-guide/Milestone-01-Batch-2-Review.md). Examples are fictional.
 
+> **Documentation status — 27 November 2026:** Focused independent reviews are recorded and [owner written/source acceptance of Batches 1–6](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7200681167) is recorded. Current visual/privacy/caption/alt approval remains outstanding; [Batch 7 reconciliation and proposed capture packs](../../../development-guide/Milestone-01-Batch-7-Review.md) await independent review and owner acceptance. Capture scope and method need separate authorisation.
+
 ## What Network Racks Records
 
 Use Network Racks to document enclosures, their physical specifications, accessories and recorded equipment positions. A **rack elevation** is a diagram of the equipment at each height. One **U** is one standard rack unit of vertical space. **Start U** is the lowest numbered unit occupied by an item; a 2U item starting at U5 occupies U5–U6. U1 is at the bottom of the diagram.
