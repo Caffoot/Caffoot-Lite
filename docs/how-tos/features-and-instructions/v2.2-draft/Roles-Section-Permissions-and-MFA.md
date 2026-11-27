@@ -2,7 +2,7 @@
 
 > **Draft v2.2 — Unreleased.** This guide covers the Staff account workflow in [PR #453](https://github.com/Caffoot/Caffoot-Lite/pull/453). Use the [published v2.1 guides](../README.md) for released installations.
 
-> **Documentation status — 27 November 2026:** Accepted written/source procedures are preserved. [Batch 7B](screenshots/batch-7b/README.md) adds desktop light-theme instructional illustrations under the [owner’s scope and method approval](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7211852349). New images await independent ChatGPT review and separate product-owner visual/privacy/caption/alt acceptance. The three Morgan Reed reuse images retain their original narrow approval and provenance. [All 16 groups / 79 specifications](screenshots/batch-7b/Coverage.md) remain traceable; no publication approval is implied.
+> **Documentation status — 27 November 2026:** Accepted written/source procedures are preserved. [Batch 7B](screenshots/batch-7b/README.md) adds desktop light-theme instructional illustrations under the [owner’s scope and method approval](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7211852349). Independent ChatGPT review and separate product-owner visual acceptance recorded in the [27 November decision](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7212506766); original provenance and targeted pre-publication refresh limitations remain. The three Morgan Reed reuse images retain their original narrow approval and provenance. [All 16 groups / 79 specifications](screenshots/batch-7b/Coverage.md) remain traceable; no publication approval is implied.
 
 [← Draft v2.2 Guides](README.md)
 
@@ -117,7 +117,7 @@ Closing the dialogue discards unsaved profile typing. Changes you already saved 
 
 ![Manage taylor.cole, Personal Details tab, with read-only username, saved Tay Cole display name and Not Verified email.](screenshots/batch-7b/account-personal-details.png)
 
-*Draft v2.2 — Saved Personal Details for taylor.cole: the account uses Tay Cole and an unverified email. Resolve any saved Staff/account differences separately. Independent and owner visual acceptance pending.*
+*Draft v2.2 — Saved Personal Details for taylor.cole: the account uses Tay Cole and an unverified email. Resolve any saved Staff/account differences separately. Independent review and owner visual acceptance recorded; original revision and targeted refresh limitations retained.*
 
 ![Morgan Reed Roles tab with protected Staff Member selected, IT Staff unchecked, Close and Done.](../../../development-handovers/evidence/native-acceptance-corrections/screenshots/permissions-roles-1440-light.png)
 
@@ -151,7 +151,7 @@ An Edit override may increase access above the roles, so it needs the same care 
 
 ![Review Access Change for dave.example showing before and after section access, one affected account, two sessions to end, Cancel and Confirm Change.](screenshots/batch-7b/access-change-review.png)
 
-*Draft v2.2 — Dave’s proposed Racks change replaces the Read override with Inherit, giving effective Edit. One account and two stored sessions would be affected. This preview was cancelled. Independent and owner visual acceptance pending.*
+*Draft v2.2 — Dave’s proposed Racks change replaces the Read override with Inherit, giving effective Edit. One account and two stored sessions would be affected. This preview was cancelled. Independent review and owner visual acceptance recorded; original revision and targeted refresh limitations retained.*
 
 ## Create And Maintain Roles
 
@@ -166,12 +166,12 @@ An Edit override may increase access above the roles, so it needs the same care 
 
 ![Manage Roles directory showing protected Staff Member with no section grants, and enabled IT Staff with Devices, IPAM, Racks and IT Assets Edit.](screenshots/batch-7b/roles-directory.png)
 
-*Draft v2.2 — Manage Roles shows the protected Staff Member baseline and the enabled IT Staff definition. Independent and owner visual acceptance pending.*
+*Draft v2.2 — Manage Roles shows the protected Staff Member baseline and the enabled IT Staff definition. Independent review and owner visual acceptance recorded; original revision and targeted refresh limitations retained.*
 
 
 ![Create Role dialogue with Equipment Auditors, Enabled selected, IT Assets Read and all other section grants set to No Access.](screenshots/batch-7b/role-configuration.png)
 
-*Draft v2.2 — Equipment Auditors is an unsaved role draft with IT Assets Read. Review Changes is still required; this role has not been created. Independent and owner visual acceptance pending.*
+*Draft v2.2 — Equipment Auditors is an unsaved role draft with IT Assets Read. Review Changes is still required; this role has not been created. Independent review and owner visual acceptance recorded; original revision and targeted refresh limitations retained.*
 
 ### Change, Disable Or Delete A Role
 
@@ -211,7 +211,7 @@ You cannot disable, demote or delete your own signed-in administrator account, a
 
 ![Sarah Lewis Account Controls with Disabled badge, Active Employment Status and the red Enable Login panel.](screenshots/batch-7b/account-login-disabled.png)
 
-*Draft v2.2 — Sarah’s saved login is Disabled while employment remains Active. Enable Login is available; this is not an offboarding result. Independent and owner visual acceptance pending.*
+*Draft v2.2 — Sarah’s saved login is Disabled while employment remains Active. Enable Login is available; this is not an offboarding result. Independent review and owner visual acceptance recorded; original revision and targeted refresh limitations retained.*
 
 For the depicted Sarah example, **Delete User** opens the browser-native confirmation **“Delete sarah.lewis?”**. Choose Cancel to keep the login. The illustration above shows her disabled login before that confirmation; it does not show deletion.
 
@@ -243,12 +243,12 @@ On a fresh installation, the first administrator can finish setup before outgoin
 
 ![Alex Morgan Account Controls with Authenticator Enrolled, Email Address Verified and an available Make admin button.](screenshots/batch-7b/account-administrator-eligible.png)
 
-*Draft v2.2 — Alex’s authenticator is enrolled and email verified, so Make admin is available. No promotion has been applied. Independent and owner visual acceptance pending.*
+*Draft v2.2 — Alex’s authenticator is enrolled and email verified, so Make admin is available. No promotion has been applied. Independent review and owner visual acceptance recorded; original revision and targeted refresh limitations retained.*
 
 
 ![Your administrator account, Account Controls tab, with the self-protection warning and disabled Disable Login, Remove admin, Reset Password and Delete User controls.](screenshots/batch-7b/account-administrator-protected.png)
 
-*Draft v2.2 — The signed-in account is also the only active administrator in this fixture. Its own disable, demotion, reset and deletion controls are protected. Independent and owner visual acceptance pending.*
+*Draft v2.2 — The signed-in account is also the only active administrator in this fixture. Its own disable, demotion, reset and deletion controls are protected. Independent review and owner visual acceptance recorded; original revision and targeted refresh limitations retained.*
 
 ## Reset A Staff Member’s Password
 
@@ -264,7 +264,7 @@ Caffoot Lite records the administrator, affected account and change in the audit
 
 ![Reset Password dialogue for jamie.taylor with empty Temporary Password and Confirm Temporary Password, session warning, Cancel and Reset Password.](screenshots/batch-7b/account-reset-password.png)
 
-*Draft v2.2 — Reset Password for Jamie Taylor, before entry or confirmation. Both temporary password fields are empty. Independent and owner visual acceptance pending.*
+*Draft v2.2 — Reset Password for Jamie Taylor, before entry or confirmation. Both temporary password fields are empty. Independent review and owner visual acceptance recorded; original revision and targeted refresh limitations retained.*
 
 ## Set Up And Use MFA
 
@@ -288,12 +288,12 @@ If you see **Unable to sign in. Please check your credentials or contact your ad
 
 ![Desktop light Welcome Back sign-in screen with empty Username and Password fields, Sign In and Forgot Password.](screenshots/batch-7b/sign-in.png)
 
-*Draft v2.2 — The sign-in form starts with empty Username and Password fields. Independent and owner visual acceptance pending.*
+*Draft v2.2 — The sign-in form starts with empty Username and Password fields. Independent review and owner visual acceptance recorded; original revision and targeted refresh limitations retained.*
 
 
 ![Verify Your Identity screen with an empty Authenticator Code field, six placeholder dots, Verify and Sign In, Back to Sign In and Forgot Password.](screenshots/batch-7b/authenticator-challenge.png)
 
-*Draft v2.2 — Tim’s IT Staff account requires the authenticator challenge after password entry. The password has cleared and the code field is empty; the dots are the application’s placeholder. Independent and owner visual acceptance pending.*
+*Draft v2.2 — Tim’s IT Staff account requires the authenticator challenge after password entry. The password has cleared and the code field is empty; the dots are the application’s placeholder. Independent review and owner visual acceptance recorded; original revision and targeted refresh limitations retained.*
 
 ### Voluntary Enrolment And Eligible Removal
 
@@ -310,17 +310,17 @@ Removal is unavailable for Administrators, accounts with any enabled additional 
 
 ![My Account Security for a baseline Staff Member, with empty current, new and confirm password fields, MFA not yet enrolled and Start MFA enrolment.](screenshots/batch-7b/account-security-voluntary.png)
 
-*Draft v2.2 — Jamie has the baseline Staff Member role and no wider grants. Security shows the empty password-change form and safe voluntary MFA starting screen; enrolment has not begun. Independent and owner visual acceptance pending.*
+*Draft v2.2 — Jamie has the baseline Staff Member role and no wider grants. Security shows the empty password-change form and safe voluntary MFA starting screen; enrolment has not begun. Independent review and owner visual acceptance recorded; original revision and targeted refresh limitations retained.*
 
 
 ![My Account Security with MFA Enabled, expanded Remove MFA, empty Current Password and Current Authenticator Code fields and Confirm MFA Removal.](screenshots/batch-7b/account-mfa-removal-eligible.png)
 
-*Draft v2.2 — Priya’s enrolled MFA is optional for her baseline-only access. The expanded removal form has empty password and authenticator fields; no removal has been submitted. Independent and owner visual acceptance pending.*
+*Draft v2.2 — Priya’s enrolled MFA is optional for her baseline-only access. The expanded removal form has empty password and authenticator fields; no removal has been submitted. Independent review and owner visual acceptance recorded; original revision and targeted refresh limitations retained.*
 
 
 ![Administrator My Account Security showing Administrator account role and MFA Enabled, with no Remove MFA control.](screenshots/batch-7b/account-mfa-removal-protected.png)
 
-*Draft v2.2 — This administrator’s MFA is mandatory. Security shows MFA Enabled and provides no Remove MFA action. Independent and owner visual acceptance pending.*
+*Draft v2.2 — This administrator’s MFA is mandatory. Security shows MFA Enabled and provides no Remove MFA action. Independent review and owner visual acceptance recorded; original revision and targeted refresh limitations retained.*
 
 ## Change Your Password Safely
 
@@ -335,7 +335,7 @@ Removal is unavailable for Administrators, accounts with any enabled additional 
 
 ![Change Your Password screen with mandatory-change explanation, empty New Password and Confirm New Password fields, Change Password and Back to Sign In.](screenshots/batch-7b/mandatory-password-change.png)
 
-*Draft v2.2 — After an assisted reset, Jamie must choose a personal password before entering the workspace. Both new password fields are empty. Independent and owner visual acceptance pending.*
+*Draft v2.2 — After an assisted reset, Jamie must choose a personal password before entering the workspace. Both new password fields are empty. Independent review and owner visual acceptance recorded; original revision and targeted refresh limitations retained.*
 
 ### Change Your Password From My Account
 
@@ -358,12 +358,12 @@ The [Security illustration above](#voluntary-enrolment-and-eligible-removal) als
 
 ![My Account Overview with jamie.taylor@example.invalid, Not Verified status and Verify Email.](screenshots/batch-7b/account-email-unverified.png)
 
-*Draft v2.2 — Jamie’s saved fictional address is Not Verified. Save Personal Details alone does not verify an address. Independent and owner visual acceptance pending.*
+*Draft v2.2 — Jamie’s saved fictional address is Not Verified. Save Personal Details alone does not verify an address. Independent review and owner visual acceptance recorded; original revision and targeted refresh limitations retained.*
 
 
 ![Verify Email Address form with empty Current Password and eight-digit Email Confirmation Code fields, Resend Confirmation Code, Cancel and Verify Email Address.](screenshots/batch-7b/account-email-verification.png)
 
-*Draft v2.2 — The existing isolated mail-sink fixture supplied the confirmation-request state. Current Password and Email Confirmation Code are empty. This illustration does not establish external mail delivery. Independent and owner visual acceptance pending.*
+*Draft v2.2 — The existing isolated mail-sink fixture supplied the confirmation-request state. Current Password and Email Confirmation Code are empty. This illustration does not establish external mail delivery. Independent review and owner visual acceptance recorded; original revision and targeted refresh limitations retained.*
 
 ### Recover Your Password From Sign-In
 

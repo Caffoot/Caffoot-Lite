@@ -50,3 +50,8 @@ html.dark .eyebrow {color:#ed8532;}
 /* Keep the added mandatory-enrolment instructions readable without restyling first-run setup. */
 .required-mfa-enrolment .qr-copy p{color:#344f67}
 .dark .required-mfa-enrolment .qr-copy p{color:var(--muted)}
+
+/* Reuse the authentication status panel and existing application danger palette for rejected confirmations. */
+#recovery-message.status{background:#fcece9;color:#a52626;border-color:#a52626;font-weight:650}
+html.dark #recovery-message.status{background:#4c2d3a;color:#fecdd3;border-color:#fecdd3}
+#recovery-message.status::before{content:"!";content:"!" / "";display:inline-flex;align-items:center;justify-content:center;width:1.15em;height:1.15em;border:1px solid currentColor;border-radius:50%;margin-inline-end:.5em;font-weight:800;vertical-align:baseline}

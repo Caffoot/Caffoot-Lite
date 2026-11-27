@@ -1,5 +1,17 @@
 # Milestone 01 — Batch 7 Screenshot Reconciliation
 
+## Current Reconciliation — 27 November 2026
+
+**Batch 7B: 25 new images and three narrow reuse images independently reviewed and owner visually accepted.** [Decision](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7212506766). All 16 groups/79 specifications, original image bytes and provenance remain. Independent review opened all 25 PNGs and matched coverage/alt text, but did not recompute every hash or repeat the complete static suite. Earlier pending/checkpoint wording below is historical.
+
+[Consolidated owner approval](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7217032947) authorises 7C–7E consecutively, with separate committed, pushed and remotely verified checkpoints, then independent review and separate owner visual acceptance for each pack. It supersedes earlier pack-by-pack execution stops only for these three packs. 7F–7H and Batch 8 remain outside scope.
+
+Documentation start `a5426ca6a2262e21530fcf972b3a1d6cc12fc950` reconciled against exact approved merged application baseline `000818f42e854e4a1fee8692b9ffaaa52b5c788d`, schema 31. Both live refs matched; their common ancestor is `fdc677920bfc52f48f641b3d6d1344c902a6a9b0`. Conflicts were overlapping correction material already on the documentation branch: retain its complete accepted instructions, correction evidence and capture provenance. No unmerged correction branch integrated.
+
+Targeted pre-publication refresh backlog remains: correction Batch 1 sign-in, authenticator challenge and mandatory password-change branding; correction Batch 2 older Staff Add/Edit/Create Login/Resolve Difference guidance, virtual Assigned To and clipped-sidebar views where affected. Accepted correction images and original historical bytes remain; no blanket currentness or publication approval. The reported slight fading of some 7B views remains unverified and does not authorise recapture. No refresh captures in this reconciliation.
+
+PR #472 remains draft, open and unmerged; #366 remains open. Native Test 70, upgrades, complete-volume recovery, private exports, audit and release/website gates remain outstanding.
+
 ## Current Acceptance And Batch 7B — 27 November 2026
 
 [Batch 7.1/bounded 7.2 independent review and owner decision](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7210689297) remain accepted, including the narrow reuse proposals. Four unrelated historical image contexts remain unresolved; none is newly used here.

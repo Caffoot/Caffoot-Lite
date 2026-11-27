@@ -2,7 +2,7 @@
 
 > **Draft v2.2 — Unreleased.** This guide covers Unified Staff Administration in [PR #453](https://github.com/Caffoot/Caffoot-Lite/pull/453). Use the [published v2.1 guides](../README.md) for the released application.
 
-> **Documentation status — 27 November 2026:** Accepted written/source procedures are preserved. [Batch 7B](screenshots/batch-7b/README.md) adds seven desktop light-theme Staff illustrations under the [owner’s scope and method approval](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7211852349). New images await independent ChatGPT review and separate product-owner visual/privacy/caption/alt acceptance. [All 16 groups / 79 specifications](screenshots/batch-7b/Coverage.md) remain traceable; no publication approval is implied.
+> **Documentation status — 27 November 2026:** Accepted written/source procedures are preserved. [Batch 7B](screenshots/batch-7b/README.md) adds seven desktop light-theme Staff illustrations under the [owner’s scope and method approval](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7211852349). Independent ChatGPT review and separate product-owner visual acceptance recorded in the [27 November decision](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7212506766); original provenance and targeted pre-publication refresh limitations remain. [All 16 groups / 79 specifications](screenshots/batch-7b/Coverage.md) remain traceable; no publication approval is implied.
 
 Staff Members is the directory of people who may hold equipment. Use it to record a person’s contact details, Department and Staff status, review their assigned equipment and, with administrator access, manage their optional login and individual permissions. A person can hold equipment without a Caffoot login.
 
@@ -38,11 +38,11 @@ Collect known work details before starting. Do not enter passwords, recovery cod
 
 ![Administrator Staff Members directory with linked usernames, Linked Login or No Login badges, Staff Status, View Details and Edit.](screenshots/batch-7b/staff-directory-administrator.png)
 
-*Draft v2.2 — Administrator view: usernames and login badges help distinguish Staff identities, including a migrated record whose name is not recorded. Independent and owner visual acceptance pending.*
+*Draft v2.2 — Administrator view: usernames and login badges help distinguish Staff identities, including a migrated record whose name is not recorded. Independent review and owner visual acceptance recorded; original revision and targeted refresh limitations retained.*
 
 ![Non-administrator Staff Members directory showing names, Departments, job titles, employment status and View Details, without login badges or Edit.](screenshots/batch-7b/staff-directory-non-administrator.png)
 
-*Draft v2.2 — Staff Members Read view after Alex’s employment change: employment status is visible, while linked usernames, login badges and editing actions are absent. Independent and owner visual acceptance pending.*
+*Draft v2.2 — Staff Members Read view after Alex’s employment change: employment status is visible, while linked usernames, login badges and editing actions are absent. Independent review and owner visual acceptance recorded; original revision and targeted refresh limitations retained.*
 
 ## Add A Person Without A Login
 
@@ -72,7 +72,7 @@ For a fictional example, create **Alex Morgan**, select **Accounts**, enter `ale
 
 ![Add Staff Member form with Jordan Rivers, Accounts Department, Service Coordinator job title, Create Caffoot Login off, Cancel and Save Staff Member.](screenshots/batch-7b/staff-add-form.png)
 
-*Draft v2.2 — An unsaved Add Staff Member draft using fictional Jordan Rivers. Create Caffoot Login is off; no new Staff record has been saved from this draft. Independent and owner visual acceptance pending.*
+*Draft v2.2 — An unsaved Add Staff Member draft using fictional Jordan Rivers. Create Caffoot Login is off; no new Staff record has been saved from this draft. Independent review and owner visual acceptance recorded; original revision and targeted refresh limitations retained.*
 
 ## Create And Link An Optional Caffoot Login
 
@@ -96,7 +96,7 @@ The Staff form offers no general merge or relink control for existing accounts. 
 
 ![Edit Staff Member for Jordan Rivers with Create Caffoot Login on, jordan.rivers username, empty Initial Password and Confirm Initial Password, and Staff Member default role.](screenshots/batch-7b/staff-create-login.png)
 
-*Draft v2.2 — The existing Jordan record has an unsaved optional login draft. The two initial password fields are empty and the default role is Staff Member. Independent and owner visual acceptance pending.*
+*Draft v2.2 — The existing Jordan record has an unsaved optional login draft. The two initial password fields are empty and the default role is Staff Member. Independent review and owner visual acceptance recorded; original revision and targeted refresh limitations retained.*
 
 ### Existing Accounts And Migrated Details
 
@@ -115,7 +115,7 @@ Changing Department, job title or location does not change account permissions o
 
 ![Edit Staff Member for Jordan Rivers with Accounts, Service Coordinator, Training Office, Active status and Create Caffoot Login off.](screenshots/batch-7b/staff-edit-form.png)
 
-*Draft v2.2 — Edit Staff Member displays Jordan’s existing Department, job title and location. This illustration does not claim an edit has been saved. Independent and owner visual acceptance pending.*
+*Draft v2.2 — Edit Staff Member displays Jordan’s existing Department, job title and location. This illustration does not claim an edit has been saved. Independent review and owner visual acceptance recorded; original revision and targeted refresh limitations retained.*
 
 ### Resolve A Difference Between Staff And Account Details
 
@@ -129,7 +129,7 @@ For example, the Staff record for fictional Taylor Cole might still show Taylor 
 
 ![Edit Staff Member showing Staff Taylor versus Account Tay, different saved emails and separate Resolve Difference selectors set to Leave Both Values Unchanged.](screenshots/batch-7b/staff-resolve-differences.png)
 
-*Draft v2.2 — Taylor/Tay and the two fictional email addresses are saved differences. Both resolution selectors still say Leave Both Values Unchanged. Independent and owner visual acceptance pending.*
+*Draft v2.2 — Taylor/Tay and the two fictional email addresses are saved differences. Both resolution selectors still say Leave Both Values Unchanged. Independent review and owner visual acceptance recorded; original revision and targeted refresh limitations retained.*
 
 The native save confirmation asks **“Save the selected personal details to both the Staff record and Caffoot account?”** If you choose the Staff email to replace the account email, it adds **“The account email must be verified before it can be used for password recovery.”** Read the complete message before confirming.
 
@@ -165,7 +165,7 @@ During an authorised review upgrade, existing Left Company/inactive Staff with e
 
 ![Alex Morgan Staff Details showing Left Company, Disabled Caffoot Login, MFA and roles retained, Reactivate, outstanding AC-LAP-07 and its assignment history.](screenshots/batch-7b/staff-left-company-retained.png)
 
-*Draft v2.2 — Saved offboarding result: Alex is Left Company, the linked login is Disabled and AC-LAP-07 remains assigned. No equipment return has been recorded. Independent and owner visual acceptance pending.*
+*Draft v2.2 — Saved offboarding result: Alex is Left Company, the linked login is Disabled and AC-LAP-07 remains assigned. No equipment return has been recorded. Independent review and owner visual acceptance recorded; original revision and targeted refresh limitations retained.*
 
 From Alex’s Staff Details, the browser-native confirmation reads **“Mark As Left Company Alex Morgan? Any linked login will be disabled and active sessions ended. Equipment, tickets and history are retained.”** The Add/Edit Staff form instead asks **“Mark As Left Company? Any linked login will be disabled and active sessions ended. Equipment, tickets and history are retained.”** Read the actual wording and choose Cancel if the change is unintended. These native confirmations use the owner-approved written substitution.
 

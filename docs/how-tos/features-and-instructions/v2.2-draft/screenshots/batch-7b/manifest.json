@@ -1,5 +1,5 @@
 {
-  "status": "Proposed Batch 7B instructional illustrations; independent review and separate owner visual acceptance pending",
+  "status": "Independently reviewed and product-owner visually accepted on 27 November 2026; targeted refresh backlog retained",
   "authorisation": "https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7211852349",
   "applicationRevision": "fdc677920bfc52f48f641b3d6d1344c902a6a9b0",
   "schema": 31,
@@ -105,8 +105,8 @@
       "guideUses": [
         "Roles-Section-Permissions-and-MFA.md#set-an-individual-section-override"
       ],
-      "independentVisualAcceptance": "pending",
-      "ownerVisualAcceptance": "pending",
+      "independentVisualAcceptance": "recorded \u2014 https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7212506766",
+      "ownerVisualAcceptance": "accepted \u2014 https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7212506766",
       "localVisualInspection": "Opened individually for framing, legibility, actual state, fictional data and empty secret fields; no QR/setup secrets present."
     },
     {
@@ -195,8 +195,8 @@
       "guideUses": [
         "Roles-Section-Permissions-and-MFA.md#make-an-existing-user-an-administrator"
       ],
-      "independentVisualAcceptance": "pending",
-      "ownerVisualAcceptance": "pending",
+      "independentVisualAcceptance": "recorded \u2014 https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7212506766",
+      "ownerVisualAcceptance": "accepted \u2014 https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7212506766",
       "localVisualInspection": "Opened individually for framing, legibility, actual state, fictional data and empty secret fields; no QR/setup secrets present."
     },
     {
@@ -259,8 +259,8 @@
       "guideUses": [
         "Roles-Section-Permissions-and-MFA.md#make-an-existing-user-an-administrator"
       ],
-      "independentVisualAcceptance": "pending",
-      "ownerVisualAcceptance": "pending",
+      "independentVisualAcceptance": "recorded \u2014 https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7212506766",
+      "ownerVisualAcceptance": "accepted \u2014 https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7212506766",
       "localVisualInspection": "Opened individually for framing, legibility, actual state, fictional data and empty secret fields; no QR/setup secrets present."
     },
     {
@@ -323,8 +323,8 @@
       "guideUses": [
         "Roles-Section-Permissions-and-MFA.md#prepare-verified-email-recovery"
       ],
-      "independentVisualAcceptance": "pending",
-      "ownerVisualAcceptance": "pending",
+      "independentVisualAcceptance": "recorded \u2014 https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7212506766",
+      "ownerVisualAcceptance": "accepted \u2014 https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7212506766",
       "localVisualInspection": "Opened individually for framing, legibility, actual state, fictional data and empty secret fields; no QR/setup secrets present."
     },
     {
@@ -387,8 +387,8 @@
       "guideUses": [
         "Roles-Section-Permissions-and-MFA.md#prepare-verified-email-recovery"
       ],
-      "independentVisualAcceptance": "pending",
-      "ownerVisualAcceptance": "pending",
+      "independentVisualAcceptance": "recorded \u2014 https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7212506766",
+      "ownerVisualAcceptance": "accepted \u2014 https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7212506766",
       "localVisualInspection": "Opened individually for framing, legibility, actual state, fictional data and empty secret fields; no QR/setup secrets present."
     },
     {
@@ -469,8 +469,8 @@
       "guideUses": [
         "Roles-Section-Permissions-and-MFA.md#enable-disable-or-delete-a-login"
       ],
-      "independentVisualAcceptance": "pending",
-      "ownerVisualAcceptance": "pending",
+      "independentVisualAcceptance": "recorded \u2014 https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7212506766",
+      "ownerVisualAcceptance": "accepted \u2014 https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7212506766",
       "localVisualInspection": "Opened individually for framing, legibility, actual state, fictional data and empty secret fields; no QR/setup secrets present."
     },
     {
@@ -533,8 +533,8 @@
       "guideUses": [
         "Roles-Section-Permissions-and-MFA.md#voluntary-enrolment-and-eligible-removal"
       ],
-      "independentVisualAcceptance": "pending",
-      "ownerVisualAcceptance": "pending",
+      "independentVisualAcceptance": "recorded \u2014 https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7212506766",
+      "ownerVisualAcceptance": "accepted \u2014 https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7212506766",
       "localVisualInspection": "Opened individually for framing, legibility, actual state, fictional data and empty secret fields; no QR/setup secrets present."
     },
     {
@@ -597,8 +597,8 @@
       "guideUses": [
         "Roles-Section-Permissions-and-MFA.md#voluntary-enrolment-and-eligible-removal"
       ],
-      "independentVisualAcceptance": "pending",
-      "ownerVisualAcceptance": "pending",
+      "independentVisualAcceptance": "recorded \u2014 https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7212506766",
+      "ownerVisualAcceptance": "accepted \u2014 https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7212506766",
       "localVisualInspection": "Opened individually for framing, legibility, actual state, fictional data and empty secret fields; no QR/setup secrets present."
     },
     {
@@ -679,8 +679,8 @@
       "guideUses": [
         "Roles-Section-Permissions-and-MFA.md#save-personal-details"
       ],
-      "independentVisualAcceptance": "pending",
-      "ownerVisualAcceptance": "pending",
+      "independentVisualAcceptance": "recorded \u2014 https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7212506766",
+      "ownerVisualAcceptance": "accepted \u2014 https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7212506766",
       "localVisualInspection": "Opened individually for framing, legibility, actual state, fictional data and empty secret fields; no QR/setup secrets present."
     },
     {
@@ -761,8 +761,8 @@
       "guideUses": [
         "Roles-Section-Permissions-and-MFA.md#reset-a-staff-members-password"
       ],
-      "independentVisualAcceptance": "pending",
-      "ownerVisualAcceptance": "pending",
+      "independentVisualAcceptance": "recorded \u2014 https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7212506766",
+      "ownerVisualAcceptance": "accepted \u2014 https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7212506766",
       "localVisualInspection": "Opened individually for framing, legibility, actual state, fictional data and empty secret fields; no QR/setup secrets present."
     },
     {
@@ -827,8 +827,8 @@
         "Roles-Section-Permissions-and-MFA.md#voluntary-enrolment-and-eligible-removal",
         "Roles-Section-Permissions-and-MFA.md#change-your-password-from-my-account"
       ],
-      "independentVisualAcceptance": "pending",
-      "ownerVisualAcceptance": "pending",
+      "independentVisualAcceptance": "recorded \u2014 https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7212506766",
+      "ownerVisualAcceptance": "accepted \u2014 https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7212506766",
       "localVisualInspection": "Opened individually for framing, legibility, actual state, fictional data and empty secret fields; no QR/setup secrets present."
     },
     {
@@ -899,8 +899,8 @@
       "guideUses": [
         "Roles-Section-Permissions-and-MFA.md#sign-in-after-enrolment"
       ],
-      "independentVisualAcceptance": "pending",
-      "ownerVisualAcceptance": "pending",
+      "independentVisualAcceptance": "recorded \u2014 https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7212506766",
+      "ownerVisualAcceptance": "accepted \u2014 https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7212506766",
       "localVisualInspection": "Opened individually for framing, legibility, actual state, fictional data and empty secret fields; no QR/setup secrets present."
     },
     {
@@ -963,8 +963,8 @@
       "guideUses": [
         "Roles-Section-Permissions-and-MFA.md#after-an-administrator-gives-you-a-temporary-password"
       ],
-      "independentVisualAcceptance": "pending",
-      "ownerVisualAcceptance": "pending",
+      "independentVisualAcceptance": "recorded \u2014 https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7212506766",
+      "ownerVisualAcceptance": "accepted \u2014 https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7212506766",
       "localVisualInspection": "Opened individually for framing, legibility, actual state, fictional data and empty secret fields; no QR/setup secrets present."
     },
     {
@@ -1008,8 +1008,8 @@
       "guideUses": [
         "Roles-Section-Permissions-and-MFA.md#recover-your-password-from-sign-in"
       ],
-      "independentVisualAcceptance": "pending",
-      "ownerVisualAcceptance": "pending",
+      "independentVisualAcceptance": "recorded \u2014 https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7212506766",
+      "ownerVisualAcceptance": "accepted \u2014 https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7212506766",
       "localVisualInspection": "Opened individually for framing, legibility, actual state, fictional data and empty secret fields; no QR/setup secrets present."
     },
     {
@@ -1054,8 +1054,8 @@
       "guideUses": [
         "Roles-Section-Permissions-and-MFA.md#recover-your-password-from-sign-in"
       ],
-      "independentVisualAcceptance": "pending",
-      "ownerVisualAcceptance": "pending",
+      "independentVisualAcceptance": "recorded \u2014 https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7212506766",
+      "ownerVisualAcceptance": "accepted \u2014 https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7212506766",
       "localVisualInspection": "Opened individually for framing, legibility, actual state, fictional data and empty secret fields; no QR/setup secrets present."
     },
     {
@@ -1119,8 +1119,8 @@
       "guideUses": [
         "Roles-Section-Permissions-and-MFA.md#create-a-custom-role"
       ],
-      "independentVisualAcceptance": "pending",
-      "ownerVisualAcceptance": "pending",
+      "independentVisualAcceptance": "recorded \u2014 https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7212506766",
+      "ownerVisualAcceptance": "accepted \u2014 https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7212506766",
       "localVisualInspection": "Opened individually for framing, legibility, actual state, fictional data and empty secret fields; no QR/setup secrets present."
     },
     {
@@ -1183,8 +1183,8 @@
       "guideUses": [
         "Roles-Section-Permissions-and-MFA.md#create-a-custom-role"
       ],
-      "independentVisualAcceptance": "pending",
-      "ownerVisualAcceptance": "pending",
+      "independentVisualAcceptance": "recorded \u2014 https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7212506766",
+      "ownerVisualAcceptance": "accepted \u2014 https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7212506766",
       "localVisualInspection": "Opened individually for framing, legibility, actual state, fictional data and empty secret fields; no QR/setup secrets present."
     },
     {
@@ -1228,8 +1228,8 @@
       "guideUses": [
         "Roles-Section-Permissions-and-MFA.md#sign-in-after-enrolment"
       ],
-      "independentVisualAcceptance": "pending",
-      "ownerVisualAcceptance": "pending",
+      "independentVisualAcceptance": "recorded \u2014 https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7212506766",
+      "ownerVisualAcceptance": "accepted \u2014 https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7212506766",
       "localVisualInspection": "Opened individually for framing, legibility, actual state, fictional data and empty secret fields; no QR/setup secrets present."
     },
     {
@@ -1292,8 +1292,8 @@
       "guideUses": [
         "Staff-Members.md#add-a-person-without-a-login"
       ],
-      "independentVisualAcceptance": "pending",
-      "ownerVisualAcceptance": "pending",
+      "independentVisualAcceptance": "recorded \u2014 https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7212506766",
+      "ownerVisualAcceptance": "accepted \u2014 https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7212506766",
       "localVisualInspection": "Opened individually for framing, legibility, actual state, fictional data and empty secret fields; no QR/setup secrets present."
     },
     {
@@ -1356,8 +1356,8 @@
       "guideUses": [
         "Staff-Members.md#create-and-link-an-optional-caffoot-login"
       ],
-      "independentVisualAcceptance": "pending",
-      "ownerVisualAcceptance": "pending",
+      "independentVisualAcceptance": "recorded \u2014 https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7212506766",
+      "ownerVisualAcceptance": "accepted \u2014 https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7212506766",
       "localVisualInspection": "Opened individually for framing, legibility, actual state, fictional data and empty secret fields; no QR/setup secrets present."
     },
     {
@@ -1421,8 +1421,8 @@
       "guideUses": [
         "Staff-Members.md#find-a-staff-member"
       ],
-      "independentVisualAcceptance": "pending",
-      "ownerVisualAcceptance": "pending",
+      "independentVisualAcceptance": "recorded \u2014 https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7212506766",
+      "ownerVisualAcceptance": "accepted \u2014 https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7212506766",
       "localVisualInspection": "Opened individually for framing, legibility, actual state, fictional data and empty secret fields; no QR/setup secrets present."
     },
     {
@@ -1489,8 +1489,8 @@
       "guideUses": [
         "Staff-Members.md#find-a-staff-member"
       ],
-      "independentVisualAcceptance": "pending",
-      "ownerVisualAcceptance": "pending",
+      "independentVisualAcceptance": "recorded \u2014 https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7212506766",
+      "ownerVisualAcceptance": "accepted \u2014 https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7212506766",
       "localVisualInspection": "Opened individually for framing, legibility, actual state, fictional data and empty secret fields; no QR/setup secrets present."
     },
     {
@@ -1553,8 +1553,8 @@
       "guideUses": [
         "Staff-Members.md#edit-staff-and-shared-personal-details"
       ],
-      "independentVisualAcceptance": "pending",
-      "ownerVisualAcceptance": "pending",
+      "independentVisualAcceptance": "recorded \u2014 https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7212506766",
+      "ownerVisualAcceptance": "accepted \u2014 https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7212506766",
       "localVisualInspection": "Opened individually for framing, legibility, actual state, fictional data and empty secret fields; no QR/setup secrets present."
     },
     {
@@ -1643,8 +1643,8 @@
       "guideUses": [
         "Staff-Members.md#mark-as-left-company-or-reactivate"
       ],
-      "independentVisualAcceptance": "pending",
-      "ownerVisualAcceptance": "pending",
+      "independentVisualAcceptance": "recorded \u2014 https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7212506766",
+      "ownerVisualAcceptance": "accepted \u2014 https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7212506766",
       "localVisualInspection": "Opened individually for framing, legibility, actual state, fictional data and empty secret fields; no QR/setup secrets present."
     },
     {
@@ -1726,8 +1726,8 @@
       "guideUses": [
         "Staff-Members.md#resolve-a-difference-between-staff-and-account-details"
       ],
-      "independentVisualAcceptance": "pending",
-      "ownerVisualAcceptance": "pending",
+      "independentVisualAcceptance": "recorded \u2014 https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7212506766",
+      "ownerVisualAcceptance": "accepted \u2014 https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7212506766",
       "localVisualInspection": "Opened individually for framing, legibility, actual state, fictional data and empty secret fields; no QR/setup secrets present."
     }
   ],
@@ -1845,5 +1845,6 @@
         "Roles-Section-Permissions-and-MFA.md#review-an-account"
       ]
     }
-  ]
+  ],
+  "acceptanceRecord": "https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7212506766"
 }

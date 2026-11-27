@@ -1,6 +1,6 @@
 # Batch 7B — Desktop Instructional Screenshots
 
-**27 November 2026. 25 proposed new images: accounts, roles and MFA 18; Staff Members 7.** Exactly three existing approved reuse images are referenced separately. Independent ChatGPT review and separate product-owner visual/privacy/caption/alt acceptance remain pending. No publication approval.
+**27 November 2026. 25 proposed new images: accounts, roles and MFA 18; Staff Members 7.** Exactly three existing approved reuse images are referenced separately. Independent ChatGPT review and separate product-owner visual acceptance recorded in the [27 November decision](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7212506766); original provenance and targeted pre-publication refresh limitations remain. No publication approval.
 
 Authority: [Batch 7B scope and method](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7211852349), [desktop light decision](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7210689297) and [accepted Batch 7A presentation](../batch-7a/README.md). The maximum 28 is a ceiling. Native deletion and Left Company confirmations use the approved exact-wording substitutions. One Security screen serves both voluntary MFA enrolment and password change. No mandatory image distinction was dropped.
 
@@ -72,4 +72,4 @@ Invalid passwords, duplicate usernames, malformed emails, expired codes, routine
 
 ## Delivery Boundary
 
-Only authorised documentation, pack records and new images change. No tracked application, configuration, schema, test or AGENTS.md change; no unrelated application tests, full regression/CI monitoring, cloud desktop, virtual display, private Pi deployment, native acceptance, upgrade/migration/backup/restore rehearsal, private export investigation, security audit, website, Batch 7C–7H, Batch 8, PR promotion, merge, release or publication. PR #472 stays open/draft/unmerged targeting milestone-1; issue #366 stays open. Stop after 7B pending independent review and separate owner visual acceptance.
+Only authorised documentation, pack records and new images change. No tracked application, configuration, schema, test or AGENTS.md change; no unrelated application tests, full regression/CI monitoring, cloud desktop, virtual display, private Pi deployment, native acceptance, upgrade/migration/backup/restore rehearsal, private export investigation, security audit, website, Batch 7C–7H, Batch 8, PR promotion, merge, release or publication. PR #472 stays open/draft/unmerged targeting milestone-1; issue #366 stays open. The historical 7B execution stop is superseded for 7C–7E by the later consolidated owner approval; separate acceptance remains required for those packs.

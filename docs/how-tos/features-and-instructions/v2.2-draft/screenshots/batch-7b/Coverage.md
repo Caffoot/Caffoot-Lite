@@ -1,6 +1,6 @@
 # Batch 7B — Original Requirement And State Mapping
 
-**27 November 2026. All 16 original groups and 79 specifications retained.** 25 proposed new desktop light images (accounts 18, Staff 7), plus exactly three approved existing reuse references. New images await independent review and separate owner visual acceptance.
+**27 November 2026. All 16 original groups and 79 specifications retained.** 25 proposed new desktop light images (accounts 18, Staff 7), plus exactly three approved existing reuse references. Independent ChatGPT review and separate product-owner visual acceptance recorded in the [27 November decision](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7212506766); original provenance and targeted pre-publication refresh limitations remain.
 
 The [owner-approved scope and written substitutions](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7211852349) control illustration counts. These are instructional mappings, not runtime test results. Original contracts remain historical traceability in [Batch 3](../../../../../development-guide/Milestone-01-Batch-3-Review.md#exact-outstanding-desktop-screenshot-requirements) and the [Batch 7 register](../../../../../development-guide/Milestone-01-Batch-7-Review.md#requirement-register). [Manifest](manifest.json) separates new and reused provenance.
 

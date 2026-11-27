@@ -1,5 +1,17 @@
 # Draft v2.2 User And Administrator Guides
 
+## Current Reconciliation — 27 November 2026
+
+**Batch 7B: 25 new images and three narrow reuse images independently reviewed and owner visually accepted.** [Decision](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7212506766). All 16 groups/79 specifications, original image bytes and provenance remain. Independent review opened all 25 PNGs and matched coverage/alt text, but did not recompute every hash or repeat the complete static suite. Earlier pending/checkpoint wording below is historical.
+
+[Consolidated owner approval](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7217032947) authorises 7C–7E consecutively, with separate committed, pushed and remotely verified checkpoints, then independent review and separate owner visual acceptance for each pack. It supersedes earlier pack-by-pack execution stops only for these three packs. 7F–7H and Batch 8 remain outside scope.
+
+Documentation start `a5426ca6a2262e21530fcf972b3a1d6cc12fc950` reconciled against exact approved merged application baseline `000818f42e854e4a1fee8692b9ffaaa52b5c788d`, schema 31. Both live refs matched; their common ancestor is `fdc677920bfc52f48f641b3d6d1344c902a6a9b0`. Conflicts were overlapping correction material already on the documentation branch: retain its complete accepted instructions, correction evidence and capture provenance. No unmerged correction branch integrated.
+
+Targeted pre-publication refresh backlog remains: correction Batch 1 sign-in, authenticator challenge and mandatory password-change branding; correction Batch 2 older Staff Add/Edit/Create Login/Resolve Difference guidance, virtual Assigned To and clipped-sidebar views where affected. Accepted correction images and original historical bytes remain; no blanket currentness or publication approval. The reported slight fading of some 7B views remains unverified and does not authorise recapture. No refresh captures in this reconciliation.
+
+PR #472 remains draft, open and unmerged; #366 remains open. Native Test 70, upgrades, complete-volume recovery, private exports, audit and release/website gates remain outstanding.
+
 > **Draft v2.2 — Unreleased.** Stage 6.6 Batch 2 adds My Equipment, unread Service Desk replies and readable Audit Trail records in the schema 31 draft candidate. The [Batch 2 verification record](../../../development-handovers/evidence/stage-6-6-batch-2/README.md) lists completed focused checks, application screenshots and remaining acceptance gates. Use the [published v2.1 guides](https://github.com/Caffoot/Caffoot-Lite/tree/v2.1/docs/how-tos/features-and-instructions) for the current release.
 
 Caffoot Lite brings accounts, Staff Members, Departments, Devices and optional IT Assets together so your team can record who holds equipment, what is physically in stock and what is ready to issue. These guides explain workflows for ordinary users, IT technicians and administrators, including Suppliers and Equipment Lifecycle in Stage 4. Examples use fictional people, organisations and equipment.
