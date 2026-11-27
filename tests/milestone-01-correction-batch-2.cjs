@@ -120,6 +120,35 @@ async function main(){
   await page.locator('[data-action="view-device"][data-id="'+fixture['Reception-PC']+'"]').first().waitFor();
   await expand(page);
  }
+ async function checkLeftCompanyDetails(id,physical){
+  await page.locator('#sidebar [data-tab="staff"]').click();
+  await page.locator('[data-staff-id="'+id+'"] [data-staff-action="staff-details"]').click();
+  const card=page.locator('[data-equipment-staff="'+id+'"] [aria-label="Current Equipment Assignments"]');
+  const wording=card.getByText('This staff member has left the company. Outstanding assignments are retained. New assignments are unavailable.',{exact:true});
+  await wording.waitFor();
+  assert.equal(await card.locator('[data-equipment-action="assign-staff"],[data-equipment-action="issue-stock-staff"]').count(),0);
+  assert.ok(await card.getByText('Reception-PC',{exact:true}).isVisible());
+  if(process.env.CAFFOOT_FOLLOWUP_WORDING==='1'){
+   await wording.scrollIntoViewIfNeeded();
+   await capture('staff-details-left-company');
+  }
+ }
+ if(process.env.CAFFOOT_FOLLOWUP_WORDING==='1'){
+  await page.setViewportSize({width:1440,height:1050});
+  await page.evaluate(()=>caffootSetTheme('light'));
+  const person=(await post('/api/staff-members',{firstName:'Alex',lastName:'Morgan'})).staffMember;
+  const physical=fixture['Reception-PC'],route='/api/equipment/assignments?deviceId='+encodeURIComponent(physical);
+  const before=await read(route);
+  await post('/api/equipment/assignments',{recipientKind:'staff',recipientId:person.id,devices:[{id:physical,revision:before.revision}]});
+  const assigned=await read(route),saved=await read('/api/staff-members/'+person.id);
+  await post('/api/staff-members/'+person.id,{active:false,revision:saved.staffMember.revision});
+  await page.reload();await page.locator('#app[aria-busy="false"]').waitFor();
+  await checkLeftCompanyDetails(person.id,physical);
+  assert.deepEqual(await read(route),assigned);
+  assert.deepEqual(errors,[]);
+  console.log('Staff Details wording, retained assignment and unavailable new assignment actions verified.');
+  return;
+ }
  await expand(page);
  if(baseline){
   await page.locator('#sidebar').evaluate(e=>e.scrollTop=0);
@@ -253,6 +282,7 @@ async function main(){
   await capture('staff-left-company-'+theme);
  }
  assert.deepEqual(await projection(physical),assigned);
+ await checkLeftCompanyDetails(person.id,physical);
  assert.deepEqual(errors,[]);
  console.log('Focused Batch 2 correction regression passed.');
 }

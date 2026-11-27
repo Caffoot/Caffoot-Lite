@@ -1,5 +1,7 @@
 # Batch 7C — Original Requirement And State Mapping
 
+**Current owner draft acceptance — 27 November 2026:** [Decision](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7218536926) follows [independent visual review](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7218523405). All original image bytes, capture metadata and requirement mappings are preserved. [Recorded editorial limits and current reconciliation](../../../../../development-guide/Milestone-01-7F-7G-Reconciliation.md#batch-8-editorial-findings-retained) remain mandatory before publication; they are not implemented here. Earlier pending notices describe the original capture checkpoint. No fresh runtime verification or publication approval is implied.
+
 **27 November 2026. 23 original groups, 120 owned specifications and 5 shared references retained.** 41 new images, ceiling 42. Independent review and separate owner visual acceptance pending.
 
 Mappings describe instructional coverage, not exhaustive runtime test results. The [consolidated owner scope](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7217032947) permits accurate written treatment of routine validation, cancellation and repetitive states. Every original contract and variant remains below; a representative image does not claim an unpictured result. Original requirements remain in the [Batch 7 register](../../../../../development-guide/Milestone-01-Batch-7-Review.md#requirement-register).

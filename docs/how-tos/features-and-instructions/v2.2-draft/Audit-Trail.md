@@ -1,8 +1,11 @@
 # Read The Audit Trail
 
+> **Current status — 27 November 2026:** Batches 7C, 7D and 7E have separate owner draft-evidence acceptance (41/36/25 new paths; 102 combined; 7E has 23 distinct image contents). Original captures, provenance and requirement mappings remain unchanged; accepted instructions retain the approved merged corrections. Batch 8 editorial findings and publication approval remain outstanding. The exact approved application baseline is now `0251b43a3b5d41d626aa022c6d7f9b4d860433da`, schema 31. 7F/7G are authorised but blocked here by unavailable retained fixtures; no new pack has been delivered. [Current reconciliation and retained editorial limits](../../../development-guide/Milestone-01-7F-7G-Reconciliation.md). Earlier capture-time status notices are historical; publication remains unauthorised.
+
 > **Draft v2.2 — Unreleased.** The integrated schema-31 baseline includes [#458](https://github.com/Caffoot/Caffoot-Lite/issues/458), merged [PR #466](https://github.com/Caffoot/Caffoot-Lite/pull/466) and the later known-feature label correction in [PR #470](https://github.com/Caffoot/Caffoot-Lite/pull/470). Its written/source documentation is owner accepted; desktop visual and publication approval remain outstanding. Examples and screenshots use fictional data.
 
 > **Written/source reconciliation:** Documentation Batch 5, application baseline `fdc677920bfc52f48f641b3d6d1344c902a6a9b0` (schema 31). Focused independent reviews are recorded and [owner written/source acceptance of Batches 1–6](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7200681167) is recorded. Current visual/privacy/caption/alt approval remains outstanding; [Batch 7 reconciliation and proposed capture packs](../../../development-guide/Milestone-01-Batch-7-Review.md) await independent review and owner acceptance. Capture scope and method need separate authorisation. Desktop capture remains deferred; existing historical/mobile images retain their original provenance. [Source review and exact screenshot requirements](../../../development-guide/Milestone-01-Batch-5-Review.md).
+> **Draft v2.2 — Unreleased.** Stage 6.6 Batch 2 [#458](https://github.com/Caffoot/Caffoot-Lite/issues/458), with Milestone 01 correction [#477](https://github.com/Caffoot/Caffoot-Lite/issues/477) ([PR #490](https://github.com/Caffoot/Caffoot-Lite/pull/490)). Revised desktop Activity Details screenshots accepted; consolidated native reacceptance and publication approval remain outstanding. Examples and screenshots use fictional data.
 
 The Audit Trail helps you establish what changed, who performed the recorded action and when. An affected-record name describes the record at the time of the saved event, not necessarily its current name. This is a read-only view: searching, opening details or viewing a timeline does not edit the original events.
 
@@ -24,9 +27,16 @@ For example, a Staff Member named Casey Reed may later be renamed Casey Morgan. 
 Select **View Details** beside an event. The dialogue retains the original actor, UTC time, result, reason and available field changes, and shows:
 
 - **Displayed record:** the name or original reference used in the list.
-- **Label source:** Name recorded at event, Name from recorded event values, Original recorded label, or Historical name not recorded.
-- **Canonical record ID:** the recorded reference where available; Not recorded if unavailable. A recorded ID alone does not prove continuity across replacement or reset.
-- **Original recorded label:** the untouched original audit label, including any internal reference.
+- **Recorded field changes:** understandable field labels and genuinely different recorded values. A missing value is **Not recorded**; an explicit null or empty value is identified separately, unless the event's known meaning establishes **Not assigned**. If a before-and-after pair is not available, the saved field names describe the event without claiming an exact difference. **No paired before-and-after values are available for this event** means the values are not available in your view; they may not have been recorded or may be withheld by your permissions.
+- **Technical Details:** expand to inspect the **Internal Record ID**, **Record Name Source**, **Original recorded label**, original field names and raw values (including unchanged context). This is collapsed initially. It contains only information already available to your account. A recorded ID alone does not prove continuity across replacement or reset.
+
+### Supplier association changes
+
+For equipment Supplier association events, the **Supplier** row combines the recorded reference and name where supported. A Device with no linked Supplier and an explicitly empty recorded Supplier name is **Not assigned**. A recorded free-text name is shown as entered. A receipt's Supplier association concerns its linked Supplier, not the original receipt text.
+
+New association events record the linked company's bounded name at the time of that change, if available. The previous company's name describes the company at the time of this change, not necessarily its name when first assigned. Subsequent renaming or disabling does not rewrite an earlier event. Older events with only a numeric reference show **Historical name not recorded (Supplier reference …)**, not today's company name. A name unavailable to your account is shown as **Historical name not available**. Technical Details retains the original references and permitted recorded values. No new Supplier name is disclosed to accounts without Suppliers access; other existing permission and redaction rules remain unchanged.
+
+For example, a Device is linked to fictional supplier Northlight Ltd. The new event records that name. If the company later becomes Northlight Services, the first event still displays Northlight Ltd; a subsequent association change may record Northlight Services as the previous company at that later event. Older ID-only events cannot be reconstructed from the current directory.
 
 Older Staff records may contain only an internal identifier. That is not a fault in the current Staff directory. The Audit Trail cannot reconstruct an unrecorded name using today's record, and does not guess. Older Department names can be shown from trustworthy saved event values, including a deleted Department's recorded name. Use **Close** or Escape to return to the event list without changing history.
 
@@ -39,9 +49,9 @@ Older Staff records may contain only an internal identifier. That is not a fault
 
 ## Optional Feature Names
 
-For optional-feature setting changes, the affected record displays **IT Assets**, **Equipment Lifecycle** or **Suppliers** for the saved identifiers `it_assets`, `equipment_lifecycle` and `suppliers`. A friendly name recorded with the event takes precedence. When a name is supplied only by this display mapping, **Label source** explains that it is a friendly name for the recorded identifier.
+For optional-feature setting changes, the affected record displays **IT Assets**, **Equipment Lifecycle** or **Suppliers** for the saved identifiers `it_assets`, `equipment_lifecycle` and `suppliers`. A friendly name recorded with the event takes precedence. When a name is supplied only by this display mapping, **Record Name Source** in Technical Details explains that it is a friendly name for the recorded identifier.
 
-Open **View Details** to inspect **Original recorded label**, any recorded canonical ID and the original before/after values. Searching still matches the original identifier. Unknown identifiers and unrelated events retain their existing presentation. The display does not rewrite historical records or change JSON export.
+Open **View Details**, then expand **Technical Details** to inspect **Original recorded label**, any recorded Internal Record ID and the original before/after values. Searching still matches the original identifier. Unknown identifiers and unrelated events retain their existing presentation. The display does not rewrite historical records or change JSON export.
 
 ## Check Recording Coverage
 
@@ -78,10 +88,26 @@ Related: [Roles, Section Permissions And MFA](Roles-Section-Permissions-and-MFA.
 
 ![View Details in dark mode with its affected-record fields and a classic scrollbar inside the rounded dialogue.](../../../development-handovers/evidence/stage-6-6-batch-3/screenshots/classic-audit-dark-390.png)
 
-*Use the canonical record ID to refer to the specific record in an investigation. Scroll within the dialogue to read the full field list. Escape returns focus to **View Details**.* [Capture provenance](../../../development-handovers/evidence/stage-6-6-batch-3/README.md#capture-provenance)
+*Historical pre-#477 mobile screenshot: the old dialogue shows the canonical record ID directly. The corrected dialogue places this reference in Technical Details. Escape returns focus to **View Details**.* [Capture provenance](../../../development-handovers/evidence/stage-6-6-batch-3/README.md#capture-provenance)
 
 ![Asset History showing Alex Reed and Alex Morgan as two names recorded for one verified Staff record.](../../../development-handovers/evidence/stage-6-6-batch-2/screenshots/audit-asset-history-desktop-light.png)
 
 *The timeline keeps the saved name for each event.* [Desktop and mobile captures and provenance](../../../development-handovers/evidence/stage-6-6-batch-2/README.md#application-screenshots)
+
+### Corrected Activity Details — accepted desktop evidence
+
+![Activity Details showing the recorded Supplier name Northlight Ltd and previous value Not assigned. ](../../../development-handovers/evidence/milestone-01-audit-details/audit-supplier-name.png)
+
+*The event-time company name is retained despite a subsequent rename. The desktop dialogue uses the approved 850px width where space permits.*
+
+![Expanded Technical Details showing the original Supplier reference, historical name fallback and unchanged Device reference.](../../../development-handovers/evidence/milestone-01-audit-details/audit-legacy-technical.png)
+
+![Restricted Activity Details with Technical Details expanded, showing unavailable before-and-after values without disclosing Supplier names or values.](screenshots/milestone-01-native-followups/audit-values-unavailable.png)
+
+*Expand Technical Details to inspect the original recorded values, including unchanged context. A missing historical name is not reconstructed from today's catalogue.*
+
+![Device Activity Details showing the previous and new Primary IP Address and Asset Tag values.](../../../development-handovers/evidence/milestone-01-audit-details/audit-device-changes.png)
+
+*Only differing recorded values appear in the main field-change list.* [Capture provenance and acceptance](../../../development-handovers/evidence/milestone-01-audit-details/README.md). Current captures are desktop light mode; narrow and dark-mode geometry was tested automatically. Native acceptance remains outstanding.
 
 [Follow the connected Aster Services support request](Connected-Service-Desk-Journey.md) · [Draft v2.2 guides](README.md)

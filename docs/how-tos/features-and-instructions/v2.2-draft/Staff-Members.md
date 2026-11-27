@@ -152,7 +152,7 @@ Use **Left Company** when someone has left, rather than to record a temporary ab
 1. Open **Staff Details**, confirm the person and review **Assigned Equipment** and **Assignment History** with the necessary equipment access.
 2. Choose **Mark As Left Company**, or, for a linked login, open **Manage Permissions → Account Controls** and use the same action under **Employment Status**.
 3. Read the confirmation. Confirming sets **Left Company**, disables any linked login and revokes its existing sessions and outstanding email verification, recovery and temporary-password change proofs together. Cancelling makes no change. The server rejects unauthorised or stale changes without saving part of the operation.
-4. Check the **Left Company** status. A linked login shows **Disabled**. Existing assignments, equipment custody, tickets and historical records are retained; no physical return or stock increase is invented. New equipment assignments to this person are rejected.
+4. Check the **Left Company** status. A linked login shows **Disabled**. Existing assignments, equipment custody, tickets and historical records are retained; no physical return or stock increase is invented. New equipment assignments to this person are rejected. On Staff Details, Assigned Equipment explains that the staff member has left the company, outstanding assignments are retained and new assignments are unavailable.
 5. Record the equipment actually returned through the existing [return/write-off](IT-Assets-Issue-Return-and-Write-Off.md) or [handover](Associated-Equipment.md#reassign-a-workstation-directly) workflow. Authorised IT retains the relevant history.
 
 To restore employment eligibility, select **Reactivate** and confirm. Reactivation preserves history and leaves the login disabled. An administrator must then explicitly choose **Enable Login** in **Manage Permissions → Account Controls** if sign-in is appropriate. The server prevents enabling a login or creating a new linked login while the Staff Member remains Left Company. Add/Edit Staff uses the same server policy; changing that form does not bypass it. Staff records have no permanent-delete action.
@@ -180,6 +180,8 @@ In **Add Staff Member** or **Edit Staff Member**, the **Equipment And Ticket Acc
 *Draft v2.2 — Active Staff guidance.* [Dark mode](screenshots/milestone-01-sidebar-device-staff-corrections/staff-active-dark.png)
 
 ![Edit Staff Member for Alex Morgan with Left Company selected and guidance about retained equipment and unavailable new assignments.](screenshots/milestone-01-sidebar-device-staff-corrections/staff-left-company-light.png)
+
+![Staff Details for a staff member who has left the company, showing retained equipment and the message that new assignments are unavailable.](screenshots/milestone-01-native-followups/staff-details-left-company.png)
 
 *Draft v2.2 — Existing assignments remain for tracking and return; changing status is not a physical return.* [Dark mode](screenshots/milestone-01-sidebar-device-staff-corrections/staff-left-company-dark.png) · [Capture provenance](screenshots/milestone-01-sidebar-device-staff-corrections/Provenance.txt) · [Owner-approved correction evidence](https://github.com/Caffoot/Caffoot-Lite/pull/485#issuecomment-7216358365)
 

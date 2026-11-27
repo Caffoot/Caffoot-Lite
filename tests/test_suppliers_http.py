@@ -233,6 +233,55 @@ class SupplierHttpTests(unittest.TestCase):
             self.save("supplier.delete", {"confirmed": True}, supplier, status=409)
         self.save("supplier.disable", {"confirmed": True, "sections": ["Devices"]}, original, actor=1, status=409)
 
+    def test_association_audit_names_are_captured_at_event_time(self):
+        from backend.equipment_suppliers import write_device_supplier, write_receipt_supplier
+        from backend.equipment_suppliers import SUPPLIER_AUDIT_REASON
+        company = self.save("supplier.save", self.company(name="Original Company"))
+        other = self.save("supplier.save", self.company(name="Next Company"))
+        with sqlite3.connect(self.db) as db:
+            db.execute("UPDATE organisation_features SET enabled=1 WHERE feature IN ('devices','it_assets')")
+        code, result = self.request("/api/devices/create", actor=1, payload={
+            "record": {"id": "audit-laptop", "name": "Audit Laptop", "type": "Laptop"},
+            "supplier": {"id": company["id"]}})
+        self.assertEqual(code, 200, result)
+        code, receipt = self.request("/api/it-assets/receive", actor=1,
+                                     payload=receipt_payload(supplierId=company["id"]))
+        self.assertEqual(code, 200, receipt)
+        def events(db):
+            return [event["changes"][0] for (raw,) in db.execute(
+                "SELECT record_json FROM inventory_change_history ORDER BY id")
+                for event in [json.loads(raw)] if event.get("reason") == SUPPLIER_AUDIT_REASON
+                and "before" in event["changes"][0]]
+        with sqlite3.connect(self.db) as db:
+            first = events(db)
+            self.assertEqual(len(first), 2)
+            self.assertTrue(all(row["after"]["supplierName"] == "Original Company" for row in first))
+            stored = db.execute("SELECT * FROM inventory_change_history ORDER BY id").fetchall()
+        renamed = self.save("supplier.save", self.company(name="Renamed Company"), company)
+        self.save("supplier.archive", {"confirmed": True}, renamed, status=409)
+        disabled = self.save("supplier.disable", {"confirmed": True, "sections": ["Devices", "IT Assets"]},
+                             renamed, actor=1)
+        self.assertEqual(disabled["status"], "disabled")
+        with sqlite3.connect(self.db) as db:
+            self.assertEqual(events(db), first)
+            write_device_supplier(db, 1, "audit-laptop", "Audit Laptop", other["id"], "")
+            write_device_supplier(db, 1, "audit-laptop", "Audit Laptop", None, "Independent Company")
+            write_device_supplier(db, 1, "audit-laptop", "Audit Laptop", None, "")
+            write_receipt_supplier(db, 1, receipt["receiptId"], other["id"], company["id"], revision=1)
+            write_receipt_supplier(db, 1, receipt["receiptId"], None, other["id"], revision=2)
+            changes = events(db)
+            self.assertEqual(changes[:2], first)
+            self.assertEqual(changes[2]["before"]["supplierName"], "Renamed Company")
+            self.assertEqual(changes[2]["after"]["supplierName"], "Next Company")
+            self.assertEqual(changes[3]["after"]["supplierText"], "Independent Company")
+            self.assertNotIn("supplierName", changes[3]["after"])
+            self.assertEqual(changes[4]["after"]["supplierText"], "")
+            self.assertEqual(changes[5]["before"]["supplierName"], "Renamed Company")
+            self.assertEqual(changes[5]["after"]["supplierName"], "Next Company")
+            self.assertIsNone(changes[6]["after"]["supplierId"])
+            self.assertNotIn("supplierName", changes[6]["after"])
+            self.assertEqual(db.execute("SELECT * FROM inventory_change_history ORDER BY id").fetchall()[:len(stored)], stored)
+
     def test_supplier_equipment_counts_visible_original_supply_through_stock_movement(self):
         company = self.save("supplier.save", self.company())
         other = self.save("supplier.save", self.company(name="Dockland Ltd"))

@@ -1,5 +1,7 @@
 # Service Desk Tickets
 
+> **Current status — 27 November 2026:** Batches 7C, 7D and 7E have separate owner draft-evidence acceptance (41/36/25 new paths; 102 combined; 7E has 23 distinct image contents). Original captures, provenance and requirement mappings remain unchanged; accepted instructions retain the approved merged corrections. Batch 8 editorial findings and publication approval remain outstanding. The exact approved application baseline is now `0251b43a3b5d41d626aa022c6d7f9b4d860433da`, schema 31. 7F/7G are authorised but blocked here by unavailable retained fixtures; no new pack has been delivered. [Current reconciliation and retained editorial limits](../../../development-guide/Milestone-01-7F-7G-Reconciliation.md). Earlier capture-time status notices are historical; publication remains unauthorised.
+
 > **Current Batch 7E capture status — 27 November 2026:** [New desktop light illustrations](screenshots/batch-7e/README.md) use the approved merged schema-31 baseline. Independent ChatGPT review and separate owner visual/privacy/caption/alt acceptance remain pending. Earlier written/source and capture-status paragraphs retain their dated scope; the current pack status controls these new images. Published v2.1 and targeted correction-refresh requirements remain unchanged.
 
 > **Draft v2.2 — Unreleased.** Use **My Tickets** to raise and follow requests for equipment assigned to you or your Department. Technicians use **IT → Service Desk**. See [Find Tickets In The IT Queue](#find-tickets-in-the-it-queue) and [Read Service Desk Activity](#read-service-desk-activity).
@@ -157,6 +159,10 @@ Sign in with **Service Desk Read** or **Edit**. You also need Read access to **D
 4. Use **Sort By** to order the results by newest update, oldest update or descending ticket number. Use **Previous** and **Next** when the results span more than one page. On a narrow screen, scroll the table horizontally to reach all eight columns.
 5. Select a ticket number or **Open Details**. **Clear Filters** restores the default Open queue and newest-first sort.
 
+The IT **Current Workload** and **Ticket Queue** refresh automatically every 30 seconds while the page is visible, and when returning to the browser tab if it is safe to refresh. Your selected filters, sort order and reporting period are retained. Automatic refresh is deferred while using a queue filter, entering custom reporting dates or editing a form, or while a ticket window is open. Keeping keyboard focus on the Reporting Period dropdown alone does not suspend automatic workload and queue updates; the selection and historical report remain unchanged. It pauses in a hidden tab and stops when you leave Service Desk.
+
+If a temporary refresh failure occurs, the last successful results remain visible and the queue shows **Automatic refresh failed. Retrying…**. These results may be out of date until the next successful refresh. If access is withdrawn or the session ends, inaccessible results are cleared or the application returns you to sign-in. The automatic queue refresh does not reload historical reporting or the employee ticket lists.
+
 ## Read Unread Replies In The IT Queue
 
 In **IT → Service Desk**, the sidebar badge counts distinct accessible tickets with unread replies across the IT queue, independently of status, assignment, search and pagination. The number beside each ticket number counts that ticket's unread replies. An authorised technician can have a different total from an employee because the IT view includes permitted internal notes.
@@ -177,7 +183,7 @@ For sign-in, feature, equipment and custody checks see [Administer The Service D
 With authorised **Service Desk** and equipment access, open **IT → Service Desk**. The reports and queue each follow your effective equipment permissions. If you can read Devices only, the activity figures cover Device tickets.
 
 1. Use **Current Workload** for live **Open**, **In Progress** and **On Hold** totals. Select a card to filter the **Ticket Queue**. Changing the reporting period leaves these workload totals at their current live values.
-2. Under **Service Desk Activity**, choose **Today**, **Last 7 Days**, **Last 30 Days**, **This Month**, **This Year** or **Custom Date Range** in **Reporting Period**. The first visit uses **This Month**. The app remembers each technician’s selection and last valid custom dates. The rolling periods include today and the preceding 6 or 29 calendar days.
+2. Under **Service Desk Activity**, choose **Today**, **Last 7 Days**, **Last 30 Days**, **This Month**, **This Year** or **Custom Date Range** in **Reporting Period**. The first visit uses **This Month**. The app remembers each technician’s selection and last valid custom dates, including both visible **From** and **To** values after signing out and back in. The rolling periods include today and the preceding 6 or 29 calendar days.
 3. For **Custom Date Range**, enter both **From** and **To**. Both dates are included, and **To** must be on or after **From**. The figures update when both dates are valid. Reporting dates follow the installation time zone.
 4. Read **Tickets Created**, **Closure Events**, **Tickets Reopened** and **Average Resolution Time**. Then read **Technician Activity** for **Work Started** and **Tickets Closed** in the same period.
 

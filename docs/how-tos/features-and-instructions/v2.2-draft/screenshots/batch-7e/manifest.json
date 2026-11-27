@@ -1750,5 +1750,16 @@
     "independentVisualAcceptance": "pending",
     "ownerVisualAcceptance": "pending",
     "ticketIdentityRetained": true
+  },
+  "currentAcceptance": {
+    "asOf": "2026-11-27",
+    "status": "Owner accepted as draft documentation evidence; publication pending",
+    "ownerDecision": "https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7218633099",
+    "independentReview": "https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7218618146",
+    "newPaths": 25,
+    "distinctImageContents": 23,
+    "editorialLimits": "../../../../../development-guide/Milestone-01-7F-7G-Reconciliation.md#batch-8-editorial-findings-retained",
+    "originalCaptureRecords": "Preserved unchanged, including historical pending status; no new runtime verification",
+    "R3ITRetention": "Reported API evidence only; not an IT screenshot or independent runtime rerun"
   }
 }

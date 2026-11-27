@@ -2989,5 +2989,16 @@
       "sha256": "5e0904ddafdb2a4c9ba27128eca49a529bfce63c87844d4deac6f06d8704dd0c",
       "provenanceLimitations": "Original per-file timestamp, full actor grants and feature snapshot were not recorded. Retain the original README and narrow reuse approval. Currentness is limited to the Suppliers implementation and illustrated directory/dashboard content; the old sidebar is not certified current."
     }
-  ]
+  ],
+  "currentAcceptance": {
+    "asOf": "2026-11-27",
+    "status": "Owner accepted as draft documentation evidence; publication pending",
+    "ownerDecision": "https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7218536926",
+    "independentReview": "https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7218523405",
+    "newPaths": 41,
+    "distinctImageContents": 41,
+    "editorialLimits": "../../../../../development-guide/Milestone-01-7F-7G-Reconciliation.md#batch-8-editorial-findings-retained",
+    "originalCaptureRecords": "Preserved unchanged, including historical pending status; no new runtime verification",
+    "R3ITRetention": null
+  }
 }

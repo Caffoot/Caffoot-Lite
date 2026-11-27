@@ -1,5 +1,7 @@
 # Batch 7C — Desktop Instructional Screenshots
 
+**Current owner draft acceptance — 27 November 2026:** [Decision](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7218536926) follows [independent visual review](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7218523405). All original image bytes, capture metadata and requirement mappings are preserved. [Recorded editorial limits and current reconciliation](../../../../../development-guide/Milestone-01-7F-7G-Reconciliation.md#batch-8-editorial-findings-retained) remain mandatory before publication; they are not implemented here. Earlier pending notices describe the original capture checkpoint. No fresh runtime verification or publication approval is implied.
+
 > **Independent-review correction — 27 November 2026:** The new captures used Playwright **1.62.1**, as recorded dynamically at capture time. Earlier reused images retain their own versions and provenance. [Evidence, corrected 7E mappings and pending visual-gap proposal](../../../../../development-guide/Milestone-01-Batches-7C-7E-Review-Corrections.md). This documentation correction adds or changes no image.
 
 **27 November 2026. 41 new desktop light images, maximum 42; 23 groups and 120 owned specifications retained, with shared references.** Independent ChatGPT review and separate product-owner visual/privacy/caption/alt acceptance remain pending. No publication approval.
