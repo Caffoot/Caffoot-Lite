@@ -6,6 +6,10 @@ Caffoot Lite brings accounts, Staff Members, Departments, Devices and optional I
 
 Start with the task you need to complete. Each feature guide explains its permissions, controls, numbered procedures, examples and recovery steps. A missing section may mean the feature is switched off or your account lacks permission; ask an administrator to check before creating duplicate records.
 
+## Move Around The Application
+
+On desktop, the left-hand navigation scrolls independently of the main page when the expanded menu is taller than the window. Scroll over the sidebar, or use the keyboard to reach the permitted links. **Settings & Data** (administrators only) and **Collapse Menu** remain reachable at the bottom. For example, if IT, Staff and Purchasing are expanded, scroll down to Settings & Data from either IT Assets Overview or Device Inventory. Collapsing a group or the menu does not change your permissions. Mobile navigation layout is unchanged.
+
 ## Import, Upgrade And Recovery
 
 Use [Import Legacy Inventory Or Upgrade Docker](Legacy-Import-and-Docker-Upgrade.md) to review a standalone v1.3.3 export, understand protected Device conflicts, rehearse a v2.1 Docker upgrade on an isolated copy, or recover a complete Docker installation with its matching image.

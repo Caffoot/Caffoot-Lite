@@ -28,6 +28,8 @@ Initial allocation is not a stock receipt and does not mark a Device Ready. Thes
 
 You need **Devices Edit**, with Devices enabled. Starting from Staff Details also requires Staff Members Read. Device Details provides a restricted recipient picker without requiring broad Staff Members or Departments access.
 
+Virtual machines do not have an **Assigned To** tab in Device Details because they cannot be physically allocated. Other applicable Device Details tabs remain available according to the existing permissions and feature settings. Physical Devices retain the Assigned To tab, including any saved assignment history.
+
 Only **Desktop**, **Laptop** and **Printer** qualify for initial allocation. A Device must:
 
 - be physical and have **Active** status;

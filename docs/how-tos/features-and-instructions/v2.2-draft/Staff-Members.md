@@ -152,6 +152,8 @@ During an authorised review upgrade, existing Left Company/inactive Staff with e
 
 ## Work With Equipment
 
+In **Add Staff Member** or **Edit Staff Member**, the **Equipment And Ticket Access** guidance follows the selected Staff Status. For Active, it explains that equipment can be assigned to eligible Staff and that ticket access depends on the linked account and its permissions. For Left Company, it explains that existing assignments remain for tracking and return, and new assignments are unavailable. Changing the selection updates the guidance immediately; it does not change saved status, equipment custody or login access until the existing Save and confirmation workflow succeeds. Use **Return Equipment** to record actual physical returns. Cancel leaves the saved record unchanged.
+
 **Assigned Equipment** shows Devices and outstanding IT Assets assigned directly to the person, according to your access. **Assignment History** retains the original relationships and responsible accounts.
 
 With Devices Edit, **Assign Equipment** records an eligible initial Device allocation to an active person. With IT Assets Edit, **Issue Equipment** opens stock issue for them. **Return Equipment** beside outstanding stock remains available for Staff who have left. Device returns require both relevant equipment permissions. Follow [Device Assignments And My Equipment](Device-Assignments-and-My-Equipment.md) and the linked stock guides for the full checks.

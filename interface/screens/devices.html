@@ -213,7 +213,7 @@
                         {{slot:16}}
                         {{slot:17}}
                     </div>
-                    <div id="device-details-panel-assigned" role="tabpanel" aria-labelledby="device-details-tab-assigned" class="device-details-panel device-review-grid" hidden><p role="status">Loading assignment…</p></div>
+                    {{slot:24}}
                     <div id="device-details-panel-associated" role="tabpanel" aria-labelledby="device-details-tab-associated" class="device-details-panel device-review-grid" hidden><p role="status">Loading associated equipment…</p></div>
                     {{slot:18}}
                     {{slot:23}}
@@ -273,3 +273,5 @@
 <!-- interface-template:devices/initialise-device-tabs-1 --><h3><span class="mini-icon" aria-hidden="true">▣</span>Server Services</h3><p>Choose the functions recorded on this server, without leaving the form.</p><div id="server-services-fields"></div><!-- /interface-template -->
 
 <!-- interface-template:devices/initialise-device-tabs-2 --><h3><span class="mini-icon" aria-hidden="true">▣</span>Installed Software</h3><p>Choose any number of items applicable to this device type, without leaving this form.</p><div id="device-form-installed-software-fields"></div><!-- /interface-template -->
+
+<!-- interface-template:devices/device-assigned-panel --><div id="device-details-panel-assigned" role="tabpanel" aria-labelledby="device-details-tab-assigned" class="device-details-panel device-review-grid" hidden><p role="status">Loading assignment…</p></div><!-- /interface-template -->
