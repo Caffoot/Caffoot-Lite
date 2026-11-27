@@ -1,5 +1,9 @@
 # Milestone 01 — Documentation Review Register
 
+## Current Approved R1–R3 Delivery — 27 November 2026
+
+[Owner approval](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7218233916) supersedes the earlier R1–R3 capture/budget stop for exactly these three views. **All 99 originals remain unchanged; cumulative totals are now 7E 25/25 and combined 102/102.** My Equipment is 6/6 and custody/membership confidentiality 5/5; other 7E allocations remain 5/4/5, and 7C/7D remain unchanged. [Actual R1–R3 views, matched original before frames, provenance and focused verification](../how-tos/features-and-instructions/v2.2-draft/screenshots/batch-7e/R1-R3.md). R1/R3 follow the same genuine personal-to-Accounts event; R2 follows actual membership loss. IT retention is an API check, not an IT screenshot. Independent review and separate owner acceptance remain pending. Earlier proposal, gap and ceiling paragraphs below are preserved as dated history, not current execution instructions. PR #472 remains draft; stop after this checkpoint with no further packs.
+
 ## Current Independent-Review Corrections — 27 November 2026
 
 [Independent review](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7217975857) identified inaccurate README automation wording and three 7E mapping claims. [Correction evidence and bounded visual-gap proposal](Milestone-01-Batches-7C-7E-Review-Corrections.md) records capture-time Playwright 1.62.1 for all 99 new images, corrected mappings and essential gaps for matched holder lists, equipment Details denial and person-to-Department paired views. All 99 delivered PNGs, original requirements, accepted written instructions and allocation ceilings remain preserved. No replacement capture or visual waiver is approved; the correction checkpoint is documentation only. Earlier delivery/check counts remain historical records, not proof of those missing views. PR #472 stays draft; stop for independent review.

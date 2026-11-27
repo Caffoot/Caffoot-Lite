@@ -5,13 +5,13 @@
   "schema": 31,
   "documentationStart": "a5426ca6a2262e21530fcf972b3a1d6cc12fc950",
   "reconciliationCheckpoint": "19e148efc866c054842c628ea2a6fde4420e2347",
-  "newCount": 22,
-  "ceiling": 22,
+  "newCount": 25,
+  "ceiling": 25,
   "counts": {
-    "My Equipment and safe equipment Details": 4,
+    "My Equipment and safe equipment Details": 6,
     "Ticket creation and confidentiality warnings": 5,
     "My Tickets and Department Tickets": 4,
-    "Handover and membership confidentiality": 4,
+    "Handover and membership confidentiality": 5,
     "Unread notifications and replies": 5
   },
   "images": [
@@ -1225,6 +1225,192 @@
       "urlPath": "/inventory#devices",
       "independentVisualAcceptance": "pending",
       "ownerVisualAcceptance": "pending"
+    },
+    {
+      "file": "r1-alex-department-equipment.png",
+      "allocation": "My Equipment and safe equipment Details",
+      "states": [
+        "B3-E5-S02",
+        "B5-A8-S01"
+      ],
+      "caption": "R1 \u2014 Isolated continuation of the preserved personal before-state: the same AST-LAP-014 has genuinely moved from Alex to Accounts Department custody. Alex remains an Accounts member, so the refreshed list now shows it under Shared with My Department, not Assigned to Me. This is not the earlier return/Sarah/retirement journey.",
+      "alt": "R1: Alex\u2019s refreshed My Equipment list with AST-LAP-014 shared with Accounts after the real personal-to-Department handover.",
+      "applicationRevision": "000818f42e854e4a1fee8692b9ffaaa52b5c788d",
+      "schema": 31,
+      "browser": "Chromium 156.0.8078.79",
+      "automation": "Playwright 1.62.1",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1050
+      },
+      "deviceScaleFactor": 1,
+      "theme": "light",
+      "fullPage": true,
+      "capturedAt": "2026-11-27T12:28:28.702Z",
+      "fixture": "R1\u2013R3 isolated fictional continuation of preserved pre-handover-with-tickets.sqlite3; original return/Sarah/retirement journey is a separate unchanged illustration",
+      "actor": "alex.morgan",
+      "context": {
+        "accountState": [
+          7,
+          0,
+          1,
+          1
+        ],
+        "roles": [
+          [
+            "Staff Member"
+          ]
+        ],
+        "overrides": [],
+        "features": {
+          "devices": 1,
+          "ipam": 1,
+          "racks": 1,
+          "suppliers": 1,
+          "equipment_lifecycle": 1,
+          "it_assets": 1
+        }
+      },
+      "sha256": "9f5fd7b007578c17a6e16ad261b69d39af77eda6f2c566aecf5b482d34146eff",
+      "urlPath": "/account#equipment",
+      "independentVisualAcceptance": "pending",
+      "ownerVisualAcceptance": "pending",
+      "documentationStart": "cc82e287ecdf2f5bb3712fda3cc7cc9453f5aafd",
+      "authority": "https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7218233916",
+      "sourceSnapshot": {
+        "file": "pre-handover-with-tickets.sqlite3",
+        "sha256": "e67dc7fb61572ce0706725d6dabbecef615a251976edb670d206a25bb0dca7f1"
+      },
+      "continuation": "R1/R3 use the same real personal-to-Accounts handover of AST-LAP-014; R2 is a real Priya Accounts-to-Sales membership loss with unchanged AST-PRN-01 custody",
+      "locale": "en-GB"
+    },
+    {
+      "file": "r2-equipment-details-denied.png",
+      "allocation": "My Equipment and safe equipment Details",
+      "states": [
+        "B3-E5-S03",
+        "B3-E4-S04"
+      ],
+      "caption": "R2 \u2014 Priya\u2019s real Accounts-to-Sales membership change leaves the Accounts printer\u2019s custody unchanged. Opening the preserved AST-PRN-01 Details entry re-reads current equipment and displays the genuine unavailable message. The background is the retained pre-change list, not current eligibility.",
+      "alt": "R2: Equipment Details displaying Equipment details could not be loaded or are no longer available after Priya lost Accounts membership.",
+      "applicationRevision": "000818f42e854e4a1fee8692b9ffaaa52b5c788d",
+      "schema": 31,
+      "browser": "Chromium 156.0.8078.79",
+      "automation": "Playwright 1.62.1",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1050
+      },
+      "deviceScaleFactor": 1,
+      "theme": "light",
+      "fullPage": true,
+      "capturedAt": "2026-11-27T12:29:27.363Z",
+      "fixture": "R1\u2013R3 isolated fictional continuation of preserved pre-handover-with-tickets.sqlite3; original return/Sarah/retirement journey is a separate unchanged illustration",
+      "actor": "priya.shah",
+      "context": {
+        "accountState": [
+          9,
+          0,
+          1,
+          1
+        ],
+        "roles": [
+          [
+            "Staff Member"
+          ]
+        ],
+        "overrides": [],
+        "features": {
+          "devices": 1,
+          "ipam": 1,
+          "racks": 1,
+          "suppliers": 1,
+          "equipment_lifecycle": 1,
+          "it_assets": 1
+        }
+      },
+      "sha256": "f5bf0c0bc3a9f105c55cbcd82e225c3277ea7609643f4feffa53c6307343bef2",
+      "urlPath": "/account#equipment",
+      "independentVisualAcceptance": "pending",
+      "ownerVisualAcceptance": "pending",
+      "documentationStart": "cc82e287ecdf2f5bb3712fda3cc7cc9453f5aafd",
+      "authority": "https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7218233916",
+      "sourceSnapshot": {
+        "file": "pre-handover-with-tickets.sqlite3",
+        "sha256": "e67dc7fb61572ce0706725d6dabbecef615a251976edb670d206a25bb0dca7f1"
+      },
+      "continuation": "R1/R3 use the same real personal-to-Accounts handover of AST-LAP-014; R2 is a real Priya Accounts-to-Sales membership loss with unchanged AST-PRN-01 custody",
+      "locale": "en-GB"
+    },
+    {
+      "file": "r3-original-personal-ticket-denied.png",
+      "allocation": "Handover and membership confidentiality",
+      "states": [
+        "B5-A8-S01",
+        "B3-E5-S04"
+      ],
+      "caption": "R3 \u2014 After the same R1 personal-to-Accounts handover, Alex can see the shared AST-LAP-014 but the original personal-custody ticket SD-0001 is unavailable. Authorised IT retrieval of the same original ticket returned 200; this screenshot shows only the genuine employee denial, not an IT historical screen.",
+      "alt": "R3: Employee ticket SD-0001 showing Ticket not found after the recorded R1 personal-to-Accounts custody change.",
+      "applicationRevision": "000818f42e854e4a1fee8692b9ffaaa52b5c788d",
+      "schema": 31,
+      "browser": "Chromium 156.0.8078.79",
+      "automation": "Playwright 1.62.1",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1050
+      },
+      "deviceScaleFactor": 1,
+      "theme": "light",
+      "fullPage": true,
+      "capturedAt": "2026-11-27T12:28:29.900Z",
+      "fixture": "R1\u2013R3 isolated fictional continuation of preserved pre-handover-with-tickets.sqlite3; original return/Sarah/retirement journey is a separate unchanged illustration",
+      "actor": "alex.morgan",
+      "context": {
+        "accountState": [
+          7,
+          0,
+          1,
+          1
+        ],
+        "roles": [
+          [
+            "Staff Member"
+          ]
+        ],
+        "overrides": [],
+        "features": {
+          "devices": 1,
+          "ipam": 1,
+          "racks": 1,
+          "suppliers": 1,
+          "equipment_lifecycle": 1,
+          "it_assets": 1
+        }
+      },
+      "sha256": "945e0833ee898878591c2868575aa86033b22aac5738668966e035ed211bcd3a",
+      "urlPath": "/account#my-tickets",
+      "independentVisualAcceptance": "pending",
+      "ownerVisualAcceptance": "pending",
+      "documentationStart": "cc82e287ecdf2f5bb3712fda3cc7cc9453f5aafd",
+      "authority": "https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7218233916",
+      "sourceSnapshot": {
+        "file": "pre-handover-with-tickets.sqlite3",
+        "sha256": "e67dc7fb61572ce0706725d6dabbecef615a251976edb670d206a25bb0dca7f1"
+      },
+      "continuation": "R1/R3 use the same real personal-to-Accounts handover of AST-LAP-014; R2 is a real Priya Accounts-to-Sales membership loss with unchanged AST-PRN-01 custody",
+      "locale": "en-GB"
     }
   ],
   "reusedImages": [
@@ -1294,11 +1480,11 @@
       "partialStateUses": [
         {
           "state": "B3-E5-S02",
-          "limit": "AST-LAP-014 personal employee list before custody change only; no matching employee after-list."
+          "limit": "This original image is before context only; the matching isolated continuation is now illustrated by R1 and, for ticket privacy, R3. It is not a later relabelled capture."
         },
         {
           "state": "B5-A8-S01",
-          "limit": "Personal before context only; no matched Department after-view."
+          "limit": "This original image is before context only; the matching isolated continuation is now illustrated by R1 and, for ticket privacy, R3. It is not a later relabelled capture."
         }
       ]
     },
@@ -1407,8 +1593,8 @@
     "7C": "a9f607b132edf1125580eb41c27ee9c8eee80902",
     "7D": "03b4f2c5090a10dc6c0ad66463e4f309a4719796"
   },
-  "combinedNewImages": 99,
-  "combinedCeiling": 100,
+  "combinedNewImages": 102,
+  "combinedCeiling": 102,
   "fixtureMetadataNotes": "New-image context.accountState columns: account ID, is_admin, active, mfa_confirmed. Staff Member is the protected baseline role; new actor wider grants come only from recorded overrides. All new contexts use en-GB and device scale 1. Source 7B reuse keeps its richer original metadata and source acceptance.",
   "captureDriverHashes": {
     "capture-common.cjs": "74bc4bc96391a9f33aa95988bb8ad658cfcda33dae9c902e668ecce9a5a238bd",
@@ -1440,5 +1626,129 @@
       "B5-A8-S01"
     ],
     "sourceAutomation": "Playwright 1.62.1 for new captures; historical 7B reuse remains Playwright 1.62.0"
+  },
+  "additionalCaptureExecution": {
+    "authority": "https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7218233916",
+    "startingDocumentationRevision": "cc82e287ecdf2f5bb3712fda3cc7cc9453f5aafd",
+    "additionalCount": 3,
+    "original99Preserved": true,
+    "allocationCeilings": {
+      "My Equipment and safe equipment Details": 6,
+      "Ticket creation and confidentiality warnings": 5,
+      "My Tickets and Department Tickets": 4,
+      "Unread notifications and replies": 5,
+      "Handover and membership confidentiality": 5
+    },
+    "priorGapRecord": "independentReviewCorrections is the preserved historical cc82e28 review record; its then-pending authority/coverage statements are superseded for R1\u2013R3 by this owner approval and delivery, not by relabelling any original image.",
+    "currentGapDisposition": {
+      "B3-E5-S02": "Original same-Device employee before frame plus R1 actual Department after-list; independent/owner visual review pending.",
+      "B3-E5-S03": "R2 genuine Equipment Details unavailable after real membership loss; review pending.",
+      "B3-E4-S04": "R2 approved unavailable-equipment representative is membership loss, not a physical printer move; review pending.",
+      "B5-A8-S01": "Original SD-0001 before frame plus R1 same-Device Department custody and R3 original personal-ticket denial after that same event; IT retention checked by API, not pictured; review pending."
+    },
+    "executionResults": {
+      "authority": "https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7218233916",
+      "source": {
+        "snapshot": "pre-handover-with-tickets.sqlite3",
+        "snapshotSha256": "e67dc7fb61572ce0706725d6dabbecef615a251976edb670d206a25bb0dca7f1",
+        "device": [
+          "806d2a83-c982-4e8f-914d-ee2828fe4961",
+          "AST-LAP-014"
+        ],
+        "personalTicket": [
+          1,
+          "806d2a83-c982-4e8f-914d-ee2828fe4961",
+          "AST-LAP-014 keyboard intermittently stops responding"
+        ],
+        "priyaDepartment": [
+          "195e21613fdf32ca5808b8b0d2aae77a",
+          "accounts"
+        ],
+        "snapshotSha256Unchanged": true
+      },
+      "applicationRevision": "000818f42e854e4a1fee8692b9ffaaa52b5c788d",
+      "schema": 31,
+      "isolatedContinuation": true,
+      "results": {
+        "R3_IT": {
+          "httpStatus": 200,
+          "ticketId": 1,
+          "deviceId": "806d2a83-c982-4e8f-914d-ee2828fe4961",
+          "subject": "AST-LAP-014 keyboard intermittently stops responding",
+          "retained": true,
+          "screenshot": false
+        },
+        "R1": {
+          "sameDeviceId": "806d2a83-c982-4e8f-914d-ee2828fe4961",
+          "employee": "alex.morgan",
+          "department": "Accounts",
+          "personalContainsDevice": false,
+          "sharedContainsDevice": true,
+          "originalChecks": "Passed before R1 capture; actual new Department custody is retained in afterCustody"
+        },
+        "R3_personal": {
+          "httpStatus": 404,
+          "ticketId": 1,
+          "originalChecks": "Passed before original R3 capture"
+        },
+        "R3_department": {
+          "httpStatus": 404,
+          "ticketId": 1,
+          "originalChecks": "Passed before original R3 capture"
+        },
+        "R2": {
+          "employee": "priya.shah",
+          "staffId": "195e21613fdf32ca5808b8b0d2aae77a",
+          "deviceId": "aster-shared-printer",
+          "deviceName": "AST-PRN-01",
+          "beforeDepartment": "accounts",
+          "afterDepartment": "sales",
+          "afterSharedContainsDevice": false,
+          "printerCustodyUnchanged": true,
+          "actualDialogText": "Equipment details could not be loaded or are no longer available.",
+          "background": "Retained pre-change list, not a refreshed current eligibility list"
+        }
+      },
+      "afterCustody": [
+        {
+          "id": 3,
+          "deviceId": "806d2a83-c982-4e8f-914d-ee2828fe4961",
+          "deviceName": "AST-LAP-014",
+          "staffId": null,
+          "departmentId": "accounts",
+          "recipientLabel": "Accounts",
+          "assignedAt": "2026-11-27T12:28:24.452408Z",
+          "actorId": 2,
+          "actorLabel": "sam.taylor",
+          "endedAt": null,
+          "departments": [
+            {
+              "id": "accounts",
+              "label": "Accounts",
+              "archived": false
+            }
+          ]
+        }
+      ],
+      "beforeCustody": [
+        {
+          "id": 1,
+          "device_id": "806d2a83-c982-4e8f-914d-ee2828fe4961",
+          "staff_id": "b1376a8bb65a1e6af8ae16424a2a13e4",
+          "department_id": null,
+          "recipient_label": "Alex Morgan",
+          "assigned_at": "2026-11-05",
+          "ended_at": null
+        }
+      ]
+    },
+    "captureDriverHashes": {
+      "r123-common.cjs": "a74a4da9f65e8ff1bb3bfa5e1f48635200c5425a379c2fc35ff07559ae12f89a",
+      "r123-capture.cjs": "e864a55020f522d2923a625e0fd8857c566a54fee14ab6049a657ca9aab25d14",
+      "r2-resume.cjs": "92ed13a392a11b3024562a58fef8a506f3f541c69b920ecea63c1ce3cbbb04ea"
+    },
+    "independentVisualAcceptance": "pending",
+    "ownerVisualAcceptance": "pending",
+    "ticketIdentityRetained": true
   }
 }

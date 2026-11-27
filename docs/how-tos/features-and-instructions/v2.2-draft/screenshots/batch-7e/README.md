@@ -1,5 +1,9 @@
 # Batch 7E — Desktop Instructional Screenshots
 
+## Current Approved R1–R3 Delivery — 27 November 2026
+
+[Owner approval](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7218233916) supersedes the earlier R1–R3 capture/budget stop for exactly these three views. **All 99 originals remain unchanged; cumulative totals are now 7E 25/25 and combined 102/102.** My Equipment is 6/6 and custody/membership confidentiality 5/5; other 7E allocations remain 5/4/5, and 7C/7D remain unchanged. [Actual R1–R3 views, matched original before frames, provenance and focused verification](R1-R3.md). R1/R3 follow the same genuine personal-to-Accounts event; R2 follows actual membership loss. IT retention is an API check, not an IT screenshot. Independent review and separate owner acceptance remain pending. Earlier proposal, gap and ceiling paragraphs below are preserved as dated history, not current execution instructions. PR #472 remains draft; stop after this checkpoint with no further packs.
+
 > **Independent-review correction — 27 November 2026:** The new captures used Playwright **1.62.1**, as recorded dynamically at capture time. Earlier reused images retain their own versions and provenance. [Evidence, corrected 7E mappings and pending visual-gap proposal](../../../../../development-guide/Milestone-01-Batches-7C-7E-Review-Corrections.md). This documentation correction adds or changes no image.
 
 **27 November 2026. 22 new desktop light images, maximum 22; 10 groups and 52 owned specifications retained, with shared references.** Independent ChatGPT review and separate product-owner visual/privacy/caption/alt acceptance remain pending. No publication approval.
@@ -91,3 +95,13 @@ Stop after this pack for independent ChatGPT review and separate product-owner v
 ## Essential Visual Gaps Identified In Independent Review
 
 The original 22 images remain preserved, with their original captions, alt text and capture metadata. Sarah’s AST-LAP-015 list is a separate current-equipment example, not the after view for Alex’s AST-LAP-014. The former personal-ticket image shows **Ticket not found**, not equipment Details denial or a paired person-to-Department handover. Matched holder lists, equipment Details denial and the person-to-Department pair remain essential visual gaps; the written procedures remain accurate but are not an approved visual substitution. [Corrected exact mappings](Coverage.md) · [Bounded existing-evidence assessment and approval-dependent proposal](../../../../../development-guide/Milestone-01-Batches-7C-7E-Review-Corrections.md#essential-visual-gaps-and-proposal). No new capture, replacement, allocation reinterpretation or coverage waiver is authorised by this correction.
+
+## Three Approved Additional Images
+
+[Owner scope, source snapshot, exact before frames and checks](R1-R3.md).
+
+| View | Original new image |
+| --- | --- |
+| R1 | [r1-alex-department-equipment.png](r1-alex-department-equipment.png) |
+| R2 | [r2-equipment-details-denied.png](r2-equipment-details-denied.png) |
+| R3 | [r3-original-personal-ticket-denied.png](r3-original-personal-ticket-denied.png) |

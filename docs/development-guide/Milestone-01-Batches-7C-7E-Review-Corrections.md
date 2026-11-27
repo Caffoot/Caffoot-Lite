@@ -1,5 +1,9 @@
 # Milestone 01 — Batches 7C–7E Independent-Review Corrections
 
+## Current Approved R1–R3 Delivery — 27 November 2026
+
+[Owner approval](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7218233916) supersedes the earlier R1–R3 capture/budget stop for exactly these three views. **All 99 originals remain unchanged; cumulative totals are now 7E 25/25 and combined 102/102.** My Equipment is 6/6 and custody/membership confidentiality 5/5; other 7E allocations remain 5/4/5, and 7C/7D remain unchanged. [Actual R1–R3 views, matched original before frames, provenance and focused verification](../how-tos/features-and-instructions/v2.2-draft/screenshots/batch-7e/R1-R3.md). R1/R3 follow the same genuine personal-to-Accounts event; R2 follows actual membership loss. IT retention is an API check, not an IT screenshot. Independent review and separate owner acceptance remain pending. Earlier proposal, gap and ceiling paragraphs below are preserved as dated history, not current execution instructions. PR #472 remains draft; stop after this checkpoint with no further packs.
+
 27 November 2026. Documentation-only response to the [independent review](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7217975857), starting from `ecb9ccef3aeec250d8211055e12f0e8f6e041ea6`. PR #472 remains draft. No capture, application process, fixture mutation, new dependency or runtime/regression test was undertaken for this correction.
 
 The review verified the separate 7C/7D/7E commits, counts and original state IDs, and opened nine PNGs. It did not give full visual acceptance or repeat all original hash/static checks. This correction does not extend that independent review or grant owner acceptance.

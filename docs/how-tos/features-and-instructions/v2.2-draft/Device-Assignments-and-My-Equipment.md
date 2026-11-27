@@ -269,7 +269,7 @@ These images follow the fictional training journey. Read the caption to distingu
 
 ## Batch 7E Desktop Illustrations
 
-> **Illustration limits corrected after independent review:** The former-personal-ticket image shows **Ticket not found**, not equipment Details denial or a matched person-to-Department pair. Sarah’s AST-LAP-015 list is a separate current-equipment example, not the after-list for Alex’s AST-LAP-014. The accepted instructions below/above remain; matched holder-list, equipment Details-denial and person-to-Department visual gaps are explicitly outstanding. [Corrected coverage](screenshots/batch-7e/Coverage.md) · [Evidence and proposed next step](../../../development-guide/Milestone-01-Batches-7C-7E-Review-Corrections.md#essential-visual-gaps-and-proposal). No new capture or visual substitution has been approved.
+> **Current illustration status — 27 November 2026:** Earlier images retain their corrected narrow limits: Ticket not found is not equipment Details denial, and Sarah’s AST-LAP-015 is not an AST-LAP-014 after-list. The separately approved R1–R3 additions below now provide proposed evidence for those gaps, using exact original before frames and an explicitly isolated continuation. [New provenance and verification](screenshots/batch-7e/R1-R3.md). Independent review and separate owner visual acceptance remain pending.
 
 These images follow the fictional training journey. Read the caption to distinguish a draft, a cancelled preview and a saved outcome. [Complete original coverage and limits](screenshots/batch-7e/Coverage.md).
 
@@ -308,3 +308,15 @@ These images follow the fictional training journey. Read the caption to distingu
 ![Alex Morgan Staff Details showing Left Company, Disabled Caffoot Login, MFA and roles retained, Reactivate, outstanding AC-LAP-07 and its assignment history.](screenshots/batch-7b/staff-left-company-retained.png)
 
 *Draft v2.2 — Historical accepted Batch 7B example only: Saved offboarding result: Alex is Left Company, the linked login is Disabled and AC-LAP-07 remains assigned. No equipment return has been recorded. This is the separate AC-LAP-07 fixture, not an employment change in the AST-LAP-014 journey. Independent review and owner visual acceptance pending.*
+
+### Approved R1–R3 Additional Evidence
+
+Compare R1 with the [original Alex/AST-LAP-014 personal list](screenshots/batch-7c/alex-before-handover.png), and R3 with the [original SD-0001 personal-ticket list](screenshots/batch-7e/personal-ticket-saved.png). These are exact earlier frames; the additions use a separate isolated continuation, not a relabelled return/Sarah/retirement outcome.
+
+![R1: Alex’s refreshed My Equipment list with AST-LAP-014 shared with Accounts after the real personal-to-Department handover.](screenshots/batch-7e/r1-alex-department-equipment.png)
+
+*Draft v2.2 — R1 — Isolated continuation of the preserved personal before-state: the same AST-LAP-014 has genuinely moved from Alex to Accounts Department custody. Alex remains an Accounts member, so the refreshed list now shows it under Shared with My Department, not Assigned to Me. This is not the earlier return/Sarah/retirement journey. Independent review and separate owner visual acceptance pending.*
+
+![R2: Equipment Details displaying Equipment details could not be loaded or are no longer available after Priya lost Accounts membership.](screenshots/batch-7e/r2-equipment-details-denied.png)
+
+*Draft v2.2 — R2 — Priya’s real Accounts-to-Sales membership change leaves the Accounts printer’s custody unchanged. Opening the preserved AST-PRN-01 Details entry re-reads current equipment and displays the genuine unavailable message. The background is the retained pre-change list, not current eligibility. Independent review and separate owner visual acceptance pending.*

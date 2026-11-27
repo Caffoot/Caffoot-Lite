@@ -245,7 +245,7 @@ For employee-facing explanations, see [Service Desk Tickets](Service-Desk-Ticket
 
 ## Batch 7E Desktop Illustrations
 
-> **Illustration limits corrected after independent review:** The former-personal-ticket image shows **Ticket not found**, not equipment Details denial or a matched person-to-Department pair. Sarah’s AST-LAP-015 list is a separate current-equipment example, not the after-list for Alex’s AST-LAP-014. The accepted instructions below/above remain; matched holder-list, equipment Details-denial and person-to-Department visual gaps are explicitly outstanding. [Corrected coverage](screenshots/batch-7e/Coverage.md) · [Evidence and proposed next step](../../../development-guide/Milestone-01-Batches-7C-7E-Review-Corrections.md#essential-visual-gaps-and-proposal). No new capture or visual substitution has been approved.
+> **Current illustration status — 27 November 2026:** Earlier images retain their corrected narrow limits: Ticket not found is not equipment Details denial, and Sarah’s AST-LAP-015 is not an AST-LAP-014 after-list. The separately approved R1–R3 additions below now provide proposed evidence for those gaps, using exact original before frames and an explicitly isolated continuation. [New provenance and verification](screenshots/batch-7e/R1-R3.md). Independent review and separate owner visual acceptance remain pending.
 
 These images follow the fictional training journey. Read the caption to distinguish a draft, a cancelled preview and a saved outcome. [Complete original coverage and limits](screenshots/batch-7e/Coverage.md).
 
@@ -264,3 +264,15 @@ These images follow the fictional training journey. Read the caption to distingu
 ![IT-only AST-LAP-014 Associated Equipment showing no current association and retained historical Office Mouse issue and return.](screenshots/batch-7e/it-only-former-accessory-history.png)
 
 *Draft v2.2 — Sam’s authorised IT view retains the former mouse association after AST-LAP-014 custody ends. The current association is empty; the old mouse belongs to historical IT records, not Sarah’s or Alex’s employee equipment access. Independent review and owner visual acceptance pending.*
+
+### Approved R1–R3 Additional Evidence
+
+Compare R1 with the [original Alex/AST-LAP-014 personal list](screenshots/batch-7c/alex-before-handover.png), and R3 with the [original SD-0001 personal-ticket list](screenshots/batch-7e/personal-ticket-saved.png). These are exact earlier frames; the additions use a separate isolated continuation, not a relabelled return/Sarah/retirement outcome.
+
+![R1: Alex’s refreshed My Equipment list with AST-LAP-014 shared with Accounts after the real personal-to-Department handover.](screenshots/batch-7e/r1-alex-department-equipment.png)
+
+*Draft v2.2 — R1 — Isolated continuation of the preserved personal before-state: the same AST-LAP-014 has genuinely moved from Alex to Accounts Department custody. Alex remains an Accounts member, so the refreshed list now shows it under Shared with My Department, not Assigned to Me. This is not the earlier return/Sarah/retirement journey. Independent review and separate owner visual acceptance pending.*
+
+![R3: Employee ticket SD-0001 showing Ticket not found after the recorded R1 personal-to-Accounts custody change.](screenshots/batch-7e/r3-original-personal-ticket-denied.png)
+
+*Draft v2.2 — R3 — After the same R1 personal-to-Accounts handover, Alex can see the shared AST-LAP-014 but the original personal-custody ticket SD-0001 is unavailable. Authorised IT retrieval of the same original ticket returned 200; this screenshot shows only the genuine employee denial, not an IT historical screen. Independent review and separate owner visual acceptance pending.*
