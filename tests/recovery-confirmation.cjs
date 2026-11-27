@@ -255,7 +255,15 @@ async function main() {
   await postFromPage(recovery, '/api/recovery/confirm', () => recover.press('Enter'), 400);
   await feedback.filter({hasText: 'Invalid or expired confirmation'}).waitFor();
   assert.equal(await feedback.textContent(), 'Invalid or expired confirmation');
-  for (const [width, height] of [[1440, 950], [390, 844]]) {
+  // Capture actual rejected feedback without putting any proof or password in an image.
+  const captureErrors = Boolean(process.env.CAFFOOT_RECOVERY_OUTPUT);
+  if (captureErrors) {
+    await token.fill('');
+    await password.fill('');
+    await confirmation.fill('');
+    await mfa.fill('');
+  }
+  for (const [width, height, viewport] of [[1440, 950, 'desktop'], [390, 844, 'mobile']]) {
     await recovery.setViewportSize({width, height});
     for (const theme of ['light', 'dark']) {
       await recovery.evaluate(theme => {
@@ -273,7 +281,15 @@ async function main() {
       assert.match(style.indicator, /!/);
       assert.equal(style.border, '1px');
       assert.equal(style.fits, true);
+      if (captureErrors) {
+        assert.deepEqual(await Promise.all([token, password, confirmation, mfa].map(field => field.inputValue())), ['', '', '', '']);
+        await recovery.screenshot({path: path.join(process.env.CAFFOOT_RECOVERY_OUTPUT, `recovery-rejected-${viewport}-${theme}.png`), fullPage: true, animations: 'disabled'});
+      }
     }
+  }
+  if (captureErrors) {
+    await token.fill(code);
+    await fillPasswords();
   }
   await recovery.setViewportSize({width: 1440, height: 950});
   await recovery.evaluate(() => { localStorage.setItem('caffoot_theme_preference', 'light'); applySignInTheme(); });
