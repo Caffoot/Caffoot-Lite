@@ -112,7 +112,10 @@ with sqlite3.connect(sys.argv[1]) as db:
  await page.getByRole('heading',{name:'Audit Trail',exact:true}).waitFor();
  for(const label of ['IT Assets','Equipment Lifecycle','Suppliers','Recorded Supplier Feature Name'])assert.ok(await page.locator('tr[data-audit-index]').filter({hasText:label}).count(),label);
  const supplierRow=page.locator('tr[data-audit-index]').filter({hasText:'Recorded Supplier Feature Name'}).first();await supplierRow.getByRole('button',{name:'View Details'}).click();
- assert.match(await page.locator('#audit-detail-body').innerText(),/suppliers/);
+ const technical=page.locator('#audit-detail-body details');
+ assert.equal(await technical.evaluate(el=>el.open),false);
+ await technical.locator('summary').click();
+ assert.match(await technical.innerText(),/suppliers/);
  await page.locator('[data-action="audit-close-detail"]').first().click();
  const downloadPromise=page.waitForEvent('download');await page.locator('[data-action="export-audit"]').click();const download=await downloadPromise;
  const exported=JSON.parse(fs.readFileSync(await download.path(),'utf8'));
