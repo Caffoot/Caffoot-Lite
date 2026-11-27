@@ -99,6 +99,39 @@ async function main(){
    fs.mkdirSync(output,{recursive:true});
    await page.screenshot({path:path.join(output,name+'.png'),animations:'disabled'});
  }
+ if(process.env.CAFFOOT_FOLLOWUP_WORDING==='1'){
+   const unavailable='No paired before-and-after values are available for this event.';
+   let wordingTrigger=await open('Recorded One-sided Example');
+   await body.getByText(unavailable,{exact:true}).waitFor();
+   await close(wordingTrigger);
+   wordingTrigger=await open('Recorded No-diff Example');
+   await body.getByText('No differing before-and-after values were captured for this event.',{exact:true}).waitFor();
+   await close(wordingTrigger);
+   const readerId=Number(py("import sqlite3,sys\nfrom backend.permissions import create_user\nwith sqlite3.connect(sys.argv[1]) as db:\n reader=create_user(db,1,'audit-wording-reader','Fictional-Audit-Reader-Password-2026!')\n db.execute(\"UPDATE accounts SET mfa_secret=?,mfa_confirmed=1 WHERE id=?\",(sys.argv[2],reader))\n db.execute(\"INSERT INTO account_permission_overrides VALUES(?,'Devices','read')\",(reader,))\n print(reader)",database,credentials.secret));
+   assert.ok(readerId>0);
+   const reader=await browser.newContext({ignoreHTTPSErrors:true,viewport:{width:1440,height:1000},locale:'en-GB'});
+   try{
+     const readerCode=py('from backend.mfa import code_at;import sys,time;print(code_at(sys.argv[1],time.time()))',credentials.secret);
+     const logged=await reader.request.post(address+'/api/login',{headers:{Origin:address},data:{username:'audit-wording-reader',password:'Fictional-Audit-Reader-Password-2026!',mfa_code:readerCode}});
+     assert.equal(logged.status(),200,await logged.text());
+     const restricted=await reader.newPage();restricted.on('pageerror',e=>errors.push(e.message));
+     await restricted.goto(address+'/inventory');await restricted.locator('#app[aria-busy="false"]').waitFor();
+     await restricted.evaluate(()=>{caffootSetTheme('light');switchTab('audit');});
+     await restricted.getByRole('heading',{name:'Audit Trail',exact:true}).waitFor();
+     const association=restricted.locator('tr[data-audit-index]').filter({hasText:'AST-LAP-014'}).filter({hasText:'Recorded change'}).first();
+     await association.getByRole('button',{name:'View Details'}).click();
+     const restrictedBody=restricted.locator('#audit-detail-body');
+     await restrictedBody.getByText(unavailable,{exact:true}).waitFor();
+     await restrictedBody.locator('summary').click();
+     assert.doesNotMatch(await restrictedBody.innerText(),/Northlight Ltd|Northlight Services|supplierName/);
+     assert.equal(await restrictedBody.locator(':scope > .diff-row').count(),0);
+     if(output){fs.mkdirSync(output,{recursive:true});await restricted.screenshot({path:path.join(output,'audit-values-unavailable.png'),animations:'disabled'});}
+   }finally{await reader.close();}
+   assert.deepEqual(stored().slice(0,original.length),original);
+   assert.deepEqual(errors,[]);
+   console.log('Unavailable values wording verified for one-sided and genuinely restricted history; no-difference wording unchanged.');
+   return;
+ }
  let trigger=await open('AST-LAP-014','Equipment Supplier association');
  assert.equal(await mainRows.count(),1);assert.match(await mainText(),/Supplier\s+Not assigned\s+Northlight Ltd/);
  assert.doesNotMatch(await mainText(),/Northlight Services|deviceId|supplierId/);
@@ -127,7 +160,7 @@ async function main(){
  for(const text of ['Null (recorded)','Empty (recorded)','False','0','Not recorded','<script>fictional</script>'])assert.ok(values.join(' ').includes(text),text);
  assert.equal(await body.locator('script').count(),0);assert.doesNotMatch(values.join(' '),/context/);
  await close(trigger);
- trigger=await open('Recorded One-sided Example');assert.equal(await mainRows.count(),0);await summary.click();assert.match(await technical.innerText(),/one-sided/);await close(trigger);
+ trigger=await open('Recorded One-sided Example');assert.equal(await mainRows.count(),0);await body.getByText('No paired before-and-after values are available for this event.',{exact:true}).waitFor();await summary.click();assert.match(await technical.innerText(),/one-sided/);await close(trigger);
  trigger=await open('Recorded No-diff Example');assert.equal(await mainRows.count(),0);await summary.click();assert.match(await technical.innerText(),/unchanged/);await close(trigger);
  const downloaded=page.waitForEvent('download');await page.locator('[data-action="export-audit"]').click();
  const json=JSON.parse(fs.readFileSync(await (await downloaded).path(),'utf8'));

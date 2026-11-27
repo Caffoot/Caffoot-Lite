@@ -320,6 +320,64 @@ async function verifyQueueRefresh(page, browser, instance, screenshot) {
     } finally { await second.close(); }
 }
 
+// Diagnostic only: distinguish an idle completed selection with retained focus
+// from the already accepted active-editing guard. No application change.
+async function investigateRetainedFocus(page,browser,instance){
+    const second=await browser.newContext({ignoreHTTPSErrors:true,viewport:{width:1440,height:960}});
+    const sam=await second.newPage();
+    try{
+        await signIn(sam,instance,'Sam Taylor');
+        await page.bringToFront();
+        const period=page.locator('[data-report-period]');
+        const report=page.locator('.service-desk-report');
+        const rows=page.locator('[data-ticket-rows]');
+        const open=page.locator('[data-workload-status="Open"] strong');
+        await page.locator('.service-desk-page:not([aria-busy])').waitFor();
+        await period.focus();
+        await period.selectOption('today');
+        await report.locator('[data-report-period]:enabled').waitFor();
+        await page.locator('.service-desk-report:not([aria-busy])').waitFor();
+        const naturallyRetained=await period.evaluate(el=>document.activeElement===el);
+        // A browser may blur after changing a select; test the retained-focus
+        // condition explicitly, and report whether the normal interaction did so.
+        if(!naturallyRetained)await period.focus();
+        assert.ok(await period.evaluate(el=>document.activeElement===el));
+        assert.equal(await page.evaluate(()=>document.hidden),false);
+        const before=Number(await open.innerText());
+        const subject='Retained focus diagnostic ticket';
+        const queueRequests=[];
+        const track=request=>{if(request.method()==='GET'&&new URL(request.url()).pathname==='/api/service-desk/it/tickets')queueRequests.push(request.url());};
+        page.on('request',track);
+        const result=await sam.evaluate(async subject=>{
+            const session=await fetch('/api/session',{cache:'no-store'});
+            if(!session.ok)throw Error('Second session unavailable: '+session.status);
+            const {csrf_token}=await session.json();
+            const response=await fetch('/api/service-desk/it/tickets',{method:'POST',headers:{'Content-Type':'application/json','X-CSRF-Token':csrf_token},body:JSON.stringify({equipmentKind:'device',equipmentId:'equipment-0',categoryId:4,subject,description:'Fictional second-session diagnostic.'})});
+            if(!response.ok)throw Error('Diagnostic mutation failed: '+response.status);
+            return response.json();
+        },subject);
+        assert.ok(result.id);
+        await page.waitForTimeout(31000);
+        assert.equal(await page.evaluate(()=>document.hidden),false);
+        assert.ok(await period.evaluate(el=>document.activeElement===el),'Focus must remain for the diagnostic');
+        const requestsWhileFocused=queueRequests.length;
+        const visibleWhileFocused=await rows.getByText(subject,{exact:true}).count();
+        const workloadWhileFocused=Number(await open.innerText());
+        console.log(JSON.stringify({naturallyRetained,requestsWhileFocused,visibleWhileFocused,workloadWhileFocused,before,period:await period.inputValue()}));
+        assert.equal(requestsWhileFocused,0,'Expected current source to suppress refresh while idle select retains focus');
+        assert.equal(visibleWhileFocused,0);
+        assert.equal(workloadWhileFocused,before);
+        await page.getByRole('heading',{name:'Service Desk',exact:true}).click();
+        assert.ok(await period.evaluate(el=>document.activeElement!==el));
+        await rows.getByText(subject,{exact:true}).waitFor({timeout:45000});
+        assert.equal(Number(await open.innerText()),before+1);
+        assert.equal(await period.inputValue(),'today');
+        assert.ok(queueRequests.length>0);
+        page.off('request',track);
+        console.log('Retained-focus suppression reproduced on unchanged refresh code; after clearing focus real interval resumed. This is diagnostic evidence, not a Safari-specific root-cause claim.');
+    }finally{await second.close();}
+}
+
 async function run() {
     let instance, browser;
     try {
@@ -336,6 +394,12 @@ async function run() {
         }
         assert.ok(healthy, fs.readFileSync(instance.logfile,'utf8'));
         await signIn(page,instance,'Alex Morgan');
+        if(process.env.CAFFOOT_FOCUS_DIAGNOSTIC==='1'){
+            await investigateRetainedFocus(page,browser,instance);
+            assert.deepEqual(errors,[]);
+            await context.close();
+            return;
+        }
         const report = page.locator('.service-desk-report');
         const period = report.locator('[data-report-period]');
         const visible = report.locator('.caffoot-uk-date-text');
