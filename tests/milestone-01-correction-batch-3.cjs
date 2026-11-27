@@ -70,13 +70,13 @@ async function signIn(page, instance, username) {
 }
 
 async function signOut(page, instance) {
-    const response = await page.request.get(instance.base + '/api/session');
-    assert.equal(response.status(), 200);
-    const session = await response.json();
-    const logout = await page.request.post(instance.base + '/api/logout', {
-        headers:{'X-CSRF-Token':session.csrf_token}, data:{}
-    });
-    assert.ok(logout.ok());
+    assert.equal((await page.request.get(instance.base + '/api/session')).status(), 200);
+    await page.getByRole('button', {name:'Open My Account'}).click();
+    const logout = page.waitForResponse(response => response.url() === instance.base + '/api/logout' && response.request().method() === 'POST');
+    await page.locator('#next-account-signout').press('Enter');
+    const response = await logout;
+    assert.ok(response.ok(), 'Sign-out HTTP status: ' + response.status());
+    await page.getByRole('heading', {name:'Welcome Back'}).waitFor();
     assert.equal((await page.request.get(instance.base + '/api/session')).status(), 401);
 }
 
