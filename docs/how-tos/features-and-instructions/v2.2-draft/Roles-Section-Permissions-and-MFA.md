@@ -242,6 +242,8 @@ Caffoot Lite records the administrator, affected account and change in the audit
 
 If you see **Unable to sign in. Please check your credentials or contact your administrator.**, check your username and password. The same message covers incorrect credentials and unavailable accounts. At **Verify Your Identity**, check the time on your authenticator device and try the next code if the previous one expired. After repeated failures, wait for the temporary sign-in limit to expire. For lost credentials, see [Account Recovery](../../../development-guide/Account-Recovery.md) or contact your administrator.
 
+**Draft screenshot refresh pending:** the sign-in, authenticator challenge and mandatory password-change illustrations below retain their original provenance and predate the approved branding punctuation correction (#476). Refresh these three affected views from the corrected application before publication; the separately approved recovery captures are updated below.
+
 ![The desktop light sign-in form shows Username and Password.](screenshots/stage-6-6-batch-1/sign-in-light-1440.png)
 
 ![The mobile dark Verify Your Identity form shows the authenticator code after a valid password.](screenshots/stage-6-6-batch-1/authenticator-dark-390.png)
@@ -304,19 +306,25 @@ You need an active Caffoot Lite account, a verified email address saved to that 
 
 If an administrator has set a temporary password, successful recovery also clears the required password change. Enter a different password at step 3 and still complete all recovery and authenticator checks.
 
-**Screenshot update pending:** the authentication illustrations in this draft predate the approved branding punctuation and Reset Password label corrections (#476 and #479). They retain their original provenance and must be refreshed from the corrected application before publication. The corrected rejection styling (#480) also requires genuine visual evidence.
+![Request a Recovery Code on desktop, with empty Username and Request Recovery Code. ](screenshots/milestone-01-authentication-corrections/recovery-request-desktop.png)
 
-![The Request a Recovery Code step on desktop with the recovery Username, Request Recovery Code and Back To Sign In.](screenshots/recovery-request-desktop.png)
+![Request a Recovery Code on mobile.](screenshots/milestone-01-authentication-corrections/recovery-request-mobile.png)
 
-![The same code request step on a mobile-width screen.](screenshots/recovery-request-mobile.png)
+*Request step, with recovery prerequisites and administrator fallback.*
 
-*Step 1 shows the recovery username and request action.*
+![Reset Your Password on desktop, with empty recovery fields and Reset Password.](screenshots/milestone-01-authentication-corrections/recovery-reset-desktop.png)
 
-![The Reset Your Password step on desktop, with New Password and Confirm New Password side by side.](screenshots/recovery-reset-desktop.png)
+![Reset Your Password on mobile, with the confirmation field below New Password.](screenshots/milestone-01-authentication-corrections/recovery-reset-mobile.png)
 
-![The Reset Your Password step on a mobile-width screen, with Confirm New Password directly below New Password.](screenshots/recovery-reset-mobile.png)
+*Reset step, showing the neutral request response and the approved Reset Password label.*
 
-*Step 2 shows the neutral request response, code, password and authenticator fields, and recovery actions.* [Screenshot provenance](screenshots/Recovery-Provenance.md)
+![Invalid or expired confirmation in desktop light mode, highlighted with an exclamation indicator.](screenshots/milestone-01-authentication-corrections/recovery-rejected-desktop-light.png)
+
+![Invalid or expired confirmation in desktop dark mode.](screenshots/milestone-01-authentication-corrections/recovery-rejected-desktop-dark.png)
+
+[Mobile light rejection](screenshots/milestone-01-authentication-corrections/recovery-rejected-mobile-light.png) · [Mobile dark rejection](screenshots/milestone-01-authentication-corrections/recovery-rejected-mobile-dark.png)
+
+*The generic rejection is highlighted; recovery inputs were cleared for these captures. These eight Chromium captures were independently reviewed and owner-approved on 27 November 2026 at revision `abd311a2e49e3f1ec666b0f0b99bf4973230ce58`. [Capture provenance and SHA-256 hashes](screenshots/milestone-01-authentication-corrections/Provenance.txt). Native reacceptance remains separate.*
 
 Select **Back To Sign In** from either step to clear recovery and restore the original sign-in screen. **Request Another Code** clears the reset fields and takes you back to **Request a Recovery Code** with your username filled in. Making that request replaces the previous code and keeps the existing failed-attempt limits. Five failed confirmations can exhaust a challenge, and the rolling account limit can require a wait of up to 15 minutes.
 
