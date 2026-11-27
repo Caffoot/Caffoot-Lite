@@ -108,9 +108,7 @@ If your Department membership or equipment custody changes, the same existing ac
 
 *Only the successfully loaded Updates conversation acknowledges Alex’s own unread messages. Other eligible accounts keep their independent state.*
 
-![Department Tickets showing a new unread reply on the existing shared printer request.](screenshots/batch-7e/later-reply-becomes-unread.png)
-
-*A later IT reply creates a new unread state for Alex even though he previously acknowledged Updates. Counts follow current eligible tickets and each account’s read receipts.*
+A later IT reply creates a new unread state for Alex even though he previously acknowledged Updates. Counts follow current eligible tickets and each account’s read receipts.
 
 ## Reply To IT Or Reopen A Ticket
 

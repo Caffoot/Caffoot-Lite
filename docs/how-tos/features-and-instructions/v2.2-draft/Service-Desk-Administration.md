@@ -194,9 +194,7 @@ The employee **Create Ticket** warning applies to every Department-assigned Devi
 
 *In this alternative handover example, AST-LAP-014 moves from Alex to Accounts. Alex remains an Accounts member, so the refreshed list shows it under Shared with My Department rather than Assigned to Me.*
 
-![Employee ticket SD-0001 showing Ticket not found after the personal-to-Accounts handover.](screenshots/batch-7e/r3-original-personal-ticket-denied.png)
-
-*After the personal-to-Accounts handover, Alex can see the shared AST-LAP-014 but cannot open its earlier personal-custody ticket SD-0001. Authorised IT retains access to the historical ticket.*
+After the personal-to-Accounts handover, Alex can see the shared AST-LAP-014 but cannot open its earlier personal-custody ticket SD-0001. Authorised IT retains access to the historical ticket.
 
 ## Check Affected Software And Category Corrections
 

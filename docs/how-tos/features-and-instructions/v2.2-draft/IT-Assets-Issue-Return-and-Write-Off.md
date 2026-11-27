@@ -155,9 +155,9 @@ returns without changing saved stock or Device records.
 
 *The laptop’s real physical return closes Alex’s original custody and enters Awaiting Preparation with Ready zero. It is not a mere unassignment.*
 
-![Return Equipment showing five returned, three Ready, two damaged, reason and outstanding remainder.](screenshots/batch-7d/partial-return-five-three-two.png)
+![Unsaved Return Equipment form with five of eight outstanding keyboards entered as returned, three Ready, two damaged and a write-off reason.](screenshots/batch-7d/partial-return-five-three-two.png)
 
-*Return five against the original issue: three checked Ready and two damaged/written off. The other three stay outstanding with Alex. This is the unsaved disposition.*
+*Before selecting Record Return, enter five returned, three checked Ready and two damaged for write-off. If the return is saved successfully, three of the eight originally outstanding keyboards remain with Alex. The preview is not a saved return.*
 
 ![Fixed unassigned Device return with physical-return statement and Date Returned cannot be in the future rejection.](screenshots/batch-7d/unassigned-return-physical-protection.png)
 

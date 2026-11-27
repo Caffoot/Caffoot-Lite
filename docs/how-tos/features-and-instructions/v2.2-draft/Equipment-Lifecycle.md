@@ -62,17 +62,13 @@ All four dates are optional. Enter a valid calendar date. Purchase Date and Orig
 
 **Duplicate** opens a new Device record with independent dates. The new Device starts without the source's dates, replacement override or history. **Add Device** and **Duplicate Device** have no lifecycle date fields. Use Edit Device after creating the physical record.
 
-![AST-LAP-014 Hardware with retained original first-service date, saved purchase/warranty dates and calculated replacement.](screenshots/batch-7d/lifecycle-saved-first-service.png)
-
-*Saved AST-LAP-014 dates retain first service 05/11/2026 after reissue. Purchase 03/11 and warranty 15/12 are evidenced fictional dates; the Laptop lifespan calculates replacement in 2029 rather than restarting at Sarah’s issue.*
+For example, AST-LAP-014 retains its original first-service date of 05/11/2026 after reissue. With a three-year Laptop lifespan, its replacement falls in 2029 rather than restarting at Sarah’s issue. The fictional purchase date is 03/11/2026 and warranty date is 15/12/2026.
 
 ![AST-LAP-016 Reissue Existing Device showing future first-service date rejection with Lifecycle disabled.](screenshots/batch-7d/first-service-future-rejected-while-off.png)
 
 *With Lifecycle disabled, the qualifying first issue still rejects a future first-service date. No custody or first-service save occurred from this rejected proposal.*
 
-![AST-LAP-016 Hardware showing the first-service date recorded while Lifecycle was disabled.](screenshots/batch-7d/first-service-visible-after-reenable.png)
-
-*After the valid first issue to Priya was saved while Lifecycle was off, re-enabling it reveals Original In Service Date 27/11/2026. This is the distinct AST-LAP-016 example.*
+For example, after a valid first issue of AST-LAP-016 to Priya on 27/11/2026 while Lifecycle is off, re-enable Lifecycle and check that **Original In Service Date** is 27/11/2026.
 
 ## Use The IT Dashboard
 

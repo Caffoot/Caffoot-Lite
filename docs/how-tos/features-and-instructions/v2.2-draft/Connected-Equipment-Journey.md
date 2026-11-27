@@ -117,9 +117,7 @@ Do not perform both alternatives for the same physical event. A recording mistak
 
 A warning is information for review. It sends no automated renewal request and does not change readiness, custody or operational status. Reissue has not restarted the three-year lifespan. [Lifecycle calculations, warnings and exceptions](Equipment-Lifecycle.md)
 
-![AST-LAP-014 Hardware with retained original first-service date, saved purchase/warranty dates and calculated replacement.](screenshots/batch-7d/lifecycle-saved-first-service.png)
-
-*Saved AST-LAP-014 dates retain first service 05/11/2026 after reissue. Purchase 03/11 and warranty 15/12 are evidenced fictional dates; the Laptop lifespan calculates replacement in 2029 rather than restarting at Sarah’s issue.*
+For example, AST-LAP-014 retains its original first-service date of 05/11/2026 after reissue. With a three-year Laptop lifespan, its replacement falls in 2029 rather than restarting at Sarah’s issue. The fictional purchase date is 03/11/2026 and warranty date is 15/12/2026.
 
 ![Lifecycle Dashboard with warning counters, named date-boundary examples and Include Retired showing historical AST-LAP-014.](screenshots/batch-7d/lifecycle-boundaries-and-retired.png)
 

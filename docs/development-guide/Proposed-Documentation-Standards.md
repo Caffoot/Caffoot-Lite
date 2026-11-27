@@ -1,6 +1,6 @@
 # Proposed Permanent Documentation Standards
 
-**Proposal for separate explicit owner approval.** This wording is not yet an amendment to AGENTS.md, CONTRIBUTING.md or any acceptance gate. It follows the [agreed quality principles](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7196814971) and [Batch 8 scope](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7224076263).
+**Historical proposal — owner approved on 27 November 2026.** The wording below is applied to AGENTS.md and CONTRIBUTING.md on the documentation branch under the [owner approval](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7224507365); existing acceptance gates remain unchanged. It follows the [agreed quality principles](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7196814971) and [Batch 8 scope](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7224076263).
 
 ## Proposed Addition To AGENTS.md
 
