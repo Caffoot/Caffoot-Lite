@@ -75,14 +75,19 @@ async function main(){
      await page.setViewportSize(viewport);
      for(const theme of ['light','dark']){
        await page.evaluate(theme=>caffootSetTheme(theme),theme);
+       const widthTrigger=await open('Legacy Laptop','Equipment Supplier association');
+       await summary.focus();await page.keyboard.press('Enter');assert.equal(await technical.evaluate(el=>el.open),true);
+       await modal.waitFor({state:'visible'});
        const geometry=await modal.evaluate(el=>{
          const r=el.getBoundingClientRect(),layer=el.closest('.modal-layer'),style=getComputedStyle(layer);
          return {width:r.width,left:r.left,right:r.right,viewport:innerWidth,available:layer.clientWidth-parseFloat(style.paddingLeft)-parseFloat(style.paddingRight),maxWidth:getComputedStyle(el).maxWidth};
        });
+       assert.ok(geometry.available>0&&geometry.width>0,JSON.stringify({viewport,theme,geometry}));
        const expected=Math.min(viewport.width>730?850:470,geometry.available);
        assert.ok(Math.abs(geometry.width-expected)<=1,JSON.stringify({viewport,theme,expected,geometry}));
        assert.ok(geometry.left>=0&&geometry.right<=viewport.width+1,JSON.stringify(geometry));
        assert.equal(geometry.maxWidth,viewport.width>730?'850px':'470px');
+       await close(widthTrigger);
      }
    }
    await page.setViewportSize({width:1440,height:1000});
@@ -107,8 +112,8 @@ async function main(){
  assert.match(await technical.innerText(),/deviceId/);
  assert.match(await technical.innerText(),/supplierId/);
  assert.match(await technical.innerText(),/supplierText/);
- await verifyDialogWidth();
  await shot('audit-legacy-technical');await close(trigger);
+ await verifyDialogWidth();
  trigger=await open('Recorded Device Example');
  assert.equal(await mainRows.count(),2);
  assert.match(await mainText(),/Primary IP Address/);assert.match(await mainText(),/Asset Tag/);
