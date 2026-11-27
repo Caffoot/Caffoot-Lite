@@ -1,10 +1,6 @@
 # Service Desk Tickets
 
-> **Current Batch 7E capture status — 27 November 2026:** [New desktop light illustrations](screenshots/batch-7e/README.md) use the approved merged schema-31 baseline. Independent ChatGPT review and separate owner visual/privacy/caption/alt acceptance remain pending. Earlier written/source and capture-status paragraphs retain their dated scope; the current pack status controls these new images. Published v2.1 and targeted correction-refresh requirements remain unchanged.
-
-> **Draft v2.2 — Unreleased.** Use **My Tickets** to raise and follow requests for equipment assigned to you or your Department. Technicians use **IT → Service Desk**. See [Find Tickets In The IT Queue](#find-tickets-in-the-it-queue) and [Read Service Desk Activity](#read-service-desk-activity).
-
-> **Written/source reconciliation:** Documentation Batch 5, application baseline `fdc677920bfc52f48f641b3d6d1344c902a6a9b0` (schema 31). Focused independent reviews are recorded and [owner written/source acceptance of Batches 1–6](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7200681167) is recorded. Current visual/privacy/caption/alt approval remains outstanding; [Batch 7 reconciliation and proposed capture packs](../../../development-guide/Milestone-01-Batch-7-Review.md) await independent review and owner acceptance. Capture scope and method need separate authorisation. Desktop capture remains deferred; existing historical/mobile images retain their original provenance. [Source review and exact screenshot requirements](../../../development-guide/Milestone-01-Batch-5-Review.md).
+> **Draft v2.2 — Unreleased.** v2.1 remains the published release. These instructions describe v2.2.
 
 ## Check Which Equipment Is Assigned To You
 
@@ -32,7 +28,19 @@ Keep the reference shown after you submit. A new personal or Department request 
 
 ![Create Ticket showing a Laptop and Microsoft Teams selected under Affected Software.](../../../development-handovers/evidence/employee-service-desk/create-ticket-desktop-light.png)
 
-*The optional software picker uses the selected computer’s recorded applications.* [Capture details](../../../development-handovers/evidence/employee-service-desk/README.md)
+*The optional software picker uses the selected computer’s recorded applications.*
+
+![Create Ticket form with AST-LAP-014, category, subject and fictional description.](screenshots/batch-7e/personal-ticket-draft.png)
+
+*Report A Problem preselects Alex’s laptop. The support request remains unsaved until Create Ticket; Cancel abandons this draft.*
+
+![My Tickets showing Alex’s saved AST-LAP-014 request and ticket reference.](screenshots/batch-7e/personal-ticket-saved.png)
+
+*The saved request has one ticket reference and starts Open, Medium and Unassigned. My Tickets follows Alex’s eligible current equipment access.*
+
+![Create Ticket draft with equipment-access rejection after Accounts was removed from the shared printer.](screenshots/batch-7e/changed-equipment-ticket-rejected.png)
+
+*Removing Accounts while Alex’s form is open makes this equipment ineligible. The actual server rejects Create Ticket and saves no request; the draft cannot retain stale access. Accounts is re-added afterwards within the same physical custody.*
 
 ## Shared Device Ticket Confidentiality
 
@@ -44,7 +52,19 @@ The Device’s current Departments can read new associated accessory tickets rai
 
 A physical return, reassignment, write-off or reissue ends the previous employee audience. Fully returning an accessory issue also ends employee access to its tickets. Authorised IT can still review the previous ticket. Internal IT notes and their attachments remain in the technician workspace. [Assignment and ticket privacy](Service-Desk-Administration.md#what-happens-to-service-desk-tickets-when-equipment-changes-hands)
 
-See the [desktop confidentiality examples](#batch-7e-desktop-illustrations) for the shared printer and an associated accessory.
+See the [confidentiality examples below](#shared-device-ticket-confidentiality) for the shared printer and an associated accessory.
+
+![Create Ticket for shared AST-PRN-01 with Department confidentiality warning before the writing fields.](screenshots/batch-7e/department-confidentiality-warning.png)
+
+*The Department confidentiality warning appears before Subject and Description. Current eligible members of the displayed Department share this request; never enter or attach confidential, personal or sensitive information.*
+
+![Shared AST-PRN-01 Create Ticket warning naming Accounts and Sales before Subject and Description.](screenshots/batch-7e/equal-department-audience-warning.png)
+
+*The same physical printer is now shared equally with Accounts and Sales. Sarah sees both current Department audiences before any sensitive writing; adding a Department does not create another issue.*
+
+![Create Ticket for the printer’s associated Office Mouse with shared-Device Department confidentiality warning.](screenshots/batch-7e/associated-accessory-confidentiality.png)
+
+*The associated mouse follows the printer’s current shared custody. Its Department confidentiality warning appears before the form’s writing fields; it is not a private personal ticket.*
 
 ## Find And Review Your Tickets
 
@@ -56,7 +76,11 @@ See the [desktop confidentiality examples](#batch-7e-desktop-illustrations) for 
 
 ![Department Tickets in Purchasing showing the status cards and the seven-column ticket list.](../../../development-handovers/evidence/employee-service-desk/department-tickets-desktop-light.png)
 
-*Department Tickets shows requests for Purchasing’s current shared equipment.* [Capture details](../../../development-handovers/evidence/employee-service-desk/README.md)
+*Department Tickets shows requests for Purchasing’s current shared equipment.*
+
+![Alex’s Department Tickets with the shared printer request, unread badge, All Tickets filter and current technician.](screenshots/batch-7e/department-tickets-unread.png)
+
+*Department Tickets follows the current shared printer custody. All Tickets exposes its In Progress request, with a per-ticket unread reply badge and separate navigation ticket counts.*
 
 ## Recognise And Read New Replies
 
@@ -72,13 +96,25 @@ The badges refresh on returning to the application, moving between workspaces, r
 
 For example, Casey and Jordan are both current members of a Department with a shared printer. IT sends two visible replies on its ticket. Each account has its own two unread replies. When Casey reads Updates, Casey's count clears; Jordan's remains two until Jordan reads the conversation. A reply you write yourself is not unread for you. Original ticket creation, original attachments, status-only changes and edits to existing replies are not new unread replies. Internal IT notes never contribute to employee counts.
 
-If your Department membership or equipment custody changes, the same existing access rules determine which tickets and replies can appear. An unread badge cannot provide access to an earlier holder's conversation. See [Who Can See A Ticket?](#who-can-see-a-ticket) and [Unread Reply Administration](Service-Desk-Administration.md#verify-unread-reply-indicators).
+If your Department membership or equipment custody changes, the same existing access rules determine which tickets and replies can appear. An unread badge cannot provide access to an earlier holder's conversation. See [Who Can See A Ticket?](#who-can-see-a-ticket) and [Unread Reply Administration](Service-Desk-Administration.md#understand-unread-reply-indicators).
 
 ![Department Tickets with an unread count beside My Tickets, the Department Tickets tab and the ticket number.](../../../development-handovers/evidence/stage-6-6-batch-2/screenshots/unread-department-tickets-desktop-light.png)
 
 *The sidebar and tab count tickets. The number beside the ticket reference counts replies on that ticket.*
 
-The [desktop Overview and Updates examples](#batch-7e-desktop-illustrations) show the unread badge before and after reading the conversation.
+The [Overview and Updates examples below](#recognise-and-read-new-replies) show the unread badge before and after reading the conversation.
+
+![Employee ticket Overview with Updates unread badge still present and the current shared-equipment request.](screenshots/batch-7e/overview-retains-unread.png)
+
+*Opening Overview leaves Alex’s unread reply outstanding. The Updates badge is not an automatic acknowledgement.*
+
+![Employee Updates showing the IT question and Reply To IT after Alex’s own unread acknowledgement.](screenshots/batch-7e/updates-acknowledges-own-read.png)
+
+*Only the successfully loaded Updates conversation acknowledges Alex’s own unread messages. Other eligible accounts keep their independent state.*
+
+![Department Tickets showing a new unread reply on the existing shared printer request.](screenshots/batch-7e/later-reply-becomes-unread.png)
+
+*A later IT reply creates a new unread state for Alex even though he previously acknowledged Updates. Counts follow current eligible tickets and each account’s read receipts.*
 
 ## Reply To IT Or Reopen A Ticket
 
@@ -91,7 +127,19 @@ For Department tickets, other authorised current members can read your replies a
 
 ![Ticket Conversation with a shared technician reply and an employee Reply To IT field.](../../../development-handovers/evidence/employee-service-desk/ticket-updates-desktop-light.png)
 
-*Updates shows the shared conversation and the reply form for an active ticket.* [Capture details](../../../development-handovers/evidence/employee-service-desk/README.md)
+*Updates shows the shared conversation and the reply form for an active ticket.*
+
+![Employee Updates with Alex’s sent reply, fictional-printer-steps.txt download and the Reply To IT form.](screenshots/batch-7e/employee-reply-and-safe-file.png)
+
+*Alex’s employee reply and the fictional text attachment are saved in the permitted conversation. Reply To IT is available for another message; attachments share the same current Department audience.*
+
+![Closed employee ticket with rejected stale reply message, no active reply form and Reopen Ticket.](screenshots/batch-7e/closed-ticket-reply-protection.png)
+
+*IT closed this ticket while the reply draft was open. The stale send is rejected; the refreshed Closed conversation requires Reopen Ticket before another employee reply or file.*
+
+![Reopened shared printer ticket History retaining its original creation, technician assignment, messages, closure and reopen.](screenshots/batch-7e/reopened-ticket-retained-history.png)
+
+*Reopen keeps the original ticket reference, Sam’s technician assignment and earlier request, reply and closure history. It starts another attempt on the same ticket rather than creating a replacement.*
 
 ## Follow Service Desk Emails
 
@@ -103,7 +151,7 @@ For Department tickets, other authorised current members can read your replies a
 
 ![A Department ticket opened from an email link after the employee signs in.](../../../development-handovers/evidence/service-desk-notifications/department-email-link.png)
 
-*A signed-in Department member sees the ticket in the Department Tickets view. Access follows the current equipment assignment and membership.* [Capture details](../../../development-handovers/evidence/service-desk-notifications/README.md)
+*A signed-in Department member sees the ticket in the Department Tickets view. Access follows the current equipment assignment and membership.*
 
 ## Who Can See A Ticket?
 
@@ -144,7 +192,7 @@ Sign in with **Service Desk Read** or **Edit**. You also need Read access to **D
 
 1. Expand **IT** in the sidebar and select **Service Desk**. **Ticket Queue** initially shows **Open** tickets.
 2. Select **Open**, **In Progress** or **On Hold** under **Current Workload** to select that status, clear the Assignment filter and jump to the matching part of the Ticket Queue. The cards show totals for your authorised scope, even while a search narrows the table.
-   In light mode, the orange border identifies the selected status. Tab adds a navy outline to the control that currently has keyboard focus. [Desktop and mobile examples](../../../development-handovers/evidence/stage-6-6-batch-3/README.md#application-screenshots)
+   In light mode, the orange border identifies the selected status. Tab adds a navy outline to the control that currently has keyboard focus.
 3. Enter a ticket number such as `SD-0001`, subject, requester or equipment name in **Search Tickets**. Use **Status**, **Priority**, **Assignment** or **Assigned Technician** for a more specific view. **All Tickets** includes Closed tickets. **Assigned To Me** uses your signed-in account.
 4. Use **Sort By** to order the results by newest update, oldest update or descending ticket number. Use **Previous** and **Next** when the results span more than one page. On a narrow screen, scroll the table horizontally to reach all eight columns.
 5. Select a ticket number or **Open Details**. **Clear Filters** restores the default Open queue and newest-first sort.
@@ -168,9 +216,9 @@ In **IT → Service Desk**, the sidebar badge counts distinct accessible tickets
 
 ![Service Desk shows one unread ticket beside the sidebar entry and one unread reply beside its ticket reference.](../../../development-handovers/evidence/stage-6-6-batch-2/screenshots/unread-it-queue-desktop-light.png)
 
-*The IT sidebar counts accessible tickets with unread replies across all queue pages and filters.* [Capture provenance](../../../development-handovers/evidence/stage-6-6-batch-2/README.md#application-screenshots)
+*The IT sidebar counts accessible tickets with unread replies across all queue pages and filters.*
 
-For sign-in, feature, equipment and custody checks see [Administer The Service Desk](Service-Desk-Administration.md#verify-unread-reply-indicators). The IT count does not grant permission to see any restricted tickets or notes.
+For sign-in, feature, equipment and custody checks see [Administer The Service Desk](Service-Desk-Administration.md#understand-unread-reply-indicators). The IT count does not grant permission to see any restricted tickets or notes.
 
 ## Read Service Desk Activity
 
@@ -208,7 +256,7 @@ If the equipment disappears or the category is unavailable, reopen the form and 
 
 ![Create Ticket with the required Device or Asset, category, subject and description fields and the optional attachment picker.](../../../development-handovers/evidence/it-service-desk/create-desktop-light.png)
 
-*The integrated Create Ticket form starts with no category selected.* [Capture details](../../../development-handovers/evidence/it-service-desk/README.md)
+*The integrated Create Ticket form starts with no category selected.*
 
 ## Review And Correct Ticket Details
 
@@ -252,7 +300,7 @@ Files must be genuine PNG, JPEG, PDF, TXT, DOCX or XLSX. Each file may be up to 
 
 ![Ticket Updates displays internal notes, employee-visible messages and an authorised attachment.](../../../development-handovers/evidence/it-service-desk/updates-desktop-light.png)
 
-*Visibility labels identify which conversation and files an authorised employee can access.* [Capture details](../../../development-handovers/evidence/it-service-desk/README.md)
+*Visibility labels identify which conversation and files an authorised employee can access.*
 
 ## Find A Ticket From Equipment
 
@@ -260,74 +308,10 @@ Files must be genuine PNG, JPEG, PDF, TXT, DOCX or XLSX. Each file may be up to 
 - In **IT → IT Assets → Stock Inventory**, open the stock item and find **Linked Tickets** in **Stock Item Details**. Individually tracked stock can show tickets for its non-Device units. For equipment registered as a Device, use the Device’s own details.
 - The Device **Tickets** tab and stock item **Linked Tickets** section require Service Desk Read as well as access to the equipment. If the list is empty, check the equipment record before asking an administrator to review access.
 
-![Printer-015 Device Details with the Tickets tab selected and linked ticket rows with Open actions.](../../../development-handovers/evidence/it-service-desk/device-linked-tickets-desktop-light.png)
+![Printer-015 Device Details with the Tickets tab selected and linked ticket rows showing their status and View Details actions.](../../../development-handovers/evidence/it-service-desk/device-linked-tickets-desktop-light.png)
 
 *Open a linked ticket from the Device’s Tickets tab; closing it returns to the equipment view.*
 
 The [administrator guide](Service-Desk-Administration.md) covers access, historical privacy and retention.
 
 [Follow the connected Aster Services support request](Connected-Service-Desk-Journey.md) · [Draft v2.2 guides](README.md)
-
-## Batch 7E Desktop Illustrations
-
-These images follow the fictional training journey. Read the caption to distinguish a draft, a cancelled preview and a saved outcome. [Complete original coverage and limits](screenshots/batch-7e/Coverage.md).
-
-![Create Ticket form with AST-LAP-014, category, subject and fictional description.](screenshots/batch-7e/personal-ticket-draft.png)
-
-*Draft v2.2 — Report A Problem preselects Alex’s laptop. The support request remains unsaved until Create Ticket; Cancel abandons this draft. Independent review and owner visual acceptance pending.*
-
-![My Tickets showing Alex’s saved AST-LAP-014 request and ticket reference.](screenshots/batch-7e/personal-ticket-saved.png)
-
-*Draft v2.2 — The saved request has one ticket reference and starts Open, Medium and Unassigned. My Tickets follows Alex’s eligible current equipment access. Independent review and owner visual acceptance pending.*
-
-![Create Ticket for shared AST-PRN-01 with Department confidentiality warning before the writing fields.](screenshots/batch-7e/department-confidentiality-warning.png)
-
-*Draft v2.2 — The Department confidentiality warning appears before Subject and Description. Current eligible members of the displayed Department share this request; never enter or attach confidential, personal or sensitive information. Independent review and owner visual acceptance pending.*
-
-![Shared AST-PRN-01 Create Ticket warning naming Accounts and Sales before Subject and Description.](screenshots/batch-7e/equal-department-audience-warning.png)
-
-*Draft v2.2 — The same physical printer is now shared equally with Accounts and Sales. Sarah sees both current Department audiences before any sensitive writing; adding a Department does not create another issue. Independent review and owner visual acceptance pending.*
-
-![Create Ticket for the printer’s associated Office Mouse with shared-Device Department confidentiality warning.](screenshots/batch-7e/associated-accessory-confidentiality.png)
-
-*Draft v2.2 — The associated mouse follows the printer’s current shared custody. Its Department confidentiality warning appears before the form’s writing fields; it is not a private personal ticket. Independent review and owner visual acceptance pending.*
-
-![Create Ticket draft with equipment-access rejection after Accounts was removed from the shared printer.](screenshots/batch-7e/changed-equipment-ticket-rejected.png)
-
-*Draft v2.2 — Removing Accounts while Alex’s form is open makes this equipment ineligible. The actual server rejects Create Ticket and saves no request; the draft cannot retain stale access. Accounts is re-added afterwards within the same physical custody. Independent review and owner visual acceptance pending.*
-
-![Alex’s Department Tickets with the shared printer request, unread badge, All Tickets filter and current technician.](screenshots/batch-7e/department-tickets-unread.png)
-
-*Draft v2.2 — Department Tickets follows the current shared printer custody. All Tickets exposes its In Progress request, with a per-ticket unread reply badge and separate navigation ticket counts. Independent review and owner visual acceptance pending.*
-
-![Employee ticket Overview with Updates unread badge still present and the current shared-equipment request.](screenshots/batch-7e/overview-retains-unread.png)
-
-*Draft v2.2 — Opening Overview leaves Alex’s unread reply outstanding. The Updates badge is not an automatic acknowledgement. Independent review and owner visual acceptance pending.*
-
-![Employee Updates showing the IT question and Reply To IT after Alex’s own unread acknowledgement.](screenshots/batch-7e/updates-acknowledges-own-read.png)
-
-*Draft v2.2 — Only the successfully loaded Updates conversation acknowledges Alex’s own unread messages. Other eligible accounts keep their independent state. Independent review and owner visual acceptance pending.*
-
-![Priya’s Updates load-error state with unread badge retained after the real request failed.](screenshots/batch-7e/other-account-failed-load-unread.png)
-
-*Draft v2.2 — Priya’s account still has its own unread reply after Alex acknowledged his. A genuine aborted local request makes Updates fail to load, so Priya’s unread state is retained. No synthetic response or application UI was supplied. Independent review and owner visual acceptance pending.*
-
-![Employee Updates with Alex’s sent reply, fictional-printer-steps.txt download and the Reply To IT form.](screenshots/batch-7e/employee-reply-and-safe-file.png)
-
-*Draft v2.2 — Alex’s employee reply and the fictional text attachment are saved in the permitted conversation. Reply To IT is available for another message; attachments share the same current Department audience. Independent review and owner visual acceptance pending.*
-
-![Department Tickets showing a new unread reply on the existing shared printer request.](screenshots/batch-7e/later-reply-becomes-unread.png)
-
-*Draft v2.2 — A later IT reply creates a new unread state for Alex even though he previously acknowledged Updates. Counts follow current eligible tickets and each account’s read receipts. Independent review and owner visual acceptance pending.*
-
-![Closed employee ticket with rejected stale reply message, no active reply form and Reopen Ticket.](screenshots/batch-7e/closed-ticket-reply-protection.png)
-
-*Draft v2.2 — IT closed this ticket while the reply draft was open. The stale send is rejected; the refreshed Closed conversation requires Reopen Ticket before another employee reply or file. Independent review and owner visual acceptance pending.*
-
-![Reopened shared printer ticket History retaining its original creation, technician assignment, messages, closure and reopen.](screenshots/batch-7e/reopened-ticket-retained-history.png)
-
-*Draft v2.2 — Reopen keeps the original ticket reference, Sam’s technician assignment and earlier request, reply and closure history. It starts another attempt on the same ticket rather than creating a replacement. Independent review and owner visual acceptance pending.*
-
-![Alex’s My Equipment with personal laptop and mouse and shared Accounts printer.](screenshots/batch-7c/alex-before-handover.png)
-
-*Draft v2.2 — Alex sees the personally assigned AST-LAP-014 and outstanding mouse, plus the Accounts printer shared through current membership. This is the preserved pre-handover state. Independent review and owner visual acceptance pending.*

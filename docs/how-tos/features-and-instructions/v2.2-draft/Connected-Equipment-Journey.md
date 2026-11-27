@@ -1,12 +1,6 @@
 # A Connected Equipment Example — Aster Services
 
-> **Current status — 27 November 2026:** Batches 7C, 7D and 7E have separate owner draft-evidence acceptance (41/36/25 new paths; 102 combined; 7E has 23 distinct image contents). Original captures, provenance and requirement mappings remain unchanged; accepted instructions retain the approved merged corrections. Batch 8 editorial findings and publication approval remain outstanding. The exact approved application baseline is now `0251b43a3b5d41d626aa022c6d7f9b4d860433da`, schema 31. 7F/7G are authorised but blocked here by unavailable retained fixtures; no new pack has been delivered. [Current reconciliation and retained editorial limits](../../../development-guide/Milestone-01-7F-7G-Reconciliation.md). Earlier capture-time status notices are historical; publication remains unauthorised.
-
-> **Current Batch 7D capture status — 27 November 2026:** [New desktop light illustrations](screenshots/batch-7d/README.md) use the approved merged schema-31 baseline. Independent ChatGPT review and separate owner visual/privacy/caption/alt acceptance remain pending. Earlier written/source and capture-status paragraphs retain their dated scope; the current pack status controls these new images. Published v2.1 and targeted correction-refresh requirements remain unchanged.
-
-> **Current Batch 7C capture status — 27 November 2026:** [New desktop light illustrations](screenshots/batch-7c/README.md) use the approved merged schema-31 baseline. Independent ChatGPT review and separate owner visual/privacy/caption/alt acceptance remain pending. Earlier written/source and capture-status paragraphs retain their dated scope; the current pack status controls these new images. Published v2.1 and targeted correction-refresh requirements remain unchanged.
-
-> **Draft v2.2 — Unreleased.** Written/source reconciliation for documentation Batches 3 and 4, application baseline `fdc677920bfc52f48f641b3d6d1344c902a6a9b0`, schema 31. Focused independent reviews are recorded and [owner written/source acceptance of Batches 1–6](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7200681167) is recorded. Current visual/privacy/caption/alt approval remains outstanding; [Batch 7 reconciliation and proposed capture packs](../../../development-guide/Milestone-01-Batch-7-Review.md) await independent review and owner acceptance. Capture scope and method need separate authorisation. Desktop capture remains deferred. [Source and screenshot record](../../../development-guide/Milestone-01-Batch-4-Review.md).
+> **Draft v2.2 — Unreleased.** v2.1 remains the published release. These instructions describe v2.2.
 
 This fictional example connects tasks that already exist. It is not a new application workflow or a compulsory order for every organisation. Follow the detailed linked guide for each form, required field, confirmation and rejection. Record only real physical events and checks in your own installation.
 
@@ -40,6 +34,14 @@ Sam needs **Devices Edit**, **IT Assets Edit** and **Suppliers Edit**, with conf
 
 The laptop stock now has two Physically Held and two Ready units; the separate mice item has its own two. No Device or employee assignment exists yet. **Cancel** before saving abandons the proposed receipt; a saved receipt remains in history. [Receive Stock and readiness](IT-Assets-Stock-Intake.md)
 
+![Receive Stock laptop draft with quantity two, checked Ready two and Northlight selected.](screenshots/batch-7c/receive-laptops.png)
+
+*The unsaved receipt records two checked, Ready laptops with an explicitly selected Northlight link. The summary is a proposal, not saved stock.*
+
+![Receive Stock with Mouse, Individually Tracked, fictional serial and asset tag, quantity one and receipt checks.](screenshots/batch-7c/receive-individual.png)
+
+*A separate individually tracked demonstration mouse is an unsaved one-unit receipt. It is additional to the journey’s two quantity-based mice.*
+
 ## 3. Register One Permanent Device
 
 1. On **04/11/2026**, open **IT → Devices → Add Device → General → Brand New — Get From Stock**. Choose the matching laptop under **Ready Unregistered Computer Stock**.
@@ -49,6 +51,10 @@ The laptop stock now has two Physically Held and two Ready units; the separate m
 5. A receipt's Supplier association is not automatically copied onto the Device. If Aster also wants a Device association, use **Edit device → General → Supplier (Optional)**, explicitly choose Northlight and save. Its Supplied Equipment view can then list the stock-derived Device without adding another unit to the original receipt quantity.
 
 Registration has not issued anything, declared a first-service date, returned equipment or configured the real machine. Do the actual setup and preparation work required by your organisation. [Device registration](Device-Stock-Registration-and-Reissue.md#register-one-brand-new-device) · [Supplier associations](Equipment-Supplier-Integration.md) · [Lifecycle dates](Equipment-Lifecycle.md)
+
+![Stock Inventory with two-laptop total and separate registered AST-LAP-014 row.](screenshots/batch-7c/registered-stock-accounting.png)
+
+*The laptop item still represents two held units: one unregistered Ready unit plus AST-LAP-014 as a registered Ready Device. Never add the Device row to the item total again.*
 
 ## 4. Issue To Alex, Or Choose Department Custody
 
@@ -61,6 +67,10 @@ Registration has not issued anything, declared a first-service date, returned eq
 
 [Issue and stock history](IT-Assets-Issue-Return-and-Write-Off.md) · [Reissue and eligibility](Device-Stock-Registration-and-Reissue.md#reissue-an-existing-ready-device) · [Explicit accessories](Associated-Equipment.md)
 
+![AST-LAP-014 Assigned To showing Alex Morgan and its assignment history.](screenshots/batch-7c/alex-saved-custody.png)
+
+*Saved current custody belongs to Alex. The original Device and assignment history remain the authoritative identity; registration was a different event.*
+
 ## 5. View Only The Employee's Permitted Information
 
 1. Alex signs in and opens **My Account → Overview → Open My Equipment**, or **Workspace → My Equipment**.
@@ -69,6 +79,10 @@ Registration has not issued anything, declared a first-service date, returned eq
 4. In the Department alternative, eligible current members see the laptop under **Shared with My Department**. If Alex moves from Accounts to Sales, the next request follows the new membership; it does not move the Accounts laptop. A saved shared Department selection also controls which current members can see the same Device.
 
 If Alex leaves, an authorised administrator with Staff Members Edit uses **Mark As Left Company**, atomically disabling the linked login and revoking sessions/proofs while keeping equipment outstanding. **Reactivate** on a later return does not re-enable that login. An administrator separately reviews access and uses **Enable Login**. This employment action creates no stock return. [My Equipment safeguards](Device-Assignments-and-My-Equipment.md#my-equipment) · [Employment and login](Staff-Members.md#mark-as-left-company-or-reactivate)
+
+![Alex’s My Equipment with personal laptop and mouse and shared Accounts printer.](screenshots/batch-7c/alex-before-handover.png)
+
+*Alex sees the personally assigned AST-LAP-014 and outstanding mouse, plus the Accounts printer shared through current membership. This is the preserved pre-handover state.*
 
 ## 6. Return And Reissue, Or Hand Over Directly
 
@@ -83,6 +97,18 @@ For this example, Alex's laptop and mouse physically return on **12/11/2026**.
 
 Do not perform both alternatives for the same physical event. A recording mistake belongs in **Correct Movement** where supported; never manufacture a receipt or return to repair a displayed balance. Individual Device quantity changes are unsupported. [Return/preparation](IT-Assets-Issue-Return-and-Write-Off.md#return-equipment) · [Direct handover](Associated-Equipment.md#reassign-a-workstation-directly) · [Quantity corrections](IT-Assets-Correct-Movement.md)
 
+![Return form for AST-LAP-014 from Alex, one returned and zero Ready or damaged.](screenshots/batch-7d/canonical-device-return.png)
+
+*The laptop’s real physical return closes Alex’s original custody and enters Awaiting Preparation with Ready zero. It is not a mere unassignment.*
+
+![Prepare Returned Equipment for AST-LAP-014 with working and data-preparation checks confirmed.](screenshots/batch-7d/returned-device-preparation.png)
+
+*The original laptop is checked working and its data wiped/reset before becoming Ready. Preparation changes readiness without adding another held unit or new Device.*
+
+![AST-LAP-014 Assigned To showing current Sarah Lewis and closed Alex Morgan physical custody.](screenshots/batch-7c/same-device-sarah-history.png)
+
+*Sarah now holds the same AST-LAP-014. Alex’s ended custody and actual return remain in its history; preparation and reissue did not create a replacement identity or restart first service.*
+
 ## 7. Review Lifecycle Information
 
 1. With Devices Read and both Devices/Lifecycle enabled, open **IT → Lifecycle** on the IT Dashboard.
@@ -90,6 +116,14 @@ Do not perform both alternatives for the same physical event. A recording mistak
 3. The default Laptop lifespan is three years, so service date 05/11/2026 gives calculated replacement **05/11/2029**. It is not yet a replacement warning on 26/11/2026. An administrator can configure lifespans/warning periods or save an evidenced manual replacement override through the existing controls.
 
 A warning is information for review. It sends no automated renewal request and does not change readiness, custody or operational status. Reissue has not restarted the three-year lifespan. [Lifecycle calculations, warnings and exceptions](Equipment-Lifecycle.md)
+
+![AST-LAP-014 Hardware with retained original first-service date, saved purchase/warranty dates and calculated replacement.](screenshots/batch-7d/lifecycle-saved-first-service.png)
+
+*Saved AST-LAP-014 dates retain first service 05/11/2026 after reissue. Purchase 03/11 and warranty 15/12 are evidenced fictional dates; the Laptop lifespan calculates replacement in 2029 rather than restarting at Sarah’s issue.*
+
+![Lifecycle Dashboard with warning counters, named date-boundary examples and Include Retired showing historical AST-LAP-014.](screenshots/batch-7d/lifecycle-boundaries-and-retired.png)
+
+*Named warranty examples distinguish yesterday, today, day 90 and day 91 under the 90-day rule. Include Retired with All Conditions retains AST-LAP-014 and its 15/12 warranty for historical review, while Retired Devices stay outside the four active counters.*
 
 ## 8. Record A Genuine End Of Use
 
@@ -102,6 +136,14 @@ Suppose the laptop later suffers irreparable damage and physically comes back on
 5. Review Movement History and Assignment History. Original receipt, registration, Alex issue/return, preparation, Sarah reissue and final disposition remain distinct. A written-off Device has no general reactivation/reissue operation. Preserve it and its historical records.
 
 [Write-off and retention](IT-Assets-Issue-Return-and-Write-Off.md#write-off-equipment) · [Device management](Devices.md) · [Retired lifecycle review](Equipment-Lifecycle.md#use-the-it-dashboard)
+
+![AST-LAP-014 return from Sarah with one damaged/write-off unit, zero Ready and a factual fictional reason.](screenshots/batch-7d/damaged-canonical-return.png)
+
+*AST-LAP-014 physically returns damaged: returned one, Ready zero and damaged/write-off one. This actual return/disposition closes Sarah’s custody and adds no usable held laptop; a genuinely missing Device would use the separate Write Off route.*
+
+![Retired AST-LAP-014 Assigned To with closed Alex and Sarah assignments and retained return/preparation/write-off movements.](screenshots/batch-7d/final-canonical-custody-history.png)
+
+*The final Retired Device keeps its identity and Alex/Sarah history. Physical return, damaged write-off and operational Retired are distinct recorded facts; nothing was deleted or generally reactivated.*
 
 ## Keep The Different Records Clear
 
@@ -116,68 +158,8 @@ Suppose the laptop later suffers irreparable damage and physically comes back on
 | Lifecycle | Recorded dates, type lifespan, calculation/override and informational warnings on the same physical Device. |
 | Movement/assignment histories | Stock facts and holder relationships with their own references, dates and actors; corrections append facts rather than erase originals. |
 
-The saved balances describe what has been recorded. Verify uncertain saves by inspecting original references before repeating an operation. This example creates no records and claims no newly executed runtime verification or publication approval.
+The saved balances describe what has been recorded. Verify uncertain saves by inspecting original references before repeating an operation.
 
 [← Draft v2.2 Guides](README.md)
 
 For a support request while Alex holds AST-LAP-014, follow the [Connected Service Desk Journey](Connected-Service-Desk-Journey.md). It uses the same fictional organisation and equipment and preserves the custody boundary on later handover.
-
-## Batch 7C Desktop Illustrations
-
-These images follow the fictional training journey. Read the caption to distinguish a draft, a cancelled preview and a saved outcome. [Complete original coverage and limits](screenshots/batch-7c/Coverage.md).
-
-![Receive Stock laptop draft with quantity two, checked Ready two and Northlight selected.](screenshots/batch-7c/receive-laptops.png)
-
-*Draft v2.2 — The unsaved receipt records two checked, Ready laptops with an explicitly selected Northlight link. The summary is a proposal, not saved stock. Independent review and owner visual acceptance pending.*
-
-![Receive Stock with Mouse, Individually Tracked, fictional serial and asset tag, quantity one and receipt checks.](screenshots/batch-7c/receive-individual.png)
-
-*Draft v2.2 — A separate individually tracked demonstration mouse is an unsaved one-unit receipt. It is additional to the journey’s two quantity-based mice. Independent review and owner visual acceptance pending.*
-
-![Stock Inventory with two-laptop total and separate registered AST-LAP-014 row.](screenshots/batch-7c/registered-stock-accounting.png)
-
-*Draft v2.2 — The laptop item still represents two held units: one unregistered Ready unit plus AST-LAP-014 as a registered Ready Device. Never add the Device row to the item total again. Independent review and owner visual acceptance pending.*
-
-![AST-LAP-014 Assigned To showing Alex Morgan and its assignment history.](screenshots/batch-7c/alex-saved-custody.png)
-
-*Draft v2.2 — Saved current custody belongs to Alex. The original Device and assignment history remain the authoritative identity; registration was a different event. Independent review and owner visual acceptance pending.*
-
-![Alex’s My Equipment with personal laptop and mouse and shared Accounts printer.](screenshots/batch-7c/alex-before-handover.png)
-
-*Draft v2.2 — Alex sees the personally assigned AST-LAP-014 and outstanding mouse, plus the Accounts printer shared through current membership. This is the preserved pre-handover state. Independent review and owner visual acceptance pending.*
-
-![Original Supplier Directory with active Northlight, two locations, two contacts, search and category filter.](../../../development-handovers/evidence/stage-6-6-batch-3/screenshots/supplier-directory-light-1440.png)
-
-*Draft v2.2 — Original Supplier Directory only: active Northlight, two locations and two contacts. Retain the original fixture, category choices and provenance; this is not a later capture. Independent review and owner visual acceptance pending.*
-
-## Batch 7D Desktop Illustrations
-
-These images follow the fictional training journey. Read the caption to distinguish a draft, a cancelled preview and a saved outcome. [Complete original coverage and limits](screenshots/batch-7d/Coverage.md).
-
-![Return form for AST-LAP-014 from Alex, one returned and zero Ready or damaged.](screenshots/batch-7d/canonical-device-return.png)
-
-*Draft v2.2 — The laptop’s real physical return closes Alex’s original custody and enters Awaiting Preparation with Ready zero. It is not a mere unassignment. Independent review and owner visual acceptance pending.*
-
-![Prepare Returned Equipment for AST-LAP-014 with working and data-preparation checks confirmed.](screenshots/batch-7d/returned-device-preparation.png)
-
-*Draft v2.2 — The original laptop is checked working and its data wiped/reset before becoming Ready. Preparation changes readiness without adding another held unit or new Device. Independent review and owner visual acceptance pending.*
-
-![AST-LAP-014 Hardware with retained original first-service date, saved purchase/warranty dates and calculated replacement.](screenshots/batch-7d/lifecycle-saved-first-service.png)
-
-*Draft v2.2 — Saved AST-LAP-014 dates retain first service 05/11/2026 after reissue. Purchase 03/11 and warranty 15/12 are evidenced fictional dates; the Laptop lifespan calculates replacement in 2029 rather than restarting at Sarah’s issue. Independent review and owner visual acceptance pending.*
-
-![AST-LAP-014 return from Sarah with one damaged/write-off unit, zero Ready and a factual fictional reason.](screenshots/batch-7d/damaged-canonical-return.png)
-
-*Draft v2.2 — AST-LAP-014 physically returns damaged: returned one, Ready zero and damaged/write-off one. This actual return/disposition closes Sarah’s custody and adds no usable held laptop; a genuinely missing Device would use the separate Write Off route. Independent review and owner visual acceptance pending.*
-
-![Retired AST-LAP-014 Assigned To with closed Alex and Sarah assignments and retained return/preparation/write-off movements.](screenshots/batch-7d/final-canonical-custody-history.png)
-
-*Draft v2.2 — The final Retired Device keeps its identity and Alex/Sarah history. Physical return, damaged write-off and operational Retired are distinct recorded facts; nothing was deleted or generally reactivated. Independent review and owner visual acceptance pending.*
-
-![Lifecycle Dashboard with warning counters, named date-boundary examples and Include Retired showing historical AST-LAP-014.](screenshots/batch-7d/lifecycle-boundaries-and-retired.png)
-
-*Draft v2.2 — Named warranty examples distinguish yesterday, today, day 90 and day 91 under the 90-day rule. Include Retired with All Conditions retains AST-LAP-014 and its 15/12 warranty for historical review, while Retired Devices stay outside the four active counters. Independent review and owner visual acceptance pending.*
-
-![AST-LAP-014 Assigned To showing current Sarah Lewis and closed Alex Morgan physical custody.](screenshots/batch-7c/same-device-sarah-history.png)
-
-*Draft v2.2 — Sarah now holds the same AST-LAP-014. Alex’s ended custody and actual return remain in its history; preparation and reissue did not create a replacement identity or restart first service. Independent review and owner visual acceptance pending.*

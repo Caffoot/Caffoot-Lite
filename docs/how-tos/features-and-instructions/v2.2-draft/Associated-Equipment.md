@@ -1,12 +1,6 @@
 # Associated Equipment And Direct Device Handover
 
-> **Current status — 27 November 2026:** Batches 7C, 7D and 7E have separate owner draft-evidence acceptance (41/36/25 new paths; 102 combined; 7E has 23 distinct image contents). Original captures, provenance and requirement mappings remain unchanged; accepted instructions retain the approved merged corrections. Batch 8 editorial findings and publication approval remain outstanding. The exact approved application baseline is now `0251b43a3b5d41d626aa022c6d7f9b4d860433da`, schema 31. 7F/7G are authorised but blocked here by unavailable retained fixtures; no new pack has been delivered. [Current reconciliation and retained editorial limits](../../../development-guide/Milestone-01-7F-7G-Reconciliation.md). Earlier capture-time status notices are historical; publication remains unauthorised.
-
-> **Current Batch 7D capture status — 27 November 2026:** [New desktop light illustrations](screenshots/batch-7d/README.md) use the approved merged schema-31 baseline. Independent ChatGPT review and separate owner visual/privacy/caption/alt acceptance remain pending. Earlier written/source and capture-status paragraphs retain their dated scope; the current pack status controls these new images. Published v2.1 and targeted correction-refresh requirements remain unchanged.
-
-> **Draft v2.2 — Unreleased.** These instructions describe the implementation on `milestone-1` at the application baseline identified below. v2.1 remains the published release.
-
-> **Written/source reconciliation:** Batch 4, application baseline `fdc677920bfc52f48f641b3d6d1344c902a6a9b0` (schema 31). Focused independent reviews are recorded and [owner written/source acceptance of Batches 1–6](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7200681167) is recorded. Current visual/privacy/caption/alt approval remains outstanding; [Batch 7 reconciliation and proposed capture packs](../../../development-guide/Milestone-01-Batch-7-Review.md) await independent review and owner acceptance. Capture scope and method need separate authorisation. Desktop capture remains deferred; existing images retain their original provenance and are not certified current by this pass. [Source review and exact screenshot requirements](../../../development-guide/Milestone-01-Batch-4-Review.md).
+> **Draft v2.2 — Unreleased.** v2.1 remains the published release. These instructions describe v2.2.
 
 Associated Equipment records which accessories belong with a particular Device's assignment. For example, a technician can explicitly link a monitor, keyboard and mouse to a workstation issued to Alex. Equipment issued to the same person or Department is not linked automatically: Alex's other monitor may belong with a different workstation.
 
@@ -43,6 +37,14 @@ Use this route when the accessory is physically available and has not yet been i
 
 The issue and association save together. For example, issue a keyboard for an Accounts and Sales workstation through **Issue And Associate**. One stock issue and one explicit association are recorded. If Sales later stops sharing that workstation, the issue and associated quantity stay with the same custody period. For two newly issued keyboards, held and Ready stock each reduce by two, and their original issue is explicitly associated with this Device's holder. If validation fails, neither the issue nor its link is saved. The separate ordinary **Issue Equipment** confirmation is described in [Issue, Return And Write Off](IT-Assets-Issue-Return-and-Write-Off.md); this combined action retains its **Add Equipment** submission.
 
+![Add Equipment form selecting one Office Mouse for Alex’s AST-LAP-014.](screenshots/batch-7d/associate-mouse-draft.png)
+
+*Issue And Associate will give one Ready mouse to the laptop’s existing Alex custody. The holder is derived from that custody and cannot be freely changed here.*
+
+![AST-LAP-014 Associated Equipment showing the saved current Office Mouse issue.](screenshots/batch-7d/associated-mouse-saved.png)
+
+*The mouse issue is now explicitly linked to this Device custody. It is not inferred from the same holder, name or purchase.*
+
 ## Associate Already Issued Equipment
 
 Use this route when the right equipment has already been issued to this exact holder and you need to record which Device it accompanies.
@@ -56,6 +58,10 @@ Use this route when the right equipment has already been issued to this exact ho
 The entire outstanding original issue is linked. If three mice remain outstanding on that issue, this action links that issue's three; it is not a way to select one mouse from the line or move it to another person. No further stock is issued or deducted. If the list says **No Eligible Issued Equipment**, check the original recipient, outstanding balance and existing associations rather than creating a second issue.
 
 In both routes, **Cancel** abandons unsaved work; a discard prompt lets you keep editing. A stale or failed save leaves existing records unchanged. Reload after a holder or stock change and select the equipment again using current information.
+
+![Add Equipment showing the original two-unit outstanding keyboard issue and No Stock Deduction.](screenshots/batch-7d/associate-entire-existing-issue.png)
+
+*Associate Already Issued Equipment links the entire two-keyboard outstanding issue for Sarah’s AST-LAP-015 custody. It does not issue stock or deduct quantity again.*
 
 ## Check The Accessory’s Current Department
 
@@ -78,6 +84,10 @@ Partial returns leave the remaining quantity outstanding with its original holde
 
 Every explicitly associated outstanding accessory must be resolved before a prepared Device can be reissued from stock or reassigned directly, including accessories linked during a former assignment. Real accessory actions are separate saved events: cancelling a later workstation handover does not undo them.
 
+![AST-LAP-014 current Alex custody with outstanding-accessory handover protection.](screenshots/batch-7d/handover-blocked-by-accessory.png)
+
+*Alex still holds the laptop. Outstanding associated equipment prevents direct reassignment until each accessory is resolved; changing a person’s Department does not resolve it.*
+
 ## Reassign A Workstation Directly
 
 Direct reassignment records a prepared Device moving from its current holder straight to a different Staff Member or Department assignment. Use it for a genuine handover. When equipment actually returns to the storeroom, use [Return → Preparation → Reissue Existing Device](Device-Stock-Registration-and-Reissue.md) instead.
@@ -97,6 +107,14 @@ For Desktop, Laptop and physical Server, preparation requires **Checked Working*
 ### Permissions For A Direct Handover
 
 Direct reassignment requires effective **Devices Edit**. A Device with recorded stock history additionally requires enabled **IT Assets** and **IT Assets Edit**. Devices-only reassignment remains available for eligible Devices without stock history when IT Assets is off. Switching IT Assets off never bypasses outstanding accessory resolution or grants stock access. Read-only users cannot reassign.
+
+![Reassignment Details for AST-LAP-014 with current-holder protection and preparation checks.](screenshots/batch-7d/direct-handover-checks.png)
+
+*This separate direct-handover draft leaves Sarah as current holder until the complete save succeeds. Working and data-preparation checks are mandatory. It is cancelled, so no new handover is recorded.*
+
+![AST-LAP-015 showing current Sarah custody and retained ended Alex assignment after confirmed preparation and reassignment.](screenshots/batch-7d/direct-handover-saved.png)
+
+*This separate AST-LAP-015 demonstration records a checked direct handover from Alex to Sarah on 27/11. It has no storeroom return and does not replace the AST-LAP-014 return/reissue journey.*
 
 ## Relationship And Cancellation Limits
 
@@ -130,40 +148,10 @@ If step 5 fails, Alex stays the workstation's recorded holder. The accessory ret
 | The holder or equipment changed while editing | Reload before retrying. A stale save cannot transfer equipment using an old assignment or consume unavailable stock. |
 | The Device is being edited elsewhere | Finish/cancel that edit or wait for the technician, then reload. Preserve the original Device rather than duplicating it. |
 
-## Related Guides And Screenshot Acceptance
+## Related Guides
 
 [Issue, Return And Write Off](IT-Assets-Issue-Return-and-Write-Off.md) · [Device Registration And Reissue](Device-Stock-Registration-and-Reissue.md) · [Device Assignments And My Equipment](Device-Assignments-and-My-Equipment.md) · [Departments And Shared Equipment](Departments-and-Shared-Equipment.md).
-
-The [genuine Associated Equipment and handover gallery](../../../development-handovers/evidence/associated-equipment-final/Report.md) preserves development evidence. Its report distinguishes agent inspection from owner visual acceptance. No standalone HTML preview is presented here as an approved application screenshot; outstanding image approval is tracked in the [documentation review items](../../../development-guide/Stage-1-3-Documentation-Review.md).
 
 [← Draft v2.2 Guides](README.md) · [Published v2.1 Guides](../README.md)
 
 [Connected example: a laptop from Supplier and stock to its final write-off](Connected-Equipment-Journey.md).
-
-## Batch 7D Desktop Illustrations
-
-These images follow the fictional training journey. Read the caption to distinguish a draft, a cancelled preview and a saved outcome. [Complete original coverage and limits](screenshots/batch-7d/Coverage.md).
-
-![Add Equipment form selecting one Office Mouse for Alex’s AST-LAP-014.](screenshots/batch-7d/associate-mouse-draft.png)
-
-*Draft v2.2 — Issue And Associate will give one Ready mouse to the laptop’s existing Alex custody. The holder is derived from that custody and cannot be freely changed here. Independent review and owner visual acceptance pending.*
-
-![AST-LAP-014 Associated Equipment showing the saved current Office Mouse issue.](screenshots/batch-7d/associated-mouse-saved.png)
-
-*Draft v2.2 — The mouse issue is now explicitly linked to this Device custody. It is not inferred from the same holder, name or purchase. Independent review and owner visual acceptance pending.*
-
-![AST-LAP-014 current Alex custody with outstanding-accessory handover protection.](screenshots/batch-7d/handover-blocked-by-accessory.png)
-
-*Draft v2.2 — Alex still holds the laptop. Outstanding associated equipment prevents direct reassignment until each accessory is resolved; changing a person’s Department does not resolve it. Independent review and owner visual acceptance pending.*
-
-![Reassignment Details for AST-LAP-014 with current-holder protection and preparation checks.](screenshots/batch-7d/direct-handover-checks.png)
-
-*Draft v2.2 — This separate direct-handover draft leaves Sarah as current holder until the complete save succeeds. Working and data-preparation checks are mandatory. It is cancelled, so no new handover is recorded. Independent review and owner visual acceptance pending.*
-
-![AST-LAP-015 showing current Sarah custody and retained ended Alex assignment after confirmed preparation and reassignment.](screenshots/batch-7d/direct-handover-saved.png)
-
-*Draft v2.2 — This separate AST-LAP-015 demonstration records a checked direct handover from Alex to Sarah on 27/11. It has no storeroom return and does not replace the AST-LAP-014 return/reissue journey. Independent review and owner visual acceptance pending.*
-
-![Add Equipment showing the original two-unit outstanding keyboard issue and No Stock Deduction.](screenshots/batch-7d/associate-entire-existing-issue.png)
-
-*Draft v2.2 — Associate Already Issued Equipment links the entire two-keyboard outstanding issue for Sarah’s AST-LAP-015 custody. It does not issue stock or deduct quantity again. Independent review and owner visual acceptance pending.*

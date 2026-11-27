@@ -1,12 +1,6 @@
 # Correct Stock Movement
 
-> **Current status — 27 November 2026:** Batches 7C, 7D and 7E have separate owner draft-evidence acceptance (41/36/25 new paths; 102 combined; 7E has 23 distinct image contents). Original captures, provenance and requirement mappings remain unchanged; accepted instructions retain the approved merged corrections. Batch 8 editorial findings and publication approval remain outstanding. The exact approved application baseline is now `0251b43a3b5d41d626aa022c6d7f9b4d860433da`, schema 31. 7F/7G are authorised but blocked here by unavailable retained fixtures; no new pack has been delivered. [Current reconciliation and retained editorial limits](../../../development-guide/Milestone-01-7F-7G-Reconciliation.md). Earlier capture-time status notices are historical; publication remains unauthorised.
-
-> **Current Batch 7D capture status — 27 November 2026:** [New desktop light illustrations](screenshots/batch-7d/README.md) use the approved merged schema-31 baseline. Independent ChatGPT review and separate owner visual/privacy/caption/alt acceptance remain pending. Earlier written/source and capture-status paragraphs retain their dated scope; the current pack status controls these new images. Published v2.1 and targeted correction-refresh requirements remain unchanged.
-
-> **Draft v2.2 — Unreleased.** These instructions describe the implementation on `milestone-1` at the application baseline identified below. v2.1 remains the published release.
-
-> **Written/source reconciliation:** Batch 4, application baseline `fdc677920bfc52f48f641b3d6d1344c902a6a9b0` (schema 31). Focused independent reviews are recorded and [owner written/source acceptance of Batches 1–6](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7200681167) is recorded. Current visual/privacy/caption/alt approval remains outstanding; [Batch 7 reconciliation and proposed capture packs](../../../development-guide/Milestone-01-Batch-7-Review.md) await independent review and owner acceptance. Capture scope and method need separate authorisation. Desktop capture remains deferred; existing images retain their original provenance and are not certified current by this pass. [Source review and exact screenshot requirements](../../../development-guide/Milestone-01-Batch-4-Review.md).
+> **Draft v2.2 — Unreleased.** v2.1 remains the published release. These instructions describe v2.2.
 
 Use **Correct Movement** when a receipt, issue, return or write-off quantity was recorded incorrectly. For example, a technician might have entered 20 keyboards received when the delivery actually contained ten. The correction keeps the original transaction and adds a dated record containing the correct total, your name and an explanation.
 
@@ -14,7 +8,7 @@ This changes a recorded quantity, not what physically happened. Use [Return Equi
 
 ![Correct Stock Movement form showing original receipt details, corrected quantity and required reason beside a calculated Before and After stock-impact table, with Cancel and Save Correction actions at the bottom.](../../../development-handovers/evidence/stock-corrections/complete-correction-form-light-1440.png)
 
-*Genuine approved application form with fictional data, illustrating a receipt correction from 20 to 18. The original record and preview remain visible together. The [Return Equipment integration report](../../../development-handovers/evidence/stock-corrections/return-equipment/Report.md) records preservation of the 28 owner-approved original screenshots; this is one of that original set.*
+*A fictional receipt correction from 20 to 18. The original record and preview remain visible together.*
 
 ## Before You Start
 
@@ -49,6 +43,10 @@ Read-only users can view permitted original records and correction history but c
 
 A successful save appends the correction and updates calculated balances together. The original transaction, its Supplier provenance, original holder and later chronological records remain. The correction does not change a movement's equipment, event date, recipient, specifications or preparation checks.
 
+![Correct Movement showing original twenty, proposed ten, reason, impact balances and readiness to save.](screenshots/batch-7d/correction-twenty-to-ten.png)
+
+*The original receipt remains twenty. This preview proposes effective quantity ten with a reason and before/after balances; Save Correction is still required.*
+
 ## Worked Example: Correct A Receipt Before It Is Used
 
 All data is fictional. Harbour View Library received ten keyboards, but the technician recorded 20 with zero Ready. No later movements exist.
@@ -68,6 +66,10 @@ All data is fictional. Harbour View Library received ten keyboards, but the tech
 4. Morgan saves the correction, then checks the original quantity still reads 20 and the effective quantity is ten. The ten real keyboards still need their normal receipt checks before issue.
 
 If 12 keyboards had already been checked or issued from that receipt, reducing it to ten could make the intervening history impossible. A current apparent surplus from a later delivery does not repair that earlier inconsistency. The correction is blocked rather than rewriting the later checks, issues or assignments.
+
+![Movement History with original receipt twenty, effective ten and appended reasoned correction records.](screenshots/batch-7d/correction-attributed-history.png)
+
+*The original twenty-unit receipt and both attributed corrections remain. Its effective quantity is ten; prior issue/return facts and physical Device identities are preserved.*
 
 ## Correct An Issue While Returning Equipment
 
@@ -100,6 +102,10 @@ The application replays the subsequent saved movement sequence in publication or
 
 A blocked preview is not an instruction to invent compensating movements. Check whether you selected the wrong original entry or entered the difference instead of the correct total. If the supported correction is still irreconcilable with recorded history, stop and give the administrator the movement and entry references, factual evidence and exact explanation. Do not delete records, alter the database or use fictitious receipts/returns to bypass the safeguard.
 
+![Correct Movement blocked preview where the proposed quantity conflicts with later dependent stock history.](screenshots/batch-7d/correction-dependent-history-blocked.png)
+
+*Five would contradict later issue/return history, so the correction is blocked. Do not invent a compensating receipt or delete the original movement.*
+
 ## Cancel, Stale Data And Recovery
 
 **Cancel** or **Escape** leaves the correction safely. If fields changed, choose **Keep Editing** to retain them or confirm discarding unsaved changes. Changing theme retains your draft. Leaving the page also protects unsaved correction fields. None of these actions reverses a correction already saved.
@@ -108,36 +114,18 @@ If another technician changes stock, Device details, assignments or equipment li
 
 If a Device edit reservation blocks a cross-feature correction, let the existing edit finish or be cancelled, then reload. If your session ends or permissions change, sign in and check your effective access before reopening the workflow. A connection failure should be followed by a check of **Correction History** and movement references before starting a separate correction.
 
+![Correct Movement showing stock-history-changed rejection after a concurrent correction.](screenshots/batch-7d/correction-stale-rejected.png)
+
+*A separately saved interim correction invalidates the earlier preview. The stale Save Correction is rejected and the user must review the refreshed history.*
+
 ## What This Form Cannot Correct
 
 The supported kinds are an original Received, Issued, Returned or Written Off quantity entry. Individual-unit and canonical-Device quantity changes are blocked, even if an entry can be opened for inspection. This form does not edit a date, original recipient, reason, serial, specification, Supplier association, registration, readiness-change record or direct handover. Use the dedicated Supplier-association controls for that relationship. For an unsupported factual correction, retain the original references and seek an administrator decision; do not fabricate physical movement.
 
-## Related Guides And Screenshots
+## Related Guides
 
 [Issue, Return And Write Off](IT-Assets-Issue-Return-and-Write-Off.md) · [Receive Stock And Stock Inventory](IT-Assets-Stock-Intake.md) · [Associated Equipment](Associated-Equipment.md) · [IT Assets Overview](IT-Assets-Dashboard.md).
-
-The [original correction evidence](../../../development-handovers/evidence/stock-corrections/Report.md) and [Return Equipment integration evidence](../../../development-handovers/evidence/stock-corrections/return-equipment/Report.md) preserve genuine screenshots and their capture context. Later integration screenshots requiring owner approval remain an item in the [documentation review items](../../../development-guide/Stage-1-3-Documentation-Review.md). Physical verification and Stocktakes remain separate work; this guide does not claim native Safari, private-installation, upgrade/restore or release acceptance.
 
 [← Draft v2.2 Guides](README.md) · [Published v2.1 Guides](../README.md)
 
 [Connected example: a laptop from Supplier and stock to its final write-off](Connected-Equipment-Journey.md).
-
-## Batch 7D Desktop Illustrations
-
-These images follow the fictional training journey. Read the caption to distinguish a draft, a cancelled preview and a saved outcome. [Complete original coverage and limits](screenshots/batch-7d/Coverage.md).
-
-![Correct Movement showing original twenty, proposed ten, reason, impact balances and readiness to save.](screenshots/batch-7d/correction-twenty-to-ten.png)
-
-*Draft v2.2 — The original receipt remains twenty. This preview proposes effective quantity ten with a reason and before/after balances; Save Correction is still required. Independent review and owner visual acceptance pending.*
-
-![Correct Movement blocked preview where the proposed quantity conflicts with later dependent stock history.](screenshots/batch-7d/correction-dependent-history-blocked.png)
-
-*Draft v2.2 — Five would contradict later issue/return history, so the correction is blocked. Do not invent a compensating receipt or delete the original movement. Independent review and owner visual acceptance pending.*
-
-![Correct Movement showing stock-history-changed rejection after a concurrent correction.](screenshots/batch-7d/correction-stale-rejected.png)
-
-*Draft v2.2 — A separately saved interim correction invalidates the earlier preview. The stale Save Correction is rejected and the user must review the refreshed history. Independent review and owner visual acceptance pending.*
-
-![Movement History with original receipt twenty, effective ten and appended reasoned correction records.](screenshots/batch-7d/correction-attributed-history.png)
-
-*Draft v2.2 — The original twenty-unit receipt and both attributed corrections remain. Its effective quantity is ten; prior issue/return facts and physical Device identities are preserved. Independent review and owner visual acceptance pending.*

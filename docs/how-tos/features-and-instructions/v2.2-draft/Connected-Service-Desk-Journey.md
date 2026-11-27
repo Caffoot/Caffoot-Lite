@@ -1,6 +1,6 @@
 # A Connected Service Desk Example — Aster Services
 
-> **Draft v2.2 — Unreleased.** Documentation Batch 5, application baseline `fdc677920bfc52f48f641b3d6d1344c902a6a9b0`, schema 31. Focused independent reviews are recorded and [owner written/source acceptance of Batches 1–6](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7200681167) is recorded. Current visual/privacy/caption/alt approval remains outstanding; [Batch 7 reconciliation and proposed capture packs](../../../development-guide/Milestone-01-Batch-7-Review.md) await independent review and owner acceptance. Capture scope and method need separate authorisation. Desktop capture remains deferred. [Source and screenshot record](../../../development-guide/Milestone-01-Batch-5-Review.md).
+> **Draft v2.2 — Unreleased.** v2.1 remains the published release. These instructions describe v2.2.
 
 At fictional **Aster Services**, **Alex Morgan** in **Accounts** uses laptop **AST-LAP-014**, issued by technician **Sam Taylor** in the [Connected Equipment Journey](Connected-Equipment-Journey.md). During Alex's continuing personal custody, the laptop's display flickers after waking. This example connects existing controls; it creates no application records and is not a test result. The ticket number below is illustrative: use the number your installation actually returns.
 

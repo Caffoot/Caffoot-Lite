@@ -1,12 +1,6 @@
 # IT Assets Overview And Low Stock Warnings
 
-> **Current status — 27 November 2026:** Batches 7C, 7D and 7E have separate owner draft-evidence acceptance (41/36/25 new paths; 102 combined; 7E has 23 distinct image contents). Original captures, provenance and requirement mappings remain unchanged; accepted instructions retain the approved merged corrections. Batch 8 editorial findings and publication approval remain outstanding. The exact approved application baseline is now `0251b43a3b5d41d626aa022c6d7f9b4d860433da`, schema 31. 7F/7G are authorised but blocked here by unavailable retained fixtures; no new pack has been delivered. [Current reconciliation and retained editorial limits](../../../development-guide/Milestone-01-7F-7G-Reconciliation.md). Earlier capture-time status notices are historical; publication remains unauthorised.
-
-> **Current Batch 7C capture status — 27 November 2026:** [New desktop light illustrations](screenshots/batch-7c/README.md) use the approved merged schema-31 baseline. Independent ChatGPT review and separate owner visual/privacy/caption/alt acceptance remain pending. Earlier written/source and capture-status paragraphs retain their dated scope; the current pack status controls these new images. Published v2.1 and targeted correction-refresh requirements remain unchanged.
-
-> **Draft v2.2 — Unreleased.** These instructions describe the implementation on `milestone-1` at the application baseline identified below. v2.1 remains the published release.
-
-> **Written/source reconciliation:** Batch 4, application baseline `fdc677920bfc52f48f641b3d6d1344c902a6a9b0` (schema 31). Focused independent reviews are recorded and [owner written/source acceptance of Batches 1–6](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7200681167) is recorded. Current visual/privacy/caption/alt approval remains outstanding; [Batch 7 reconciliation and proposed capture packs](../../../development-guide/Milestone-01-Batch-7-Review.md) await independent review and owner acceptance. Capture scope and method need separate authorisation. Desktop capture remains deferred; existing images retain their original provenance and are not certified current by this pass. [Source review and exact screenshot requirements](../../../development-guide/Milestone-01-Batch-4-Review.md).
+> **Draft v2.2 — Unreleased.** v2.1 remains the published release. These instructions describe v2.2.
 
 The IT Assets **Overview** brings together the organisation's current equipment balances, preparation backlog, stock movements and optional Low Stock warnings. It helps a technician answer practical questions: what is held, what can be issued now, which items need checks and which quantity-based items are below their configured minimum?
 
@@ -14,7 +8,7 @@ The dashboard reports the existing stock records; opening it does not receive, i
 
 ![IT Assets Overview in the light theme, with current stock cards, category distribution, readiness, held-stock classification, minimum-stock attention items and movement history reporting.](../../../development-handovers/evidence/stock-dashboard/dashboard-light-1440.png)
 
-*Approved application capture with fictional data. The first/default tab is **Overview**. This image shows a viewer with both IT Assets and Devices access; the classification and available actions depend on permissions. The owner approved the genuine dashboard captures in [PR #398](https://github.com/Caffoot/Caffoot-Lite/pull/398#issuecomment-6929275962). Figures illustrate that capture, not your organisation's current stock.*
+*Overview shows a viewer with IT Assets and Devices access. Classification and available actions depend on permissions; figures describe fictional stock.*
 
 ## Before You Start
 
@@ -45,6 +39,18 @@ The switch and permissions are separate. The built-in **IT Staff** role defaults
 
 If the cards show 25 Physically Held, 15 Ready and ten Awaiting Checks / Preparation, there are 25 held units altogether. Adding the Ready and awaiting figures explains the held figure; adding all three would count the same equipment twice.
 
+![Empty IT Assets Overview before any stock has been received.](screenshots/batch-7c/stock-empty.png)
+
+*Before the first receipt, this example has no stock. Check filters and history before repeating a delivery.*
+
+![Keyboard Stock Item Details with held fifty, Ready eight, awaiting forty-two and minimum stock level ten.](screenshots/batch-7c/readiness-eight-of-fifty.png)
+
+*Fifty keyboards are physically held; only eight are Ready against minimum ten. The minimum compares Ready units, rather than the full held quantity.*
+
+![IT Assets Overview with mixed stock, classifications, reporting controls and low-stock attention.](screenshots/batch-7c/stock-mixed-overview.png)
+
+*Mixed quantity and individually tracked stock use complete held totals. The 90-day reporting control affects movement reporting, not current stock arithmetic.*
+
 ## Choose A Category And Reporting Period
 
 1. Set **Equipment Category** to the category you want to inspect, or keep **All Categories**.
@@ -74,6 +80,10 @@ With the required Devices access:
 
 **No stock categories recorded.**, **No equipment is physically held.** and **No Data For This Selection** describe different parts of the report. **No items below minimum or awaiting checks in this selection.** means no attention rows for that selection; it does not certify that every physical item has been inspected. Use All Categories and both permitted reporting periods when investigating missing activity. The category/period selectors refresh reporting; there is no reporting Save or Cancel and they make no stock changes. A failed load is not a zero-stock result.
 
+![Read-only USB Keyboard stock details with held fifty and Ready eight, without a readiness editor.](screenshots/batch-7c/read-only-stock-details.png)
+
+*IT Assets Read can inspect stock details and recorded checks, but cannot change readiness or receive or issue stock.*
+
 ## Configure An Optional Minimum Stock Level
 
 The warning compares each quantity-based stock item's own **Ready To Issue** total with its own optional **Minimum Stock Level**. It does not compare the organisation total or Physically Held against one global threshold.
@@ -96,6 +106,10 @@ A blank minimum means no warning. Zero is a configured minimum; a valid non-nega
 
 A warning offers **View / Update** for an editor or **View Details** for a read-only viewer. Use the existing receipt or preparation workflow for the actual stock situation. The warning does not place an order, reserve stock, send equipment to a recipient or automatically confirm checks.
 
+![Filtered Stock Inventory with USB Keyboards Low Stock and Clear Dashboard Filters.](screenshots/batch-7c/low-stock-drill.png)
+
+*The Low Stock drill-down identifies the eight-Ready keyboard item below minimum ten. Clear Dashboard Filters returns to the full stock list.*
+
 ## Permissions, Complete Totals And Privacy
 
 IT Assets-only viewers receive complete organisation-wide stock totals and correct Low Stock calculations, including registered equipment. Removing Devices Read must not make a genuinely low item appear sufficient or make held stock disappear from an aggregate.
@@ -103,6 +117,10 @@ IT Assets-only viewers receive complete organisation-wide stock totals and corre
 That aggregate permission does not disclose Device identities, Device-specific histories, a Device-only count or the three-way **Held Stock Classification** breakdown. For IT Assets-only viewers, aggregate cards/category displays are informational, while authorised stock-item warnings can still open their stock details. The separate individual Device list is permission-filtered and need not account for every unit included in the complete aggregate.
 
 Read-only access offers no stock-changing controls. Changing a feature switch or permission does not erase records; subsequent requests apply the current access rules. **My Equipment** remains a separate safe personal/shared view, not access to organisation-wide stock reporting.
+
+![IT Assets-only Overview with complete totals and restricted Device classification guidance.](screenshots/batch-7c/assets-only-protected.png)
+
+*IT Assets Read without Devices Read receives complete aggregate totals, while Device identities, classifications and Device drill-down stay protected.*
 
 ## Troubleshooting
 
@@ -118,40 +136,10 @@ Read-only access offers no stock-changing controls. Changing a feature switch or
 | A filtered table omits expected records | Read its dashboard-selection explanation and choose **Clear Dashboard Filters**; also check the Overview category selection. |
 | Stock fails to load | Use **Reload Stock**, check your session and effective permissions, and review the displayed error before retrying. Opening or reloading reporting changes no stock. |
 
-## Related Guides And Acceptance Boundary
+## Related Guides
 
 [Receive Stock And Stock Inventory](IT-Assets-Stock-Intake.md) · [Issue, Return And Write Off](IT-Assets-Issue-Return-and-Write-Off.md) · [Device Registration And Reissue](Device-Stock-Registration-and-Reissue.md) · [Correct Stock Movement](IT-Assets-Correct-Movement.md).
-
-The [genuine dashboard evidence](../../../development-handovers/evidence/stock-dashboard/Report.md) records the existing checks and capture provenance. Owner approval of those images does not establish native Safari, private-installation, full upgrade/restore or release acceptance. Remaining documentation and manual acceptance items are recorded in the [documentation review items](../../../development-guide/Stage-1-3-Documentation-Review.md).
 
 [← Draft v2.2 Guides](README.md) · [Published v2.1 Guides](../README.md)
 
 [Connected example: a laptop from Supplier and stock to its final write-off](Connected-Equipment-Journey.md).
-
-## Batch 7C Desktop Illustrations
-
-These images follow the fictional training journey. Read the caption to distinguish a draft, a cancelled preview and a saved outcome. [Complete original coverage and limits](screenshots/batch-7c/Coverage.md).
-
-![Empty IT Assets Overview before any stock has been received.](screenshots/batch-7c/stock-empty.png)
-
-*Draft v2.2 — Before the first receipt, the isolated journey has no stock. Empty totals do not authorise receiving a delivery twice. Independent review and owner visual acceptance pending.*
-
-![Keyboard Stock Item Details with held fifty, Ready eight, awaiting forty-two and minimum stock level ten.](screenshots/batch-7c/readiness-eight-of-fifty.png)
-
-*Draft v2.2 — Fifty keyboards are physically held; only eight are Ready against minimum ten. The minimum compares Ready units, rather than the full held quantity. Independent review and owner visual acceptance pending.*
-
-![IT Assets Overview with mixed stock, classifications, reporting controls and low-stock attention.](screenshots/batch-7c/stock-mixed-overview.png)
-
-*Draft v2.2 — Mixed quantity and individually tracked stock use complete held totals. The 90-day reporting control affects movement reporting, not current stock arithmetic. Independent review and owner visual acceptance pending.*
-
-![Filtered Stock Inventory with USB Keyboards Low Stock and Clear Dashboard Filters.](screenshots/batch-7c/low-stock-drill.png)
-
-*Draft v2.2 — The Low Stock drill-down identifies the eight-Ready keyboard item below minimum ten. Clear Dashboard Filters returns to the full stock list. Independent review and owner visual acceptance pending.*
-
-![IT Assets-only Overview with complete totals and restricted Device classification guidance.](screenshots/batch-7c/assets-only-protected.png)
-
-*Draft v2.2 — IT Assets Read without Devices Read receives complete aggregate totals, while Device identities, classifications and Device drill-down stay protected. Independent review and owner visual acceptance pending.*
-
-![Read-only USB Keyboard stock details with held fifty and Ready eight, without a readiness editor.](screenshots/batch-7c/read-only-stock-details.png)
-
-*Draft v2.2 — IT Assets Read can inspect stock details and recorded checks, but cannot change readiness or receive or issue stock. Independent review and owner visual acceptance pending.*

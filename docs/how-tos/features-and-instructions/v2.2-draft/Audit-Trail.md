@@ -1,15 +1,12 @@
 # Read The Audit Trail
 
-> **Draft v2.2 — Unreleased.** The integrated schema-31 baseline includes [#458](https://github.com/Caffoot/Caffoot-Lite/issues/458), merged [PR #466](https://github.com/Caffoot/Caffoot-Lite/pull/466) and the later known-feature label correction in [PR #470](https://github.com/Caffoot/Caffoot-Lite/pull/470). Its written/source documentation is owner accepted; desktop visual and publication approval remain outstanding. Examples and screenshots use fictional data.
-
-> **Written/source reconciliation:** Documentation Batch 5, application baseline `fdc677920bfc52f48f641b3d6d1344c902a6a9b0` (schema 31). Focused independent reviews are recorded and [owner written/source acceptance of Batches 1–6](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7200681167) is recorded. Current visual/privacy/caption/alt approval remains outstanding; [Batch 7 reconciliation and proposed capture packs](../../../development-guide/Milestone-01-Batch-7-Review.md) await independent review and owner acceptance. Capture scope and method need separate authorisation. Desktop capture remains deferred; existing historical/mobile images retain their original provenance. [Source review and exact screenshot requirements](../../../development-guide/Milestone-01-Batch-5-Review.md).
-> **Draft v2.2 — Unreleased.** Stage 6.6 Batch 2 [#458](https://github.com/Caffoot/Caffoot-Lite/issues/458), with Milestone 01 correction [#477](https://github.com/Caffoot/Caffoot-Lite/issues/477) ([PR #490](https://github.com/Caffoot/Caffoot-Lite/pull/490)). Revised desktop Activity Details screenshots accepted; consolidated native reacceptance and publication approval remain outstanding. Examples and screenshots use fictional data.
+> **Draft v2.2 — Unreleased.** v2.1 remains the published release. These instructions describe v2.2.
 
 The Audit Trail helps you establish what changed, who performed the recorded action and when. An affected-record name describes the record at the time of the saved event, not necessarily its current name. This is a read-only view: searching, opening details or viewing a timeline does not edit the original events.
 
 ## Before you start
 
-Sign in using an active account and complete any required MFA. An administrator with confirmed MFA retains essential administration/security history even with optional inventory features off. Other readers need effective Read access to an enabled Devices, IPAM, Racks, IT Assets or Suppliers section; their events remain permission-filtered. Staff directory or employee ticket eligibility alone does not grant the general Audit Trail. Open **Audit Trail** from the existing navigation if your account has access. Your administrator controls the section permissions and optional features that determine which events are available. The change to labels does not grant any new history rights. Some details and complete events may be withheld, including Device-linked stock events when Devices access is unavailable. A missing event or area is not evidence that no change occurred.
+Sign in using an active account and complete any required MFA. An administrator with confirmed MFA retains essential administration/security history even with optional inventory features off. Other readers need effective Read access to an enabled Devices, IPAM, Racks, IT Assets or Suppliers section; their events remain permission-filtered. Staff directory or employee ticket eligibility alone does not grant the general Audit Trail. Open **Audit Trail** from the existing navigation if your account has access. Your administrator controls the section permissions and optional features that determine which events are available. Some details and complete events may be withheld, including Device-linked stock events when Devices access is unavailable. A missing event or area is not evidence that no change occurred.
 
 ## Find an event
 
@@ -78,7 +75,7 @@ Open **View Details**, then expand **Technical Details** to inspect **Original r
 ## Check Recording Coverage
 
 1. Open **Recording Coverage**. Read its retention and permission explanation. History has no automatic expiry and the Audit Trail offers no delete/purge control.
-2. Use the following source-checked boundaries for this integrated baseline. The panel's account/security rows still say **In development**; those broad labels are not a complete list of the specific writers already implemented.
+2. Use the following recording limits. The panel's account/security rows still say **In development**; those broad labels are not a complete list of the specific writers already implemented.
 
    | Recorded area | Scope and limits |
    | --- | --- |

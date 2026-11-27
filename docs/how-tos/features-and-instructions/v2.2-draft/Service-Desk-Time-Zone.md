@@ -1,8 +1,6 @@
 # Set The Service Desk Time Zone
 
-> **Draft v2.2 — Unreleased.** Use these instructions on an authorised v2.2 review installation. For the published v2.1 release, use its [installation guide](../../../../INSTALLATION.md).
-
-> **Documentation Batch 6:** source-inspected at `fdc677920bfc52f48f641b3d6d1344c902a6a9b0` (schema 31). Focused independent reviews are recorded and [owner written/source acceptance of Batches 1–6](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7200681167) is recorded. Current visual/privacy/caption/alt approval remains outstanding; [Batch 7 reconciliation and proposed capture packs](../../../development-guide/Milestone-01-Batch-7-Review.md) await independent review and owner acceptance. Capture scope and method need separate authorisation. Desktop capture remains deferred. [Evidence states and screenshot record](../../../development-guide/Milestone-01-Batch-6-Review.md). These are current draft instructions, not newly executed deployment checks.
+> **Draft v2.2 — Unreleased.** v2.1 remains the published release. These instructions describe v2.2.
 
 The Service Desk uses one installation time zone for working hours, excluded dates and reporting dates. A named time zone follows local clock changes automatically. Ticket creation, updates and the live queue remain available while the time zone needs attention.
 
@@ -55,13 +53,13 @@ For a separate review checkout, the [draft Docker Compose example](compose-v2.2-
 
 ![Administrator warning in Working Hours when the deployment time zone is missing.](../../../development-handovers/evidence/service-desk-reporting/missing-timezone-desktop-light.png)
 
-*Set a valid IANA zone in the deployment configuration and recreate the service to clear this warning.* [Capture details](../../../development-handovers/evidence/service-desk-reporting/README.md)
+*Set a valid IANA zone in the deployment configuration and recreate the service to clear this warning.*
 
 ## Automatic Clock Changes And Effective History
 
 Working Hours and Excluded Dates use the chosen installation-wide zone, not each employee's browser zone. IANA rules handle daylight saving automatically; do not manually move the weekly opening times when clocks change. Under the UK example `Europe/London`, Sunday 01:00–03:00 includes **one actual eligible hour in spring** and **three in autumn**. Sunday 01:30–02:30 includes **30 eligible minutes in spring** and **90 in autumn**: each real occurrence of the repeated eligible part counts. Ordinary weekdays remain as configured.
 
-A valid changed `TZ` takes effect when applied at startup. Earlier known calendar/zone portions and completed measurements remain unchanged. Saved Working Hours/Excluded Dates changes similarly apply prospectively: the approved 10:00 opening, 13:00 calendar change and 18:00 closure gives **3 original + 5 new = 8 hours**, without holds/exclusions. A period with unknown/invalid timezone history cannot be reconstructed after correction; an attempt spanning that interval has no complete trustworthy duration. A new valid setting supports future accounting, not retrospective invention.
+A valid changed `TZ` takes effect when applied at startup. Earlier known calendar/zone portions and completed measurements remain unchanged. Saved Working Hours/Excluded Dates changes similarly apply prospectively: an example 10:00 opening, 13:00 calendar change and 18:00 closure gives **3 original + 5 new = 8 hours**, without holds/exclusions. A period with unknown/invalid timezone history cannot be reconstructed after correction; an attempt spanning that interval has no complete trustworthy duration. A new valid setting supports future accounting, not retrospective invention.
 
 No completed closures (**—**), a genuine measured zero (**0h 0m**) and an unavailable/incomplete measurement are distinct. Missing/invalid TZ also makes period counts unavailable while ordinary ticket creation, updates, reopening and live workload continue. [Calendar and reporting examples](Service-Desk-Administration.md#understand-working-time-measurements)
 

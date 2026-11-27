@@ -1,8 +1,6 @@
 # Roles, Section Permissions And MFA
 
-> **Draft v2.2 — Unreleased.** This guide covers the Staff account workflow in [PR #453](https://github.com/Caffoot/Caffoot-Lite/pull/453). Use the [published v2.1 guides](../README.md) for released installations.
-
-> **Documentation status — 27 November 2026:** Accepted written/source procedures are preserved. [Batch 7B](screenshots/batch-7b/README.md) adds desktop light-theme instructional illustrations under the [owner’s scope and method approval](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7211852349). Independent ChatGPT review and separate product-owner visual acceptance recorded in the [27 November decision](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7212506766); original provenance and targeted pre-publication refresh limitations remain. The three Morgan Reed reuse images retain their original narrow approval and provenance. [All 16 groups / 79 specifications](screenshots/batch-7b/Coverage.md) remain traceable; no publication approval is implied.
+> **Draft v2.2 — Unreleased.** v2.1 remains the published release. These instructions describe v2.2.
 
 [← Draft v2.2 Guides](README.md)
 
@@ -48,7 +46,7 @@ A limited recipient search in an authorised equipment action lets the operator s
 
 Every account receives the protected **Staff Member** baseline. This role grants no general section access and cannot be renamed, disabled, deleted or removed from an account. Its name is separate from the **Staff Members** directory section.
 
-**IT Staff** is an additional built-in role. Its identity and name are protected, but an administrator can change its section grants, disable or re-enable it, and assign or remove its memberships. It does not make someone an Administrator. At this source checkpoint, its default grants are **Devices Edit**, **IPAM Edit**, **Racks Edit** and **IT Assets Edit**. Staff Members and Departments access must be granted separately where needed. Always inspect the current definition: an administrator may already have changed its defaults.
+**IT Staff** is an additional built-in role. Its identity and name are protected, but an administrator can change its section grants, disable or re-enable it, and assign or remove its memberships. It does not make someone an Administrator. Its default grants are **Devices Edit**, **IPAM Edit**, **Racks Edit** and **IT Assets Edit**. Staff Members and Departments access must be granted separately where needed. Always inspect the current definition: an administrator may already have changed its defaults.
 
 Administrators can also create custom roles. A person can hold several roles at once. For each section, the highest grant from their enabled roles becomes the **Inherited** level: Edit takes precedence over Read. A role's No Access setting supplies no grant; it does not cancel a grant from another enabled role.
 
@@ -71,11 +69,11 @@ If Dave becomes responsible for rack maintenance, select **Inherit** for Racks, 
 
 ### What An Existing Account May Show After Upgrade
 
-The accepted schema-12 change assigned IT Staff to enabled pre-existing accounts, including enabled administrators and accounts that previously had no infrastructure access. Individual overrides preserved their exact earlier Devices, IPAM and Racks levels. Disabled accounts did not receive that membership. The added enabled role made MFA mandatory, even where all effective infrastructure rights stayed No Access.
+An earlier role migration assigned IT Staff to enabled pre-existing accounts, including enabled administrators and accounts that previously had no infrastructure access. Individual overrides preserved their exact earlier Devices, IPAM and Racks levels. Disabled accounts did not receive that membership. The added enabled role made MFA mandatory, even where all effective infrastructure rights stayed No Access.
 
 The later schema-20 change adds the IT Assets Edit role default while preserving existing accounts' earlier effective IT Assets access. An account can therefore show IT Staff membership and still have an IT Assets **No Access** or **Read** override. This is deliberate access preservation. Do not clear it as an assumed fault.
 
-Fresh installations create IT Staff enabled but unassigned. Newly created ordinary accounts receive Staff Member only. These are implemented compatibility rules, not a verified production upgrade procedure; [version and acceptance status](../../../development-guide/Development-Status.md) remains separate.
+Fresh installations create IT Staff enabled but unassigned. Newly created ordinary accounts receive Staff Member only. Use the isolated [upgrade guidance](Legacy-Import-and-Docker-Upgrade.md) when reviewing an existing installation.
 
 ## Create A Sign-In Account
 
@@ -117,16 +115,15 @@ Closing the dialogue discards unsaved profile typing. Changes you already saved 
 
 ![Manage taylor.cole, Personal Details tab, with read-only username, saved Tay Cole display name and Not Verified email.](screenshots/batch-7b/account-personal-details.png)
 
-*Draft v2.2 — Saved Personal Details for taylor.cole: the account uses Tay Cole and an unverified email. Resolve any saved Staff/account differences separately. Independent review and owner visual acceptance recorded; original revision and targeted refresh limitations retained.*
+*Saved Personal Details for taylor.cole: the account uses Tay Cole and an unverified email. Resolve any saved Staff/account differences separately.*
 
 ![Morgan Reed Roles tab with protected Staff Member selected, IT Staff unchecked, Close and Done.](../../../development-handovers/evidence/native-acceptance-corrections/screenshots/permissions-roles-1440-light.png)
 
-*Draft v2.2 — Morgan’s saved membership: protected Staff Member selected, IT Staff unchecked. This is not a subsequent membership change. Approved narrow reuse; original provenance retained.*
-
+*Morgan’s saved membership: protected Staff Member selected, IT Staff unchecked. This is not a subsequent membership change.*
 
 ![Morgan Reed Permissions tab with eight Inherit selectors, inherited and effective No Access, and Suppliers Feature Disabled.](../../../development-handovers/evidence/native-acceptance-corrections/screenshots/permissions-permissions-1440-light.png)
 
-*Draft v2.2 — Morgan’s inherited and effective No Access example, including Suppliers Feature Disabled. This is not a later access-change result. Approved narrow reuse; original provenance retained.*
+*Morgan’s inherited and effective No Access example, including Suppliers Feature Disabled. This is not a later access-change result.*
 
 ## Assign Or Remove An Additional Role
 
@@ -151,7 +148,7 @@ An Edit override may increase access above the roles, so it needs the same care 
 
 ![Review Access Change for dave.example showing before and after section access, one affected account, two sessions to end, Cancel and Confirm Change.](screenshots/batch-7b/access-change-review.png)
 
-*Draft v2.2 — Dave’s proposed Racks change replaces the Read override with Inherit, giving effective Edit. One account and two stored sessions would be affected. This preview was cancelled. Independent review and owner visual acceptance recorded; original revision and targeted refresh limitations retained.*
+*Dave’s proposed Racks change replaces the Read override with Inherit, giving effective Edit. One account and two stored sessions would be affected. This preview was cancelled.*
 
 ## Create And Maintain Roles
 
@@ -166,12 +163,11 @@ An Edit override may increase access above the roles, so it needs the same care 
 
 ![Manage Roles directory showing protected Staff Member with no section grants, and enabled IT Staff with Devices, IPAM, Racks and IT Assets Edit.](screenshots/batch-7b/roles-directory.png)
 
-*Draft v2.2 — Manage Roles shows the protected Staff Member baseline and the enabled IT Staff definition. Independent review and owner visual acceptance recorded; original revision and targeted refresh limitations retained.*
-
+*Manage Roles shows the protected Staff Member baseline and the enabled IT Staff definition.*
 
 ![Create Role dialogue with Equipment Auditors, Enabled selected, IT Assets Read and all other section grants set to No Access.](screenshots/batch-7b/role-configuration.png)
 
-*Draft v2.2 — Equipment Auditors is an unsaved role draft with IT Assets Read. Review Changes is still required; this role has not been created. Independent review and owner visual acceptance recorded; original revision and targeted refresh limitations retained.*
+*Equipment Auditors is an unsaved role draft with IT Assets Read. Review Changes is still required; this role has not been created.*
 
 ### Change, Disable Or Delete A Role
 
@@ -206,12 +202,11 @@ You cannot disable, demote or delete your own signed-in administrator account, a
 
 ![Morgan Reed Account Controls with Active employment, Disable Login and unavailable Make admin, plus Reset Password and Delete User.](../../../development-handovers/evidence/native-acceptance-corrections/screenshots/permissions-controls-1440-light.png)
 
-*Draft v2.2 — Morgan’s initial Active employment/login controls; promotion unavailable. This is not Alex’s later eligibility or offboarding result. Approved narrow reuse; original provenance retained.*
-
+*Morgan’s initial Active employment/login controls; promotion unavailable. This is not Alex’s later eligibility or offboarding result.*
 
 ![Sarah Lewis Account Controls with Disabled badge, Active Employment Status and the red Enable Login panel.](screenshots/batch-7b/account-login-disabled.png)
 
-*Draft v2.2 — Sarah’s saved login is Disabled while employment remains Active. Enable Login is available; this is not an offboarding result. Independent review and owner visual acceptance recorded; original revision and targeted refresh limitations retained.*
+*Sarah’s saved login is Disabled while employment remains Active. Enable Login is available; this is not an offboarding result.*
 
 For the depicted Sarah example, **Delete User** opens the browser-native confirmation **“Delete sarah.lewis?”**. Choose Cancel to keep the login. The illustration above shows her disabled login before that confirmation; it does not show deletion.
 
@@ -239,16 +234,15 @@ Use an existing administrator session protected by MFA. The proposed administrat
 
 If **Make admin** stays disabled, check the guidance beside it. If an email address was just changed, the user must verify the new address. The server checks eligibility again when it receives the promotion request.
 
-On a fresh installation, the first administrator can finish setup before outgoing email is configured. They must still enrol their authenticator. After configuring outgoing email, they can verify their address in **My Account → Overview → Personal Details**. Existing administrators keep their access if an address is missing or loses verification. The warning below their email settings explains how to restore eligibility for password recovery. Outgoing email remains optional for everyday operation, and the protected [host-only first-administrator recovery procedure](../../../development-guide/Account-Recovery.md) remains available to the system operator when its conditions are met.
+On a fresh installation, the first administrator can finish setup before outgoing email is configured. They must still enrol their authenticator. After configuring outgoing email, they can verify their address in **My Account → Overview → Personal Details**. Existing administrators keep their access if an address is missing or loses verification. The warning below their email settings explains how to restore eligibility for password recovery. Outgoing email remains optional for everyday operation, and the protected [host-only first-administrator recovery procedure](../../../development-guide/Account-Recovery.md#last-resort-sole-administrator-recovery) remains available to the system operator when its conditions are met.
 
 ![Alex Morgan Account Controls with Authenticator Enrolled, Email Address Verified and an available Make admin button.](screenshots/batch-7b/account-administrator-eligible.png)
 
-*Draft v2.2 — Alex’s authenticator is enrolled and email verified, so Make admin is available. No promotion has been applied. Independent review and owner visual acceptance recorded; original revision and targeted refresh limitations retained.*
-
+*Alex’s authenticator is enrolled and email verified, so Make admin is available. No promotion has been applied.*
 
 ![Your administrator account, Account Controls tab, with the self-protection warning and disabled Disable Login, Remove admin, Reset Password and Delete User controls.](screenshots/batch-7b/account-administrator-protected.png)
 
-*Draft v2.2 — The signed-in account is also the only active administrator in this fixture. Its own disable, demotion, reset and deletion controls are protected. Independent review and owner visual acceptance recorded; original revision and targeted refresh limitations retained.*
+*The signed-in account is also the only active administrator in this example. Its own disable, demotion, reset and deletion controls are protected.*
 
 ## Reset A Staff Member’s Password
 
@@ -264,7 +258,7 @@ Caffoot Lite records the administrator, affected account and change in the audit
 
 ![Reset Password dialogue for jamie.taylor with empty Temporary Password and Confirm Temporary Password, session warning, Cancel and Reset Password.](screenshots/batch-7b/account-reset-password.png)
 
-*Draft v2.2 — Reset Password for Jamie Taylor, before entry or confirmation. Both temporary password fields are empty. Independent review and owner visual acceptance recorded; original revision and targeted refresh limitations retained.*
+*Reset Password for Jamie Taylor, before entry or confirmation. Both temporary password fields are empty.*
 
 ## Set Up And Use MFA
 
@@ -284,16 +278,7 @@ Caffoot Lite records the administrator, affected account and change in the audit
 
 If you see **Unable to sign in. Please check your credentials or contact your administrator.**, check your username and password. The same message covers incorrect credentials and unavailable accounts. At **Verify Your Identity**, check the time on your authenticator device and try the next code if the previous one expired. After repeated failures, wait for the temporary sign-in limit to expire. For lost credentials, see [Account Recovery](../../../development-guide/Account-Recovery.md) or contact your administrator.
 
-**Draft screenshot refresh pending:** the sign-in, authenticator challenge and mandatory password-change illustrations below retain their original provenance and predate the approved branding punctuation correction (#476). Refresh these three affected views from the corrected application before publication; the separately approved recovery captures are updated below.
 
-![Desktop light Welcome Back sign-in screen with empty Username and Password fields, Sign In and Forgot Password.](screenshots/batch-7b/sign-in.png)
-
-*Draft v2.2 — The sign-in form starts with empty Username and Password fields. Independent review and owner visual acceptance recorded; original revision and targeted refresh limitations retained.*
-
-
-![Verify Your Identity screen with an empty Authenticator Code field, six placeholder dots, Verify and Sign In, Back to Sign In and Forgot Password.](screenshots/batch-7b/authenticator-challenge.png)
-
-*Draft v2.2 — Tim’s IT Staff account requires the authenticator challenge after password entry. The password has cleared and the code field is empty; the dots are the application’s placeholder. Independent review and owner visual acceptance recorded; original revision and targeted refresh limitations retained.*
 
 ### Voluntary Enrolment And Eligible Removal
 
@@ -310,17 +295,15 @@ Removal is unavailable for Administrators, accounts with any enabled additional 
 
 ![My Account Security for a baseline Staff Member, with empty current, new and confirm password fields, MFA not yet enrolled and Start MFA enrolment.](screenshots/batch-7b/account-security-voluntary.png)
 
-*Draft v2.2 — Jamie has the baseline Staff Member role and no wider grants. Security shows the empty password-change form and safe voluntary MFA starting screen; enrolment has not begun. Independent review and owner visual acceptance recorded; original revision and targeted refresh limitations retained.*
-
+*Jamie has the baseline Staff Member role and no wider grants. Security shows the empty password-change form and safe voluntary MFA starting screen; enrolment has not begun.*
 
 ![My Account Security with MFA Enabled, expanded Remove MFA, empty Current Password and Current Authenticator Code fields and Confirm MFA Removal.](screenshots/batch-7b/account-mfa-removal-eligible.png)
 
-*Draft v2.2 — Priya’s enrolled MFA is optional for her baseline-only access. The expanded removal form has empty password and authenticator fields; no removal has been submitted. Independent review and owner visual acceptance recorded; original revision and targeted refresh limitations retained.*
-
+*Priya’s enrolled MFA is optional for her baseline-only access. The expanded removal form has empty password and authenticator fields; no removal has been submitted.*
 
 ![Administrator My Account Security showing Administrator account role and MFA Enabled, with no Remove MFA control.](screenshots/batch-7b/account-mfa-removal-protected.png)
 
-*Draft v2.2 — This administrator’s MFA is mandatory. Security shows MFA Enabled and provides no Remove MFA action. Independent review and owner visual acceptance recorded; original revision and targeted refresh limitations retained.*
+*This administrator’s MFA is mandatory. Security shows MFA Enabled and provides no Remove MFA action.*
 
 ## Change Your Password Safely
 
@@ -333,9 +316,6 @@ Removal is unavailable for Administrators, accounts with any enabled additional 
 
 **Back to Sign In** clears the form. The restricted password-change screen expires after five minutes and cannot open normal application pages. The password change remains required the next time you sign in with the temporary password. If the change screen expires, begin again at sign-in. If the administrator resets the account again, use the latest temporary password. If the account is disabled, ask your administrator to check its status. A verified-email recovery can also complete the required password change when recovery is available and you choose a different password.
 
-![Change Your Password screen with mandatory-change explanation, empty New Password and Confirm New Password fields, Change Password and Back to Sign In.](screenshots/batch-7b/mandatory-password-change.png)
-
-*Draft v2.2 — After an assisted reset, Jamie must choose a personal password before entering the workspace. Both new password fields are empty. Independent review and owner visual acceptance recorded; original revision and targeted refresh limitations retained.*
 
 ### Change Your Password From My Account
 
@@ -358,12 +338,11 @@ The [Security illustration above](#voluntary-enrolment-and-eligible-removal) als
 
 ![My Account Overview with jamie.taylor@example.invalid, Not Verified status and Verify Email.](screenshots/batch-7b/account-email-unverified.png)
 
-*Draft v2.2 — Jamie’s saved fictional address is Not Verified. Save Personal Details alone does not verify an address. Independent review and owner visual acceptance recorded; original revision and targeted refresh limitations retained.*
-
+*Jamie’s saved fictional address is Not Verified. Save Personal Details alone does not verify an address.*
 
 ![Verify Email Address form with empty Current Password and eight-digit Email Confirmation Code fields, Resend Confirmation Code, Cancel and Verify Email Address.](screenshots/batch-7b/account-email-verification.png)
 
-*Draft v2.2 — The existing isolated mail-sink fixture supplied the confirmation-request state. Current Password and Email Confirmation Code are empty. This illustration does not establish external mail delivery. Independent review and owner visual acceptance recorded; original revision and targeted refresh limitations retained.*
+*Request confirmation for your saved email address. Current Password and Email Confirmation Code are empty in this example.*
 
 ### Recover Your Password From Sign-In
 
@@ -384,33 +363,27 @@ If no email arrives, check the junk folder and ask your administrator to check y
 
 ![Request a Recovery Code on desktop, with empty Username and Request Recovery Code. ](screenshots/milestone-01-authentication-corrections/recovery-request-desktop.png)
 
-![Request a Recovery Code on mobile.](screenshots/milestone-01-authentication-corrections/recovery-request-mobile.png)
-
 *Request step, with recovery prerequisites and administrator fallback.*
 
 ![Reset Your Password on desktop, with empty recovery fields and Reset Password.](screenshots/milestone-01-authentication-corrections/recovery-reset-desktop.png)
 
-![Reset Your Password on mobile, with the confirmation field below New Password.](screenshots/milestone-01-authentication-corrections/recovery-reset-mobile.png)
-
-*Reset step, showing the neutral request response and the approved Reset Password label.*
+*Reset step, showing the neutral request response and Reset Password.*
 
 ![Invalid or expired confirmation in desktop light mode, highlighted with an exclamation indicator.](screenshots/milestone-01-authentication-corrections/recovery-rejected-desktop-light.png)
 
-![Invalid or expired confirmation in desktop dark mode.](screenshots/milestone-01-authentication-corrections/recovery-rejected-desktop-dark.png)
-
 [Mobile light rejection](screenshots/milestone-01-authentication-corrections/recovery-rejected-mobile-light.png) · [Mobile dark rejection](screenshots/milestone-01-authentication-corrections/recovery-rejected-mobile-dark.png)
 
-*The generic rejection is highlighted; recovery inputs were cleared for these captures. These eight Chromium captures were independently reviewed and owner-approved on 27 November 2026 at revision `abd311a2e49e3f1ec666b0f0b99bf4973230ce58`. [Capture provenance and SHA-256 hashes](screenshots/milestone-01-authentication-corrections/Provenance.txt). Native reacceptance remains separate.*
+*A rejected recovery attempt shows a generic message. Check your username and the current code without sharing them.*
 
 ### Password Values And Lost Authenticators
 
 Use long, unique passwords and communicate initial or temporary values privately. The current implementation rejects an empty password; it does not display or enforce a documented minimum length, complexity score or mandatory expiry period. Password and confirmation must match exactly. A mandatory replacement must differ from the temporary password. Initial account creation does not itself set the assisted-reset mandatory-change flag; ask the new user to change their initial password in My Account.
 
-An emailed eight-digit recovery code is a password-recovery proof, not a backup authenticator code. There is no user-facing set of downloadable MFA recovery codes or administrator MFA-reset button in these account controls. A lost required authenticator prevents email recovery as well as normal sign-in. Contact the system operator privately; the [host-only recovery reference](../../../development-guide/Account-Recovery.md) has limited eligibility and is not a general account bypass. Do not delete an account, create duplicate Staff or remove permissions as an improvised recovery procedure.
+An emailed eight-digit recovery code is a password-recovery proof, not a backup authenticator code. There is no user-facing set of downloadable MFA recovery codes or administrator MFA-reset button in these account controls. A lost required authenticator prevents email recovery as well as normal sign-in. Contact the system operator privately; the [host-only recovery reference](../../../development-guide/Account-Recovery.md#last-resort-sole-administrator-recovery) has limited eligibility and is not a general account bypass. Do not delete an account, create duplicate Staff or remove permissions as an improvised recovery procedure.
 
 ## Sessions, Sign-Out And Unsaved Work
 
-A session keeps a browser signed in after authentication. At this checkpoint it expires 12 hours after creation; the application does not promise an unlimited or activity-renewed session. Relevant account, role and security changes can end it sooner. **My Account → Sign Out** ends the current session; it does not sign out every other browser.
+A session keeps a browser signed in after authentication. It expires 12 hours after creation; the application does not promise an unlimited or activity-renewed session. Relevant account, role and security changes can end it sooner. **My Account → Sign Out** ends the current session; it does not sign out every other browser.
 
 A browser page with an expired or invalid session returns to the existing sign-in page with **Your Session Has Ended** and a request to sign in again. A page opened with no session asks you to sign in. In an already-open workspace this occurs when a failed application request establishes that the session has ended; there is no immediate countdown or background-expiry alert. An ordinary permission denial while the session remains valid is a separate error.
 
@@ -439,7 +412,5 @@ Essential **Account**, **Role** and **Security** audit events remain available t
 ## Related Workflows
 
 [Optional Features And Link To IPAM](Optional-Features-and-Link-To-IPAM.md) · [Staff Members](Staff-Members.md) · [Departments And Shared Equipment](Departments-and-Shared-Equipment.md) · [Device Assignments And My Equipment](Device-Assignments-and-My-Equipment.md) · [IT Assets Stock Intake](IT-Assets-Stock-Intake.md)
-
-Administrators and maintainers can consult the [role and account contract](../../../development-guide/Role-Permissions.md), [authentication and permission reference](../../../development-guide/04-Authentication-and-Permissions.md), [accepted IT Staff decisions](https://github.com/Caffoot/Caffoot-Lite/issues/365) and [later IT Assets default decision](https://github.com/Caffoot/Caffoot-Lite/issues/396). Current acceptance and release boundaries belong in [Development Status](../../../development-guide/Development-Status.md).
 
 [Connected equipment example — Supplier, stock, assignment and later use](Connected-Equipment-Journey.md).

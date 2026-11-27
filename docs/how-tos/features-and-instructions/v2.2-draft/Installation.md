@@ -1,8 +1,6 @@
 # Install An Isolated v2.2 Review Instance
 
-> **Draft v2.2 — Unreleased private-review guidance.** Source-inspected at `fdc677920bfc52f48f641b3d6d1344c902a6a9b0`, schema 31. These instructions are not a production deployment or public release procedure. No public v2.2 image tag, registry availability or release date is established. Published v2.1 remains current: use its [installation guide](../../../../INSTALLATION.md) for that version.
-
-> **Documentation Batch 6:** focused independent ChatGPT review is recorded and [owner written/source acceptance](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7200681167) is recorded. Current supported-upgrade, complete-volume restoration and desktop visual acceptance remain outstanding. [Evidence states, sources and screenshot requirements](../../../development-guide/Milestone-01-Batch-6-Review.md).
+> **Draft v2.2 — Unreleased.** v2.1 remains the published release. These instructions describe v2.2.
 
 This guide explains the existing draft examples for an installation that has already been authorised for isolated review. A container is the running application; an image is the packaged application it starts from. A Docker volume or bind mount holds persistent data outside that replaceable container. A new empty mount creates a new installation; it does not copy an existing one.
 
@@ -13,12 +11,11 @@ This guide explains the existing draft examples for an installation that has alr
 | New, separately authorised disposable v2.2 review instance | Follow this guide with a distinct stack/project, endpoint and empty storage. |
 | Existing Docker instance or review data that must survive | Identify its image and actual `/data` first; use [upgrade, backup and recovery](Legacy-Import-and-Docker-Upgrade.md). Never paste a new-install example over its settings. |
 | Published standalone v1.3.3 HTML inventory | Prepare the destination first, then use [one-way legacy import](Legacy-Import-and-Docker-Upgrade.md#import-legacy-inventory). Its JSON is not a Docker installation backup. |
-| The owner's established private Raspberry Pi acceptance environment | Use the separately approved owner runbook, not a new generic stack. This guide deliberately supplies no owner-specific host, checkout, volume, container or port. |
 
 ## Prerequisites And Preparation
 
 1. Obtain authorisation for the exact review revision and installation. Identify the Docker host, operator, intended browser address and a free host port. Have access to Docker Engine with the **Docker Compose plugin**, or an existing Portainer environment capable of running a Docker stack. Host administrator/Docker permissions can expose the installation's secrets; limit them appropriately.
-2. Check the host architecture and the actual image's architecture. Historical Linux AMD64 Docker rehearsals and an ARM64 Raspberry Pi private image build are recorded, with exact revisions, in the [Batch 6 evidence table](../../../development-guide/Milestone-01-Batch-6-Review.md#historical-verification--version-specific). They do not establish a current public multi-architecture v2.2 image or complete native acceptance. Do not use an image for another architecture or infer successful startup from a successful build.
+2. Check that the actual image supports the host architecture, such as AMD64 or ARM64. No public multi-architecture v2.2 image is available. Do not use an image for another architecture or infer successful startup from a successful build.
 3. Reserve separate storage and capacity for the image/build, growing SQLite data, ticket attachment bytes, profile/branding images and complete protected backup copies. Source does not establish a universal minimum disk/RAM requirement. Check free capacity for the intended workload and retention; the 100 MB attachment allowance is per ticket, not an installation storage cap.
 4. Choose a distinct review project/stack, container identity, host endpoint and data mount. Keep production and other installations inaccessible to this review stack. Copied data may contain active accounts, private files and SMTP settings: isolate it and use controlled mail destinations before exercising notifications. Never reuse a production mount for an isolated review.
 5. Keep the existing repository YAML unchanged. Make your installation-specific copy or Portainer editor configuration privately. Protect saved environment/configuration and backups. Do not put passwords, mail credentials or private certificates in Git, tickets or screenshots.
@@ -75,11 +72,11 @@ The image defaults to `/data/caffoot.sqlite3` and `/data/tls`. Advanced `CAFFOOT
 5. Select **Deploy the stack**. Check the container's actual image, mount, running status and health in Portainer. A local-only image must already exist on the selected Docker host; do not request a registry re-pull for it. If image access fails, stop and resolve the authorised image route; no public v2.2 registry fallback is specified.
 6. Continue with HTTPS verification and initial setup below. Deployment/healthy status alone does not prove browser trust, authentication or data preservation.
 
-Portainer labels can vary by installed version. The established flow uses **Web editor** for creation and the existing stack's **Editor → Update the stack** for updates. This source review does not verify every Portainer version or authorise changes to the owner's established private stack.
+Portainer labels can vary by installed version. The established flow uses **Web editor** for creation and the existing stack's **Editor → Update the stack** for updates. Use the update procedure and storage mapping established for your existing installation.
 
 ## Method 2 — Docker Compose Source Build
 
-These are instructions for later authorised review operation, not commands executed during documentation reconciliation.
+Use a separate isolated instance for v2.2 review; keep production on the published release.
 
 1. Use a clean checkout at the exact authorised application candidate and record `git rev-parse HEAD`. Keep local changes/other branches safe. Confirm that the Dockerfile and draft build context identify this checkout. Never label an unverified working tree as an exact source revision.
 2. In the shell from that repository root, provide the values for your isolated instance. Example only:
@@ -110,7 +107,7 @@ These are instructions for later authorised review operation, not commands execu
 
 6. With the same file/project options, use `docker compose ps` and `docker compose logs caffoot-lite` to check startup, and inspect the actual image architecture/revision and `/data` mount. Keep logs private. Use **Ctrl+C** to stop following logs, not to delete storage.
 
-The Dockerfile uses Python 3.12 Alpine with OpenSSL and IANA tzdata, packages the backend/setup/interface and required local assets, and runs as `10001:10001`. Its source revision label defaults to `development` unless supplied. Build-context ignore files and explicit COPY paths are packaging controls; they do not certify an arbitrary private checkout contains no secrets. No source build or package publication was performed for this guide.
+The Dockerfile uses Python 3.12 Alpine with OpenSSL and IANA tzdata, packages the backend/setup/interface and required local assets, and runs as `10001:10001`. Its source revision label defaults to `development` unless supplied. Build-context ignore files and explicit COPY paths are packaging controls; they do not certify an arbitrary private checkout contains no secrets.
 
 ## Verify HTTPS Identity Before Setup
 
@@ -133,7 +130,7 @@ A fresh database has no fixed/default administrator password and no public regis
 
 1. Open the trusted browser origin; `/setup` serves setup/sign-in. On an empty database choose **Get Started**, then **Create Your Administrator**. Enter your chosen **Username**, **Password** and **Confirm Password**. For a fictional example use `aster.admin`, with a unique secret stored securely rather than a published example password.
 2. Choose **Continue To Authenticator Setup**. Correct any field error, including mismatched confirmation, before continuing. **Back** returns to the welcome step before account submission; an already created pending administrator should resume enrolment rather than create another account.
-3. On **Secure Your Account**, scan the private QR code with your authenticator. If needed use **Can't scan? Show setup key**. Enter the current six-digit **Authenticator Code** and choose **Confirm MFA Setup**. Never share or capture the QR/secret/code in instructional evidence. An invalid code leaves setup incomplete; check the selected account and device clock before trying again.
+3. On **Secure Your Account**, scan the private QR code with your authenticator. If needed use **Can't scan? Show setup key**. Enter the current six-digit **Authenticator Code** and choose **Confirm MFA Setup**. Keep the QR code, setup key and authenticator codes private. An invalid code leaves setup incomplete; check the selected account and device clock before trying again.
 4. At **You're All Set!**, choose **Continue to Sign In**. Enter **Username** and **Password**, then **Sign In**. The enrolled account sees **Verify Your Identity**: enter **Authenticator Code** and choose **Verify & Sign In**.
 5. If setup was interrupted, use **Finish Administrator Setup → Continue Enrolment** with the original credentials. Do not clear the database to restart enrolment. Unexpected first-run setup on an existing installation is a reason to stop and check the mount.
 6. After sign-in, use **My Account** to review personal/security settings and verify an email address when SMTP is configured. A successful SMTP test is not account verification or recovery eligibility. Later promotion of another administrator has its own verified-email/MFA/no-pending-password-change requirements; the initial setup exception is deliberate. [Accounts and MFA](Roles-Section-Permissions-and-MFA.md)
@@ -141,7 +138,7 @@ A fresh database has no fixed/default administrator password and no public regis
 
 ## Confirm Startup And Persistence
 
-1. Confirm the intended container is running/healthy and read its relevant logs for migration, origin, TLS or storage errors. Health does not certify every feature or complete acceptance.
+1. Confirm the intended container is running/healthy and read its relevant logs for migration, origin, TLS or storage errors. Health confirms local liveness; check access and data separately.
 2. Sign in through trusted HTTPS and check the expected installation: existing accounts/data for an upgrade/recovery, or the new setup for a deliberately empty review instance. Open representative permitted records and verify feature choices and the applied time zone.
 3. As part of separately authorised installation verification, recreate/restart using the **same** mount and settings, then check sign-in, HTTPS fingerprint and records remain. Recreating is not a backup. Do not run deletion or recovery rehearsals merely because this guide lists verification steps.
 4. Retain image identity, configuration and a protected complete off-host backup/recovery plan. [Backup, recovery and matching-image rollback](Legacy-Import-and-Docker-Upgrade.md#back-up-a-complete-installation)

@@ -1,8 +1,6 @@
 # Import Legacy Inventory Or Upgrade Docker
 
-> **Draft v2.2 — Unreleased.** These instructions are for authorised isolated v2.2 review installations. For a live v2.1 installation, use the [published v2.1 guidance](https://github.com/Caffoot/Caffoot-Lite/blob/c3237114108cad9f7d4e57657b6aed5e0091a5ef/docs/how-tos/features-and-instructions/Migration-Backup-and-Restore.md).
-
-> **Documentation Batch 6:** source-inspected at `fdc677920bfc52f48f641b3d6d1344c902a6a9b0`, schema 31, after verified Batch 5 checkpoint `f84b3acd7f90e69c8e33ded8e4d59b6a84fb8e41`. Focused independent reviews are recorded and [owner written/source acceptance of Batches 1–6](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7200681167) is recorded. Current visual/privacy/caption/alt approval remains outstanding; [Batch 7 reconciliation and proposed capture packs](../../../development-guide/Milestone-01-Batch-7-Review.md) await independent review and owner acceptance. Capture scope and method need separate authorisation. Current supported-upgrade and complete-volume restoration acceptance remain outstanding. [Sources, historical evidence, limitations and screenshots](../../../development-guide/Milestone-01-Batch-6-Review.md).
+> **Draft v2.2 — Unreleased.** v2.1 remains the published release. These instructions describe v2.2.
 
 Choose the procedure for the installation you already have.
 
@@ -12,14 +10,9 @@ Choose the procedure for the installation you already have.
 | An existing Caffoot Lite v2.1 Docker installation | Follow [Upgrade a v2.1 Docker installation](#upgrade-a-v21-docker-installation). The application upgrades the existing SQLite database on startup. |
 | A Docker installation that needs recovery | Use your external backup tooling and [restore the complete installation with its matching image](#restore-a-complete-installation). A standalone inventory JSON file cannot recover a Docker installation. |
 
-## Evidence And Version Boundaries
+## Version And Recovery Limits
 
-| Evidence state | What it establishes |
-| --- | --- |
-| **Source-inspected behaviour** | The current schema-31 source implements migrations, protected one-way inventory import, private persistent storage and the safeguards described here. Reading source is not a successful installation/upgrade/recovery test. |
-| **Historically verified procedures** | The [historical verification table](../../../development-guide/Milestone-01-Batch-6-Review.md#historical-verification--version-specific) gives exact revisions and schemas: earlier schema 7→10, 10→11, 10→28 and 10/28→29 exercises, plus focused schema-30/31 evidence. The Stage 1 rehearsal guide targets schema 12; its test instructions must not be mistaken for a new schema-31 run. |
-| **Current unreleased draft instructions** | This guide and [Installation](Installation.md) explain later authorised isolated review work. No deployment, upgrade, backup or restoration was performed for this documentation checkpoint. |
-| **Outstanding acceptance** | Current supported upgrade and complete-volume restoration, native/private installation verification, independent security audit #443, desktop visuals and release approval remain separate. An untested backup has not been proved recoverable. |
+v2.2 is unreleased. Use the upgrade and recovery procedures below only on a separately authorised isolated copy. A supported production v2.1 → v2.2 upgrade and complete-volume recovery for the current v2.2 candidate have not been established. Keep production on the published release and retain its matching image and complete backup. An untested backup has not been proved recoverable.
 
 ## Import Legacy Inventory
 
@@ -60,8 +53,6 @@ If the reviewed backup changes or omits any protected Device, Caffoot Lite rejec
 
 *Both conflicts appear in the same rejection. Keep the original backup and review the file and mounting choices before starting again.*
 
-See the [desktop and mobile rejection captures in light and dark modes](../../../development-handovers/evidence/stage-6-2/README.md#protected-import-rejection-captures).
-
 | What you see | What to check |
 | --- | --- |
 | **Import v1.3.3 Inventory** is unavailable | Confirm the session belongs to an active MFA-enrolled Administrator and that Devices, IPAM and Racks are enabled. |
@@ -69,13 +60,11 @@ See the [desktop and mobile rejection captures in light and dark modes](../../..
 | A protected Device is changed or missing | Use the list in the rejection dialog to check that you chose the intended backup and, where applicable, the correct mounting choices. Proceed only if the reviewed backup leaves every listed Device identical. If the only copy conflicts, stop and keep the current installation and the original export. |
 | The review expires, you sign out or the application restarts | Choose the file again and repeat the review. Reviews are temporary and specific to your session. |
 
-The screenshots use fictional inventory captured in the working application. See the [Stage 6.2 evidence record](../../../development-handovers/evidence/stage-6-2/README.md) for source revisions and checked scenarios.
-
 ## Upgrade A v2.1 Docker Installation
 
-The current authorised application baseline uses **schema 31**; published v2.1 uses **schema 10**. Source applies pending numbered migrations on startup and rejects a database newer than the image understands. A historical supported-path rehearsal is not final acceptance of this current candidate.
+The v2.2 candidate uses **schema 31**; published v2.1 uses **schema 10**. The application applies pending numbered migrations on startup and rejects a database newer than the image understands.
 
-The Stage 6.2 rehearsal reached schema 28 from schema 10 on a disposable copy. Stage 6.4 later rehearsed schema 10 and populated schema 28 to schema 29, preserving original Device, assignment, stock issue, accessory and ticket references while recording equal Department relationships separately. Schema 30 adds temporary-password change state/proofs; schema 31 adds account-specific ticket read receipts. Existing ticket messages are not automatically marked read. The current startup also reconciles Left Company linked logins without another schema number. A protected inventory import still requires matching saved Device records for equipment with retained relationships.
+Schema 30 adds temporary-password change state; schema 31 adds account-specific ticket read receipts. Existing ticket messages are not automatically marked read. Startup also reconciles Left Company linked logins without another schema number. A protected inventory import still requires matching saved Device records for equipment with retained relationships.
 
 For any separately authorised isolated upgrade, first identify the original image, architecture, schema, actual project/mount and complete private configuration. Confirm the intended source-to-target path, make a complete stopped pre-upgrade backup and retain its matching image. Keep that archive separate from the upgrade copy. Historical schema-28/29 recovery copies require their own matching images; current schema-31 copies require the corresponding current image. See [Back Up A Complete Installation](#back-up-a-complete-installation). Keep production on its separately approved published version; no production v2.2 upgrade procedure or release is approved here.
 
@@ -95,15 +84,15 @@ Follow [Back up a complete installation](#back-up-a-complete-installation) while
 2. Before starting, preserve its original snapshot/image and ensure copied SMTP cannot send unintended real alerts. Choose the organisation's correct IANA `TZ` and retain the saved earlier settings. Keep the test stack's existing `/data` mapping and working HTTPS/network settings when you replace the image. For Portainer, edit the existing test stack and replace its image reference. For Compose, change the image in the existing test definition and recreate the service in the same project. Confirm the volume mapping before starting. The application applies pending migrations on startup. Configuration/TLS failures can occur after database initialisation; failed health or startup does not establish that the database stayed on its old schema.
 3. Check that the instance becomes healthy and that it still presents the trusted certificate. Sign in using an authorised test account. On the v2.1 upgrade, earlier migrations end existing sessions and revoke affected outstanding email proofs. Legacy Readers and other active accounts moved to **IT Staff** may need to enrol an authenticator, even if their inventory access remains **No Access**. Existing authenticator details are retained. See [Roles, Section Permissions And MFA](Roles-Section-Permissions-and-MFA.md#what-an-existing-account-may-show-after-upgrade).
 4. Verify representative Devices, linked IPAM and Racks records, preferences and Audit Trail entries. Check a saved profile, existing Read and Edit access, Administrator sign-in and private email settings. For a populated v2.2 review source, compare Department assignments, original stock recipients and quantities, associated equipment, ticket visibility and attachments. The upgrade preserves established effective access under its migration rules while applying the new MFA requirements and historical accessory restriction above. Verify actual roles and individual overrides rather than relying on job titles. Check protected Left Company status and retained-disabled login behaviour, pending temporary-password changes, current-custody/Department boundaries, internal notes, attachment bytes and independent unread receipts with representative authorised and unauthorised accounts.
-5. Recreate the isolated container again against the same mount and repeat the health, sign-in and sample record checks. Historical rehearsals checked SQLite integrity, foreign keys and unchanged rows on repeat startup; those results belong to their recorded revisions/schemas. For the current candidate, expected schema 31, integrity/foreign keys, matched record/file comparisons and repeat-start verification still need separately authorised acceptance evidence. If startup fails or records/permissions differ unexpectedly, stop and preserve the upgraded copy and logs privately for investigation. Do not repeatedly restart under different images, edit schema/security flags, bypass a last-administrator conflict or treat an empty database as a successful upgrade. Revert only with the complete matching pre-upgrade snapshot/image procedure below.
+5. Recreate the isolated container again against the same mount and repeat the health, sign-in and sample record checks. Check the expected schema 31, SQLite integrity and foreign keys, and compare records and files with the pre-upgrade copy. If startup fails or records/permissions differ unexpectedly, stop and preserve the upgraded copy and logs privately for investigation. Do not repeatedly restart under different images, edit schema/security flags, bypass a last-administrator conflict or treat an empty database as a successful upgrade. Revert only with the complete matching pre-upgrade snapshot/image procedure below.
 
 ### Left Company Linked Login Reconciliation
 
-The native acceptance correction build retains schema 31. On startup it checks for existing inactive/Left Company Staff with enabled linked logins. Within the upgrade transaction, it disables those logins and revokes their sessions, email verification/recovery proofs and temporary-password change proofs. Staff identities, assignments, equipment custody, tickets, MFA enrolment and historical records are retained. A new Audit Trail event identifies **Application upgrade** as the actor; original events remain unchanged. Repeated startup does not add duplicate reconciliation events.
+The v2.2 application retains schema 31. On startup it checks for existing inactive/Left Company Staff with enabled linked logins. Within the upgrade transaction, it disables those logins and revokes their sessions, email verification/recovery proofs and temporary-password change proofs. Staff identities, assignments, equipment custody, tickets, MFA enrolment and historical records are retained. A new Audit Trail event identifies **Application upgrade** as the actor; original events remain unchanged. Repeated startup does not add duplicate reconciliation events.
 
-If the affected accounts include every active administrator, startup stops with an explicit last-active-administrator conflict and rolls back the transaction. Keep the complete pre-upgrade backup and matching image. Report the conflict to the product owner for an approved resolution; do not edit database flags or bypass the safeguard. No running installation or private customer data was reconciled as part of development verification.
+If the affected accounts include every active administrator, startup stops with an explicit last-active-administrator conflict and rolls back the transaction. Keep the complete pre-upgrade backup and matching image. Report the conflict to the product owner for an approved resolution; do not edit database flags or bypass the safeguard.
 
-Reactivation later leaves the login disabled. An administrator must first reactivate Staff and then explicitly use **Enable Login** after reviewing access. See [Staff lifecycle](Staff-Members.md#mark-as-left-company-or-reactivate). This isolated development check does not complete the outstanding supported-upgrade, complete-volume backup/restore, native or publication gates.
+Reactivation later leaves the login disabled. An administrator must first reactivate Staff and then explicitly use **Enable Login** after reviewing access. See [Staff lifecycle](Staff-Members.md#mark-as-left-company-or-reactivate).
 
 ### Roll Back Using The Complete Pre-Upgrade Backup
 
@@ -113,7 +102,7 @@ Reactivation later leaves the login disabled. An administrator must first reacti
 
 ## Back Up A Complete Installation
 
-Use trusted external host/volume backup tooling selected for your installation. Caffoot Lite provides no full-installation recovery export through the browser. The following is a source-supported stopped-volume procedure and current draft guidance; historical restoration evidence does not certify your backup or current release recovery. An unreadable, incomplete or untested archive has not been proved recoverable.
+Use trusted external host/volume backup tooling selected for your installation. Caffoot Lite provides no full-installation recovery export through the browser. This draft stopped-volume procedure does not establish successful recovery for your installation. An unreadable, incomplete or untested archive has not been proved recoverable.
 
 1. Record the exact running image digest or revision and architecture, your Compose project or Portainer stack, and the actual mount at `/data`. In Compose, inspect the running service container's mounts. In Portainer, check the container's mount details and **Volumes**. For Docker-managed storage, use the actual named volume, including any project prefix. For a bind mount, use the exact host directory shown as the mount source.
 2. Save the stack definition and its private environment and secrets separately from `/data`. Include the web origin, server address, published port and any configured `TZ`. Retain access to the exact matching image. If TLS terminates at a separate reverse proxy, preserve its configuration and credentials separately.
@@ -123,7 +112,7 @@ Use trusted external host/volume backup tooling selected for your installation. 
 
 ## Restore A Complete Installation
 
-This is draft administrator guidance for a separately authorised recovery, not a claim that current schema-31 complete-volume restoration has passed. Protect the original backup and source. Recovering a snapshot returns to its capture time; later changes are absent unless separately preserved and supported recovery is established. Do not improvise a merge between old and upgraded databases.
+This is draft administrator guidance for a separately authorised recovery, current schema-31 complete-volume recovery has not been established. Protect the original backup and source. Recovering a snapshot returns to its capture time; later changes are absent unless separately preserved and supported recovery is established. Do not improvise a merge between old and upgraded databases.
 
 1. Create a new, isolated target. Confirm its container is stopped and its `/data` mapping is a new empty volume or a new empty bind directory. Check the mapping before extracting. Keep the source and earlier recovery copies available.
 2. Extract with the external tool, restoring all paths, numeric ownership and modes. Make sure the application user `10001:10001` inside the container can read and write its data and traverse the mount. For a standard rootful bind mount, an administrator can prepare a new directory with `sudo install -d -m 0750 -o 10001 -g 10001 /path/to/new-data` before restoring. For rootless Docker or user namespace remapping, check the ownership as seen inside a container using that mapping. The host IDs can differ. Preserve restrictive modes on private files.
@@ -131,7 +120,7 @@ This is draft administrator guidance for a separately authorised recovery, not a
 4. Start the target and check HTTPS health, sign-in and MFA, the expected account permissions and representative data. For example, check a saved rack position, a Department assignment, a Service Desk closure and an authorised attachment download. Check that an unrelated account cannot read that ticket. Verify settings and the expected optional-feature choices. Keep any test mail on an isolated receiver.
 5. Restart or recreate the target with the same mount and repeat the checks. If the application opens first-run setup, stop and verify the mount and archive layout. If it reports a permissions error, compare the mount ownership and modes inside the container with those saved. If the schema is newer than the image understands, stop and select the image recorded for that backup.
 
-The [Stage 6.3 recovery record](../../../development-handovers/evidence/stage-6-3/README.md) covers a **historical schema-28** disposable AMD64 Docker Compose restore and matching-image schema-10 rollback; the later [Stage 6.4 evidence](../../../development-handovers/evidence/stage-6-4/README.md) covers its schema-29 exercise. Neither completes current schema-31 supported-upgrade or complete-volume restoration acceptance. The [Stage 6.2 evidence](../../../development-handovers/evidence/stage-6-2/README.md) covers the separate schema upgrade. Test your own off-host backup tooling and installation recovery before relying on it.
+Verify your own off-host backup tooling and isolated matching-image recovery before relying on a backup.
 
 ### Recovery Problems To Investigate
 

@@ -1,12 +1,6 @@
 # IT Assets: Issue, Return And Write Off
 
-> **Current status — 27 November 2026:** Batches 7C, 7D and 7E have separate owner draft-evidence acceptance (41/36/25 new paths; 102 combined; 7E has 23 distinct image contents). Original captures, provenance and requirement mappings remain unchanged; accepted instructions retain the approved merged corrections. Batch 8 editorial findings and publication approval remain outstanding. The exact approved application baseline is now `0251b43a3b5d41d626aa022c6d7f9b4d860433da`, schema 31. 7F/7G are authorised but blocked here by unavailable retained fixtures; no new pack has been delivered. [Current reconciliation and retained editorial limits](../../../development-guide/Milestone-01-7F-7G-Reconciliation.md). Earlier capture-time status notices are historical; publication remains unauthorised.
-
-> **Current Batch 7D capture status — 27 November 2026:** [New desktop light illustrations](screenshots/batch-7d/README.md) use the approved merged schema-31 baseline. Independent ChatGPT review and separate owner visual/privacy/caption/alt acceptance remain pending. Earlier written/source and capture-status paragraphs retain their dated scope; the current pack status controls these new images. Published v2.1 and targeted correction-refresh requirements remain unchanged.
-
-> **Draft v2.2 — Unreleased.** These instructions describe the implementation on `milestone-1` at the application baseline identified below. v2.1 remains the published release. Use these feature instructions on an authorised development or acceptance instance; they are not installation, upgrade or restore instructions.
-
-> **Written/source reconciliation:** Batch 4, application baseline `fdc677920bfc52f48f641b3d6d1344c902a6a9b0` (schema 31). Focused independent reviews are recorded and [owner written/source acceptance of Batches 1–6](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7200681167) is recorded. Current visual/privacy/caption/alt approval remains outstanding; [Batch 7 reconciliation and proposed capture packs](../../../development-guide/Milestone-01-Batch-7-Review.md) await independent review and owner acceptance. Capture scope and method need separate authorisation. Desktop capture remains deferred; existing images retain their original provenance and are not certified current by this pass. [Source review and exact screenshot requirements](../../../development-guide/Milestone-01-Batch-4-Review.md).
+> **Draft v2.2 — Unreleased.** v2.1 remains the published release. These instructions describe v2.2.
 
 Use IT Assets to record who has equipment, what has physically returned and which items can safely be issued again. An issue reduces available stock; a genuine return records what came back; preparation confirms which returned items are ready; a write-off records equipment that must leave usable inventory. Each action keeps the original equipment identity and a permanent movement record.
 
@@ -84,6 +78,18 @@ The Department holds one shared allocation of eight. Its ten Staff Members do no
 
 **Cancel** leaves an unsaved form without issuing equipment. Where a discard prompt appears, choose **Keep Editing** to retain your entries or confirm discarding them. In the final confirmation, **Back To Edit** restores the same form values; it is the route to check dates, notes or selections before saving.
 
+![Issue Equipment draft with eight keyboards, Alex Morgan and the original issue date.](screenshots/batch-7d/quantity-issue-draft.png)
+
+*Eight of ten Ready units are proposed for Alex from a separate twenty-keyboard demonstration receipt. Nothing is issued until the confirmation succeeds.*
+
+![Confirm Issue Equipment summary for eight Correction Training Keyboards to Alex, with Back To Edit and Confirm Issue.](screenshots/batch-7d/quantity-issue-confirmation.png)
+
+*Confirm Issue Equipment retains the exact equipment, quantity and recipient. Back To Edit returns to the draft; Cancel records no issue.*
+
+![Issue Equipment with the individual mouse serial/asset identity and Sarah as proposed recipient.](screenshots/batch-7d/individual-issue-selection.png)
+
+*An individually tracked mouse is selected by its own identity. This draft is cancelled, so it does not add another issue to the connected journey.*
+
 ## Return Equipment
 
 1. Open **Return Equipment**. In **Select Issued Equipment**, select the original outstanding issue. Check its original issue date, recipient and outstanding quantity. An authorised **Return Equipment** link on Staff/Department equipment preselects that issue.
@@ -120,7 +126,7 @@ The same canonical Device remains in Devices. Its original assignment closes per
 
 ### Return A Currently Unassigned Device
 
-[Changed-screen evidence and review status](../../../development-handovers/evidence/unassigned-device-return/Report.md#changed-screen-gallery--awaiting-owner-visual-acceptance).
+.
 
 1. Open the existing **Device Details → Assigned To** tab for the actual physical Device.
 2. Choose **Return Equipment**. Both Devices Edit and IT Assets Edit are required, with their features enabled. The Device must be physical, currently unassigned and have no previous stock movements. Existing issued/assigned equipment keeps its original return route; held, prepared or written-off equipment cannot be returned again.
@@ -147,6 +153,18 @@ Operational Status, IP, Rack, Location and existing history remain unchanged.
 Disabling IT Assets retains the existing Devices-only controls and denies stock
 returns without changing saved stock or Device records.
 
+![Return form for AST-LAP-014 from Alex, one returned and zero Ready or damaged.](screenshots/batch-7d/canonical-device-return.png)
+
+*The laptop’s real physical return closes Alex’s original custody and enters Awaiting Preparation with Ready zero. It is not a mere unassignment.*
+
+![Return Equipment showing five returned, three Ready, two damaged, reason and outstanding remainder.](screenshots/batch-7d/partial-return-five-three-two.png)
+
+*Return five against the original issue: three checked Ready and two damaged/written off. The other three stay outstanding with Alex. This is the unsaved disposition.*
+
+![Fixed unassigned Device return with physical-return statement and Date Returned cannot be in the future rejection.](screenshots/batch-7d/unassigned-return-physical-protection.png)
+
+*This existing unassigned Device has no recorded issue to close. Its fixed one-unit physical return would enter Awaiting Preparation; a future return is rejected and records nothing.*
+
 ## Prepare Returned Equipment
 
 In **Stock Inventory**, choose the item's **View / Update**, then **Prepare Returned Equipment**. For a returned managed Device, use **View / Update** under **Registered Devices In Stock History**.
@@ -167,6 +185,14 @@ In **Stock Inventory**, choose the item's **View / Update**, then **Prepare Retu
 If the applicable preparation has not been completed and confirmed, leave the equipment Awaiting Preparation.
 
 The original receipt-readiness controls cannot bypass returned-equipment checks. Receipt guidance remains in [Receive Stock And Stock Inventory](IT-Assets-Stock-Intake.md).
+
+![Prepare Returned Equipment for AST-LAP-014 with working and data-preparation checks confirmed.](screenshots/batch-7d/returned-device-preparation.png)
+
+*The original laptop is checked working and its data wiped/reset before becoming Ready. Preparation changes readiness without adding another held unit or new Device.*
+
+![Laptop stock readiness editor showing one unregistered Ready unit, one returned registered unit and the registered-Device readiness safeguard.](screenshots/batch-7c/returned-device-readiness-protection.png)
+
+*The returned registered Device cannot be made Ready by increasing the stock item’s receipt-readiness total. Its own Prepare Returned Equipment checks are required; this out-of-range draft is discarded.*
 
 ## Write Off Equipment
 
@@ -191,6 +217,14 @@ Write-off history is permanent. A genuine write-off has no general reactivation 
 
 For one missing mouse from an outstanding quantity of three, the result is two still outstanding and one written off. Physically Held and Ready do not increase: the missing mouse never came back. A physically returned broken mouse follows the return-and-damage procedure instead. See [Associated Equipment](Associated-Equipment.md) for a complete leaving-day handover example.
 
+![AST-LAP-014 return from Sarah with one damaged/write-off unit, zero Ready and a factual fictional reason.](screenshots/batch-7d/damaged-canonical-return.png)
+
+*AST-LAP-014 physically returns damaged: returned one, Ready zero and damaged/write-off one. This actual return/disposition closes Sarah’s custody and adds no usable held laptop; a genuinely missing Device would use the separate Write Off route.*
+
+![Retired AST-LAP-014 Assigned To with closed Alex and Sarah assignments and retained return/preparation/write-off movements.](screenshots/batch-7d/final-canonical-custody-history.png)
+
+*The final Retired Device keeps its identity and Alex/Sarah history. Physical return, damaged write-off and operational Retired are distinct recorded facts; nothing was deleted or generally reactivated.*
+
 ## Read Stock And Equipment History
 
 **Stock Inventory** distinguishes Physically Held, Ready, Awaiting Checks, Awaiting Preparation, Currently Issued and Written Off. Physically Held includes awaiting equipment; it excludes issued and written-off quantities. Registered Devices retain their own identities in a separate table.
@@ -211,6 +245,10 @@ With independent access, Staff/Department equipment shows actual outstanding Ass
 
 All issue/return/preparation/write-off quantities are whole units: positive for an actual movement, zero allowed for optional Ready/damaged dispositions, and no more than the relevant current balance. Ready plus damaged cannot exceed returned. Notes and mandatory reasons allow up to 2,000 characters. Blank mandatory reasons, insufficient checks, excessive quantities, duplicate units, stale versions, ended sessions and revoked permissions reject the operation. For partial returns, check the outstanding remainder before closing the form. Returning or writing off a Device leaves its accessory issues outstanding until resolved separately.
 
+![Movement History with original receipt twenty, effective ten and appended reasoned correction records.](screenshots/batch-7d/correction-attributed-history.png)
+
+*The original twenty-unit receipt and both attributed corrections remain. Its effective quantity is ten; prior issue/return facts and physical Device identities are preserved.*
+
 ## Troubleshooting And Recovery
 
 | What You See | What To Check Or Do |
@@ -228,64 +266,10 @@ All issue/return/preparation/write-off quantities are whole units: positive for 
 
 Cancelling affects the current unsaved form. It does not reverse a return, write-off or other action already saved separately. Notes and history remain subject to their access permissions; ordinary **My Equipment** viewers receive only their safe personal/shared equipment view, not this stock administration interface.
 
-## Related Guides And Review Items
+## Related Guides
 
 [Receive Stock And Stock Inventory](IT-Assets-Stock-Intake.md) · [Device Registration And Reissue](Device-Stock-Registration-and-Reissue.md) · [Associated Equipment And Direct Handover](Associated-Equipment.md) · [Correct Stock Movement](IT-Assets-Correct-Movement.md) · [IT Assets Overview And Low Stock](IT-Assets-Dashboard.md).
 
-Genuine development screenshots are retained in the linked evidence reports. Approval of a functional preview alone does not make it an approved application screenshot. The [documentation review items](../../../development-guide/Stage-1-3-Documentation-Review.md) record image and remaining manual acceptance requirements. No production upgrade, backup or restore acceptance is claimed here.
-
-![Mobile dark Return Equipment form for an unassigned fictional device](../../../development-handovers/evidence/stage-6-6-batch-3/screenshots/stock-unassigned-return-dark-390.png)
-
-More current examples show [writing off an issued device in mobile dark](../../../development-handovers/evidence/stage-6-6-batch-3/screenshots/stock-issued-writeoff-dark-390.png) and [reviewing Movement History in desktop light](../../../development-handovers/evidence/stage-6-6-batch-3/screenshots/stock-movement-history-light-1440.png).
-
-[Implementation And Screenshots](../../../development-handovers/evidence/stock-circulation/Report.md) · [Roles And MFA](Roles-Section-Permissions-and-MFA.md) · [← Draft v2.2 Guides](README.md) · [Published v2.1 Guides](../README.md)
+ · [Roles And MFA](Roles-Section-Permissions-and-MFA.md) · [← Draft v2.2 Guides](README.md) · [Published v2.1 Guides](../README.md)
 
 [Connected example: a laptop from Supplier and stock to its final write-off](Connected-Equipment-Journey.md).
-
-## Batch 7D Desktop Illustrations
-
-These images follow the fictional training journey. Read the caption to distinguish a draft, a cancelled preview and a saved outcome. [Complete original coverage and limits](screenshots/batch-7d/Coverage.md).
-
-![Return form for AST-LAP-014 from Alex, one returned and zero Ready or damaged.](screenshots/batch-7d/canonical-device-return.png)
-
-*Draft v2.2 — The laptop’s real physical return closes Alex’s original custody and enters Awaiting Preparation with Ready zero. It is not a mere unassignment. Independent review and owner visual acceptance pending.*
-
-![Prepare Returned Equipment for AST-LAP-014 with working and data-preparation checks confirmed.](screenshots/batch-7d/returned-device-preparation.png)
-
-*Draft v2.2 — The original laptop is checked working and its data wiped/reset before becoming Ready. Preparation changes readiness without adding another held unit or new Device. Independent review and owner visual acceptance pending.*
-
-![Issue Equipment draft with eight keyboards, Alex Morgan and the original issue date.](screenshots/batch-7d/quantity-issue-draft.png)
-
-*Draft v2.2 — Eight of ten Ready units are proposed for Alex from a separate twenty-keyboard demonstration receipt. Nothing is issued until the confirmation succeeds. Independent review and owner visual acceptance pending.*
-
-![Confirm Issue Equipment summary for eight Correction Training Keyboards to Alex, with Back To Edit and Confirm Issue.](screenshots/batch-7d/quantity-issue-confirmation.png)
-
-*Draft v2.2 — Confirm Issue Equipment retains the exact equipment, quantity and recipient. Back To Edit returns to the draft; Cancel records no issue. Independent review and owner visual acceptance pending.*
-
-![Return Equipment showing five returned, three Ready, two damaged, reason and outstanding remainder.](screenshots/batch-7d/partial-return-five-three-two.png)
-
-*Draft v2.2 — Return five against the original issue: three checked Ready and two damaged/written off. The other three stay outstanding with Alex. This is the unsaved disposition. Independent review and owner visual acceptance pending.*
-
-![Issue Equipment with the individual mouse serial/asset identity and Sarah as proposed recipient.](screenshots/batch-7d/individual-issue-selection.png)
-
-*Draft v2.2 — An individually tracked mouse is selected by its own identity. This draft is cancelled, so it does not add another issue to the connected journey. Independent review and owner visual acceptance pending.*
-
-![Movement History with original receipt twenty, effective ten and appended reasoned correction records.](screenshots/batch-7d/correction-attributed-history.png)
-
-*Draft v2.2 — The original twenty-unit receipt and both attributed corrections remain. Its effective quantity is ten; prior issue/return facts and physical Device identities are preserved. Independent review and owner visual acceptance pending.*
-
-![Fixed unassigned Device return with physical-return statement and Date Returned cannot be in the future rejection.](screenshots/batch-7d/unassigned-return-physical-protection.png)
-
-*Draft v2.2 — This existing unassigned Device has no recorded issue to close. Its fixed one-unit physical return would enter Awaiting Preparation; a future return is rejected and records nothing. Independent review and owner visual acceptance pending.*
-
-![AST-LAP-014 return from Sarah with one damaged/write-off unit, zero Ready and a factual fictional reason.](screenshots/batch-7d/damaged-canonical-return.png)
-
-*Draft v2.2 — AST-LAP-014 physically returns damaged: returned one, Ready zero and damaged/write-off one. This actual return/disposition closes Sarah’s custody and adds no usable held laptop; a genuinely missing Device would use the separate Write Off route. Independent review and owner visual acceptance pending.*
-
-![Retired AST-LAP-014 Assigned To with closed Alex and Sarah assignments and retained return/preparation/write-off movements.](screenshots/batch-7d/final-canonical-custody-history.png)
-
-*Draft v2.2 — The final Retired Device keeps its identity and Alex/Sarah history. Physical return, damaged write-off and operational Retired are distinct recorded facts; nothing was deleted or generally reactivated. Independent review and owner visual acceptance pending.*
-
-![Laptop stock readiness editor showing one unregistered Ready unit, one returned registered unit and the registered-Device readiness safeguard.](screenshots/batch-7c/returned-device-readiness-protection.png)
-
-*Draft v2.2 — The returned registered Device cannot be made Ready by increasing the stock item’s receipt-readiness total. Its own Prepare Returned Equipment checks are required; this out-of-range draft is discarded. Independent review and owner visual acceptance pending.*

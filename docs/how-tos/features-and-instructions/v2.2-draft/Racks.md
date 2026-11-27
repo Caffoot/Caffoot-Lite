@@ -1,10 +1,8 @@
 # Network Racks — Enclosures, Elevations And Equipment Placement
 
+> **Draft v2.2 — Unreleased.** v2.1 remains the published release. These instructions describe v2.2.
+
 [← Draft v2.2 Guides](README.md)
-
-> **Draft v2.2 — Unreleased.** Reconciled against `fdc677920bfc52f48f641b3d6d1344c902a6a9b0` (schema 31), 26 November 2026. These instructions build on the preserved [published v2.1 guide](https://github.com/Caffoot/Caffoot-Lite/blob/c3237114108cad9f7d4e57657b6aed5e0091a5ef/docs/how-tos/features-and-instructions/Racks.md). Batch 7A desktop illustrations below are owner visually accepted; publication and final release acceptance remain separate; see the [Batch 2 review record](../../../development-guide/Milestone-01-Batch-2-Review.md). Examples are fictional.
-
-> **Documentation status — 27 November 2026:** Batches 1–6 written/source work and Batch 7.1/bounded 7.2 are owner accepted. [Batch 7A](screenshots/batch-7a/README.md) has 38 independently reviewed and owner visually accepted desktop light-theme images, final 38/40. The native disable confirmation has an explicitly accepted written substitution. No publication or application acceptance is implied.
 
 ## What Network Racks Records
 
@@ -43,15 +41,15 @@ Network Racks can be used without IPAM, or independently for enclosure/accessory
 
 ![Read-only Rack Inventory with Training Rack, its 12U height, Training Equipment Room, 5 occupied numbered U, two mounted Devices and four accessories.](screenshots/batch-7a/racks-inventory.png)
 
-*Draft v2.2 — Rack Inventory records enclosure dimensions and occupied numbered U across both faces. Owner visually accepted; publication remains separate.*
+*Rack Inventory records enclosure dimensions and occupied numbered U across both faces.*
 
 ![Read-only Training Rack Front elevation showing training-switch-01 at U10, training-host-01 at U7–U8 and two shelves.](screenshots/batch-7a/racks-front-read-only.png)
 
-*Draft v2.2 — Front elevation under Racks Read: inspect saved equipment and capacity without placement or drag controls. Owner visually accepted; publication remains separate.*
+*Front elevation under Racks Read: inspect saved equipment and capacity without placement or drag controls.*
 
 ![Read-only Training Rack Rear elevation with Training Patch Panel at U10 and Training Rear PDU on the right 0U rail.](screenshots/batch-7a/racks-rear-read-only.png)
 
-*Draft v2.2 — Rear elevation shows the patch panel and Right 0U PDU; left and right are viewed from the selected face. Owner visually accepted; publication remains separate.*
+*Rear elevation shows the patch panel and Right 0U PDU; left and right are viewed from the selected face.*
 
 ## Worked Example: Create A Training Rack
 
@@ -68,7 +66,7 @@ Creating a Rack from within a Device draft saves that enclosure independently. R
 
 ![Add Network Rack Enclosure form with Training Expansion Rack, Training Equipment Room, Wall-mounted cabinet, 12U and 600 mm width and depth.](screenshots/batch-7a/racks-enclosure-form.png)
 
-*Draft v2.2 — The enclosure form records measured physical dimensions. This new Training Expansion Rack draft is unsaved. Owner visually accepted; publication remains separate.*
+*The enclosure form records measured physical dimensions. This new Training Expansion Rack draft is unsaved.*
 
 ## Place An Existing Rack-Mounted Device
 
@@ -85,18 +83,18 @@ A Rack placement obtains the existing Device edit reservation and checks its rev
 
 ![Place Device / Horizontal Accessory at U11 with training-switch-01, Front, Start U11 and read-only height 1U.](screenshots/batch-7a/racks-device-placement.png)
 
-*Draft v2.2 — Place an existing Device at a free Front position. Its recorded 1U height is read-only in this form; the proposed move is unsaved. Owner visually accepted; publication remains separate.*
+*Place an existing Device at a free Front position. Its recorded 1U height is read-only in this form; the proposed move is unsaved.*
 
 ![Horizontal Accessory form with height 12U, no available Start U positions and No available positions for this type, height and face warning.](screenshots/batch-7a/racks-collision-warning.png)
 
-*Draft v2.2 — A 12U horizontal accessory cannot fit on the occupied Front face. The form offers no valid Start U and warns before saving. Owner visually accepted; publication remains separate.*
+*A 12U horizontal accessory cannot fit on the occupied Front face. The form offers no valid Start U and warns before saving.*
 
 ## Move Or Remove A Device From A Rack
 
 1. In Rack View, use the mounted item's **Edit placement** action to choose another offered face/start position and save with **Mount Device**. Check the result before making another change. Cancel leaves the prior position.
 2. Alternatively drag a mounted Device to a new valid U position. Review the footprint/target preview before dropping. A drop is a save action; there is no later page-wide Save. Invalid or colliding targets are rejected with the original position retained.
 3. For another rack, use **Device Details → Edit device → General → Mounting & Rack Configuration** with Devices Edit and Racks Edit to select the destination rack, face, start U and height, then **Save Device**. Check the actual location separately. Do not use **Remove from rack** as a shortcut to the destination's placement chooser: unmounting sets the mounting value to Desktop, which is ineligible for that chooser. If already unmounted, restore an eligible **Rack Mounted** configuration and select the destination rack and position together in the Device editor.
-4. **Remove from rack** removes the current placement immediately when permitted; it has no separate confirmation dialog in this implementation. Check the named item before using it. It clears the active rack/U position and uses the existing Desktop mounting value while preserving Location Area. It does not delete the Device, release its IP, end custody or physically move equipment.
+4. **Remove from rack** removes the current placement immediately when permitted; it has no separate confirmation dialog in Caffoot Lite. Check the named item before using it. It clears the active rack/U position and uses the existing Desktop mounting value while preserving Location Area. It does not delete the Device, release its IP, end custody or physically move equipment.
 
 If removal is rejected by type/mounting validation or a protected relationship, keep the record and use the Device editor to choose a valid type-appropriate non-Rack mounting method with the required permissions. A Retired status alone does not unmount a Device. Do not delete or duplicate equipment to bypass placement validation.
 
@@ -112,7 +110,7 @@ If removal is rejected by type/mounting validation or a protected relationship, 
 
 ![Horizontal Accessory placement for Training Additional Patch Panel at Front U1, height 1U and 24 patch-panel ports.](screenshots/batch-7a/racks-accessory-placement.png)
 
-*Draft v2.2 — A horizontal patch panel uses central U space on the selected face; this placement is an unsaved draft. Owner visually accepted; publication remains separate.*
+*A horizontal patch panel uses central U space on the selected face; this placement is an unsaved draft.*
 
 ## Add And Maintain Vertical 0U Accessories
 
@@ -137,7 +135,7 @@ A separately saved shelf remains if you cancel the Device draft. **Duplicate** c
 
 ![Read-only Location tab for training-printer-01 showing Tabletop / Shelf Mounted and Training Rack, Shelf U3, Front.](screenshots/batch-7a/devices-details-shelf-location.png)
 
-*Draft v2.2 — The saved printer derives its Front U3 location from Training Printer Shelf; it occupies no separate U footprint. Owner visually accepted; publication remains separate.*
+*The saved printer derives its Front U3 location from Training Printer Shelf; it occupies no separate U footprint.*
 
 ### Remove A Shelf That Holds Devices
 
@@ -151,7 +149,7 @@ The server rechecks the exact shelf preview, full linked-Device set, revisions, 
 
 ![Remove Rack Shelf review for training-printer-01 with reassignment to Training Rack Shelf U5 selected and Confirm Shelf Removal available.](screenshots/batch-7a/racks-shelf-removal-review.png)
 
-*Draft v2.2 — Review the replacement shelf for training-printer-01 before removing its current shelf; no removal has been confirmed. Owner visually accepted; publication remains separate.*
+*Review the replacement shelf for training-printer-01 before removing its current shelf; no removal has been confirmed.*
 
 ## Edit A Rack Or Correct Its Specifications
 
@@ -164,7 +162,7 @@ Correcting a measurement is different from recording a physically replaced enclo
 
 ![Confirm Rack Specification Correction dialog warning that mounted equipment will not be moved, above the Training Rack correction draft.](screenshots/batch-7a/racks-specification-correction.png)
 
-*Draft v2.2 — Review a proposed width correction from 600 to 650 mm. Mounted equipment will not move; this correction has not been confirmed. Owner visually accepted; publication remains separate.*
+*Review a proposed width correction from 600 to 650 mm. Mounted equipment will not move; this correction has not been confirmed.*
 
 ## Remove An Accessory Or Empty Rack
 
@@ -179,7 +177,7 @@ Correcting a measurement is different from recording a physically replaced enclo
 2. Allow the application's print window if the browser blocks it. The normal flow opens a separate printable view for front and rear elevations, capacity and side-rail equipment, then the browser print dialog.
 3. Choose the printer or the browser's PDF destination, check pagination and paper size, and print/save. Cancel the print dialog to leave inventory unchanged.
 
-Printed records reflect saved data visible to your account at that time. They may include equipment names, rooms and positions, so store/share them with appropriate care. Historical print PDFs and same-tab development trials remain evidence; they are not a promise that another browser has been accepted.
+Printed records reflect saved data visible to your account at that time. They may include equipment names, rooms and positions, so store/share them with appropriate care. Check the print preview before saving or printing, as page layout can vary by browser.
 
 ## Protected Relationships And Troubleshooting
 

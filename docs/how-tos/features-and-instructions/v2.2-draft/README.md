@@ -1,54 +1,22 @@
 # Draft v2.2 User And Administrator Guides
 
-> **Current status — 27 November 2026:** Batches 7C, 7D and 7E have separate owner draft-evidence acceptance (41/36/25 new paths; 102 combined; 7E has 23 distinct image contents). Original captures, provenance and requirement mappings remain unchanged; accepted instructions retain the approved merged corrections. Batch 8 editorial findings and publication approval remain outstanding. The exact approved application baseline is now `0251b43a3b5d41d626aa022c6d7f9b4d860433da`, schema 31. 7F/7G are authorised but blocked here by unavailable retained fixtures; no new pack has been delivered. [Current reconciliation and retained editorial limits](../../../development-guide/Milestone-01-7F-7G-Reconciliation.md). Earlier capture-time status notices are historical; publication remains unauthorised.
+> **Draft v2.2 — Unreleased.** v2.1 remains the published release. These instructions describe v2.2.
 
-## Batch 7E Delivery And Consolidated Stop — 27 November 2026
-
-**22/22 new desktop light images**, plus exact 7C pre-handover reuse and one narrow accepted 7B offboarding reference; all **10 groups / 52 owned states and one shared reference** retained. [Pack/direct images and guides](screenshots/batch-7e/README.md) · [coverage](screenshots/batch-7e/Coverage.md) · [manifest](screenshots/batch-7e/manifest.json) · [verification](screenshots/batch-7e/Verification.md). Counts: My Equipment 4/4, ticket creation/warnings 5/5, ticket navigation 4/4, unread/replies 5/5, custody/membership confidentiality 4/4. The 7B offboarding image is its separate AC-LAP-07 fixture, with original acceptance and limitations; no relabelling as this journey’s current state.
-
-**Combined delivery: 99/100 new images; 54 groups, 286 owned states and seven shared references retained.** Separate remotely verified checkpoints: 7C `a9f607b132edf1125580eb41c27ee9c8eee80902`; 7D `03b4f2c5090a10dc6c0ad66463e4f309a4719796`. 7E follows those successful checkpoints. Original accepted instructions, historical/correction evidence and targeted refresh backlog remain; the new use of earlier illustrations does not certify them as later captures. Routine and unpictured variants have explicit written dispositions, not invented runtime passes.
-
-**Stop here for independent ChatGPT review and separate product-owner visual/privacy/caption/alt acceptance of each pack.** No pack is newly owner-accepted by this delivery. PR #472 remains draft/open/unmerged, #366 open, and v2.1 remains published. No 7F–7H/8, native/upgrade/recovery/export/audit/website work, promotion, merge, release or publication.
-
-## Batch 7D Delivery — 27 November 2026
-
-**36/36 new desktop light images**, with three genuinely matching 7C references; all **21 groups / 114 owned states and one shared reference** retained. [Pack/images](screenshots/batch-7d/README.md) · [coverage](screenshots/batch-7d/Coverage.md) · [manifest](screenshots/batch-7d/manifest.json) · [verification](screenshots/batch-7d/Verification.md). Category counts: Departments 7/7, custody 5/5, circulation 8/8, associations/handover 6/6, corrections 4/4, lifecycle 6/6. Independent review and separate owner visual acceptance remain pending. 7C was separately committed, pushed and remotely verified at `a9f607b132edf1125580eb41c27ee9c8eee80902` before this documentation delivery. Continue to 7E only after this checkpoint succeeds.
-
-## Batch 7C Delivery — 27 November 2026
-
-**41/42 new desktop light images**, plus narrow original RE07/RE08 reuse; all **23 groups / 120 owned states and five shared references** retained. [Pack and direct image links](screenshots/batch-7c/README.md) · [complete coverage](screenshots/batch-7c/Coverage.md) · [provenance](screenshots/batch-7c/manifest.json) · [focused verification](screenshots/batch-7c/Verification.md). Category counts: dashboard 5/6, intake/readiness 7/7, registration/reissue 6/6, Suppliers 8/8, Issues/Purchasing 7/7, integration 8/8. Independent ChatGPT review and separate owner visual/privacy/caption/alt acceptance pending; no publication approval. The original Alex My Equipment frame belongs to the connected 7C journey and will be reused for 7E. Pre-handover fixture preparation preserves later-pack states; undelivered 7D/7E illustrations are not part of this checkpoint. Continue to separately verified 7D under consolidated owner approval after this checkpoint succeeds.
-
-## Current Reconciliation — 27 November 2026
-
-**Batch 7B: 25 new images and three narrow reuse images independently reviewed and owner visually accepted.** [Decision](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7212506766). All 16 groups/79 specifications, original image bytes and provenance remain. Independent review opened all 25 PNGs and matched coverage/alt text, but did not recompute every hash or repeat the complete static suite. Earlier pending/checkpoint wording below is historical.
-
-[Consolidated owner approval](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7217032947) authorises 7C–7E consecutively, with separate committed, pushed and remotely verified checkpoints, then independent review and separate owner visual acceptance for each pack. It supersedes earlier pack-by-pack execution stops only for these three packs. 7F–7H and Batch 8 remain outside scope.
-
-Documentation start `a5426ca6a2262e21530fcf972b3a1d6cc12fc950` reconciled against exact approved merged application baseline `000818f42e854e4a1fee8692b9ffaaa52b5c788d`, schema 31. Both live refs matched; their common ancestor is `fdc677920bfc52f48f641b3d6d1344c902a6a9b0`. Conflicts were overlapping correction material already on the documentation branch: retain its complete accepted instructions, correction evidence and capture provenance. No unmerged correction branch integrated.
-
-Targeted pre-publication refresh backlog remains: correction Batch 1 sign-in, authenticator challenge and mandatory password-change branding; correction Batch 2 older Staff Add/Edit/Create Login/Resolve Difference guidance, virtual Assigned To and clipped-sidebar views where affected. Accepted correction images and original historical bytes remain; no blanket currentness or publication approval. The reported slight fading of some 7B views remains unverified and does not authorise recapture. No refresh captures in this reconciliation.
-
-PR #472 remains draft, open and unmerged; #366 remains open. Native Test 70, upgrades, complete-volume recovery, private exports, audit and release/website gates remain outstanding.
-
-> **Draft v2.2 — Unreleased.** Stage 6.6 Batch 2 adds My Equipment, unread Service Desk replies and readable Audit Trail records in the schema 31 draft candidate. The [Batch 2 verification record](../../../development-handovers/evidence/stage-6-6-batch-2/README.md) lists completed focused checks, application screenshots and remaining acceptance gates. Use the [published v2.1 guides](https://github.com/Caffoot/Caffoot-Lite/tree/v2.1/docs/how-tos/features-and-instructions) for the current release.
-
-Caffoot Lite brings accounts, Staff Members, Departments, Devices and optional IT Assets together so your team can record who holds equipment, what is physically in stock and what is ready to issue. These guides explain workflows for ordinary users, IT technicians and administrators, including Suppliers and Equipment Lifecycle in Stage 4. Examples use fictional people, organisations and equipment.
+Caffoot Lite brings accounts, Staff Members, Departments, Devices and optional IT Assets together so your team can record who holds equipment, what is physically in stock and what is ready to issue. These guides explain workflows for ordinary users, IT technicians and administrators, including Suppliers and Equipment Lifecycle. Examples use fictional people, organisations and equipment.
 
 Start with the task you need to complete. Each feature guide explains its permissions, controls, numbered procedures, examples and recovery steps. A missing section may mean the feature is switched off or your account lacks permission; ask an administrator to check before creating duplicate records.
 
 ## Move Around The Application
 
-On desktop, the left-hand navigation scrolls independently of the main page when the expanded menu is taller than the window. Scroll over the sidebar, or use the keyboard to reach the permitted links. **Settings & Data** (administrators only) and **Collapse Menu** remain reachable at the bottom. For example, if IT, Staff and Purchasing are expanded, scroll down to Settings & Data from either IT Assets Overview or Device Inventory. Collapsing a group or the menu does not change your permissions. Mobile navigation layout is unchanged.
+On desktop, the left-hand navigation scrolls independently of the main page when the expanded menu is taller than the window. Scroll over the sidebar, or use the keyboard to reach the permitted links. **Settings & Data** (administrators only) and **Collapse Menu** remain reachable at the bottom. For example, if IT, Staff and Purchasing are expanded, scroll down to Settings & Data from either IT Assets Overview or Device Inventory. Collapsing a group or the menu does not change your permissions.
 
 ![IT Assets Overview with the expanded sidebar scrolled to Settings & Data and Collapse Menu.](screenshots/milestone-01-sidebar-device-staff-corrections/sidebar-it-assets-overview-light.png)
 
-*Draft v2.2 — Scroll within the desktop sidebar rather than moving the main page. The lower links remain reachable at a short 1440 × 600 viewport.* [Dark mode](screenshots/milestone-01-sidebar-device-staff-corrections/sidebar-it-assets-overview-dark.png)
+*Scroll within the desktop sidebar rather than moving the main page. The lower links remain reachable at a short 1440 × 600 viewport.*
 
 ![Device Inventory with the same sidebar scrolled to the bottom and Settings & Data and Collapse Menu visible.](screenshots/milestone-01-sidebar-device-staff-corrections/sidebar-device-inventory-light.png)
 
-*Draft v2.2 — The same navigation works from Device Inventory.* [Dark mode](screenshots/milestone-01-sidebar-device-staff-corrections/sidebar-device-inventory-dark.png) · [Capture provenance](screenshots/milestone-01-sidebar-device-staff-corrections/Provenance.txt) · [Owner-approved correction evidence](https://github.com/Caffoot/Caffoot-Lite/pull/485#issuecomment-7216358365)
-
-> **Correction evidence — 27 November 2026:** The new Batch 2 correction captures show the shared desktop sidebar, virtual/physical Device Details and Active/Left Company guidance at `6feba03d`. Earlier screenshots retain their original provenance and approval scope; where an older capture shows the previous Staff guidance, virtual Assigned To tab or clipped navigation, refresh or replace that view before publication. No blanket screenshot or release approval is implied.
+*The same navigation works from Device Inventory.*
 
 ## Import, Upgrade And Recovery
 
@@ -75,8 +43,6 @@ This is a change to how dates are **entered and shown**, not to the dates alread
 | Record racks, inspect elevations, place equipment and manage shelves/accessories | [Network Racks](Racks.md) |
 | Enable optional features, record basic IPv4 or explicitly link to IPAM | [Optional Features, Basic IPv4 And Link To IPAM](Optional-Features-and-Link-To-IPAM.md) |
 
-These infrastructure drafts have completed the Batch 2 text/source pass at the recorded baseline. The owner approved Batch 2 written/source work; Batch 7A’s 38 desktop images are independently reviewed and owner visually accepted; see the [Batch 2 evidence and limitations](../../../development-guide/Milestone-01-Batch-2-Review.md).
-
 ### A Sensible Infrastructure Setup Order
 
 1. Agree which infrastructure areas the organisation uses. An administrator enables the required Optional Features and grants access separately.
@@ -99,8 +65,6 @@ These infrastructure drafts have completed the Batch 2 text/source pass at the r
 | Enable sections, preserve Rack information or record/link basic IPv4 addresses | [Optional Features, Basic IPv4 And Link To IPAM](Optional-Features-and-Link-To-IPAM.md) |
 
 An application account is the identity used to sign in. A Staff Member is a person in your organisation; that person may have a linked account or no login at all. Roles determine section access, while an organisation's Optional Features switches determine whether optional functions are available. A role does not switch a feature on.
-
-Batch 3 accounts, Staff, Departments and My Equipment have completed written/source reconciliation at the recorded baseline, **focused independent ChatGPT review recorded and owner written acceptance recorded**. Desktop requirements are deferred to Batch 7. [Batch 3 source, validation and screenshot record](../../../development-guide/Milestone-01-Batch-3-Review.md).
 
 ## People And Equipment
 
@@ -146,7 +110,7 @@ For a new delivery, follow Receive Stock → check/readiness → Issue Equipment
 | Use Purchasing, file or correct Issues, hand them over between contacts and manage Issue Categories | [Supplier Issues And Purchasing](Supplier-Issues-and-Purchasing.md) |
 | Record, correct or review Supplier associations on Devices and stock receipts | [Equipment Supplier Integration](Equipment-Supplier-Integration.md) |
 
-Suppliers starts switched off and uses its own section permissions. Supplier Management, Supplier Issues/Purchasing and Equipment Supplier Integration are owner-accepted and integrated on the unreleased development branch through merged PRs #414–#416. The Supplier Equipment view and schema 23 work are part of that integration, not a remaining draft PR.
+Suppliers starts switched off and uses its own section permissions. Use Supplier Equipment to review linked Devices and stock receipts without duplicating their inventory records.
 
 ## Equipment Lifecycle
 
@@ -154,9 +118,7 @@ Suppliers starts switched off and uses its own section permissions. Supplier Man
 | --- | --- |
 | Record dates, review Dashboard warnings, configure warning periods and lifespans, archive or restore types | [Equipment Lifecycle](Equipment-Lifecycle.md) |
 
-Equipment Lifecycle is independently optional and starts switched off. Stage 4.4 is owner-accepted and merged via PR #418 into the unreleased development branch; these instructions remain draft v2.2, not published v2.1 features.
-
-Batch 4's ten equipment/Supplier/Lifecycle guides and linked example have completed written/source reconciliation at the stated baseline, **focused independent ChatGPT review recorded and owner written acceptance recorded**. [Batch 4 source, validation and outstanding desktop requirements](../../../development-guide/Milestone-01-Batch-4-Review.md). Batches 5–6 have their separate accepted written/source checkpoints below; Batch 7 reconciliation review/acceptance, capture approval, Batch 8 and all release/visual gates remain outstanding.
+Equipment Lifecycle is independently optional and starts switched off. Enabling it makes its date controls, settings and warnings available without replacing equipment or changing physical stock.
 
 ## Service Desk
 
@@ -171,38 +133,8 @@ Batch 4's ten equipment/Supplier/Lifecycle guides and linked example have comple
 | Configure the IT support mailbox, check notification recipients and troubleshoot missing mail | [Service Desk email settings](Service-Desk-Administration.md#configure-the-it-support-mailbox) |
 | Edit and publish templates, set company branding and send a sample | [Email Templates And Company Branding](Email-Templates-and-Company-Branding.md) |
 
-The foundation, IT queue and employee ticket workflows are integrated through [PRs #437](https://github.com/Caffoot/Caffoot-Lite/pull/437), [#438](https://github.com/Caffoot/Caffoot-Lite/pull/438) and [#439](https://github.com/Caffoot/Caffoot-Lite/pull/439). Service Desk settings and reporting are integrated through [PR #440](https://github.com/Caffoot/Caffoot-Lite/pull/440), and Email Templates and Company Branding through [PR #441](https://github.com/Caffoot/Caffoot-Lite/pull/441). The notification instructions cover the Stage 5.6 development changes integrated through [PR #442](https://github.com/Caffoot/Caffoot-Lite/pull/442).
-
-Batch 5 written/source reconciliation has a recorded focused independent review and separate owner written acceptance. [Source, validation, findings and 35 additional screenshot groups](../../../development-guide/Milestone-01-Batch-5-Review.md). Desktop work is deferred to Batch 7; none of the previous 82 groups is waived.
+Employees use My Tickets and Department Tickets for eligible equipment. Technicians use the separately permissioned IT Service Desk. Administrators manage its calendar, categories and email settings.
 
 ## Audit Trail
 
-Use [Read The Audit Trail](Audit-Trail.md) to search authorised event-time names and original references, inspect label provenance and export the history available to your account.
-
-The dated independent review additions in the Batch 3 and Batch 4 records supersede the original Codex review-pending status in the guide reconciliation banners. [Separate owner written acceptance](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7199742131) is recorded for both batches at `5969d35c4df5f69f138372b51adc9fe5a972837d`; the dated earlier banners retain their checkpoint context. Visual approval remains outstanding.
-
-## Publication And Acceptance
-
-Stages 1–5 are integrated into `milestone-1`. Stage 6.2 import protection is integrated; its historical schema-28 evidence is distinct from the current schema-31 draft instructions. Batch 3.4 manual/native acceptance, broader Raspberry Pi/native Safari and private-installation checks, and current supported-upgrade and complete-volume restoration acceptance remain outstanding. The historical Stage 6.3/schema-28 and Stage 6.4/schema-29 exercises do not complete those current gates. [Stage 6.2 evidence](../../../development-handovers/evidence/stage-6-2/README.md)
-
-Images used here are genuine application captures with an identified approval source and captions describing their scope. Functional HTML previews are retained as development references, never presented as application screenshots. Missing or outdated images and remaining wording discrepancies are listed in the [documentation review record](../../../development-guide/Stage-1-3-Documentation-Review.md).
-
-For implementation checkpoints and dated evidence, see [Development Status](../../../development-guide/Development-Status.md), the [active milestone handover](../../../development-handovers/milestone-01.md), [documentation plan #366](https://github.com/Caffoot/Caffoot-Lite/issues/366), [master tracker #351](https://github.com/Caffoot/Caffoot-Lite/issues/351) and [Stage 3 decisions #368](https://github.com/Caffoot/Caffoot-Lite/issues/368).
-
-## Installation And Recovery Documentation Checkpoint
-
-Batch 6 written/source reconciliation covers [Installation](Installation.md), [Legacy Import, Docker Upgrade, Backup And Recovery](Legacy-Import-and-Docker-Upgrade.md) and [Service Desk Time Zone](Service-Desk-Time-Zone.md). [Separate Batch 6 review](../../../development-guide/Milestone-01-Batch-6-Review.md) records pinned sources, historical versions, limitations, static checks and **21 additional screenshot groups**. Focused independent ChatGPT review and separate owner written acceptance are recorded for Batch 6. The [Batch 7 reconciliation](../../../development-guide/Milestone-01-Batch-7-Review.md) preserves all **138 original desktop groups** and maps 670 distinct state specifications, with none waived. No deployment/rehearsal, current upgrade/restore acceptance or release approval follows from written completion. Batch 7.1 reconciliation and the bounded 7.2 existing-image assessment await their own independent review and owner acceptance. No Batch 7.3 capture or Batch 8 work is authorised.
-
-## Current Screenshot Packs — 27 November 2026
-
-[Batch 7A](screenshots/batch-7a/README.md) is administratively complete: **38/40 owner visually accepted images**, all 19 groups/85 specifications retained, and the exact native disable-confirmation example accepted in writing. [Batch 7B](screenshots/batch-7b/README.md) adds **25 proposed new desktop light images** (accounts 18, Staff 7) and three approved narrow reuse references; all 16 groups/79 specifications are mapped. Independent review and separate owner visual acceptance of the new 7B images remain pending. Batches 1–6 written/source and Batch 7.1/bounded 7.2 acceptance remain recorded. No 7C–7H, Batch 8, release or publication is authorised.
-
-The dated checkpoint statements below preserve their then-current scope and pending status; current decisions above control.
-
-## Historical Screenshot Reconciliation Checkpoint — 27 November 2026
-
-The [owner acceptance record](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7200681167) establishes written/source acceptance of Batches 1–6, subject to the focused independent-review limits. Dated earlier review records are preserved. This does not accept desktop visuals, runtime, security or release readiness.
-
-[Batch 7 requirements and proposed packs](../../../development-guide/Milestone-01-Batch-7-Review.md) account for all 19 + 25 + 38 + 35 + 21 = 138 original groups, 678 state references and 670 distinct instructional state specifications. [Existing-image inventory](../../../development-guide/Milestone-01-Batch-7-Image-Inventory.md): 1,213 files, eight narrow reuse proposals awaiting owner approval, 16 inspected examples requiring recapture for the proposed use, 1,185 historical-only files and four inspected latest desktop candidates awaiting individual assessment. Twenty-eight images opened locally and six earlier visual findings reused; no blanket image certification. No group is fully satisfied; no image has been promoted.
-
-Batch 7.1 and the explicitly bounded 7.2 assessment await independent ChatGPT review and owner acceptance. Batch 7.3 functional packs 7A–7H are proposals requiring explicit scope/method approval. No capture, browser, runtime, Docker, installation/migration/upgrade/recovery procedure or native acceptance was performed. Native acceptance remains paused after Test 69, with Test 70 next; supported upgrade, complete-volume restoration, two private export cases, independent audit #443, Batch 8 and final release/website gates remain outstanding. v2.1 remains published and v2.2 unreleased.
+Use [Read The Audit Trail](Audit-Trail.md) to search authorised event-time names and original references, understand recorded labels and export the history available to your account.

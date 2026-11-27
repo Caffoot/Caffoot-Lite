@@ -1,10 +1,8 @@
 # Devices — Creating, Editing and Managing Equipment
 
+> **Draft v2.2 — Unreleased.** v2.1 remains the published release. These instructions describe v2.2.
+
 [← All feature guides](README.md)
-
-> **Draft v2.2 — Unreleased.** Text and controls have been reconciled against `fdc677920bfc52f48f641b3d6d1344c902a6a9b0` (schema 31), 26 November 2026. For v2.1, use the [guide at the published release tag](https://github.com/Caffoot/Caffoot-Lite/blob/c3237114108cad9f7d4e57657b6aed5e0091a5ef/docs/how-tos/features-and-instructions/Devices.md). Batch 7A desktop illustrations below are owner visually accepted; publication and final release acceptance remain separate; see the [Batch 2 review record](../../../development-guide/Milestone-01-Batch-2-Review.md). All examples are fictional.
-
-> **Documentation status — 27 November 2026:** Batches 1–6 written/source work and Batch 7.1/bounded 7.2 are owner accepted. [Batch 7A](screenshots/batch-7a/README.md) has 38 independently reviewed and owner visually accepted desktop light-theme images, final 38/40. The native disable confirmation has an explicitly accepted written substitution. No publication or application acceptance is implied.
 
 ## What a device record represents
 
@@ -23,11 +21,11 @@ The Devices section also provides **Device Types**, **Locations**, **Manufacture
 
 ![Device Inventory listing eight training devices with type, location, primary IP, status and hardware columns.](screenshots/batch-7a/devices-inventory.png)
 
-*Draft v2.2 — Recorded fictional Device Inventory; these are saved records, not discovery results. Owner visually accepted; publication remains separate.*
+*Recorded fictional Device Inventory; these are saved records, not discovery results.*
 
 ![Device Inventory with Switch and Training Equipment Room filters selected and one matching switch.](screenshots/batch-7a/devices-combined-filters.png)
 
-*Draft v2.2 — Device Type and Location filters narrow the inventory to training-switch-01. Owner visually accepted; publication remains separate.*
+*Device Type and Location filters narrow the inventory to training-switch-01.*
 
 ## Prepare before you add a device
 
@@ -54,7 +52,7 @@ The application refuses invalid addresses, incompatible rack positions and other
 
 ![Add New Device General form with training-new-switch, physical Switch type, Training Equipment Room and Tabletop / Shelf Mounted selected.](screenshots/batch-7a/devices-add-form.png)
 
-*Draft v2.2 — Add New Device: a fictional unsaved switch draft. Duplicate uses this editor with a new identity. Owner visually accepted; publication remains separate.*
+*Add New Device: a fictional unsaved switch draft. Duplicate uses this editor with a new identity.*
 
 ### Choose the right address workflow
 
@@ -89,19 +87,19 @@ Available tabs and fields depend on type, recorded information, enabled features
 
 ![Read-only Device Details Overview for training-switch-01, including its active status, managed primary IP and recorded location.](screenshots/batch-7a/devices-details-overview.png)
 
-*Draft v2.2 — The saved training-switch-01 Overview, viewed with Devices Read. Owner visually accepted; publication remains separate.*
+*The saved training-switch-01 Overview, viewed with Devices Read.*
 
 ![Device Details Hardware tab for training-switch-01 with fictional manufacturer, model and serial number.](screenshots/batch-7a/devices-details-hardware.png)
 
-*Draft v2.2 — Hardware records describe the fictional switch; they do not discover its specification. Owner visually accepted; publication remains separate.*
+*Hardware records describe the fictional switch; they do not discover its specification.*
 
 ![Read-only Network tab for training-basic-printer showing primary IP 192.0.2.30 and subnet 192.0.2.0/24 after explicit linking.](screenshots/batch-7a/devices-details-network.png)
 
-*Draft v2.2 — After deliberate linking, training-basic-printer retains 192.0.2.30 and now shows its managed subnet. Compare the earlier chooser for the same saved address. Owner visually accepted; publication remains separate.*
+*After deliberate linking, training-basic-printer retains 192.0.2.30 and now shows its managed subnet. Compare the earlier chooser for the same saved address.*
 
 ![Read-only Location tab for training-printer-01 showing Tabletop / Shelf Mounted and Training Rack, Shelf U3, Front.](screenshots/batch-7a/devices-details-shelf-location.png)
 
-*Draft v2.2 — The saved printer derives its Front U3 location from Training Printer Shelf; it occupies no separate U footprint. Owner visually accepted; publication remains separate.*
+*The saved printer derives its Front U3 location from Training Printer Shelf; it occupies no separate U footprint.*
 
 ## Edit, save and cancel
 
@@ -118,7 +116,7 @@ A recorded assignment or stock unit protects the Device's type and physical/virt
 
 ![Edit Device General form for training-switch-01 showing its saved identity, Active status and the start of Mounting & Rack Configuration.](screenshots/batch-7a/devices-edit-form.png)
 
-*Draft v2.2 — Edit Device: review the existing switch identity and protected related fields before saving. Owner visually accepted; publication remains separate.*
+*Edit Device: review the existing switch identity and protected related fields before saving.*
 
 ## Duplicate a device
 
@@ -201,11 +199,11 @@ For example, *training-host-01* can record two 240 GB SATA SSD independent boot 
 
 ![Server Hardware editor with Record Boot Storage selected and two 240 GB SATA SSD boot drives in Mirror.](screenshots/batch-7a/devices-independent-boot.png)
 
-*Draft v2.2 — Independent boot drives are recorded separately from ZFS pools; this does not configure disks. Owner visually accepted; publication remains separate.*
+*Independent boot drives are recorded separately from ZFS pools; this does not configure disks.*
 
 ![Hardware details for training-host-01 showing Existing ZFS Pool: Training Data and Mirror, two 960 GB SATA SSD drives.](screenshots/batch-7a/devices-zfs-linked-boot.png)
 
-*Draft v2.2 — The saved Hardware details show linked boot and the recorded Mirror VDEV together; these records do not configure disks. Owner visually accepted; publication remains separate.*
+*The saved Hardware details show linked boot and the recorded Mirror VDEV together; these records do not configure disks.*
 
 ## Complete A Host And Guest Inventory
 
@@ -222,11 +220,11 @@ Historical missing/retired hosts may be retained on existing records; this does 
 
 ![VM General editor for training-app-vm-01 showing training-host-01, the explanation of platform inheritance, 4 vCPUs, 8 GB RAM, 100 GB virtual disk and 2 network adapters.](screenshots/batch-7a/devices-vm-resources.png)
 
-*Draft v2.2 — The VM inherits its host platform and has its own recorded virtual resource allocations. Owner visually accepted; publication remains separate.*
+*The VM inherits its host platform and has its own recorded virtual resource allocations.*
 
 ![Resolve hosted virtual machines review for training-host-01 with training-app-vm-01 set to Reassign to training-host-02 and Keep Editing or Confirm Guest Decisions.](screenshots/batch-7a/devices-host-change-review.png)
 
-*Draft v2.2 — Review the explicit replacement host for the guest before confirming. This draft has not migrated or reassigned a real VM. Owner visually accepted; publication remains separate.*
+*Review the explicit replacement host for the guest before confirming. This draft has not migrated or reassigned a real VM.*
 
 ## Manage Device Types And Locations
 
@@ -243,7 +241,7 @@ Names must be non-empty, at most 100 characters and unique without case differen
 
 ![Manage Device Types filtered to Server, showing Server and Virtual Machine entries and the warning that in-use deletion changes affected Devices to Unknown.](screenshots/batch-7a/devices-manage-types.png)
 
-*Draft v2.2 — Manage Device Types filtered to Server shows affected counts and shared catalogue actions. Unknown remains protected. Owner visually accepted; publication remains separate.*
+*Manage Device Types filtered to Server shows affected counts and shared catalogue actions. Unknown remains protected.*
 
 ## Maintain Hardware, Software And Service Catalogues
 
@@ -260,11 +258,11 @@ Record actual software and services by editing the Device and saving the relevan
 
 ![Manufacturers catalogue filtered to Training Instruments, marked Recorded, with View Devices and Edit actions.](screenshots/batch-7a/devices-representative-catalogue.png)
 
-*Draft v2.2 — The manufacturer catalogue is a representative example; software and service catalogues have their own written procedures. Owner visually accepted; publication remains separate.*
+*The manufacturer catalogue is a representative example; software and service catalogues have their own written procedures.*
 
 ![Remove Software confirmation naming Training Tools and training-host-01, explaining that the in-use software cannot be removed until its assignments are updated.](screenshots/batch-7a/devices-blocked-removal.png)
 
-*Draft v2.2 — Training Tools cannot be removed while training-host-01 records it as installed. Owner visually accepted; publication remains separate.*
+*Training Tools cannot be removed while training-host-01 records it as installed.*
 
 ## Choose the next task after recording equipment
 

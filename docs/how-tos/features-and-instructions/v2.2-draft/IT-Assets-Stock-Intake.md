@@ -1,14 +1,8 @@
 # IT Assets: Receive Stock And Stock Inventory
 
-> **Current status — 27 November 2026:** Batches 7C, 7D and 7E have separate owner draft-evidence acceptance (41/36/25 new paths; 102 combined; 7E has 23 distinct image contents). Original captures, provenance and requirement mappings remain unchanged; accepted instructions retain the approved merged corrections. Batch 8 editorial findings and publication approval remain outstanding. The exact approved application baseline is now `0251b43a3b5d41d626aa022c6d7f9b4d860433da`, schema 31. 7F/7G are authorised but blocked here by unavailable retained fixtures; no new pack has been delivered. [Current reconciliation and retained editorial limits](../../../development-guide/Milestone-01-7F-7G-Reconciliation.md). Earlier capture-time status notices are historical; publication remains unauthorised.
+> **Draft v2.2 — Unreleased.** v2.1 remains the published release. These instructions describe v2.2.
 
-> **Current Batch 7C capture status — 27 November 2026:** [New desktop light illustrations](screenshots/batch-7c/README.md) use the approved merged schema-31 baseline. Independent ChatGPT review and separate owner visual/privacy/caption/alt acceptance remain pending. Earlier written/source and capture-status paragraphs retain their dated scope; the current pack status controls these new images. Published v2.1 and targeted correction-refresh requirements remain unchanged.
-
-> **Draft v2.2 — Not Yet Published.** This guide describes the implementation on `milestone-1` at the application baseline identified below. It is for review of unreleased functionality. Use the [published v2.1 guides](../README.md) for current production instructions. Native/manual and release acceptance remain separate; these are not installation, upgrade or restore instructions.
-
-> **Written/source reconciliation:** Batch 4, application baseline `fdc677920bfc52f48f641b3d6d1344c902a6a9b0` (schema 31). Focused independent reviews are recorded and [owner written/source acceptance of Batches 1–6](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7200681167) is recorded. Current visual/privacy/caption/alt approval remains outstanding; [Batch 7 reconciliation and proposed capture packs](../../../development-guide/Milestone-01-Batch-7-Review.md) await independent review and owner acceptance. Capture scope and method need separate authorisation. Desktop capture remains deferred; existing images retain their original provenance and are not certified current by this pass. [Source review and exact screenshot requirements](../../../development-guide/Milestone-01-Batch-4-Review.md).
-
-> For the Supplier selector and retrospective receipt corrections added in Stage 4 Batch 4.3, see [Equipment Supplier Integration](Equipment-Supplier-Integration.md#record-a-supplier-when-equipment-arrives).
+> For the Supplier selector and retrospective receipt corrections, see [Equipment Supplier Integration](Equipment-Supplier-Integration.md#record-a-supplier-when-equipment-arrives).
 
 ## What Stock Intake Records
 
@@ -54,11 +48,15 @@ Use separate stock items for materially different recorded specifications. Five 
 
 Shared fields must describe every unit represented by the item. Do not put an employee name, unique computer name, serial number, IP address or rack position into a shared specification. Unknown optional values can remain blank. When entering a capacity, use a positive number with its correct unit; do not enter zero as a substitute for unknown.
 
+![Receive Stock with Mouse, Individually Tracked, fictional serial and asset tag, quantity one and receipt checks.](screenshots/batch-7c/receive-individual.png)
+
+*A separate individually tracked demonstration mouse is an unsaved one-unit receipt. It is additional to the journey’s two quantity-based mice.*
+
 ## Record The First Receipt
 
 ![Accepted Receive Stock screen showing a new Desktop stock entry, shared specifications, receipt details and checks](../../../development-handovers/evidence/stage-4-batch-44-corrected/stock/stock-receive-new-light-1440.png)
 
-*Corrected application capture at `8e25fd1451d3297cfa34b2d8c37bbee5ec4878bf`, from the [19 November PR #428 gallery](../../../development-handovers/evidence/stage-4-batch-44-corrected/README.md), using fictional data and UK date controls. Its visual approval applies to that historical capture, not a current publication certification. Earlier PR #388 images remain separate historical evidence.*
+*Review the Supplier, quantity and preparation checks before confirming the receipt.*
 
 Have the actual equipment, delivery information and any completed checks available before submitting the form.
 
@@ -77,6 +75,10 @@ A successful receipt adds every received unit to Physically Held. Only explicitl
 
 **Cancel** abandons the unsaved form and returns to Stock Inventory after any unsaved-change confirmation. It cannot reverse a saved receipt. If validation rejects the form, read the message and correct the relevant value; the receipt is saved as a complete operation or not saved at all. If the outcome is uncertain after a connection interruption, inspect Receipt History before starting a new receipt for the same delivery.
 
+![Receive Stock laptop draft with quantity two, checked Ready two and Northlight selected.](screenshots/batch-7c/receive-laptops.png)
+
+*The unsaved receipt records two checked, Ready laptops with an explicitly selected Northlight link. The summary is a proposal, not saved stock.*
+
 ## Receive More Of An Existing Item
 
 1. Open **Receive Stock → Receive More Of An Existing Item**.
@@ -87,6 +89,10 @@ A successful receipt adds every received unit to Physically Held. Only explicitl
 6. In Receipt History, verify that this is a separate delivery with its own date, quantity, Supplier and account.
 
 The existing item's common specifications remain unchanged. Earlier receipts, registered Devices and assignments keep their own identity and history. An identical **New Stock Entry** is rejected with a message directing you to **Receive More Of An Existing Item**. A genuinely different specification needs a new item instead.
+
+![Receive More Of An Existing Item for Aster Travel 14, with immutable item summary and unsaved extra quantity one.](screenshots/batch-7c/receive-existing.png)
+
+*Receive More retains the laptop’s matching identity and shared specifications. This extra delivery draft is cancelled; the saved journey remains two laptops.*
 
 ## Understand Stock Inventory
 
@@ -109,7 +115,15 @@ Stock Inventory currently has no standalone text-search or category-filter toolb
 
 The receiving form requires Model / Description (up to 120 characters), a recognised Equipment Type and Tracking Method, positive whole Quantity Received, valid Date Received and explicit check/ready values. Manufacturer allows 120 characters; Processor 200; Supplier text, Serial Number and Asset Tag 200 each; Receipt Notes 2,000. Nonblank memory/storage must be positive finite values with the displayed unit. Blank is unknown; zero or a negative capacity is invalid. Quantity Received and Minimum Stock Level use whole numbers up to 9,007,199,254,740,991, with the corresponding stock limits also checked at save. Minimum permits zero; receipt quantity does not. Dates must describe completed physical receipt; the ordinary receipt field does not impose a universal no-future-date rule.
 
-Shared specifications and tracking are not a general editable catalogue in this screen. The backend's foundation for attributed metadata corrections is not an available user-facing **Edit Specifications** procedure. Correct a supported movement quantity through its specialised workflow and a Supplier association through Receipt History; refer other factual metadata problems to the administrator with the receipt reference.
+Shared specifications and tracking are not a general editable catalogue in this screen. There is no **Edit Specifications** action in this screen. Correct a supported movement quantity through its specialised workflow and a Supplier association through Receipt History; refer other factual metadata problems to the administrator with the receipt reference.
+
+![Read-only USB Keyboard stock details with held fifty and Ready eight, without a readiness editor.](screenshots/batch-7c/read-only-stock-details.png)
+
+*IT Assets Read can inspect stock details and recorded checks, but cannot change readiness or receive or issue stock.*
+
+![Stock Inventory with two-laptop total and separate registered AST-LAP-014 row.](screenshots/batch-7c/registered-stock-accounting.png)
+
+*The laptop item still represents two held units: one unregistered Ready unit plus AST-LAP-014 as a registered Ready Device. Never add the Device row to the item total again.*
 
 ## Complete Receipt Checks Later
 
@@ -126,6 +140,10 @@ For example, fictional Aster Services receives ten identical keyboards and check
 
 The quantity form cannot change the registered Ready portion of a computer item's balance. Use the relevant individual Device workflow for registered machines. It also cannot bypass preparation requirements for returned units. A rejected change leaves the previous saved readiness intact; **Cancel** discards unsaved edits.
 
+![Keyboard Stock Item Details with held fifty, Ready eight, awaiting forty-two and minimum stock level ten.](screenshots/batch-7c/readiness-eight-of-fifty.png)
+
+*Fifty keyboards are physically held; only eight are Ready against minimum ten. The minimum compares Ready units, rather than the full held quantity.*
+
 ## Move Ready Stock Back For Rechecking
 
 If equipment previously marked ready needs checking again:
@@ -136,6 +154,10 @@ If equipment previously marked ready needs checking again:
 4. Check the summary and select **Save Readiness Change**.
 
 The held total does not change. Equipment that has not been returned moves back to Awaiting Checks; equipment with a recorded return follows the applicable preparation state. This records a dated readiness change, not a delivery, physical return or Write Off. If equipment has actually been issued or permanently disposed of, use the corresponding movement workflow instead.
+
+![Laptop stock readiness editor showing one unregistered Ready unit, one returned registered unit and the registered-Device readiness safeguard.](screenshots/batch-7c/returned-device-readiness-protection.png)
+
+*The returned registered Device cannot be made Ready by increasing the stock item’s receipt-readiness total. Its own Prepare Returned Equipment checks are required; this out-of-range draft is discarded.*
 
 ## Set A Minimum Stock Level
 
@@ -149,7 +171,7 @@ Minimums apply separately to **Quantity-Based Stock** items.
 
 For a minimum of five, five ready is sufficient and four ready produces a warning. Ten physically held with only four ready still produces that warning: awaiting equipment is not available. A threshold-only save records an attributed setting change without inventing a stock movement. There is no compulsory global minimum, automatic purchase or email alert.
 
-The current readiness hint states that Low Stock compares Ready To Issue with this item's configured minimum. An earlier report records a superseded unavailable-warning hint; it is historical, not a current limitation.
+The current readiness hint states that Low Stock compares Ready To Issue with this item's configured minimum.
 
 ## Check History And Resolve Mistakes
 
@@ -169,46 +191,12 @@ Use [Movement History and Correct Movement](IT-Assets-Correct-Movement.md) to in
 
 Keep notes factual and relevant to equipment handling. Supplier names, serials, asset tags and staff-related movement information may be sensitive; avoid passwords or unrelated personal information. The server checks permission and stock state again when saving, so an open form does not preserve rights that have since been removed.
 
-## Related Guidance And Screenshots
+![Receipt History showing DEMO-104 two-laptop delivery, checks and Northlight association.](screenshots/batch-7c/receipt-history.png)
+
+*The original two-laptop receipt is saved with its checks, date, Sam and Supplier. Later associations and readiness history are separate records.*
+
+## Related Guidance
 
 Continue with [Device registration and reissue](Device-Stock-Registration-and-Reissue.md), [Issue, Return and Write Off](IT-Assets-Issue-Return-and-Write-Off.md), [Associated Equipment](Associated-Equipment.md), [dashboard reporting](IT-Assets-Dashboard.md), [Optional Features](Optional-Features-and-Link-To-IPAM.md) and [roles and MFA](Roles-Section-Permissions-and-MFA.md).
 
-The [stock-intake evidence](../../../development-handovers/evidence/stock-intake/Report.md) preserves genuine application captures and source checks. The corrected PR #428 receipt capture above is retained with its provenance stated. A refreshed capture showing the complete current tab set, Cancel action and minimum-stock presentation remains a documentation acceptance item. Functional HTML previews are not application screenshots.
-
 [Connected example: a laptop from Supplier and stock to its final write-off](Connected-Equipment-Journey.md).
-
-## Batch 7C Desktop Illustrations
-
-These images follow the fictional training journey. Read the caption to distinguish a draft, a cancelled preview and a saved outcome. [Complete original coverage and limits](screenshots/batch-7c/Coverage.md).
-
-![Receive Stock laptop draft with quantity two, checked Ready two and Northlight selected.](screenshots/batch-7c/receive-laptops.png)
-
-*Draft v2.2 — The unsaved receipt records two checked, Ready laptops with an explicitly selected Northlight link. The summary is a proposal, not saved stock. Independent review and owner visual acceptance pending.*
-
-![Receipt History showing DEMO-104 two-laptop delivery, checks and Northlight association.](screenshots/batch-7c/receipt-history.png)
-
-*Draft v2.2 — The original two-laptop receipt is saved with its checks, date, Sam and Supplier. Later associations and readiness history are separate records. Independent review and owner visual acceptance pending.*
-
-![Receive Stock with Mouse, Individually Tracked, fictional serial and asset tag, quantity one and receipt checks.](screenshots/batch-7c/receive-individual.png)
-
-*Draft v2.2 — A separate individually tracked demonstration mouse is an unsaved one-unit receipt. It is additional to the journey’s two quantity-based mice. Independent review and owner visual acceptance pending.*
-
-![Receive More Of An Existing Item for Aster Travel 14, with immutable item summary and unsaved extra quantity one.](screenshots/batch-7c/receive-existing.png)
-
-*Draft v2.2 — Receive More retains the laptop’s matching identity and shared specifications. This extra delivery draft is cancelled; the saved journey remains two laptops. Independent review and owner visual acceptance pending.*
-
-![Keyboard Stock Item Details with held fifty, Ready eight, awaiting forty-two and minimum stock level ten.](screenshots/batch-7c/readiness-eight-of-fifty.png)
-
-*Draft v2.2 — Fifty keyboards are physically held; only eight are Ready against minimum ten. The minimum compares Ready units, rather than the full held quantity. Independent review and owner visual acceptance pending.*
-
-![Read-only USB Keyboard stock details with held fifty and Ready eight, without a readiness editor.](screenshots/batch-7c/read-only-stock-details.png)
-
-*Draft v2.2 — IT Assets Read can inspect stock details and recorded checks, but cannot change readiness or receive or issue stock. Independent review and owner visual acceptance pending.*
-
-![Stock Inventory with two-laptop total and separate registered AST-LAP-014 row.](screenshots/batch-7c/registered-stock-accounting.png)
-
-*Draft v2.2 — The laptop item still represents two held units: one unregistered Ready unit plus AST-LAP-014 as a registered Ready Device. Never add the Device row to the item total again. Independent review and owner visual acceptance pending.*
-
-![Laptop stock readiness editor showing one unregistered Ready unit, one returned registered unit and the registered-Device readiness safeguard.](screenshots/batch-7c/returned-device-readiness-protection.png)
-
-*Draft v2.2 — The returned registered Device cannot be made Ready by increasing the stock item’s receipt-readiness total. Its own Prepare Returned Equipment checks are required; this out-of-range draft is discarded. Independent review and owner visual acceptance pending.*

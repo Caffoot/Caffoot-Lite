@@ -1,8 +1,6 @@
 # Optional Features, Basic IPv4 And Link To IPAM
 
-> **Draft v2.2 — Unreleased.** Text and controls have been reconciled against the 26 November 2026 application baseline, `fdc677920bfc52f48f641b3d6d1344c902a6a9b0` (schema 31). Use the [published v2.1 guides](https://github.com/Caffoot/Caffoot-Lite/tree/c3237114108cad9f7d4e57657b6aed5e0091a5ef/docs/how-tos/features-and-instructions) for the current release. Optional Features and basic-IP linking are v2.2 functionality, not v2.1 instructions. Batch 7A desktop illustrations below are owner visually accepted; publication and final release acceptance remain separate. This is not an installation, upgrade or restore procedure.
-
-> **Documentation status — 27 November 2026:** Batches 1–6 written/source work and Batch 7.1/bounded 7.2 are owner accepted. [Batch 7A](screenshots/batch-7a/README.md) has 38 independently reviewed and owner visually accepted desktop light-theme images, final 38/40. The native disable confirmation has an explicitly accepted written substitution. No publication or application acceptance is implied.
+> **Draft v2.2 — Unreleased.** v2.1 remains the published release. These instructions describe v2.2.
 
 ## Choose The Features Your Organisation Uses
 
@@ -35,7 +33,7 @@ Open **Settings & Data → Optional Features**. The cards are grouped as follows
 
 ![Optional Features showing Devices, IP Address Management, Network Racks, Suppliers, Equipment Lifecycle and IT Assets enabled.](screenshots/batch-7a/optional-six-feature-cards.png)
 
-*Draft v2.2 — All six Optional Features are enabled in this fictional administrator fixture; enabling a feature does not grant account permissions. Owner visually accepted; publication remains separate.*
+*All six Optional Features are enabled in this fictional example; enabling a feature does not grant account permissions.*
 
 ### Feature Access And Retained Information
 
@@ -76,13 +74,13 @@ Controls are temporarily unavailable while a setting is being saved. If saving f
 4. Wait for the saved **Disabled** state. The section's navigation and feature-specific actions disappear, and its operations are blocked on the server as well as in the interface. A previously opened page does not bypass this restriction.
 5. To restore access later, enable the same card. The retained records and saved permissions apply again; colleagues still need the required account access and MFA verification.
 
-For example, disabling Network Racks asks **“Disable Network Racks? Saved data and permissions will be retained.”** This exact written example is the owner-approved substitution for the browser-native confirmation image. Read it before choosing Cancel or confirming.
+For example, disabling Network Racks asks **“Disable Network Racks? Saved data and permissions will be retained.”** Read it before choosing Cancel or confirming.
 
 Disabling does not delete inventory, stock, placements, address relationships or history. Successful setting changes are recorded with the administrator and previous/new state. Turning off IT Assets also hides its stock information in related views; it does not turn managed Devices into anonymous stock or erase their identity.
 
 ### Defaults And Independent Use
 
-In the unreleased implementation, a genuinely new installation starts with all optional areas disabled. The existing-installation migration preserves prior Devices, IPAM and Network Racks availability by initially enabling those three, even when the existing inventory is empty. IT Assets, Suppliers and Equipment Lifecycle are initially disabled. Later restarts and upgrades retain saved choices. These are descriptions of the implementation, not a verified production-upgrade procedure.
+In v2.2, a genuinely new installation starts with all optional areas disabled. The existing-installation migration preserves prior Devices, IPAM and Network Racks availability by initially enabling those three, even when the existing inventory is empty. IT Assets, Suppliers and Equipment Lifecycle are initially disabled. Later restarts and upgrades retain saved choices. For an existing installation, use the isolated [upgrade guidance](Legacy-Import-and-Docker-Upgrade.md); no production v2.2 upgrade procedure is available.
 
 | Intended Use | Feature Choices And Practical Effect |
 | --- | --- |
@@ -167,9 +165,9 @@ After successful linking, the existing managed-IP permissions apply. Disabling I
 
 ![Link to IPAM dialog for training-basic-printer at 192.0.2.30 with Lab Network 192.0.2.0/24 selected and Cancel or Link to IPAM actions.](screenshots/batch-7a/optional-existing-subnet-chooser.png)
 
-*Draft v2.2 — Link to IPAM deliberately selects an existing containing subnet for the exact saved basic address. No link has been confirmed. Owner visually accepted; publication remains separate.*
+*Link to IPAM deliberately selects an existing containing subnet for the exact saved basic address. No link has been confirmed.*
 
-*Shared Batch 7A illustration: [the same printer after deliberate linking](screenshots/batch-7a/devices-details-network.png) is the saved result for this chooser; the draft and result are different states.*
+*Example: [the same printer after deliberate linking](screenshots/batch-7a/devices-details-network.png) is the saved result for this chooser; the draft and result are different states.*
 
 ## Preserve Devices When Network Racks Is Off
 
@@ -189,9 +187,9 @@ When Rack information is unavailable, related views may show **Rack information 
 
 ![Edit Device General form for training-printer-01 with protected Training Equipment Room Location Area and Rack placement controls hidden while Network Racks is off.](screenshots/batch-7a/optional-racks-off-location.png)
 
-*Draft v2.2 — With Network Racks off, the saved shelf relationship protects Location Area during unrelated Device editing. Hidden controls do not mean a detached Device. Owner visually accepted; publication remains separate.*
+*With Network Racks off, the saved shelf relationship protects Location Area during unrelated Device editing. Hidden controls do not mean a detached Device.*
 
-*Shared Batch 7A illustrations: [the matching saved shelf Location](screenshots/batch-7a/devices-details-shelf-location.png) and [Training Rack Front elevation](screenshots/batch-7a/racks-front-read-only.png) show the feature-on relationship retained while Racks is disabled.*
+*Related views: [the matching saved shelf Location](screenshots/batch-7a/devices-details-shelf-location.png) and [Training Rack Front elevation](screenshots/batch-7a/racks-front-read-only.png) show the feature-on relationship retained while Racks is disabled.*
 
 ## Troubleshooting And Safe Recovery
 
@@ -221,6 +219,6 @@ Feature and permission restrictions apply to direct requests as well as visible 
 - [Receive Stock And Stock Inventory](IT-Assets-Stock-Intake.md) — configure and receive equipment with IT Assets enabled.
 - [Issue, Return And Write Off](IT-Assets-Issue-Return-and-Write-Off.md) — circulate equipment and preserve stock history.
 - [Device Stock Registration And Reissue](Device-Stock-Registration-and-Reissue.md) — when stock work also needs canonical Device access.
-- [Optional Features — Development Foundation](../../../development-guide/Optional-Features.md) — the maintained technical contract and evidence references.
+-  — the maintained technical contract and evidence references.
 
 [← Draft v2.2 Guides](README.md) · [Published v2.1 Guides](https://github.com/Caffoot/Caffoot-Lite/tree/c3237114108cad9f7d4e57657b6aed5e0091a5ef/docs/how-tos/features-and-instructions)

@@ -1,12 +1,6 @@
 # Departments And Shared Equipment
 
-> **Current status — 27 November 2026:** Batches 7C, 7D and 7E have separate owner draft-evidence acceptance (41/36/25 new paths; 102 combined; 7E has 23 distinct image contents). Original captures, provenance and requirement mappings remain unchanged; accepted instructions retain the approved merged corrections. Batch 8 editorial findings and publication approval remain outstanding. The exact approved application baseline is now `0251b43a3b5d41d626aa022c6d7f9b4d860433da`, schema 31. 7F/7G are authorised but blocked here by unavailable retained fixtures; no new pack has been delivered. [Current reconciliation and retained editorial limits](../../../development-guide/Milestone-01-7F-7G-Reconciliation.md). Earlier capture-time status notices are historical; publication remains unauthorised.
-
-> **Current Batch 7D capture status — 27 November 2026:** [New desktop light illustrations](screenshots/batch-7d/README.md) use the approved merged schema-31 baseline. Independent ChatGPT review and separate owner visual/privacy/caption/alt acceptance remain pending. Earlier written/source and capture-status paragraphs retain their dated scope; the current pack status controls these new images. Published v2.1 and targeted correction-refresh requirements remain unchanged.
-
-> **Draft v2.2 — Unreleased.** This guide includes the Stage 6.4 Shared Devices review changes. It is for development review, not production installation, upgrade or restore. Use the [published v2.1 guides](../README.md) for the released application. Native/manual and release acceptance remain separate.
-
-> **Written/source reconciliation:** Batch 3, application baseline `fdc677920bfc52f48f641b3d6d1344c902a6a9b0` (schema 31). Focused independent reviews are recorded and [owner written/source acceptance of Batches 1–6](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7200681167) is recorded. Current visual/privacy/caption/alt approval remains outstanding; [Batch 7 reconciliation and proposed capture packs](../../../development-guide/Milestone-01-Batch-7-Review.md) await independent review and owner acceptance. Capture scope and method need separate authorisation. Desktop capture remains deferred; existing images retain their original provenance and are not certified current by this pass. [Source review and exact screenshot requirements](../../../development-guide/Milestone-01-Batch-3-Review.md).
+> **Draft v2.2 — Unreleased.** v2.1 remains the published release. These instructions describe v2.2.
 
 Departments group Staff Members and provide a holder for equipment used collectively, such as an Accounts printer. They are simple independent groups, without subdepartments or management trees. Membership is optional and grants no application permissions.
 
@@ -31,6 +25,14 @@ Staff Members and Departments are core sections and do not depend on the IT Asse
 Open **Staff → Departments** to see the list, including **Active** and **Archived** records. The current directory has no search or status-filter control; review the displayed names and status badges. A new installation can show **0 Departments**. Create one only when it represents a real group.
 
 Details can show **No Staff Members In This Department** or **No Recorded Activity Available**. Equipment has its own empty and restricted states. A missing permission or failed load is not evidence that there are no members or equipment. Check the selected tab, feature switches and relevant access, then reopen Details to retry.
+
+![Department directory showing Accounts, Sales and IT with active status, current membership and management actions.](screenshots/batch-7d/department-directory.png)
+
+*Accounts, Sales and IT are independent flat Departments. Membership grants no security role, and Archive preserves current/history associations.*
+
+![Accounts Department Overview with Staff and equipment Not Available for the Departments-only reader.](screenshots/batch-7d/department-permission-boundary.png)
+
+*Departments Read alone does not disclose Staff or equipment counts. Not Available means missing independent permission, rather than an empty Department.*
 
 ## Add A Department
 
@@ -63,7 +65,12 @@ An authorised Staff editor receives the limited Department names needed for this
 
 Moving someone from Accounts to Sales changes their Department-shared equipment visibility on the next My Equipment request. It does not move the Accounts printer, transfer their laptop or alter either Department's equipment assignments. Use the relevant equipment workflow to change an actual holder.
 
-## Department Details — Unreleased v2.2
+![Edit Priya Shah with Department Sales selected while the saved Accounts membership is unchanged until Save.](screenshots/batch-7d/priya-department-change.png)
+
+*Priya’s unsaved Staff edit selects Sales instead of Accounts. Saving membership changes shared visibility but does not assign or move a Device or change her baseline security role.*
+
+<a id="department-details--unreleased-v22"></a>
+## Department Details
 
 1. Open **Staff → Departments → View Details** beside the group.
 2. Start with **Overview** to confirm its name and status.
@@ -86,7 +93,15 @@ If a panel could not load, reopen Details to retry. Check your access before int
 
 ![Department Details Equipment tab showing a fictional Department's outstanding dock quantity and genuine issue and return history](../../../development-handovers/evidence/stock-circulation/screenshots/department-equipment-light-1440.png)
 
-*Approved Batch 3.8 application capture with fictional data. The dock remains assigned to the Department once; the history records its original issue and partial return. Personally assigned Staff equipment is excluded from this view.*
+*The dock remains assigned to the Department once; the history records its original issue and partial return. Personally assigned Staff equipment is excluded from this view.*
+
+![Accounts Department Staff Members tab listing Alex and Priya with current eligibility.](screenshots/batch-7d/department-staff-members.png)
+
+*Authorised Staff Members Read exposes the Department’s current people. Personally held equipment is not the Department’s shared stock.*
+
+![Accounts Equipment tab showing shared AST-PRN-01 and its original assignment history.](screenshots/batch-7d/department-current-equipment.png)
+
+*Accounts shared equipment contains the original AST-PRN-01 assignment. A member’s personally held laptop is not copied into this Department table.*
 
 ## Change Which Departments Share A Device
 
@@ -96,7 +111,11 @@ A saved addition gives eligible Finance members access to employee-visible Devic
 
 ![Sales Department Equipment listing the original Main Office Printer](../../../development-handovers/evidence/stage-6-4/screenshots/department-equipment-desktop-light.png)
 
-*The Sales row opens the same Main Office Printer that Accounts uses.* [Capture provenance](../../../development-handovers/evidence/stage-6-4/README.md)
+*The Sales row opens the same Main Office Printer that Accounts uses.*
+
+![Manage Departments with no selected Department and Select at least one Department rejection.](screenshots/batch-7d/department-selection-protection.png)
+
+*Manage Departments rejects an empty selection. This is a selection change within the same physical custody, not a return/reissue or transfer of the printer.*
 
 ## Assign Shared Equipment
 
@@ -147,6 +166,10 @@ Archive changes status after its own confirmation; it does not save a changed De
 
 Archiving keeps Staff membership, equipment holders, movement dates and history. It does not move members, return stock, close assignments, disable accounts or change permissions. Existing archived membership can remain during an unrelated Staff edit. Shared equipment stays linked to the archived Department; archive does not manufacture personal assignments for its members.
 
+![Manage Accounts Department with name, Archive and save/cancel actions and protected deletion policy.](screenshots/batch-7d/department-protected-management.png)
+
+*Accounts has membership/equipment history. The management dialog explains retention; permanent deletion is unavailable where associations must remain. This draft is cancelled.*
+
 ## Reactivate Or Delete An Unused Department
 
 To reactivate, open **Manage** or **Manage Department**, choose **Reactivate** and confirm. The Department becomes eligible for new memberships and assignments again. History stays intact; previous equipment is not automatically reissued.
@@ -174,7 +197,7 @@ Moving all current Staff out of a Department does not necessarily make it deleta
 
 The server rechecks permissions, status and associations at save time. A button in an older open screen does not guarantee the action is still eligible. Unsafe deletion or assignment is rejected without removing existing relationships.
 
-## Related Guides And Screenshot Provenance
+## Related Guides
 
 - [Staff Members](Staff-Members.md)
 - [Device Assignments And My Equipment](Device-Assignments-and-My-Equipment.md)
@@ -182,40 +205,6 @@ The server rechecks permissions, status and associations at save time. A button 
 - [Device Stock Registration And Reissue](Device-Stock-Registration-and-Reissue.md)
 - [Associated Equipment](Associated-Equipment.md)
 
-The reused image belongs to the [owner-approved Batch 3.8 application captures](https://github.com/Caffoot/Caffoot-Lite/pull/389#issuecomment-6908629303). The [Department Details evidence](../../../development-handovers/evidence/department-details/Report.md) preserves earlier application captures and their original limitations. Functional previews are not substituted as approved screenshots.
-
 [← Draft v2.2 Guides](README.md) · [Published v2.1 Guides](../README.md)
 
 [Connected equipment example — Supplier, stock, assignment and later use](Connected-Equipment-Journey.md).
-
-## Batch 7D Desktop Illustrations
-
-These images follow the fictional training journey. Read the caption to distinguish a draft, a cancelled preview and a saved outcome. [Complete original coverage and limits](screenshots/batch-7d/Coverage.md).
-
-![Department directory showing Accounts, Sales and IT with active status, current membership and management actions.](screenshots/batch-7d/department-directory.png)
-
-*Draft v2.2 — Accounts, Sales and IT are independent flat Departments. Membership grants no security role, and Archive preserves current/history associations. Independent review and owner visual acceptance pending.*
-
-![Manage Accounts Department with name, Archive and save/cancel actions and protected deletion policy.](screenshots/batch-7d/department-protected-management.png)
-
-*Draft v2.2 — Accounts has membership/equipment history. The management dialog explains retention; permanent deletion is unavailable where associations must remain. This draft is cancelled. Independent review and owner visual acceptance pending.*
-
-![Accounts Department Staff Members tab listing Alex and Priya with current eligibility.](screenshots/batch-7d/department-staff-members.png)
-
-*Draft v2.2 — Authorised Staff Members Read exposes the Department’s current people. Personally held equipment is not the Department’s shared stock. Independent review and owner visual acceptance pending.*
-
-![Accounts Equipment tab showing shared AST-PRN-01 and its original assignment history.](screenshots/batch-7d/department-current-equipment.png)
-
-*Draft v2.2 — Accounts shared equipment contains the original AST-PRN-01 assignment. A member’s personally held laptop is not copied into this Department table. Independent review and owner visual acceptance pending.*
-
-![Manage Departments with no selected Department and Select at least one Department rejection.](screenshots/batch-7d/department-selection-protection.png)
-
-*Draft v2.2 — Manage Departments rejects an empty selection. This is a selection change within the same physical custody, not a return/reissue or transfer of the printer. Independent review and owner visual acceptance pending.*
-
-![Edit Priya Shah with Department Sales selected while the saved Accounts membership is unchanged until Save.](screenshots/batch-7d/priya-department-change.png)
-
-*Draft v2.2 — Priya’s unsaved Staff edit selects Sales instead of Accounts. Saving membership changes shared visibility but does not assign or move a Device or change her baseline security role. Independent review and owner visual acceptance pending.*
-
-![Accounts Department Overview with Staff and equipment Not Available for the Departments-only reader.](screenshots/batch-7d/department-permission-boundary.png)
-
-*Draft v2.2 — Departments Read alone does not disclose Staff or equipment counts. Not Available means missing independent permission, rather than an empty Department. Independent review and owner visual acceptance pending.*
