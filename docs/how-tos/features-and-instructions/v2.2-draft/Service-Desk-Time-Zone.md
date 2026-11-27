@@ -24,7 +24,7 @@ The Service Desk uses one installation time zone for working hours, excluded dat
 4. Keep the verified current image; a time-zone correction does not need a new public image or a fresh volume. Use **Update the stack** to apply the edited configuration. For a Git-managed stack, make the equivalent edit in its actual source and apply it using the stack’s existing update method. The service may be briefly unavailable while the container is recreated.
 5. Use [Check The Result](#check-the-result) after Caffoot Lite comes back.
 
-The [draft Portainer example](portainer-v2.2-draft.yaml) shows where `TZ` goes. Its empty entry is intended for you to edit. The example takes an authorised private review image through `CAFFOOT_V22_PREVIEW_IMAGE`.
+The [draft Portainer example](portainer-v2.2-draft.yaml) shows where `TZ` goes. Supply `TZ` in the stack environment settings; the required-variable expression rejects missing or empty values. You may instead set the literal IANA name in your private editor copy. The example takes an authorised private review image through `CAFFOOT_V22_PREVIEW_IMAGE`.
 
 ## Update A Docker Compose Installation
 
@@ -39,7 +39,7 @@ The [draft Portainer example](portainer-v2.2-draft.yaml) shows where `TZ` goes. 
 4. Apply the change with `docker compose up -d`, keeping those same project and file options. Compose recreates the service with the updated environment. Restarting the existing container alone keeps its old environment.
 5. Use [Check The Result](#check-the-result) after Caffoot Lite comes back.
 
-For a separate review checkout, the [draft Docker Compose example](compose-v2.2-draft.yaml) shows the empty, editable `TZ` entry next to the existing environment and storage settings.
+For a separate review checkout, the [draft Docker Compose example](compose-v2.2-draft.yaml) reads `TZ` from your shell or private environment file and rejects a missing or empty value. Export the chosen IANA name or set it literally in your private copy. The root source-build Compose file also passes `TZ` through, retaining the application warning if it is unset; it assumes no default zone.
 
 ## Check The Result
 

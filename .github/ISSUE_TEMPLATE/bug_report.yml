@@ -8,15 +8,15 @@ body:
       value: |
         Thank you for helping improve Caffoot Lite! You do not need to be a developer to report a bug.
 
-        Please explain what happened in your own words. Screenshots are welcome, but optional.
+        Please explain what happened in your own words. Screenshots are welcome, but optional. Categories cover published and forthcoming features; availability depends on your version.
 
         **Security or privacy concern?** Please do not publish passwords, authentication codes, tokens, private IP addresses, personal data or exploit details here. Read our [Security Reporting Guide](https://github.com/Caffoot/Caffoot-Lite/blob/main/SECURITY.md) first.
   - type: input
     id: version
     attributes:
       label: "Caffoot Lite Version"
-      description: "You can find this under My Account > About Caffoot Lite."
-      placeholder: "For example, v2.1"
+      description: "Check My Account > About Caffoot Lite. For an unreleased review build, also include its source commit or private image reference; the published release label alone does not identify it. Do not share private registry credentials."
+      placeholder: "Copy the version or review commit you are using"
     validations:
       required: true
   - type: dropdown
@@ -24,16 +24,25 @@ body:
     attributes:
       label: "Where Did It Happen?"
       options:
-        - "Installation / Portainer"
+        - "Installation / Docker Compose / Portainer"
         - "Sign-In & MFA"
         - "Dashboard"
         - "Device Inventory"
+        - "Staff Members & Departments"
+        - "My Equipment / Shared Equipment"
+        - "IT Assets / Stock / Custody"
+        - "Suppliers / Purchasing / Equipment Lifecycle"
+        - "Service Desk / My Tickets / Department Tickets"
+        - "Service Desk Working Hours / Time Zone / Reports"
+        - "Email / Notifications / Templates / Branding"
         - "IPAM"
         - "Network Racks"
-        - "Change History"
+        - "Audit Trail / Change History"
         - "Users & Permissions"
         - "My Account"
-        - "Settings & Data"
+        - "Settings & Data / Optional Features"
+        - "Import / Backup / Upgrade / Recovery"
+        - "Help & Guides / About"
         - "Other"
     validations:
       required: true

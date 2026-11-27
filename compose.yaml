@@ -4,6 +4,9 @@ services:
       context: .
       dockerfile: Dockerfile
     environment:
+      # Choose the organisation's IANA zone; an unset value retains the
+      # application's missing-zone warning, without assuming a local default.
+      TZ: "${TZ-}"
       CAFFOOT_WEB_ADDRESS: "${CAFFOOT_WEB_ADDRESS:?Set the HTTPS browser address in CAFFOOT_WEB_ADDRESS}"
       CAFFOOT_SERVER_ADDRESS: "${CAFFOOT_SERVER_ADDRESS:?Set the server IP or hostname in CAFFOOT_SERVER_ADDRESS}"
       CAFFOOT_PORT: "${CAFFOOT_PORT:-8080}"

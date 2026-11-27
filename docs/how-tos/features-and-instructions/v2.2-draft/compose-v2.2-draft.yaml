@@ -1,4 +1,8 @@
-# Caffoot Lite v2.2 draft. Build from the authorised review checkout.
+# Caffoot Lite v2.2 release candidate — UNRELEASED.
+# Build from the authorised review checkout; no public v2.2 image is offered.
+# Future publication target only: ghcr.io/caffoot/caffoot-lite:v2.2
+# At the approved release transition, replace build with the verified image.
+# Until then, use this source build or the private-image Portainer example.
 services:
   caffoot-lite:
     build:
@@ -6,7 +10,7 @@ services:
       dockerfile: Dockerfile
     environment:
       # Set your organisation's IANA time zone. "Europe/London" is a UK example only.
-      TZ: ""
+      TZ: "${TZ:?Set TZ to your organisation's IANA time zone}"
       CAFFOOT_WEB_ADDRESS: "${CAFFOOT_WEB_ADDRESS:?Set the HTTPS browser address in CAFFOOT_WEB_ADDRESS}"
       CAFFOOT_SERVER_ADDRESS: "${CAFFOOT_SERVER_ADDRESS:?Set the server IP or hostname in CAFFOOT_SERVER_ADDRESS}"
       CAFFOOT_PORT: "${CAFFOOT_PORT:-8080}"

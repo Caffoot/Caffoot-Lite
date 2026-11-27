@@ -19,7 +19,7 @@ This guide explains the existing draft examples for an installation that has alr
 3. Reserve separate storage and capacity for the image/build, growing SQLite data, ticket attachment bytes, profile/branding images and complete protected backup copies. No universal minimum disk/RAM requirement is specified. Check free capacity for the intended workload and retention; the 100 MB attachment allowance is per ticket, not an installation storage cap.
 4. Choose a distinct review project/stack, container identity, host endpoint and data mount. Keep production and other installations inaccessible to this review stack. Copied data may contain active accounts, private files and SMTP settings: isolate it and use controlled mail destinations before exercising notifications. Never reuse a production mount for an isolated review.
 5. Keep the existing repository YAML unchanged. Make your installation-specific copy or Portainer editor configuration privately. Protect saved environment/configuration and backups. Do not put passwords, mail credentials or private certificates in Git, tickets or screenshots.
-6. Select the organisation's IANA time zone before starting. `Europe/London` is a **UK example**, not a default. The draft examples deliberately contain `TZ: ""`, which needs replacing. [Time zone configuration and warnings](Service-Desk-Time-Zone.md)
+6. Select the organisation's IANA time zone before starting. `Europe/London` is a **UK example**, not a default. The draft examples require `TZ` through the shell, a private environment file or Portainer stack environment settings. There is no default; an empty or missing value fails configuration validation. Use an IANA name, not a fixed clock offset. [Time zone configuration and warnings](Service-Desk-Time-Zone.md)
 
 ## Understand The Draft Examples
 
@@ -27,7 +27,9 @@ This guide explains the existing draft examples for an installation that has alr
 
 [Compose draft](compose-v2.2-draft.yaml) builds from the authorised source checkout. Its `build.context: ../../../..` resolves from the draft directory to the repository root, using the root Dockerfile. It requires web/server environment values, defaults the published port to 8080 and uses `${CAFFOOT_DATA_PATH:-caffoot_data}:/data`. Do not move this file to another directory and assume its relative build context still resolves correctly. Use the explicit file path from the repository root as shown below, or deliberately correct a private copy's context to the verified source root.
 
-The root `compose.yaml` is also a source-build configuration, but lacks the v2.2 `TZ` entry; root `portainer-v2.1.yaml` and `INSTALLATION.md` remain published v2.1 examples. They have not been converted into v2.2 deployment files.
+The root `compose.yaml` is also a source-build configuration. It passes the operator's `TZ` through without a default; if unset, the application retains its missing-zone warning and incomplete Service Desk metrics. Set it explicitly for a usable support calendar. Root `portainer-v2.1.yaml` and `INSTALLATION.md` remain published v2.1 examples.
+
+Both draft files are complete **unreleased release-candidate configurations**, not a supported production upgrade. Their comments identify `ghcr.io/caffoot/caffoot-lite:v2.2` solely as a future publication target; no active setting pulls that tag. The Compose file keeps its source build and Portainer keeps its required private-image option. Only after separate release approval and image verification may an operator replace the build/private image with that public target. Preserve the actual architecture, project and `/data` mount during any separately approved transition.
 
 ### Environment And Ports
 
@@ -67,7 +69,7 @@ The image defaults to `/data/caffoot.sqlite3` and `/data/tls`. Advanced `CAFFOOT
 
 1. In the authorised Docker environment, verify that the exact private review image exists locally or is available through an explicitly authorised private pull route. Inspect its full `org.opencontainers.image.revision` label, image identity and architecture. A local private image name follows the established `caffoot-lite:private-<first-12-of-SHA>` pattern only when it was actually built from that source; a tag alone is not proof. Do not publish it to make a pull work.
 2. In Portainer choose **Stacks → Add stack**, use a distinct review name, then **Web editor**. Paste a private copy of the [draft Portainer example](portainer-v2.2-draft.yaml).
-3. Supply `CAFFOOT_V22_PREVIEW_IMAGE` through the stack's environment settings, or replace the `image:` expression in this private editor copy with the verified authorised image reference. The required-variable expression intentionally fails when no image is supplied. Never insert a token into a shared stack definition.
+3. Supply the correct IANA `TZ` and `CAFFOOT_V22_PREVIEW_IMAGE` through the stack's environment settings, or replace the `image:` expression in this private editor copy with the verified authorised image reference. The required-variable expressions intentionally fail when no image or time zone is supplied. Never insert a token into a shared stack definition.
 4. Review/change the example addresses, all three host-port references, `TZ`, container name and storage for this isolated instance. Keep the service name `caffoot-lite`. For an existing instance, stop here and follow its preserved upgrade/configuration procedure instead of changing its mount.
 5. Select **Deploy the stack**. Check the container's actual image, mount, running status and health in Portainer. A local-only image must already exist on the selected Docker host; do not request a registry re-pull for it. If image access fails, stop and resolve the authorised image route; no public v2.2 registry fallback is specified.
 6. Continue with HTTPS verification and initial setup below. Deployment/healthy status alone does not prove browser trust, authentication or data preservation.
@@ -85,9 +87,10 @@ Use a separate isolated instance for v2.2 review; keep production on the publish
    export CAFFOOT_WEB_ADDRESS='https://192.0.2.40:8446'
    export CAFFOOT_SERVER_ADDRESS='192.0.2.40'
    export CAFFOOT_PORT='8446'
+   export TZ='Europe/London' # UK example only; choose your organisation's zone
    ```
 
-3. Put your private configuration copy beside the original draft file, using a distinct filename, so `../../../..` still resolves to the same source root; if storing it elsewhere, explicitly set its build context to the absolute verified source root. In that private copy, replace the literal empty `TZ` with the correct IANA name. Merely exporting a shell `TZ` does not replace that literal YAML value. Retain the intended `/data` mapping. Use a distinct project consistently; for illustration, commands below use `aster-review`. In every command replace `/path/to/private-review.yaml` with the absolute path to that edited private copy.
+3. Put your private configuration copy beside the original draft file, using a distinct filename, so `../../../..` still resolves to the same source root; if storing it elsewhere, explicitly set its build context to the absolute verified source root. The `TZ` expression reads the exported IANA name; no YAML edit is needed for it. A private `.env` file can supply these values instead; use an explicit `--env-file /path/to/private.env` consistently if it is outside Compose's normal environment-file location. Keep it outside Git and protect it as installation configuration. Retain the intended `/data` mapping. Use a distinct project consistently; for illustration, commands below use `aster-review`. In every command replace `/path/to/private-review.yaml` with the absolute path to that edited private copy.
 4. Validate the configuration without starting services:
 
    ```sh
