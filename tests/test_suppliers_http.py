@@ -258,7 +258,10 @@ class SupplierHttpTests(unittest.TestCase):
             self.assertTrue(all(row["after"]["supplierName"] == "Original Company" for row in first))
             stored = db.execute("SELECT * FROM inventory_change_history ORDER BY id").fetchall()
         renamed = self.save("supplier.save", self.company(name="Renamed Company"), company)
-        self.save("supplier.archive", {"confirmed": True}, renamed)
+        self.save("supplier.archive", {"confirmed": True}, renamed, status=409)
+        disabled = self.save("supplier.disable", {"confirmed": True, "sections": ["Devices", "IT Assets"]},
+                             renamed, actor=1)
+        self.assertEqual(disabled["status"], "disabled")
         with sqlite3.connect(self.db) as db:
             self.assertEqual(events(db), first)
             write_device_supplier(db, 1, "audit-laptop", "Audit Laptop", other["id"], "")
