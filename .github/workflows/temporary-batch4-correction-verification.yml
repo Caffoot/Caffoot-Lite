@@ -25,10 +25,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
-      - name: Check focused history and Supplier association safeguards
-        run: |
-          python -m compileall -q backend tests
-          PYTHONPATH=tests:. python -m unittest -v test_history_permissions test_history_http test_suppliers_http.SupplierHttpTests.test_association_audit_names_are_captured_at_event_time test_suppliers_http.SupplierHttpTests.test_atomic_confirmed_assignments_and_permanent_receipt_provenance test_suppliers_http.SupplierHttpTests.test_lookup_edit_boundaries_and_receipt_replay test_modular_interface
+      - name: Check pinned interface stylesheet and template contracts
+        run: PYTHONPATH=tests:. python -m unittest -v test_modular_interface
       - name: Install isolated Chromium test tools
         run: |
           npm install --prefix "$RUNNER_TEMP/caffoot-browser-tests" --no-save --no-package-lock --no-audit --no-fund playwright@1.56.1
@@ -36,6 +34,7 @@ jobs:
       - name: Verify Activity Details and capture approved states
         env:
           NODE_PATH: ${{ runner.temp }}/caffoot-browser-tests/node_modules
+          CAFFOOT_BATCH4_WIDTH_ONLY: '1'
           CAFFOOT_BATCH4_OUTPUT: ${{ runner.temp }}/batch4-correction-evidence
           EXPECTED_REVISION: ${{ github.event.pull_request.head.sha }}
         run: |

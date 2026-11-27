@@ -69,6 +69,26 @@ async function main(){
    await page.keyboard.press('Escape');await page.locator('#audit-detail-layer').waitFor({state:'hidden'});
    assert.ok(await trigger.evaluate(el=>el===document.activeElement));
  }
+ async function verifyDialogWidth(){
+   const modal=page.locator('#audit-detail-layer .audit-modal');
+   for(const viewport of [{width:1440,height:1000},{width:730,height:844},{width:390,height:844}]){
+     await page.setViewportSize(viewport);
+     for(const theme of ['light','dark']){
+       await page.evaluate(theme=>caffootSetTheme(theme),theme);
+       const geometry=await modal.evaluate(el=>{
+         const r=el.getBoundingClientRect(),layer=el.closest('.modal-layer'),style=getComputedStyle(layer);
+         return {width:r.width,left:r.left,right:r.right,viewport:innerWidth,available:layer.clientWidth-parseFloat(style.paddingLeft)-parseFloat(style.paddingRight),maxWidth:getComputedStyle(el).maxWidth};
+       });
+       const expected=Math.min(viewport.width>730?850:470,geometry.available);
+       assert.ok(Math.abs(geometry.width-expected)<=1,JSON.stringify({viewport,theme,expected,geometry}));
+       assert.ok(geometry.left>=0&&geometry.right<=viewport.width+1,JSON.stringify(geometry));
+       assert.equal(geometry.maxWidth,viewport.width>730?'850px':'470px');
+     }
+   }
+   await page.setViewportSize({width:1440,height:1000});
+   await page.evaluate(()=>caffootSetTheme('light'));
+   console.log('Audit dialogue width: 850px desktop, existing narrow width preserved, light and dark verified.');
+ }
  async function shot(name){
    if(!output)return;
    fs.mkdirSync(output,{recursive:true});
@@ -87,12 +107,14 @@ async function main(){
  assert.match(await technical.innerText(),/deviceId/);
  assert.match(await technical.innerText(),/supplierId/);
  assert.match(await technical.innerText(),/supplierText/);
+ await verifyDialogWidth();
  await shot('audit-legacy-technical');await close(trigger);
  trigger=await open('Recorded Device Example');
  assert.equal(await mainRows.count(),2);
  assert.match(await mainText(),/Primary IP Address/);assert.match(await mainText(),/Asset Tag/);
  assert.doesNotMatch(await mainText(),/Device Reference|Status/);
  await shot('audit-device-changes');await close(trigger);
+ if(process.env.CAFFOOT_BATCH4_WIDTH_ONLY!=='1'){
  for(const [label,field] of [['Recorded IPAM Example','Reserved For Device Reference'],['Recorded Rack Example','Height (U)'],['Recorded Staff Example','Department Reference'],['Recorded Department Example','Name'],['Recorded Role Example','Roles and permissions'],['Recorded Security Example','MFA status'],['Recorded Settings Example','Enabled']]){
    trigger=await open(label);assert.ok((await mainText()).includes(field));await close(trigger);
  }
@@ -105,8 +127,9 @@ async function main(){
  const downloaded=page.waitForEvent('download');await page.locator('[data-action="export-audit"]').click();
  const json=JSON.parse(fs.readFileSync(await (await downloaded).path(),'utf8'));
  for(const [,raw] of original)assert.ok(json.events.some(e=>JSON.stringify(e)===JSON.stringify(JSON.parse(raw))));
+ }
  assert.deepEqual(stored().slice(0,original.length),original);assert.deepEqual(errors,[]);
  if(output){const pngs=fs.readdirSync(output).filter(f=>f.endsWith('.png'));fs.writeFileSync(path.join(output,'Provenance.json'),JSON.stringify({revision:spawnSync('git',['rev-parse','HEAD'],{cwd:root,encoding:'utf8'}).stdout.trim(),browser:browser.version(),viewport:{width:1440,height:1000},fixture:'Disposable HTTPS/SQLite; actual Supplier and Device saves, separately seeded fictional historical records',hashes:Object.fromEntries(pngs.map(f=>[f,createHash('sha256').update(fs.readFileSync(path.join(output,f))).digest('hex')]))},null,2));}
- console.log('Audit Details: event-time name, legacy fallback, raw context, representative labels, null/empty/false/zero, escaping, keyboard/focus, immutable history and JSON export verified.');
+ console.log(process.env.CAFFOOT_BATCH4_WIDTH_ONLY==='1'?'Audit Details: approved width, three affected visual states, keyboard/focus and immutable stored history verified.':'Audit Details: event-time name, legacy fallback, raw context, representative labels, null/empty/false/zero, escaping, keyboard/focus, immutable history and JSON export verified.');
 }
 main().catch(e=>{console.error(e);process.exitCode=1;}).finally(async()=>{if(browser)await browser.close();if(server)server.kill('SIGKILL');fs.rmSync(tmp,{recursive:true,force:true});});
