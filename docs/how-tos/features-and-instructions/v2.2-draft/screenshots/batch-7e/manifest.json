@@ -1,0 +1,1412 @@
+{
+  "status": "Draft instructional evidence \u2014 independent ChatGPT review and separate product-owner visual/privacy/caption/alt acceptance pending",
+  "authority": "https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7217032947",
+  "applicationRevision": "000818f42e854e4a1fee8692b9ffaaa52b5c788d",
+  "schema": 31,
+  "documentationStart": "a5426ca6a2262e21530fcf972b3a1d6cc12fc950",
+  "reconciliationCheckpoint": "19e148efc866c054842c628ea2a6fde4420e2347",
+  "newCount": 22,
+  "ceiling": 22,
+  "counts": {
+    "My Equipment and safe equipment Details": 4,
+    "Ticket creation and confidentiality warnings": 5,
+    "My Tickets and Department Tickets": 4,
+    "Handover and membership confidentiality": 4,
+    "Unread notifications and replies": 5
+  },
+  "images": [
+    {
+      "file": "employee-safe-device-details.png",
+      "allocation": "My Equipment and safe equipment Details",
+      "states": [
+        "B3-E4-S01",
+        "B3-E4-S02",
+        "B3-E4-S05"
+      ],
+      "caption": "Employee Details offers a safe recorded-equipment summary. It does not grant access to network identities, Supplier purchase information, private IT notes or protected historical records.",
+      "alt": "Employee-safe equipment Details with recorded hardware fields and Close and Report A Problem.",
+      "applicationRevision": "000818f42e854e4a1fee8692b9ffaaa52b5c788d",
+      "schema": 31,
+      "browser": "Chromium 156.0.8078.79",
+      "automation": "Playwright 1.62.1",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1050
+      },
+      "deviceScaleFactor": 1,
+      "theme": "light",
+      "fullPage": true,
+      "capturedAt": "2026-11-27T11:41:14.958Z",
+      "fixture": "Disposable fictional Aster Services / Northlight journey on local HTTPS and SQLite",
+      "actor": "alex.morgan",
+      "context": {
+        "accountState": [
+          7,
+          0,
+          1,
+          1
+        ],
+        "roles": [
+          [
+            "Staff Member"
+          ]
+        ],
+        "overrides": [],
+        "features": {
+          "devices": 1,
+          "ipam": 1,
+          "racks": 1,
+          "suppliers": 1,
+          "equipment_lifecycle": 1,
+          "it_assets": 1
+        }
+      },
+      "sha256": "76c288b34085b84ad922996b63b95b61332471beee99c0646982f2e4d1d26038",
+      "urlPath": "/account#equipment",
+      "independentVisualAcceptance": "pending",
+      "ownerVisualAcceptance": "pending"
+    },
+    {
+      "file": "personal-ticket-draft.png",
+      "allocation": "Ticket creation and confidentiality warnings",
+      "states": [
+        "B5-T1-S02",
+        "B5-T2-S01"
+      ],
+      "caption": "Report A Problem preselects Alex\u2019s laptop. The support request remains unsaved until Create Ticket; Cancel abandons this draft.",
+      "alt": "Create Ticket form with AST-LAP-014, category, subject and fictional description.",
+      "applicationRevision": "000818f42e854e4a1fee8692b9ffaaa52b5c788d",
+      "schema": 31,
+      "browser": "Chromium 156.0.8078.79",
+      "automation": "Playwright 1.62.1",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1050
+      },
+      "deviceScaleFactor": 1,
+      "theme": "light",
+      "fullPage": true,
+      "capturedAt": "2026-11-27T11:41:15.805Z",
+      "fixture": "Disposable fictional Aster Services / Northlight journey on local HTTPS and SQLite",
+      "actor": "alex.morgan",
+      "context": {
+        "accountState": [
+          7,
+          0,
+          1,
+          1
+        ],
+        "roles": [
+          [
+            "Staff Member"
+          ]
+        ],
+        "overrides": [],
+        "features": {
+          "devices": 1,
+          "ipam": 1,
+          "racks": 1,
+          "suppliers": 1,
+          "equipment_lifecycle": 1,
+          "it_assets": 1
+        }
+      },
+      "sha256": "271d9fd34dd7e6b9d5b9e75c7c886df117a5732610f637c15df9a50422b7cdaa",
+      "urlPath": "/account#equipment",
+      "independentVisualAcceptance": "pending",
+      "ownerVisualAcceptance": "pending"
+    },
+    {
+      "file": "personal-ticket-saved.png",
+      "allocation": "My Tickets and Department Tickets",
+      "states": [
+        "B5-T2-S03",
+        "B5-T4-S01"
+      ],
+      "caption": "The saved request has one ticket reference and starts Open, Medium and Unassigned. My Tickets follows Alex\u2019s eligible current equipment access.",
+      "alt": "My Tickets showing Alex\u2019s saved AST-LAP-014 request and ticket reference.",
+      "applicationRevision": "000818f42e854e4a1fee8692b9ffaaa52b5c788d",
+      "schema": 31,
+      "browser": "Chromium 156.0.8078.79",
+      "automation": "Playwright 1.62.1",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1050
+      },
+      "deviceScaleFactor": 1,
+      "theme": "light",
+      "fullPage": true,
+      "capturedAt": "2026-11-27T11:41:31.801Z",
+      "fixture": "Disposable fictional Aster Services / Northlight journey on local HTTPS and SQLite",
+      "actor": "alex.morgan",
+      "context": {
+        "accountState": [
+          7,
+          0,
+          1,
+          1
+        ],
+        "roles": [
+          [
+            "Staff Member"
+          ]
+        ],
+        "overrides": [],
+        "features": {
+          "devices": 1,
+          "ipam": 1,
+          "racks": 1,
+          "suppliers": 1,
+          "equipment_lifecycle": 1,
+          "it_assets": 1
+        }
+      },
+      "sha256": "d7e73fd7a888979a3d91573fd0f4fb3282b9ab64ee1c638bda7bea69e46c4651",
+      "urlPath": "/account#my-tickets",
+      "independentVisualAcceptance": "pending",
+      "ownerVisualAcceptance": "pending"
+    },
+    {
+      "file": "department-confidentiality-warning.png",
+      "allocation": "Ticket creation and confidentiality warnings",
+      "states": [
+        "B5-T3-S01",
+        "B5-T3-S03"
+      ],
+      "caption": "The Department confidentiality warning appears before Subject and Description. Current eligible members of the displayed Department share this request; never enter or attach confidential, personal or sensitive information.",
+      "alt": "Create Ticket for shared AST-PRN-01 with Department confidentiality warning before the writing fields.",
+      "applicationRevision": "000818f42e854e4a1fee8692b9ffaaa52b5c788d",
+      "schema": 31,
+      "browser": "Chromium 156.0.8078.79",
+      "automation": "Playwright 1.62.1",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1050
+      },
+      "deviceScaleFactor": 1,
+      "theme": "light",
+      "fullPage": true,
+      "capturedAt": "2026-11-27T11:41:32.603Z",
+      "fixture": "Disposable fictional Aster Services / Northlight journey on local HTTPS and SQLite",
+      "actor": "alex.morgan",
+      "context": {
+        "accountState": [
+          7,
+          0,
+          1,
+          1
+        ],
+        "roles": [
+          [
+            "Staff Member"
+          ]
+        ],
+        "overrides": [],
+        "features": {
+          "devices": 1,
+          "ipam": 1,
+          "racks": 1,
+          "suppliers": 1,
+          "equipment_lifecycle": 1,
+          "it_assets": 1
+        }
+      },
+      "sha256": "50e7e378221a63697cc3b9940587577f68cb06a6a83ca2c88c00604c8288eee1",
+      "urlPath": "/account#equipment",
+      "independentVisualAcceptance": "pending",
+      "ownerVisualAcceptance": "pending"
+    },
+    {
+      "file": "priya-membership-before.png",
+      "allocation": "Handover and membership confidentiality",
+      "states": [
+        "B3-E5-S01",
+        "B5-A8-S05"
+      ],
+      "caption": "Priya\u2019s current Accounts membership grants the shared Accounts printer. This preserved view precedes her membership change and moves no physical equipment.",
+      "alt": "Priya\u2019s My Equipment before changing Accounts membership, showing the shared AST-PRN-01 printer.",
+      "applicationRevision": "000818f42e854e4a1fee8692b9ffaaa52b5c788d",
+      "schema": 31,
+      "browser": "Chromium 156.0.8078.79",
+      "automation": "Playwright 1.62.1",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1050
+      },
+      "deviceScaleFactor": 1,
+      "theme": "light",
+      "fullPage": true,
+      "capturedAt": "2026-11-27T11:48:48.254Z",
+      "fixture": "Disposable fictional Aster Services / Northlight journey on local HTTPS and SQLite",
+      "actor": "priya.shah",
+      "context": {
+        "accountState": [
+          9,
+          0,
+          1,
+          1
+        ],
+        "roles": [
+          [
+            "Staff Member"
+          ]
+        ],
+        "overrides": [],
+        "features": {
+          "devices": 1,
+          "ipam": 1,
+          "racks": 1,
+          "suppliers": 1,
+          "equipment_lifecycle": 1,
+          "it_assets": 1
+        }
+      },
+      "sha256": "8f7b8c5219f29767bee581539039143280abfdf316f2f8a0804a8d8e4ffc4441",
+      "urlPath": "/account#equipment",
+      "independentVisualAcceptance": "pending",
+      "ownerVisualAcceptance": "pending"
+    },
+    {
+      "file": "priya-membership-after.png",
+      "allocation": "Handover and membership confidentiality",
+      "states": [
+        "B3-E5-S01",
+        "B5-A8-S05"
+      ],
+      "caption": "Priya is now in Sales. The unchanged Accounts printer is absent; AST-LAP-016 is a separately recorded personal first issue. Membership did not move the Accounts printer or confer an IT role.",
+      "alt": "Priya\u2019s My Equipment after moving to Sales, with personal AST-LAP-016 and no Accounts shared printer.",
+      "applicationRevision": "000818f42e854e4a1fee8692b9ffaaa52b5c788d",
+      "schema": 31,
+      "browser": "Chromium 156.0.8078.79",
+      "automation": "Playwright 1.62.1",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1050
+      },
+      "deviceScaleFactor": 1,
+      "theme": "light",
+      "fullPage": true,
+      "capturedAt": "2026-11-27T11:58:30.656Z",
+      "fixture": "Disposable fictional Aster Services / Northlight journey on local HTTPS and SQLite",
+      "actor": "priya.shah",
+      "context": {
+        "accountState": [
+          9,
+          0,
+          1,
+          1
+        ],
+        "roles": [
+          [
+            "Staff Member"
+          ]
+        ],
+        "overrides": [],
+        "features": {
+          "devices": 1,
+          "ipam": 1,
+          "racks": 1,
+          "suppliers": 1,
+          "equipment_lifecycle": 1,
+          "it_assets": 1
+        }
+      },
+      "sha256": "28fbbae5d39fedc3f032bfc583c284c1710ec97bbb1d1d053152cf387ebe322c",
+      "urlPath": "/account#equipment",
+      "independentVisualAcceptance": "pending",
+      "ownerVisualAcceptance": "pending"
+    },
+    {
+      "file": "sarah-current-equipment.png",
+      "allocation": "My Equipment and safe equipment Details",
+      "states": [
+        "B3-E3-S02",
+        "B3-E5-S02"
+      ],
+      "caption": "Sarah\u2019s current list contains independent AST-LAP-015 and its explicit keyboard issue. Retired/written-off AST-LAP-014 and its former holders\u2019 IT history are not employee equipment.",
+      "alt": "Sarah\u2019s My Equipment showing current AST-LAP-015 and its outstanding associated keyboards.",
+      "applicationRevision": "000818f42e854e4a1fee8692b9ffaaa52b5c788d",
+      "schema": 31,
+      "browser": "Chromium 156.0.8078.79",
+      "automation": "Playwright 1.62.1",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1050
+      },
+      "deviceScaleFactor": 1,
+      "theme": "light",
+      "fullPage": true,
+      "capturedAt": "2026-11-27T11:58:35.064Z",
+      "fixture": "Disposable fictional Aster Services / Northlight journey on local HTTPS and SQLite",
+      "actor": "sarah.lewis",
+      "context": {
+        "accountState": [
+          8,
+          0,
+          1,
+          1
+        ],
+        "roles": [
+          [
+            "Staff Member"
+          ]
+        ],
+        "overrides": [],
+        "features": {
+          "devices": 1,
+          "ipam": 1,
+          "racks": 1,
+          "suppliers": 1,
+          "equipment_lifecycle": 1,
+          "it_assets": 1
+        }
+      },
+      "sha256": "26dd6ab9c92e5a3910a01a7c7296f618f0cc0df29ddfab61ea80f392e3e0faa2",
+      "urlPath": "/account#equipment",
+      "independentVisualAcceptance": "pending",
+      "ownerVisualAcceptance": "pending"
+    },
+    {
+      "file": "employee-safe-asset-quantity.png",
+      "allocation": "My Equipment and safe equipment Details",
+      "states": [
+        "B3-E4-S03"
+      ],
+      "caption": "The employee asset summary shows only Sarah\u2019s outstanding quantity and safe identity fields, not full stock totals, Supplier details or movement history.",
+      "alt": "Employee-safe USB Keyboards Details showing outstanding quantity two and safe equipment fields.",
+      "applicationRevision": "000818f42e854e4a1fee8692b9ffaaa52b5c788d",
+      "schema": 31,
+      "browser": "Chromium 156.0.8078.79",
+      "automation": "Playwright 1.62.1",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1050
+      },
+      "deviceScaleFactor": 1,
+      "theme": "light",
+      "fullPage": true,
+      "capturedAt": "2026-11-27T11:58:35.413Z",
+      "fixture": "Disposable fictional Aster Services / Northlight journey on local HTTPS and SQLite",
+      "actor": "sarah.lewis",
+      "context": {
+        "accountState": [
+          8,
+          0,
+          1,
+          1
+        ],
+        "roles": [
+          [
+            "Staff Member"
+          ]
+        ],
+        "overrides": [],
+        "features": {
+          "devices": 1,
+          "ipam": 1,
+          "racks": 1,
+          "suppliers": 1,
+          "equipment_lifecycle": 1,
+          "it_assets": 1
+        }
+      },
+      "sha256": "ad424b977a7b707de7acd7ced8e6103aca40836ab5c1ac5293b8efa432a417bc",
+      "urlPath": "/account#equipment",
+      "independentVisualAcceptance": "pending",
+      "ownerVisualAcceptance": "pending"
+    },
+    {
+      "file": "former-personal-ticket-unavailable.png",
+      "allocation": "Handover and membership confidentiality",
+      "states": [
+        "B3-E5-S02",
+        "B3-E5-S03",
+        "B3-E5-S04",
+        "B5-A8-S01"
+      ],
+      "caption": "Alex\u2019s old AST-LAP-014 ticket is unavailable after that custody ended. An old reference does not grant employee access to retained IT history or the next holder\u2019s records.",
+      "alt": "Employee ticket window showing the former personal ticket is not available, without its historical content.",
+      "applicationRevision": "000818f42e854e4a1fee8692b9ffaaa52b5c788d",
+      "schema": 31,
+      "browser": "Chromium 156.0.8078.79",
+      "automation": "Playwright 1.62.1",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1050
+      },
+      "deviceScaleFactor": 1,
+      "theme": "light",
+      "fullPage": true,
+      "capturedAt": "2026-11-27T11:58:39.732Z",
+      "fixture": "Disposable fictional Aster Services / Northlight journey on local HTTPS and SQLite",
+      "actor": "alex.morgan",
+      "context": {
+        "accountState": [
+          7,
+          0,
+          1,
+          1
+        ],
+        "roles": [
+          [
+            "Staff Member"
+          ]
+        ],
+        "overrides": [],
+        "features": {
+          "devices": 1,
+          "ipam": 1,
+          "racks": 1,
+          "suppliers": 1,
+          "equipment_lifecycle": 1,
+          "it_assets": 1
+        }
+      },
+      "sha256": "945e0833ee898878591c2868575aa86033b22aac5738668966e035ed211bcd3a",
+      "urlPath": "/account#my-tickets",
+      "independentVisualAcceptance": "pending",
+      "ownerVisualAcceptance": "pending"
+    },
+    {
+      "file": "employee-recorded-software.png",
+      "allocation": "My Equipment and safe equipment Details",
+      "states": [
+        "B3-E4-S01"
+      ],
+      "caption": "Priya\u2019s permitted Details shows recorded Windows and Google Chrome names for her current AST-LAP-016. The fictional private IT note stays excluded from the employee projection.",
+      "alt": "Employee-safe AST-LAP-016 Details with Windows 11 Pro and recorded Google Chrome, without private IT fields.",
+      "applicationRevision": "000818f42e854e4a1fee8692b9ffaaa52b5c788d",
+      "schema": 31,
+      "browser": "Chromium 156.0.8078.79",
+      "automation": "Playwright 1.62.1",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1050
+      },
+      "deviceScaleFactor": 1,
+      "theme": "light",
+      "fullPage": true,
+      "capturedAt": "2026-11-27T11:58:48.117Z",
+      "fixture": "Disposable fictional Aster Services / Northlight journey on local HTTPS and SQLite",
+      "actor": "priya.shah",
+      "context": {
+        "accountState": [
+          9,
+          0,
+          1,
+          1
+        ],
+        "roles": [
+          [
+            "Staff Member"
+          ]
+        ],
+        "overrides": [],
+        "features": {
+          "devices": 1,
+          "ipam": 1,
+          "racks": 1,
+          "suppliers": 1,
+          "equipment_lifecycle": 1,
+          "it_assets": 1
+        }
+      },
+      "sha256": "93cc3e887ea07162815c7a50dcc6e69920bbd54021e1fae5979d5e4a59c612d6",
+      "urlPath": "/account#equipment",
+      "independentVisualAcceptance": "pending",
+      "ownerVisualAcceptance": "pending"
+    },
+    {
+      "file": "equal-department-audience-warning.png",
+      "allocation": "Ticket creation and confidentiality warnings",
+      "states": [
+        "B5-T3-S01",
+        "B5-T3-S04"
+      ],
+      "caption": "The same physical printer is now shared equally with Accounts and Sales. Sarah sees both current Department audiences before any sensitive writing; adding a Department does not create another issue.",
+      "alt": "Shared AST-PRN-01 Create Ticket warning naming Accounts and Sales before Subject and Description.",
+      "applicationRevision": "000818f42e854e4a1fee8692b9ffaaa52b5c788d",
+      "schema": 31,
+      "browser": "Chromium 156.0.8078.79",
+      "automation": "Playwright 1.62.1",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1050
+      },
+      "deviceScaleFactor": 1,
+      "theme": "light",
+      "fullPage": true,
+      "capturedAt": "2026-11-27T11:59:13.658Z",
+      "fixture": "Disposable fictional Aster Services / Northlight journey on local HTTPS and SQLite",
+      "actor": "sarah.lewis",
+      "context": {
+        "accountState": [
+          8,
+          0,
+          1,
+          1
+        ],
+        "roles": [
+          [
+            "Staff Member"
+          ]
+        ],
+        "overrides": [],
+        "features": {
+          "devices": 1,
+          "ipam": 1,
+          "racks": 1,
+          "suppliers": 1,
+          "equipment_lifecycle": 1,
+          "it_assets": 1
+        }
+      },
+      "sha256": "ce1afff8598eb850899e39b1937ae85ecccebda8f7d55a2b5e0dde15761e35fc",
+      "urlPath": "/account#equipment",
+      "independentVisualAcceptance": "pending",
+      "ownerVisualAcceptance": "pending"
+    },
+    {
+      "file": "associated-accessory-confidentiality.png",
+      "allocation": "Ticket creation and confidentiality warnings",
+      "states": [
+        "B5-T3-S02"
+      ],
+      "caption": "The associated mouse follows the printer\u2019s current shared custody. Its Department confidentiality warning appears before the form\u2019s writing fields; it is not a private personal ticket.",
+      "alt": "Create Ticket for the printer\u2019s associated Office Mouse with shared-Device Department confidentiality warning.",
+      "applicationRevision": "000818f42e854e4a1fee8692b9ffaaa52b5c788d",
+      "schema": 31,
+      "browser": "Chromium 156.0.8078.79",
+      "automation": "Playwright 1.62.1",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1050
+      },
+      "deviceScaleFactor": 1,
+      "theme": "light",
+      "fullPage": true,
+      "capturedAt": "2026-11-27T11:59:18.050Z",
+      "fixture": "Disposable fictional Aster Services / Northlight journey on local HTTPS and SQLite",
+      "actor": "alex.morgan",
+      "context": {
+        "accountState": [
+          7,
+          0,
+          1,
+          1
+        ],
+        "roles": [
+          [
+            "Staff Member"
+          ]
+        ],
+        "overrides": [],
+        "features": {
+          "devices": 1,
+          "ipam": 1,
+          "racks": 1,
+          "suppliers": 1,
+          "equipment_lifecycle": 1,
+          "it_assets": 1
+        }
+      },
+      "sha256": "e2cf6027f282aa9305a8367e47161e405ae7e7b827dcdf86f02d21a02e64b08f",
+      "urlPath": "/account#equipment",
+      "independentVisualAcceptance": "pending",
+      "ownerVisualAcceptance": "pending"
+    },
+    {
+      "file": "changed-equipment-ticket-rejected.png",
+      "allocation": "Ticket creation and confidentiality warnings",
+      "states": [
+        "B5-T1-S03",
+        "B5-T3-S05"
+      ],
+      "caption": "Removing Accounts while Alex\u2019s form is open makes this equipment ineligible. The actual server rejects Create Ticket and saves no request; the draft cannot retain stale access. Accounts is re-added afterwards within the same physical custody.",
+      "alt": "Create Ticket draft with equipment-access rejection after Accounts was removed from the shared printer.",
+      "applicationRevision": "000818f42e854e4a1fee8692b9ffaaa52b5c788d",
+      "schema": 31,
+      "browser": "Chromium 156.0.8078.79",
+      "automation": "Playwright 1.62.1",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1050
+      },
+      "deviceScaleFactor": 1,
+      "theme": "light",
+      "fullPage": true,
+      "capturedAt": "2026-11-27T11:59:20.728Z",
+      "fixture": "Disposable fictional Aster Services / Northlight journey on local HTTPS and SQLite",
+      "actor": "alex.morgan",
+      "context": {
+        "accountState": [
+          7,
+          0,
+          1,
+          1
+        ],
+        "roles": [
+          [
+            "Staff Member"
+          ]
+        ],
+        "overrides": [],
+        "features": {
+          "devices": 1,
+          "ipam": 1,
+          "racks": 1,
+          "suppliers": 1,
+          "equipment_lifecycle": 1,
+          "it_assets": 1
+        }
+      },
+      "sha256": "1e0a63dd90a17ea25f0dcbd74f55e416a9002e4b02597e47c2bb62a35fa5309d",
+      "urlPath": "/account#equipment",
+      "independentVisualAcceptance": "pending",
+      "ownerVisualAcceptance": "pending"
+    },
+    {
+      "file": "department-tickets-unread.png",
+      "allocation": "My Tickets and Department Tickets",
+      "states": [
+        "B5-T4-S02",
+        "B5-T4-S03",
+        "B5-T4-S04",
+        "B5-T5-S01"
+      ],
+      "caption": "Department Tickets follows the current shared printer custody. All Tickets exposes its In Progress request, with a per-ticket unread reply badge and separate navigation ticket counts.",
+      "alt": "Alex\u2019s Department Tickets with the shared printer request, unread badge, All Tickets filter and current technician.",
+      "applicationRevision": "000818f42e854e4a1fee8692b9ffaaa52b5c788d",
+      "schema": 31,
+      "browser": "Chromium 156.0.8078.79",
+      "automation": "Playwright 1.62.1",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1050
+      },
+      "deviceScaleFactor": 1,
+      "theme": "light",
+      "fullPage": true,
+      "capturedAt": "2026-11-27T12:01:03.841Z",
+      "fixture": "Disposable fictional Aster Services / Northlight journey on local HTTPS and SQLite",
+      "actor": "alex.morgan",
+      "context": {
+        "accountState": [
+          7,
+          0,
+          1,
+          1
+        ],
+        "roles": [
+          [
+            "Staff Member"
+          ]
+        ],
+        "overrides": [],
+        "features": {
+          "devices": 1,
+          "ipam": 1,
+          "racks": 1,
+          "suppliers": 1,
+          "equipment_lifecycle": 1,
+          "it_assets": 1
+        }
+      },
+      "sha256": "d227b5d89c75eb3e3bcc00b5984bbb74cfe154bf8569f5473e3ff04968acd164",
+      "urlPath": "/account#my-tickets",
+      "independentVisualAcceptance": "pending",
+      "ownerVisualAcceptance": "pending"
+    },
+    {
+      "file": "overview-retains-unread.png",
+      "allocation": "Unread notifications and replies",
+      "states": [
+        "B5-T4-S05",
+        "B5-T5-S02"
+      ],
+      "caption": "Opening Overview leaves Alex\u2019s unread reply outstanding. The Updates badge is not an automatic acknowledgement.",
+      "alt": "Employee ticket Overview with Updates unread badge still present and the current shared-equipment request.",
+      "applicationRevision": "000818f42e854e4a1fee8692b9ffaaa52b5c788d",
+      "schema": 31,
+      "browser": "Chromium 156.0.8078.79",
+      "automation": "Playwright 1.62.1",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1050
+      },
+      "deviceScaleFactor": 1,
+      "theme": "light",
+      "fullPage": true,
+      "capturedAt": "2026-11-27T12:01:04.205Z",
+      "fixture": "Disposable fictional Aster Services / Northlight journey on local HTTPS and SQLite",
+      "actor": "alex.morgan",
+      "context": {
+        "accountState": [
+          7,
+          0,
+          1,
+          1
+        ],
+        "roles": [
+          [
+            "Staff Member"
+          ]
+        ],
+        "overrides": [],
+        "features": {
+          "devices": 1,
+          "ipam": 1,
+          "racks": 1,
+          "suppliers": 1,
+          "equipment_lifecycle": 1,
+          "it_assets": 1
+        }
+      },
+      "sha256": "5aa25ed0a6f224f4365baf18c000404b19992bab31e242be821aef1b3cda5f63",
+      "urlPath": "/account#my-tickets",
+      "independentVisualAcceptance": "pending",
+      "ownerVisualAcceptance": "pending"
+    },
+    {
+      "file": "updates-acknowledges-own-read.png",
+      "allocation": "Unread notifications and replies",
+      "states": [
+        "B5-T5-S03"
+      ],
+      "caption": "Only the successfully loaded Updates conversation acknowledges Alex\u2019s own unread messages. Other eligible accounts keep their independent state.",
+      "alt": "Employee Updates showing the IT question and Reply To IT after Alex\u2019s own unread acknowledgement.",
+      "applicationRevision": "000818f42e854e4a1fee8692b9ffaaa52b5c788d",
+      "schema": 31,
+      "browser": "Chromium 156.0.8078.79",
+      "automation": "Playwright 1.62.1",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1050
+      },
+      "deviceScaleFactor": 1,
+      "theme": "light",
+      "fullPage": true,
+      "capturedAt": "2026-11-27T12:01:04.542Z",
+      "fixture": "Disposable fictional Aster Services / Northlight journey on local HTTPS and SQLite",
+      "actor": "alex.morgan",
+      "context": {
+        "accountState": [
+          7,
+          0,
+          1,
+          1
+        ],
+        "roles": [
+          [
+            "Staff Member"
+          ]
+        ],
+        "overrides": [],
+        "features": {
+          "devices": 1,
+          "ipam": 1,
+          "racks": 1,
+          "suppliers": 1,
+          "equipment_lifecycle": 1,
+          "it_assets": 1
+        }
+      },
+      "sha256": "27e0caf472d2e889f2c9c81dd5b8ce314652d5e51da8457b96d6b887dffcbfcc",
+      "urlPath": "/account#my-tickets",
+      "independentVisualAcceptance": "pending",
+      "ownerVisualAcceptance": "pending"
+    },
+    {
+      "file": "other-account-failed-load-unread.png",
+      "allocation": "Unread notifications and replies",
+      "states": [
+        "B5-T5-S04",
+        "B5-T5-S05"
+      ],
+      "caption": "Priya\u2019s account still has its own unread reply after Alex acknowledged his. A genuine aborted local request makes Updates fail to load, so Priya\u2019s unread state is retained. No synthetic response or application UI was supplied.",
+      "alt": "Priya\u2019s Updates load-error state with unread badge retained after the real request failed.",
+      "applicationRevision": "000818f42e854e4a1fee8692b9ffaaa52b5c788d",
+      "schema": 31,
+      "browser": "Chromium 156.0.8078.79",
+      "automation": "Playwright 1.62.1",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1050
+      },
+      "deviceScaleFactor": 1,
+      "theme": "light",
+      "fullPage": true,
+      "capturedAt": "2026-11-27T12:01:08.572Z",
+      "fixture": "Disposable fictional Aster Services / Northlight journey on local HTTPS and SQLite",
+      "actor": "priya.shah",
+      "context": {
+        "accountState": [
+          9,
+          0,
+          1,
+          1
+        ],
+        "roles": [
+          [
+            "Staff Member"
+          ]
+        ],
+        "overrides": [],
+        "features": {
+          "devices": 1,
+          "ipam": 1,
+          "racks": 1,
+          "suppliers": 1,
+          "equipment_lifecycle": 1,
+          "it_assets": 1
+        }
+      },
+      "sha256": "7b40a7c0f532243894be15cae3a1a173fd8f147914ea8e3f85dbfd66b3315729",
+      "urlPath": "/account#my-tickets",
+      "independentVisualAcceptance": "pending",
+      "ownerVisualAcceptance": "pending"
+    },
+    {
+      "file": "employee-reply-and-safe-file.png",
+      "allocation": "Unread notifications and replies",
+      "states": [
+        "B5-T6-S01",
+        "B5-T6-S02"
+      ],
+      "caption": "Alex\u2019s employee reply and the fictional text attachment are saved in the permitted conversation. Reply To IT is available for another message; attachments share the same current Department audience.",
+      "alt": "Employee Updates with Alex\u2019s sent reply, fictional-printer-steps.txt download and the Reply To IT form.",
+      "applicationRevision": "000818f42e854e4a1fee8692b9ffaaa52b5c788d",
+      "schema": 31,
+      "browser": "Chromium 156.0.8078.79",
+      "automation": "Playwright 1.62.1",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1050
+      },
+      "deviceScaleFactor": 1,
+      "theme": "light",
+      "fullPage": true,
+      "capturedAt": "2026-11-27T12:01:09.056Z",
+      "fixture": "Disposable fictional Aster Services / Northlight journey on local HTTPS and SQLite",
+      "actor": "alex.morgan",
+      "context": {
+        "accountState": [
+          7,
+          0,
+          1,
+          1
+        ],
+        "roles": [
+          [
+            "Staff Member"
+          ]
+        ],
+        "overrides": [],
+        "features": {
+          "devices": 1,
+          "ipam": 1,
+          "racks": 1,
+          "suppliers": 1,
+          "equipment_lifecycle": 1,
+          "it_assets": 1
+        }
+      },
+      "sha256": "a5d9158b26444fbe17a5a69693370817170945b86067277ccb102bdba87db404",
+      "urlPath": "/account#my-tickets",
+      "independentVisualAcceptance": "pending",
+      "ownerVisualAcceptance": "pending"
+    },
+    {
+      "file": "later-reply-becomes-unread.png",
+      "allocation": "Unread notifications and replies",
+      "states": [
+        "B5-T5-S06"
+      ],
+      "caption": "A later IT reply creates a new unread state for Alex even though he previously acknowledged Updates. Counts follow current eligible tickets and each account\u2019s read receipts.",
+      "alt": "Department Tickets showing a new unread reply on the existing shared printer request.",
+      "applicationRevision": "000818f42e854e4a1fee8692b9ffaaa52b5c788d",
+      "schema": 31,
+      "browser": "Chromium 156.0.8078.79",
+      "automation": "Playwright 1.62.1",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1050
+      },
+      "deviceScaleFactor": 1,
+      "theme": "light",
+      "fullPage": true,
+      "capturedAt": "2026-11-27T12:01:10.336Z",
+      "fixture": "Disposable fictional Aster Services / Northlight journey on local HTTPS and SQLite",
+      "actor": "alex.morgan",
+      "context": {
+        "accountState": [
+          7,
+          0,
+          1,
+          1
+        ],
+        "roles": [
+          [
+            "Staff Member"
+          ]
+        ],
+        "overrides": [],
+        "features": {
+          "devices": 1,
+          "ipam": 1,
+          "racks": 1,
+          "suppliers": 1,
+          "equipment_lifecycle": 1,
+          "it_assets": 1
+        }
+      },
+      "sha256": "d227b5d89c75eb3e3bcc00b5984bbb74cfe154bf8569f5473e3ff04968acd164",
+      "urlPath": "/account#my-tickets",
+      "independentVisualAcceptance": "pending",
+      "ownerVisualAcceptance": "pending"
+    },
+    {
+      "file": "closed-ticket-reply-protection.png",
+      "allocation": "My Tickets and Department Tickets",
+      "states": [
+        "B5-T6-S03",
+        "B5-T6-S04",
+        "B5-T6-S06"
+      ],
+      "caption": "IT closed this ticket while the reply draft was open. The stale send is rejected; the refreshed Closed conversation requires Reopen Ticket before another employee reply or file.",
+      "alt": "Closed employee ticket with rejected stale reply message, no active reply form and Reopen Ticket.",
+      "applicationRevision": "000818f42e854e4a1fee8692b9ffaaa52b5c788d",
+      "schema": 31,
+      "browser": "Chromium 156.0.8078.79",
+      "automation": "Playwright 1.62.1",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1050
+      },
+      "deviceScaleFactor": 1,
+      "theme": "light",
+      "fullPage": true,
+      "capturedAt": "2026-11-27T12:01:10.853Z",
+      "fixture": "Disposable fictional Aster Services / Northlight journey on local HTTPS and SQLite",
+      "actor": "alex.morgan",
+      "context": {
+        "accountState": [
+          7,
+          0,
+          1,
+          1
+        ],
+        "roles": [
+          [
+            "Staff Member"
+          ]
+        ],
+        "overrides": [],
+        "features": {
+          "devices": 1,
+          "ipam": 1,
+          "racks": 1,
+          "suppliers": 1,
+          "equipment_lifecycle": 1,
+          "it_assets": 1
+        }
+      },
+      "sha256": "a073277324e4c5c7082044e85acd24b33771f526e4ca6ce0600fc40fb19334e3",
+      "urlPath": "/account#my-tickets",
+      "independentVisualAcceptance": "pending",
+      "ownerVisualAcceptance": "pending"
+    },
+    {
+      "file": "reopened-ticket-retained-history.png",
+      "allocation": "My Tickets and Department Tickets",
+      "states": [
+        "B5-T4-S06",
+        "B5-T6-S05"
+      ],
+      "caption": "Reopen keeps the original ticket reference, Sam\u2019s technician assignment and earlier request, reply and closure history. It starts another attempt on the same ticket rather than creating a replacement.",
+      "alt": "Reopened shared printer ticket History retaining its original creation, technician assignment, messages, closure and reopen.",
+      "applicationRevision": "000818f42e854e4a1fee8692b9ffaaa52b5c788d",
+      "schema": 31,
+      "browser": "Chromium 156.0.8078.79",
+      "automation": "Playwright 1.62.1",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1050
+      },
+      "deviceScaleFactor": 1,
+      "theme": "light",
+      "fullPage": true,
+      "capturedAt": "2026-11-27T12:01:11.364Z",
+      "fixture": "Disposable fictional Aster Services / Northlight journey on local HTTPS and SQLite",
+      "actor": "alex.morgan",
+      "context": {
+        "accountState": [
+          7,
+          0,
+          1,
+          1
+        ],
+        "roles": [
+          [
+            "Staff Member"
+          ]
+        ],
+        "overrides": [],
+        "features": {
+          "devices": 1,
+          "ipam": 1,
+          "racks": 1,
+          "suppliers": 1,
+          "equipment_lifecycle": 1,
+          "it_assets": 1
+        }
+      },
+      "sha256": "b1a7b02cb1c52c8b517ba00574a11b332692bbce4547816649a76f5400ecbd83",
+      "urlPath": "/account#my-tickets",
+      "independentVisualAcceptance": "pending",
+      "ownerVisualAcceptance": "pending"
+    },
+    {
+      "file": "it-only-former-accessory-history.png",
+      "allocation": "Handover and membership confidentiality",
+      "states": [
+        "B5-A8-S06"
+      ],
+      "caption": "Sam\u2019s authorised IT view retains the former mouse association after AST-LAP-014 custody ends. The current association is empty; the old mouse belongs to historical IT records, not Sarah\u2019s or Alex\u2019s employee equipment access.",
+      "alt": "IT-only AST-LAP-014 Associated Equipment showing no current association and retained historical Office Mouse issue and return.",
+      "applicationRevision": "000818f42e854e4a1fee8692b9ffaaa52b5c788d",
+      "schema": 31,
+      "browser": "Chromium 156.0.8078.79",
+      "automation": "Playwright 1.62.1",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1050
+      },
+      "deviceScaleFactor": 1,
+      "theme": "light",
+      "fullPage": true,
+      "capturedAt": "2026-11-27T12:02:58.536Z",
+      "fixture": "Disposable fictional Aster Services / Northlight journey on local HTTPS and SQLite",
+      "actor": "sam.taylor",
+      "context": {
+        "accountState": [
+          2,
+          0,
+          1,
+          1
+        ],
+        "roles": [
+          [
+            "Staff Member"
+          ]
+        ],
+        "overrides": [
+          [
+            "Departments",
+            "edit"
+          ],
+          [
+            "Devices",
+            "edit"
+          ],
+          [
+            "IT Assets",
+            "edit"
+          ],
+          [
+            "Service Desk",
+            "edit"
+          ],
+          [
+            "Staff Members",
+            "edit"
+          ],
+          [
+            "Suppliers",
+            "edit"
+          ]
+        ],
+        "features": {
+          "devices": 1,
+          "ipam": 1,
+          "racks": 1,
+          "suppliers": 1,
+          "equipment_lifecycle": 1,
+          "it_assets": 1
+        }
+      },
+      "sha256": "a881670a7ce34eeefd46d62a18c38aeb0bac56a83b3bccf7e117b9ec641cc10b",
+      "urlPath": "/inventory#devices",
+      "independentVisualAcceptance": "pending",
+      "ownerVisualAcceptance": "pending"
+    }
+  ],
+  "reusedImages": [
+    {
+      "file": "docs/how-tos/features-and-instructions/v2.2-draft/screenshots/batch-7c/alex-before-handover.png",
+      "allocation": "Device registration and reissue",
+      "states": [
+        "B3-E3-S02",
+        "B5-T1-S01",
+        "B4-K1-S06"
+      ],
+      "caption": "Alex sees the personally assigned AST-LAP-014 and outstanding mouse, plus the Accounts printer shared through current membership. This is the preserved pre-handover state.",
+      "alt": "Alex\u2019s My Equipment with personal laptop and mouse and shared Accounts printer.",
+      "applicationRevision": "000818f42e854e4a1fee8692b9ffaaa52b5c788d",
+      "schema": 31,
+      "browser": "Chromium 156.0.8078.79",
+      "automation": "Playwright 1.62.1",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1050
+      },
+      "deviceScaleFactor": 1,
+      "theme": "light",
+      "fullPage": true,
+      "capturedAt": "2026-11-27T11:41:14.646Z",
+      "fixture": "Disposable fictional Aster Services / Northlight journey on local HTTPS and SQLite",
+      "actor": "alex.morgan",
+      "context": {
+        "accountState": [
+          7,
+          0,
+          1,
+          1
+        ],
+        "roles": [
+          [
+            "Staff Member"
+          ]
+        ],
+        "overrides": [],
+        "features": {
+          "devices": 1,
+          "ipam": 1,
+          "racks": 1,
+          "suppliers": 1,
+          "equipment_lifecycle": 1,
+          "it_assets": 1
+        }
+      },
+      "sha256": "09d06aacfc06928add4e56cd6e9634d3960bd9cec5be652c199a9309239626db",
+      "urlPath": "/account#equipment",
+      "independentVisualAcceptance": "pending",
+      "ownerVisualAcceptance": "pending",
+      "originalSourceStates": [
+        "B3-E3-S02",
+        "B4-K1-S06",
+        "B5-T1-S01",
+        "B4-K1-S06"
+      ],
+      "sourcePack": "7C",
+      "id": "Shared-7C-alex-before-handover",
+      "provenanceLimitations": "Exact original Batch 7C bytes, actor, timestamp and caption; these shared uses do not relabel the image as a later outcome. Batch 7C independent/owner visual acceptance remains pending."
+    },
+    {
+      "file": "docs/how-tos/features-and-instructions/v2.2-draft/screenshots/batch-7b/staff-left-company-retained.png",
+      "requirements": [
+        "B3-S5-S03"
+      ],
+      "caption": "Historical accepted Batch 7B example only: Saved offboarding result: Alex is Left Company, the linked login is Disabled and AC-LAP-07 remains assigned. No equipment return has been recorded. This is the separate AC-LAP-07 fixture, not an employment change in the AST-LAP-014 journey.",
+      "alt": "Alex Morgan Staff Details showing Left Company, Disabled Caffoot Login, MFA and roles retained, Reactivate, outstanding AC-LAP-07 and its assignment history.",
+      "applicationRevision": "fdc677920bfc52f48f641b3d6d1344c902a6a9b0",
+      "documentationStart": "8c790ad91a969b35a2b610f7fe7dd4e8a87daea4",
+      "schema": 31,
+      "browser": "Chromium 156.0.8078.79",
+      "automation": "Playwright 1.62.0",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1304
+      },
+      "deviceScaleFactor": 1,
+      "theme": "light",
+      "fullPage": true,
+      "capturedAt": "2026-11-27T06:59:18.545482+00:00",
+      "fixture": "Isolated fictional local HTTPS/SQLite training fixture; Accounts Department, Training Office, AC-LAP-07; example.invalid addresses only",
+      "actor": "training-admin",
+      "subject": "alex.morgan",
+      "accountContexts": {
+        "training-admin": {
+          "account_id": 1,
+          "roles": [
+            [
+              "Staff Member"
+            ]
+          ],
+          "overrides": {},
+          "account_state": [
+            1,
+            1,
+            1,
+            0
+          ],
+          "effective_permissions": {},
+          "mfa_mandatory": true,
+          "mfa_required_at_sign_in": true
+        },
+        "alex.morgan": {
+          "account_id": 2,
+          "roles": [
+            [
+              "Staff Member"
+            ],
+            [
+              "IT Staff"
+            ]
+          ],
+          "overrides": {},
+          "account_state": [
+            0,
+            0,
+            1,
+            0
+          ],
+          "effective_permissions": {
+            "Devices": "edit",
+            "IPAM": "edit",
+            "IT Assets": "edit",
+            "Racks": "edit"
+          },
+          "mfa_mandatory": true,
+          "mfa_required_at_sign_in": true
+        }
+      },
+      "featureConfiguration": {
+        "devices": true,
+        "ipam": true,
+        "racks": true,
+        "suppliers": true,
+        "equipment_lifecycle": true,
+        "it_assets": true
+      },
+      "sha256": "26df714cf370b949237a02f137c1a111ffafe32c2045423600136c5abb22554d",
+      "guide": "Staff-Members.md",
+      "guideUses": [
+        "Staff-Members.md#mark-as-left-company-or-reactivate"
+      ],
+      "independentVisualAcceptance": "recorded \u2014 https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7212506766",
+      "ownerVisualAcceptance": "accepted \u2014 https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7212506766",
+      "localVisualInspection": "Opened individually for framing, legibility, actual state, fictional data and empty secret fields; no QR/setup secrets present.",
+      "states": [
+        "B3-E5-S05"
+      ],
+      "originalSourceStates": [
+        "B3-S5-S03"
+      ],
+      "sourcePack": "7B",
+      "id": "Shared-7B-offboarding",
+      "provenanceLimitations": "Preserve original accepted Batch 7B provenance and correction-refresh limits; no recapture, relabelling or new session-revocation test. The new guide use remains pending owner acceptance."
+    }
+  ],
+  "verifiedPreviousCheckpoints": {
+    "reconciliation": "19e148efc866c054842c628ea2a6fde4420e2347",
+    "7C": "a9f607b132edf1125580eb41c27ee9c8eee80902",
+    "7D": "03b4f2c5090a10dc6c0ad66463e4f309a4719796"
+  },
+  "combinedNewImages": 99,
+  "combinedCeiling": 100,
+  "fixtureMetadataNotes": "New-image context.accountState columns: account ID, is_admin, active, mfa_confirmed. Staff Member is the protected baseline role; new actor wider grants come only from recorded overrides. All new contexts use en-GB and device scale 1. Source 7B reuse keeps its richer original metadata and source acceptance.",
+  "captureDriverHashes": {
+    "capture-common.cjs": "74bc4bc96391a9f33aa95988bb8ad658cfcda33dae9c902e668ecce9a5a238bd",
+    "e-privacy.cjs": "940baf3154d30a02b9efb218bc2521b5f507ea0752d169f07bd1426ef3b60897",
+    "e-warnings.cjs": "9db1e081b3cc675805130634fa4470da26c8956a5353320dac950da4bc858282",
+    "e-conversation.cjs": "a3b9e56f17792615bfeeb7bf7611aa835539597dec99694ec46c06d8bde15c07",
+    "e-historical-accessory.cjs": "31f1a584d932a0f26aceb2ee5c15add0e460502ddace4fdc40d4be61fb3a2895"
+  }
+}

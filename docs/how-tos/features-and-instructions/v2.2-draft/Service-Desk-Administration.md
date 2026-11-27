@@ -1,5 +1,7 @@
 # Administer The Service Desk
 
+> **Current Batch 7E capture status — 27 November 2026:** [New desktop light illustrations](screenshots/batch-7e/README.md) use the approved merged schema-31 baseline. Independent ChatGPT review and separate owner visual/privacy/caption/alt acceptance remain pending. Earlier written/source and capture-status paragraphs retain their dated scope; the current pack status controls these new images. Published v2.1 and targeted correction-refresh requirements remain unchanged.
+
 > **Draft v2.2 — Unreleased.** This guide covers employee and technician access, ticket email, the support calendar, categories, reporting and the effect of equipment changes on stored tickets and files.
 
 > **Written/source reconciliation:** Documentation Batch 5, application baseline `fdc677920bfc52f48f641b3d6d1344c902a6a9b0` (schema 31). Focused independent reviews are recorded and [owner written/source acceptance of Batches 1–6](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7200681167) is recorded. Current visual/privacy/caption/alt approval remains outstanding; [Batch 7 reconciliation and proposed capture packs](../../../development-guide/Milestone-01-Batch-7-Review.md) await independent review and owner acceptance. Capture scope and method need separate authorisation. Desktop capture remains deferred; existing historical/mobile images retain their original provenance. [Source review and exact screenshot requirements](../../../development-guide/Milestone-01-Batch-5-Review.md).
@@ -240,3 +242,23 @@ The reset is one database operation, including ticket attachments. An error roll
 For employee-facing explanations, see [Service Desk Tickets](Service-Desk-Tickets.md). For source and test coverage, see [Service Desk Foundation](../../../development-guide/Service-Desk-Foundation.md).
 
 [Follow the connected Aster Services support request](Connected-Service-Desk-Journey.md) · [Draft v2.2 guides](README.md)
+
+## Batch 7E Desktop Illustrations
+
+These images follow the fictional training journey. Read the caption to distinguish a draft, a cancelled preview and a saved outcome. [Complete original coverage and limits](screenshots/batch-7e/Coverage.md).
+
+![Priya’s My Equipment before changing Accounts membership, showing the shared AST-PRN-01 printer.](screenshots/batch-7e/priya-membership-before.png)
+
+*Draft v2.2 — Priya’s current Accounts membership grants the shared Accounts printer. This preserved view precedes her membership change and moves no physical equipment. Independent review and owner visual acceptance pending.*
+
+![Priya’s My Equipment after moving to Sales, with personal AST-LAP-016 and no Accounts shared printer.](screenshots/batch-7e/priya-membership-after.png)
+
+*Draft v2.2 — Priya is now in Sales. The unchanged Accounts printer is absent; AST-LAP-016 is a separately recorded personal first issue. Membership did not move the Accounts printer or confer an IT role. Independent review and owner visual acceptance pending.*
+
+![Employee ticket window showing the former personal ticket is not available, without its historical content.](screenshots/batch-7e/former-personal-ticket-unavailable.png)
+
+*Draft v2.2 — Alex’s old AST-LAP-014 ticket is unavailable after that custody ended. An old reference does not grant employee access to retained IT history or the next holder’s records. Independent review and owner visual acceptance pending.*
+
+![IT-only AST-LAP-014 Associated Equipment showing no current association and retained historical Office Mouse issue and return.](screenshots/batch-7e/it-only-former-accessory-history.png)
+
+*Draft v2.2 — Sam’s authorised IT view retains the former mouse association after AST-LAP-014 custody ends. The current association is empty; the old mouse belongs to historical IT records, not Sarah’s or Alex’s employee equipment access. Independent review and owner visual acceptance pending.*

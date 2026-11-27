@@ -1,5 +1,13 @@
 # Draft v2.2 User And Administrator Guides
 
+## Batch 7E Delivery And Consolidated Stop — 27 November 2026
+
+**22/22 new desktop light images**, plus exact 7C pre-handover reuse and one narrow accepted 7B offboarding reference; all **10 groups / 52 owned states and one shared reference** retained. [Pack/direct images and guides](screenshots/batch-7e/README.md) · [coverage](screenshots/batch-7e/Coverage.md) · [manifest](screenshots/batch-7e/manifest.json) · [verification](screenshots/batch-7e/Verification.md). Counts: My Equipment 4/4, ticket creation/warnings 5/5, ticket navigation 4/4, unread/replies 5/5, custody/membership confidentiality 4/4. The 7B offboarding image is its separate AC-LAP-07 fixture, with original acceptance and limitations; no relabelling as this journey’s current state.
+
+**Combined delivery: 99/100 new images; 54 groups, 286 owned states and seven shared references retained.** Separate remotely verified checkpoints: 7C `a9f607b132edf1125580eb41c27ee9c8eee80902`; 7D `03b4f2c5090a10dc6c0ad66463e4f309a4719796`. 7E follows those successful checkpoints. Original accepted instructions, historical/correction evidence and targeted refresh backlog remain; the new use of earlier illustrations does not certify them as later captures. Routine and unpictured variants have explicit written dispositions, not invented runtime passes.
+
+**Stop here for independent ChatGPT review and separate product-owner visual/privacy/caption/alt acceptance of each pack.** No pack is newly owner-accepted by this delivery. PR #472 remains draft/open/unmerged, #366 open, and v2.1 remains published. No 7F–7H/8, native/upgrade/recovery/export/audit/website work, promotion, merge, release or publication.
+
 ## Batch 7D Delivery — 27 November 2026
 
 **36/36 new desktop light images**, with three genuinely matching 7C references; all **21 groups / 114 owned states and one shared reference** retained. [Pack/images](screenshots/batch-7d/README.md) · [coverage](screenshots/batch-7d/Coverage.md) · [manifest](screenshots/batch-7d/manifest.json) · [verification](screenshots/batch-7d/Verification.md). Category counts: Departments 7/7, custody 5/5, circulation 8/8, associations/handover 6/6, corrections 4/4, lifecycle 6/6. Independent review and separate owner visual acceptance remain pending. 7C was separately committed, pushed and remotely verified at `a9f607b132edf1125580eb41c27ee9c8eee80902` before this documentation delivery. Continue to 7E only after this checkpoint succeeds.

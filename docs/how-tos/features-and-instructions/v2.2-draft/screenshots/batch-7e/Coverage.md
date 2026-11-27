@@ -1,0 +1,148 @@
+# Batch 7E — Original Requirement And State Mapping
+
+**27 November 2026. 10 original groups, 52 owned specifications and 1 shared references retained.** 22 new images, ceiling 22. Independent review and separate owner visual acceptance pending.
+
+Mappings describe instructional coverage, not exhaustive runtime test results. The [consolidated owner scope](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7217032947) permits accurate written treatment of routine validation, cancellation and repetitive states. Every original contract and variant remains below; a representative image does not claim an unpictured result. Original requirements remain in the [Batch 7 register](../../../../../development-guide/Milestone-01-Batch-7-Review.md#requirement-register).
+
+## B3-E3 — My Account → Overview → Open My Equipment; Workspace → My Equipment
+
+Original contract: Active linked baseline Staff, Devices/IT Assets enabled, Priya personal laptop/adapters and Accounts printer; tables, Search Equipment, Equipment Type/Kind, Clear Filters, Details/Report A Problem; No matching equipment versus No equipment available
+
+Written procedure: [Device-Assignments-and-My-Equipment](../../Device-Assignments-and-My-Equipment.md#my-equipment).
+
+| Original specification | Instructional disposition and illustration limit | Image references |
+| --- | --- | --- |
+| `B3-E3-S01` — My Account shortcut. | Written procedure for My Account shortcut. No separate screenshot of this variant and no new runtime-pass claim; retain all prerequisites, rejection, cancellation and result instructions in the linked guide. | Written instructions |
+| `B3-E3-S02` — Personal/shared tables. | Illustrated directly or by the precisely bounded representative caption below; other variants in the original contract retain the linked written procedure. Sarah’s current list contains independent AST-LAP-015 and its explicit keyboard issue. Retired/written-off AST-LAP-014 and its former holders’ IT history are not employee equipment. Alex sees the personally assigned AST-LAP-014 and outstanding mouse, plus the Accounts printer shared through current membership. This is the preserved pre-handover state. | [sarah-current-equipment](sarah-current-equipment.png) · [Shared-7C-alex-before-handover](../batch-7c/alex-before-handover.png) |
+| `B3-E3-S03` — Search/type/kind filter results. | Written procedure for Search/type/kind filter results. No separate screenshot of this variant and no new runtime-pass claim; retain all prerequisites, rejection, cancellation and result instructions in the linked guide. | Written instructions |
+| `B3-E3-S04` — No matches. | Written procedure for No matches. No separate screenshot of this variant and no new runtime-pass claim; retain all prerequisites, rejection, cancellation and result instructions in the linked guide. | Written instructions |
+| `B3-E3-S05` — No equipment available. | Written procedure for No equipment available. No separate screenshot of this variant and no new runtime-pass claim; retain all prerequisites, rejection, cancellation and result instructions in the linked guide. | Written instructions |
+
+## B3-E4 — My Equipment → Details
+
+Original contract: Same baseline Staff; laptop with recognised software and missing-field example, IT Asset outstanding quantity, Close/Report A Problem, no restricted network/private fields; custody changed unavailable state
+
+Written procedure: [Device-Assignments-and-My-Equipment](../../Device-Assignments-and-My-Equipment.md#find-equipment-and-open-details).
+
+| Original specification | Instructional disposition and illustration limit | Image references |
+| --- | --- | --- |
+| `B3-E4-S01` — Laptop safe Details/software. | Illustrated directly or by the precisely bounded representative caption below; other variants in the original contract retain the linked written procedure. Employee Details offers a safe recorded-equipment summary. It does not grant access to network identities, Supplier purchase information, private IT notes or protected historical records. Priya’s permitted Details shows recorded Windows and Google Chrome names for her current AST-LAP-016. The fictional private IT note stays excluded from the employee projection. | [employee-safe-device-details](employee-safe-device-details.png) · [employee-recorded-software](employee-recorded-software.png) |
+| `B3-E4-S02` — Missing fields/software empty. | Illustrated directly or by the precisely bounded representative caption below; other variants in the original contract retain the linked written procedure. Employee Details offers a safe recorded-equipment summary. It does not grant access to network identities, Supplier purchase information, private IT notes or protected historical records. | [employee-safe-device-details](employee-safe-device-details.png) |
+| `B3-E4-S03` — Asset quantity Details. | Illustrated directly or by the precisely bounded representative caption below; other variants in the original contract retain the linked written procedure. The employee asset summary shows only Sarah’s outstanding quantity and safe identity fields, not full stock totals, Supplier details or movement history. | [employee-safe-asset-quantity](employee-safe-asset-quantity.png) |
+| `B3-E4-S04` — Custody-changed unavailable. | Written procedure for Custody-changed unavailable. No separate screenshot of this variant and no new runtime-pass claim; retain all prerequisites, rejection, cancellation and result instructions in the linked guide. | Written instructions |
+| `B3-E4-S05` — Close/Report A Problem. | Illustrated directly or by the precisely bounded representative caption below; other variants in the original contract retain the linked written procedure. Employee Details offers a safe recorded-equipment summary. It does not grant access to network identities, Supplier purchase information, private IT notes or protected historical records. | [employee-safe-device-details](employee-safe-device-details.png) |
+
+## B3-E5 — Staff Department change / Device holder change / login disable
+
+Original contract: Matched fictional Priya before/after; new membership list and next Details denial, old holder history IT-only, login revoked; no physical movement on membership change
+
+Written procedure: [Device-Assignments-and-My-Equipment](../../Device-Assignments-and-My-Equipment.md#visibility-empty-results-and-permission-changes).
+
+| Original specification | Instructional disposition and illustration limit | Image references |
+| --- | --- | --- |
+| `B3-E5-S01` — Membership before/after list. | Illustrated directly or by the precisely bounded representative caption below; other variants in the original contract retain the linked written procedure. Priya’s current Accounts membership grants the shared Accounts printer. This preserved view precedes her membership change and moves no physical equipment. Priya is now in Sales. The unchanged Accounts printer is absent; AST-LAP-016 is a separately recorded personal first issue. Membership did not move the Accounts printer or confer an IT role. | [priya-membership-before](priya-membership-before.png) · [priya-membership-after](priya-membership-after.png) |
+| `B3-E5-S02` — Holder before/after list. | Illustrated directly or by the precisely bounded representative caption below; other variants in the original contract retain the linked written procedure. Sarah’s current list contains independent AST-LAP-015 and its explicit keyboard issue. Retired/written-off AST-LAP-014 and its former holders’ IT history are not employee equipment. Alex’s old AST-LAP-014 ticket is unavailable after that custody ended. An old reference does not grant employee access to retained IT history or the next holder’s records. | [sarah-current-equipment](sarah-current-equipment.png) · [former-personal-ticket-unavailable](former-personal-ticket-unavailable.png) |
+| `B3-E5-S03` — Next Details denied. | Illustrated directly or by the precisely bounded representative caption below; other variants in the original contract retain the linked written procedure. Alex’s old AST-LAP-014 ticket is unavailable after that custody ended. An old reference does not grant employee access to retained IT history or the next holder’s records. | [former-personal-ticket-unavailable](former-personal-ticket-unavailable.png) |
+| `B3-E5-S04` — Former ticket history IT-only. | Illustrated directly or by the precisely bounded representative caption below; other variants in the original contract retain the linked written procedure. Alex’s old AST-LAP-014 ticket is unavailable after that custody ended. An old reference does not grant employee access to retained IT history or the next holder’s records. | [former-personal-ticket-unavailable](former-personal-ticket-unavailable.png) |
+| `B3-E5-S05` — Disabled login revoked. | Illustrated directly or by the precisely bounded representative caption below; other variants in the original contract retain the linked written procedure. Historical accepted Batch 7B example only: Saved offboarding result: Alex is Left Company, the linked login is Disabled and AC-LAP-07 remains assigned. No equipment return has been recorded. This is the separate AC-LAP-07 fixture, not an employment change in the AST-LAP-014 journey. | [Shared-7B-offboarding](../batch-7b/staff-left-company-retained.png) |
+
+## B5-T1 — My Equipment → Report A Problem
+
+Original contract: Active linked employee, AST-LAP-014 selected, personal/shared rows, missing/changed equipment and Cancel.
+
+Written procedure: [Service-Desk-Tickets](../../Service-Desk-Tickets.md#check-which-equipment-is-assigned-to-you).
+
+| Original specification | Instructional disposition and illustration limit | Image references |
+| --- | --- | --- |
+| `B5-T1-S01` — Personal/shared My Equipment rows. Shared canonical reference: `B4-K1-S06`. | Illustrated directly or by the precisely bounded representative caption below; other variants in the original contract retain the linked written procedure. Alex sees the personally assigned AST-LAP-014 and outstanding mouse, plus the Accounts printer shared through current membership. This is the preserved pre-handover state. | [Shared-7C-alex-before-handover](../batch-7c/alex-before-handover.png) |
+| `B5-T1-S02` — Preselected Report A Problem. | Illustrated directly or by the precisely bounded representative caption below; other variants in the original contract retain the linked written procedure. Report A Problem preselects Alex’s laptop. The support request remains unsaved until Create Ticket; Cancel abandons this draft. | [personal-ticket-draft](personal-ticket-draft.png) |
+| `B5-T1-S03` — Missing/changed equipment. | Illustrated directly or by the precisely bounded representative caption below; other variants in the original contract retain the linked written procedure. Removing Accounts while Alex’s form is open makes this equipment ineligible. The actual server rejects Create Ticket and saves no request; the draft cannot retain stale access. Accounts is re-added afterwards within the same physical custody. | [changed-equipment-ticket-rejected](changed-equipment-ticket-rejected.png) |
+| `B5-T1-S04` — Cancel unchanged. | Written procedure for Cancel unchanged. No separate screenshot of this variant and no new runtime-pass claim; retain all prerequisites, rejection, cancellation and result instructions in the linked guide. | Written instructions |
+
+## B5-T2 — Employee Create Ticket
+
+Original contract: Device/category/empty validation, Subject/Description limits, optional software recorded/Other/blank, Create Ticket/Cancel and saved reference.
+
+Written procedure: [Service-Desk-Tickets](../../Service-Desk-Tickets.md#raise-a-support-request).
+
+| Original specification | Instructional disposition and illustration limit | Image references |
+| --- | --- | --- |
+| `B5-T2-S01` — Device/category/software form. | Illustrated directly or by the precisely bounded representative caption below; other variants in the original contract retain the linked written procedure. Report A Problem preselects Alex’s laptop. The support request remains unsaved until Create Ticket; Cancel abandons this draft. | [personal-ticket-draft](personal-ticket-draft.png) |
+| `B5-T2-S02` — Required/limit validation. | Written procedure for Required/limit validation. No separate screenshot of this variant and no new runtime-pass claim; retain all prerequisites, rejection, cancellation and result instructions in the linked guide. | Written instructions |
+| `B5-T2-S03` — Saved ticket reference. | Illustrated directly or by the precisely bounded representative caption below; other variants in the original contract retain the linked written procedure. The saved request has one ticket reference and starts Open, Medium and Unassigned. My Tickets follows Alex’s eligible current equipment access. | [personal-ticket-saved](personal-ticket-saved.png) |
+| `B5-T2-S04` — Cancel unchanged. | Written procedure for Cancel unchanged. No separate screenshot of this variant and no new runtime-pass claim; retain all prerequisites, rejection, cancellation and result instructions in the linked guide. | Written instructions |
+| `B5-T2-S05` — Light/dark form. | The current owner assignment requires desktop light only. The original dark presentation variant is retained in historical traceability; no new dark capture or dark-theme functional acceptance is claimed. The personal ticket draft illustrates the actual light form. | [personal-ticket-draft](personal-ticket-draft.png) |
+
+## B5-T3 — Shared confidentiality
+
+Original contract: Department Device and linked accessory; warning before fields, Report A Problem preselection/picker change, equal added Department audience.
+
+Written procedure: [Service-Desk-Tickets](../../Service-Desk-Tickets.md#shared-device-ticket-confidentiality).
+
+| Original specification | Instructional disposition and illustration limit | Image references |
+| --- | --- | --- |
+| `B5-T3-S01` — Shared Device warning before fields. | Illustrated directly or by the precisely bounded representative caption below; other variants in the original contract retain the linked written procedure. The Department confidentiality warning appears before Subject and Description. Current eligible members of the displayed Department share this request; never enter or attach confidential, personal or sensitive information. The same physical printer is now shared equally with Accounts and Sales. Sarah sees both current Department audiences before any sensitive writing; adding a Department does not create another issue. | [department-confidentiality-warning](department-confidentiality-warning.png) · [equal-department-audience-warning](equal-department-audience-warning.png) |
+| `B5-T3-S02` — Linked accessory warning. | Illustrated directly or by the precisely bounded representative caption below; other variants in the original contract retain the linked written procedure. The associated mouse follows the printer’s current shared custody. Its Department confidentiality warning appears before the form’s writing fields; it is not a private personal ticket. | [associated-accessory-confidentiality](associated-accessory-confidentiality.png) |
+| `B5-T3-S03` — Picker change preselection. | Illustrated directly or by the precisely bounded representative caption below; other variants in the original contract retain the linked written procedure. The Department confidentiality warning appears before Subject and Description. Current eligible members of the displayed Department share this request; never enter or attach confidential, personal or sensitive information. | [department-confidentiality-warning](department-confidentiality-warning.png) |
+| `B5-T3-S04` — Equal added Department audience. | Illustrated directly or by the precisely bounded representative caption below; other variants in the original contract retain the linked written procedure. The same physical printer is now shared equally with Accounts and Sales. Sarah sees both current Department audiences before any sensitive writing; adding a Department does not create another issue. | [equal-department-audience-warning](equal-department-audience-warning.png) |
+| `B5-T3-S05` — Desktop negatives. | Illustrated directly or by the precisely bounded representative caption below; other variants in the original contract retain the linked written procedure. Removing Accounts while Alex’s form is open makes this equipment ineligible. The actual server rejects Create Ticket and saves no request; the draft cannot retain stale access. Accounts is re-added afterwards within the same physical custody. | [changed-equipment-ticket-rejected](changed-equipment-ticket-rejected.png) |
+
+## B5-T4 — Employee ticket navigation
+
+Original contract: My Tickets/Department Tickets, default Open, Clear Filters/All Tickets, equipment/search/sort, pagination, Overview/History/Close Window.
+
+Written procedure: [Service-Desk-Tickets](../../Service-Desk-Tickets.md#find-and-review-your-tickets).
+
+| Original specification | Instructional disposition and illustration limit | Image references |
+| --- | --- | --- |
+| `B5-T4-S01` — My Tickets default Open. | Illustrated directly or by the precisely bounded representative caption below; other variants in the original contract retain the linked written procedure. The saved request has one ticket reference and starts Open, Medium and Unassigned. My Tickets follows Alex’s eligible current equipment access. | [personal-ticket-saved](personal-ticket-saved.png) |
+| `B5-T4-S02` — Department Tickets. | Illustrated directly or by the precisely bounded representative caption below; other variants in the original contract retain the linked written procedure. Department Tickets follows the current shared printer custody. All Tickets exposes its In Progress request, with a per-ticket unread reply badge and separate navigation ticket counts. | [department-tickets-unread](department-tickets-unread.png) |
+| `B5-T4-S03` — All Tickets/Clear filters. | Illustrated directly or by the precisely bounded representative caption below; other variants in the original contract retain the linked written procedure. Department Tickets follows the current shared printer custody. All Tickets exposes its In Progress request, with a per-ticket unread reply badge and separate navigation ticket counts. | [department-tickets-unread](department-tickets-unread.png) |
+| `B5-T4-S04` — Search/sort/page. | Illustrated directly or by the precisely bounded representative caption below; other variants in the original contract retain the linked written procedure. Department Tickets follows the current shared printer custody. All Tickets exposes its In Progress request, with a per-ticket unread reply badge and separate navigation ticket counts. | [department-tickets-unread](department-tickets-unread.png) |
+| `B5-T4-S05` — Overview. | Illustrated directly or by the precisely bounded representative caption below; other variants in the original contract retain the linked written procedure. Opening Overview leaves Alex’s unread reply outstanding. The Updates badge is not an automatic acknowledgement. | [overview-retains-unread](overview-retains-unread.png) |
+| `B5-T4-S06` — History/Close Window. | Illustrated directly or by the precisely bounded representative caption below; other variants in the original contract retain the linked written procedure. Reopen keeps the original ticket reference, Sam’s technician assignment and earlier request, reply and closure history. It starts another attempt on the same ticket rather than creating a replacement. | [reopened-ticket-retained-history](reopened-ticket-retained-history.png) |
+
+## B5-T5 — Unread lifecycle
+
+Original contract: Employee sidebar/tab/ticket/Updates counts, Overview unchanged, successful Updates clears own state, second account unchanged, failed load retained and later reply unread.
+
+Written procedure: [Service-Desk-Tickets](../../Service-Desk-Tickets.md#recognise-and-read-new-replies).
+
+| Original specification | Instructional disposition and illustration limit | Image references |
+| --- | --- | --- |
+| `B5-T5-S01` — Employee badge counts. | Illustrated directly or by the precisely bounded representative caption below; other variants in the original contract retain the linked written procedure. Department Tickets follows the current shared printer custody. All Tickets exposes its In Progress request, with a per-ticket unread reply badge and separate navigation ticket counts. | [department-tickets-unread](department-tickets-unread.png) |
+| `B5-T5-S02` — Overview does not clear. | Illustrated directly or by the precisely bounded representative caption below; other variants in the original contract retain the linked written procedure. Opening Overview leaves Alex’s unread reply outstanding. The Updates badge is not an automatic acknowledgement. | [overview-retains-unread](overview-retains-unread.png) |
+| `B5-T5-S03` — Successful Updates clears own count. | Illustrated directly or by the precisely bounded representative caption below; other variants in the original contract retain the linked written procedure. Only the successfully loaded Updates conversation acknowledges Alex’s own unread messages. Other eligible accounts keep their independent state. | [updates-acknowledges-own-read](updates-acknowledges-own-read.png) |
+| `B5-T5-S04` — Second account unchanged. | Illustrated directly or by the precisely bounded representative caption below; other variants in the original contract retain the linked written procedure. Priya’s account still has its own unread reply after Alex acknowledged his. A genuine aborted local request makes Updates fail to load, so Priya’s unread state is retained. No synthetic response or application UI was supplied. | [other-account-failed-load-unread](other-account-failed-load-unread.png) |
+| `B5-T5-S05` — Failed load retained. | Illustrated directly or by the precisely bounded representative caption below; other variants in the original contract retain the linked written procedure. Priya’s account still has its own unread reply after Alex acknowledged his. A genuine aborted local request makes Updates fail to load, so Priya’s unread state is retained. No synthetic response or application UI was supplied. | [other-account-failed-load-unread](other-account-failed-load-unread.png) |
+| `B5-T5-S06` — Later reply unread. | Illustrated directly or by the precisely bounded representative caption below; other variants in the original contract retain the linked written procedure. A later IT reply creates a new unread state for Alex even though he previously acknowledged Updates. Counts follow current eligible tickets and each account’s read receipts. | [later-reply-becomes-unread](later-reply-becomes-unread.png) |
+
+## B5-T6 — Employee reply/reopen
+
+Original contract: Reply To IT/Send Reply/file, Closed restriction, Reopen Ticket/Cancel, retained reference/technician/history and rejected stale action.
+
+Written procedure: [Service-Desk-Tickets](../../Service-Desk-Tickets.md#reply-to-it-or-reopen-a-ticket).
+
+| Original specification | Instructional disposition and illustration limit | Image references |
+| --- | --- | --- |
+| `B5-T6-S01` — Reply/file form. | Illustrated directly or by the precisely bounded representative caption below; other variants in the original contract retain the linked written procedure. Alex’s employee reply and the fictional text attachment are saved in the permitted conversation. Reply To IT is available for another message; attachments share the same current Department audience. | [employee-reply-and-safe-file](employee-reply-and-safe-file.png) |
+| `B5-T6-S02` — Sent reply. | Illustrated directly or by the precisely bounded representative caption below; other variants in the original contract retain the linked written procedure. Alex’s employee reply and the fictional text attachment are saved in the permitted conversation. Reply To IT is available for another message; attachments share the same current Department audience. | [employee-reply-and-safe-file](employee-reply-and-safe-file.png) |
+| `B5-T6-S03` — Closed restriction. | Illustrated directly or by the precisely bounded representative caption below; other variants in the original contract retain the linked written procedure. IT closed this ticket while the reply draft was open. The stale send is rejected; the refreshed Closed conversation requires Reopen Ticket before another employee reply or file. | [closed-ticket-reply-protection](closed-ticket-reply-protection.png) |
+| `B5-T6-S04` — Reopen/Cancel. | Illustrated directly or by the precisely bounded representative caption below; other variants in the original contract retain the linked written procedure. IT closed this ticket while the reply draft was open. The stale send is rejected; the refreshed Closed conversation requires Reopen Ticket before another employee reply or file. | [closed-ticket-reply-protection](closed-ticket-reply-protection.png) |
+| `B5-T6-S05` — Reopened retained reference/history. | Illustrated directly or by the precisely bounded representative caption below; other variants in the original contract retain the linked written procedure. Reopen keeps the original ticket reference, Sam’s technician assignment and earlier request, reply and closure history. It starts another attempt on the same ticket rather than creating a replacement. | [reopened-ticket-retained-history](reopened-ticket-retained-history.png) |
+| `B5-T6-S06` — Stale rejection. | Illustrated directly or by the precisely bounded representative caption below; other variants in the original contract retain the linked written procedure. IT closed this ticket while the reply draft was open. The stale send is rejected; the refreshed Closed conversation requires Reopen Ticket before another employee reply or file. | [closed-ticket-reply-protection](closed-ticket-reply-protection.png) |
+
+## B5-A8 — Custody/membership privacy
+
+Original contract: Person→Department, Department→Department/person, equal add/remove/re-add, membership join/leave, associated/historical IT-only; employee versus IT comparison.
+
+Written procedure: [Service-Desk-Administration](../../Service-Desk-Administration.md#what-happens-to-service-desk-tickets-when-equipment-changes-hands).
+
+| Original specification | Instructional disposition and illustration limit | Image references |
+| --- | --- | --- |
+| `B5-A8-S01` — Person to Department paired views. | Illustrated directly or by the precisely bounded representative caption below; other variants in the original contract retain the linked written procedure. Alex’s old AST-LAP-014 ticket is unavailable after that custody ended. An old reference does not grant employee access to retained IT history or the next holder’s records. | [former-personal-ticket-unavailable](former-personal-ticket-unavailable.png) |
+| `B5-A8-S02` — Department A to B paired views. | Written procedure for Department A to B paired views. No separate screenshot of this variant and no new runtime-pass claim; retain all prerequisites, rejection, cancellation and result instructions in the linked guide. | Written instructions |
+| `B5-A8-S03` — Department to person paired views. | Written procedure for Department to person paired views. No separate screenshot of this variant and no new runtime-pass claim; retain all prerequisites, rejection, cancellation and result instructions in the linked guide. | Written instructions |
+| `B5-A8-S04` — Equal add/remove/re-add. | Written procedure for Equal add/remove/re-add. No separate screenshot of this variant and no new runtime-pass claim; retain all prerequisites, rejection, cancellation and result instructions in the linked guide. | Written instructions |
+| `B5-A8-S05` — Membership join/leave. | Illustrated directly or by the precisely bounded representative caption below; other variants in the original contract retain the linked written procedure. Priya’s current Accounts membership grants the shared Accounts printer. This preserved view precedes her membership change and moves no physical equipment. Priya is now in Sales. The unchanged Accounts printer is absent; AST-LAP-016 is a separately recorded personal first issue. Membership did not move the Accounts printer or confer an IT role. | [priya-membership-before](priya-membership-before.png) · [priya-membership-after](priya-membership-after.png) |
+| `B5-A8-S06` — Historical accessories IT-only. | Illustrated directly or by the precisely bounded representative caption below; other variants in the original contract retain the linked written procedure. Sam’s authorised IT view retains the former mouse association after AST-LAP-014 custody ends. The current association is empty; the old mouse belongs to historical IT records, not Sarah’s or Alex’s employee equipment access. | [it-only-former-accessory-history](it-only-former-accessory-history.png) |

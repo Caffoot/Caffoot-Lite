@@ -1,5 +1,7 @@
 # Device Assignments And My Equipment
 
+> **Current Batch 7E capture status — 27 November 2026:** [New desktop light illustrations](screenshots/batch-7e/README.md) use the approved merged schema-31 baseline. Independent ChatGPT review and separate owner visual/privacy/caption/alt acceptance remain pending. Earlier written/source and capture-status paragraphs retain their dated scope; the current pack status controls these new images. Published v2.1 and targeted correction-refresh requirements remain unchanged.
+
 > **Current Batch 7D capture status — 27 November 2026:** [New desktop light illustrations](screenshots/batch-7d/README.md) use the approved merged schema-31 baseline. Independent ChatGPT review and separate owner visual/privacy/caption/alt acceptance remain pending. Earlier written/source and capture-status paragraphs retain their dated scope; the current pack status controls these new images. Published v2.1 and targeted correction-refresh requirements remain unchanged.
 
 > **Draft v2.2 — Unreleased.** This guide includes the Stage 6.4 Shared Devices review changes. It is for development review, not production installation, upgrade or restore. Use the [published v2.1 guides](../README.md) for the released application. Batch 3.4 native/manual acceptance remains deferred; release acceptance is separate.
@@ -264,3 +266,43 @@ These images follow the fictional training journey. Read the caption to distingu
 ![AST-LAP-014 Assigned To showing Alex Morgan and its assignment history.](screenshots/batch-7c/alex-saved-custody.png)
 
 *Draft v2.2 — Saved current custody belongs to Alex. The original Device and assignment history remain the authoritative identity; registration was a different event. Independent review and owner visual acceptance pending.*
+
+## Batch 7E Desktop Illustrations
+
+These images follow the fictional training journey. Read the caption to distinguish a draft, a cancelled preview and a saved outcome. [Complete original coverage and limits](screenshots/batch-7e/Coverage.md).
+
+![Employee-safe equipment Details with recorded hardware fields and Close and Report A Problem.](screenshots/batch-7e/employee-safe-device-details.png)
+
+*Draft v2.2 — Employee Details offers a safe recorded-equipment summary. It does not grant access to network identities, Supplier purchase information, private IT notes or protected historical records. Independent review and owner visual acceptance pending.*
+
+![Priya’s My Equipment before changing Accounts membership, showing the shared AST-PRN-01 printer.](screenshots/batch-7e/priya-membership-before.png)
+
+*Draft v2.2 — Priya’s current Accounts membership grants the shared Accounts printer. This preserved view precedes her membership change and moves no physical equipment. Independent review and owner visual acceptance pending.*
+
+![Priya’s My Equipment after moving to Sales, with personal AST-LAP-016 and no Accounts shared printer.](screenshots/batch-7e/priya-membership-after.png)
+
+*Draft v2.2 — Priya is now in Sales. The unchanged Accounts printer is absent; AST-LAP-016 is a separately recorded personal first issue. Membership did not move the Accounts printer or confer an IT role. Independent review and owner visual acceptance pending.*
+
+![Sarah’s My Equipment showing current AST-LAP-015 and its outstanding associated keyboards.](screenshots/batch-7e/sarah-current-equipment.png)
+
+*Draft v2.2 — Sarah’s current list contains independent AST-LAP-015 and its explicit keyboard issue. Retired/written-off AST-LAP-014 and its former holders’ IT history are not employee equipment. Independent review and owner visual acceptance pending.*
+
+![Employee-safe USB Keyboards Details showing outstanding quantity two and safe equipment fields.](screenshots/batch-7e/employee-safe-asset-quantity.png)
+
+*Draft v2.2 — The employee asset summary shows only Sarah’s outstanding quantity and safe identity fields, not full stock totals, Supplier details or movement history. Independent review and owner visual acceptance pending.*
+
+![Employee ticket window showing the former personal ticket is not available, without its historical content.](screenshots/batch-7e/former-personal-ticket-unavailable.png)
+
+*Draft v2.2 — Alex’s old AST-LAP-014 ticket is unavailable after that custody ended. An old reference does not grant employee access to retained IT history or the next holder’s records. Independent review and owner visual acceptance pending.*
+
+![Employee-safe AST-LAP-016 Details with Windows 11 Pro and recorded Google Chrome, without private IT fields.](screenshots/batch-7e/employee-recorded-software.png)
+
+*Draft v2.2 — Priya’s permitted Details shows recorded Windows and Google Chrome names for her current AST-LAP-016. The fictional private IT note stays excluded from the employee projection. Independent review and owner visual acceptance pending.*
+
+![Alex’s My Equipment with personal laptop and mouse and shared Accounts printer.](screenshots/batch-7c/alex-before-handover.png)
+
+*Draft v2.2 — Alex sees the personally assigned AST-LAP-014 and outstanding mouse, plus the Accounts printer shared through current membership. This is the preserved pre-handover state. Independent review and owner visual acceptance pending.*
+
+![Alex Morgan Staff Details showing Left Company, Disabled Caffoot Login, MFA and roles retained, Reactivate, outstanding AC-LAP-07 and its assignment history.](screenshots/batch-7b/staff-left-company-retained.png)
+
+*Draft v2.2 — Historical accepted Batch 7B example only: Saved offboarding result: Alex is Left Company, the linked login is Disabled and AC-LAP-07 remains assigned. No equipment return has been recorded. This is the separate AC-LAP-07 fixture, not an employment change in the AST-LAP-014 journey. Independent review and owner visual acceptance pending.*
