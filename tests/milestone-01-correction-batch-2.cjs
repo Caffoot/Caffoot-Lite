@@ -24,6 +24,7 @@ async function main(){
   'from backend.permissions import create_user',
   'with sqlite3.connect(sys.argv[1]) as db:',
   ' db.execute("UPDATE organisation_features SET enabled=1")',
+  ' db.commit()',
   ' reader=create_user(db,1,"batch2-reader","Fictional-Reader-Password-2026!")',
   ' db.execute("UPDATE accounts SET mfa_secret=?,mfa_confirmed=1 WHERE id=?",(sys.argv[2],reader))',
   " db.execute(\"INSERT INTO account_permission_overrides VALUES(?,'Devices','read')\",(reader,))",
