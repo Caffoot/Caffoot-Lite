@@ -107,6 +107,36 @@ async function verifyQueueRefresh(page, browser, instance, screenshot) {
     const search = page.locator('#service-desk-search');
     const report = page.locator('.service-desk-report');
     const subject = 'Batch 3 external ticket';
+    // Evidence only: scroll the real queue into view, without altering application state.
+    async function queueScreenshot(name, target = rows) {
+        if (!screenshotFolder) return;
+        const previousScroll = await page.evaluate(() => {
+            const ancestors = [];
+            for (let el = document.querySelector('#service-desk-queue'); el; el = el.parentElement) {
+                ancestors.push([el.scrollLeft, el.scrollTop]);
+            }
+            return {ancestors, x: window.scrollX, y: window.scrollY};
+        });
+        try {
+            await page.locator('#service-desk-queue').evaluate(el => el.scrollIntoView({block:'start', behavior:'instant'}));
+            for (const locator of [count, status, sort, target]) {
+                const box = await locator.boundingBox();
+                const viewport = page.viewportSize();
+                assert.ok(box && box.x >= 0 && box.y >= 0 && box.x + box.width <= viewport.width + 1 && box.y + box.height <= viewport.height + 1, 'Queue evidence is outside the viewport: ' + name);
+            }
+            await screenshot(name);
+        } finally {
+            await page.evaluate(({ancestors,x,y}) => {
+                let el = document.querySelector('#service-desk-queue');
+                for (const [left,top] of ancestors) {
+                    if (!el) break;
+                    el.scrollTo({left,top,behavior:'instant'});
+                    el = el.parentElement;
+                }
+                window.scrollTo({left:x,top:y,behavior:'instant'});
+            }, previousScroll);
+        }
+    }
     let queueRequests = 0, reportRequests = 0;
     const returnToTab = target => target.evaluate(()=>document.dispatchEvent(new Event('visibilitychange')));
     const blur = target => target.evaluate(()=>document.activeElement?.blur());
@@ -158,6 +188,7 @@ async function verifyQueueRefresh(page, browser, instance, screenshot) {
         assert.deepEqual(await report.locator('[data-report-metric]').allTextContents(),historical);
         assert.deepEqual(await report.locator('.caffoot-uk-date-text').evaluateAll(inputs=>inputs.map(input=>input.value)),savedDates);
         await screenshot('workload-auto-created');
+        await queueScreenshot('queue-auto-created', rows.getByText(subject,{exact:true}));
         // Hidden tab: suspend queue requests through a full refresh interval.
         await page.evaluate(()=>{
             Object.defineProperty(document,'hidden',{configurable:true,get:()=>true});
@@ -176,6 +207,7 @@ async function verifyQueueRefresh(page, browser, instance, screenshot) {
         await rows.getByText(subject,{exact:true}).waitFor({state:'hidden',timeout:5000});
         assert.equal(Number(await open.innerText()),before);
         await screenshot('workload-auto-closed');
+        await queueScreenshot('queue-auto-closed');
         // A search control in use and an open Create Ticket draft must not be disrupted.
         await search.focus();
         let requests = queueRequests;
@@ -207,7 +239,7 @@ async function verifyQueueRefresh(page, browser, instance, screenshot) {
         await page.getByText('Automatic refresh failed. Retrying…',{exact:false}).waitFor();
         assert.equal(await rows.innerText(),beforeFailure);
         assert.equal(await page.locator('[data-ticket-workload]').innerText(),workload);
-        await screenshot('workload-refresh-retry');
+        await queueScreenshot('workload-refresh-retry');
         await returnToTab(page);
         await page.getByText('Automatic refresh failed. Retrying…',{exact:false}).waitFor({state:'hidden'});
         // A delayed older background result must not overwrite a newer filter response.
