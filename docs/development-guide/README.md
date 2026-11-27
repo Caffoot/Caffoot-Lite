@@ -10,11 +10,11 @@ Welcome. This guide explains **how Caffoot Lite actually works**, from the every
 
 **Current development target: v2.2 (Milestone 01).** The integrated application includes roles and optional features; Staff/Departments and equipment custody; IT Assets stock/circulation; Suppliers and Lifecycle; and employee/technician Service Desk, reporting, templates and notifications. See [Development Status](Development-Status.md), the [active handover](../development-handovers/milestone-01.md), [release inventory](Milestone-01-Release-Inventory.md) and [draft release notes](../Release-Notes-v2.2.md). Integration does not complete outstanding native/manual, supported-upgrade, complete-volume recovery, security or release acceptance.
 
-Caffoot Lite helps small IT teams document their devices, IP addresses, network racks and changes. The earlier HTML release saves its inventory in one browser. The Docker application keeps a **shared inventory** in a central SQLite database so authorised users see the same information.
+Caffoot Lite helps small IT teams manage infrastructure, people, equipment custody and support work. Devices, IPAM and Network Racks share identities and access checks with the Staff directory, stock, Suppliers, Lifecycle and Service Desk. The earlier HTML release saves its inventory in one browser. The Docker application keeps a **shared inventory** in a central SQLite database so authorised users see the same information.
 
 Think of it as three parts:
 
-1. **The browser** displays familiar Devices, IPAM, Racks and Change History screens, together with the approved accounts and sign-in features.
+1. **The browser** displays infrastructure, Staff/Departments, stock, Purchasing, Service Desk and Audit Trail screens according to effective access and enabled features. Employees have restricted My Equipment and ticket views; administrators manage accounts and settings.
 2. **The server** checks who is signed in, whether they may make the requested change, and whether the inventory will remain valid.
 3. **SQLite** keeps the accepted records. It sits in the container's persistent `/data` directory so normal container recreation need not remove inventory.
 
@@ -52,7 +52,7 @@ All contributors should first read [CONTRIBUTING.md](../../CONTRIBUTING.md) and 
 - [`compose.yaml`](../../compose.yaml), [`portainer-v2.1.yaml`](../../portainer-v2.1.yaml) and [`Dockerfile`](../../Dockerfile): deployment configuration.
 - [`app/caffoot-lite.html` at v1.3.3](https://github.com/Caffoot/Caffoot-Lite/blob/v1.3.3/app/caffoot-lite.html): **published** inventory behaviour to preserve.
 
-For current installation instructions see [`INSTALLATION.md`](../../INSTALLATION.md). The [root README](../../README.md) describes the published v2.1 edition and links to earlier releases.
+For current installation instructions see [`INSTALLATION.md`](../../INSTALLATION.md). The [root README](../../README.md) introduces unreleased v2.2 and links separately to the published v2.1 download and installation guidance.
 
 ## Before making a change
 

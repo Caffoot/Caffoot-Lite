@@ -12,6 +12,22 @@ SQLite is a database stored in a file rather than a separate database server. Ca
 
 The code keeps Devices, IPAM and Racks records in separate tables, along with account and session tables. Variable fields are retained as JSON within the appropriate record, preserving the published application's custom and historical data. There is **no competing whole-inventory JSON authority**.
 
+## Current Domain Storage Map
+
+The current schema-31 database holds more than the original infrastructure collections. Use this map before the dated migration records below; those records explain how the schema evolved rather than listing every current table.
+
+| Domain | Definitions and ownership |
+| --- | --- |
+| Accounts, profiles, roles, overrides, sessions and temporary-password state | [`schema.py`](../../backend/schema.py), [`roles.py`](../../backend/roles.py) and [`account_security.py`](../../backend/account_security.py) |
+| Staff, Departments and Device custody | [`schema.py`](../../backend/schema.py), [`assignment_closure.py`](../../backend/assignment_closure.py), [`handover_schema.py`](../../backend/handover_schema.py) and [`shared_device_schema.py`](../../backend/shared_device_schema.py) |
+| Stock items, individual units and immutable movement/entry journal | [`stock_schema.py`](../../backend/stock_schema.py); explicit accessory links in [`equipment_associations.py`](../../backend/equipment_associations.py) |
+| Suppliers, categories, locations, contacts, notes and Issues/updates | [`supplier_schema.py`](../../backend/supplier_schema.py), [`supplier_issue_schema.py`](../../backend/supplier_issue_schema.py) |
+| Canonical Supplier links and per-Device lifecycle dates/settings | [`equipment_supplier_schema.py`](../../backend/equipment_supplier_schema.py), [`equipment_lifecycle_schema.py`](../../backend/equipment_lifecycle_schema.py) |
+| Tickets, messages, attachments, events, closures, calendar history, reporting preferences and read receipts | [`service_desk_schema.py`](../../backend/service_desk_schema.py), with authorised reads and writes through the Service Desk modules |
+| Draft/published email wording, shared branding and managed logo | [`email_templates.py`](../../backend/email_templates.py) |
+
+Ticket attachments, account photos and branding logos are database bytes. Private SMTP configuration, the email-proof key and TLS material are supporting files in the persistent installation. A complete stopped-volume backup must retain both; an inventory JSON file cannot recreate them. See the [draft complete-installation procedure](../how-tos/features-and-instructions/v2.2-draft/Legacy-Import-and-Docker-Upgrade.md#back-up-a-complete-installation).
+
 ## Source and schema version
 
 **Historical Batch 3.10 Checkpoint D:** Schema 19 adds nullable `handover_event_id` and

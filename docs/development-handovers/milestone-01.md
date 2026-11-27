@@ -6,6 +6,12 @@ Published v2.1 remains at tagged source `c3237114108cad9f7d4e57657b6aed5e0091a5e
 
 [Owner-approved Batch 8 scope](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7224076263) follows [7F–7H draft acceptance](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7224015412). PR #472 stays draft and issue #366 stays open. Independent documentation review and owner acceptance remain separate. Native acceptance is paused after Test 69 with Test 70 next; deferred manual checks, supported upgrade and complete-volume recovery, private exports, independent audit #443 and final release gates remain outstanding. No production, website, merge or publication approval follows from documentation completion.
 
+### Final Batch 8 Documentation Correction — 27 November 2026
+
+Continues documentation `7b70912e52941c828ecc20d8b6391348d938354b` under the [owner's final correction](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7224538338). The root README now introduces the complete implemented v2.2 product with four existing desktop-light images, clear unreleased status and published v2.1 installation guidance. Wider content corrections cover live summaries/navigation, domain references, source-build boundaries, account-permissions illustration, audit prerequisites and email guidance. [Existing documentation register](../development-guide/Milestone-01-Documentation-Register.md#owner-directed-final-batch-8-correction--27-november-2026) records scope, image provenance, focused checks and remaining gates. The first README checkpoint `73f4dd13589f20838171ed83b3376d01c48c9687` is pushed and remotely verified. The final correction commit is reported in PR #472 and the completion summary.
+
+The required documentation workflow and read-only release preflight separate the unreleased README target from the published installation version and retain their compatibility safeguards. Explicit publication remains strict; ten focused preflight tests and the read-only CLI pass. Application source, original image bytes, published guide copies and historical evidence remain intact. PR #472 stays draft/open and #366 open; stop for independent review and separate owner acceptance. No native/runtime testing, new captures/reports, website work, promotion, merge, deployment or publication.
+
 The dated handover entries below preserve their original scope and results; they do not override the current boundary above.
 
 ## Historical Native Acceptance Corrections — 26 November 2026

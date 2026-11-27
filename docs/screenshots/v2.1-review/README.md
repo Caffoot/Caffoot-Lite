@@ -2,6 +2,8 @@
 
 These **genuine captures of published v2.1** were visually approved by the product owner in the Caffoot Lite project conversation on **15 November 2026**. The nine guide images and the README IPAM image are now used in the documentation on the draft correction branch. Original screenshots remain at their existing public paths. **Image approval does not authorise merging PR #384.**
 
+**Current documentation use:** the root README now introduces unreleased v2.2 with separate v2.2 illustrations. The v2.1 README/IPAM usage entries below record the original approved placement; those image bytes and this evidence remain preserved. Published v2.1 guides continue to use their version-correct illustrations.
+
 ## Source and capture conditions
 
 - Exact source: [`v2.1`, c3237114108cad9f7d4e57657b6aed5e0091a5ef](https://github.com/Caffoot/Caffoot-Lite/tree/v2.1), exported into an isolated working directory without source modifications.

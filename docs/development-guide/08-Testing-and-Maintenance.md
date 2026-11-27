@@ -8,10 +8,10 @@ Before changing Caffoot Lite, identify the existing behaviour that must remain i
 
 | Source | Purpose |
 | --- | --- |
-| [`tests/`](../../tests/) | Python unit checks for schema, users, sessions, access, imports, device/IPAM/rack operations and validation |
+| [`tests/`](../../tests/) | Python unit and HTTP checks for schema, accounts/MFA, permissions, import, infrastructure, Staff/Departments, custody, stock, Suppliers/Lifecycle, tickets, reporting and email |
 | [`tests/browser-compat.cjs`](../../tests/browser-compat.cjs) | Chromium/Playwright checks of approved browser workflows |
 | [`tests/test_compose_lifecycle.py`](../../tests/test_compose_lifecycle.py) | Optional Docker lifecycle test for port and persistent database/certificate |
-| [`tests/test_upgrade_restore.py`](../../tests/test_upgrade_restore.py) | Opt-in two-image, complete-volume schema-10→11 upgrade and matching v2.1 restore; see [rehearsal instructions](Upgrade-And-Restore-Rehearsal.md) |
+| [`tests/test_upgrade_restore.py`](../../tests/test_upgrade_restore.py) | Opt-in two-image upgrade and matching v2.1 restore helper. The [original rehearsal](Upgrade-And-Restore-Rehearsal.md) records Stage 1 schema 10→12; later [Stage 6 evidence](../development-handovers/evidence/stage-6-3/README.md) has its own pinned scope. Neither establishes current schema-31 recovery |
 | [`app/` at the published v1.3.3 tag](https://github.com/Caffoot/Caffoot-Lite/tree/v1.3.3/app) | Original HTML application's historical source and tests, excluded from the current Docker source |
 | [Published v1.3.3 source and tests](https://github.com/Caffoot/Caffoot-Lite/tree/v1.3.3/app) | Authoritative published inventory compatibility baseline; check later fixes before using older audit findings |
 
@@ -50,13 +50,13 @@ The 25 earlier audit, workflow, test-matrix and draft migration documents are ac
 - [Release documentation](../../.github/workflows/release-documentation.yml) — required `release-documentation` pull-request status check; its check identifier must remain stable.
 - [Git history secret scan](../../.github/workflows/git-history-secrets.yml) — full-history secret scan on pull requests and main.
 - [Publish Caffoot Lite](../../.github/workflows/publish-release.yml) — owner-started release workflow with read-only pull-request preflight and shared release checks; publication requires a separate explicit owner decision.
-- [Release preflight verifier](../../scripts/verify_release.py) and [focused tests](../../tests/test_release_preflight.py) — verify that the version shown in About matches release notes, Portainer and current installation guidance, without publishing anything.
+- [Release preflight verifier](../../scripts/verify_release.py) and [focused tests](../../tests/test_release_preflight.py) — verify that the version shown in About matches release notes, Portainer and current installation guidance, without publishing anything. A read-only PR check permits an explicitly unreleased README target with draft notes while checking the published installation files. An explicit publication version must match every release file; the read-only allowance grants no publication rights.
 
 Workflows have path filters to conserve CI minutes. A documentation-only PR may not trigger backend or browser checks; don't claim it did. The manual publishing workflow calls the existing test workflows at the release gate, regardless of PR path filters, and publishes nothing unless each required job succeeds.
 
 ## Maintenance procedure
 
-**Across chat sessions:** Verify current GitHub state, the approved issues and [Development Status](Development-Status.md) before resuming. The published v2.1 release is the tagged schema-10 application, not the current `milestone-1` schema-15 source. Do not present old Stage 1 or earlier release tests as new evidence for Batch 3.4 or a future production upgrade. The [archived v2.1 handover](../historical/development-handovers/v2.1.md) and [historical v2.0.3 handover](../historical/development-handovers/v2.0.3.md) remain evidence; follow the [modular interface guide](Modular-Interface.md) and [release checklist](Security-Fixes-and-Releases.md) for their relevant scope.
+**Across chat sessions:** Verify current GitHub state, the approved issues and [Development Status](Development-Status.md) before resuming. The published v2.1 release is the tagged schema-10 application, distinct from the unreleased schema-31 v2.2 application. Verify its exact revision in Development Status. Do not present old Stage 1 or earlier release tests as current milestone, native/manual or production-upgrade acceptance. The [archived v2.1 handover](../historical/development-handovers/v2.1.md) and [historical v2.0.3 handover](../historical/development-handovers/v2.0.3.md) remain evidence; follow the [modular interface guide](Modular-Interface.md) and [release checklist](Security-Fixes-and-Releases.md) for their relevant scope.
 
 1. Review the product-owner-approved scope, current decisions and the [contribution guide](../../CONTRIBUTING.md). [#215](https://github.com/Caffoot/Caffoot-Lite/issues/215) and [#218](https://github.com/Caffoot/Caffoot-Lite/issues/218) are completed historical release records, not live development restrictions.
 2. Verify the protected `main` branch, relevant CI and [published v1.3.3 compatibility baseline](https://github.com/Caffoot/Caffoot-Lite/tree/v1.3.3).

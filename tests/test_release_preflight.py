@@ -63,6 +63,36 @@ class ReleasePreflightTests(unittest.TestCase):
     def test_complete_release_preparation_passes(self):
         self.assertEqual(check_release_files(self.root, "2.0.3"), "v2.0.3")
 
+    def test_product_subtitle_keeps_exact_release_version_check(self):
+        self.write("README.md", f"# Caffoot Lite {self.version} — Everyday IT Management\n")
+        self.assertEqual(check_release_files(self.root, self.version), self.version)
+
+    def test_unreleased_readme_is_only_accepted_for_read_only_check(self):
+        self.write("README.md", "# Caffoot Lite v2.2 — Everyday IT Management\n"
+                   "v2.2 is unreleased. v2.0.3 remains the published download.\n")
+        self.write("docs/Release-Notes-v2.2.md", "# Caffoot Lite v2.2 — Notes\nDraft — Unreleased.\n")
+        self.assertEqual(check_release_files(self.root, self.version,
+                                            allow_unreleased_readme=True), self.version)
+        with self.assertRaisesRegex(ReleasePreflightError, "README.md"):
+            check_release_files(self.root, self.version)
+        with self.assertRaisesRegex(ReleasePreflightError, "portainer-v2.2.yaml"):
+            check_release_files(self.root, "v2.2")
+
+    def test_unreleased_readme_needs_notice_and_draft_notes(self):
+        self.write("README.md", "# Caffoot Lite v2.2 — Everyday IT Management\n"
+                   "v2.0.3 remains published.\n")
+        self.write("docs/Release-Notes-v2.2.md", "Draft — Unreleased.\n")
+        with self.assertRaisesRegex(ReleasePreflightError, "README.md"):
+            check_release_files(self.root, self.version, allow_unreleased_readme=True)
+        self.write("README.md", "# Caffoot Lite v2.2 — Everyday IT Management\n"
+                   "v2.2 is unreleased. v2.0.3 remains published.\n")
+        self.write("docs/Release-Notes-v2.2.md", "Released.\n")
+        with self.assertRaisesRegex(ReleasePreflightError, "README.md"):
+            check_release_files(self.root, self.version, allow_unreleased_readme=True)
+        (self.root / "docs/Release-Notes-v2.2.md").unlink()
+        with self.assertRaisesRegex(ReleasePreflightError, "Missing release file"):
+            check_release_files(self.root, self.version, allow_unreleased_readme=True)
+
     def test_incorrect_about_version_is_caught(self):
         self.write("inventory.html", "Installed Version: Caffoot Lite v2.0.2")
         with self.assertRaisesRegex(ReleasePreflightError, "About page"):

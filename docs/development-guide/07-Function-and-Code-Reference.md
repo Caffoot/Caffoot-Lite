@@ -56,6 +56,20 @@ See [Modular Interface](Modular-Interface.md) for the Issue #282 presentation mo
 
 The Issue #309 tab icons use `renderSectionTabIcon`. `revealSectionTab` scrolls a navigation row horizontally to show a focused or selected tab, and `revealActiveSectionTabs` retains the existing selected-tab behaviour after rendering or resizing. The shared 16px content entrance and icon styling live in `interface/styles/components.css`; Audit Trail's single totals block follows its tabs in `interface/screens/audit-trail.html`.
 
+## Connected v2.2 Domains
+
+The infrastructure writers below are one part of the application. Follow these modules for the connected people, purchasing and support workflows; the server still checks each operation independently.
+
+| Source | Responsibility |
+| --- | --- |
+| [`suppliers.py`](../../backend/suppliers.py), [`supplier_schema.py`](../../backend/supplier_schema.py), [`supplier_issue_schema.py`](../../backend/supplier_issue_schema.py) | Supplier directory, contacts/locations/notes, Issue updates and Purchasing reporting; `save_supplier_operation` dispatches authorised writes. |
+| [`equipment_suppliers.py`](../../backend/equipment_suppliers.py), [`equipment_supplier_schema.py`](../../backend/equipment_supplier_schema.py) | Explicit Device/receipt Supplier associations, original-supply reporting and retained history. |
+| [`equipment_lifecycle.py`](../../backend/equipment_lifecycle.py), [`equipment_lifecycle_schema.py`](../../backend/equipment_lifecycle_schema.py) | Per-Device lifecycle dates, lifespans, warnings and first-service capture. |
+| [`shared_devices.py`](../../backend/shared_devices.py), [`shared_device_schema.py`](../../backend/shared_device_schema.py) | Equal Department links within one physical Device custody period and current employee audience. |
+| [`staff_employment.py`](../../backend/staff_employment.py), [`staff_identity.py`](../../backend/staff_identity.py) | Linked employment/login eligibility, offboarding reconciliation and shared Staff/account identity safeguards. |
+| [`service_desk_reads.py`](../../backend/service_desk_reads.py) | Per-account unread counts and acknowledgement of an authorised loaded conversation. |
+| [`service_desk_email.py`](../../backend/service_desk_email.py) | Notification events and recipient rechecks, separate from template wording and SMTP delivery. |
+
 ## Inventory writers and validators
 
 | File | Search terms |
@@ -126,7 +140,7 @@ On `milestone-1`, `schema.py:migrate_role_permissions` and `verify_role_migratio
 
 Start in [`import_drafts.py`](../../backend/import_drafts.py) (`ImportDrafts.begin` and `confirm`), follow [`import_review.py`](../../backend/import_review.py) (`prepare_published_export_review`) and [`import_service.py`](../../backend/import_service.py) (`preview_published_export` and `replace_from_published_export`). Existing conditional corrections are in [`access_point_review.py`](../../backend/access_point_review.py) and [`legacy_mounting.py`](../../backend/legacy_mounting.py).
 
-Published inventory behaviour comes from [tagged v1.3.3 source](https://github.com/Caffoot/Caffoot-Lite/blob/v1.3.3/app/caffoot-lite.html), including `createInventoryBackup`, `validateBackupVersion` and `normaliseImportedBackupAndPlanLegacyMountRepairs`. For declarations and search locations in this prepared modular v2.1 application, use the [Function Index](Function-Index.md). Older source investigations remain in the [historical Git snapshot](https://github.com/Caffoot/Caffoot-Lite/tree/049262f196be494074f698a72f377153f202171b/docs/required-only), not as new specifications.
+Published inventory behaviour comes from [tagged v1.3.3 source](https://github.com/Caffoot/Caffoot-Lite/blob/v1.3.3/app/caffoot-lite.html), including `createInventoryBackup`, `validateBackupVersion` and `normaliseImportedBackupAndPlanLegacyMountRepairs`. For declarations and search locations in the integrated unreleased v2.2 application, use the [Function Index](Function-Index.md). Older source investigations remain in the [historical Git snapshot](https://github.com/Caffoot/Caffoot-Lite/tree/049262f196be494074f698a72f377153f202171b/docs/required-only), not as new specifications.
 
 See [coding conventions](06-Coding-and-Naming-Conventions.md) and [tests](08-Testing-and-Maintenance.md).
 

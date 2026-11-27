@@ -27,9 +27,9 @@ Sign in as an administrator using your authenticator. Check that the prospective
 
 Ordinary Staff use equipment-scoped access through their Staff account link. They need no Service Desk, general inventory or Staff Directory grant for that access. The separate Service Desk permission governs the wider technician queue. [Roles, Section Permissions And MFA](Roles-Section-Permissions-and-MFA.md) · [Optional Features](Optional-Features-and-Link-To-IPAM.md)
 
-![Service Desk permission in the existing Manage User access controls, with Inherit and effective No Access shown for an example account.](../../../development-handovers/evidence/service-desk-foundation/it-staff-dave-1440.png)
+![Manage Permissions for fictional Morgan Reed, with the Permissions tab showing section overrides and effective access, including Service Desk.](../../../development-handovers/evidence/native-acceptance-corrections/screenshots/permissions-permissions-1440-light.png)
 
-*The Service Desk permission uses the existing per-account controls.*
+*Use the Permissions tab to review the inherited, override and effective Service Desk level alongside equipment access.*
 
 ## Verify A Technician’s Access
 

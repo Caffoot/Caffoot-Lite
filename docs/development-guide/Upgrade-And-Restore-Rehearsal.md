@@ -3,7 +3,7 @@
 This development check starts published v2.1 (schema 10), creates a fictional
 installation, upgrades it to the historical Stage 1 schema 12, then restores the whole saved directory
 before starting the matching v2.1 image. It does not use an owner's installation
-or establish that a production backup exists. Stage 1 was subsequently accepted and merged via PR #358. This is not a current Milestone 01/schema-15 or production upgrade procedure.
+or establish that a production backup exists. Stage 1 was subsequently accepted and merged via PR #358. This is not a current Milestone 01/schema-31 or production upgrade procedure.
 
 ## Run The Check
 

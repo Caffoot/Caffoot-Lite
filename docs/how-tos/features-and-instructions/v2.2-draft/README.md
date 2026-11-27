@@ -2,7 +2,7 @@
 
 > **Draft v2.2 — Unreleased.** v2.1 remains the published release. These instructions describe v2.2.
 
-Caffoot Lite brings accounts, Staff Members, Departments, Devices and optional IT Assets together so your team can record who holds equipment, what is physically in stock and what is ready to issue. These guides explain workflows for ordinary users, IT technicians and administrators, including Suppliers and Equipment Lifecycle. Examples use fictional people, organisations and equipment.
+Caffoot Lite v2.2 — Everyday IT Management connects Devices, IPAM and Network Racks with accounts, Staff Members, Departments and optional IT Assets. Record who holds equipment, what is physically in stock and what is ready to issue; keep Supplier and lifecycle information alongside it; and handle support through employee tickets and the IT Service Desk. These guides explain the connected workflows, permissions, reporting, email and administration for employees, IT technicians and administrators. Examples use fictional people, organisations and equipment.
 
 Start with the task you need to complete. Each feature guide explains its permissions, controls, numbered procedures, examples and recovery steps. A missing section may mean the feature is switched off or your account lacks permission; ask an administrator to check before creating duplicate records.
 
