@@ -60,7 +60,11 @@ async function main(){
  await page.goto(address+'/inventory#it-assets');
  await page.locator('#app[aria-busy="false"]').waitFor();
  await page.locator('#stock-overview').waitFor();
+ async function waitForNavigation(p){
+  await p.locator('#app[aria-busy="false"] #sidebar:not([data-session-permissions-pending]):not([data-inventory-permissions-pending])').waitFor();
+ }
  async function expand(p){
+  await waitForNavigation(p);
   for(const group of ['it','staff','purchasing']){
    const button=p.locator('#sidebar [data-action="toggle-nav-group"][data-group="'+group+'"]');
    if(await button.isVisible()&&await button.getAttribute('aria-expanded')!=='true')await button.click();
@@ -83,7 +87,9 @@ async function main(){
   await p.screenshot({path:path.join(output,name+'.png'),animations:'disabled'});
  }
  async function checkScroll(p,requireOverflow=true,requireSettings=true){
+  await waitForNavigation(p);
   const sidebar=p.locator('#sidebar');
+  if(requireSettings)await sidebar.locator('#next-settings-nav').waitFor();
   await sidebar.evaluate(e=>e.scrollTop=0);
   const before=await metrics(p);
   assert.equal(before.overflow,'auto',JSON.stringify(before));
@@ -138,10 +144,14 @@ async function main(){
  }
  // Check only shared sidebar reachability, not unrelated page workflows.
  for(const tab of ['dashboard','ipam','racks','staff','departments','users','purchasing','suppliers','audit','settings','service-desk','equipment']){
+  await waitForNavigation(page);
   const nav=page.locator('#sidebar [data-tab="'+tab+'"]');
   if(!await nav.isVisible())continue;
   await nav.click();
+  await page.locator('#sidebar [data-tab="'+tab+'"][aria-current="page"]').waitFor();
+  await waitForNavigation(page);
   await expand(page);
+  console.log('Checking sidebar on route:',tab);
   await checkScroll(page);
  }
  const toggle=page.locator('#sidebar [data-action="toggle-sidebar"]');
@@ -156,7 +166,7 @@ async function main(){
  const reader=await restricted.newPage();
  reader.on('pageerror',error=>errors.push(error.message));
  await reader.goto(address+'/inventory#devices');
- await reader.locator('#app[aria-busy="false"]').waitFor();
+ await waitForNavigation(reader);
  assert.equal(await reader.locator('#sidebar [data-tab="devices"]').isVisible(),true);
  for(const tab of ['it-assets','suppliers','users','settings','staff','departments']){
   assert.equal(await reader.locator('#sidebar [data-tab="'+tab+'"]').isVisible(),false,tab);
