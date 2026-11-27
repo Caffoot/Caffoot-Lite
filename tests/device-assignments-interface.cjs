@@ -182,7 +182,7 @@ async function test(){
      headingRightInset:parseFloat(getComputedStyle(heading).paddingRight)+parseFloat(getComputedStyle(card).borderRightWidth)};
    }));
    for(const item of notice){
-    assert.equal(item.text,'Staff Member Has Left Company — outstanding assignments are retained. New assignments are unavailable.');
+    assert.equal(item.text,'This staff member has left the company. Outstanding assignments are retained. New assignments are unavailable.');
     assert.ok(Math.abs(item.left-item.headingLeft)<1,'Inactive notice must align with its heading');
     assert.ok(Math.abs(item.rightInset-item.headingRightInset)<1,'Inactive notice must retain the matching right inset');
    }

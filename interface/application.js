@@ -945,7 +945,7 @@ function hierarchyValidateTypes(subnets) {
               .map(key=>auditDiffRow(auditFieldLabel(key,row),auditValueText(before,key),auditValueText(after,key))));
           }
           let fields=differences.length?renderInterfaceTemplate("audit-trail/fields-1",[])+differences.join(''):
-            row.fields.length?'<h3 class="detail-section">Recorded field names</h3><p class="detail-description">'+escapeHtml(row.fields.map(key=>auditFieldLabel(key,row)).join(', '))+'</p><p class="detail-description">'+(pair?'No differing before-and-after values were captured for this event.':'No paired before-and-after values were captured for this event.')+'</p>':
+            row.fields.length?'<h3 class="detail-section">Recorded field names</h3><p class="detail-description">'+escapeHtml(row.fields.map(key=>auditFieldLabel(key,row)).join(', '))+'</p><p class="detail-description">'+(pair?'No differing before-and-after values were captured for this event.':'No paired before-and-after values are available for this event.')+'</p>':
             '<p class="detail-description">No field-level differences were captured for this event.</p>';
           if(supplierAssociation&&row.kind==='IT Assets')fields+='<p class="detail-description">This change concerns the linked Supplier, not the original receipt text.</p>';
           const identity='<h3 class="detail-section">Affected record</h3><dl class="identity-grid">'+

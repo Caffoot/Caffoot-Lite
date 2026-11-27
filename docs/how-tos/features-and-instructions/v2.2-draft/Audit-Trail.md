@@ -22,7 +22,7 @@ For example, a Staff Member named Casey Reed may later be renamed Casey Morgan. 
 Select **View Details** beside an event. The dialogue retains the original actor, UTC time, result, reason and available field changes, and shows:
 
 - **Displayed record:** the name or original reference used in the list.
-- **Recorded field changes:** understandable field labels and genuinely different recorded values. A missing value is **Not recorded**; an explicit null or empty value is identified separately, unless the event's known meaning establishes **Not assigned**. If a before-and-after pair was not recorded, the saved field names describe the event without claiming an exact difference.
+- **Recorded field changes:** understandable field labels and genuinely different recorded values. A missing value is **Not recorded**; an explicit null or empty value is identified separately, unless the event's known meaning establishes **Not assigned**. If a before-and-after pair is not available, the saved field names describe the event without claiming an exact difference. **No paired before-and-after values are available for this event** means the values are not available in your view; they may not have been recorded or may be withheld by your permissions.
 - **Technical Details:** expand to inspect the **Internal Record ID**, **Record Name Source**, **Original recorded label**, original field names and raw values (including unchanged context). This is collapsed initially. It contains only information already available to your account. A recorded ID alone does not prove continuity across replacement or reset.
 
 ### Supplier association changes
@@ -77,6 +77,8 @@ Related: [Roles, Section Permissions And MFA](Roles-Section-Permissions-and-MFA.
 *The event-time company name is retained despite a subsequent rename. The desktop dialogue uses the approved 850px width where space permits.*
 
 ![Expanded Technical Details showing the original Supplier reference, historical name fallback and unchanged Device reference.](../../../development-handovers/evidence/milestone-01-audit-details/audit-legacy-technical.png)
+
+![Restricted Activity Details with Technical Details expanded, showing unavailable before-and-after values without disclosing Supplier names or values.](screenshots/milestone-01-native-followups/audit-values-unavailable.png)
 
 *Expand Technical Details to inspect the original recorded values, including unchanged context. A missing historical name is not reconstructed from today's catalogue.*
 

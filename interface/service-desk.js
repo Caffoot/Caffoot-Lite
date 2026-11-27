@@ -571,7 +571,8 @@ window.caffootServiceDesk = (() => {
             const focused = document.activeElement;
             return !document.hidden && !document.getElementById('app')?.inert &&
                 !document.querySelector('#modal-container:not(.hidden)') && !pendingSearch &&
-                !(page.contains(focused) && (focused.matches('input,select,textarea,[contenteditable="true"]') ||
+                !(page.contains(focused) && ((focused.matches('input,select,textarea,[contenteditable="true"]') &&
+                    focused !== page.querySelector('.service-desk-report select[data-report-period]')) ||
                     rows.contains(focused) || pagination.contains(focused)));
         }
 

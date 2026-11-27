@@ -180,8 +180,14 @@ async function verifyQueueRefresh(page, browser, instance, screenshot) {
         const ticket = await mutate('tickets',{equipmentKind:'device',equipmentId:'equipment-0',categoryId:4,
             subject,description:'Created in the second authenticated session.'});
         assert.ok(ticket.id);
-        // A real 30-second interval updates the first session, without any navigation or manual refresh.
+        // Reporting period focus alone must not block the real 30-second interval.
+        const retainedPeriod=report.locator('[data-report-period]');
+        const selectedPeriod=await retainedPeriod.inputValue();
+        await retainedPeriod.focus();
         await rows.getByText(subject,{exact:true}).waitFor({timeout:45000});
+        assert.ok(await retainedPeriod.evaluate(el=>document.activeElement===el));
+        assert.equal(await retainedPeriod.inputValue(),selectedPeriod);
+        await blur(page);
         assert.equal(Number(await open.innerText()),before+1);
         assert.equal(await status.inputValue(),'Open');
         assert.equal(await sort.inputValue(),'oldest');
@@ -320,6 +326,89 @@ async function verifyQueueRefresh(page, browser, instance, screenshot) {
     } finally { await second.close(); }
 }
 
+// Positive regression for #482: the reporting select is outside the refreshed queue.
+async function verifyRetainedFocus(page,browser,instance){
+    const second=await browser.newContext({ignoreHTTPSErrors:true,viewport:{width:1440,height:960}});
+    const sam=await second.newPage();
+    try{
+        await signIn(sam,instance,'Sam Taylor');
+        await page.bringToFront();
+        const period=page.locator('[data-report-period]');
+        const report=page.locator('.service-desk-report');
+        const rows=page.locator('[data-ticket-rows]');
+        const open=page.locator('[data-workload-status="Open"] strong');
+        await page.locator('.service-desk-page:not([aria-busy])').waitFor();
+        await period.focus();
+        await period.selectOption('today');
+        await report.locator('[data-report-period]:enabled').waitFor();
+        await page.locator('.service-desk-report:not([aria-busy])').waitFor();
+        const naturallyRetained=await period.evaluate(el=>document.activeElement===el);
+        // A browser may blur after changing a select; test the retained-focus
+        // condition explicitly, and report whether the normal interaction did so.
+        if(!naturallyRetained)await period.focus();
+        assert.ok(await period.evaluate(el=>document.activeElement===el));
+        assert.equal(await page.evaluate(()=>document.hidden),false);
+        const before=Number(await open.innerText());
+        const subject='Retained focus regression ticket';
+        const queueRequests=[],reportRequests=[];
+        const historical=await report.locator('[data-report-metric]').allTextContents();
+        const track=request=>{
+            if(request.method()!=='GET')return;
+            const pathname=new URL(request.url()).pathname;
+            if(pathname==='/api/service-desk/it/tickets')queueRequests.push(request.url());
+            if(pathname==='/api/service-desk/it/report')reportRequests.push(request.url());
+        };
+        page.on('request',track);
+        const result=await sam.evaluate(async subject=>{
+            const session=await fetch('/api/session',{cache:'no-store'});
+            if(!session.ok)throw Error('Second session unavailable: '+session.status);
+            const {csrf_token}=await session.json();
+            const response=await fetch('/api/service-desk/it/tickets',{method:'POST',headers:{'Content-Type':'application/json','X-CSRF-Token':csrf_token},body:JSON.stringify({equipmentKind:'device',equipmentId:'equipment-0',categoryId:4,subject,description:'Fictional second-session refresh regression.'})});
+            if(!response.ok)throw Error('Diagnostic mutation failed: '+response.status);
+            return response.json();
+        },subject);
+        assert.ok(result.id);
+        // No navigation, blur or synthetic visibility event: wait for the real timer.
+        await rows.getByText(subject,{exact:true}).waitFor({timeout:45000});
+        assert.equal(await page.evaluate(()=>document.hidden),false);
+        assert.ok(await period.evaluate(el=>document.activeElement===el),'Refresh must preserve reporting focus');
+        assert.equal(Number(await open.innerText()),before+1);
+        assert.equal(await period.inputValue(),'today');
+        assert.ok(queueRequests.length>0);
+        assert.deepEqual(await report.locator('[data-report-metric]').allTextContents(),historical);
+        assert.deepEqual(reportRequests,[],'Queue refresh must not fetch historical reports');
+        console.log(JSON.stringify({naturallyRetained,queueRequests:queueRequests.length,workloadBefore:before,workloadAfter:Number(await open.innerText()),period:await period.inputValue(),reportRequests:reportRequests.length}));
+        // Keep the existing guards on all other controls and active forms.
+        const resume=()=>page.evaluate(()=>document.dispatchEvent(new Event('visibilitychange')));
+        const protectedControls=[
+            page.locator('#service-desk-search'),
+            page.locator('#ticket-queue-filters [name="status"]')
+        ];
+        await period.selectOption('custom');
+        await report.locator(':scope [data-report-dates]:not([hidden])').waitFor();
+        await page.locator('.service-desk-report:not([aria-busy])').waitFor();
+        protectedControls.push(report.locator('.caffoot-uk-date-text').first());
+        for(const control of protectedControls){
+            await control.focus();
+            const requests=queueRequests.length;
+            await resume();
+            await page.waitForTimeout(500);
+            assert.equal(queueRequests.length,requests,'Other editing controls must continue blocking refresh');
+            assert.ok(await control.evaluate(el=>document.activeElement===el));
+        }
+        await page.locator('[data-ticket-create]').click();
+        const draft=page.locator('#service-desk-create-form [name="subject"]');
+        await draft.fill('Unsaved fictional draft');
+        const requests=queueRequests.length;
+        await resume();
+        await page.waitForTimeout(500);
+        assert.equal(queueRequests.length,requests,'Open ticket form must continue blocking refresh');
+        assert.equal(await draft.inputValue(),'Unsaved fictional draft');
+        page.off('request',track);
+        console.log('Reporting period focus retained through real automatic refresh; historical metrics and editing safeguards preserved.');
+    }finally{await second.close();}
+}
+
 async function run() {
     let instance, browser;
     try {
@@ -336,6 +425,12 @@ async function run() {
         }
         assert.ok(healthy, fs.readFileSync(instance.logfile,'utf8'));
         await signIn(page,instance,'Alex Morgan');
+        if(process.env.CAFFOOT_FOCUS_REGRESSION==='1'){
+            await verifyRetainedFocus(page,browser,instance);
+            assert.deepEqual(errors,[]);
+            await context.close();
+            return;
+        }
         const report = page.locator('.service-desk-report');
         const period = report.locator('[data-report-period]');
         const visible = report.locator('.caffoot-uk-date-text');
