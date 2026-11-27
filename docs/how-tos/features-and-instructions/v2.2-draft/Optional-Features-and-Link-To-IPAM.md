@@ -167,6 +167,8 @@ After successful linking, the existing managed-IP permissions apply. Disabling I
 
 *Draft v2.2 — Link to IPAM deliberately selects an existing containing subnet for the exact saved basic address. No link has been confirmed. Visual acceptance pending.*
 
+*Shared Batch 7A illustration: [the same printer after deliberate linking](screenshots/batch-7a/devices-details-network.png) is the saved result for this chooser; the draft and result are different states.*
+
 ## Preserve Devices When Network Racks Is Off
 
 Turning off Network Racks hides Rack-specific controls while retaining the saved placement. Ordinary, type-appropriate non-Rack mounting choices remain available for equipment without a protected Rack placement.
@@ -186,6 +188,8 @@ When Rack information is unavailable, related views may show **Rack information 
 ![Edit Device General form for training-printer-01 with protected Training Equipment Room Location Area and Rack placement controls hidden while Network Racks is off.](screenshots/batch-7a/optional-racks-off-location.png)
 
 *Draft v2.2 — With Network Racks off, the saved shelf relationship protects Location Area during unrelated Device editing. Hidden controls do not mean a detached Device. Visual acceptance pending.*
+
+*Shared Batch 7A illustrations: [the matching saved shelf Location](screenshots/batch-7a/devices-details-shelf-location.png) and [Training Rack Front elevation](screenshots/batch-7a/racks-front-read-only.png) show the feature-on relationship retained while Racks is disabled.*
 
 ## Troubleshooting And Safe Recovery
 

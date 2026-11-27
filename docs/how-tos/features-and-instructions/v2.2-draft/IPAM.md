@@ -134,6 +134,8 @@ Use [the complete Link to IPAM procedure](Optional-Features-and-Link-To-IPAM.md#
 
 *Draft v2.2 — Basic IPs Outside Subnets is 1: the offsite printer is basic and outside the two managed networks. A count does not prove linking. Visual acceptance pending.*
 
+*Shared Batch 7A illustration: [the same printer after deliberate linking](screenshots/batch-7a/devices-details-network.png) shows the saved managed subnet for the address in the chooser.*
+
 ## Bulk Reserve Or Release Addresses
 
 This works inside one subnet; it does not create networks or assign Device identities.

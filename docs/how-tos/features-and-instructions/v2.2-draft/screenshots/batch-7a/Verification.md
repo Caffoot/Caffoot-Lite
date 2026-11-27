@@ -10,7 +10,7 @@ Verification results are recorded below after the final scoped checks. This page
 | Approved ceilings | Devices 15/15, IPAM 11/11, Racks 9/10, Optional Features 3/4; total 38/40 |
 | Original traceability | All 19 groups and 85 unique specifications map individually; original Requirement Register remains byte-identical |
 | Accepted guide prose | Preserved byte for byte after excluding inserted image/caption pairs and current-status notices |
-| Local destinations in four guides and pack records | 237 occurrences resolve; 27 applicable local heading anchors resolve |
+| Local destinations in four guides and pack records | 241 occurrences resolve; 27 applicable local heading anchors resolve |
 | Embedded guide images | 39 occurrences, all with non-empty alt text; one Location image shared across two guides |
 | Markdown | Balanced fences, consistent table columns and `git diff --check` pass |
 | Existing release documentation compatibility | Existing workflow's Python check executed unchanged; eight published/legacy guide pairs remain byte-identical |
