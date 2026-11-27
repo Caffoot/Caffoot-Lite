@@ -6,6 +6,7 @@ on:
     paths:
       - "interface/**"
       - "tests/browser-compat.cjs"
+      - "tests/milestone-01-correction-batch-2.cjs"
       - "tests/email-templates-interface.cjs"
       - "tests/service-desk-reporting-interface.cjs"
       - "tests/fixtures/service_desk_reporting.py"
@@ -44,6 +45,7 @@ on:
     paths:
       - "interface/**"
       - "tests/browser-compat.cjs"
+      - "tests/milestone-01-correction-batch-2.cjs"
       - "tests/email-templates-interface.cjs"
       - "tests/service-desk-reporting-interface.cjs"
       - "tests/fixtures/service_desk_reporting.py"
@@ -129,6 +131,10 @@ jobs:
           CAFFOOT_AXE_SOURCE: ${{ runner.temp }}/caffoot-browser-tests/node_modules/axe-core/axe.min.js
           CAFFOOT_ROLES_OUTPUT: ${{ runner.temp }}/users-roles-evidence
         run: node tests/users-roles-interface.cjs
+      - name: Check Milestone 01 correction Batch 2
+        env:
+          NODE_PATH: ${{ runner.temp }}/caffoot-browser-tests/node_modules
+        run: node tests/milestone-01-correction-batch-2.cjs
       - name: Exercise Stage 3 Staff Directory and Department interface
         env:
           NODE_PATH: ${{ runner.temp }}/caffoot-browser-tests/node_modules
