@@ -258,6 +258,31 @@ async function verifyQueueRefresh(page, browser, instance, screenshot) {
         await returnToTab(sam);
         await sam.waitForTimeout(1000);
         assert.deepEqual(samQueueRequests,[]);
+        assert.deepEqual(await sam.locator('[data-report-metric]').allTextContents(),['—','—','—','—']);
+        assert.equal(await sam.locator('[data-report-technicians] tr').count(),1);
+        assert.equal((await sam.locator('[data-report-technicians]').innerText()).trim(),'—');
+        // Expire Alex's actual fixture session while the IT queue is open.
+        await page.bringToFront();
+        await openServiceDesk(page);
+        await waitIdle(page);
+        await blur(page);
+        python("import sqlite3,sys\nwith sqlite3.connect(sys.argv[1]) as db:\n    db.execute('DELETE FROM account_sessions WHERE account_id=1')",instance.database);
+        assert.equal((await page.request.get(instance.base+'/api/session')).status(),401);
+        const expired = nextQueue(page);
+        await returnToTab(page);
+        assert.equal((await expired).status(),401);
+        await page.locator('#message').getByText('Your Session Has Ended').waitFor();
+        assert.equal(new URL(page.url()).pathname,'/setup');
+        assert.equal(await page.locator('[data-ticket-rows]').count(),0);
+        assert.equal(await page.locator('[data-ticket-workload]').count(),0);
+        const expiredRequests = [];
+        page.on('request',request=>{if(queueURL(request.url())) expiredRequests.push(request.url());});
+        await returnToTab(page);
+        await page.waitForTimeout(1000);
+        assert.deepEqual(expiredRequests,[]);
+        await signIn(page,instance,'Alex Morgan');
+        assert.ok(await page.locator('[data-ticket-workload] button').first().isVisible());
+        console.log('Expired IT queue session redirects to approved sign-in, removes old queue and restarts only after genuine reauthentication.');
         assert.deepEqual(errors,[]);
         console.log('Automatic IT queue/workload refresh passed: genuine two-session mutations, real interval, hidden/departed page pause, return refresh, retained filters/report/draft, transient failure recovery, stale-response cancellation and actual permission withdrawal.');
     } finally { await second.close(); }
