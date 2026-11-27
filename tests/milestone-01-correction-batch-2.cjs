@@ -98,9 +98,12 @@ async function main(){
   assert.equal(after.windowY,before.windowY,'Sidebar wheel must not move the main page');
   assert.ok(after.collapseTop>=after.top-1&&after.collapseBottom<=after.bottom+1,JSON.stringify(after));
   if(requireSettings)assert.ok(after.settingsTop>=after.top-1&&after.settingsBottom<=after.bottom+1,JSON.stringify(after));
-  await sidebar.evaluate(e=>e.scrollTop=0);
   const collapse=sidebar.locator('[data-action="toggle-sidebar"]');
+  // Each theme/route must test a fresh focus transition, not refocus the same element.
+  await collapse.evaluate(e=>e.blur());
+  await sidebar.evaluate(e=>e.scrollTop=0);
   await collapse.focus();
+  assert.equal(await collapse.evaluate(e=>document.activeElement===e),true);
   const keyboard=await metrics(p);
   assert.ok(keyboard.collapseBottom<=keyboard.bottom+1&&keyboard.collapseTop>=keyboard.top-1,JSON.stringify(keyboard));
   console.log('Sidebar reachability',JSON.stringify({before,after,keyboard}));
