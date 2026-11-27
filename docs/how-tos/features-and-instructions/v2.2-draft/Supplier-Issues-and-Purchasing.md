@@ -1,5 +1,7 @@
 # Supplier Issues And Purchasing
 
+> **Current Batch 7C capture status — 27 November 2026:** [New desktop light illustrations](screenshots/batch-7c/README.md) use the approved merged schema-31 baseline. Independent ChatGPT review and separate owner visual/privacy/caption/alt acceptance remain pending. Earlier written/source and capture-status paragraphs retain their dated scope; the current pack status controls these new images. Published v2.1 and targeted correction-refresh requirements remain unchanged.
+
 > **Draft v2.2 — Unreleased.** This guide describes Stage 4 Batch 4.2 on the development branch. Use the [published v2.1 guides](../README.md) for the current release.
 
 > **Written/source reconciliation:** Batch 4, application baseline `fdc677920bfc52f48f641b3d6d1344c902a6a9b0` (schema 31). Focused independent reviews are recorded and [owner written/source acceptance of Batches 1–6](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7200681167) is recorded. Current visual/privacy/caption/alt approval remains outstanding; [Batch 7 reconciliation and proposed capture packs](../../../development-guide/Milestone-01-Batch-7-Review.md) await independent review and owner acceptance. Capture scope and method need separate authorisation. Desktop capture remains deferred; existing images retain their original provenance and are not certified current by this pass. [Source review and exact screenshot requirements](../../../development-guide/Milestone-01-Batch-4-Review.md).
@@ -121,3 +123,39 @@ Issue Title is required and allows up to 160 characters. Main Description and ea
 See the [Batch 3 capture record](../../../development-handovers/evidence/stage-6-6-batch-3/README.md), [Supplier Management](Supplier-Management.md) and [Batch 4.2 approval](https://github.com/Caffoot/Caffoot-Lite/issues/411).
 
 [Connected example: a laptop from Supplier and stock to its final write-off](Connected-Equipment-Journey.md).
+
+## Batch 7C Desktop Illustrations
+
+These images follow the fictional training journey. Read the caption to distinguish a draft, a cancelled preview and a saved outcome. [Complete original coverage and limits](screenshots/batch-7c/Coverage.md).
+
+![Add Supplier Issue with title, description, Jo Patel and Delivery Documentation category.](screenshots/batch-7c/supplier-issue-add.png)
+
+*Draft v2.2 — The Issue is still a draft; its inline Delivery Documentation category has already been saved separately. No stock or employee ticket changes result. Independent review and owner visual acceptance pending.*
+
+![Supplier Issue Details showing In Progress, Jo Patel and a dated update.](screenshots/batch-7c/supplier-issue-update.png)
+
+*Draft v2.2 — Saved In Progress Issue with a dated update. The status belongs to Supplier work; it is separate from employee tickets and stock. Independent review and owner visual acceptance pending.*
+
+![Supplier Issue Details with Kim Cooper selected and the corrected dated update attribution.](screenshots/batch-7c/supplier-issue-handover.png)
+
+*Draft v2.2 — Kim is now the linked contact. The corrected update retains its original author/date and a correction attribution; earlier contact notes are not transferred. Independent review and owner visual acceptance pending.*
+
+![Manage Issue Categories showing Delivery Documentation Retired with Rename and Reactivate.](screenshots/batch-7c/issue-category-retired.png)
+
+*Draft v2.2 — Retiring Delivery Documentation retains the existing Issue and offers Reactivate. It is not Supplier company-category archiving. Independent review and owner visual acceptance pending.*
+
+![Purchasing Dashboard with Northlight supplier totals and recent Mouse delivery query.](screenshots/batch-7c/purchasing-journey.png)
+
+*Draft v2.2 — The connected journey has one active Supplier Issue. Purchasing totals concern Suppliers and their Issues, not an employee Service Desk queue. Independent review and owner visual acceptance pending.*
+
+![Northlight Supplier Issues list with In Progress Mouse delivery query, Kim Cooper and retired Delivery Documentation category.](screenshots/batch-7c/supplier-issues.png)
+
+*Draft v2.2 — The saved Issue remains linked to its retired category and Kim. Status and category filters narrow this Supplier list. Independent review and owner visual acceptance pending.*
+
+![Supplier Issue form showing a changed-record rejection while the unsaved update remains visible.](screenshots/batch-7c/supplier-issue-stale-rejected.png)
+
+*Draft v2.2 — A separately saved company note makes this Issue form stale. Its attempted update is rejected; refresh and review current information before trying again. Independent review and owner visual acceptance pending.*
+
+![Original Purchasing Dashboard showing Northlight Supplier Issue totals, status breakdown and View All Issues.](../../../development-handovers/evidence/stage-6-6-batch-3/screenshots/purchasing-dashboard-light-1440.png)
+
+*Draft v2.2 — Original Northlight Purchasing Dashboard only: two Open Issues, one In Progress and one Resolved. It is a separate original fixture, not the later one-Issue journey outcome. Independent review and owner visual acceptance pending.*

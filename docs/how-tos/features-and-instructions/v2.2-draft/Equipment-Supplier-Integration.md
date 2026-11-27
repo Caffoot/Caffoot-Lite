@@ -1,5 +1,7 @@
 # Equipment Supplier Integration
 
+> **Current Batch 7C capture status — 27 November 2026:** [New desktop light illustrations](screenshots/batch-7c/README.md) use the approved merged schema-31 baseline. Independent ChatGPT review and separate owner visual/privacy/caption/alt acceptance remain pending. Earlier written/source and capture-status paragraphs retain their dated scope; the current pack status controls these new images. Published v2.1 and targeted correction-refresh requirements remain unchanged.
+
 > **Draft v2.2 — unreleased.** These instructions describe the Stage 4 development application. The examples use fictional companies and equipment. For the published release, use the [v2.1 guides](../README.md).
 
 > **Written/source reconciliation:** Batch 4, application baseline `fdc677920bfc52f48f641b3d6d1344c902a6a9b0` (schema 31). Focused independent reviews are recorded and [owner written/source acceptance of Batches 1–6](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7200681167) is recorded. Current visual/privacy/caption/alt approval remains outstanding; [Batch 7 reconciliation and proposed capture packs](../../../development-guide/Milestone-01-Batch-7-Review.md) await independent review and owner acceptance. Capture scope and method need separate authorisation. Desktop capture remains deferred; existing images retain their original provenance and are not certified current by this pass. [Source review and exact screenshot requirements](../../../development-guide/Milestone-01-Batch-4-Review.md).
@@ -139,3 +141,43 @@ For company, location and contact lifecycle actions, see [Supplier Management](S
 More desktop and mobile captures, their exact source revision, and verification details are available in the [Batch 4.3 application evidence](../../../development-handovers/evidence/stage-4-batch-43/Application-Report.md).
 
 [Connected example: a laptop from Supplier and stock to its final write-off](Connected-Equipment-Journey.md).
+
+## Batch 7C Desktop Illustrations
+
+These images follow the fictional training journey. Read the caption to distinguish a draft, a cancelled preview and a saved outcome. [Complete original coverage and limits](screenshots/batch-7c/Coverage.md).
+
+![Receipt History showing DEMO-104 two-laptop delivery, checks and Northlight association.](screenshots/batch-7c/receipt-history.png)
+
+*Draft v2.2 — The original two-laptop receipt is saved with its checks, date, Sam and Supplier. Later associations and readiness history are separate records. Independent review and owner visual acceptance pending.*
+
+![Add Device Supplier chooser offering Northlight to an equipment editor without Supplier directory access.](screenshots/batch-7c/minimal-supplier-chooser.png)
+
+*Draft v2.2 — This Devices/IT Assets editor has no Suppliers Read. It can choose the minimal company identity; typing alone is not an explicit canonical link. The Device draft is discarded. Independent review and owner visual acceptance pending.*
+
+![Assign Supplier confirmation for two selected Devices with Northlight explicitly selected.](screenshots/batch-7c/bulk-device-supplier.png)
+
+*Draft v2.2 — The administrator is confirming links on two original Devices. This proposal does not change custody, stock or configuration. Independent review and owner visual acceptance pending.*
+
+![Assign Supplier dialog showing selected Device missing, changed or reserved rejection.](screenshots/batch-7c/bulk-device-supplier-rejected.png)
+
+*Draft v2.2 — A real edit reservation on one selected Device rejects the entire proposed Supplier assignment. Neither Device receives a partial link. Independent review and owner visual acceptance pending.*
+
+![Remove Supplier Association confirmation retaining the original two-laptop receipt.](screenshots/batch-7c/receipt-supplier-removal.png)
+
+*Draft v2.2 — Removing this one current association retains the original Northlight receipt text and delivery facts. It is not deletion or a stock adjustment. Independent review and owner visual acceptance pending.*
+
+![Original Northlight two-laptop receipt with Link Supplier after the current association was removed.](screenshots/batch-7c/receipt-supplier-unlinked.png)
+
+*Draft v2.2 — The current link is removed while Northlight remains the original receipt Supplier text. The receipt quantity, checks and date are unchanged. Independent review and owner visual acceptance pending.*
+
+![Northlight Supplied Equipment with original fifty-keyboard receipt, independent Device and stock-derived Device, without double counting.](screenshots/batch-7c/supplier-original-fifty-one.png)
+
+*Draft v2.2 — For this association demonstration, Northlight is linked to the original fifty-keyboard receipt, independent AST-LAP-015 and stock-derived AST-LAP-014. The original-supply metric is 51: the stock-derived Device adds no extra receipt quantity. Laptop/mouse receipt links are restored next. Independent review and owner visual acceptance pending.*
+
+![Assign Supplier confirmation for two selected receipts with Northlight selected.](screenshots/batch-7c/receipt-multiple-assignment.png)
+
+*Draft v2.2 — Two receipt associations are proposed together for restoration to Northlight. Each original Supplier string and physical delivery stays recorded. Independent review and owner visual acceptance pending.*
+
+![Northlight Supplier Overview for a Suppliers-only reader, without Supplied Equipment or equipment metric.](screenshots/batch-7c/supplier-reader-protected-equipment.png)
+
+*Draft v2.2 — Suppliers Read alone does not reveal Device or stock equipment rows. Their independent Read rights are required. Independent review and owner visual acceptance pending.*

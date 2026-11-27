@@ -1,5 +1,7 @@
 # IT Assets Overview And Low Stock Warnings
 
+> **Current Batch 7C capture status — 27 November 2026:** [New desktop light illustrations](screenshots/batch-7c/README.md) use the approved merged schema-31 baseline. Independent ChatGPT review and separate owner visual/privacy/caption/alt acceptance remain pending. Earlier written/source and capture-status paragraphs retain their dated scope; the current pack status controls these new images. Published v2.1 and targeted correction-refresh requirements remain unchanged.
+
 > **Draft v2.2 — Unreleased.** These instructions describe the implementation on `milestone-1` at the application baseline identified below. v2.1 remains the published release.
 
 > **Written/source reconciliation:** Batch 4, application baseline `fdc677920bfc52f48f641b3d6d1344c902a6a9b0` (schema 31). Focused independent reviews are recorded and [owner written/source acceptance of Batches 1–6](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7200681167) is recorded. Current visual/privacy/caption/alt approval remains outstanding; [Batch 7 reconciliation and proposed capture packs](../../../development-guide/Milestone-01-Batch-7-Review.md) await independent review and owner acceptance. Capture scope and method need separate authorisation. Desktop capture remains deferred; existing images retain their original provenance and are not certified current by this pass. [Source review and exact screenshot requirements](../../../development-guide/Milestone-01-Batch-4-Review.md).
@@ -123,3 +125,31 @@ The [genuine dashboard evidence](../../../development-handovers/evidence/stock-d
 [← Draft v2.2 Guides](README.md) · [Published v2.1 Guides](../README.md)
 
 [Connected example: a laptop from Supplier and stock to its final write-off](Connected-Equipment-Journey.md).
+
+## Batch 7C Desktop Illustrations
+
+These images follow the fictional training journey. Read the caption to distinguish a draft, a cancelled preview and a saved outcome. [Complete original coverage and limits](screenshots/batch-7c/Coverage.md).
+
+![Empty IT Assets Overview before any stock has been received.](screenshots/batch-7c/stock-empty.png)
+
+*Draft v2.2 — Before the first receipt, the isolated journey has no stock. Empty totals do not authorise receiving a delivery twice. Independent review and owner visual acceptance pending.*
+
+![Keyboard Stock Item Details with held fifty, Ready eight, awaiting forty-two and minimum stock level ten.](screenshots/batch-7c/readiness-eight-of-fifty.png)
+
+*Draft v2.2 — Fifty keyboards are physically held; only eight are Ready against minimum ten. The minimum compares Ready units, rather than the full held quantity. Independent review and owner visual acceptance pending.*
+
+![IT Assets Overview with mixed stock, classifications, reporting controls and low-stock attention.](screenshots/batch-7c/stock-mixed-overview.png)
+
+*Draft v2.2 — Mixed quantity and individually tracked stock use complete held totals. The 90-day reporting control affects movement reporting, not current stock arithmetic. Independent review and owner visual acceptance pending.*
+
+![Filtered Stock Inventory with USB Keyboards Low Stock and Clear Dashboard Filters.](screenshots/batch-7c/low-stock-drill.png)
+
+*Draft v2.2 — The Low Stock drill-down identifies the eight-Ready keyboard item below minimum ten. Clear Dashboard Filters returns to the full stock list. Independent review and owner visual acceptance pending.*
+
+![IT Assets-only Overview with complete totals and restricted Device classification guidance.](screenshots/batch-7c/assets-only-protected.png)
+
+*Draft v2.2 — IT Assets Read without Devices Read receives complete aggregate totals, while Device identities, classifications and Device drill-down stay protected. Independent review and owner visual acceptance pending.*
+
+![Read-only USB Keyboard stock details with held fifty and Ready eight, without a readiness editor.](screenshots/batch-7c/read-only-stock-details.png)
+
+*Draft v2.2 — IT Assets Read can inspect stock details and recorded checks, but cannot change readiness or receive or issue stock. Independent review and owner visual acceptance pending.*

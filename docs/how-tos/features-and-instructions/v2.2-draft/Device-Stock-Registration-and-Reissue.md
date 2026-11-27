@@ -1,5 +1,7 @@
 # Register Computers From Stock And Reissue Devices
 
+> **Current Batch 7C capture status — 27 November 2026:** [New desktop light illustrations](screenshots/batch-7c/README.md) use the approved merged schema-31 baseline. Independent ChatGPT review and separate owner visual/privacy/caption/alt acceptance remain pending. Earlier written/source and capture-status paragraphs retain their dated scope; the current pack status controls these new images. Published v2.1 and targeted correction-refresh requirements remain unchanged.
+
 > **Draft v2.2 — Not Yet Published.** This guide describes the implementation on `milestone-1` at the application baseline identified below. Use the [published v2.1 guides](../README.md) for current production instructions. These draft procedures do not establish installation, upgrade, native/manual or release acceptance.
 
 > **Written/source reconciliation:** Batch 4, application baseline `fdc677920bfc52f48f641b3d6d1344c902a6a9b0` (schema 31). Focused independent reviews are recorded and [owner written/source acceptance of Batches 1–6](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7200681167) is recorded. Current visual/privacy/caption/alt approval remains outstanding; [Batch 7 reconciliation and proposed capture packs](../../../development-guide/Milestone-01-Batch-7-Review.md) await independent review and owner acceptance. Capture scope and method need separate authorisation. Desktop capture remains deferred; existing images retain their original provenance and are not certified current by this pass. [Source review and exact screenshot requirements](../../../development-guide/Milestone-01-Batch-4-Review.md).
@@ -190,3 +192,35 @@ The [registration and storage evidence gallery](../../../development-handovers/e
 The [technical source mapping](../../../development-guide/Device-Stock-Registration-and-Reissue.md) explains implementation boundaries for maintainers. Native Pi/Safari, private-export, complete upgrade/restore and release acceptance must be established separately; this guide does not declare them complete.
 
 [Connected example: a laptop from Supplier and stock to its final write-off](Connected-Equipment-Journey.md).
+
+## Batch 7C Desktop Illustrations
+
+These images follow the fictional training journey. Read the caption to distinguish a draft, a cancelled preview and a saved outcome. [Complete original coverage and limits](screenshots/batch-7c/Coverage.md).
+
+![Add Device General form for AST-LAP-014, DEMO-AST-014 and the selected Ready stock source.](screenshots/batch-7c/register-ast-lap-014.png)
+
+*Draft v2.2 — The Device draft selects one Ready laptop from the two-unit receipt. Registration will retain one permanent AST-LAP-014 identity and will not assign it. Independent review and owner visual acceptance pending.*
+
+![Stock Inventory with two-laptop total and separate registered AST-LAP-014 row.](screenshots/batch-7c/registered-stock-accounting.png)
+
+*Draft v2.2 — The laptop item still represents two held units: one unregistered Ready unit plus AST-LAP-014 as a registered Ready Device. Never add the Device row to the item total again. Independent review and owner visual acceptance pending.*
+
+![Reissue Existing Device form selecting AST-LAP-014, Alex Morgan and 05/11/2026.](screenshots/batch-7c/reissue-to-alex.png)
+
+*Draft v2.2 — This is the unsaved first issue of the already registered Ready Device to Alex. The explicit issue will reduce held/Ready by one and preserve Device identity. Independent review and owner visual acceptance pending.*
+
+![AST-LAP-014 Assigned To showing Alex Morgan and its assignment history.](screenshots/batch-7c/alex-saved-custody.png)
+
+*Draft v2.2 — Saved current custody belongs to Alex. The original Device and assignment history remain the authoritative identity; registration was a different event. Independent review and owner visual acceptance pending.*
+
+![Laptop stock readiness editor showing one unregistered Ready unit, one returned registered unit and the registered-Device readiness safeguard.](screenshots/batch-7c/returned-device-readiness-protection.png)
+
+*Draft v2.2 — The returned registered Device cannot be made Ready by increasing the stock item’s receipt-readiness total. Its own Prepare Returned Equipment checks are required; this out-of-range draft is discarded. Independent review and owner visual acceptance pending.*
+
+![Reissue Existing Device with no Ready registered Devices while AST-LAP-014 awaits preparation.](screenshots/batch-7c/awaiting-device-not-reissuable.png)
+
+*Draft v2.2 — AST-LAP-014 is Awaiting Preparation, so it is absent from the Ready registered Device chooser. The returned identity and history remain saved. Independent review and owner visual acceptance pending.*
+
+![AST-LAP-014 Assigned To showing current Sarah Lewis and closed Alex Morgan physical custody.](screenshots/batch-7c/same-device-sarah-history.png)
+
+*Draft v2.2 — Sarah now holds the same AST-LAP-014. Alex’s ended custody and actual return remain in its history; preparation and reissue did not create a replacement identity or restart first service. Independent review and owner visual acceptance pending.*

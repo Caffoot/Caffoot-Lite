@@ -1,5 +1,9 @@
 # Draft v2.2 User And Administrator Guides
 
+## Batch 7C Delivery — 27 November 2026
+
+**41/42 new desktop light images**, plus narrow original RE07/RE08 reuse; all **23 groups / 120 owned states and five shared references** retained. [Pack and direct image links](screenshots/batch-7c/README.md) · [complete coverage](screenshots/batch-7c/Coverage.md) · [provenance](screenshots/batch-7c/manifest.json) · [focused verification](screenshots/batch-7c/Verification.md). Category counts: dashboard 5/6, intake/readiness 7/7, registration/reissue 6/6, Suppliers 8/8, Issues/Purchasing 7/7, integration 8/8. Independent ChatGPT review and separate owner visual/privacy/caption/alt acceptance pending; no publication approval. The original Alex My Equipment frame belongs to the connected 7C journey and will be reused for 7E. Pre-handover fixture preparation preserves later-pack states; undelivered 7D/7E illustrations are not part of this checkpoint. Continue to separately verified 7D under consolidated owner approval after this checkpoint succeeds.
+
 ## Current Reconciliation — 27 November 2026
 
 **Batch 7B: 25 new images and three narrow reuse images independently reviewed and owner visually accepted.** [Decision](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7212506766). All 16 groups/79 specifications, original image bytes and provenance remain. Independent review opened all 25 PNGs and matched coverage/alt text, but did not recompute every hash or repeat the complete static suite. Earlier pending/checkpoint wording below is historical.

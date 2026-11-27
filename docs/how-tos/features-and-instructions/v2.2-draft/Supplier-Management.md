@@ -1,5 +1,7 @@
 # Supplier Management
 
+> **Current Batch 7C capture status — 27 November 2026:** [New desktop light illustrations](screenshots/batch-7c/README.md) use the approved merged schema-31 baseline. Independent ChatGPT review and separate owner visual/privacy/caption/alt acceptance remain pending. Earlier written/source and capture-status paragraphs retain their dated scope; the current pack status controls these new images. Published v2.1 and targeted correction-refresh requirements remain unchanged.
+
 > **Draft v2.2 — unreleased.** These instructions describe Supplier Management in the current integrated development application. Continue to use the [v2.1 guides](../README.md) for the published version. The examples here use fictional businesses and contacts.
 
 > **Written/source reconciliation:** Batch 4, application baseline `fdc677920bfc52f48f641b3d6d1344c902a6a9b0` (schema 31). Focused independent reviews are recorded and [owner written/source acceptance of Batches 1–6](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7200681167) is recorded. Current visual/privacy/caption/alt approval remains outstanding; [Batch 7 reconciliation and proposed capture packs](../../../development-guide/Milestone-01-Batch-7-Review.md) await independent review and owner acceptance. Capture scope and method need separate authorisation. Desktop capture remains deferred; existing images retain their original provenance and are not certified current by this pass. [Source review and exact screenshot requirements](../../../development-guide/Milestone-01-Batch-4-Review.md).
@@ -137,3 +139,43 @@ Scroll down to reach the Contact entry and save controls on a narrow screen.
 ![Desktop light Supplier Details on the Overview tab with the company actions beside the heading](../../../development-handovers/evidence/stage-6-6-batch-3/screenshots/supplier-details-light-1440.png)
 
 [Connected example: a laptop from Supplier and stock to its final write-off](Connected-Equipment-Journey.md).
+
+## Batch 7C Desktop Illustrations
+
+These images follow the fictional training journey. Read the caption to distinguish a draft, a cancelled preview and a saved outcome. [Complete original coverage and limits](screenshots/batch-7c/Coverage.md).
+
+![Supplier Locations showing Main Office and Leeds Branch with their current actions.](screenshots/batch-7c/supplier-locations.png)
+
+*Draft v2.2 — Northlight has a Main Office and Leeds Branch. Jo is a company-wide contact; the Main Office has protected deletion rules. Independent review and owner visual acceptance pending.*
+
+![Add Contact form for Kim Cooper with Leeds Branch selected.](screenshots/batch-7c/supplier-contact.png)
+
+*Draft v2.2 — Kim is an unsaved location-specific contact for Leeds; company-wide and selected-location scopes are independent choices. Independent review and owner visual acceptance pending.*
+
+![Add Note for Jo Patel containing a fictional delivery coordination note.](screenshots/batch-7c/contact-note.png)
+
+*Draft v2.2 — This unsaved note belongs to Jo, rather than the company. Keep factual work information in the appropriate note owner. Independent review and owner visual acceptance pending.*
+
+![Northlight Notes showing company and Jo Patel notes, author labels and owner filter.](screenshots/batch-7c/supplier-notes.png)
+
+*Draft v2.2 — Saved company and contact notes retain their owners and authors. Supplier Note history protects the company from deletion; Archive retains it. Independent review and owner visual acceptance pending.*
+
+![Archive Supplier confirmation for Northlight, retaining its recorded history.](screenshots/batch-7c/supplier-archive-protection.png)
+
+*Draft v2.2 — Archive is a proposed lifecycle action, retaining notes, Issues and equipment links. This confirmation is cancelled for the continuing journey. Independent review and owner visual acceptance pending.*
+
+![Add Supplier form showing Northlight company details, Hardware category, address fields and Jo Patel contact.](screenshots/batch-7c/supplier-add.png)
+
+*Draft v2.2 — A representative unsaved Northlight company/contact draft. The continuing journey already has its saved Northlight record; this demonstration draft is discarded, rather than creating a duplicate. Independent review and owner visual acceptance pending.*
+
+![Disable Supplier confirmation naming Northlight, affected sections and retained associations and supply history.](screenshots/batch-7c/supplier-disable-impact.png)
+
+*Draft v2.2 — Only the administrator sees Disable. Review the actual affected sections and retained-history warning before confirming; this preview is cancelled. Independent review and owner visual acceptance pending.*
+
+![Manage Supplier Categories showing Hardware, Software and other company categories with management actions.](screenshots/batch-7c/supplier-categories.png)
+
+*Draft v2.2 — Supplier company categories have their own Archive and Reactivate controls. This catalogue is independent of Issue Categories and company lifecycle actions. Independent review and owner visual acceptance pending.*
+
+![Original Supplier Directory with active Northlight, two locations, two contacts, search and category filter.](../../../development-handovers/evidence/stage-6-6-batch-3/screenshots/supplier-directory-light-1440.png)
+
+*Draft v2.2 — Original Supplier Directory only: active Northlight, two locations and two contacts. Retain the original fixture, category choices and provenance; this is not a later capture. Independent review and owner visual acceptance pending.*

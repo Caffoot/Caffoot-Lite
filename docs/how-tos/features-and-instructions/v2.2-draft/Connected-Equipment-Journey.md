@@ -1,5 +1,7 @@
 # A Connected Equipment Example — Aster Services
 
+> **Current Batch 7C capture status — 27 November 2026:** [New desktop light illustrations](screenshots/batch-7c/README.md) use the approved merged schema-31 baseline. Independent ChatGPT review and separate owner visual/privacy/caption/alt acceptance remain pending. Earlier written/source and capture-status paragraphs retain their dated scope; the current pack status controls these new images. Published v2.1 and targeted correction-refresh requirements remain unchanged.
+
 > **Draft v2.2 — Unreleased.** Written/source reconciliation for documentation Batches 3 and 4, application baseline `fdc677920bfc52f48f641b3d6d1344c902a6a9b0`, schema 31. Focused independent reviews are recorded and [owner written/source acceptance of Batches 1–6](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7200681167) is recorded. Current visual/privacy/caption/alt approval remains outstanding; [Batch 7 reconciliation and proposed capture packs](../../../development-guide/Milestone-01-Batch-7-Review.md) await independent review and owner acceptance. Capture scope and method need separate authorisation. Desktop capture remains deferred. [Source and screenshot record](../../../development-guide/Milestone-01-Batch-4-Review.md).
 
 This fictional example connects tasks that already exist. It is not a new application workflow or a compulsory order for every organisation. Follow the detailed linked guide for each form, required field, confirmation and rejection. Record only real physical events and checks in your own installation.
@@ -115,3 +117,31 @@ The saved balances describe what has been recorded. Verify uncertain saves by in
 [← Draft v2.2 Guides](README.md)
 
 For a support request while Alex holds AST-LAP-014, follow the [Connected Service Desk Journey](Connected-Service-Desk-Journey.md). It uses the same fictional organisation and equipment and preserves the custody boundary on later handover.
+
+## Batch 7C Desktop Illustrations
+
+These images follow the fictional training journey. Read the caption to distinguish a draft, a cancelled preview and a saved outcome. [Complete original coverage and limits](screenshots/batch-7c/Coverage.md).
+
+![Receive Stock laptop draft with quantity two, checked Ready two and Northlight selected.](screenshots/batch-7c/receive-laptops.png)
+
+*Draft v2.2 — The unsaved receipt records two checked, Ready laptops with an explicitly selected Northlight link. The summary is a proposal, not saved stock. Independent review and owner visual acceptance pending.*
+
+![Receive Stock with Mouse, Individually Tracked, fictional serial and asset tag, quantity one and receipt checks.](screenshots/batch-7c/receive-individual.png)
+
+*Draft v2.2 — A separate individually tracked demonstration mouse is an unsaved one-unit receipt. It is additional to the journey’s two quantity-based mice. Independent review and owner visual acceptance pending.*
+
+![Stock Inventory with two-laptop total and separate registered AST-LAP-014 row.](screenshots/batch-7c/registered-stock-accounting.png)
+
+*Draft v2.2 — The laptop item still represents two held units: one unregistered Ready unit plus AST-LAP-014 as a registered Ready Device. Never add the Device row to the item total again. Independent review and owner visual acceptance pending.*
+
+![AST-LAP-014 Assigned To showing Alex Morgan and its assignment history.](screenshots/batch-7c/alex-saved-custody.png)
+
+*Draft v2.2 — Saved current custody belongs to Alex. The original Device and assignment history remain the authoritative identity; registration was a different event. Independent review and owner visual acceptance pending.*
+
+![Alex’s My Equipment with personal laptop and mouse and shared Accounts printer.](screenshots/batch-7c/alex-before-handover.png)
+
+*Draft v2.2 — Alex sees the personally assigned AST-LAP-014 and outstanding mouse, plus the Accounts printer shared through current membership. This is the preserved pre-handover state. Independent review and owner visual acceptance pending.*
+
+![Original Supplier Directory with active Northlight, two locations, two contacts, search and category filter.](../../../development-handovers/evidence/stage-6-6-batch-3/screenshots/supplier-directory-light-1440.png)
+
+*Draft v2.2 — Original Supplier Directory only: active Northlight, two locations and two contacts. Retain the original fixture, category choices and provenance; this is not a later capture. Independent review and owner visual acceptance pending.*
