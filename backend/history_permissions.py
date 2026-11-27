@@ -110,6 +110,15 @@ def visible_change_history(connection, account_id):
         if reason in (DEVICE_AUDIT_REASON, FIRST_SERVICE_AUDIT_REASON) and not (
                 sections['Devices'] and feature_enabled(connection, 'Equipment Lifecycle')):
             continue
+        # New association names are additional historical data. Preserve every
+        # original field, but never disclose these names without Suppliers access.
+        if (reason == SUPPLIER_AUDIT_REASON and not sections["Suppliers"]
+                and isinstance(event.get("changes"), list)):
+            for change in event["changes"]:
+                if isinstance(change, dict) and change.get("kind") in ("Device", "IT Assets"):
+                    for side in ("before", "after"):
+                        if isinstance(change.get(side), dict):
+                            change[side].pop("supplierName", None)
         stock_changes = (isinstance(event, dict) and isinstance(event.get('changes'), list)
                          and any(isinstance(change, dict) and change.get('kind') == 'IT Assets'
                                  for change in event['changes']))

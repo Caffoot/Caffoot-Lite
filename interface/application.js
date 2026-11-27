@@ -869,23 +869,97 @@ function hierarchyValidateTypes(subnets) {
           if(auditLastFocus?.isConnected)auditLastFocus.focus();
           auditLastFocus=null;
         }
+        // Display only recorded values. Unknown fields and missing historical
+        // names must not be inferred from today's inventory or Supplier catalogue.
+        const auditFieldLabels=Object.freeze({
+          name:'Name',type:'Type',status:'Status',location:'Location',manufacturer:'Manufacturer',model:'Model',
+          assetTag:'Asset Tag',serialNumber:'Serial Number',mountType:'Mount Type',rackId:'Rack Reference',
+          rackUStart:'Rack Start U',rackUEnd:'Rack End U',rackUHeight:'Rack Height (U)',face:'Rack Face',
+          rackShelfAccessoryId:'Rack Shelf Reference',virtualHostId:'Virtual Host Reference',
+          virtualPlatform:'Virtual Platform',primaryIp:'Primary IP Address',ipReserved:'IP Reserved',
+          deviceId:'Device Reference',reservedForDeviceId:'Reserved For Device Reference',
+          kind:'Kind',cidr:'Network (CIDR)',parentId:'Parent Record Reference',gateway:'Gateway',
+          vlan:'VLAN',vlanId:'VLAN ID',purpose:'Purpose',heightU:'Height (U)',startU:'Start U',
+          supplierId:'Supplier',supplierText:'Supplier Name',supplierName:'Recorded Supplier Name',
+          movementId:'Stock Movement Reference',id:'Internal Record ID',departmentId:'Department Reference',
+          staffId:'Staff Reference',accountId:'Account Reference',assignedAt:'Assigned At',
+          first_name:'First Name',last_name:'Last Name',department_id:'Department Reference',
+          firstName:'First Name',lastName:'Last Name',active:'Active',archived:'Archived',
+          enabled:'Enabled',hidden:'Hidden',effectiveAt:'Effective At',value:'Value'
+        });
+        function auditFieldLabel(key,row){
+          if(key==='Department'&&row.kind==='Staff Member')return 'Department Reference';
+          return Object.hasOwn(auditFieldLabels,key)?auditFieldLabels[key]:key;
+        }
+        function auditValueObject(value){return !!value&&typeof value==='object'&&!Array.isArray(value);}
+        function auditValuesEqual(left,right){
+          if(Object.is(left,right))return true;
+          if(!left||!right||typeof left!=='object'||typeof right!=='object'||Array.isArray(left)!==Array.isArray(right))return false;
+          const keys=Object.keys(left);
+          return keys.length===Object.keys(right).length&&keys.every(key=>Object.hasOwn(right,key)&&auditValuesEqual(left[key],right[key]));
+        }
+        function auditValueText(values,key,raw=false){
+          if(!auditValueObject(values)||!Object.hasOwn(values,key))return 'Not recorded';
+          const value=values[key];
+          if(raw)return JSON.stringify(value);
+          if(value===null)return 'Null (recorded)';
+          if(value==='')return 'Empty (recorded)';
+          if(typeof value==='object')return JSON.stringify(value);
+          if(typeof value==='boolean')return value?'True':'False';
+          return String(value);
+        }
+        function auditSupplierValue(values,isDevice){
+          if(!auditValueObject(values)||!Object.hasOwn(values,'supplierId'))return 'Not recorded';
+          const id=values.supplierId;
+          if(id===null){
+            if(!isDevice)return 'Not assigned';
+            if(typeof values.supplierText!=='string')return 'Not recorded';
+            return values.supplierText===''?'Not assigned':values.supplierText;
+          }
+          if(!Number.isSafeInteger(id)||id<=0)return 'Not recorded';
+          if(typeof values.supplierName==='string'&&values.supplierName.trim()&&values.supplierName.length<=160&&!/[\u0000-\u001f\u007f]/.test(values.supplierName))return values.supplierName;
+          return (nextDeviceBridge?.canReadSuppliers()?'Historical name not recorded':'Historical name not available')+' (Supplier reference '+id+')';
+        }
+        function auditDiffRow(label,before,after){
+          return '<div class="diff-row"><b>'+escapeHtml(label)+'</b><span class="before">'+escapeHtml(before)+'</span><span class="after">'+escapeHtml(after)+'</span></div>';
+        }
         function showAuditDetail(index){
           const row=auditVisibleRows()[index],layer=document.getElementById('audit-detail-layer');
           if(!row||!layer)return;
           auditLastFocus=document.activeElement;
           document.getElementById('audit-detail-title').textContent=row.kind+' '+row.action.toLowerCase();
           document.getElementById('audit-detail-lead').textContent=row.label+' · '+row.area;
-          let fields=row.fields.length?'<h3 class="detail-section">Recorded field names</h3><p class="detail-description">'+escapeHtml(row.fields.join(', '))+'</p>':
-            '<p class="detail-description">No field-level differences were captured for this event.</p>';
-          if(row.before&&row.after&&typeof row.before==='object'&&typeof row.after==='object'){
-            const keys=[...new Set([...Object.keys(row.before),...Object.keys(row.after)])].slice(0,30);
-            fields=renderInterfaceTemplate("audit-trail/fields-1",[])+
-              keys.map(k=>'<div class="diff-row"><b>'+escapeHtml(k)+'</b><span class="before">'+escapeHtml(String(row.before[k]??'Not recorded'))+'</span><span class="after">'+escapeHtml(String(row.after[k]??'Not recorded'))+'</span></div>').join('');
+          const before=auditValueObject(row.before)?row.before:{},after=auditValueObject(row.after)?row.after:{};
+          const keys=[...new Set([...Object.keys(before),...Object.keys(after)])];
+          const pair=auditValueObject(row.before)&&auditValueObject(row.after);
+          const changed=key=>Object.hasOwn(before,key)!==Object.hasOwn(after,key)||!auditValuesEqual(before[key],after[key]);
+          const supplierAssociation=row.reason==='Equipment Supplier association'&&['Device','IT Assets'].includes(row.kind)&&
+            pair&&Object.hasOwn(before,'supplierId')&&Object.hasOwn(after,'supplierId');
+          const supplierKeys=['supplierId','supplierText','supplierName'];
+          let differences=[];
+          if(pair){
+            if(supplierAssociation&&(changed('supplierId')||changed('supplierText'))){
+              differences.push(auditDiffRow('Supplier',auditSupplierValue(before,row.kind==='Device'),auditSupplierValue(after,row.kind==='Device')));
+            }
+            differences.push(...keys.filter(key=>changed(key)&&!(supplierAssociation&&supplierKeys.includes(key)))
+              .map(key=>auditDiffRow(auditFieldLabel(key,row),auditValueText(before,key),auditValueText(after,key))));
           }
+          let fields=differences.length?renderInterfaceTemplate("audit-trail/fields-1",[])+differences.join(''):
+            row.fields.length?'<h3 class="detail-section">Recorded field names</h3><p class="detail-description">'+escapeHtml(row.fields.map(key=>auditFieldLabel(key,row)).join(', '))+'</p><p class="detail-description">'+(pair?'No differing before-and-after values were captured for this event.':'No paired before-and-after values were captured for this event.')+'</p>':
+            '<p class="detail-description">No field-level differences were captured for this event.</p>';
+          if(supplierAssociation&&row.kind==='IT Assets')fields+='<p class="detail-description">This change concerns the linked Supplier, not the original receipt text.</p>';
           const identity='<h3 class="detail-section">Affected record</h3><dl class="identity-grid">'+
-            [['Displayed record',row.label],['Label source',row.labelSource],['Canonical record ID',row.canonicalId],['Original recorded label',row.originalLabel]]
+            '<div><dt>Displayed record</dt><dd>'+escapeHtml(row.label)+'</dd></div></dl>';
+          const technicalIdentity='<dl class="identity-grid">'+
+            [['Internal Record ID',row.canonicalId],['Record Name Source',row.labelSource],['Original recorded label',row.originalLabel]]
               .map(([label,value])=>'<div><dt>'+escapeHtml(label)+'</dt><dd>'+escapeHtml(value)+'</dd></div>').join('')+'</dl>';
-          document.getElementById('audit-detail-body').innerHTML='<div class="detail-meta"><div><small>Performed by</small><b>'+escapeHtml(row.actor)+'</b></div><div><small>When (UTC)</small><b>'+escapeHtml(auditDate(row.at))+'</b></div><div><small>Result</small><b>'+escapeHtml(row.outcome)+'</b></div></div><p class="detail-description">'+escapeHtml(row.reason)+'</p>'+identity+fields;
+          const originalFields=row.fields.length?'<p class="detail-description">Original recorded field names: '+escapeHtml(row.fields.join(', '))+'</p>':'';
+          const rawValues=keys.length?'<h3 class="detail-section">Original recorded values (including unchanged context)</h3><div class="diff-head"><span>Field</span><span>Previous value</span><span>New value</span></div>'+
+            keys.map(key=>auditDiffRow(key,auditValueText(before,key,true),auditValueText(after,key,true))).join(''):'';
+          const rawNonObject=[['Previous value',row.before],['New value',row.after]].filter(([,value])=>value!==undefined&&!auditValueObject(value))
+            .map(([label,value])=>'<p class="detail-description">'+escapeHtml(label+': '+JSON.stringify(value))+'</p>').join('');
+          const technical='<details><summary class="detail-section">Technical Details</summary>'+technicalIdentity+originalFields+rawValues+rawNonObject+'</details>';
+          document.getElementById('audit-detail-body').innerHTML='<div class="detail-meta"><div><small>Performed by</small><b>'+escapeHtml(row.actor)+'</b></div><div><small>When (UTC)</small><b>'+escapeHtml(auditDate(row.at))+'</b></div><div><small>Result</small><b>'+escapeHtml(row.outcome)+'</b></div></div><p class="detail-description">'+escapeHtml(row.reason)+'</p>'+identity+fields+technical;
           layer.hidden=false;
           layer.querySelector('[data-action="audit-close-detail"]').focus();
         }
