@@ -31,7 +31,7 @@ This is a change to how dates are **entered and shown**, not to the dates alread
 | Record racks, inspect elevations, place equipment and manage shelves/accessories | [Network Racks](Racks.md) |
 | Enable optional features, record basic IPv4 or explicitly link to IPAM | [Optional Features, Basic IPv4 And Link To IPAM](Optional-Features-and-Link-To-IPAM.md) |
 
-These infrastructure drafts have completed the Batch 2 text/source pass at the recorded baseline. The owner approved Batch 2 written/source work; desktop screenshot suitability/approval remains outstanding; see the [Batch 2 evidence and limitations](../../../development-guide/Milestone-01-Batch-2-Review.md).
+These infrastructure drafts have completed the Batch 2 text/source pass at the recorded baseline. The owner approved Batch 2 written/source work; Batch 7A’s 38 desktop images are independently reviewed and owner visually accepted; see the [Batch 2 evidence and limitations](../../../development-guide/Milestone-01-Batch-2-Review.md).
 
 ### A Sensible Infrastructure Setup Order
 
@@ -149,7 +149,13 @@ For implementation checkpoints and dated evidence, see [Development Status](../.
 
 Batch 6 written/source reconciliation covers [Installation](Installation.md), [Legacy Import, Docker Upgrade, Backup And Recovery](Legacy-Import-and-Docker-Upgrade.md) and [Service Desk Time Zone](Service-Desk-Time-Zone.md). [Separate Batch 6 review](../../../development-guide/Milestone-01-Batch-6-Review.md) records pinned sources, historical versions, limitations, static checks and **21 additional screenshot groups**. Focused independent ChatGPT review and separate owner written acceptance are recorded for Batch 6. The [Batch 7 reconciliation](../../../development-guide/Milestone-01-Batch-7-Review.md) preserves all **138 original desktop groups** and maps 670 distinct state specifications, with none waived. No deployment/rehearsal, current upgrade/restore acceptance or release approval follows from written completion. Batch 7.1 reconciliation and the bounded 7.2 existing-image assessment await their own independent review and owner acceptance. No Batch 7.3 capture or Batch 8 work is authorised.
 
-## Screenshot Reconciliation Checkpoint — 27 November 2026
+## Current Screenshot Packs — 27 November 2026
+
+[Batch 7A](screenshots/batch-7a/README.md) is administratively complete: **38/40 owner visually accepted images**, all 19 groups/85 specifications retained, and the exact native disable-confirmation example accepted in writing. [Batch 7B](screenshots/batch-7b/README.md) adds **25 proposed new desktop light images** (accounts 18, Staff 7) and three approved narrow reuse references; all 16 groups/79 specifications are mapped. Independent review and separate owner visual acceptance of the new 7B images remain pending. Batches 1–6 written/source and Batch 7.1/bounded 7.2 acceptance remain recorded. No 7C–7H, Batch 8, release or publication is authorised.
+
+The dated checkpoint statements below preserve their then-current scope and pending status; current decisions above control.
+
+## Historical Screenshot Reconciliation Checkpoint — 27 November 2026
 
 The [owner acceptance record](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7200681167) establishes written/source acceptance of Batches 1–6, subject to the focused independent-review limits. Dated earlier review records are preserved. This does not accept desktop visuals, runtime, security or release readiness.
 

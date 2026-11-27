@@ -2,9 +2,9 @@
 
 [← All feature guides](README.md)
 
-> **Draft v2.2 — Unreleased.** Reconciled against application baseline `fdc677920bfc52f48f641b3d6d1344c902a6a9b0` (schema 31), 26 November 2026. Use the [published v2.1 guide](https://github.com/Caffoot/Caffoot-Lite/blob/c3237114108cad9f7d4e57657b6aed5e0091a5ef/docs/how-tos/features-and-instructions/IPAM.md) for that release. Batch 7A proposed desktop illustrations are included below; visual and final acceptance remain outstanding; see the [Batch 2 review record](../../../development-guide/Milestone-01-Batch-2-Review.md). Examples are fictional and use documentation address ranges.
+> **Draft v2.2 — Unreleased.** Reconciled against application baseline `fdc677920bfc52f48f641b3d6d1344c902a6a9b0` (schema 31), 26 November 2026. Use the [published v2.1 guide](https://github.com/Caffoot/Caffoot-Lite/blob/c3237114108cad9f7d4e57657b6aed5e0091a5ef/docs/how-tos/features-and-instructions/IPAM.md) for that release. Batch 7A desktop illustrations below are owner visually accepted; publication and final release acceptance remain separate; see the [Batch 2 review record](../../../development-guide/Milestone-01-Batch-2-Review.md). Examples are fictional and use documentation address ranges.
 
-> **Documentation status — 27 November 2026:** Batches 1–6 written/source work and [Batch 7.1/bounded 7.2](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7210689297) are owner accepted. [Batch 7A](screenshots/batch-7a/README.md) is authorised for at most 40 desktop light-theme images. The proposed illustrations below await independent ChatGPT review and product-owner visual/privacy/caption/alt acceptance; no publication approval is implied.
+> **Documentation status — 27 November 2026:** Batches 1–6 written/source work and Batch 7.1/bounded 7.2 are owner accepted. [Batch 7A](screenshots/batch-7a/README.md) has 38 independently reviewed and owner visually accepted desktop light-theme images, final 38/40. The native disable confirmation has an explicitly accepted written substitution. No publication or application acceptance is implied.
 
 ## Understand the records
 
@@ -29,11 +29,11 @@ IP Address Management (IPAM) records planned address space and saved allocations
 
 ![Manage Subnets listing Lab Network 192.0.2.0/24 with VLAN 50 and Training Review Network 198.51.100.0/26 without a VLAN.](screenshots/batch-7a/ipam-manage-subnets.png)
 
-*Draft v2.2 — Manage Subnets shows the two standalone fictional networks and their network actions. Visual acceptance pending.*
+*Draft v2.2 — Manage Subnets shows the two standalone fictional networks and their network actions. Owner visually accepted; publication remains separate.*
 
 ![Lab Network IP Addresses showing the .1–.32 range, protected gateway 192.0.2.1, Assigned training-switch-01 at .10 and Available address cards.](screenshots/batch-7a/ipam-address-grid.png)
 
-*Draft v2.2 — The selected .1–.32 range shows the protected Reserved gateway, an Assigned Device address and Available cards; other ranges have their own controls. Visual acceptance pending.*
+*Draft v2.2 — The selected .1–.32 range shows the protected Reserved gateway, an Assigned Device address and Available cards; other ranges have their own controls. Owner visually accepted; publication remains separate.*
 
 ### Read Address States And Totals
 
@@ -61,7 +61,7 @@ To create an organisational parent instead, select **IP Address Block** in the s
 
 ![Add Single Subnet form for Training Expansion, 203.0.113.64/26, LAN purpose, gateway 203.0.113.65 and optional VLAN and block fields.](screenshots/batch-7a/ipam-single-subnet-form.png)
 
-*Draft v2.2 — Add Single Subnet requires an explicit purpose and a usable LAN gateway. This is an unsaved draft. Visual acceptance pending.*
+*Draft v2.2 — Add Single Subnet requires an explicit purpose and a usable LAN gateway. This is an unsaved draft. Owner visually accepted; publication remains separate.*
 
 ## Add multiple subnets
 
@@ -82,7 +82,7 @@ Names/descriptions can explain a real VPN range, for example *London ↔ Bristol
 
 ![Multiple-subnet preview for Training A 203.0.113.128/26 and Training B 203.0.113.192/26, with LAN purposes and first-usable gateways.](screenshots/batch-7a/ipam-multiple-subnet-preview.png)
 
-*Draft v2.2 — Review both generated /26 networks and their individual purposes and gateways before saving; neither exists yet. Visual acceptance pending.*
+*Draft v2.2 — Review both generated /26 networks and their individual purposes and gateways before saving; neither exists yet. Owner visually accepted; publication remains separate.*
 
 ## Edit an individual IP
 
@@ -95,11 +95,11 @@ Names/descriptions can explain a real VPN range, for example *London ↔ Bristol
 
 ![Configure IP 192.0.2.42 with Reserved selected, hostname training-spare-42 and address-specific IPAM Notes.](screenshots/batch-7a/ipam-configure-address.png)
 
-*Draft v2.2 — Configure an independent spare address; this Reserved draft has not been saved. Visual acceptance pending.*
+*Draft v2.2 — Configure an independent spare address; this Reserved draft has not been saved. Owner visually accepted; publication remains separate.*
 
 ![Configure IP 192.0.2.10 showing training-switch-01 ownership, protected Status and Hostname, and editable IPAM Notes.](screenshots/batch-7a/ipam-protected-device-address.png)
 
-*Draft v2.2 — Device ownership protects Status and Hostname here; IPAM Notes remain separate editable address metadata. Visual acceptance pending.*
+*Draft v2.2 — Device ownership protects Status and Hostname here; IPAM Notes remain separate editable address metadata. Owner visually accepted; publication remains separate.*
 
 ## Reserve and release a spare address
 
@@ -132,7 +132,7 @@ Use [the complete Link to IPAM procedure](Optional-Features-and-Link-To-IPAM.md#
 
 ![IPAM Overview showing two networks, 316 usable addresses and Basic IPs Outside Subnets count 1.](screenshots/batch-7a/ipam-overview-basic-count.png)
 
-*Draft v2.2 — Basic IPs Outside Subnets is 1: the offsite printer is basic and outside the two managed networks. A count does not prove linking. Visual acceptance pending.*
+*Draft v2.2 — Basic IPs Outside Subnets is 1: the offsite printer is basic and outside the two managed networks. A count does not prove linking. Owner visually accepted; publication remains separate.*
 
 *Shared Batch 7A illustration: [the same printer after deliberate linking](screenshots/batch-7a/devices-details-network.png) shows the saved managed subnet for the address in the chooser.*
 
@@ -150,11 +150,11 @@ For example, reserving fictional `192.0.2.40`–`192.0.2.45` with Hostname *trai
 
 ![Bulk reservation preview for 192.0.2.1–192.0.2.12 showing eligible changes, protected skipped addresses and Apply or Back to editing actions.](screenshots/batch-7a/ipam-bulk-reservation-preview.png)
 
-*Draft v2.2 — The reservation preview skips the gateway and Device-owned .10. No changes have been applied. Visual acceptance pending.*
+*Draft v2.2 — The reservation preview skips the gateway and Device-owned .10. No changes have been applied. Owner visually accepted; publication remains separate.*
 
 ![Bulk release preview showing eligible changes and protected/skipped addresses before Apply.](screenshots/batch-7a/ipam-bulk-release-preview.png)
 
-*Draft v2.2 — The release preview affects eligible unowned reservations, while Device primary IPs and the gateway remain protected. Visual acceptance pending.*
+*Draft v2.2 — The release preview affects eligible unowned reservations, while Device primary IPs and the gateway remain protected. Owner visually accepted; publication remains separate.*
 
 ## Edit Subnets, Blocks And VLANs
 
@@ -189,11 +189,11 @@ Basic Device addresses are not detached by subnet deletion. They remain basic an
 
 ![Subnet deletion blocked notice for Lab Network explaining that IPAM records still use it.](screenshots/batch-7a/ipam-protected-deletion.png)
 
-*Draft v2.2 — Independent reservations protect Lab Network from subnet deletion; investigate dependencies rather than bypassing them. Visual acceptance pending.*
+*Draft v2.2 — Independent reservations protect Lab Network from subnet deletion; investigate dependencies rather than bypassing them. Owner visually accepted; publication remains separate.*
 
 ![Delete Subnet review listing training-review-switch at 198.51.100.10 and warning that its active primary IP will be cleared before deletion.](screenshots/batch-7a/ipam-move-devices-review.png)
 
-*Draft v2.2 — Move Devices & Delete Subnet would clear the listed active primary IP; it does not physically relocate equipment. This is a review only. Visual acceptance pending.*
+*Draft v2.2 — Move Devices & Delete Subnet would clear the listed active primary IP; it does not physically relocate equipment. This is a review only. Owner visually accepted; publication remains separate.*
 
 ## Investigate A Consistency Warning
 

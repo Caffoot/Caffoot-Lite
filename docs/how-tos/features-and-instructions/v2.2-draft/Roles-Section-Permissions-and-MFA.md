@@ -2,7 +2,7 @@
 
 > **Draft v2.2 — Unreleased.** This guide covers the Staff account workflow in [PR #453](https://github.com/Caffoot/Caffoot-Lite/pull/453). Use the [published v2.1 guides](../README.md) for released installations.
 
-> **Written/source reconciliation:** Batch 3, application baseline `fdc677920bfc52f48f641b3d6d1344c902a6a9b0` (schema 31). Focused independent reviews are recorded and [owner written/source acceptance of Batches 1–6](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7200681167) is recorded. Current visual/privacy/caption/alt approval remains outstanding; [Batch 7 reconciliation and proposed capture packs](../../../development-guide/Milestone-01-Batch-7-Review.md) await independent review and owner acceptance. Capture scope and method need separate authorisation. Desktop capture remains deferred; existing images retain their original provenance and are not certified current by this pass. [Source review and exact screenshot requirements](../../../development-guide/Milestone-01-Batch-3-Review.md).
+> **Documentation status — 27 November 2026:** Accepted written/source procedures are preserved. [Batch 7B](screenshots/batch-7b/README.md) adds desktop light-theme instructional illustrations under the [owner’s scope and method approval](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7211852349). New images await independent ChatGPT review and separate product-owner visual/privacy/caption/alt acceptance. The three Morgan Reed reuse images retain their original narrow approval and provenance. [All 16 groups / 79 specifications](screenshots/batch-7b/Coverage.md) remain traceable; no publication approval is implied.
 
 [← Draft v2.2 Guides](README.md)
 
@@ -106,10 +106,6 @@ Switching tabs retains personal details you have typed. Immediate account change
 
 Check **Feature Disabled** beside a section: configured rights remain subject to its organisation switch. **MFA Required · Setup Pending** means the person must enrol before normal sign-in. Your own administrator account retains its protected controls; use **My Account** for your own personal and security settings.
 
-![Personal Details in the wider dialogue with aligned Display Name and E-Mail Address fields.](../../../development-handovers/evidence/native-acceptance-corrections/screenshots/permissions-personal-1440-light.png)
-
-*Fictional user morgan.reed. [Roles](../../../development-handovers/evidence/native-acceptance-corrections/screenshots/permissions-roles-1440-light.png) · [Permissions](../../../development-handovers/evidence/native-acceptance-corrections/screenshots/permissions-permissions-1440-light.png) · [Account Controls](../../../development-handovers/evidence/native-acceptance-corrections/screenshots/permissions-controls-1440-light.png) · [Narrow dark view](../../../development-handovers/evidence/native-acceptance-corrections/screenshots/permissions-personal-390-dark.png) · [All captures and provenance](../../../development-handovers/evidence/native-acceptance-corrections/README.md)*
-
 ### Save Personal Details
 
 1. In **Manage Permissions → Personal Details**, check the read-only username. Update **First Name**, **Last Name**, **Display Name** or **E-Mail Address** as needed.
@@ -118,6 +114,19 @@ Check **Feature Disabled** beside a section: configured rights remain subject to
 4. Ask the owner to verify a changed email in My Account before using password recovery. A changed account address clears prior verification and outstanding proofs. Saving the existing address retains them.
 
 Closing the dialogue discards unsaved profile typing. Changes you already saved or confirmed still apply.
+
+![Manage taylor.cole, Personal Details tab, with read-only username, saved Tay Cole display name and Not Verified email.](screenshots/batch-7b/account-personal-details.png)
+
+*Draft v2.2 — Saved Personal Details for taylor.cole: the account uses Tay Cole and an unverified email. Resolve any saved Staff/account differences separately. Independent and owner visual acceptance pending.*
+
+![Morgan Reed Roles tab with protected Staff Member selected, IT Staff unchecked, Close and Done.](../../../development-handovers/evidence/native-acceptance-corrections/screenshots/permissions-roles-1440-light.png)
+
+*Draft v2.2 — Morgan’s saved membership: protected Staff Member selected, IT Staff unchecked. This is not a subsequent membership change. Approved narrow reuse; original provenance retained.*
+
+
+![Morgan Reed Permissions tab with eight Inherit selectors, inherited and effective No Access, and Suppliers Feature Disabled.](../../../development-handovers/evidence/native-acceptance-corrections/screenshots/permissions-permissions-1440-light.png)
+
+*Draft v2.2 — Morgan’s inherited and effective No Access example, including Suppliers Feature Disabled. This is not a later access-change result. Approved narrow reuse; original provenance retained.*
 
 ## Assign Or Remove An Additional Role
 
@@ -129,11 +138,6 @@ Closing the dialogue discards unsaved profile typing. Changes you already saved 
 6. After success, review the refreshed account. If MFA enrolment is pending, the current tabbed dialogue shows its warning in **Roles**. Review effective levels in the separate **Permissions** tab. Tell the person to sign in again and complete enrolment.
 
 Staff Member cannot be removed. An additional role may be assigned before MFA enrolment, but cannot be used to bypass enrolment. Removing a role does not automatically remove an enrolled authenticator or erase individual overrides.
-
-![Manage Permissions with the mandatory MFA warning directly above Section Permissions.](../../../development-handovers/evidence/stage-6-6-batch-3/screenshots/manage-permissions-warning-dark-390.png)
-
-*Historical pre-tabbed narrow capture: the MFA warning preceded the section controls. The current four-tab dialogue places that warning in Roles; current desktop suitability remains a Batch 7 requirement.* [Light view and capture provenance](../../../development-handovers/evidence/stage-6-6-batch-3/README.md#application-screenshots)
-
 ## Set An Individual Section Override
 
 1. Open **Staff Details → Manage Permissions → Permissions** for the ordinary account.
@@ -145,6 +149,10 @@ Staff Member cannot be removed. An additional role may be assigned before MFA en
 
 An Edit override may increase access above the roles, so it needs the same care as granting a role. A Read override can intentionally limit inherited Edit. Other sections keep their own permissions; changing Devices does not grant Staff Members, IPAM or IT Assets rights.
 
+![Review Access Change for dave.example showing before and after section access, one affected account, two sessions to end, Cancel and Confirm Change.](screenshots/batch-7b/access-change-review.png)
+
+*Draft v2.2 — Dave’s proposed Racks change replaces the Read override with Inherit, giving effective Edit. One account and two stored sessions would be affected. This preview was cancelled. Independent and owner visual acceptance pending.*
+
 ## Create And Maintain Roles
 
 ### Create A Custom Role
@@ -155,6 +163,15 @@ An Edit override may increase access above the roles, so it needs the same care 
 4. Select **Review Changes**, then inspect the role definition and consequences in **Review Access Change**.
 5. Select **Confirm Change** to create it, or **Cancel** to save nothing.
 6. Assign it to the intended accounts separately. A new role starts enabled and unassigned; creating it alone grants no account access. Every assigned enabled additional role requires MFA.
+
+![Manage Roles directory showing protected Staff Member with no section grants, and enabled IT Staff with Devices, IPAM, Racks and IT Assets Edit.](screenshots/batch-7b/roles-directory.png)
+
+*Draft v2.2 — Manage Roles shows the protected Staff Member baseline and the enabled IT Staff definition. Independent and owner visual acceptance pending.*
+
+
+![Create Role dialogue with Equipment Auditors, Enabled selected, IT Assets Read and all other section grants set to No Access.](screenshots/batch-7b/role-configuration.png)
+
+*Draft v2.2 — Equipment Auditors is an unsaved role draft with IT Assets Read. Review Changes is still required; this role has not been created. Independent and owner visual acceptance pending.*
 
 ### Change, Disable Or Delete A Role
 
@@ -187,9 +204,16 @@ Account controls are separate from role previews. Check the account identity bef
 
 You cannot disable, demote or delete your own signed-in administrator account, and the last active administrator is protected. Deleting a login does not delete its Staff directory identity or return its equipment; review those separately in the [Staff lifecycle](Staff-Members.md). These controls do not provide an administrator bypass for a forgotten password or authenticator.
 
-![Account Controls showing Employment Status and the green Disable Login panel.](../../../development-handovers/evidence/native-acceptance-corrections/screenshots/permissions-controls-1440-light.png)
+![Morgan Reed Account Controls with Active employment, Disable Login and unavailable Make admin, plus Reset Password and Delete User.](../../../development-handovers/evidence/native-acceptance-corrections/screenshots/permissions-controls-1440-light.png)
 
-*Left Company disables the linked login and ends its sessions atomically. Reactivate does not enable the login. **Enable Login** is unavailable while Staff remain Left Company. [Employment policy and permissions](Staff-Members.md#mark-as-left-company-or-reactivate) · [Dark narrow capture](../../../development-handovers/evidence/native-acceptance-corrections/screenshots/permissions-controls-390-dark.png)*
+*Draft v2.2 — Morgan’s initial Active employment/login controls; promotion unavailable. This is not Alex’s later eligibility or offboarding result. Approved narrow reuse; original provenance retained.*
+
+
+![Sarah Lewis Account Controls with Disabled badge, Active Employment Status and the red Enable Login panel.](screenshots/batch-7b/account-login-disabled.png)
+
+*Draft v2.2 — Sarah’s saved login is Disabled while employment remains Active. Enable Login is available; this is not an offboarding result. Independent and owner visual acceptance pending.*
+
+For the depicted Sarah example, **Delete User** opens the browser-native confirmation **“Delete sarah.lewis?”**. Choose Cancel to keep the login. The illustration above shows her disabled login before that confirmation; it does not show deletion.
 
 ## Employment Status And Linked Login Security
 
@@ -202,6 +226,8 @@ Employment has two current choices: **Active** and **Left Company**. Older evide
 
 For example, Alex Morgan leaves with laptop **AC-LAP-07** still recorded against them. Offboarding blocks Alex's login while IT resolves the actual equipment. On Alex's return, Reactivate permits new assignments but does not restore login access. An administrator deliberately enables it after reviewing Alex's current roles. Self-offboarding and disabling the remaining active administrator are rejected, with both Staff and account changes rolled back. [Full Staff procedure](Staff-Members.md#mark-as-left-company-or-reactivate)
 
+The [matching saved Staff illustration](Staff-Members.md#mark-as-left-company-or-reactivate) shows Alex’s Left Company status, Disabled login and retained AC-LAP-07 assignment. Morgan’s reused initial controls are not that result.
+
 ## Make An Existing User An Administrator
 
 Use an existing administrator session protected by MFA. The proposed administrator must have confirmed their authenticator, verified the email address saved in **My Account** and completed any required temporary password change. Saving an email address alone does not verify it.
@@ -213,13 +239,16 @@ Use an existing administrator session protected by MFA. The proposed administrat
 
 If **Make admin** stays disabled, check the guidance beside it. If an email address was just changed, the user must verify the new address. The server checks eligibility again when it receives the promotion request.
 
-![Manage Permissions in desktop light mode. Alex’s authenticator is enrolled, the email address is unverified and Make admin is disabled.](screenshots/stage-6-6-batch-1/administrator-eligibility-light-1440.png)
-
-*The guidance beside Make administrator explains which step Alex needs to complete.*
-
 On a fresh installation, the first administrator can finish setup before outgoing email is configured. They must still enrol their authenticator. After configuring outgoing email, they can verify their address in **My Account → Overview → Personal Details**. Existing administrators keep their access if an address is missing or loses verification. The warning below their email settings explains how to restore eligibility for password recovery. Outgoing email remains optional for everyday operation, and the protected [host-only first-administrator recovery procedure](../../../development-guide/Account-Recovery.md) remains available to the system operator when its conditions are met.
 
-![My Account in mobile light mode. The email verification warning is below Email Address and Verify Email.](screenshots/stage-6-6-batch-1/my-account-administrator-warning-light-390.png)
+![Alex Morgan Account Controls with Authenticator Enrolled, Email Address Verified and an available Make admin button.](screenshots/batch-7b/account-administrator-eligible.png)
+
+*Draft v2.2 — Alex’s authenticator is enrolled and email verified, so Make admin is available. No promotion has been applied. Independent and owner visual acceptance pending.*
+
+
+![Your administrator account, Account Controls tab, with the self-protection warning and disabled Disable Login, Remove admin, Reset Password and Delete User controls.](screenshots/batch-7b/account-administrator-protected.png)
+
+*Draft v2.2 — The signed-in account is also the only active administrator in this fixture. Its own disable, demotion, reset and deletion controls are protected. Independent and owner visual acceptance pending.*
 
 ## Reset A Staff Member’s Password
 
@@ -233,9 +262,9 @@ Use an assisted reset when a non-administrator needs a temporary password. You n
 
 Caffoot Lite records the administrator, affected account and change in the audit trail. Passwords and authenticator values stay out of the audit record.
 
-![The Reset Password dialogue for Jamie Taylor in desktop light mode with two empty password fields and the warning about ending sessions and recovery codes.](screenshots/stage-6-6-batch-1/reset-password-light-1440.png)
+![Reset Password dialogue for jamie.taylor with empty Temporary Password and Confirm Temporary Password, session warning, Cancel and Reset Password.](screenshots/batch-7b/account-reset-password.png)
 
-*Review the warning, then confirm the reset or select Cancel.*
+*Draft v2.2 — Reset Password for Jamie Taylor, before entry or confirmation. Both temporary password fields are empty. Independent and owner visual acceptance pending.*
 
 ## Set Up And Use MFA
 
@@ -255,9 +284,14 @@ Caffoot Lite records the administrator, affected account and change in the audit
 
 If you see **Unable to sign in. Please check your credentials or contact your administrator.**, check your username and password. The same message covers incorrect credentials and unavailable accounts. At **Verify Your Identity**, check the time on your authenticator device and try the next code if the previous one expired. After repeated failures, wait for the temporary sign-in limit to expire. For lost credentials, see [Account Recovery](../../../development-guide/Account-Recovery.md) or contact your administrator.
 
-![The desktop light sign-in form shows Username and Password.](screenshots/stage-6-6-batch-1/sign-in-light-1440.png)
+![Desktop light Welcome Back sign-in screen with empty Username and Password fields, Sign In and Forgot Password.](screenshots/batch-7b/sign-in.png)
 
-![The mobile dark Verify Your Identity form shows the authenticator code after a valid password.](screenshots/stage-6-6-batch-1/authenticator-dark-390.png)
+*Draft v2.2 — The sign-in form starts with empty Username and Password fields. Independent and owner visual acceptance pending.*
+
+
+![Verify Your Identity screen with an empty Authenticator Code field, six placeholder dots, Verify and Sign In, Back to Sign In and Forgot Password.](screenshots/batch-7b/authenticator-challenge.png)
+
+*Draft v2.2 — Tim’s IT Staff account requires the authenticator challenge after password entry. The password has cleared and the code field is empty; the dots are the application’s placeholder. Independent and owner visual acceptance pending.*
 
 ### Voluntary Enrolment And Eligible Removal
 
@@ -272,6 +306,20 @@ Once enrolled, MFA remains required at sign-in even if a role is disabled or rem
 
 Removal is unavailable for Administrators, accounts with any enabled additional role, or accounts with wider effective Read/Edit access. The server rechecks eligibility and credentials before saving. Losing an authenticator does not make required MFA optional; contact the administrator and use maintained recovery guidance where applicable.
 
+![My Account Security for a baseline Staff Member, with empty current, new and confirm password fields, MFA not yet enrolled and Start MFA enrolment.](screenshots/batch-7b/account-security-voluntary.png)
+
+*Draft v2.2 — Jamie has the baseline Staff Member role and no wider grants. Security shows the empty password-change form and safe voluntary MFA starting screen; enrolment has not begun. Independent and owner visual acceptance pending.*
+
+
+![My Account Security with MFA Enabled, expanded Remove MFA, empty Current Password and Current Authenticator Code fields and Confirm MFA Removal.](screenshots/batch-7b/account-mfa-removal-eligible.png)
+
+*Draft v2.2 — Priya’s enrolled MFA is optional for her baseline-only access. The expanded removal form has empty password and authenticator fields; no removal has been submitted. Independent and owner visual acceptance pending.*
+
+
+![Administrator My Account Security showing Administrator account role and MFA Enabled, with no Remove MFA control.](screenshots/batch-7b/account-mfa-removal-protected.png)
+
+*Draft v2.2 — This administrator’s MFA is mandatory. Security shows MFA Enabled and provides no Remove MFA action. Independent and owner visual acceptance pending.*
+
 ## Change Your Password Safely
 
 ### After An Administrator Gives You A Temporary Password
@@ -283,9 +331,9 @@ Removal is unavailable for Administrators, accounts with any enabled additional 
 
 **Back to Sign In** clears the form. The restricted password-change screen expires after five minutes and cannot open normal application pages. The password change remains required the next time you sign in with the temporary password. If the change screen expires, begin again at sign-in. If the administrator resets the account again, use the latest temporary password. If the account is disabled, ask your administrator to check its status. A verified-email recovery can also complete the required password change when recovery is available and you choose a different password.
 
-![Change Your Password in mobile dark mode with empty New Password and Confirm New Password fields.](screenshots/stage-6-6-batch-1/change-temporary-password-dark-390.png)
+![Change Your Password screen with mandatory-change explanation, empty New Password and Confirm New Password fields, Change Password and Back to Sign In.](screenshots/batch-7b/mandatory-password-change.png)
 
-*The same sign-in page returns after a successful change and prompts you to use your new password.* [Capture variants and provenance](screenshots/stage-6-6-batch-1/README.md)
+*Draft v2.2 — After an assisted reset, Jamie must choose a personal password before entering the workspace. Both new password fields are empty. Independent and owner visual acceptance pending.*
 
 ### Change Your Password From My Account
 
@@ -297,12 +345,23 @@ Removal is unavailable for Administrators, accounts with any enabled additional 
 
 Typing values without submitting does not change the password. Follow the result shown and check a fresh sign-in rather than assuming an old tab saved it. Password changes do not remove MFA or grant access. Do not share your old password with an administrator or put credentials in an equipment note.
 
+The [Security illustration above](#voluntary-enrolment-and-eligible-removal) also shows this empty Change Password form. Reusing it here does not imply a password change was submitted.
+
 ### Prepare Verified Email Recovery
 
 1. Open **My Account → Overview → Personal Details** and save your optional email address with **Save Personal Details**.
 2. Select **Verify Email**, enter **Current Password** and choose **Send Confirmation Code**.
 3. Enter **Email Confirmation Code (8 Digits)**, retaining any leading zeroes, then select **Verify Email Address**.
 4. Check that the address shows **Verified**. Changing the saved address removes verification. **Cancel** clears verification password/code fields without verifying the address.
+
+![My Account Overview with jamie.taylor@example.invalid, Not Verified status and Verify Email.](screenshots/batch-7b/account-email-unverified.png)
+
+*Draft v2.2 — Jamie’s saved fictional address is Not Verified. Save Personal Details alone does not verify an address. Independent and owner visual acceptance pending.*
+
+
+![Verify Email Address form with empty Current Password and eight-digit Email Confirmation Code fields, Resend Confirmation Code, Cancel and Verify Email Address.](screenshots/batch-7b/account-email-verification.png)
+
+*Draft v2.2 — The existing isolated mail-sink fixture supplied the confirmation-request state. Current Password and Email Confirmation Code are empty. This illustration does not establish external mail delivery. Independent and owner visual acceptance pending.*
 
 ### Recover Your Password From Sign-In
 
@@ -317,21 +376,18 @@ You need an active Caffoot Lite account, a verified email address saved to that 
 
 If an administrator has set a temporary password, successful recovery also clears the required password change. Enter a different password at step 3 and still complete all recovery and authenticator checks.
 
-![The Request a Recovery Code step on desktop with the recovery Username, Request Recovery Code and Back To Sign In.](screenshots/recovery-request-desktop.png)
-
-![The same code request step on a mobile-width screen.](screenshots/recovery-request-mobile.png)
-
-*Step 1 shows the recovery username and request action.*
-
-![The Reset Your Password step on desktop, with New Password and Confirm New Password side by side.](screenshots/recovery-reset-desktop.png)
-
-![The Reset Your Password step on a mobile-width screen, with Confirm New Password directly below New Password.](screenshots/recovery-reset-mobile.png)
-
-*Step 2 shows the neutral request response, code, password and authenticator fields, and recovery actions.* [Screenshot provenance](screenshots/Recovery-Provenance.md)
-
 Select **Back To Sign In** from either step to clear recovery and restore the preceding sign-in step. If recovery was opened from **Verify Your Identity**, it returns to that authenticator challenge with focus on its code field; otherwise it returns to Username. Closing clears the local recovery fields and does not change your saved password. **Request Another Code** clears the reset fields and takes you back to **Request a Recovery Code** with your username filled in. Making that request replaces the previous code and keeps the existing failed-attempt limits. Five failed confirmations can exhaust a challenge, and the rolling account limit can require a wait of up to 15 minutes.
 
 If no email arrives, check the junk folder and ask your administrator to check your verification and outgoing mail privately. The request message confirms neither eligibility nor delivery. If confirmation is rejected, check that the recovery code is current and that you used the correct authenticator. For delivery and administrator troubleshooting, see [Account Recovery](../../../development-guide/Account-Recovery.md).
+
+![Request a Recovery Code screen with empty Username, Request Recovery Code and Back To Sign In.](screenshots/batch-7b/recovery-request.png)
+
+*Draft v2.2 — Request a Recovery Code starts with an empty Username field. Recovery prerequisites and the administrator fallback remain visible. Independent and owner visual acceptance pending.*
+
+
+![Reset Your Password with neutral request response, empty recovery code, new password, confirmation and authenticator fields, Recover Password, Request Another Code and Back To Sign In.](screenshots/batch-7b/recovery-reset.png)
+
+*Draft v2.2 — The neutral response after requesting recovery for fictional recovery-owner confirms neither eligibility nor delivery. All recovery, password and authenticator fields are empty. Independent and owner visual acceptance pending.*
 
 ### Password Values And Lost Authenticators
 

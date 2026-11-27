@@ -1,8 +1,8 @@
 # Optional Features, Basic IPv4 And Link To IPAM
 
-> **Draft v2.2 — Unreleased.** Text and controls have been reconciled against the 26 November 2026 application baseline, `fdc677920bfc52f48f641b3d6d1344c902a6a9b0` (schema 31). Use the [published v2.1 guides](https://github.com/Caffoot/Caffoot-Lite/tree/c3237114108cad9f7d4e57657b6aed5e0091a5ef/docs/how-tos/features-and-instructions) for the current release. Optional Features and basic-IP linking are v2.2 functionality, not v2.1 instructions. Batch 7A proposed desktop illustrations are included below; visual and final acceptance remain outstanding. This is not an installation, upgrade or restore procedure.
+> **Draft v2.2 — Unreleased.** Text and controls have been reconciled against the 26 November 2026 application baseline, `fdc677920bfc52f48f641b3d6d1344c902a6a9b0` (schema 31). Use the [published v2.1 guides](https://github.com/Caffoot/Caffoot-Lite/tree/c3237114108cad9f7d4e57657b6aed5e0091a5ef/docs/how-tos/features-and-instructions) for the current release. Optional Features and basic-IP linking are v2.2 functionality, not v2.1 instructions. Batch 7A desktop illustrations below are owner visually accepted; publication and final release acceptance remain separate. This is not an installation, upgrade or restore procedure.
 
-> **Documentation status — 27 November 2026:** Batches 1–6 written/source work and [Batch 7.1/bounded 7.2](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7210689297) are owner accepted. [Batch 7A](screenshots/batch-7a/README.md) is authorised for at most 40 desktop light-theme images. The proposed illustrations below await independent ChatGPT review and product-owner visual/privacy/caption/alt acceptance; no publication approval is implied.
+> **Documentation status — 27 November 2026:** Batches 1–6 written/source work and Batch 7.1/bounded 7.2 are owner accepted. [Batch 7A](screenshots/batch-7a/README.md) has 38 independently reviewed and owner visually accepted desktop light-theme images, final 38/40. The native disable confirmation has an explicitly accepted written substitution. No publication or application acceptance is implied.
 
 ## Choose The Features Your Organisation Uses
 
@@ -35,7 +35,7 @@ Open **Settings & Data → Optional Features**. The cards are grouped as follows
 
 ![Optional Features showing Devices, IP Address Management, Network Racks, Suppliers, Equipment Lifecycle and IT Assets enabled.](screenshots/batch-7a/optional-six-feature-cards.png)
 
-*Draft v2.2 — All six Optional Features are enabled in this fictional administrator fixture; enabling a feature does not grant account permissions. Visual acceptance pending.*
+*Draft v2.2 — All six Optional Features are enabled in this fictional administrator fixture; enabling a feature does not grant account permissions. Owner visually accepted; publication remains separate.*
 
 ### Feature Access And Retained Information
 
@@ -75,6 +75,8 @@ Controls are temporarily unavailable while a setting is being saved. If saving f
 3. Read the confirmation that saved data and permissions will be retained. Choose **Cancel** to leave the feature enabled without saving a change, or confirm to disable it.
 4. Wait for the saved **Disabled** state. The section's navigation and feature-specific actions disappear, and its operations are blocked on the server as well as in the interface. A previously opened page does not bypass this restriction.
 5. To restore access later, enable the same card. The retained records and saved permissions apply again; colleagues still need the required account access and MFA verification.
+
+For example, disabling Network Racks asks **“Disable Network Racks? Saved data and permissions will be retained.”** This exact written example is the owner-approved substitution for the browser-native confirmation image. Read it before choosing Cancel or confirming.
 
 Disabling does not delete inventory, stock, placements, address relationships or history. Successful setting changes are recorded with the administrator and previous/new state. Turning off IT Assets also hides its stock information in related views; it does not turn managed Devices into anonymous stock or erase their identity.
 
@@ -165,7 +167,7 @@ After successful linking, the existing managed-IP permissions apply. Disabling I
 
 ![Link to IPAM dialog for training-basic-printer at 192.0.2.30 with Lab Network 192.0.2.0/24 selected and Cancel or Link to IPAM actions.](screenshots/batch-7a/optional-existing-subnet-chooser.png)
 
-*Draft v2.2 — Link to IPAM deliberately selects an existing containing subnet for the exact saved basic address. No link has been confirmed. Visual acceptance pending.*
+*Draft v2.2 — Link to IPAM deliberately selects an existing containing subnet for the exact saved basic address. No link has been confirmed. Owner visually accepted; publication remains separate.*
 
 *Shared Batch 7A illustration: [the same printer after deliberate linking](screenshots/batch-7a/devices-details-network.png) is the saved result for this chooser; the draft and result are different states.*
 
@@ -187,7 +189,7 @@ When Rack information is unavailable, related views may show **Rack information 
 
 ![Edit Device General form for training-printer-01 with protected Training Equipment Room Location Area and Rack placement controls hidden while Network Racks is off.](screenshots/batch-7a/optional-racks-off-location.png)
 
-*Draft v2.2 — With Network Racks off, the saved shelf relationship protects Location Area during unrelated Device editing. Hidden controls do not mean a detached Device. Visual acceptance pending.*
+*Draft v2.2 — With Network Racks off, the saved shelf relationship protects Location Area during unrelated Device editing. Hidden controls do not mean a detached Device. Owner visually accepted; publication remains separate.*
 
 *Shared Batch 7A illustrations: [the matching saved shelf Location](screenshots/batch-7a/devices-details-shelf-location.png) and [Training Rack Front elevation](screenshots/batch-7a/racks-front-read-only.png) show the feature-on relationship retained while Racks is disabled.*
 

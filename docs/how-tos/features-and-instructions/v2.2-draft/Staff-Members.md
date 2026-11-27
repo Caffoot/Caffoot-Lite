@@ -2,7 +2,7 @@
 
 > **Draft v2.2 — Unreleased.** This guide covers Unified Staff Administration in [PR #453](https://github.com/Caffoot/Caffoot-Lite/pull/453). Use the [published v2.1 guides](../README.md) for the released application.
 
-> **Written/source reconciliation:** Batch 3, application baseline `fdc677920bfc52f48f641b3d6d1344c902a6a9b0` (schema 31). Focused independent reviews are recorded and [owner written/source acceptance of Batches 1–6](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7200681167) is recorded. Current visual/privacy/caption/alt approval remains outstanding; [Batch 7 reconciliation and proposed capture packs](../../../development-guide/Milestone-01-Batch-7-Review.md) await independent review and owner acceptance. Capture scope and method need separate authorisation. Desktop capture remains deferred; existing images retain their original provenance and are not certified current by this pass. [Source review and exact screenshot requirements](../../../development-guide/Milestone-01-Batch-3-Review.md).
+> **Documentation status — 27 November 2026:** Accepted written/source procedures are preserved. [Batch 7B](screenshots/batch-7b/README.md) adds seven desktop light-theme Staff illustrations under the [owner’s scope and method approval](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7211852349). New images await independent ChatGPT review and separate product-owner visual/privacy/caption/alt acceptance. [All 16 groups / 79 specifications](screenshots/batch-7b/Coverage.md) remain traceable; no publication approval is implied.
 
 Staff Members is the directory of people who may hold equipment. Use it to record a person’s contact details, Department and Staff status, review their assigned equipment and, with administrator access, manage their optional login and individual permissions. A person can hold equipment without a Caffoot login.
 
@@ -36,11 +36,13 @@ Collect known work details before starting. Do not enter passwords, recovery cod
 
 **No Department**, **No Email Recorded** and **Name Not Recorded** describe missing details. Administrators see linked usernames and **Linked Login** or **No Login** beside the Staff status. Account status, authenticator enrolment and assigned roles appear in the administrator’s Caffoot Login card.
 
-![Staff Members in desktop light mode. Each row has adjacent login and Staff status badges and adjacent View Details and Edit buttons.](screenshots/staff-administration/unified-staff-light-1440.png)
+![Administrator Staff Members directory with linked usernames, Linked Login or No Login badges, Staff Status, View Details and Edit.](screenshots/batch-7b/staff-directory-administrator.png)
 
-*The Staff Members list with fictional records. The sign-in usernames distinguish the two records labelled Name Not Recorded.*
+*Draft v2.2 — Administrator view: usernames and login badges help distinguish Staff identities, including a migrated record whose name is not recorded. Independent and owner visual acceptance pending.*
 
-[Desktop dark](screenshots/staff-administration/unified-staff-dark-1440.png) · [Mobile light](screenshots/staff-administration/unified-staff-light-390.png) · [Mobile dark](screenshots/staff-administration/unified-staff-dark-390.png)
+![Non-administrator Staff Members directory showing names, Departments, job titles, employment status and View Details, without login badges or Edit.](screenshots/batch-7b/staff-directory-non-administrator.png)
+
+*Draft v2.2 — Staff Members Read view after Alex’s employment change: employment status is visible, while linked usernames, login badges and editing actions are absent. Independent and owner visual acceptance pending.*
 
 ## Add A Person Without A Login
 
@@ -68,6 +70,10 @@ Names allow up to 100 characters each; Job Title 120, Telephone Number 100, Loca
 
 For a fictional example, create **Alex Morgan**, select **Accounts**, enter `alex.morgan@example.org`, leave Create Caffoot Login off and save. Alex can now receive eligible equipment but has no credentials and cannot open My Equipment. Department membership has granted no application access.
 
+![Add Staff Member form with Jordan Rivers, Accounts Department, Service Coordinator job title, Create Caffoot Login off, Cancel and Save Staff Member.](screenshots/batch-7b/staff-add-form.png)
+
+*Draft v2.2 — An unsaved Add Staff Member draft using fictional Jordan Rivers. Create Caffoot Login is off; no new Staff record has been saved from this draft. Independent and owner visual acceptance pending.*
+
 ## Create And Link An Optional Caffoot Login
 
 The combined form reuses existing account security and links the login to the person holding their equipment.
@@ -82,19 +88,15 @@ The combined form reuses existing account security and links the login to the pe
 
 If **This username is already in use. Please choose another username.** appears beneath **Username**, enter a different username. For example, `Alex.Morgan` conflicts with `alex.morgan`. The form keeps the other Staff details you entered and clears both password fields. Re-enter the two passwords and select **Save Staff Member** again. The existing account keeps its credentials and the rejected save creates no Staff record or login.
 
-![Staff Member form in desktop light mode. The duplicate username message is below the highlighted Username field.](screenshots/stage-6-6-batch-1/duplicate-username-light-1440.png)
-
-*The saved username `taylor.cole` conflicts with `TAYLOR.COLE`. The Staff details remain in the form.* [Capture variants and provenance](screenshots/stage-6-6-batch-1/README.md)
-
 The **Caffoot Login** card shows **Username**, **Account Status**, **Authenticator** and **Assigned Roles**. Select **Manage Permissions** just below Assigned Roles to open the account dialogue. Its four tabs are **Personal Details**, **Roles**, **Permissions** and **Account Controls**. Personal Details displays the read-only **Sign-in Username**. Account Controls brings together employment status, login status and the existing security controls. Switching tabs preserves unsaved personal details; use **Save Personal Details** to save them. The header, tabs and **Done** stay visible while the selected content scrolls. Close it with **Close**, **Done** or Escape to return to the same Staff Details. See the [account review procedure](Roles-Section-Permissions-and-MFA.md#review-an-account).
-
-![Staff Details in desktop light mode. The Caffoot Login card shows the username, account status, authenticator, assigned roles and Manage Permissions.](screenshots/staff-administration/staff-details-light-1440.png)
-
-*The Staff Details entry point for the fictional account taylor.cole.*
 
 When their Staff link and current equipment make them eligible, linked users can work with permitted equipment in [My Tickets and Department Tickets](Service-Desk-Tickets.md). Wider IT Service Desk or inventory access requires the relevant section permissions.
 
 The Staff form offers no general merge or relink control for existing accounts. If an account is already linked to a different record, refer the discrepancy to an administrator; do not create a duplicate login or rewrite names to disguise the conflict.
+
+![Edit Staff Member for Jordan Rivers with Create Caffoot Login on, jordan.rivers username, empty Initial Password and Confirm Initial Password, and Staff Member default role.](screenshots/batch-7b/staff-create-login.png)
+
+*Draft v2.2 — The existing Jordan record has an unsaved optional login draft. The two initial password fields are empty and the default role is Staff Member. Independent and owner visual acceptance pending.*
 
 ### Existing Accounts And Migrated Details
 
@@ -111,6 +113,10 @@ A Staff email with a blank account email still needs an administrator’s decisi
 
 Changing Department, job title or location does not change account permissions or move equipment. **Left Company** disables a linked login and revokes sessions/proofs; **Reactivate** leaves it disabled, as explained below. Account owners can edit shared names and email in **My Account → Overview → Personal Details → Save Personal Details**. Account display name and photo belong to My Account. The sign-in username stays fixed.
 
+![Edit Staff Member for Jordan Rivers with Accounts, Service Coordinator, Training Office, Active status and Create Caffoot Login off.](screenshots/batch-7b/staff-edit-form.png)
+
+*Draft v2.2 — Edit Staff Member displays Jordan’s existing Department, job title and location. This illustration does not claim an edit has been saved. Independent and owner visual acceptance pending.*
+
 ### Resolve A Difference Between Staff And Account Details
 
 1. As an authorised administrator, locate the person in **Staff Members** and choose **Edit**.
@@ -121,9 +127,11 @@ Changing Department, job title or location does not change account permissions o
 
 For example, the Staff record for fictional Taylor Cole might still show Taylor while the account shows Tay. After confirming the preferred name, choose **Keep Account Value** for First Name. Leave an unrelated email difference unresolved until Taylor confirms the address. If My Account asks the user to contact an administrator about a field, they can still save other personal details by leaving that field at its saved account value.
 
-![Edit Staff Member showing the two saved values for a first name and an email difference, with neither value selected.](screenshots/staff-administration/resolve-profile-light-1440.png)
+![Edit Staff Member showing Staff Taylor versus Account Tay, different saved emails and separate Resolve Difference selectors set to Leave Both Values Unchanged.](screenshots/batch-7b/staff-resolve-differences.png)
 
-*Resolve Difference controls appear on the administrator’s Staff form for the fields that need a choice.* [Mobile dark](screenshots/staff-administration/resolve-profile-dark-390.png)
+*Draft v2.2 — Taylor/Tay and the two fictional email addresses are saved differences. Both resolution selectors still say Leave Both Values Unchanged. Independent and owner visual acceptance pending.*
+
+The native save confirmation asks **“Save the selected personal details to both the Staff record and Caffoot account?”** If you choose the Staff email to replace the account email, it adds **“The account email must be verified before it can be used for password recovery.”** Read the complete message before confirming.
 
 ### Recover From A Stale Edit
 
@@ -132,6 +140,9 @@ For example, the Staff record for fictional Taylor Cole might still show Taylor 
 3. Review the new values and Department choices, reapply the necessary changes and select any resolutions again before saving.
 
 An existing archived Department membership can be retained during an edit. An archived Department is unavailable for a new membership.
+
+
+Refresh Current Details asks **“Refresh this Staff Member? This will replace your unsaved details, including any login fields, with the current saved values.”** Cancel keeps your current form entries.
 
 <a id="mark-inactive-or-reactivate"></a>
 ## Mark As Left Company Or Reactivate
@@ -148,13 +159,15 @@ To restore employment eligibility, select **Reactivate** and confirm. Reactivati
 
 You cannot mark your own signed-in administrator account as Left Company, and the last active administrator cannot be disabled. If a safeguard rejects the action, keep the records intact and ask the product owner to resolve the administrator arrangements; do not work around the rejection.
 
-![Manage Permissions Account Controls showing Employment Status and Disable Login in desktop light mode.](../../../development-handovers/evidence/native-acceptance-corrections/screenshots/permissions-controls-1440-light.png)
-
-*The same protected employment action is available from Staff Details. [Narrow dark-mode view](../../../development-handovers/evidence/native-acceptance-corrections/screenshots/permissions-controls-390-dark.png) · [Capture provenance](../../../development-handovers/evidence/native-acceptance-corrections/README.md)*
-
 For example, fictional Alex leaves with a laptop and two adapters recorded against them. Mark As Left Company disables Alex's linked login and ends its sessions, while all three items remain outstanding. IT records only the items physically returned. If Alex returns to the company, Reactivate restores assignment eligibility; the administrator reviews access before explicitly enabling the login.
 
 During an authorised review upgrade, existing Left Company/inactive Staff with enabled logins are reconciled to disabled logins with session and proof revocation. If this would disable every active administrator, startup stops and rolls back the transaction for product owner approval. This is a tested data rule, not an approved production upgrade procedure. See [upgrade safeguards](Legacy-Import-and-Docker-Upgrade.md#left-company-linked-login-reconciliation).
+
+![Alex Morgan Staff Details showing Left Company, Disabled Caffoot Login, MFA and roles retained, Reactivate, outstanding AC-LAP-07 and its assignment history.](screenshots/batch-7b/staff-left-company-retained.png)
+
+*Draft v2.2 — Saved offboarding result: Alex is Left Company, the linked login is Disabled and AC-LAP-07 remains assigned. No equipment return has been recorded. Independent and owner visual acceptance pending.*
+
+From Alex’s Staff Details, the browser-native confirmation reads **“Mark As Left Company Alex Morgan? Any linked login will be disabled and active sessions ended. Equipment, tickets and history are retained.”** The Add/Edit Staff form instead asks **“Mark As Left Company? Any linked login will be disabled and active sessions ended. Equipment, tickets and history are retained.”** Read the actual wording and choose Cancel if the change is unintended. These native confirmations use the owner-approved written substitution.
 
 ## Work With Equipment
 
@@ -184,7 +197,7 @@ A linked person opens **My Equipment** for limited personal/shared information w
 - [Device Assignments And My Equipment](Device-Assignments-and-My-Equipment.md)
 - [Issue, Return And Write Off](IT-Assets-Issue-Return-and-Write-Off.md)
 
-The illustrations were captured from the running v2.2 development application with fictional data. See the [capture record](screenshots/staff-administration/README.md) for dimensions, source revision and review status.
+The new illustrations show the running pinned v2.2 development application with fictional data. See the [Batch 7B capture record](screenshots/batch-7b/README.md) for dimensions, source revision and pending independent/owner visual acceptance. The [original Staff-administration evidence](screenshots/staff-administration/README.md) remains preserved with its historical provenance.
 
 [← Draft v2.2 Guides](README.md) · [Published v2.1 Guides](../README.md)
 

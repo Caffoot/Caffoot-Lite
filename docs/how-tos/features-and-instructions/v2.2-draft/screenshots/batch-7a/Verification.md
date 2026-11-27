@@ -1,4 +1,14 @@
-# Batch 7A — Static Verification
+# Batch 7A — Static Verification And Acceptance
+
+**Current acceptance — 27 November 2026:** 38/40 accepted images; all 19 groups and 85 specifications retained. [Independent review and owner acceptance](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7211815146) supersede the earlier capture blocker. `B2-17-S02` now maps to the exact written example in Optional Features: **“Disable Network Racks? Saved data and permissions will be retained.”** No further screenshot, recapture, runtime retest or virtual-display tooling is required or used.
+
+The independent review opened all 38 images and checked state coverage and guide mapping. It expressly did not recompute all image hashes or rerun the full static suite. The earlier 38/38 hash/dimension results below remain attributed to that capture checkpoint. Batch 7B static checks separately verify administrative reconciliation, unchanged 7A PNGs/provenance and all 85 coverage IDs. Owner visual acceptance is not publication, runtime or release acceptance.
+
+## Historical Static Capture Verification
+
+The following dated pre-acceptance results and pending/blocker wording are preserved as history and are superseded for current acceptance by the decision above.
+
+# Original Static Verification Record
 
 27 November 2026. Static documentation/image checks only. Independent and owner visual acceptance remain pending. The native disable-confirmation capture remains blocked; see the [pack record](README.md#capture-blocker--native-disable-confirmation).
 

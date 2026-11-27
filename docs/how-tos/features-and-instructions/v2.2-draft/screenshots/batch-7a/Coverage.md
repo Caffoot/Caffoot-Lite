@@ -1,8 +1,8 @@
 # Batch 7A — Original Requirement And State Mapping
 
-**27 November 2026. All 19 original groups and 85 specifications retained.** Images are proposed instructions, pending independent and owner visual acceptance. The native disable-confirmation image is blocked; Batch 7A is incomplete until its capture method is approved and the image is delivered.
+**27 November 2026. All 19 original groups and 85 specifications retained.** All 38 images are independently reviewed and owner visually accepted, final count 38/40. The remaining native confirmation uses the [explicitly approved written substitution](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7211815146); no extra image is required.
 
-The [approved 40-image list and visual-only substitutions](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7210755148) control this pack. This table distinguishes direct illustration, representative reuse, written instructions and an unresolved capture. An image reference never asserts an uncaptured save, cancellation, rejection or result. The [original contracts](../../../../../development-guide/Milestone-01-Batch-7-Review.md#requirement-register) remain authoritative historical traceability. [Manifest](manifest.json) records actual capture context.
+The [approved 40-image list and visual-only substitutions](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7210755148) control this pack. This table distinguishes direct illustration, representative reuse, written instructions and the accepted native-confirmation substitution. An image reference never asserts an uncaptured save, cancellation, rejection or result. The [original contracts](../../../../../development-guide/Milestone-01-Batch-7-Review.md#requirement-register) remain authoritative historical traceability. [Manifest](manifest.json) records actual capture context.
 
 ## B2-01 — Devices: unfiltered inventory plus one combined-filter result and Overview drill-down
 
@@ -195,7 +195,7 @@ Written procedure: [Optional-Features-and-Link-To-IPAM — Find And Read The Fea
 | Original specification | Approved disposition and precise illustration limit | Image references |
 | --- | --- | --- |
 | `B2-17-S01` — Six feature cards. | Full-page six-card image at a desktop 1440 × 1050 viewport; raster height is recorded separately. | [optional-six-feature-cards](optional-six-feature-cards.png) |
-| `B2-17-S02` — Disable confirmation. | BLOCKED: genuine browser-native confirm dialog is recognised, but the existing headless screenshot method cannot capture it. No generated substitute or written waiver. | **Blocked capture** |
+| `B2-17-S02` — Disable confirmation. | Owner-approved written example: “Disable Network Racks? Saved data and permissions will be retained.” Read, cancel/confirm and retained-data protections remain in Optional Features. No native screenshot required. | [Written instructions](../../Optional-Features-and-Link-To-IPAM.md#disable-or-re-enable-a-feature) |
 | `B2-17-S03` — Disabled retained-data result. | Owner-approved written retained-data/disabled-result explanation, supported by the Racks-off protected editor illustration. | [optional-racks-off-location](optional-racks-off-location.png) |
 | `B2-17-S04` — Cancel unchanged. | Owner-approved written Cancel instructions; the native dialog was dismissed during the capture-method check. | Written instructions |
 

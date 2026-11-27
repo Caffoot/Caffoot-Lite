@@ -1,5 +1,17 @@
 # Batch 7A — Desktop Instructional Screenshots
 
+**Current acceptance — 27 November 2026: all 38 images independently reviewed and visually accepted by the product owner; final count 38/40.** [Acceptance decision](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7211815146). No further 7A capture is required. Publication and application acceptance remain separate.
+
+`B2-17-S02` is satisfied for instructional purposes by the owner-approved exact written example: **“Disable Network Racks? Saved data and permissions will be retained.”** It now appears in [Optional Features](../../Optional-Features-and-Link-To-IPAM.md#disable-or-re-enable-a-feature). Keep the instructions to read, cancel or confirm and retain data/permissions. [Current coverage](Coverage.md), [manifest](manifest.json) and [verification/acceptance record](Verification.md) reflect this decision. All 19 original groups and 85 specifications remain retained.
+
+Independent review opened all 38 images and checked their instructional suitability, privacy and guide/manifest mapping. Its recorded limit is preserved: it did not recompute all hashes or rerun the full static suite. This assignment performs administrative reconciliation only; no 7A recapture, retest or virtual-display installation.
+
+## Historical Capture Checkpoint — Before Acceptance
+
+The following original capture record is retained verbatim apart from its heading level. Its pending/blocker statements describe that dated checkpoint and are superseded by the acceptance above; its proposed virtual-display method was not authorised or used.
+
+# Original Batch 7A Capture Record
+
 **27 November 2026. Blocked capture checkpoint: 38 proposed images delivered; the browser-native disable confirmation remains outstanding.** Independent ChatGPT review and owner visual acceptance are pending. No image is publication-approved.
 
 Authority: [scope and method approval](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7210755148). Maximum 40 new screenshots; desktop light theme only. [Provenance manifest](manifest.json). [All 19 groups / 85 original specifications](Coverage.md). [Static verification](Verification.md).
