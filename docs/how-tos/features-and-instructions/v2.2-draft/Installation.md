@@ -2,7 +2,7 @@
 
 > **Draft v2.2 — Unreleased private-review guidance.** Source-inspected at `fdc677920bfc52f48f641b3d6d1344c902a6a9b0`, schema 31. These instructions are not a production deployment or public release procedure. No public v2.2 image tag, registry availability or release date is established. Published v2.1 remains current: use its [installation guide](../../../../INSTALLATION.md) for that version.
 
-> **Documentation Batch 6:** written/source reconciliation awaits independent ChatGPT review and separate owner written acceptance. Current supported-upgrade, complete-volume restoration and desktop visual acceptance remain outstanding. [Evidence states, sources and screenshot requirements](../../../development-guide/Milestone-01-Batch-6-Review.md).
+> **Documentation Batch 6:** focused independent ChatGPT review is recorded and [owner written/source acceptance](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7200681167) is recorded. Current supported-upgrade, complete-volume restoration and desktop visual acceptance remain outstanding. [Evidence states, sources and screenshot requirements](../../../development-guide/Milestone-01-Batch-6-Review.md).
 
 This guide explains the existing draft examples for an installation that has already been authorised for isolated review. A container is the running application; an image is the packaged application it starts from. A Docker volume or bind mount holds persistent data outside that replaceable container. A new empty mount creates a new installation; it does not copy an existing one.
 

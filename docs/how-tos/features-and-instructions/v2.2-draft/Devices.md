@@ -52,6 +52,10 @@ Imagine recording *lab-switch-01*, a fictional switch on documentation subnet 19
 
 The application refuses invalid addresses, incompatible rack positions and other relationship errors; follow the message rather than attempting to force the save. A rejected save is not a successful partial creation. Check the saved record before retrying after an unclear connection failure.
 
+![Add New Device General form with training-new-switch, physical Switch type, Training Equipment Room and Tabletop / Shelf Mounted selected.](screenshots/batch-7a/devices-add-form.png)
+
+*Draft v2.2 — Add New Device: a fictional unsaved switch draft. Duplicate uses this editor with a new identity. Visual acceptance pending.*
+
 ### Choose the right address workflow
 
 | Situation | What to do |
@@ -63,10 +67,6 @@ The application refuses invalid addresses, incompatible rack positions and other
 | Existing managed IP with IPAM off or without IPAM Edit | The saved address is protected from editing. Turning IPAM off does not clear the relationship. |
 
 For the basic-IP example, record a fictional offline printer without an address, or with 192.0.2.20 while IPAM is off. When IPAM is enabled later and the correct subnet exists, use **Device Details → Network → Link to IPAM** with both Edit permissions. Read the full [Optional Features and Link to IPAM procedure](Optional-Features-and-Link-To-IPAM.md#deliberately-link-a-saved-basic-address) for the dialog, conflicts and cancellation. A hidden allocation can still prevent use of an address.
-
-![Add New Device General form with training-new-switch, physical Switch type, Training Equipment Room and Tabletop / Shelf Mounted selected.](screenshots/batch-7a/devices-add-form.png)
-
-*Draft v2.2 — Add New Device: a fictional unsaved switch draft. Duplicate uses this editor with a new identity. Visual acceptance pending.*
 
 ## View an existing device
 
@@ -95,9 +95,9 @@ Available tabs and fields depend on type, recorded information, enabled features
 
 *Draft v2.2 — Hardware records describe the fictional switch; they do not discover its specification. Visual acceptance pending.*
 
-![Read-only Network tab showing training-switch-01 at 192.0.2.10 and its Lab Network association.](screenshots/batch-7a/devices-details-network.png)
+![Read-only Network tab for training-basic-printer showing primary IP 192.0.2.30 and subnet 192.0.2.0/24 after explicit linking.](screenshots/batch-7a/devices-details-network.png)
 
-*Draft v2.2 — The switch has a managed address on Lab Network. Visual acceptance pending.*
+*Draft v2.2 — After deliberate linking, training-basic-printer retains 192.0.2.30 and now shows its managed subnet. Compare the earlier chooser for the same saved address. Visual acceptance pending.*
 
 ![Read-only Location tab for training-printer-01 showing Tabletop / Shelf Mounted and Training Rack, Shelf U3, Front.](screenshots/batch-7a/devices-details-shelf-location.png)
 

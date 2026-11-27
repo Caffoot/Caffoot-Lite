@@ -1,8 +1,8 @@
 # Optional Features, Basic IPv4 And Link To IPAM
 
-> **Draft v2.2 — Unreleased.** Text and controls have been reconciled against the 26 November 2026 application baseline, `fdc677920bfc52f48f641b3d6d1344c902a6a9b0` (schema 31). Use the [published v2.1 guides](https://github.com/Caffoot/Caffoot-Lite/tree/c3237114108cad9f7d4e57657b6aed5e0091a5ef/docs/how-tos/features-and-instructions) for the current release. Optional Features and basic-IP linking are v2.2 functionality, not v2.1 instructions. Current desktop illustrations and final acceptance remain outstanding. This is not an installation, upgrade or restore procedure.
+> **Draft v2.2 — Unreleased.** Text and controls have been reconciled against the 26 November 2026 application baseline, `fdc677920bfc52f48f641b3d6d1344c902a6a9b0` (schema 31). Use the [published v2.1 guides](https://github.com/Caffoot/Caffoot-Lite/tree/c3237114108cad9f7d4e57657b6aed5e0091a5ef/docs/how-tos/features-and-instructions) for the current release. Optional Features and basic-IP linking are v2.2 functionality, not v2.1 instructions. Batch 7A proposed desktop illustrations are included below; visual and final acceptance remain outstanding. This is not an installation, upgrade or restore procedure.
 
-> **Documentation status — 27 November 2026:** Focused independent reviews are recorded and [owner written/source acceptance of Batches 1–6](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7200681167) is recorded. Current visual/privacy/caption/alt approval remains outstanding; [Batch 7 reconciliation and proposed capture packs](../../../development-guide/Milestone-01-Batch-7-Review.md) await independent review and owner acceptance. Capture scope and method need separate authorisation.
+> **Documentation status — 27 November 2026:** Batches 1–6 written/source work and [Batch 7.1/bounded 7.2](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7210689297) are owner accepted. [Batch 7A](screenshots/batch-7a/README.md) is authorised for at most 40 desktop light-theme images. The proposed illustrations below await independent ChatGPT review and product-owner visual/privacy/caption/alt acceptance; no publication approval is implied.
 
 ## Choose The Features Your Organisation Uses
 
@@ -32,6 +32,10 @@ Open **Settings & Data → Optional Features**. The cards are grouped as follows
 | Additional Features | **Suppliers** | Company records, categories, locations, contacts and notes in [Supplier Management](Supplier-Management.md) |
 | Additional Features | **Equipment Lifecycle** | Physical Device dates, warranty and replacement warnings and lifespan settings in [Equipment Lifecycle](Equipment-Lifecycle.md) |
 | Additional Features | **IT Assets** | Stock receipts, inventory, readiness checks, equipment issue and return, write-offs and related stock reporting |
+
+![Optional Features showing Devices, IP Address Management, Network Racks, Suppliers, Equipment Lifecycle and IT Assets enabled.](screenshots/batch-7a/optional-six-feature-cards.png)
+
+*Draft v2.2 — All six Optional Features are enabled in this fictional administrator fixture; enabling a feature does not grant account permissions. Visual acceptance pending.*
 
 ### Feature Access And Retained Information
 
@@ -159,6 +163,10 @@ The Device association and IPAM allocation save together. **Cancel** changes nei
 
 After successful linking, the existing managed-IP permissions apply. Disabling IPAM later preserves the managed relationship and makes its address read-only; it does not unlink it or turn it back into basic mode.
 
+![Link to IPAM dialog for training-basic-printer at 192.0.2.30 with Lab Network 192.0.2.0/24 selected and Cancel or Link to IPAM actions.](screenshots/batch-7a/optional-existing-subnet-chooser.png)
+
+*Draft v2.2 — Link to IPAM deliberately selects an existing containing subnet for the exact saved basic address. No link has been confirmed. Visual acceptance pending.*
+
 ## Preserve Devices When Network Racks Is Off
 
 Turning off Network Racks hides Rack-specific controls while retaining the saved placement. Ordinary, type-appropriate non-Rack mounting choices remain available for equipment without a protected Rack placement.
@@ -174,6 +182,10 @@ For a fictional switch already mounted in **Training Rack**, an authorised Devic
 The saved mount type, Rack reference, U position/span, face, shelf association and ordinary Location text remain unchanged by that unrelated edit. The server preserves omitted hidden values and rejects attempts to change protected placement. A hidden Rack is not a missing record, and disabling the feature is not an unmounting operation.
 
 When Rack information is unavailable, related views may show **Rack information is not available with your current access.** Do not recreate a rack or shelf merely because its details are hidden. To deliberately move or unmount equipment, re-enable Network Racks and use the existing placement workflow with the required permissions.
+
+![Edit Device General form for training-printer-01 with protected Training Equipment Room Location Area and Rack placement controls hidden while Network Racks is off.](screenshots/batch-7a/optional-racks-off-location.png)
+
+*Draft v2.2 — With Network Racks off, the saved shelf relationship protects Location Area during unrelated Device editing. Hidden controls do not mean a detached Device. Visual acceptance pending.*
 
 ## Troubleshooting And Safe Recovery
 

@@ -1,5 +1,7 @@
 # Milestone 01 — Batch 7 Existing Image Inventory
 
+> **Current decision — 27 November 2026:** [Independent review and owner acceptance](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7210689297) accept the inventory and bounded assessment, including the eight narrow reuse proposals. The four unresolved candidates remain pending. The dated inventory and class counts below are preserved; [Batch 7A](../how-tos/features-and-instructions/v2.2-draft/screenshots/batch-7a/README.md) records new images separately. No historical file has been moved, edited or deleted.
+
 **27 November 2026. Read-only file inventory and limited visual assessment; independent ChatGPT review and owner acceptance pending.** This accompanies the [Batch 7 reconciliation](Milestone-01-Batch-7-Review.md). No image is newly embedded, altered or promoted.
 
 The inventory covers every raster file in development evidence, draft-guide screenshots and the published v2.1 review gallery: **1,213 files = 1,154 + 49 + 10**. It deliberately includes mobile, superseded and reference-only files so none disappears from the evidence accounting. These are file counts, not requirement groups or accepted screenshots. Other old published screenshot paths remain preserved by the complete tree comparison; they are not additional candidates for current v2.2 reuse.

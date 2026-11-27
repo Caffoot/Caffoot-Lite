@@ -41,6 +41,18 @@ Network Racks can be used without IPAM, or independently for enclosure/accessory
 
 **Rack Inventory** utilisation counts each numbered U once across both faces. **Overview → Capacity** combined face utilisation counts front and rear separately. A 12U rack has 12 physical U and 24 face-U; 3U occupied at the same height on each face is 3 occupied numbered U in the inventory card and 6 occupied face-U in the combined figure. Vertical rails do not consume central U. These are inventory estimates using the records available to the view.
 
+![Read-only Rack Inventory with Training Rack, its 12U height, Training Equipment Room, 5 occupied numbered U, two mounted Devices and four accessories.](screenshots/batch-7a/racks-inventory.png)
+
+*Draft v2.2 — Rack Inventory records enclosure dimensions and occupied numbered U across both faces. Visual acceptance pending.*
+
+![Read-only Training Rack Front elevation showing training-switch-01 at U10, training-host-01 at U7–U8 and two shelves.](screenshots/batch-7a/racks-front-read-only.png)
+
+*Draft v2.2 — Front elevation under Racks Read: inspect saved equipment and capacity without placement or drag controls. Visual acceptance pending.*
+
+![Read-only Training Rack Rear elevation with Training Patch Panel at U10 and Training Rear PDU on the right 0U rail.](screenshots/batch-7a/racks-rear-read-only.png)
+
+*Draft v2.2 — Rear elevation shows the patch panel and Right 0U PDU; left and right are viewed from the selected face. Visual acceptance pending.*
+
 ## Worked Example: Create A Training Rack
 
 Imagine a fictional 12U *Training Rack*, 600 mm wide and 600 mm deep, in *Training Equipment Room*. Replace these values with actual measurements.
@@ -54,6 +66,10 @@ Imagine a fictional 12U *Training Rack*, 600 mm wide and 600 mm deep, in *Traini
 
 Creating a Rack from within a Device draft saves that enclosure independently. Returning to or cancelling the Device form does not undo the saved Rack. A Rack's Location Room is separate from the managed Device Locations list; choosing a Rack can suggest a location on a new Device, but moving an existing Device between racks does not overwrite its saved Location Area automatically.
 
+![Add Network Rack Enclosure form with Training Expansion Rack, Training Equipment Room, Wall-mounted cabinet, 12U and 600 mm width and depth.](screenshots/batch-7a/racks-enclosure-form.png)
+
+*Draft v2.2 — The enclosure form records measured physical dimensions. This new Training Expansion Rack draft is unsaved. Visual acceptance pending.*
+
 ## Place An Existing Rack-Mounted Device
 
 1. Use [Devices](Devices.md) to record the real physical Device first. It must support and be configured as **Rack Mounted**. Its recorded U height must reflect the actual item. Virtual machines are located through their host and cannot be mounted independently.
@@ -66,6 +82,14 @@ Creating a Rack from within a Device draft saves that enclosure independently. R
 For example, a 1U *training-switch-01* at Front U10 occupies U10 alone. A 2U *training-host-01* at Front U7 occupies U7–U8. A horizontal patch panel cannot overlap those units on Front; Rear positions are recorded independently. **Cancel** leaves the saved Device and rack unchanged.
 
 A Rack placement obtains the existing Device edit reservation and checks its revision. Another user's active edit, a changed record, hidden occupant or new collision rejects the move and restores the original placement. A successful save followed by an unsuccessful refresh is reported separately: refresh and inspect the saved record before retrying.
+
+![Place Device / Horizontal Accessory at U11 with training-switch-01, Front, Start U11 and read-only height 1U.](screenshots/batch-7a/racks-device-placement.png)
+
+*Draft v2.2 — Place an existing Device at a free Front position. Its recorded 1U height is read-only in this form; the proposed move is unsaved. Visual acceptance pending.*
+
+![Horizontal Accessory form with height 12U, no available Start U positions and No available positions for this type, height and face warning.](screenshots/batch-7a/racks-collision-warning.png)
+
+*Draft v2.2 — A 12U horizontal accessory cannot fit on the occupied Front face. The form offers no valid Start U and warns before saving. Visual acceptance pending.*
 
 ## Move Or Remove A Device From A Rack
 
@@ -85,6 +109,10 @@ If removal is rejected by type/mounting validation or a protected relationship, 
 5. Select **Place Equipment**, then reopen the elevation and equipment list. Cancel saves nothing. Collisions, invalid height/ports or a failed save leave the previous inventory unchanged.
 6. Open an existing accessory to use **Edit Horizontal Accessory Placement**. Review its type, Name, Face, Start U, Height and any port count, then **Save changes**. Use **Cancel** to retain its saved placement.
 7. Dragging a supported horizontal accessory to a valid new position saves immediately on drop, subject to the same collision checks. Devices resting on a shelf derive its current position; they do not acquire separate U slots when the shelf moves.
+
+![Horizontal Accessory placement for Training Additional Patch Panel at Front U1, height 1U and 24 patch-panel ports.](screenshots/batch-7a/racks-accessory-placement.png)
+
+*Draft v2.2 — A horizontal patch panel uses central U space on the selected face; this placement is an unsaved draft. Visual acceptance pending.*
 
 ## Add And Maintain Vertical 0U Accessories
 
@@ -107,6 +135,10 @@ Use a shelf for supported physical **Tabletop / Shelf Mounted** equipment. An ac
 
 A separately saved shelf remains if you cancel the Device draft. **Duplicate** can copy an eligible shelf association, but creates a separate Device identity; check actual equipment before saving. Read [Devices](Devices.md#shelves-and-recorded-software) for the complete Device-side context.
 
+![Read-only Location tab for training-printer-01 showing Tabletop / Shelf Mounted and Training Rack, Shelf U3, Front.](screenshots/batch-7a/devices-details-shelf-location.png)
+
+*Draft v2.2 — The saved printer derives its Front U3 location from Training Printer Shelf; it occupies no separate U footprint. Visual acceptance pending.*
+
 ### Remove A Shelf That Holds Devices
 
 1. Open the shelf's accessory editor and choose **Remove**. With linked Devices, this opens **Remove Rack Shelf**, not the ordinary accessory deletion confirmation.
@@ -117,9 +149,9 @@ A separately saved shelf remains if you cancel the Device draft. **Duplicate** c
 
 The server rechecks the exact shelf preview, full linked-Device set, revisions, permissions, destinations and active edit reservations. A changed record or another editor blocks removal without applying a subset. Resolve the reported reason and reopen a fresh review. Do not delete the parent rack to bypass it.
 
-![Read-only Location tab for training-printer-01 showing Tabletop / Shelf Mounted and Training Rack, Shelf U3, Front.](screenshots/batch-7a/devices-details-shelf-location.png)
+![Remove Rack Shelf review for training-printer-01 with reassignment to Training Rack Shelf U5 selected and Confirm Shelf Removal available.](screenshots/batch-7a/racks-shelf-removal-review.png)
 
-*Draft v2.2 — The saved printer derives its Front U3 location from Training Printer Shelf; it occupies no separate U footprint. Visual acceptance pending.*
+*Draft v2.2 — Review the replacement shelf for training-printer-01 before removing its current shelf; no removal has been confirmed. Visual acceptance pending.*
 
 ## Edit A Rack Or Correct Its Specifications
 
@@ -129,6 +161,10 @@ The server rechecks the exact shelf preview, full linked-Device set, revisions, 
 4. Reopen Rack Settings and both faces to verify the result. The rack cannot be shortened below any Device or accessory span, including vertical accessories. Validation failure preserves the prior record.
 
 Correcting a measurement is different from recording a physically replaced enclosure or moving equipment. It does not transfer Devices automatically and does not override collision, type or relationship safeguards.
+
+![Confirm Rack Specification Correction dialog warning that mounted equipment will not be moved, above the Training Rack correction draft.](screenshots/batch-7a/racks-specification-correction.png)
+
+*Draft v2.2 — Review a proposed width correction from 600 to 650 mm. Mounted equipment will not move; this correction has not been confirmed. Visual acceptance pending.*
 
 ## Remove An Accessory Or Empty Rack
 

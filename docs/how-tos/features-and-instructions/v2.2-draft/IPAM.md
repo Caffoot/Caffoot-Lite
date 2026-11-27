@@ -27,6 +27,14 @@ IP Address Management (IPAM) records planned address space and saved allocations
 
 **CIDR** combines a network address and prefix length. For example, `192.0.2.0/24` has usable host addresses `192.0.2.1`–`192.0.2.254`; the network and broadcast boundaries are not usable hosts. A **gateway** is the router address for that network. A **VLAN** is a numbered logical network association, not an address pool by itself. A parent **IP Address Block** organises ranges and has no address cards, gateway or VLAN of its own.
 
+![Manage Subnets listing Lab Network 192.0.2.0/24 with VLAN 50 and Training Review Network 198.51.100.0/26 without a VLAN.](screenshots/batch-7a/ipam-manage-subnets.png)
+
+*Draft v2.2 — Manage Subnets shows the two standalone fictional networks and their network actions. Visual acceptance pending.*
+
+![Lab Network IP Addresses showing the .1–.32 range, protected gateway 192.0.2.1, Assigned training-switch-01 at .10 and Available address cards.](screenshots/batch-7a/ipam-address-grid.png)
+
+*Draft v2.2 — The selected .1–.32 range shows the protected Reserved gateway, an Assigned Device address and Available cards; other ranges have their own controls. Visual acceptance pending.*
+
 ### Read Address States And Totals
 
 | State | Meaning And Consequence |
@@ -37,14 +45,6 @@ IP Address Management (IPAM) records planned address space and saved allocations
 | Gateway · Reserved / Assigned | The subnet gateway is protected. Change the network or its eligible network Device, rather than editing it as a spare address. |
 
 Usable capacity excludes network/broadcast addresses. Utilisation includes Assigned and Reserved addresses; an unallocated gateway is counted as reserved without creating an allocation record. Basic Device addresses are excluded from next-available suggestions, but are not counted as managed assignments. Therefore a basic address can still look Available in the grid, and an Available total is not an allocation guarantee.
-
-![Manage Subnets listing Lab Network 192.0.2.0/24 and Training Review Network 198.51.100.0/26 with gateway and VLAN information.](screenshots/batch-7a/ipam-manage-subnets.png)
-
-*Draft v2.2 — Manage Subnets shows the two standalone fictional networks and their network actions. Visual acceptance pending.*
-
-![Lab Network IP Addresses grid showing gateway 192.0.2.1, Device-owned .10 and .20, reserved .40 and .41, and Available addresses.](screenshots/batch-7a/ipam-address-grid.png)
-
-*Draft v2.2 — Lab Network address cards distinguish protected gateway, Assigned, Reserved and Available states. Basic .30 remains unlinked. Visual acceptance pending.*
 
 ## Worked example — add one subnet
 
@@ -58,6 +58,10 @@ Consider this fictional documentation example; substitute your approved real net
 6. Optionally choose an **IP Address Block** and write a **Description**. Select **Save Subnet**, then use **Browse IP Addresses** to check its CIDR, name, purpose, VLAN, gateway and usable range. **Cancel** abandons the unsaved form; a validation error leaves it open for correction.
 
 To create an organisational parent instead, select **IP Address Block** in the same form. A block has no gateway/VLAN and does not allocate addresses to devices; create addressable child subnets as needed. Enter an aligned block CIDR and **IP Address Block Name**, optionally a parent block and Description, then **Save IP Address Block**. For example, `198.51.100.0/24` can contain smaller /26 child networks. A child must be strictly smaller than and contained by its parent. Blocks remain optional. Disabled **Reserved range (coming next)** and **Loopback /32 (coming next)** are not available workflows.
+
+![Add Single Subnet form for Training Expansion, 203.0.113.64/26, LAN purpose, gateway 203.0.113.65 and optional VLAN and block fields.](screenshots/batch-7a/ipam-single-subnet-form.png)
+
+*Draft v2.2 — Add Single Subnet requires an explicit purpose and a usable LAN gateway. This is an unsaved draft. Visual acceptance pending.*
 
 ## Add multiple subnets
 
@@ -76,6 +80,10 @@ The preview scrolls independently with Back/Cancel/Save visible, and rows stack 
 
 Names/descriptions can explain a real VPN range, for example *London ↔ Bristol VPN*. A tunnel which only routes existing LANs does not need a fictional extra subnet. Tunnel relationships, public-IP/WAN and customer-isolated overlapping ranges are outside this workflow.
 
+![Multiple-subnet preview for Training A 203.0.113.128/26 and Training B 203.0.113.192/26, with LAN purposes and first-usable gateways.](screenshots/batch-7a/ipam-multiple-subnet-preview.png)
+
+*Draft v2.2 — Review both generated /26 networks and their individual purposes and gateways before saving; neither exists yet. Visual acceptance pending.*
+
 ## Edit an individual IP
 
 1. Navigate to the recorded subnet and select an address card, e.g. **192.0.2.10**.
@@ -84,6 +92,14 @@ Names/descriptions can explain a real VPN range, for example *London ↔ Bristol
 4. Reopen the address to verify the saved value. A colleague opening the address after your save will fetch the current shared value.
 
 **Cancel** leaves the address unchanged. A rejected save restores its previous allocation; correct the reason and reopen if the records changed. IPAM Notes stay with the address and are separate from Device Notes. Gateway cards reject ordinary editing with a protected-address message. Do not change an active Device's assigned address to Available to bypass ownership.
+
+![Configure IP 192.0.2.42 with Reserved selected, hostname training-spare-42 and address-specific IPAM Notes.](screenshots/batch-7a/ipam-configure-address.png)
+
+*Draft v2.2 — Configure an independent spare address; this Reserved draft has not been saved. Visual acceptance pending.*
+
+![Configure IP 192.0.2.10 showing training-switch-01 ownership, protected Status and Hostname, and editable IPAM Notes.](screenshots/batch-7a/ipam-protected-device-address.png)
+
+*Draft v2.2 — Device ownership protects Status and Hostname here; IPAM Notes remain separate editable address metadata. Visual acceptance pending.*
 
 ## Reserve and release a spare address
 
@@ -130,6 +146,14 @@ This works inside one subnet; it does not create networks or assign Device ident
 
 For example, reserving fictional `192.0.2.40`–`192.0.2.45` with Hostname *training-spare* adds the subnet host offsets (such as *training-spare-40*). Read the preview rather than assuming every address is free. The server rechecks current permissions, conflicts and validity and rolls back the submitted set on rejection. Refresh and preview again after a conflict; the old preview is not a permanent reservation.
 
+![Bulk reservation preview for 192.0.2.1–192.0.2.12 showing eligible changes, protected skipped addresses and Apply or Back to editing actions.](screenshots/batch-7a/ipam-bulk-reservation-preview.png)
+
+*Draft v2.2 — The reservation preview skips the gateway and Device-owned .10. No changes have been applied. Visual acceptance pending.*
+
+![Bulk release preview showing eligible changes and protected/skipped addresses before Apply.](screenshots/batch-7a/ipam-bulk-release-preview.png)
+
+*Draft v2.2 — The release preview affects eligible unowned reservations, while Device primary IPs and the gateway remain protected. Visual acceptance pending.*
+
 ## Edit Subnets, Blocks And VLANs
 
 1. Open **Manage Subnets → Edit Subnet** or **Edit Block** for the exact record. Check CIDR and current parent before editing. Existing record kind is fixed; a network cannot be converted into a block by editing it.
@@ -160,6 +184,14 @@ Deletion is permanent and can remove active address relationships. It is not a w
 6. Reopen the remaining network and Device records to check the outcome. Current permissions, enabled Devices where detachment is needed, dependency sets, VLAN ownership and active Device edits are rechecked. Stale/changed previews or another editor's reservation reject the entire operation; refresh and review again.
 
 Basic Device addresses are not detached by subnet deletion. They remain basic and may then contribute to Basic IPs Outside Subnets. Do not infer that deleting a subnet releases every address recorded elsewhere.
+
+![Subnet deletion blocked notice for Lab Network explaining that IPAM records still use it.](screenshots/batch-7a/ipam-protected-deletion.png)
+
+*Draft v2.2 — Independent reservations protect Lab Network from subnet deletion; investigate dependencies rather than bypassing them. Visual acceptance pending.*
+
+![Delete Subnet review listing training-review-switch at 198.51.100.10 and warning that its active primary IP will be cleared before deletion.](screenshots/batch-7a/ipam-move-devices-review.png)
+
+*Draft v2.2 — Move Devices & Delete Subnet would clear the listed active primary IP; it does not physically relocate equipment. This is a review only. Visual acceptance pending.*
 
 ## Investigate A Consistency Warning
 
