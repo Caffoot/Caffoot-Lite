@@ -4,6 +4,13 @@ These **genuine captures of published v2.1** were visually approved by the produ
 
 **Current documentation use:** the root README now introduces unreleased v2.2 with separate v2.2 illustrations. The v2.1 README/IPAM usage entries below record the original approved placement; those image bytes and this evidence remain preserved. Published v2.1 guides continue to use their version-correct illustrations.
 
+**Archived original root illustrations — 27 November 2026:** these four original PNGs are retained byte-for-byte in this folder following owner approval. They are not current v2.2 illustrations. The previous root locations remain available at [the pre-archive revision](https://github.com/Caffoot/Caffoot-Lite/tree/89a0956207ae7ffd2f9e4bb787dce4830debfbd0).
+
+- [caffoot-v2.1-dashboard-light-cropped.png](caffoot-v2.1-dashboard-light-cropped.png) — original [root path at the pre-archive revision](https://github.com/Caffoot/Caffoot-Lite/blob/89a0956207ae7ffd2f9e4bb787dce4830debfbd0/caffoot-v2.1-dashboard-light-cropped.png).
+- [caffoot-v2.1-devices-light-cropped.png](caffoot-v2.1-devices-light-cropped.png) — original [root path at the pre-archive revision](https://github.com/Caffoot/Caffoot-Lite/blob/89a0956207ae7ffd2f9e4bb787dce4830debfbd0/caffoot-v2.1-devices-light-cropped.png).
+- [caffoot-v2.1-ipam-light-cropped.png](caffoot-v2.1-ipam-light-cropped.png) — original [root path at the pre-archive revision](https://github.com/Caffoot/Caffoot-Lite/blob/89a0956207ae7ffd2f9e4bb787dce4830debfbd0/caffoot-v2.1-ipam-light-cropped.png).
+- [caffoot-v2.1-racks-light-cropped.png](caffoot-v2.1-racks-light-cropped.png) — original [root path at the pre-archive revision](https://github.com/Caffoot/Caffoot-Lite/blob/89a0956207ae7ffd2f9e4bb787dce4830debfbd0/caffoot-v2.1-racks-light-cropped.png).
+
 ## Source and capture conditions
 
 - Exact source: [`v2.1`, c3237114108cad9f7d4e57657b6aed5e0091a5ef](https://github.com/Caffoot/Caffoot-Lite/tree/v2.1), exported into an isolated working directory without source modifications.
