@@ -7767,14 +7767,19 @@ function openIpModal(ip) {
                     '</div></section>';
             } else if (section === 'help') {
                 // The authoritative Markdown user guides are shared with GitHub and the future website.
-                const guideRoot = 'https://github.com/Caffoot/Caffoot-Lite/blob/main/docs/how-tos/features-and-instructions/';
+                const guideRoot = 'https://github.com/Caffoot/Caffoot-Lite/blob/8c680f3cd540a91df50299b8243f480fc9857242/docs/how-tos/features-and-instructions/v2.2-draft/';
                 const helpTopics = [
-                    ['Getting Started', 'Create your administrator on first run and enrol MFA. Then use Devices, IPAM and Network Racks just as in published v1.3.3. Authorised users work from the same central inventory.', [['Getting Started', 'Getting-Started.md']]],
-                    ['Import from v1.3.3', 'Under Import Inventory, choose a fresh JSON backup exported from published v1.3.3 and review all required corrections before confirming replacement. For older HTML versions, upgrade to v1.3.3 before exporting.', [['Migration', 'Migration-Backup-and-Restore.md']]],
-                    ['Devices, IPAM and Racks', 'Manage the familiar devices, primary IP assignments, subnets, VLANs, racks and accessories. Device editing reserves that device for one user at a time.', [['Devices', 'Devices.md'], ['IPAM', 'IPAM.md'], ['Racks', 'Racks.md']]],
-                    ['Users and MFA', 'Administrators manage users and permissions in the Users section. New users have no access until permissions are granted. MFA is required for editing and administration.', [['Users and MFA', 'Users-Permissions-and-MFA.md']]],
-                    ['Database backup and recovery', 'Use your established Docker, Portainer or database volume backup application. Caffoot Lite has no ongoing inventory JSON backup export.', [['Backup and restore', 'Migration-Backup-and-Restore.md']]],
-                    ['Appearance', 'Appearance Preferences offers Light Mode, Dark Mode and Use System Setting. This appearance preference remains local to your browser.', [['Settings', 'Settings-and-Change-History.md']]]
+                    ["Getting Started", "Create your administrator on first run and enrol MFA. Administrators choose the optional features and access needed by the team. Fresh installations start with optional features off.", [["Getting Started", "README.md"]]],
+                    ["Import From v1.3.3", "Choose a fresh published v1.3.3 JSON export, review required corrections and explicitly confirm replacement. This is a one-way migration, not an ongoing database backup.", [["Legacy Import", "Legacy-Import-and-Docker-Upgrade.md"]]],
+                    ["Devices, IPAM And Racks", "Manage Devices, optional basic IP addresses, managed subnets, VLANs, racks and accessories. Link an eligible saved Device to IPAM explicitly. Device editing reserves that Device for one user at a time.", [["Devices", "Devices.md"], ["IPAM", "IPAM.md"], ["Racks", "Racks.md"]]],
+                    ["Staff, Departments And My Equipment", "Staff Members can have a login or be recorded without one. Department membership grants no application permissions. My Equipment shows eligible personal and current Department equipment.", [["Staff Members", "Staff-Members.md"], ["Departments", "Departments-and-Shared-Equipment.md"], ["My Equipment", "Device-Assignments-and-My-Equipment.md"]]],
+                    ["Accounts, Roles And MFA", "Administrators manage linked logins from Staff Details. Roles and individual permissions control access. Wider Read or Edit access and enabled additional roles require MFA; enrolled MFA remains required at sign-in.", [["Accounts, Roles And MFA", "Roles-Section-Permissions-and-MFA.md"]]],
+                    ["IT Assets And Equipment Custody", "Receive stock, record checks, prepare and issue equipment, and record returns or write-offs. Register and reissue a Device without creating a duplicate permanent Device record.", [["IT Assets", "IT-Assets-Issue-Return-and-Write-Off.md"]]],
+                    ["Suppliers And Equipment Lifecycle", "Keep Supplier and purchasing records alongside equipment. Review warranty, service and lifecycle warnings when the relevant features and permissions are enabled.", [["Suppliers", "Supplier-Management.md"], ["Equipment Lifecycle", "Equipment-Lifecycle.md"]]],
+                    ["Service Desk And Email", "Use My Tickets or permitted Department Tickets to request support. Authorised technicians manage the IT queue. Administrators configure working hours, the installation time zone, email templates and notifications. Queueing an email does not confirm delivery.", [["Tickets", "Service-Desk-Tickets.md"], ["Administration", "Service-Desk-Administration.md"], ["Email", "Email-Templates-and-Company-Branding.md"]]],
+                    ["Audit Trail And Optional Features", "Audit Trail access follows your permissions. Administrators choose optional features in Settings & Data; disabling a feature retains its saved records and permissions.", [["Audit Trail", "Audit-Trail.md"], ["Optional Features", "Optional-Features-and-Link-To-IPAM.md"]]],
+                    ["Database Backup And Recovery", "Protect a complete copy of the persistent data mount, including SQLite, private files and TLS identity. Keep the exact storage mapping and matching image. A legacy JSON export is not a Docker backup; v2.2 production upgrade and recovery acceptance remain outstanding.", [["Backup And Recovery", "Legacy-Import-and-Docker-Upgrade.md"]]],
+                    ["Appearance", "Light, Dark and System preferences remain local to this browser.", [["My Account", "README.md"]]]
                 ];
                 const guideLinks = guides => '<div class="flex flex-wrap gap-x-5 gap-y-2 px-5 pb-4">' + guides.map(([label,file]) =>
                     '<a href="' + guideRoot + encodeURIComponent(file) + '" target="_blank" rel="noopener noreferrer" class="text-sm font-semibold text-indigo-700 dark:text-indigo-300 hover:underline focus-visible:underline" aria-label="Read full ' + label + ' guide (opens new tab)">Read full ' + label + ' guide <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></a>'
@@ -7785,8 +7790,8 @@ function openIpModal(ip) {
                 body = '<section class="settings-panel settings-about"><div class="settings-about-brand">' +
                     '<img src="../assets/caffoot-icon-1024.png" alt="Caffoot hedgehog logo" width="76" height="76">' +
                     renderInterfaceTemplate("settings/about-summary",[]) +
-                    '<div class="settings-about-version"><span>Installed Version</span><strong>Caffoot Lite v2.1</strong></div>' +
-                    '<p>Manage devices, IP addresses, subnets and network racks using a shared central SQLite database with authorised multi-user access.</p>' +
+                    '<div class="settings-about-version"><span>Published Release</span><strong>Caffoot Lite v2.1</strong></div>' +
+                    '<p>Manage infrastructure, Staff, equipment custody, Suppliers and Service Desk work using a shared central SQLite database with authorised multi-user access. v2.2 is an unreleased review candidate; v2.1 remains the published release.</p>' +
                     '<h4>Project & Documentation</h4><div class="settings-about-links">' +
                     renderInterfaceTemplate("settings/repository-link",[]) +
                     renderInterfaceTemplate("settings/user-guides-link",[]) +

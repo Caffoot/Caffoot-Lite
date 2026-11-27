@@ -1,0 +1,2899 @@
+{
+  "status": "Draft instructional evidence \u2014 independent ChatGPT review and separate product-owner visual/privacy/caption/alt acceptance pending",
+  "authority": "https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7217032947",
+  "applicationRevision": "000818f42e854e4a1fee8692b9ffaaa52b5c788d",
+  "schema": 31,
+  "documentationStart": "a5426ca6a2262e21530fcf972b3a1d6cc12fc950",
+  "reconciliationCheckpoint": "19e148efc866c054842c628ea2a6fde4420e2347",
+  "newCount": 36,
+  "ceiling": 36,
+  "counts": {
+    "Device assignments and custody": 5,
+    "Associated equipment and handover": 6,
+    "Equipment issue, return and write-off": 8,
+    "Departments and membership": 7,
+    "Stock movement corrections": 4,
+    "Lifecycle management": 6
+  },
+  "images": [
+    {
+      "file": "assign-printer-department.png",
+      "allocation": "Device assignments and custody",
+      "states": [
+        "B3-E1-S02",
+        "B3-E1-S03"
+      ],
+      "caption": "This unsaved assignment selects Accounts for one shared physical printer. Membership affects access, rather than creating another physical issue.",
+      "alt": "Assign Device dialog selecting Department custody and Accounts for AST-PRN-01.",
+      "applicationRevision": "000818f42e854e4a1fee8692b9ffaaa52b5c788d",
+      "schema": 31,
+      "browser": "Chromium 156.0.8078.79",
+      "automation": "Playwright 1.62.1",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1050
+      },
+      "deviceScaleFactor": 1,
+      "theme": "light",
+      "fullPage": true,
+      "capturedAt": "2026-11-27T11:39:57.267Z",
+      "fixture": "Disposable fictional Aster Services / Northlight journey on local HTTPS and SQLite",
+      "actor": "sam.taylor",
+      "context": {
+        "accountState": [
+          2,
+          0,
+          1,
+          1
+        ],
+        "roles": [
+          [
+            "Staff Member"
+          ]
+        ],
+        "overrides": [
+          [
+            "Departments",
+            "edit"
+          ],
+          [
+            "Devices",
+            "edit"
+          ],
+          [
+            "IT Assets",
+            "edit"
+          ],
+          [
+            "Service Desk",
+            "edit"
+          ],
+          [
+            "Staff Members",
+            "edit"
+          ],
+          [
+            "Suppliers",
+            "edit"
+          ]
+        ],
+        "features": {
+          "devices": 1,
+          "ipam": 1,
+          "racks": 1,
+          "suppliers": 1,
+          "equipment_lifecycle": 1,
+          "it_assets": 1
+        }
+      },
+      "sha256": "7b356daeef4f5cb71e767cb8db8ac38ad004fb2cbee77c8b16930381c029e6ba",
+      "urlPath": "/inventory#devices",
+      "independentVisualAcceptance": "pending",
+      "ownerVisualAcceptance": "pending"
+    },
+    {
+      "file": "associate-mouse-draft.png",
+      "allocation": "Associated equipment and handover",
+      "states": [
+        "B4-E1-S01"
+      ],
+      "caption": "Issue And Associate will give one Ready mouse to the laptop\u2019s existing Alex custody. The holder is derived from that custody and cannot be freely changed here.",
+      "alt": "Add Equipment form selecting one Office Mouse for Alex\u2019s AST-LAP-014.",
+      "applicationRevision": "000818f42e854e4a1fee8692b9ffaaa52b5c788d",
+      "schema": 31,
+      "browser": "Chromium 156.0.8078.79",
+      "automation": "Playwright 1.62.1",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1050
+      },
+      "deviceScaleFactor": 1,
+      "theme": "light",
+      "fullPage": true,
+      "capturedAt": "2026-11-27T11:40:15.651Z",
+      "fixture": "Disposable fictional Aster Services / Northlight journey on local HTTPS and SQLite",
+      "actor": "sam.taylor",
+      "context": {
+        "accountState": [
+          2,
+          0,
+          1,
+          1
+        ],
+        "roles": [
+          [
+            "Staff Member"
+          ]
+        ],
+        "overrides": [
+          [
+            "Departments",
+            "edit"
+          ],
+          [
+            "Devices",
+            "edit"
+          ],
+          [
+            "IT Assets",
+            "edit"
+          ],
+          [
+            "Service Desk",
+            "edit"
+          ],
+          [
+            "Staff Members",
+            "edit"
+          ],
+          [
+            "Suppliers",
+            "edit"
+          ]
+        ],
+        "features": {
+          "devices": 1,
+          "ipam": 1,
+          "racks": 1,
+          "suppliers": 1,
+          "equipment_lifecycle": 1,
+          "it_assets": 1
+        }
+      },
+      "sha256": "e802e9e305697ab62ffc9a488a212d5b605ab1d60bed5d206ce784835b1fa682",
+      "urlPath": "/inventory#devices",
+      "independentVisualAcceptance": "pending",
+      "ownerVisualAcceptance": "pending"
+    },
+    {
+      "file": "associated-mouse-saved.png",
+      "allocation": "Associated equipment and handover",
+      "states": [
+        "B4-E1-S03"
+      ],
+      "caption": "The mouse issue is now explicitly linked to this Device custody. It is not inferred from the same holder, name or purchase.",
+      "alt": "AST-LAP-014 Associated Equipment showing the saved current Office Mouse issue.",
+      "applicationRevision": "000818f42e854e4a1fee8692b9ffaaa52b5c788d",
+      "schema": 31,
+      "browser": "Chromium 156.0.8078.79",
+      "automation": "Playwright 1.62.1",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1050
+      },
+      "deviceScaleFactor": 1,
+      "theme": "light",
+      "fullPage": true,
+      "capturedAt": "2026-11-27T11:40:16.252Z",
+      "fixture": "Disposable fictional Aster Services / Northlight journey on local HTTPS and SQLite",
+      "actor": "sam.taylor",
+      "context": {
+        "accountState": [
+          2,
+          0,
+          1,
+          1
+        ],
+        "roles": [
+          [
+            "Staff Member"
+          ]
+        ],
+        "overrides": [
+          [
+            "Departments",
+            "edit"
+          ],
+          [
+            "Devices",
+            "edit"
+          ],
+          [
+            "IT Assets",
+            "edit"
+          ],
+          [
+            "Service Desk",
+            "edit"
+          ],
+          [
+            "Staff Members",
+            "edit"
+          ],
+          [
+            "Suppliers",
+            "edit"
+          ]
+        ],
+        "features": {
+          "devices": 1,
+          "ipam": 1,
+          "racks": 1,
+          "suppliers": 1,
+          "equipment_lifecycle": 1,
+          "it_assets": 1
+        }
+      },
+      "sha256": "59cd3a7457e3e0f9657d948662afc8bd2a96083ab1685e77ff640eedea7c8fe0",
+      "urlPath": "/inventory#devices",
+      "independentVisualAcceptance": "pending",
+      "ownerVisualAcceptance": "pending"
+    },
+    {
+      "file": "handover-blocked-by-accessory.png",
+      "allocation": "Associated equipment and handover",
+      "states": [
+        "B4-E3-S05"
+      ],
+      "caption": "Alex still holds the laptop. Outstanding associated equipment prevents direct reassignment until each accessory is resolved; changing a person\u2019s Department does not resolve it.",
+      "alt": "AST-LAP-014 current Alex custody with outstanding-accessory handover protection.",
+      "applicationRevision": "000818f42e854e4a1fee8692b9ffaaa52b5c788d",
+      "schema": 31,
+      "browser": "Chromium 156.0.8078.79",
+      "automation": "Playwright 1.62.1",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1050
+      },
+      "deviceScaleFactor": 1,
+      "theme": "light",
+      "fullPage": true,
+      "capturedAt": "2026-11-27T11:42:42.766Z",
+      "fixture": "Disposable fictional Aster Services / Northlight journey on local HTTPS and SQLite",
+      "actor": "sam.taylor",
+      "context": {
+        "accountState": [
+          2,
+          0,
+          1,
+          1
+        ],
+        "roles": [
+          [
+            "Staff Member"
+          ]
+        ],
+        "overrides": [
+          [
+            "Departments",
+            "edit"
+          ],
+          [
+            "Devices",
+            "edit"
+          ],
+          [
+            "IT Assets",
+            "edit"
+          ],
+          [
+            "Service Desk",
+            "edit"
+          ],
+          [
+            "Staff Members",
+            "edit"
+          ],
+          [
+            "Suppliers",
+            "edit"
+          ]
+        ],
+        "features": {
+          "devices": 1,
+          "ipam": 1,
+          "racks": 1,
+          "suppliers": 1,
+          "equipment_lifecycle": 1,
+          "it_assets": 1
+        }
+      },
+      "sha256": "838df20f1177b8c0e5be5643aebd3d0ff8bb43d4f973e0176da328fa23caa4b5",
+      "urlPath": "/inventory#devices",
+      "independentVisualAcceptance": "pending",
+      "ownerVisualAcceptance": "pending"
+    },
+    {
+      "file": "canonical-device-return.png",
+      "allocation": "Equipment issue, return and write-off",
+      "states": [
+        "B4-C2-S01",
+        "B4-K2-S01"
+      ],
+      "caption": "The laptop\u2019s real physical return closes Alex\u2019s original custody and enters Awaiting Preparation with Ready zero. It is not a mere unassignment.",
+      "alt": "Return form for AST-LAP-014 from Alex, one returned and zero Ready or damaged.",
+      "applicationRevision": "000818f42e854e4a1fee8692b9ffaaa52b5c788d",
+      "schema": 31,
+      "browser": "Chromium 156.0.8078.79",
+      "automation": "Playwright 1.62.1",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1171
+      },
+      "deviceScaleFactor": 1,
+      "theme": "light",
+      "fullPage": true,
+      "capturedAt": "2026-11-27T11:43:13.777Z",
+      "fixture": "Disposable fictional Aster Services / Northlight journey on local HTTPS and SQLite",
+      "actor": "sam.taylor",
+      "context": {
+        "accountState": [
+          2,
+          0,
+          1,
+          1
+        ],
+        "roles": [
+          [
+            "Staff Member"
+          ]
+        ],
+        "overrides": [
+          [
+            "Departments",
+            "edit"
+          ],
+          [
+            "Devices",
+            "edit"
+          ],
+          [
+            "IT Assets",
+            "edit"
+          ],
+          [
+            "Service Desk",
+            "edit"
+          ],
+          [
+            "Staff Members",
+            "edit"
+          ],
+          [
+            "Suppliers",
+            "edit"
+          ]
+        ],
+        "features": {
+          "devices": 1,
+          "ipam": 1,
+          "racks": 1,
+          "suppliers": 1,
+          "equipment_lifecycle": 1,
+          "it_assets": 1
+        }
+      },
+      "sha256": "f7297be91eef5a5ad59c66337abb235eba8fe56f6cfb547e4e8a87c94baf47b6",
+      "urlPath": "/inventory#devices",
+      "independentVisualAcceptance": "pending",
+      "ownerVisualAcceptance": "pending"
+    },
+    {
+      "file": "returned-device-preparation.png",
+      "allocation": "Equipment issue, return and write-off",
+      "states": [
+        "B4-C3-S04",
+        "B4-K2-S01"
+      ],
+      "caption": "The original laptop is checked working and its data wiped/reset before becoming Ready. Preparation changes readiness without adding another held unit or new Device.",
+      "alt": "Prepare Returned Equipment for AST-LAP-014 with working and data-preparation checks confirmed.",
+      "applicationRevision": "000818f42e854e4a1fee8692b9ffaaa52b5c788d",
+      "schema": 31,
+      "browser": "Chromium 156.0.8078.79",
+      "automation": "Playwright 1.62.1",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 2250
+      },
+      "deviceScaleFactor": 1,
+      "theme": "light",
+      "fullPage": true,
+      "capturedAt": "2026-11-27T11:43:17.273Z",
+      "fixture": "Disposable fictional Aster Services / Northlight journey on local HTTPS and SQLite",
+      "actor": "sam.taylor",
+      "context": {
+        "accountState": [
+          2,
+          0,
+          1,
+          1
+        ],
+        "roles": [
+          [
+            "Staff Member"
+          ]
+        ],
+        "overrides": [
+          [
+            "Departments",
+            "edit"
+          ],
+          [
+            "Devices",
+            "edit"
+          ],
+          [
+            "IT Assets",
+            "edit"
+          ],
+          [
+            "Service Desk",
+            "edit"
+          ],
+          [
+            "Staff Members",
+            "edit"
+          ],
+          [
+            "Suppliers",
+            "edit"
+          ]
+        ],
+        "features": {
+          "devices": 1,
+          "ipam": 1,
+          "racks": 1,
+          "suppliers": 1,
+          "equipment_lifecycle": 1,
+          "it_assets": 1
+        }
+      },
+      "sha256": "96a503aabf5366889de5057c59e6e8e2eee8b10b5d768cb3bd75633f5614b05a",
+      "urlPath": "/inventory#it-assets",
+      "independentVisualAcceptance": "pending",
+      "ownerVisualAcceptance": "pending"
+    },
+    {
+      "file": "direct-handover-checks.png",
+      "allocation": "Associated equipment and handover",
+      "states": [
+        "B4-E3-S01",
+        "B4-E3-S03",
+        "B4-E3-S06"
+      ],
+      "caption": "This separate direct-handover draft leaves Sarah as current holder until the complete save succeeds. Working and data-preparation checks are mandatory. It is cancelled, so no new handover is recorded.",
+      "alt": "Reassignment Details for AST-LAP-014 with current-holder protection and preparation checks.",
+      "applicationRevision": "000818f42e854e4a1fee8692b9ffaaa52b5c788d",
+      "schema": 31,
+      "browser": "Chromium 156.0.8078.79",
+      "automation": "Playwright 1.62.1",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1050
+      },
+      "deviceScaleFactor": 1,
+      "theme": "light",
+      "fullPage": true,
+      "capturedAt": "2026-11-27T11:43:20.929Z",
+      "fixture": "Disposable fictional Aster Services / Northlight journey on local HTTPS and SQLite",
+      "actor": "sam.taylor",
+      "context": {
+        "accountState": [
+          2,
+          0,
+          1,
+          1
+        ],
+        "roles": [
+          [
+            "Staff Member"
+          ]
+        ],
+        "overrides": [
+          [
+            "Departments",
+            "edit"
+          ],
+          [
+            "Devices",
+            "edit"
+          ],
+          [
+            "IT Assets",
+            "edit"
+          ],
+          [
+            "Service Desk",
+            "edit"
+          ],
+          [
+            "Staff Members",
+            "edit"
+          ],
+          [
+            "Suppliers",
+            "edit"
+          ]
+        ],
+        "features": {
+          "devices": 1,
+          "ipam": 1,
+          "racks": 1,
+          "suppliers": 1,
+          "equipment_lifecycle": 1,
+          "it_assets": 1
+        }
+      },
+      "sha256": "e6cbf87c9460756030e510a8d80cff9c60a6642210e6ddc70b3b2db2562c4fc4",
+      "urlPath": "/inventory#devices",
+      "independentVisualAcceptance": "pending",
+      "ownerVisualAcceptance": "pending"
+    },
+    {
+      "file": "department-directory.png",
+      "allocation": "Departments and membership",
+      "states": [
+        "B3-D1-S01"
+      ],
+      "caption": "Accounts, Sales and IT are independent flat Departments. Membership grants no security role, and Archive preserves current/history associations.",
+      "alt": "Department directory showing Accounts, Sales and IT with active status, current membership and management actions.",
+      "applicationRevision": "000818f42e854e4a1fee8692b9ffaaa52b5c788d",
+      "schema": 31,
+      "browser": "Chromium 156.0.8078.79",
+      "automation": "Playwright 1.62.1",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1050
+      },
+      "deviceScaleFactor": 1,
+      "theme": "light",
+      "fullPage": true,
+      "capturedAt": "2026-11-27T11:48:52.239Z",
+      "fixture": "Disposable fictional Aster Services / Northlight journey on local HTTPS and SQLite",
+      "actor": "sam.taylor",
+      "context": {
+        "accountState": [
+          2,
+          0,
+          1,
+          1
+        ],
+        "roles": [
+          [
+            "Staff Member"
+          ]
+        ],
+        "overrides": [
+          [
+            "Departments",
+            "edit"
+          ],
+          [
+            "Devices",
+            "edit"
+          ],
+          [
+            "IT Assets",
+            "edit"
+          ],
+          [
+            "Service Desk",
+            "edit"
+          ],
+          [
+            "Staff Members",
+            "edit"
+          ],
+          [
+            "Suppliers",
+            "edit"
+          ]
+        ],
+        "features": {
+          "devices": 1,
+          "ipam": 1,
+          "racks": 1,
+          "suppliers": 1,
+          "equipment_lifecycle": 1,
+          "it_assets": 1
+        }
+      },
+      "sha256": "51f22bdaecccd65b177d5a58787b29a98ef2a793bb054a1dee45e5c3e2241094",
+      "urlPath": "/inventory#departments",
+      "independentVisualAcceptance": "pending",
+      "ownerVisualAcceptance": "pending"
+    },
+    {
+      "file": "department-protected-management.png",
+      "allocation": "Departments and membership",
+      "states": [
+        "B3-D1-S02",
+        "B3-D1-S04"
+      ],
+      "caption": "Accounts has membership/equipment history. The management dialog explains retention; permanent deletion is unavailable where associations must remain. This draft is cancelled.",
+      "alt": "Manage Accounts Department with name, Archive and save/cancel actions and protected deletion policy.",
+      "applicationRevision": "000818f42e854e4a1fee8692b9ffaaa52b5c788d",
+      "schema": 31,
+      "browser": "Chromium 156.0.8078.79",
+      "automation": "Playwright 1.62.1",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1050
+      },
+      "deviceScaleFactor": 1,
+      "theme": "light",
+      "fullPage": true,
+      "capturedAt": "2026-11-27T11:48:52.535Z",
+      "fixture": "Disposable fictional Aster Services / Northlight journey on local HTTPS and SQLite",
+      "actor": "sam.taylor",
+      "context": {
+        "accountState": [
+          2,
+          0,
+          1,
+          1
+        ],
+        "roles": [
+          [
+            "Staff Member"
+          ]
+        ],
+        "overrides": [
+          [
+            "Departments",
+            "edit"
+          ],
+          [
+            "Devices",
+            "edit"
+          ],
+          [
+            "IT Assets",
+            "edit"
+          ],
+          [
+            "Service Desk",
+            "edit"
+          ],
+          [
+            "Staff Members",
+            "edit"
+          ],
+          [
+            "Suppliers",
+            "edit"
+          ]
+        ],
+        "features": {
+          "devices": 1,
+          "ipam": 1,
+          "racks": 1,
+          "suppliers": 1,
+          "equipment_lifecycle": 1,
+          "it_assets": 1
+        }
+      },
+      "sha256": "0bfb0c1e6b0d72e746eddcdf6a8df24f57947713f9e128c3cb57b12f12a3eca7",
+      "urlPath": "/inventory#departments",
+      "independentVisualAcceptance": "pending",
+      "ownerVisualAcceptance": "pending"
+    },
+    {
+      "file": "department-staff-members.png",
+      "allocation": "Departments and membership",
+      "states": [
+        "B3-D3-S02"
+      ],
+      "caption": "Authorised Staff Members Read exposes the Department\u2019s current people. Personally held equipment is not the Department\u2019s shared stock.",
+      "alt": "Accounts Department Staff Members tab listing Alex and Priya with current eligibility.",
+      "applicationRevision": "000818f42e854e4a1fee8692b9ffaaa52b5c788d",
+      "schema": 31,
+      "browser": "Chromium 156.0.8078.79",
+      "automation": "Playwright 1.62.1",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1050
+      },
+      "deviceScaleFactor": 1,
+      "theme": "light",
+      "fullPage": true,
+      "capturedAt": "2026-11-27T11:48:52.954Z",
+      "fixture": "Disposable fictional Aster Services / Northlight journey on local HTTPS and SQLite",
+      "actor": "sam.taylor",
+      "context": {
+        "accountState": [
+          2,
+          0,
+          1,
+          1
+        ],
+        "roles": [
+          [
+            "Staff Member"
+          ]
+        ],
+        "overrides": [
+          [
+            "Departments",
+            "edit"
+          ],
+          [
+            "Devices",
+            "edit"
+          ],
+          [
+            "IT Assets",
+            "edit"
+          ],
+          [
+            "Service Desk",
+            "edit"
+          ],
+          [
+            "Staff Members",
+            "edit"
+          ],
+          [
+            "Suppliers",
+            "edit"
+          ]
+        ],
+        "features": {
+          "devices": 1,
+          "ipam": 1,
+          "racks": 1,
+          "suppliers": 1,
+          "equipment_lifecycle": 1,
+          "it_assets": 1
+        }
+      },
+      "sha256": "0132711bfe942006efc6c397c58c216b1f8c229314360dc9c69be92b5d4e30fe",
+      "urlPath": "/inventory#departments",
+      "independentVisualAcceptance": "pending",
+      "ownerVisualAcceptance": "pending"
+    },
+    {
+      "file": "department-current-equipment.png",
+      "allocation": "Departments and membership",
+      "states": [
+        "B3-D3-S03"
+      ],
+      "caption": "Accounts shared equipment contains the original AST-PRN-01 assignment. A member\u2019s personally held laptop is not copied into this Department table.",
+      "alt": "Accounts Equipment tab showing shared AST-PRN-01 and its original assignment history.",
+      "applicationRevision": "000818f42e854e4a1fee8692b9ffaaa52b5c788d",
+      "schema": 31,
+      "browser": "Chromium 156.0.8078.79",
+      "automation": "Playwright 1.62.1",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1050
+      },
+      "deviceScaleFactor": 1,
+      "theme": "light",
+      "fullPage": true,
+      "capturedAt": "2026-11-27T11:48:53.229Z",
+      "fixture": "Disposable fictional Aster Services / Northlight journey on local HTTPS and SQLite",
+      "actor": "sam.taylor",
+      "context": {
+        "accountState": [
+          2,
+          0,
+          1,
+          1
+        ],
+        "roles": [
+          [
+            "Staff Member"
+          ]
+        ],
+        "overrides": [
+          [
+            "Departments",
+            "edit"
+          ],
+          [
+            "Devices",
+            "edit"
+          ],
+          [
+            "IT Assets",
+            "edit"
+          ],
+          [
+            "Service Desk",
+            "edit"
+          ],
+          [
+            "Staff Members",
+            "edit"
+          ],
+          [
+            "Suppliers",
+            "edit"
+          ]
+        ],
+        "features": {
+          "devices": 1,
+          "ipam": 1,
+          "racks": 1,
+          "suppliers": 1,
+          "equipment_lifecycle": 1,
+          "it_assets": 1
+        }
+      },
+      "sha256": "d15ac8d39bfffa390dea21436150276390e345647a6df085cdac5a213dbb3bd4",
+      "urlPath": "/inventory#departments",
+      "independentVisualAcceptance": "pending",
+      "ownerVisualAcceptance": "pending"
+    },
+    {
+      "file": "department-selection-protection.png",
+      "allocation": "Departments and membership",
+      "states": [
+        "B3-D4-S01",
+        "B3-D4-S02"
+      ],
+      "caption": "Manage Departments rejects an empty selection. This is a selection change within the same physical custody, not a return/reissue or transfer of the printer.",
+      "alt": "Manage Departments with no selected Department and Select at least one Department rejection.",
+      "applicationRevision": "000818f42e854e4a1fee8692b9ffaaa52b5c788d",
+      "schema": 31,
+      "browser": "Chromium 156.0.8078.79",
+      "automation": "Playwright 1.62.1",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1050
+      },
+      "deviceScaleFactor": 1,
+      "theme": "light",
+      "fullPage": true,
+      "capturedAt": "2026-11-27T11:48:54.822Z",
+      "fixture": "Disposable fictional Aster Services / Northlight journey on local HTTPS and SQLite",
+      "actor": "sam.taylor",
+      "context": {
+        "accountState": [
+          2,
+          0,
+          1,
+          1
+        ],
+        "roles": [
+          [
+            "Staff Member"
+          ]
+        ],
+        "overrides": [
+          [
+            "Departments",
+            "edit"
+          ],
+          [
+            "Devices",
+            "edit"
+          ],
+          [
+            "IT Assets",
+            "edit"
+          ],
+          [
+            "Service Desk",
+            "edit"
+          ],
+          [
+            "Staff Members",
+            "edit"
+          ],
+          [
+            "Suppliers",
+            "edit"
+          ]
+        ],
+        "features": {
+          "devices": 1,
+          "ipam": 1,
+          "racks": 1,
+          "suppliers": 1,
+          "equipment_lifecycle": 1,
+          "it_assets": 1
+        }
+      },
+      "sha256": "0ea760d8eb7245ff9b6cf6a574b384b9cc2952c5d276e77e3719110d52e2a125",
+      "urlPath": "/inventory#devices",
+      "independentVisualAcceptance": "pending",
+      "ownerVisualAcceptance": "pending"
+    },
+    {
+      "file": "priya-department-change.png",
+      "allocation": "Departments and membership",
+      "states": [
+        "B3-D2-S01"
+      ],
+      "caption": "Priya\u2019s unsaved Staff edit selects Sales instead of Accounts. Saving membership changes shared visibility but does not assign or move a Device or change her baseline security role.",
+      "alt": "Edit Priya Shah with Department Sales selected while the saved Accounts membership is unchanged until Save.",
+      "applicationRevision": "000818f42e854e4a1fee8692b9ffaaa52b5c788d",
+      "schema": 31,
+      "browser": "Chromium 156.0.8078.79",
+      "automation": "Playwright 1.62.1",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1050
+      },
+      "deviceScaleFactor": 1,
+      "theme": "light",
+      "fullPage": true,
+      "capturedAt": "2026-11-27T11:48:56.239Z",
+      "fixture": "Disposable fictional Aster Services / Northlight journey on local HTTPS and SQLite",
+      "actor": "sam.taylor",
+      "context": {
+        "accountState": [
+          2,
+          0,
+          1,
+          1
+        ],
+        "roles": [
+          [
+            "Staff Member"
+          ]
+        ],
+        "overrides": [
+          [
+            "Departments",
+            "edit"
+          ],
+          [
+            "Devices",
+            "edit"
+          ],
+          [
+            "IT Assets",
+            "edit"
+          ],
+          [
+            "Service Desk",
+            "edit"
+          ],
+          [
+            "Staff Members",
+            "edit"
+          ],
+          [
+            "Suppliers",
+            "edit"
+          ]
+        ],
+        "features": {
+          "devices": 1,
+          "ipam": 1,
+          "racks": 1,
+          "suppliers": 1,
+          "equipment_lifecycle": 1,
+          "it_assets": 1
+        }
+      },
+      "sha256": "34c4d1d0833efbd63869bdd27aeee6dee8e7941bf805ee227320969cf631bc3a",
+      "urlPath": "/inventory#staff",
+      "independentVisualAcceptance": "pending",
+      "ownerVisualAcceptance": "pending"
+    },
+    {
+      "file": "department-permission-boundary.png",
+      "allocation": "Departments and membership",
+      "states": [
+        "B3-D3-S01",
+        "B3-D3-S05"
+      ],
+      "caption": "Departments Read alone does not disclose Staff or equipment counts. Not Available means missing independent permission, rather than an empty Department.",
+      "alt": "Accounts Department Overview with Staff and equipment Not Available for the Departments-only reader.",
+      "applicationRevision": "000818f42e854e4a1fee8692b9ffaaa52b5c788d",
+      "schema": 31,
+      "browser": "Chromium 156.0.8078.79",
+      "automation": "Playwright 1.62.1",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1050
+      },
+      "deviceScaleFactor": 1,
+      "theme": "light",
+      "fullPage": true,
+      "capturedAt": "2026-11-27T11:49:00.864Z",
+      "fixture": "Disposable fictional Aster Services / Northlight journey on local HTTPS and SQLite",
+      "actor": "department.reader",
+      "context": {
+        "accountState": [
+          10,
+          0,
+          1,
+          1
+        ],
+        "roles": [
+          [
+            "Staff Member"
+          ]
+        ],
+        "overrides": [
+          [
+            "Departments",
+            "read"
+          ]
+        ],
+        "features": {
+          "devices": 1,
+          "ipam": 1,
+          "racks": 1,
+          "suppliers": 1,
+          "equipment_lifecycle": 1,
+          "it_assets": 1
+        }
+      },
+      "sha256": "4f9678d43f1cabbc1781752fa6e1b0bcd27dc9fc8bc43038251de74118f32b3a",
+      "urlPath": "/inventory#departments",
+      "independentVisualAcceptance": "pending",
+      "ownerVisualAcceptance": "pending"
+    },
+    {
+      "file": "quantity-issue-draft.png",
+      "allocation": "Equipment issue, return and write-off",
+      "states": [
+        "B4-C1-S01"
+      ],
+      "caption": "Eight of ten Ready units are proposed for Alex from a separate twenty-keyboard demonstration receipt. Nothing is issued until the confirmation succeeds.",
+      "alt": "Issue Equipment draft with eight keyboards, Alex Morgan and the original issue date.",
+      "applicationRevision": "000818f42e854e4a1fee8692b9ffaaa52b5c788d",
+      "schema": 31,
+      "browser": "Chromium 156.0.8078.79",
+      "automation": "Playwright 1.62.1",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1050
+      },
+      "deviceScaleFactor": 1,
+      "theme": "light",
+      "fullPage": true,
+      "capturedAt": "2026-11-27T11:50:00.389Z",
+      "fixture": "Disposable fictional Aster Services / Northlight journey on local HTTPS and SQLite",
+      "actor": "sam.taylor",
+      "context": {
+        "accountState": [
+          2,
+          0,
+          1,
+          1
+        ],
+        "roles": [
+          [
+            "Staff Member"
+          ]
+        ],
+        "overrides": [
+          [
+            "Departments",
+            "edit"
+          ],
+          [
+            "Devices",
+            "edit"
+          ],
+          [
+            "IT Assets",
+            "edit"
+          ],
+          [
+            "Service Desk",
+            "edit"
+          ],
+          [
+            "Staff Members",
+            "edit"
+          ],
+          [
+            "Suppliers",
+            "edit"
+          ]
+        ],
+        "features": {
+          "devices": 1,
+          "ipam": 1,
+          "racks": 1,
+          "suppliers": 1,
+          "equipment_lifecycle": 1,
+          "it_assets": 1
+        }
+      },
+      "sha256": "c9371490b808a45d2b94f7ca617617e574ec52ad1fcf600d1124d089afe7e066",
+      "urlPath": "/inventory#it-assets",
+      "independentVisualAcceptance": "pending",
+      "ownerVisualAcceptance": "pending"
+    },
+    {
+      "file": "quantity-issue-confirmation.png",
+      "allocation": "Equipment issue, return and write-off",
+      "states": [
+        "B4-C1-S03",
+        "B4-C1-S04"
+      ],
+      "caption": "Confirm Issue Equipment retains the exact equipment, quantity and recipient. Back To Edit returns to the draft; Cancel records no issue.",
+      "alt": "Confirm Issue Equipment summary for eight Correction Training Keyboards to Alex, with Back To Edit and Confirm Issue.",
+      "applicationRevision": "000818f42e854e4a1fee8692b9ffaaa52b5c788d",
+      "schema": 31,
+      "browser": "Chromium 156.0.8078.79",
+      "automation": "Playwright 1.62.1",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1050
+      },
+      "deviceScaleFactor": 1,
+      "theme": "light",
+      "fullPage": true,
+      "capturedAt": "2026-11-27T11:50:00.703Z",
+      "fixture": "Disposable fictional Aster Services / Northlight journey on local HTTPS and SQLite",
+      "actor": "sam.taylor",
+      "context": {
+        "accountState": [
+          2,
+          0,
+          1,
+          1
+        ],
+        "roles": [
+          [
+            "Staff Member"
+          ]
+        ],
+        "overrides": [
+          [
+            "Departments",
+            "edit"
+          ],
+          [
+            "Devices",
+            "edit"
+          ],
+          [
+            "IT Assets",
+            "edit"
+          ],
+          [
+            "Service Desk",
+            "edit"
+          ],
+          [
+            "Staff Members",
+            "edit"
+          ],
+          [
+            "Suppliers",
+            "edit"
+          ]
+        ],
+        "features": {
+          "devices": 1,
+          "ipam": 1,
+          "racks": 1,
+          "suppliers": 1,
+          "equipment_lifecycle": 1,
+          "it_assets": 1
+        }
+      },
+      "sha256": "6a25d52854cca692ff8e7bfa596558a01b33c97245747c149ec8542ff72109a6",
+      "urlPath": "/inventory#it-assets",
+      "independentVisualAcceptance": "pending",
+      "ownerVisualAcceptance": "pending"
+    },
+    {
+      "file": "partial-return-five-three-two.png",
+      "allocation": "Equipment issue, return and write-off",
+      "states": [
+        "B4-C2-S01",
+        "B4-C2-S02"
+      ],
+      "caption": "Return five against the original issue: three checked Ready and two damaged/written off. The other three stay outstanding with Alex. This is the unsaved disposition.",
+      "alt": "Return Equipment showing five returned, three Ready, two damaged, reason and outstanding remainder.",
+      "applicationRevision": "000818f42e854e4a1fee8692b9ffaaa52b5c788d",
+      "schema": 31,
+      "browser": "Chromium 156.0.8078.79",
+      "automation": "Playwright 1.62.1",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1262
+      },
+      "deviceScaleFactor": 1,
+      "theme": "light",
+      "fullPage": true,
+      "capturedAt": "2026-11-27T11:50:01.204Z",
+      "fixture": "Disposable fictional Aster Services / Northlight journey on local HTTPS and SQLite",
+      "actor": "sam.taylor",
+      "context": {
+        "accountState": [
+          2,
+          0,
+          1,
+          1
+        ],
+        "roles": [
+          [
+            "Staff Member"
+          ]
+        ],
+        "overrides": [
+          [
+            "Departments",
+            "edit"
+          ],
+          [
+            "Devices",
+            "edit"
+          ],
+          [
+            "IT Assets",
+            "edit"
+          ],
+          [
+            "Service Desk",
+            "edit"
+          ],
+          [
+            "Staff Members",
+            "edit"
+          ],
+          [
+            "Suppliers",
+            "edit"
+          ]
+        ],
+        "features": {
+          "devices": 1,
+          "ipam": 1,
+          "racks": 1,
+          "suppliers": 1,
+          "equipment_lifecycle": 1,
+          "it_assets": 1
+        }
+      },
+      "sha256": "b2cb3da6f1f801fe940568ab47bf6526a25f64e242b5890fa4e57491321ddab2",
+      "urlPath": "/inventory#it-assets",
+      "independentVisualAcceptance": "pending",
+      "ownerVisualAcceptance": "pending"
+    },
+    {
+      "file": "individual-issue-selection.png",
+      "allocation": "Equipment issue, return and write-off",
+      "states": [
+        "B4-C1-S02"
+      ],
+      "caption": "An individually tracked mouse is selected by its own identity. This draft is cancelled, so it does not add another issue to the connected journey.",
+      "alt": "Issue Equipment with the individual mouse serial/asset identity and Sarah as proposed recipient.",
+      "applicationRevision": "000818f42e854e4a1fee8692b9ffaaa52b5c788d",
+      "schema": 31,
+      "browser": "Chromium 156.0.8078.79",
+      "automation": "Playwright 1.62.1",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1050
+      },
+      "deviceScaleFactor": 1,
+      "theme": "light",
+      "fullPage": true,
+      "capturedAt": "2026-11-27T11:50:02.415Z",
+      "fixture": "Disposable fictional Aster Services / Northlight journey on local HTTPS and SQLite",
+      "actor": "sam.taylor",
+      "context": {
+        "accountState": [
+          2,
+          0,
+          1,
+          1
+        ],
+        "roles": [
+          [
+            "Staff Member"
+          ]
+        ],
+        "overrides": [
+          [
+            "Departments",
+            "edit"
+          ],
+          [
+            "Devices",
+            "edit"
+          ],
+          [
+            "IT Assets",
+            "edit"
+          ],
+          [
+            "Service Desk",
+            "edit"
+          ],
+          [
+            "Staff Members",
+            "edit"
+          ],
+          [
+            "Suppliers",
+            "edit"
+          ]
+        ],
+        "features": {
+          "devices": 1,
+          "ipam": 1,
+          "racks": 1,
+          "suppliers": 1,
+          "equipment_lifecycle": 1,
+          "it_assets": 1
+        }
+      },
+      "sha256": "6de1207d8defc5bc1223df29c1ddcf904c6e32899a6404496a34fc0b17b4e5f0",
+      "urlPath": "/inventory#it-assets",
+      "independentVisualAcceptance": "pending",
+      "ownerVisualAcceptance": "pending"
+    },
+    {
+      "file": "correction-twenty-to-ten.png",
+      "allocation": "Stock movement corrections",
+      "states": [
+        "B4-F1-S01",
+        "B4-F1-S02"
+      ],
+      "caption": "The original receipt remains twenty. This preview proposes effective quantity ten with a reason and before/after balances; Save Correction is still required.",
+      "alt": "Correct Movement showing original twenty, proposed ten, reason, impact balances and readiness to save.",
+      "applicationRevision": "000818f42e854e4a1fee8692b9ffaaa52b5c788d",
+      "schema": 31,
+      "browser": "Chromium 156.0.8078.79",
+      "automation": "Playwright 1.62.1",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 4613
+      },
+      "deviceScaleFactor": 1,
+      "theme": "light",
+      "fullPage": true,
+      "capturedAt": "2026-11-27T11:50:37.886Z",
+      "fixture": "Disposable fictional Aster Services / Northlight journey on local HTTPS and SQLite",
+      "actor": "sam.taylor",
+      "context": {
+        "accountState": [
+          2,
+          0,
+          1,
+          1
+        ],
+        "roles": [
+          [
+            "Staff Member"
+          ]
+        ],
+        "overrides": [
+          [
+            "Departments",
+            "edit"
+          ],
+          [
+            "Devices",
+            "edit"
+          ],
+          [
+            "IT Assets",
+            "edit"
+          ],
+          [
+            "Service Desk",
+            "edit"
+          ],
+          [
+            "Staff Members",
+            "edit"
+          ],
+          [
+            "Suppliers",
+            "edit"
+          ]
+        ],
+        "features": {
+          "devices": 1,
+          "ipam": 1,
+          "racks": 1,
+          "suppliers": 1,
+          "equipment_lifecycle": 1,
+          "it_assets": 1
+        }
+      },
+      "sha256": "c704c2267bff3a8351239f76e5c595c94600cac7e56674bda4892951752a342b",
+      "urlPath": "/inventory#it-assets",
+      "independentVisualAcceptance": "pending",
+      "ownerVisualAcceptance": "pending"
+    },
+    {
+      "file": "correction-dependent-history-blocked.png",
+      "allocation": "Stock movement corrections",
+      "states": [
+        "B4-F2-S02"
+      ],
+      "caption": "Five would contradict later issue/return history, so the correction is blocked. Do not invent a compensating receipt or delete the original movement.",
+      "alt": "Correct Movement blocked preview where the proposed quantity conflicts with later dependent stock history.",
+      "applicationRevision": "000818f42e854e4a1fee8692b9ffaaa52b5c788d",
+      "schema": 31,
+      "browser": "Chromium 156.0.8078.79",
+      "automation": "Playwright 1.62.1",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 4613
+      },
+      "deviceScaleFactor": 1,
+      "theme": "light",
+      "fullPage": true,
+      "capturedAt": "2026-11-27T11:50:38.535Z",
+      "fixture": "Disposable fictional Aster Services / Northlight journey on local HTTPS and SQLite",
+      "actor": "sam.taylor",
+      "context": {
+        "accountState": [
+          2,
+          0,
+          1,
+          1
+        ],
+        "roles": [
+          [
+            "Staff Member"
+          ]
+        ],
+        "overrides": [
+          [
+            "Departments",
+            "edit"
+          ],
+          [
+            "Devices",
+            "edit"
+          ],
+          [
+            "IT Assets",
+            "edit"
+          ],
+          [
+            "Service Desk",
+            "edit"
+          ],
+          [
+            "Staff Members",
+            "edit"
+          ],
+          [
+            "Suppliers",
+            "edit"
+          ]
+        ],
+        "features": {
+          "devices": 1,
+          "ipam": 1,
+          "racks": 1,
+          "suppliers": 1,
+          "equipment_lifecycle": 1,
+          "it_assets": 1
+        }
+      },
+      "sha256": "f0db380f4d9ac6e783d20f24017519c3a18c9b94877d4736173b9762125519d1",
+      "urlPath": "/inventory#it-assets",
+      "independentVisualAcceptance": "pending",
+      "ownerVisualAcceptance": "pending"
+    },
+    {
+      "file": "correction-stale-rejected.png",
+      "allocation": "Stock movement corrections",
+      "states": [
+        "B4-F2-S04"
+      ],
+      "caption": "A separately saved interim correction invalidates the earlier preview. The stale Save Correction is rejected and the user must review the refreshed history.",
+      "alt": "Correct Movement showing stock-history-changed rejection after a concurrent correction.",
+      "applicationRevision": "000818f42e854e4a1fee8692b9ffaaa52b5c788d",
+      "schema": 31,
+      "browser": "Chromium 156.0.8078.79",
+      "automation": "Playwright 1.62.1",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 4630
+      },
+      "deviceScaleFactor": 1,
+      "theme": "light",
+      "fullPage": true,
+      "capturedAt": "2026-11-27T11:50:40.139Z",
+      "fixture": "Disposable fictional Aster Services / Northlight journey on local HTTPS and SQLite",
+      "actor": "sam.taylor",
+      "context": {
+        "accountState": [
+          2,
+          0,
+          1,
+          1
+        ],
+        "roles": [
+          [
+            "Staff Member"
+          ]
+        ],
+        "overrides": [
+          [
+            "Departments",
+            "edit"
+          ],
+          [
+            "Devices",
+            "edit"
+          ],
+          [
+            "IT Assets",
+            "edit"
+          ],
+          [
+            "Service Desk",
+            "edit"
+          ],
+          [
+            "Staff Members",
+            "edit"
+          ],
+          [
+            "Suppliers",
+            "edit"
+          ]
+        ],
+        "features": {
+          "devices": 1,
+          "ipam": 1,
+          "racks": 1,
+          "suppliers": 1,
+          "equipment_lifecycle": 1,
+          "it_assets": 1
+        }
+      },
+      "sha256": "f15b3ba22bbd30c458cadcce12e78e170902e666fe9a6e13e9e5d86bb40809ad",
+      "urlPath": "/inventory#it-assets",
+      "independentVisualAcceptance": "pending",
+      "ownerVisualAcceptance": "pending"
+    },
+    {
+      "file": "correction-attributed-history.png",
+      "allocation": "Stock movement corrections",
+      "states": [
+        "B4-F1-S03",
+        "B4-C1-S05",
+        "B4-C2-S03"
+      ],
+      "caption": "The original twenty-unit receipt and both attributed corrections remain. Its effective quantity is ten; prior issue/return facts and physical Device identities are preserved.",
+      "alt": "Movement History with original receipt twenty, effective ten and appended reasoned correction records.",
+      "applicationRevision": "000818f42e854e4a1fee8692b9ffaaa52b5c788d",
+      "schema": 31,
+      "browser": "Chromium 156.0.8078.79",
+      "automation": "Playwright 1.62.1",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 3440
+      },
+      "deviceScaleFactor": 1,
+      "theme": "light",
+      "fullPage": true,
+      "capturedAt": "2026-11-27T11:50:43.623Z",
+      "fixture": "Disposable fictional Aster Services / Northlight journey on local HTTPS and SQLite",
+      "actor": "sam.taylor",
+      "context": {
+        "accountState": [
+          2,
+          0,
+          1,
+          1
+        ],
+        "roles": [
+          [
+            "Staff Member"
+          ]
+        ],
+        "overrides": [
+          [
+            "Departments",
+            "edit"
+          ],
+          [
+            "Devices",
+            "edit"
+          ],
+          [
+            "IT Assets",
+            "edit"
+          ],
+          [
+            "Service Desk",
+            "edit"
+          ],
+          [
+            "Staff Members",
+            "edit"
+          ],
+          [
+            "Suppliers",
+            "edit"
+          ]
+        ],
+        "features": {
+          "devices": 1,
+          "ipam": 1,
+          "racks": 1,
+          "suppliers": 1,
+          "equipment_lifecycle": 1,
+          "it_assets": 1
+        }
+      },
+      "sha256": "e64745a32a0e6a23deba3e8a3830a9b5cac90c7d188de4e2f0e1ac236201d5de",
+      "urlPath": "/inventory#it-assets",
+      "independentVisualAcceptance": "pending",
+      "ownerVisualAcceptance": "pending"
+    },
+    {
+      "file": "unused-device-unassigned.png",
+      "allocation": "Device assignments and custody",
+      "states": [
+        "B3-E2-S03"
+      ],
+      "caption": "AST-LAP-015 is an independent Device with no current holder or physical stock receipt. Initial allocation is available only while it remains eligible.",
+      "alt": "AST-LAP-015 Assigned To with Unassigned status and Assign Device action.",
+      "applicationRevision": "000818f42e854e4a1fee8692b9ffaaa52b5c788d",
+      "schema": 31,
+      "browser": "Chromium 156.0.8078.79",
+      "automation": "Playwright 1.62.1",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1050
+      },
+      "deviceScaleFactor": 1,
+      "theme": "light",
+      "fullPage": true,
+      "capturedAt": "2026-11-27T11:51:41.503Z",
+      "fixture": "Disposable fictional Aster Services / Northlight journey on local HTTPS and SQLite",
+      "actor": "sam.taylor",
+      "context": {
+        "accountState": [
+          2,
+          0,
+          1,
+          1
+        ],
+        "roles": [
+          [
+            "Staff Member"
+          ]
+        ],
+        "overrides": [
+          [
+            "Departments",
+            "edit"
+          ],
+          [
+            "Devices",
+            "edit"
+          ],
+          [
+            "IT Assets",
+            "edit"
+          ],
+          [
+            "Service Desk",
+            "edit"
+          ],
+          [
+            "Staff Members",
+            "edit"
+          ],
+          [
+            "Suppliers",
+            "edit"
+          ]
+        ],
+        "features": {
+          "devices": 1,
+          "ipam": 1,
+          "racks": 1,
+          "suppliers": 1,
+          "equipment_lifecycle": 1,
+          "it_assets": 1
+        }
+      },
+      "sha256": "8aaa5b8094c610556acb0d5d2187e41f1d2dc747f438bcabf9c7931bf36cf49a",
+      "urlPath": "/inventory#devices",
+      "independentVisualAcceptance": "pending",
+      "ownerVisualAcceptance": "pending"
+    },
+    {
+      "file": "initial-allocation-rejected.png",
+      "allocation": "Device assignments and custody",
+      "states": [
+        "B3-E1-S02",
+        "B3-E1-S03",
+        "B3-E1-S05"
+      ],
+      "caption": "A real edit reservation invalidates this initial allocation. The complete selection is rejected; Alex does not receive a partially saved assignment.",
+      "alt": "Assign Device recipient selection with a changed or reserved Device rejection.",
+      "applicationRevision": "000818f42e854e4a1fee8692b9ffaaa52b5c788d",
+      "schema": 31,
+      "browser": "Chromium 156.0.8078.79",
+      "automation": "Playwright 1.62.1",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1050
+      },
+      "deviceScaleFactor": 1,
+      "theme": "light",
+      "fullPage": true,
+      "capturedAt": "2026-11-27T11:51:43.162Z",
+      "fixture": "Disposable fictional Aster Services / Northlight journey on local HTTPS and SQLite",
+      "actor": "sam.taylor",
+      "context": {
+        "accountState": [
+          2,
+          0,
+          1,
+          1
+        ],
+        "roles": [
+          [
+            "Staff Member"
+          ]
+        ],
+        "overrides": [
+          [
+            "Departments",
+            "edit"
+          ],
+          [
+            "Devices",
+            "edit"
+          ],
+          [
+            "IT Assets",
+            "edit"
+          ],
+          [
+            "Service Desk",
+            "edit"
+          ],
+          [
+            "Staff Members",
+            "edit"
+          ],
+          [
+            "Suppliers",
+            "edit"
+          ]
+        ],
+        "features": {
+          "devices": 1,
+          "ipam": 1,
+          "racks": 1,
+          "suppliers": 1,
+          "equipment_lifecycle": 1,
+          "it_assets": 1
+        }
+      },
+      "sha256": "1728b9f0a7447af35b959a73ab485bd3231f3fb798f5b4f6e9b0c06db112fe15",
+      "urlPath": "/inventory#devices",
+      "independentVisualAcceptance": "pending",
+      "ownerVisualAcceptance": "pending"
+    },
+    {
+      "file": "direct-handover-saved.png",
+      "allocation": "Associated equipment and handover",
+      "states": [
+        "B4-E3-S04",
+        "B3-E1-S04",
+        "B3-E2-S04"
+      ],
+      "caption": "This separate AST-LAP-015 demonstration records a checked direct handover from Alex to Sarah on 27/11. It has no storeroom return and does not replace the AST-LAP-014 return/reissue journey.",
+      "alt": "AST-LAP-015 showing current Sarah custody and retained ended Alex assignment after confirmed preparation and reassignment.",
+      "applicationRevision": "000818f42e854e4a1fee8692b9ffaaa52b5c788d",
+      "schema": 31,
+      "browser": "Chromium 156.0.8078.79",
+      "automation": "Playwright 1.62.1",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1050
+      },
+      "deviceScaleFactor": 1,
+      "theme": "light",
+      "fullPage": true,
+      "capturedAt": "2026-11-27T11:51:45.311Z",
+      "fixture": "Disposable fictional Aster Services / Northlight journey on local HTTPS and SQLite",
+      "actor": "sam.taylor",
+      "context": {
+        "accountState": [
+          2,
+          0,
+          1,
+          1
+        ],
+        "roles": [
+          [
+            "Staff Member"
+          ]
+        ],
+        "overrides": [
+          [
+            "Departments",
+            "edit"
+          ],
+          [
+            "Devices",
+            "edit"
+          ],
+          [
+            "IT Assets",
+            "edit"
+          ],
+          [
+            "Service Desk",
+            "edit"
+          ],
+          [
+            "Staff Members",
+            "edit"
+          ],
+          [
+            "Suppliers",
+            "edit"
+          ]
+        ],
+        "features": {
+          "devices": 1,
+          "ipam": 1,
+          "racks": 1,
+          "suppliers": 1,
+          "equipment_lifecycle": 1,
+          "it_assets": 1
+        }
+      },
+      "sha256": "e084a7770c4e2d866917e0eb66760c3a38a7f80000a1ab6e515b4e5b0664df73",
+      "urlPath": "/inventory#devices",
+      "independentVisualAcceptance": "pending",
+      "ownerVisualAcceptance": "pending"
+    },
+    {
+      "file": "read-only-current-and-history.png",
+      "allocation": "Device assignments and custody",
+      "states": [
+        "B3-E2-S01",
+        "B3-E2-S04",
+        "B3-E2-S05"
+      ],
+      "caption": "Devices/IT Assets Read can review AST-LAP-014\u2019s current Sarah custody and earlier Alex history, without assignment, return, write-off or editing controls.",
+      "alt": "Read-only AST-LAP-014 Assigned To with current Sarah and ended Alex custody and dated movement history.",
+      "applicationRevision": "000818f42e854e4a1fee8692b9ffaaa52b5c788d",
+      "schema": 31,
+      "browser": "Chromium 156.0.8078.79",
+      "automation": "Playwright 1.62.1",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1050
+      },
+      "deviceScaleFactor": 1,
+      "theme": "light",
+      "fullPage": true,
+      "capturedAt": "2026-11-27T11:51:49.712Z",
+      "fixture": "Disposable fictional Aster Services / Northlight journey on local HTTPS and SQLite",
+      "actor": "equipment.reader",
+      "context": {
+        "accountState": [
+          4,
+          0,
+          1,
+          1
+        ],
+        "roles": [
+          [
+            "Staff Member"
+          ]
+        ],
+        "overrides": [
+          [
+            "Devices",
+            "read"
+          ],
+          [
+            "IT Assets",
+            "read"
+          ]
+        ],
+        "features": {
+          "devices": 1,
+          "ipam": 1,
+          "racks": 1,
+          "suppliers": 1,
+          "equipment_lifecycle": 1,
+          "it_assets": 1
+        }
+      },
+      "sha256": "cbf06cdf573a632be8c5e839906e21ae238412cd7baf9fbb9b9d6093372bcbe7",
+      "urlPath": "/inventory#devices",
+      "independentVisualAcceptance": "pending",
+      "ownerVisualAcceptance": "pending"
+    },
+    {
+      "file": "lifecycle-date-editor.png",
+      "allocation": "Lifecycle management",
+      "states": [
+        "B4-J1-S02",
+        "B4-J1-S04"
+      ],
+      "caption": "Purchase and evidenced Warranty Expiry are proposed alongside the retained first-service date. A manual replacement override is shown as an unsaved example, then cleared before saving the calculated-date journey.",
+      "alt": "AST-LAP-014 Hardware lifecycle editor with dates, original first service and administrator replacement override draft.",
+      "applicationRevision": "000818f42e854e4a1fee8692b9ffaaa52b5c788d",
+      "schema": 31,
+      "browser": "Chromium 156.0.8078.79",
+      "automation": "Playwright 1.62.1",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1050
+      },
+      "deviceScaleFactor": 1,
+      "theme": "light",
+      "fullPage": true,
+      "capturedAt": "2026-11-27T11:53:28.051Z",
+      "fixture": "Disposable fictional Aster Services / Northlight journey on local HTTPS and SQLite",
+      "actor": "training-admin",
+      "context": {
+        "accountState": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "roles": [
+          [
+            "Staff Member"
+          ]
+        ],
+        "overrides": [],
+        "features": {
+          "devices": 1,
+          "ipam": 1,
+          "racks": 1,
+          "suppliers": 1,
+          "equipment_lifecycle": 1,
+          "it_assets": 1
+        }
+      },
+      "sha256": "aa4c25e3caf97d3ac287b76ac921efe17ca1d30d99c7a80a3fe2fcb160ea6409",
+      "urlPath": "/inventory#devices",
+      "independentVisualAcceptance": "pending",
+      "ownerVisualAcceptance": "pending"
+    },
+    {
+      "file": "lifecycle-saved-first-service.png",
+      "allocation": "Lifecycle management",
+      "states": [
+        "B4-J1-S01",
+        "B4-J1-S05",
+        "B4-J4-S04",
+        "B4-J4-S06",
+        "B4-K2-S03"
+      ],
+      "caption": "Saved AST-LAP-014 dates retain first service 05/11/2026 after reissue. Purchase 03/11 and warranty 15/12 are evidenced fictional dates; the Laptop lifespan calculates replacement in 2029 rather than restarting at Sarah\u2019s issue.",
+      "alt": "AST-LAP-014 Hardware with retained original first-service date, saved purchase/warranty dates and calculated replacement.",
+      "applicationRevision": "000818f42e854e4a1fee8692b9ffaaa52b5c788d",
+      "schema": 31,
+      "browser": "Chromium 156.0.8078.79",
+      "automation": "Playwright 1.62.1",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1050
+      },
+      "deviceScaleFactor": 1,
+      "theme": "light",
+      "fullPage": true,
+      "capturedAt": "2026-11-27T11:53:29.612Z",
+      "fixture": "Disposable fictional Aster Services / Northlight journey on local HTTPS and SQLite",
+      "actor": "training-admin",
+      "context": {
+        "accountState": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "roles": [
+          [
+            "Staff Member"
+          ]
+        ],
+        "overrides": [],
+        "features": {
+          "devices": 1,
+          "ipam": 1,
+          "racks": 1,
+          "suppliers": 1,
+          "equipment_lifecycle": 1,
+          "it_assets": 1
+        }
+      },
+      "sha256": "cb594ff987ca0ca53a243f0bda88600a9066c6868fb9094a7905df72a48d99e9",
+      "urlPath": "/inventory#devices",
+      "independentVisualAcceptance": "pending",
+      "ownerVisualAcceptance": "pending"
+    },
+    {
+      "file": "lifecycle-settings.png",
+      "allocation": "Lifecycle management",
+      "states": [
+        "B4-J2-S01",
+        "B4-J2-S03"
+      ],
+      "caption": "Administrator settings keep independent default 90-day warning periods and per-type lifespans. A blank lifespan is different from a numeric year count. This view makes no settings change.",
+      "alt": "Lifecycle Settings showing warranty and replacement warning days, per-type lifespans, Save Settings and Cancel.",
+      "applicationRevision": "000818f42e854e4a1fee8692b9ffaaa52b5c788d",
+      "schema": 31,
+      "browser": "Chromium 156.0.8078.79",
+      "automation": "Playwright 1.62.1",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1737
+      },
+      "deviceScaleFactor": 1,
+      "theme": "light",
+      "fullPage": true,
+      "capturedAt": "2026-11-27T11:53:31.196Z",
+      "fixture": "Disposable fictional Aster Services / Northlight journey on local HTTPS and SQLite",
+      "actor": "training-admin",
+      "context": {
+        "accountState": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "roles": [
+          [
+            "Staff Member"
+          ]
+        ],
+        "overrides": [],
+        "features": {
+          "devices": 1,
+          "ipam": 1,
+          "racks": 1,
+          "suppliers": 1,
+          "equipment_lifecycle": 1,
+          "it_assets": 1
+        }
+      },
+      "sha256": "bfc71474e11cc0c465db38c1b07f247a35f88aea565aa3f1a8e317f6a8166a1f",
+      "urlPath": "/inventory#settings",
+      "independentVisualAcceptance": "pending",
+      "ownerVisualAcceptance": "pending"
+    },
+    {
+      "file": "first-service-future-rejected-while-off.png",
+      "allocation": "Lifecycle management",
+      "states": [
+        "B4-J4-S03",
+        "B4-J4-S05"
+      ],
+      "caption": "With Lifecycle disabled, the qualifying first issue still rejects a future first-service date. No custody or first-service save occurred from this rejected proposal.",
+      "alt": "AST-LAP-016 Reissue Existing Device showing future first-service date rejection with Lifecycle disabled.",
+      "applicationRevision": "000818f42e854e4a1fee8692b9ffaaa52b5c788d",
+      "schema": 31,
+      "browser": "Chromium 156.0.8078.79",
+      "automation": "Playwright 1.62.1",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1050
+      },
+      "deviceScaleFactor": 1,
+      "theme": "light",
+      "fullPage": true,
+      "capturedAt": "2026-11-27T11:53:34.089Z",
+      "fixture": "Disposable fictional Aster Services / Northlight journey on local HTTPS and SQLite",
+      "actor": "training-admin",
+      "context": {
+        "accountState": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "roles": [
+          [
+            "Staff Member"
+          ]
+        ],
+        "overrides": [],
+        "features": {
+          "devices": 1,
+          "ipam": 1,
+          "racks": 1,
+          "suppliers": 1,
+          "equipment_lifecycle": 0,
+          "it_assets": 1
+        }
+      },
+      "sha256": "f6845a9a350a404657465db55ea6dd6665d334c7366ea2590d50fc8845376a8a",
+      "urlPath": "/inventory#it-assets",
+      "independentVisualAcceptance": "pending",
+      "ownerVisualAcceptance": "pending"
+    },
+    {
+      "file": "first-service-visible-after-reenable.png",
+      "allocation": "Lifecycle management",
+      "states": [
+        "B4-J4-S03",
+        "B4-J4-S04"
+      ],
+      "caption": "After the valid first issue to Priya was saved while Lifecycle was off, re-enabling it reveals Original In Service Date 27/11/2026. This is the distinct AST-LAP-016 example.",
+      "alt": "AST-LAP-016 Hardware showing the first-service date recorded while Lifecycle was disabled.",
+      "applicationRevision": "000818f42e854e4a1fee8692b9ffaaa52b5c788d",
+      "schema": 31,
+      "browser": "Chromium 156.0.8078.79",
+      "automation": "Playwright 1.62.1",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1050
+      },
+      "deviceScaleFactor": 1,
+      "theme": "light",
+      "fullPage": true,
+      "capturedAt": "2026-11-27T11:53:35.619Z",
+      "fixture": "Disposable fictional Aster Services / Northlight journey on local HTTPS and SQLite",
+      "actor": "training-admin",
+      "context": {
+        "accountState": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "roles": [
+          [
+            "Staff Member"
+          ]
+        ],
+        "overrides": [],
+        "features": {
+          "devices": 1,
+          "ipam": 1,
+          "racks": 1,
+          "suppliers": 1,
+          "equipment_lifecycle": 1,
+          "it_assets": 1
+        }
+      },
+      "sha256": "8256501000e7991aad1234785b9c16ba865566cd736cc3612ddb12033e9f9545",
+      "urlPath": "/inventory#devices",
+      "independentVisualAcceptance": "pending",
+      "ownerVisualAcceptance": "pending"
+    },
+    {
+      "file": "unassigned-return-physical-protection.png",
+      "allocation": "Equipment issue, return and write-off",
+      "states": [
+        "B4-C3-S01",
+        "B4-C3-S02"
+      ],
+      "caption": "This existing unassigned Device has no recorded issue to close. Its fixed one-unit physical return would enter Awaiting Preparation; a future return is rejected and records nothing.",
+      "alt": "Fixed unassigned Device return with physical-return statement and Date Returned cannot be in the future rejection.",
+      "applicationRevision": "000818f42e854e4a1fee8692b9ffaaa52b5c788d",
+      "schema": 31,
+      "browser": "Chromium 156.0.8078.79",
+      "automation": "Playwright 1.62.1",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1255
+      },
+      "deviceScaleFactor": 1,
+      "theme": "light",
+      "fullPage": true,
+      "capturedAt": "2026-11-27T11:54:32.872Z",
+      "fixture": "Disposable fictional Aster Services / Northlight journey on local HTTPS and SQLite",
+      "actor": "sam.taylor",
+      "context": {
+        "accountState": [
+          2,
+          0,
+          1,
+          1
+        ],
+        "roles": [
+          [
+            "Staff Member"
+          ]
+        ],
+        "overrides": [
+          [
+            "Departments",
+            "edit"
+          ],
+          [
+            "Devices",
+            "edit"
+          ],
+          [
+            "IT Assets",
+            "edit"
+          ],
+          [
+            "Service Desk",
+            "edit"
+          ],
+          [
+            "Staff Members",
+            "edit"
+          ],
+          [
+            "Suppliers",
+            "edit"
+          ]
+        ],
+        "features": {
+          "devices": 1,
+          "ipam": 1,
+          "racks": 1,
+          "suppliers": 1,
+          "equipment_lifecycle": 1,
+          "it_assets": 1
+        }
+      },
+      "sha256": "1eaac45d5b371f96fb992e120ad83139a7b4dfe666c4b84632d53c02d4da970a",
+      "urlPath": "/inventory#devices",
+      "independentVisualAcceptance": "pending",
+      "ownerVisualAcceptance": "pending"
+    },
+    {
+      "file": "associate-entire-existing-issue.png",
+      "allocation": "Associated equipment and handover",
+      "states": [
+        "B4-E2-S01",
+        "B4-E2-S02"
+      ],
+      "caption": "Associate Already Issued Equipment links the entire two-keyboard outstanding issue for Sarah\u2019s AST-LAP-015 custody. It does not issue stock or deduct quantity again.",
+      "alt": "Add Equipment showing the original two-unit outstanding keyboard issue and No Stock Deduction.",
+      "applicationRevision": "000818f42e854e4a1fee8692b9ffaaa52b5c788d",
+      "schema": 31,
+      "browser": "Chromium 156.0.8078.79",
+      "automation": "Playwright 1.62.1",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1050
+      },
+      "deviceScaleFactor": 1,
+      "theme": "light",
+      "fullPage": true,
+      "capturedAt": "2026-11-27T11:54:34.387Z",
+      "fixture": "Disposable fictional Aster Services / Northlight journey on local HTTPS and SQLite",
+      "actor": "sam.taylor",
+      "context": {
+        "accountState": [
+          2,
+          0,
+          1,
+          1
+        ],
+        "roles": [
+          [
+            "Staff Member"
+          ]
+        ],
+        "overrides": [
+          [
+            "Departments",
+            "edit"
+          ],
+          [
+            "Devices",
+            "edit"
+          ],
+          [
+            "IT Assets",
+            "edit"
+          ],
+          [
+            "Service Desk",
+            "edit"
+          ],
+          [
+            "Staff Members",
+            "edit"
+          ],
+          [
+            "Suppliers",
+            "edit"
+          ]
+        ],
+        "features": {
+          "devices": 1,
+          "ipam": 1,
+          "racks": 1,
+          "suppliers": 1,
+          "equipment_lifecycle": 1,
+          "it_assets": 1
+        }
+      },
+      "sha256": "da6625eab2d149c0e19960569cd82c1a70004b0bf3ebcc4669a03bd229a40463",
+      "urlPath": "/inventory#devices",
+      "independentVisualAcceptance": "pending",
+      "ownerVisualAcceptance": "pending"
+    },
+    {
+      "file": "damaged-canonical-return.png",
+      "allocation": "Equipment issue, return and write-off",
+      "states": [
+        "B4-C4-S02",
+        "B4-K2-S05"
+      ],
+      "caption": "AST-LAP-014 physically returns damaged: returned one, Ready zero and damaged/write-off one. This actual return/disposition closes Sarah\u2019s custody and adds no usable held laptop; a genuinely missing Device would use the separate Write Off route.",
+      "alt": "AST-LAP-014 return from Sarah with one damaged/write-off unit, zero Ready and a factual fictional reason.",
+      "applicationRevision": "000818f42e854e4a1fee8692b9ffaaa52b5c788d",
+      "schema": 31,
+      "browser": "Chromium 156.0.8078.79",
+      "automation": "Playwright 1.62.1",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1246
+      },
+      "deviceScaleFactor": 1,
+      "theme": "light",
+      "fullPage": true,
+      "capturedAt": "2026-11-27T11:55:13.375Z",
+      "fixture": "Disposable fictional Aster Services / Northlight journey on local HTTPS and SQLite",
+      "actor": "training-admin",
+      "context": {
+        "accountState": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "roles": [
+          [
+            "Staff Member"
+          ]
+        ],
+        "overrides": [],
+        "features": {
+          "devices": 1,
+          "ipam": 1,
+          "racks": 1,
+          "suppliers": 1,
+          "equipment_lifecycle": 1,
+          "it_assets": 1
+        }
+      },
+      "sha256": "019b348331eb765022270b820dcc2f7ea3055a7a57d4bde41ff34efa48f0793a",
+      "urlPath": "/inventory#devices",
+      "independentVisualAcceptance": "pending",
+      "ownerVisualAcceptance": "pending"
+    },
+    {
+      "file": "final-canonical-custody-history.png",
+      "allocation": "Device assignments and custody",
+      "states": [
+        "B3-E2-S04",
+        "B4-C4-S05",
+        "B4-K2-S06"
+      ],
+      "caption": "The final Retired Device keeps its identity and Alex/Sarah history. Physical return, damaged write-off and operational Retired are distinct recorded facts; nothing was deleted or generally reactivated.",
+      "alt": "Retired AST-LAP-014 Assigned To with closed Alex and Sarah assignments and retained return/preparation/write-off movements.",
+      "applicationRevision": "000818f42e854e4a1fee8692b9ffaaa52b5c788d",
+      "schema": 31,
+      "browser": "Chromium 156.0.8078.79",
+      "automation": "Playwright 1.62.1",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1050
+      },
+      "deviceScaleFactor": 1,
+      "theme": "light",
+      "fullPage": true,
+      "capturedAt": "2026-11-27T11:55:14.997Z",
+      "fixture": "Disposable fictional Aster Services / Northlight journey on local HTTPS and SQLite",
+      "actor": "training-admin",
+      "context": {
+        "accountState": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "roles": [
+          [
+            "Staff Member"
+          ]
+        ],
+        "overrides": [],
+        "features": {
+          "devices": 1,
+          "ipam": 1,
+          "racks": 1,
+          "suppliers": 1,
+          "equipment_lifecycle": 1,
+          "it_assets": 1
+        }
+      },
+      "sha256": "7940bb99448b1f1ef0d4a608aba0a754f22ad03d4c6f2bfd7563505a7e4bf747",
+      "urlPath": "/inventory#devices",
+      "independentVisualAcceptance": "pending",
+      "ownerVisualAcceptance": "pending"
+    },
+    {
+      "file": "lifecycle-boundaries-and-retired.png",
+      "allocation": "Lifecycle management",
+      "states": [
+        "B4-J3-S01",
+        "B4-J3-S02",
+        "B4-J3-S03",
+        "B4-J3-S04",
+        "B4-K2-S04"
+      ],
+      "caption": "Named warranty examples distinguish yesterday, today, day 90 and day 91 under the 90-day rule. Include Retired with All Conditions retains AST-LAP-014 and its 15/12 warranty for historical review, while Retired Devices stay outside the four active counters.",
+      "alt": "Lifecycle Dashboard with warning counters, named date-boundary examples and Include Retired showing historical AST-LAP-014.",
+      "applicationRevision": "000818f42e854e4a1fee8692b9ffaaa52b5c788d",
+      "schema": 31,
+      "browser": "Chromium 156.0.8078.79",
+      "automation": "Playwright 1.62.1",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1270
+      },
+      "deviceScaleFactor": 1,
+      "theme": "light",
+      "fullPage": true,
+      "capturedAt": "2026-11-27T11:55:16.561Z",
+      "fixture": "Disposable fictional Aster Services / Northlight journey on local HTTPS and SQLite",
+      "actor": "training-admin",
+      "context": {
+        "accountState": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "roles": [
+          [
+            "Staff Member"
+          ]
+        ],
+        "overrides": [],
+        "features": {
+          "devices": 1,
+          "ipam": 1,
+          "racks": 1,
+          "suppliers": 1,
+          "equipment_lifecycle": 1,
+          "it_assets": 1
+        }
+      },
+      "sha256": "e57097b2b7eeca922b79520aefbccfeb1a967832823a5429394a11432c9114f4",
+      "urlPath": "/inventory#dashboard",
+      "independentVisualAcceptance": "pending",
+      "ownerVisualAcceptance": "pending"
+    }
+  ],
+  "reusedImages": [
+    {
+      "file": "docs/how-tos/features-and-instructions/v2.2-draft/screenshots/batch-7c/same-device-sarah-history.png",
+      "allocation": "Device registration and reissue",
+      "states": [
+        "B4-K2-S02",
+        "B3-E2-S01",
+        "B3-E2-S04"
+      ],
+      "caption": "Sarah now holds the same AST-LAP-014. Alex\u2019s ended custody and actual return remain in its history; preparation and reissue did not create a replacement identity or restart first service.",
+      "alt": "AST-LAP-014 Assigned To showing current Sarah Lewis and closed Alex Morgan physical custody.",
+      "applicationRevision": "000818f42e854e4a1fee8692b9ffaaa52b5c788d",
+      "schema": 31,
+      "browser": "Chromium 156.0.8078.79",
+      "automation": "Playwright 1.62.1",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1050
+      },
+      "deviceScaleFactor": 1,
+      "theme": "light",
+      "fullPage": true,
+      "capturedAt": "2026-11-27T11:43:20.568Z",
+      "fixture": "Disposable fictional Aster Services / Northlight journey on local HTTPS and SQLite",
+      "actor": "sam.taylor",
+      "context": {
+        "accountState": [
+          2,
+          0,
+          1,
+          1
+        ],
+        "roles": [
+          [
+            "Staff Member"
+          ]
+        ],
+        "overrides": [
+          [
+            "Departments",
+            "edit"
+          ],
+          [
+            "Devices",
+            "edit"
+          ],
+          [
+            "IT Assets",
+            "edit"
+          ],
+          [
+            "Service Desk",
+            "edit"
+          ],
+          [
+            "Staff Members",
+            "edit"
+          ],
+          [
+            "Suppliers",
+            "edit"
+          ]
+        ],
+        "features": {
+          "devices": 1,
+          "ipam": 1,
+          "racks": 1,
+          "suppliers": 1,
+          "equipment_lifecycle": 1,
+          "it_assets": 1
+        }
+      },
+      "sha256": "05ffb7179466d198f4701b86b7fc8cf2f7e56cb78e0bbab07db701716cf74959",
+      "urlPath": "/inventory#devices",
+      "independentVisualAcceptance": "pending",
+      "ownerVisualAcceptance": "pending",
+      "originalSourceStates": [
+        "B4-D3-S01",
+        "B4-D3-S03",
+        "B4-D3-S04"
+      ],
+      "sourcePack": "7C",
+      "id": "Shared-7C-same-device-sarah-history",
+      "provenanceLimitations": "Exact original Batch 7C bytes, actor, timestamp and caption; these shared uses do not relabel the image as a later outcome. Batch 7C independent/owner visual acceptance remains pending."
+    },
+    {
+      "file": "docs/how-tos/features-and-instructions/v2.2-draft/screenshots/batch-7c/returned-device-readiness-protection.png",
+      "allocation": "Stock intake and readiness",
+      "states": [
+        "B4-C3-S03"
+      ],
+      "caption": "The returned registered Device cannot be made Ready by increasing the stock item\u2019s receipt-readiness total. Its own Prepare Returned Equipment checks are required; this out-of-range draft is discarded.",
+      "alt": "Laptop stock readiness editor showing one unregistered Ready unit, one returned registered unit and the registered-Device readiness safeguard.",
+      "applicationRevision": "000818f42e854e4a1fee8692b9ffaaa52b5c788d",
+      "schema": 31,
+      "browser": "Chromium 156.0.8078.79",
+      "automation": "Playwright 1.62.1",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 2779
+      },
+      "deviceScaleFactor": 1,
+      "theme": "light",
+      "fullPage": true,
+      "capturedAt": "2026-11-27T11:43:15.251Z",
+      "fixture": "Disposable fictional Aster Services / Northlight journey on local HTTPS and SQLite",
+      "actor": "sam.taylor",
+      "context": {
+        "accountState": [
+          2,
+          0,
+          1,
+          1
+        ],
+        "roles": [
+          [
+            "Staff Member"
+          ]
+        ],
+        "overrides": [
+          [
+            "Departments",
+            "edit"
+          ],
+          [
+            "Devices",
+            "edit"
+          ],
+          [
+            "IT Assets",
+            "edit"
+          ],
+          [
+            "Service Desk",
+            "edit"
+          ],
+          [
+            "Staff Members",
+            "edit"
+          ],
+          [
+            "Suppliers",
+            "edit"
+          ]
+        ],
+        "features": {
+          "devices": 1,
+          "ipam": 1,
+          "racks": 1,
+          "suppliers": 1,
+          "equipment_lifecycle": 1,
+          "it_assets": 1
+        }
+      },
+      "sha256": "c750b5fdec8e5296fcca89da78cf22f3e817d34ae3eb98f148d22e45adbc8dec",
+      "urlPath": "/inventory#it-assets",
+      "independentVisualAcceptance": "pending",
+      "ownerVisualAcceptance": "pending",
+      "originalSourceStates": [
+        "B4-B3-S05",
+        "B4-D2-S04"
+      ],
+      "sourcePack": "7C",
+      "id": "Shared-7C-returned-device-readiness-protection",
+      "provenanceLimitations": "Exact original Batch 7C bytes, actor, timestamp and caption; these shared uses do not relabel the image as a later outcome. Batch 7C independent/owner visual acceptance remains pending."
+    },
+    {
+      "file": "docs/how-tos/features-and-instructions/v2.2-draft/screenshots/batch-7c/alex-saved-custody.png",
+      "allocation": "Device registration and reissue",
+      "states": [
+        "B3-E2-S01"
+      ],
+      "caption": "Saved current custody belongs to Alex. The original Device and assignment history remain the authoritative identity; registration was a different event.",
+      "alt": "AST-LAP-014 Assigned To showing Alex Morgan and its assignment history.",
+      "applicationRevision": "000818f42e854e4a1fee8692b9ffaaa52b5c788d",
+      "schema": 31,
+      "browser": "Chromium 156.0.8078.79",
+      "automation": "Playwright 1.62.1",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1050
+      },
+      "deviceScaleFactor": 1,
+      "theme": "light",
+      "fullPage": true,
+      "capturedAt": "2026-11-27T11:36:56.346Z",
+      "fixture": "Disposable fictional Aster Services / Northlight journey on local HTTPS and SQLite",
+      "actor": "sam.taylor",
+      "context": {
+        "accountState": [
+          2,
+          0,
+          1,
+          1
+        ],
+        "roles": [
+          [
+            "Staff Member"
+          ]
+        ],
+        "overrides": [
+          [
+            "Departments",
+            "edit"
+          ],
+          [
+            "Devices",
+            "edit"
+          ],
+          [
+            "IT Assets",
+            "edit"
+          ],
+          [
+            "Service Desk",
+            "edit"
+          ],
+          [
+            "Staff Members",
+            "edit"
+          ],
+          [
+            "Suppliers",
+            "edit"
+          ]
+        ],
+        "features": {
+          "devices": 1,
+          "ipam": 1,
+          "racks": 1,
+          "suppliers": 1,
+          "equipment_lifecycle": 1,
+          "it_assets": 1
+        }
+      },
+      "sha256": "451794a8a10f47bf930f6075dd0f65a32fea6097f3fe3532c625ce78c32cc0e3",
+      "urlPath": "/inventory#devices",
+      "independentVisualAcceptance": "pending",
+      "ownerVisualAcceptance": "pending",
+      "originalSourceStates": [
+        "B4-D2-S05",
+        "B4-K1-S05"
+      ],
+      "sourcePack": "7C",
+      "id": "Shared-7C-alex-saved-custody",
+      "provenanceLimitations": "Exact original Batch 7C bytes, actor, timestamp and caption; these shared uses do not relabel the image as a later outcome. Batch 7C independent/owner visual acceptance remains pending."
+    }
+  ],
+  "currentAcceptance": {
+    "asOf": "2026-11-27",
+    "status": "Owner accepted as draft documentation evidence; publication pending",
+    "ownerDecision": "https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7218601672",
+    "independentReview": "https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7218568474",
+    "newPaths": 36,
+    "distinctImageContents": 36,
+    "editorialLimits": "../../../../../development-guide/Milestone-01-7F-7G-Reconciliation.md#batch-8-editorial-findings-retained",
+    "originalCaptureRecords": "Preserved unchanged, including historical pending status; no new runtime verification",
+    "R3ITRetention": null
+  }
+}

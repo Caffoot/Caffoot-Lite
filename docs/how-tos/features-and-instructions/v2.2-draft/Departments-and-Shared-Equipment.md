@@ -1,6 +1,6 @@
 # Departments And Shared Equipment
 
-> **Draft v2.2 — Unreleased.** This guide includes the Stage 6.4 Shared Devices review changes. It is for development review, not production installation, upgrade or restore. Use the [published v2.1 guides](../README.md) for the released application. Native/manual and release acceptance remain separate.
+> **Draft v2.2 — Unreleased.** v2.1 remains the published release. These instructions describe v2.2.
 
 Departments group Staff Members and provide a holder for equipment used collectively, such as an Accounts printer. They are simple independent groups, without subdepartments or management trees. Membership is optional and grants no application permissions.
 
@@ -18,7 +18,21 @@ An eligible Desktop, Laptop or Printer can be shared by several Departments in o
 | Initially assign an eligible existing Device or manage its assigned Departments | Devices Edit, with Devices enabled. |
 | Issue or return IT Assets stock | IT Assets Edit, with IT Assets enabled. Canonical Device stock work also requires Devices Edit and Devices enabled. |
 
-Staff Members and Departments are core sections and do not depend on the IT Assets switch. Account administration remains separate in **Staff → Permissions**; Departments Edit does not grant it. See [Roles, Section Permissions And MFA](Roles-Section-Permissions-and-MFA.md) and [Optional Features](Optional-Features-and-Link-To-IPAM.md) if controls are unavailable.
+Staff Members and Departments are core sections and do not depend on the IT Assets switch. Individual account administration uses **Staff Members → Staff Details → Manage Permissions**, while reusable roles use **Staff → Permissions → Manage Roles**; Departments Edit does not grant it. See [Roles, Section Permissions And MFA](Roles-Section-Permissions-and-MFA.md) and [Optional Features](Optional-Features-and-Link-To-IPAM.md) if controls are unavailable.
+
+## Find Departments And Interpret Empty Panels
+
+Open **Staff → Departments** to see the list, including **Active** and **Archived** records. The current directory has no search or status-filter control; review the displayed names and status badges. A new installation can show **0 Departments**. Create one only when it represents a real group.
+
+Details can show **No Staff Members In This Department** or **No Recorded Activity Available**. Equipment has its own empty and restricted states. A missing permission or failed load is not evidence that there are no members or equipment. Check the selected tab, feature switches and relevant access, then reopen Details to retry.
+
+![Department directory showing Accounts, Sales and IT with active status, current membership and management actions.](screenshots/batch-7d/department-directory.png)
+
+*Accounts, Sales and IT are independent flat Departments. Membership grants no security role, and Archive preserves current/history associations.*
+
+![Accounts Department Overview with Staff and equipment Not Available for the Departments-only reader.](screenshots/batch-7d/department-permission-boundary.png)
+
+*Departments Read alone does not disclose Staff or equipment counts. Not Available means missing independent permission, rather than an empty Department.*
 
 ## Add A Department
 
@@ -51,7 +65,12 @@ An authorised Staff editor receives the limited Department names needed for this
 
 Moving someone from Accounts to Sales changes their Department-shared equipment visibility on the next My Equipment request. It does not move the Accounts printer, transfer their laptop or alter either Department's equipment assignments. Use the relevant equipment workflow to change an actual holder.
 
-## Department Details — Unreleased v2.2
+![Edit Priya Shah with Department Sales selected while the saved Accounts membership is unchanged until Save.](screenshots/batch-7d/priya-department-change.png)
+
+*Priya’s unsaved Staff edit selects Sales instead of Accounts. Saving membership changes shared visibility but does not assign or move a Device or change her baseline security role.*
+
+<a id="department-details--unreleased-v22"></a>
+## Department Details
 
 1. Open **Staff → Departments → View Details** beside the group.
 2. Start with **Overview** to confirm its name and status.
@@ -62,7 +81,7 @@ Moving someone from Accounts to Sales changes their Department-shared equipment 
 | Tab | What it shows |
 | --- | --- |
 | Overview | Name, status, independent structure and New Membership availability. Staff, Shared Devices and IT Assets summaries require independent access. **Not Available** is not a zero count. |
-| Staff Members | Current members, including inactive Staff whose membership is retained. Change membership through the Staff form. |
+| Staff Members | Current members, including Left Company Staff whose membership is retained. Change membership through the Staff form. |
 | Equipment | Devices shared with the Department and outstanding IT Assets issued to it, followed by recorded equipment history. A Device shared with Sales and Accounts appears in both Departments and opens the same inventory record. Its outstanding explicitly associated accessories appear with the same current Departments when you have Devices and IT Assets access. Personally assigned Staff equipment is excluded. |
 | History | Available recorded Department changes and authorised equipment activity, with dates and responsible accounts. Visibility depends on access to the existing history/equipment services. An empty state does not prove no changes have occurred. |
 
@@ -74,7 +93,15 @@ If a panel could not load, reopen Details to retry. Check your access before int
 
 ![Department Details Equipment tab showing a fictional Department's outstanding dock quantity and genuine issue and return history](../../../development-handovers/evidence/stock-circulation/screenshots/department-equipment-light-1440.png)
 
-*Approved Batch 3.8 application capture with fictional data. The dock remains assigned to the Department once; the history records its original issue and partial return. Personally assigned Staff equipment is excluded from this view.*
+*The dock remains assigned to the Department once; the history records its original issue and partial return. Personally assigned Staff equipment is excluded from this view.*
+
+![Accounts Department Staff Members tab listing Alex and Priya with current eligibility.](screenshots/batch-7d/department-staff-members.png)
+
+*Authorised Staff Members Read exposes the Department’s current people. Personally held equipment is not the Department’s shared stock.*
+
+![Accounts Equipment tab showing shared AST-PRN-01 and its original assignment history.](screenshots/batch-7d/department-current-equipment.png)
+
+*Accounts shared equipment contains the original AST-PRN-01 assignment. A member’s personally held laptop is not copied into this Department table.*
 
 ## Change Which Departments Share A Device
 
@@ -84,7 +111,11 @@ A saved addition gives eligible Finance members access to employee-visible Devic
 
 ![Sales Department Equipment listing the original Main Office Printer](../../../development-handovers/evidence/stage-6-4/screenshots/department-equipment-desktop-light.png)
 
-*The Sales row opens the same Main Office Printer that Accounts uses.* [Capture provenance](../../../development-handovers/evidence/stage-6-4/README.md)
+*The Sales row opens the same Main Office Printer that Accounts uses.*
+
+![Manage Departments with no selected Department and Select at least one Department rejection.](screenshots/batch-7d/department-selection-protection.png)
+
+*Manage Departments rejects an empty selection. This is a selection change within the same physical custody, not a return/reissue or transfer of the printer.*
 
 ## Assign Shared Equipment
 
@@ -135,6 +166,10 @@ Archive changes status after its own confirmation; it does not save a changed De
 
 Archiving keeps Staff membership, equipment holders, movement dates and history. It does not move members, return stock, close assignments, disable accounts or change permissions. Existing archived membership can remain during an unrelated Staff edit. Shared equipment stays linked to the archived Department; archive does not manufacture personal assignments for its members.
 
+![Manage Accounts Department with name, Archive and save/cancel actions and protected deletion policy.](screenshots/batch-7d/department-protected-management.png)
+
+*Accounts has membership/equipment history. The management dialog explains retention; permanent deletion is unavailable where associations must remain. This draft is cancelled.*
+
 ## Reactivate Or Delete An Unused Department
 
 To reactivate, open **Manage** or **Manage Department**, choose **Reactivate** and confirm. The Department becomes eligible for new memberships and assignments again. History stays intact; previous equipment is not automatically reissued.
@@ -162,7 +197,7 @@ Moving all current Staff out of a Department does not necessarily make it deleta
 
 The server rechecks permissions, status and associations at save time. A button in an older open screen does not guarantee the action is still eligible. Unsafe deletion or assignment is rejected without removing existing relationships.
 
-## Related Guides And Screenshot Provenance
+## Related Guides
 
 - [Staff Members](Staff-Members.md)
 - [Device Assignments And My Equipment](Device-Assignments-and-My-Equipment.md)
@@ -170,6 +205,6 @@ The server rechecks permissions, status and associations at save time. A button 
 - [Device Stock Registration And Reissue](Device-Stock-Registration-and-Reissue.md)
 - [Associated Equipment](Associated-Equipment.md)
 
-The reused image belongs to the [owner-approved Batch 3.8 application captures](https://github.com/Caffoot/Caffoot-Lite/pull/389#issuecomment-6908629303). The [Department Details evidence](../../../development-handovers/evidence/department-details/Report.md) preserves earlier application captures and their original limitations. Functional previews are not substituted as approved screenshots.
-
 [← Draft v2.2 Guides](README.md) · [Published v2.1 Guides](../README.md)
+
+[Connected equipment example — Supplier, stock, assignment and later use](Connected-Equipment-Journey.md).

@@ -1,0 +1,2211 @@
+{
+  "status": "All 38 images independently reviewed and owner visually accepted; final 38/40; no publication approval",
+  "images": [
+    {
+      "file": "devices-inventory.png",
+      "requirements": [
+        "B2-01-S01"
+      ],
+      "caption": "Recorded fictional Device Inventory; these are saved records, not discovery results.",
+      "alt": "Device Inventory listing eight training devices with type, location, primary IP, status and hardware columns.",
+      "applicationRevision": "fdc677920bfc52f48f641b3d6d1344c902a6a9b0",
+      "documentationStart": "e9ff3e18fb1eca21f91c856c93e8a8ba6b67963e",
+      "schema": 31,
+      "browser": "Chromium 155.0.8059.79",
+      "automation": "Playwright 1.56.1",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1050
+      },
+      "theme": "light",
+      "capturedAt": "2026-11-27T05:40:26.883Z",
+      "fixture": "Isolated fictional training inventory; documentation address ranges only",
+      "role": "training-editor",
+      "permissions": {
+        "read": {
+          "Devices": true,
+          "IPAM": true,
+          "Racks": true
+        },
+        "edit": {
+          "Devices": true,
+          "IPAM": true,
+          "Racks": true
+        }
+      },
+      "featureConfiguration": {
+        "devices": true,
+        "equipment_lifecycle": true,
+        "ipam": true,
+        "it_assets": true,
+        "racks": true,
+        "suppliers": true
+      },
+      "sha256": "f00e411f4a6dd00906e83f80091f3892bc87f564adb0fd5a1ae63fda968460f4",
+      "independentVisualAcceptance": "Reviewed; see acceptanceRecord and its stated verification limits",
+      "ownerVisualAcceptance": "Accepted, 27 November 2026",
+      "accountState": {
+        "active": true,
+        "mfaEnrolledAndConfirmed": true,
+        "authenticatedMfaSession": true
+      },
+      "roleContext": "Staff Member with explicit Devices/IPAM/Racks Edit overrides; other inventory sections have no grant",
+      "localVisualInspection": "Original local inspection retained below; all 38 subsequently independently reviewed and owner visually accepted, as recorded in acceptanceRecord.",
+      "acceptanceRecord": "https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7211815146",
+      "historicalLocalVisualInspection": "Opened locally for framing, legibility, fictional data, caption and alt review; independent and owner visual acceptance pending"
+    },
+    {
+      "file": "devices-combined-filters.png",
+      "requirements": [
+        "B2-01-S02"
+      ],
+      "caption": "Device Type and Location filters narrow the inventory to training-switch-01.",
+      "alt": "Device Inventory with Switch and Training Equipment Room filters selected and one matching switch.",
+      "applicationRevision": "fdc677920bfc52f48f641b3d6d1344c902a6a9b0",
+      "documentationStart": "e9ff3e18fb1eca21f91c856c93e8a8ba6b67963e",
+      "schema": 31,
+      "browser": "Chromium 155.0.8059.79",
+      "automation": "Playwright 1.56.1",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1050
+      },
+      "theme": "light",
+      "capturedAt": "2026-11-27T05:40:34.445Z",
+      "fixture": "Isolated fictional training inventory; documentation address ranges only",
+      "role": "training-editor",
+      "permissions": {
+        "read": {
+          "Devices": true,
+          "IPAM": true,
+          "Racks": true
+        },
+        "edit": {
+          "Devices": true,
+          "IPAM": true,
+          "Racks": true
+        }
+      },
+      "featureConfiguration": {
+        "devices": true,
+        "equipment_lifecycle": true,
+        "ipam": true,
+        "it_assets": true,
+        "racks": true,
+        "suppliers": true
+      },
+      "sha256": "a0165ca39cb334652eb67dfe30fbf7ddbc608eb964943ac653194ee9b5c7a7db",
+      "independentVisualAcceptance": "Reviewed; see acceptanceRecord and its stated verification limits",
+      "ownerVisualAcceptance": "Accepted, 27 November 2026",
+      "accountState": {
+        "active": true,
+        "mfaEnrolledAndConfirmed": true,
+        "authenticatedMfaSession": true
+      },
+      "roleContext": "Staff Member with explicit Devices/IPAM/Racks Edit overrides; other inventory sections have no grant",
+      "localVisualInspection": "Original local inspection retained below; all 38 subsequently independently reviewed and owner visually accepted, as recorded in acceptanceRecord.",
+      "acceptanceRecord": "https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7211815146",
+      "historicalLocalVisualInspection": "Opened locally for framing, legibility, fictional data, caption and alt review; independent and owner visual acceptance pending"
+    },
+    {
+      "file": "devices-details-overview.png",
+      "requirements": [
+        "B2-02-S01"
+      ],
+      "caption": "The saved training-switch-01 Overview, viewed with Devices Read.",
+      "alt": "Read-only Device Details Overview for training-switch-01, including its active status, managed primary IP and recorded location.",
+      "applicationRevision": "fdc677920bfc52f48f641b3d6d1344c902a6a9b0",
+      "documentationStart": "e9ff3e18fb1eca21f91c856c93e8a8ba6b67963e",
+      "schema": 31,
+      "browser": "Chromium 155.0.8059.79",
+      "automation": "Playwright 1.56.1",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1050
+      },
+      "theme": "light",
+      "capturedAt": "2026-11-27T05:40:44.553Z",
+      "fixture": "Isolated fictional training inventory; documentation address ranges only",
+      "role": "training-reader",
+      "permissions": {
+        "read": {
+          "Devices": true,
+          "IPAM": true,
+          "Racks": true
+        },
+        "edit": {
+          "Devices": false,
+          "IPAM": false,
+          "Racks": false
+        }
+      },
+      "featureConfiguration": {
+        "devices": true,
+        "equipment_lifecycle": true,
+        "ipam": true,
+        "it_assets": true,
+        "racks": true,
+        "suppliers": true
+      },
+      "sha256": "33476569f87246a93e6197043f094d581008b164d4f5bd1948c1707bff500b6a",
+      "independentVisualAcceptance": "Reviewed; see acceptanceRecord and its stated verification limits",
+      "ownerVisualAcceptance": "Accepted, 27 November 2026",
+      "accountState": {
+        "active": true,
+        "mfaEnrolledAndConfirmed": true,
+        "authenticatedMfaSession": true
+      },
+      "roleContext": "Staff Member with explicit Devices/IPAM/Racks Read overrides; other inventory sections have no grant",
+      "localVisualInspection": "Original local inspection retained below; all 38 subsequently independently reviewed and owner visually accepted, as recorded in acceptanceRecord.",
+      "acceptanceRecord": "https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7211815146",
+      "historicalLocalVisualInspection": "Opened locally for framing, legibility, fictional data, caption and alt review; independent and owner visual acceptance pending"
+    },
+    {
+      "file": "devices-details-hardware.png",
+      "requirements": [
+        "B2-02-S02"
+      ],
+      "caption": "Hardware records describe the fictional switch; they do not discover its specification.",
+      "alt": "Device Details Hardware tab for training-switch-01 with fictional manufacturer, model and serial number.",
+      "applicationRevision": "fdc677920bfc52f48f641b3d6d1344c902a6a9b0",
+      "documentationStart": "e9ff3e18fb1eca21f91c856c93e8a8ba6b67963e",
+      "schema": 31,
+      "browser": "Chromium 155.0.8059.79",
+      "automation": "Playwright 1.56.1",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1050
+      },
+      "theme": "light",
+      "capturedAt": "2026-11-27T05:40:52.236Z",
+      "fixture": "Isolated fictional training inventory; documentation address ranges only",
+      "role": "training-reader",
+      "permissions": {
+        "read": {
+          "Devices": true,
+          "IPAM": true,
+          "Racks": true
+        },
+        "edit": {
+          "Devices": false,
+          "IPAM": false,
+          "Racks": false
+        }
+      },
+      "featureConfiguration": {
+        "devices": true,
+        "equipment_lifecycle": true,
+        "ipam": true,
+        "it_assets": true,
+        "racks": true,
+        "suppliers": true
+      },
+      "sha256": "eaf4807fec6904c07b8a4108e93eae857acca98970c8f0963dca015070c6a185",
+      "independentVisualAcceptance": "Reviewed; see acceptanceRecord and its stated verification limits",
+      "ownerVisualAcceptance": "Accepted, 27 November 2026",
+      "accountState": {
+        "active": true,
+        "mfaEnrolledAndConfirmed": true,
+        "authenticatedMfaSession": true
+      },
+      "roleContext": "Staff Member with explicit Devices/IPAM/Racks Read overrides; other inventory sections have no grant",
+      "localVisualInspection": "Original local inspection retained below; all 38 subsequently independently reviewed and owner visually accepted, as recorded in acceptanceRecord.",
+      "acceptanceRecord": "https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7211815146",
+      "historicalLocalVisualInspection": "Opened locally for framing, legibility, fictional data, caption and alt review; independent and owner visual acceptance pending"
+    },
+    {
+      "file": "devices-details-network.png",
+      "requirements": [
+        "B2-02-S03",
+        "B2-07-S03",
+        "B2-18-S05"
+      ],
+      "caption": "After deliberate linking, training-basic-printer retains 192.0.2.30 and now shows its managed subnet. Compare the earlier chooser for the same saved address.",
+      "alt": "Read-only Network tab for training-basic-printer showing primary IP 192.0.2.30 and subnet 192.0.2.0/24 after explicit linking.",
+      "applicationRevision": "fdc677920bfc52f48f641b3d6d1344c902a6a9b0",
+      "documentationStart": "e9ff3e18fb1eca21f91c856c93e8a8ba6b67963e",
+      "schema": 31,
+      "browser": "Chromium 155.0.8059.79",
+      "automation": "Playwright 1.56.1",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1050
+      },
+      "theme": "light",
+      "capturedAt": "2026-11-27T05:52:40.572Z",
+      "fixture": "Isolated fictional training inventory; documentation address ranges only",
+      "role": "training-reader",
+      "permissions": {
+        "read": {
+          "Devices": true,
+          "IPAM": true,
+          "Racks": true
+        },
+        "edit": {
+          "Devices": false,
+          "IPAM": false,
+          "Racks": false
+        }
+      },
+      "featureConfiguration": {
+        "devices": true,
+        "equipment_lifecycle": true,
+        "ipam": true,
+        "it_assets": true,
+        "racks": true,
+        "suppliers": true
+      },
+      "sha256": "3c2834b88698265562807daa493a74c5f96c02e17a4ea758a50a243b73b2ed96",
+      "independentVisualAcceptance": "Reviewed; see acceptanceRecord and its stated verification limits",
+      "ownerVisualAcceptance": "Accepted, 27 November 2026",
+      "sharedUses": [
+        "IPAM: explicitly linked result",
+        "Optional Features: saved result for the existing-subnet chooser"
+      ],
+      "accountState": {
+        "active": true,
+        "mfaEnrolledAndConfirmed": true,
+        "authenticatedMfaSession": true
+      },
+      "roleContext": "Staff Member with explicit Devices/IPAM/Racks Read overrides; other inventory sections have no grant",
+      "localVisualInspection": "Original local inspection retained below; all 38 subsequently independently reviewed and owner visually accepted, as recorded in acceptanceRecord.",
+      "acceptanceRecord": "https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7211815146",
+      "historicalLocalVisualInspection": "Opened locally for framing, legibility, fictional data, caption and alt review; independent and owner visual acceptance pending"
+    },
+    {
+      "file": "devices-details-shelf-location.png",
+      "requirements": [
+        "B2-02-S04",
+        "B2-16-S01"
+      ],
+      "caption": "The saved printer derives its Front U3 location from Training Printer Shelf; it occupies no separate U footprint.",
+      "alt": "Read-only Location tab for training-printer-01 showing Tabletop / Shelf Mounted and Training Rack, Shelf U3, Front.",
+      "applicationRevision": "fdc677920bfc52f48f641b3d6d1344c902a6a9b0",
+      "documentationStart": "e9ff3e18fb1eca21f91c856c93e8a8ba6b67963e",
+      "schema": 31,
+      "browser": "Chromium 155.0.8059.79",
+      "automation": "Playwright 1.56.1",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1050
+      },
+      "theme": "light",
+      "capturedAt": "2026-11-27T05:41:07.421Z",
+      "fixture": "Isolated fictional training inventory; documentation address ranges only",
+      "role": "training-reader",
+      "permissions": {
+        "read": {
+          "Devices": true,
+          "IPAM": true,
+          "Racks": true
+        },
+        "edit": {
+          "Devices": false,
+          "IPAM": false,
+          "Racks": false
+        }
+      },
+      "featureConfiguration": {
+        "devices": true,
+        "equipment_lifecycle": true,
+        "ipam": true,
+        "it_assets": true,
+        "racks": true,
+        "suppliers": true
+      },
+      "sha256": "812aee81d84d8b752169520f0e97a31419608eb47506b2e90625bdb5179b66f4",
+      "independentVisualAcceptance": "Reviewed; see acceptanceRecord and its stated verification limits",
+      "ownerVisualAcceptance": "Accepted, 27 November 2026",
+      "sharedUses": [
+        "Racks: linked shelf Device location",
+        "Optional Features: genuinely matching feature-on shelf placement"
+      ],
+      "accountState": {
+        "active": true,
+        "mfaEnrolledAndConfirmed": true,
+        "authenticatedMfaSession": true
+      },
+      "roleContext": "Staff Member with explicit Devices/IPAM/Racks Read overrides; other inventory sections have no grant",
+      "localVisualInspection": "Original local inspection retained below; all 38 subsequently independently reviewed and owner visually accepted, as recorded in acceptanceRecord.",
+      "acceptanceRecord": "https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7211815146",
+      "historicalLocalVisualInspection": "Opened locally for framing, legibility, fictional data, caption and alt review; independent and owner visual acceptance pending"
+    },
+    {
+      "file": "devices-add-form.png",
+      "requirements": [
+        "B2-03-S01",
+        "B2-03-S03"
+      ],
+      "caption": "Add New Device: a fictional unsaved switch draft. Duplicate uses this editor with a new identity.",
+      "alt": "Add New Device General form with training-new-switch, physical Switch type, Training Equipment Room and Tabletop / Shelf Mounted selected.",
+      "applicationRevision": "fdc677920bfc52f48f641b3d6d1344c902a6a9b0",
+      "documentationStart": "e9ff3e18fb1eca21f91c856c93e8a8ba6b67963e",
+      "schema": 31,
+      "browser": "Chromium 155.0.8059.79",
+      "automation": "Playwright 1.56.1",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1050
+      },
+      "theme": "light",
+      "capturedAt": "2026-11-27T05:41:38.664Z",
+      "fixture": "Isolated fictional training inventory; documentation address ranges only",
+      "role": "training-editor",
+      "permissions": {
+        "read": {
+          "Devices": true,
+          "IPAM": true,
+          "Racks": true
+        },
+        "edit": {
+          "Devices": true,
+          "IPAM": true,
+          "Racks": true
+        }
+      },
+      "featureConfiguration": {
+        "devices": true,
+        "equipment_lifecycle": true,
+        "ipam": true,
+        "it_assets": true,
+        "racks": true,
+        "suppliers": true
+      },
+      "sha256": "8e7c7c03059295b340e88144a912f45c8c6ec06b29d15d9f72a158bd3741cdb1",
+      "independentVisualAcceptance": "Reviewed; see acceptanceRecord and its stated verification limits",
+      "ownerVisualAcceptance": "Accepted, 27 November 2026",
+      "accountState": {
+        "active": true,
+        "mfaEnrolledAndConfirmed": true,
+        "authenticatedMfaSession": true
+      },
+      "roleContext": "Staff Member with explicit Devices/IPAM/Racks Edit overrides; other inventory sections have no grant",
+      "localVisualInspection": "Original local inspection retained below; all 38 subsequently independently reviewed and owner visually accepted, as recorded in acceptanceRecord.",
+      "acceptanceRecord": "https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7211815146",
+      "historicalLocalVisualInspection": "Opened locally for framing, legibility, fictional data, caption and alt review; independent and owner visual acceptance pending"
+    },
+    {
+      "file": "devices-edit-form.png",
+      "requirements": [
+        "B2-03-S02"
+      ],
+      "caption": "Edit Device: review the existing switch identity and protected related fields before saving.",
+      "alt": "Edit Device General form for training-switch-01 showing its saved identity, Active status and the start of Mounting & Rack Configuration.",
+      "applicationRevision": "fdc677920bfc52f48f641b3d6d1344c902a6a9b0",
+      "documentationStart": "e9ff3e18fb1eca21f91c856c93e8a8ba6b67963e",
+      "schema": 31,
+      "browser": "Chromium 155.0.8059.79",
+      "automation": "Playwright 1.56.1",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1050
+      },
+      "theme": "light",
+      "capturedAt": "2026-11-27T05:41:46.629Z",
+      "fixture": "Isolated fictional training inventory; documentation address ranges only",
+      "role": "training-editor",
+      "permissions": {
+        "read": {
+          "Devices": true,
+          "IPAM": true,
+          "Racks": true
+        },
+        "edit": {
+          "Devices": true,
+          "IPAM": true,
+          "Racks": true
+        }
+      },
+      "featureConfiguration": {
+        "devices": true,
+        "equipment_lifecycle": true,
+        "ipam": true,
+        "it_assets": true,
+        "racks": true,
+        "suppliers": true
+      },
+      "sha256": "9d1c9ae60934dc4688e4f8a02a4d3db0f7a1dd333cf9707d1ef5e84f355d6b74",
+      "independentVisualAcceptance": "Reviewed; see acceptanceRecord and its stated verification limits",
+      "ownerVisualAcceptance": "Accepted, 27 November 2026",
+      "accountState": {
+        "active": true,
+        "mfaEnrolledAndConfirmed": true,
+        "authenticatedMfaSession": true
+      },
+      "roleContext": "Staff Member with explicit Devices/IPAM/Racks Edit overrides; other inventory sections have no grant",
+      "localVisualInspection": "Original local inspection retained below; all 38 subsequently independently reviewed and owner visually accepted, as recorded in acceptanceRecord.",
+      "acceptanceRecord": "https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7211815146",
+      "historicalLocalVisualInspection": "Opened locally for framing, legibility, fictional data, caption and alt review; independent and owner visual acceptance pending"
+    },
+    {
+      "file": "devices-independent-boot.png",
+      "requirements": [
+        "B2-04-S02"
+      ],
+      "caption": "Independent boot drives are recorded separately from ZFS pools; this does not configure disks.",
+      "alt": "Server Hardware editor with Record Boot Storage selected and two 240 GB SATA SSD boot drives in Mirror.",
+      "applicationRevision": "fdc677920bfc52f48f641b3d6d1344c902a6a9b0",
+      "documentationStart": "e9ff3e18fb1eca21f91c856c93e8a8ba6b67963e",
+      "schema": 31,
+      "browser": "Chromium 155.0.8059.79",
+      "automation": "Playwright 1.56.1",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1050
+      },
+      "theme": "light",
+      "capturedAt": "2026-11-27T05:41:55.228Z",
+      "fixture": "Isolated fictional training inventory; documentation address ranges only",
+      "role": "training-editor",
+      "permissions": {
+        "read": {
+          "Devices": true,
+          "IPAM": true,
+          "Racks": true
+        },
+        "edit": {
+          "Devices": true,
+          "IPAM": true,
+          "Racks": true
+        }
+      },
+      "featureConfiguration": {
+        "devices": true,
+        "equipment_lifecycle": true,
+        "ipam": true,
+        "it_assets": true,
+        "racks": true,
+        "suppliers": true
+      },
+      "sha256": "f34dc2fbc44e620cf9c5eaddee56a607373d755c73a8ba3e541cefd8fa7d57cf",
+      "independentVisualAcceptance": "Reviewed; see acceptanceRecord and its stated verification limits",
+      "ownerVisualAcceptance": "Accepted, 27 November 2026",
+      "accountState": {
+        "active": true,
+        "mfaEnrolledAndConfirmed": true,
+        "authenticatedMfaSession": true
+      },
+      "roleContext": "Staff Member with explicit Devices/IPAM/Racks Edit overrides; other inventory sections have no grant",
+      "localVisualInspection": "Original local inspection retained below; all 38 subsequently independently reviewed and owner visually accepted, as recorded in acceptanceRecord.",
+      "acceptanceRecord": "https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7211815146",
+      "historicalLocalVisualInspection": "Opened locally for framing, legibility, fictional data, caption and alt review; independent and owner visual acceptance pending"
+    },
+    {
+      "file": "devices-zfs-linked-boot.png",
+      "requirements": [
+        "B2-04-S01",
+        "B2-04-S03"
+      ],
+      "caption": "The saved Hardware details show linked boot and the recorded Mirror VDEV together; these records do not configure disks.",
+      "alt": "Hardware details for training-host-01 showing Existing ZFS Pool: Training Data and Mirror, two 960 GB SATA SSD drives.",
+      "applicationRevision": "fdc677920bfc52f48f641b3d6d1344c902a6a9b0",
+      "documentationStart": "e9ff3e18fb1eca21f91c856c93e8a8ba6b67963e",
+      "schema": 31,
+      "browser": "Chromium 155.0.8059.79",
+      "automation": "Playwright 1.56.1",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1050
+      },
+      "theme": "light",
+      "capturedAt": "2026-11-27T05:43:54.149Z",
+      "fixture": "Isolated fictional training inventory; documentation address ranges only",
+      "role": "training-editor",
+      "permissions": {
+        "read": {
+          "Devices": true,
+          "IPAM": true,
+          "Racks": true
+        },
+        "edit": {
+          "Devices": true,
+          "IPAM": true,
+          "Racks": true
+        }
+      },
+      "featureConfiguration": {
+        "devices": true,
+        "equipment_lifecycle": true,
+        "ipam": true,
+        "it_assets": true,
+        "racks": true,
+        "suppliers": true
+      },
+      "sha256": "d9297e486a4ac5facde461afa04414901b59fe9346af727ecd702e5dc360e910",
+      "independentVisualAcceptance": "Reviewed; see acceptanceRecord and its stated verification limits",
+      "ownerVisualAcceptance": "Accepted, 27 November 2026",
+      "accountState": {
+        "active": true,
+        "mfaEnrolledAndConfirmed": true,
+        "authenticatedMfaSession": true
+      },
+      "roleContext": "Staff Member with explicit Devices/IPAM/Racks Edit overrides; other inventory sections have no grant",
+      "localVisualInspection": "Original local inspection retained below; all 38 subsequently independently reviewed and owner visually accepted, as recorded in acceptanceRecord.",
+      "acceptanceRecord": "https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7211815146",
+      "historicalLocalVisualInspection": "Opened locally for framing, legibility, fictional data, caption and alt review; independent and owner visual acceptance pending"
+    },
+    {
+      "file": "devices-vm-resources.png",
+      "requirements": [
+        "B2-05-S01"
+      ],
+      "caption": "The VM inherits its host platform and has its own recorded virtual resource allocations.",
+      "alt": "VM General editor for training-app-vm-01 showing training-host-01, the explanation of platform inheritance, 4 vCPUs, 8 GB RAM, 100 GB virtual disk and 2 network adapters.",
+      "applicationRevision": "fdc677920bfc52f48f641b3d6d1344c902a6a9b0",
+      "documentationStart": "e9ff3e18fb1eca21f91c856c93e8a8ba6b67963e",
+      "schema": 31,
+      "browser": "Chromium 155.0.8059.79",
+      "automation": "Playwright 1.56.1",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1050
+      },
+      "theme": "light",
+      "capturedAt": "2026-11-27T05:43:02.286Z",
+      "fixture": "Isolated fictional training inventory; documentation address ranges only",
+      "role": "training-editor",
+      "permissions": {
+        "read": {
+          "Devices": true,
+          "IPAM": true,
+          "Racks": true
+        },
+        "edit": {
+          "Devices": true,
+          "IPAM": true,
+          "Racks": true
+        }
+      },
+      "featureConfiguration": {
+        "devices": true,
+        "equipment_lifecycle": true,
+        "ipam": true,
+        "it_assets": true,
+        "racks": true,
+        "suppliers": true
+      },
+      "sha256": "664747adbda0f6b278bb76c3cdef1fd737a1feeb141a5ad1e92ae93cf21efb24",
+      "independentVisualAcceptance": "Reviewed; see acceptanceRecord and its stated verification limits",
+      "ownerVisualAcceptance": "Accepted, 27 November 2026",
+      "accountState": {
+        "active": true,
+        "mfaEnrolledAndConfirmed": true,
+        "authenticatedMfaSession": true
+      },
+      "roleContext": "Staff Member with explicit Devices/IPAM/Racks Edit overrides; other inventory sections have no grant",
+      "localVisualInspection": "Original local inspection retained below; all 38 subsequently independently reviewed and owner visually accepted, as recorded in acceptanceRecord.",
+      "acceptanceRecord": "https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7211815146",
+      "historicalLocalVisualInspection": "Opened locally for framing, legibility, fictional data, caption and alt review; independent and owner visual acceptance pending"
+    },
+    {
+      "file": "devices-host-change-review.png",
+      "requirements": [
+        "B2-05-S02"
+      ],
+      "caption": "Review the explicit replacement host for the guest before confirming. This draft has not migrated or reassigned a real VM.",
+      "alt": "Resolve hosted virtual machines review for training-host-01 with training-app-vm-01 set to Reassign to training-host-02 and Keep Editing or Confirm Guest Decisions.",
+      "applicationRevision": "fdc677920bfc52f48f641b3d6d1344c902a6a9b0",
+      "documentationStart": "e9ff3e18fb1eca21f91c856c93e8a8ba6b67963e",
+      "schema": 31,
+      "browser": "Chromium 155.0.8059.79",
+      "automation": "Playwright 1.56.1",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1050
+      },
+      "theme": "light",
+      "capturedAt": "2026-11-27T05:43:00.543Z",
+      "fixture": "Isolated fictional training inventory; documentation address ranges only",
+      "role": "training-editor",
+      "permissions": {
+        "read": {
+          "Devices": true,
+          "IPAM": true,
+          "Racks": true
+        },
+        "edit": {
+          "Devices": true,
+          "IPAM": true,
+          "Racks": true
+        }
+      },
+      "featureConfiguration": {
+        "devices": true,
+        "equipment_lifecycle": true,
+        "ipam": true,
+        "it_assets": true,
+        "racks": true,
+        "suppliers": true
+      },
+      "sha256": "9d44d621ca1112a0619ca868c56dfedbd86dd0209660fd4a7a0712ca3e1a2f6e",
+      "independentVisualAcceptance": "Reviewed; see acceptanceRecord and its stated verification limits",
+      "ownerVisualAcceptance": "Accepted, 27 November 2026",
+      "accountState": {
+        "active": true,
+        "mfaEnrolledAndConfirmed": true,
+        "authenticatedMfaSession": true
+      },
+      "roleContext": "Staff Member with explicit Devices/IPAM/Racks Edit overrides; other inventory sections have no grant",
+      "localVisualInspection": "Original local inspection retained below; all 38 subsequently independently reviewed and owner visually accepted, as recorded in acceptanceRecord.",
+      "acceptanceRecord": "https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7211815146",
+      "historicalLocalVisualInspection": "Opened locally for framing, legibility, fictional data, caption and alt review; independent and owner visual acceptance pending"
+    },
+    {
+      "file": "devices-manage-types.png",
+      "requirements": [
+        "B2-06-S01"
+      ],
+      "caption": "Manage Device Types filtered to Server shows affected counts and shared catalogue actions. Unknown remains protected.",
+      "alt": "Manage Device Types filtered to Server, showing Server and Virtual Machine entries and the warning that in-use deletion changes affected Devices to Unknown.",
+      "applicationRevision": "fdc677920bfc52f48f641b3d6d1344c902a6a9b0",
+      "documentationStart": "e9ff3e18fb1eca21f91c856c93e8a8ba6b67963e",
+      "schema": 31,
+      "browser": "Chromium 155.0.8059.79",
+      "automation": "Playwright 1.56.1",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1050
+      },
+      "theme": "light",
+      "capturedAt": "2026-11-27T05:44:26.898Z",
+      "fixture": "Isolated fictional training inventory; documentation address ranges only",
+      "role": "training-editor",
+      "permissions": {
+        "read": {
+          "Devices": true,
+          "IPAM": true,
+          "Racks": true
+        },
+        "edit": {
+          "Devices": true,
+          "IPAM": true,
+          "Racks": true
+        }
+      },
+      "featureConfiguration": {
+        "devices": true,
+        "equipment_lifecycle": true,
+        "ipam": true,
+        "it_assets": true,
+        "racks": true,
+        "suppliers": true
+      },
+      "sha256": "914af1d0aa7e2c01e60e936d1aa0d57966a848934a4365e074c0726cd0b63eab",
+      "independentVisualAcceptance": "Reviewed; see acceptanceRecord and its stated verification limits",
+      "ownerVisualAcceptance": "Accepted, 27 November 2026",
+      "accountState": {
+        "active": true,
+        "mfaEnrolledAndConfirmed": true,
+        "authenticatedMfaSession": true
+      },
+      "roleContext": "Staff Member with explicit Devices/IPAM/Racks Edit overrides; other inventory sections have no grant",
+      "localVisualInspection": "Original local inspection retained below; all 38 subsequently independently reviewed and owner visually accepted, as recorded in acceptanceRecord.",
+      "acceptanceRecord": "https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7211815146",
+      "historicalLocalVisualInspection": "Opened locally for framing, legibility, fictional data, caption and alt review; independent and owner visual acceptance pending"
+    },
+    {
+      "file": "devices-blocked-removal.png",
+      "requirements": [
+        "B2-06-S02"
+      ],
+      "caption": "Training Tools cannot be removed while training-host-01 records it as installed.",
+      "alt": "Remove Software confirmation naming Training Tools and training-host-01, explaining that the in-use software cannot be removed until its assignments are updated.",
+      "applicationRevision": "fdc677920bfc52f48f641b3d6d1344c902a6a9b0",
+      "documentationStart": "e9ff3e18fb1eca21f91c856c93e8a8ba6b67963e",
+      "schema": 31,
+      "browser": "Chromium 155.0.8059.79",
+      "automation": "Playwright 1.56.1",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1050
+      },
+      "theme": "light",
+      "capturedAt": "2026-11-27T05:43:56.888Z",
+      "fixture": "Isolated fictional training inventory; documentation address ranges only",
+      "role": "training-editor",
+      "permissions": {
+        "read": {
+          "Devices": true,
+          "IPAM": true,
+          "Racks": true
+        },
+        "edit": {
+          "Devices": true,
+          "IPAM": true,
+          "Racks": true
+        }
+      },
+      "featureConfiguration": {
+        "devices": true,
+        "equipment_lifecycle": true,
+        "ipam": true,
+        "it_assets": true,
+        "racks": true,
+        "suppliers": true
+      },
+      "sha256": "d7d3622fb46e589524315cd591e2f5afc9f948a832d32037f5ef45b4d73de08b",
+      "independentVisualAcceptance": "Reviewed; see acceptanceRecord and its stated verification limits",
+      "ownerVisualAcceptance": "Accepted, 27 November 2026",
+      "accountState": {
+        "active": true,
+        "mfaEnrolledAndConfirmed": true,
+        "authenticatedMfaSession": true
+      },
+      "roleContext": "Staff Member with explicit Devices/IPAM/Racks Edit overrides; other inventory sections have no grant",
+      "localVisualInspection": "Original local inspection retained below; all 38 subsequently independently reviewed and owner visually accepted, as recorded in acceptanceRecord.",
+      "acceptanceRecord": "https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7211815146",
+      "historicalLocalVisualInspection": "Opened locally for framing, legibility, fictional data, caption and alt review; independent and owner visual acceptance pending"
+    },
+    {
+      "file": "devices-representative-catalogue.png",
+      "requirements": [
+        "B2-06-S03",
+        "B2-06-S04",
+        "B2-06-S05"
+      ],
+      "caption": "The manufacturer catalogue is a representative example; software and service catalogues have their own written procedures.",
+      "alt": "Manufacturers catalogue filtered to Training Instruments, marked Recorded, with View Devices and Edit actions.",
+      "applicationRevision": "fdc677920bfc52f48f641b3d6d1344c902a6a9b0",
+      "documentationStart": "e9ff3e18fb1eca21f91c856c93e8a8ba6b67963e",
+      "schema": 31,
+      "browser": "Chromium 155.0.8059.79",
+      "automation": "Playwright 1.56.1",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1050
+      },
+      "theme": "light",
+      "capturedAt": "2026-11-27T05:44:16.359Z",
+      "fixture": "Isolated fictional training inventory; documentation address ranges only",
+      "role": "training-editor",
+      "permissions": {
+        "read": {
+          "Devices": true,
+          "IPAM": true,
+          "Racks": true
+        },
+        "edit": {
+          "Devices": true,
+          "IPAM": true,
+          "Racks": true
+        }
+      },
+      "featureConfiguration": {
+        "devices": true,
+        "equipment_lifecycle": true,
+        "ipam": true,
+        "it_assets": true,
+        "racks": true,
+        "suppliers": true
+      },
+      "sha256": "915d88c2b75208ab5bf1fdaf12f2e64d78de57ace3d7b58f730b3c47ed726858",
+      "independentVisualAcceptance": "Reviewed; see acceptanceRecord and its stated verification limits",
+      "ownerVisualAcceptance": "Accepted, 27 November 2026",
+      "accountState": {
+        "active": true,
+        "mfaEnrolledAndConfirmed": true,
+        "authenticatedMfaSession": true
+      },
+      "roleContext": "Staff Member with explicit Devices/IPAM/Racks Edit overrides; other inventory sections have no grant",
+      "localVisualInspection": "Original local inspection retained below; all 38 subsequently independently reviewed and owner visually accepted, as recorded in acceptanceRecord.",
+      "acceptanceRecord": "https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7211815146",
+      "historicalLocalVisualInspection": "Opened locally for framing, legibility, fictional data, caption and alt review; independent and owner visual acceptance pending"
+    },
+    {
+      "file": "ipam-overview-basic-count.png",
+      "requirements": [
+        "B2-07-S01"
+      ],
+      "caption": "Basic IPs Outside Subnets is 1: the offsite printer is basic and outside the two managed networks. A count does not prove linking.",
+      "alt": "IPAM Overview showing two networks, 316 usable addresses and Basic IPs Outside Subnets count 1.",
+      "applicationRevision": "fdc677920bfc52f48f641b3d6d1344c902a6a9b0",
+      "documentationStart": "e9ff3e18fb1eca21f91c856c93e8a8ba6b67963e",
+      "schema": 31,
+      "browser": "Chromium 155.0.8059.79",
+      "automation": "Playwright 1.56.1",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1050
+      },
+      "theme": "light",
+      "capturedAt": "2026-11-27T05:44:52.319Z",
+      "fixture": "Isolated fictional training inventory; documentation address ranges only",
+      "role": "training-editor",
+      "permissions": {
+        "read": {
+          "Devices": true,
+          "IPAM": true,
+          "Racks": true
+        },
+        "edit": {
+          "Devices": true,
+          "IPAM": true,
+          "Racks": true
+        }
+      },
+      "featureConfiguration": {
+        "devices": true,
+        "equipment_lifecycle": true,
+        "ipam": true,
+        "it_assets": true,
+        "racks": true,
+        "suppliers": true
+      },
+      "sha256": "8ee9b3df42bf7793095173b8626ea66cec109c517b7bf2060646ea38e1bc6255",
+      "independentVisualAcceptance": "Reviewed; see acceptanceRecord and its stated verification limits",
+      "ownerVisualAcceptance": "Accepted, 27 November 2026",
+      "accountState": {
+        "active": true,
+        "mfaEnrolledAndConfirmed": true,
+        "authenticatedMfaSession": true
+      },
+      "roleContext": "Staff Member with explicit Devices/IPAM/Racks Edit overrides; other inventory sections have no grant",
+      "localVisualInspection": "Original local inspection retained below; all 38 subsequently independently reviewed and owner visually accepted, as recorded in acceptanceRecord.",
+      "acceptanceRecord": "https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7211815146",
+      "historicalLocalVisualInspection": "Opened locally for framing, legibility, fictional data, caption and alt review; independent and owner visual acceptance pending"
+    },
+    {
+      "file": "ipam-manage-subnets.png",
+      "requirements": [
+        "B2-08-S01"
+      ],
+      "caption": "Manage Subnets shows the two standalone fictional networks and their network actions.",
+      "alt": "Manage Subnets listing Lab Network 192.0.2.0/24 with VLAN 50 and Training Review Network 198.51.100.0/26 without a VLAN.",
+      "applicationRevision": "fdc677920bfc52f48f641b3d6d1344c902a6a9b0",
+      "documentationStart": "e9ff3e18fb1eca21f91c856c93e8a8ba6b67963e",
+      "schema": 31,
+      "browser": "Chromium 155.0.8059.79",
+      "automation": "Playwright 1.56.1",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1050
+      },
+      "theme": "light",
+      "capturedAt": "2026-11-27T05:45:03.161Z",
+      "fixture": "Isolated fictional training inventory; documentation address ranges only",
+      "role": "training-editor",
+      "permissions": {
+        "read": {
+          "Devices": true,
+          "IPAM": true,
+          "Racks": true
+        },
+        "edit": {
+          "Devices": true,
+          "IPAM": true,
+          "Racks": true
+        }
+      },
+      "featureConfiguration": {
+        "devices": true,
+        "equipment_lifecycle": true,
+        "ipam": true,
+        "it_assets": true,
+        "racks": true,
+        "suppliers": true
+      },
+      "sha256": "c78e0273a88d065f0db0ee9c22235dd983c715ad035db525570ecedb537db484",
+      "independentVisualAcceptance": "Reviewed; see acceptanceRecord and its stated verification limits",
+      "ownerVisualAcceptance": "Accepted, 27 November 2026",
+      "accountState": {
+        "active": true,
+        "mfaEnrolledAndConfirmed": true,
+        "authenticatedMfaSession": true
+      },
+      "roleContext": "Staff Member with explicit Devices/IPAM/Racks Edit overrides; other inventory sections have no grant",
+      "localVisualInspection": "Original local inspection retained below; all 38 subsequently independently reviewed and owner visually accepted, as recorded in acceptanceRecord.",
+      "acceptanceRecord": "https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7211815146",
+      "historicalLocalVisualInspection": "Opened locally for framing, legibility, fictional data, caption and alt review; independent and owner visual acceptance pending"
+    },
+    {
+      "file": "ipam-address-grid.png",
+      "requirements": [
+        "B2-08-S02",
+        "B2-08-S03"
+      ],
+      "caption": "The selected .1\u2013.32 range shows the protected Reserved gateway, an Assigned Device address and Available cards; other ranges have their own controls.",
+      "alt": "Lab Network IP Addresses showing the .1\u2013.32 range, protected gateway 192.0.2.1, Assigned training-switch-01 at .10 and Available address cards.",
+      "applicationRevision": "fdc677920bfc52f48f641b3d6d1344c902a6a9b0",
+      "documentationStart": "e9ff3e18fb1eca21f91c856c93e8a8ba6b67963e",
+      "schema": 31,
+      "browser": "Chromium 155.0.8059.79",
+      "automation": "Playwright 1.56.1",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1050
+      },
+      "theme": "light",
+      "capturedAt": "2026-11-27T05:45:03.907Z",
+      "fixture": "Isolated fictional training inventory; documentation address ranges only",
+      "role": "training-editor",
+      "permissions": {
+        "read": {
+          "Devices": true,
+          "IPAM": true,
+          "Racks": true
+        },
+        "edit": {
+          "Devices": true,
+          "IPAM": true,
+          "Racks": true
+        }
+      },
+      "featureConfiguration": {
+        "devices": true,
+        "equipment_lifecycle": true,
+        "ipam": true,
+        "it_assets": true,
+        "racks": true,
+        "suppliers": true
+      },
+      "sha256": "9ac295ca2c64e3d1f846d77d0ce84fcfefbf3efe5bc4420ce5cfe2ecef6be529",
+      "independentVisualAcceptance": "Reviewed; see acceptanceRecord and its stated verification limits",
+      "ownerVisualAcceptance": "Accepted, 27 November 2026",
+      "sharedUses": [
+        "Devices: saved managed-address result",
+        "Optional Features: address-state explanation"
+      ],
+      "accountState": {
+        "active": true,
+        "mfaEnrolledAndConfirmed": true,
+        "authenticatedMfaSession": true
+      },
+      "roleContext": "Staff Member with explicit Devices/IPAM/Racks Edit overrides; other inventory sections have no grant",
+      "localVisualInspection": "Original local inspection retained below; all 38 subsequently independently reviewed and owner visually accepted, as recorded in acceptanceRecord.",
+      "acceptanceRecord": "https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7211815146",
+      "historicalLocalVisualInspection": "Opened locally for framing, legibility, fictional data, caption and alt review; independent and owner visual acceptance pending"
+    },
+    {
+      "file": "ipam-configure-address.png",
+      "requirements": [
+        "B2-10-S01"
+      ],
+      "caption": "Configure an independent spare address; this Reserved draft has not been saved.",
+      "alt": "Configure IP 192.0.2.42 with Reserved selected, hostname training-spare-42 and address-specific IPAM Notes.",
+      "applicationRevision": "fdc677920bfc52f48f641b3d6d1344c902a6a9b0",
+      "documentationStart": "e9ff3e18fb1eca21f91c856c93e8a8ba6b67963e",
+      "schema": 31,
+      "browser": "Chromium 155.0.8059.79",
+      "automation": "Playwright 1.56.1",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1050
+      },
+      "theme": "light",
+      "capturedAt": "2026-11-27T05:46:07.953Z",
+      "fixture": "Isolated fictional training inventory; documentation address ranges only",
+      "role": "training-editor",
+      "permissions": {
+        "read": {
+          "Devices": true,
+          "IPAM": true,
+          "Racks": true
+        },
+        "edit": {
+          "Devices": true,
+          "IPAM": true,
+          "Racks": true
+        }
+      },
+      "featureConfiguration": {
+        "devices": true,
+        "equipment_lifecycle": true,
+        "ipam": true,
+        "it_assets": true,
+        "racks": true,
+        "suppliers": true
+      },
+      "sha256": "e7aa6b3bfcef0a1210258771aa792c04d9b8d11fa9d8b338c4ea1889b7d01096",
+      "independentVisualAcceptance": "Reviewed; see acceptanceRecord and its stated verification limits",
+      "ownerVisualAcceptance": "Accepted, 27 November 2026",
+      "accountState": {
+        "active": true,
+        "mfaEnrolledAndConfirmed": true,
+        "authenticatedMfaSession": true
+      },
+      "roleContext": "Staff Member with explicit Devices/IPAM/Racks Edit overrides; other inventory sections have no grant",
+      "localVisualInspection": "Original local inspection retained below; all 38 subsequently independently reviewed and owner visually accepted, as recorded in acceptanceRecord.",
+      "acceptanceRecord": "https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7211815146",
+      "historicalLocalVisualInspection": "Opened locally for framing, legibility, fictional data, caption and alt review; independent and owner visual acceptance pending"
+    },
+    {
+      "file": "ipam-protected-device-address.png",
+      "requirements": [
+        "B2-10-S02",
+        "B2-10-S04"
+      ],
+      "caption": "Device ownership protects Status and Hostname here; IPAM Notes remain separate editable address metadata.",
+      "alt": "Configure IP 192.0.2.10 showing training-switch-01 ownership, protected Status and Hostname, and editable IPAM Notes.",
+      "applicationRevision": "fdc677920bfc52f48f641b3d6d1344c902a6a9b0",
+      "documentationStart": "e9ff3e18fb1eca21f91c856c93e8a8ba6b67963e",
+      "schema": 31,
+      "browser": "Chromium 155.0.8059.79",
+      "automation": "Playwright 1.56.1",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1050
+      },
+      "theme": "light",
+      "capturedAt": "2026-11-27T05:46:08.955Z",
+      "fixture": "Isolated fictional training inventory; documentation address ranges only",
+      "role": "training-editor",
+      "permissions": {
+        "read": {
+          "Devices": true,
+          "IPAM": true,
+          "Racks": true
+        },
+        "edit": {
+          "Devices": true,
+          "IPAM": true,
+          "Racks": true
+        }
+      },
+      "featureConfiguration": {
+        "devices": true,
+        "equipment_lifecycle": true,
+        "ipam": true,
+        "it_assets": true,
+        "racks": true,
+        "suppliers": true
+      },
+      "sha256": "dc1604646d3685e5752701d364ea0403a28dfcc939b93359dae253df4f26b0f9",
+      "independentVisualAcceptance": "Reviewed; see acceptanceRecord and its stated verification limits",
+      "ownerVisualAcceptance": "Accepted, 27 November 2026",
+      "accountState": {
+        "active": true,
+        "mfaEnrolledAndConfirmed": true,
+        "authenticatedMfaSession": true
+      },
+      "roleContext": "Staff Member with explicit Devices/IPAM/Racks Edit overrides; other inventory sections have no grant",
+      "localVisualInspection": "Original local inspection retained below; all 38 subsequently independently reviewed and owner visually accepted, as recorded in acceptanceRecord.",
+      "acceptanceRecord": "https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7211815146",
+      "historicalLocalVisualInspection": "Opened locally for framing, legibility, fictional data, caption and alt review; independent and owner visual acceptance pending"
+    },
+    {
+      "file": "ipam-single-subnet-form.png",
+      "requirements": [
+        "B2-09-S01"
+      ],
+      "caption": "Add Single Subnet requires an explicit purpose and a usable LAN gateway. This is an unsaved draft.",
+      "alt": "Add Single Subnet form for Training Expansion, 203.0.113.64/26, LAN purpose, gateway 203.0.113.65 and optional VLAN and block fields.",
+      "applicationRevision": "fdc677920bfc52f48f641b3d6d1344c902a6a9b0",
+      "documentationStart": "e9ff3e18fb1eca21f91c856c93e8a8ba6b67963e",
+      "schema": 31,
+      "browser": "Chromium 155.0.8059.79",
+      "automation": "Playwright 1.56.1",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1050
+      },
+      "theme": "light",
+      "capturedAt": "2026-11-27T05:46:10.003Z",
+      "fixture": "Isolated fictional training inventory; documentation address ranges only",
+      "role": "training-editor",
+      "permissions": {
+        "read": {
+          "Devices": true,
+          "IPAM": true,
+          "Racks": true
+        },
+        "edit": {
+          "Devices": true,
+          "IPAM": true,
+          "Racks": true
+        }
+      },
+      "featureConfiguration": {
+        "devices": true,
+        "equipment_lifecycle": true,
+        "ipam": true,
+        "it_assets": true,
+        "racks": true,
+        "suppliers": true
+      },
+      "sha256": "89a71b521ece3b5ec0585049b46d3832d963b8a7341c5a2ecd9fd34aaa3cdac6",
+      "independentVisualAcceptance": "Reviewed; see acceptanceRecord and its stated verification limits",
+      "ownerVisualAcceptance": "Accepted, 27 November 2026",
+      "accountState": {
+        "active": true,
+        "mfaEnrolledAndConfirmed": true,
+        "authenticatedMfaSession": true
+      },
+      "roleContext": "Staff Member with explicit Devices/IPAM/Racks Edit overrides; other inventory sections have no grant",
+      "localVisualInspection": "Original local inspection retained below; all 38 subsequently independently reviewed and owner visually accepted, as recorded in acceptanceRecord.",
+      "acceptanceRecord": "https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7211815146",
+      "historicalLocalVisualInspection": "Opened locally for framing, legibility, fictional data, caption and alt review; independent and owner visual acceptance pending"
+    },
+    {
+      "file": "ipam-multiple-subnet-preview.png",
+      "requirements": [
+        "B2-09-S02"
+      ],
+      "caption": "Review both generated /26 networks and their individual purposes and gateways before saving; neither exists yet.",
+      "alt": "Multiple-subnet preview for Training A 203.0.113.128/26 and Training B 203.0.113.192/26, with LAN purposes and first-usable gateways.",
+      "applicationRevision": "fdc677920bfc52f48f641b3d6d1344c902a6a9b0",
+      "documentationStart": "e9ff3e18fb1eca21f91c856c93e8a8ba6b67963e",
+      "schema": 31,
+      "browser": "Chromium 155.0.8059.79",
+      "automation": "Playwright 1.56.1",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1050
+      },
+      "theme": "light",
+      "capturedAt": "2026-11-27T05:48:02.490Z",
+      "fixture": "Isolated fictional training inventory; documentation address ranges only",
+      "role": "training-editor",
+      "permissions": {
+        "read": {
+          "Devices": true,
+          "IPAM": true,
+          "Racks": true
+        },
+        "edit": {
+          "Devices": true,
+          "IPAM": true,
+          "Racks": true
+        }
+      },
+      "featureConfiguration": {
+        "devices": true,
+        "equipment_lifecycle": true,
+        "ipam": true,
+        "it_assets": true,
+        "racks": true,
+        "suppliers": true
+      },
+      "sha256": "61bb3d8866f62950335502b6069d104d9ce0cddbcd494432208b733256eadf47",
+      "independentVisualAcceptance": "Reviewed; see acceptanceRecord and its stated verification limits",
+      "ownerVisualAcceptance": "Accepted, 27 November 2026",
+      "accountState": {
+        "active": true,
+        "mfaEnrolledAndConfirmed": true,
+        "authenticatedMfaSession": true
+      },
+      "roleContext": "Staff Member with explicit Devices/IPAM/Racks Edit overrides; other inventory sections have no grant",
+      "localVisualInspection": "Original local inspection retained below; all 38 subsequently independently reviewed and owner visually accepted, as recorded in acceptanceRecord.",
+      "acceptanceRecord": "https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7211815146",
+      "historicalLocalVisualInspection": "Opened locally for framing, legibility, fictional data, caption and alt review; independent and owner visual acceptance pending"
+    },
+    {
+      "file": "ipam-bulk-reservation-preview.png",
+      "requirements": [
+        "B2-11-S01",
+        "B2-11-S03"
+      ],
+      "caption": "The reservation preview skips the gateway and Device-owned .10. No changes have been applied.",
+      "alt": "Bulk reservation preview for 192.0.2.1\u2013192.0.2.12 showing eligible changes, protected skipped addresses and Apply or Back to editing actions.",
+      "applicationRevision": "fdc677920bfc52f48f641b3d6d1344c902a6a9b0",
+      "documentationStart": "e9ff3e18fb1eca21f91c856c93e8a8ba6b67963e",
+      "schema": 31,
+      "browser": "Chromium 155.0.8059.79",
+      "automation": "Playwright 1.56.1",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1050
+      },
+      "theme": "light",
+      "capturedAt": "2026-11-27T05:47:11.548Z",
+      "fixture": "Isolated fictional training inventory; documentation address ranges only",
+      "role": "training-editor",
+      "permissions": {
+        "read": {
+          "Devices": true,
+          "IPAM": true,
+          "Racks": true
+        },
+        "edit": {
+          "Devices": true,
+          "IPAM": true,
+          "Racks": true
+        }
+      },
+      "featureConfiguration": {
+        "devices": true,
+        "equipment_lifecycle": true,
+        "ipam": true,
+        "it_assets": true,
+        "racks": true,
+        "suppliers": true
+      },
+      "sha256": "f471d407098e61dd4226931544615bc1f5d6f144f5254597661550e11b99a19d",
+      "independentVisualAcceptance": "Reviewed; see acceptanceRecord and its stated verification limits",
+      "ownerVisualAcceptance": "Accepted, 27 November 2026",
+      "accountState": {
+        "active": true,
+        "mfaEnrolledAndConfirmed": true,
+        "authenticatedMfaSession": true
+      },
+      "roleContext": "Staff Member with explicit Devices/IPAM/Racks Edit overrides; other inventory sections have no grant",
+      "localVisualInspection": "Original local inspection retained below; all 38 subsequently independently reviewed and owner visually accepted, as recorded in acceptanceRecord.",
+      "acceptanceRecord": "https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7211815146",
+      "historicalLocalVisualInspection": "Opened locally for framing, legibility, fictional data, caption and alt review; independent and owner visual acceptance pending"
+    },
+    {
+      "file": "ipam-bulk-release-preview.png",
+      "requirements": [
+        "B2-11-S02",
+        "B2-11-S03"
+      ],
+      "caption": "The release preview affects eligible unowned reservations, while Device primary IPs and the gateway remain protected.",
+      "alt": "Bulk release preview showing eligible changes and protected/skipped addresses before Apply.",
+      "applicationRevision": "fdc677920bfc52f48f641b3d6d1344c902a6a9b0",
+      "documentationStart": "e9ff3e18fb1eca21f91c856c93e8a8ba6b67963e",
+      "schema": 31,
+      "browser": "Chromium 155.0.8059.79",
+      "automation": "Playwright 1.56.1",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1050
+      },
+      "theme": "light",
+      "capturedAt": "2026-11-27T05:47:12.511Z",
+      "fixture": "Isolated fictional training inventory; documentation address ranges only",
+      "role": "training-editor",
+      "permissions": {
+        "read": {
+          "Devices": true,
+          "IPAM": true,
+          "Racks": true
+        },
+        "edit": {
+          "Devices": true,
+          "IPAM": true,
+          "Racks": true
+        }
+      },
+      "featureConfiguration": {
+        "devices": true,
+        "equipment_lifecycle": true,
+        "ipam": true,
+        "it_assets": true,
+        "racks": true,
+        "suppliers": true
+      },
+      "sha256": "b40e21be49169029e5939c805a28b7137e4646d3669e343c487ceb5b8b52d81e",
+      "independentVisualAcceptance": "Reviewed; see acceptanceRecord and its stated verification limits",
+      "ownerVisualAcceptance": "Accepted, 27 November 2026",
+      "accountState": {
+        "active": true,
+        "mfaEnrolledAndConfirmed": true,
+        "authenticatedMfaSession": true
+      },
+      "roleContext": "Staff Member with explicit Devices/IPAM/Racks Edit overrides; other inventory sections have no grant",
+      "localVisualInspection": "Original local inspection retained below; all 38 subsequently independently reviewed and owner visually accepted, as recorded in acceptanceRecord.",
+      "acceptanceRecord": "https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7211815146",
+      "historicalLocalVisualInspection": "Opened locally for framing, legibility, fictional data, caption and alt review; independent and owner visual acceptance pending"
+    },
+    {
+      "file": "ipam-protected-deletion.png",
+      "requirements": [
+        "B2-12-S01"
+      ],
+      "caption": "Independent reservations protect Lab Network from subnet deletion; investigate dependencies rather than bypassing them.",
+      "alt": "Subnet deletion blocked notice for Lab Network explaining that IPAM records still use it.",
+      "applicationRevision": "fdc677920bfc52f48f641b3d6d1344c902a6a9b0",
+      "documentationStart": "e9ff3e18fb1eca21f91c856c93e8a8ba6b67963e",
+      "schema": 31,
+      "browser": "Chromium 155.0.8059.79",
+      "automation": "Playwright 1.56.1",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1050
+      },
+      "theme": "light",
+      "capturedAt": "2026-11-27T05:47:13.460Z",
+      "fixture": "Isolated fictional training inventory; documentation address ranges only",
+      "role": "training-editor",
+      "permissions": {
+        "read": {
+          "Devices": true,
+          "IPAM": true,
+          "Racks": true
+        },
+        "edit": {
+          "Devices": true,
+          "IPAM": true,
+          "Racks": true
+        }
+      },
+      "featureConfiguration": {
+        "devices": true,
+        "equipment_lifecycle": true,
+        "ipam": true,
+        "it_assets": true,
+        "racks": true,
+        "suppliers": true
+      },
+      "sha256": "b237033a9b8a3bc313e14a7692f17f99f6f28dcdecc651946663b87a5ad0bfec",
+      "independentVisualAcceptance": "Reviewed; see acceptanceRecord and its stated verification limits",
+      "ownerVisualAcceptance": "Accepted, 27 November 2026",
+      "accountState": {
+        "active": true,
+        "mfaEnrolledAndConfirmed": true,
+        "authenticatedMfaSession": true
+      },
+      "roleContext": "Staff Member with explicit Devices/IPAM/Racks Edit overrides; other inventory sections have no grant",
+      "localVisualInspection": "Original local inspection retained below; all 38 subsequently independently reviewed and owner visually accepted, as recorded in acceptanceRecord.",
+      "acceptanceRecord": "https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7211815146",
+      "historicalLocalVisualInspection": "Opened locally for framing, legibility, fictional data, caption and alt review; independent and owner visual acceptance pending"
+    },
+    {
+      "file": "ipam-move-devices-review.png",
+      "requirements": [
+        "B2-12-S02"
+      ],
+      "caption": "Move Devices & Delete Subnet would clear the listed active primary IP; it does not physically relocate equipment. This is a review only.",
+      "alt": "Delete Subnet review listing training-review-switch at 198.51.100.10 and warning that its active primary IP will be cleared before deletion.",
+      "applicationRevision": "fdc677920bfc52f48f641b3d6d1344c902a6a9b0",
+      "documentationStart": "e9ff3e18fb1eca21f91c856c93e8a8ba6b67963e",
+      "schema": 31,
+      "browser": "Chromium 155.0.8059.79",
+      "automation": "Playwright 1.56.1",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1050
+      },
+      "theme": "light",
+      "capturedAt": "2026-11-27T05:47:14.441Z",
+      "fixture": "Isolated fictional training inventory; documentation address ranges only",
+      "role": "training-editor",
+      "permissions": {
+        "read": {
+          "Devices": true,
+          "IPAM": true,
+          "Racks": true
+        },
+        "edit": {
+          "Devices": true,
+          "IPAM": true,
+          "Racks": true
+        }
+      },
+      "featureConfiguration": {
+        "devices": true,
+        "equipment_lifecycle": true,
+        "ipam": true,
+        "it_assets": true,
+        "racks": true,
+        "suppliers": true
+      },
+      "sha256": "2e0ff8a19a8ddbbd58999b278eef61066622a05814632086f14f9724ab528ad2",
+      "independentVisualAcceptance": "Reviewed; see acceptanceRecord and its stated verification limits",
+      "ownerVisualAcceptance": "Accepted, 27 November 2026",
+      "accountState": {
+        "active": true,
+        "mfaEnrolledAndConfirmed": true,
+        "authenticatedMfaSession": true
+      },
+      "roleContext": "Staff Member with explicit Devices/IPAM/Racks Edit overrides; other inventory sections have no grant",
+      "localVisualInspection": "Original local inspection retained below; all 38 subsequently independently reviewed and owner visually accepted, as recorded in acceptanceRecord.",
+      "acceptanceRecord": "https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7211815146",
+      "historicalLocalVisualInspection": "Opened locally for framing, legibility, fictional data, caption and alt review; independent and owner visual acceptance pending"
+    },
+    {
+      "file": "racks-inventory.png",
+      "requirements": [
+        "B2-13-S01",
+        "B2-13-S04"
+      ],
+      "caption": "Rack Inventory records enclosure dimensions and occupied numbered U across both faces.",
+      "alt": "Read-only Rack Inventory with Training Rack, its 12U height, Training Equipment Room, 5 occupied numbered U, two mounted Devices and four accessories.",
+      "applicationRevision": "fdc677920bfc52f48f641b3d6d1344c902a6a9b0",
+      "documentationStart": "e9ff3e18fb1eca21f91c856c93e8a8ba6b67963e",
+      "schema": 31,
+      "browser": "Chromium 155.0.8059.79",
+      "automation": "Playwright 1.56.1",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1050
+      },
+      "theme": "light",
+      "capturedAt": "2026-11-27T05:48:05.023Z",
+      "fixture": "Isolated fictional training inventory; documentation address ranges only",
+      "role": "training-reader",
+      "permissions": {
+        "read": {
+          "Devices": true,
+          "IPAM": true,
+          "Racks": true
+        },
+        "edit": {
+          "Devices": false,
+          "IPAM": false,
+          "Racks": false
+        }
+      },
+      "featureConfiguration": {
+        "devices": true,
+        "equipment_lifecycle": true,
+        "ipam": true,
+        "it_assets": true,
+        "racks": true,
+        "suppliers": true
+      },
+      "sha256": "eeda04313b9f55ce39421e2a1361c91d68119c27b143f9759b695c1c0aa216ff",
+      "independentVisualAcceptance": "Reviewed; see acceptanceRecord and its stated verification limits",
+      "ownerVisualAcceptance": "Accepted, 27 November 2026",
+      "accountState": {
+        "active": true,
+        "mfaEnrolledAndConfirmed": true,
+        "authenticatedMfaSession": true
+      },
+      "roleContext": "Staff Member with explicit Devices/IPAM/Racks Read overrides; other inventory sections have no grant",
+      "localVisualInspection": "Original local inspection retained below; all 38 subsequently independently reviewed and owner visually accepted, as recorded in acceptanceRecord.",
+      "acceptanceRecord": "https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7211815146",
+      "historicalLocalVisualInspection": "Opened locally for framing, legibility, fictional data, caption and alt review; independent and owner visual acceptance pending"
+    },
+    {
+      "file": "racks-front-read-only.png",
+      "requirements": [
+        "B2-13-S02",
+        "B2-13-S04",
+        "B2-13-S05"
+      ],
+      "caption": "Front elevation under Racks Read: inspect saved equipment and capacity without placement or drag controls.",
+      "alt": "Read-only Training Rack Front elevation showing training-switch-01 at U10, training-host-01 at U7\u2013U8 and two shelves.",
+      "applicationRevision": "fdc677920bfc52f48f641b3d6d1344c902a6a9b0",
+      "documentationStart": "e9ff3e18fb1eca21f91c856c93e8a8ba6b67963e",
+      "schema": 31,
+      "browser": "Chromium 155.0.8059.79",
+      "automation": "Playwright 1.56.1",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1050
+      },
+      "theme": "light",
+      "capturedAt": "2026-11-27T05:48:41.441Z",
+      "fixture": "Isolated fictional training inventory; documentation address ranges only",
+      "role": "training-reader",
+      "permissions": {
+        "read": {
+          "Devices": true,
+          "IPAM": true,
+          "Racks": true
+        },
+        "edit": {
+          "Devices": false,
+          "IPAM": false,
+          "Racks": false
+        }
+      },
+      "featureConfiguration": {
+        "devices": true,
+        "equipment_lifecycle": true,
+        "ipam": true,
+        "it_assets": true,
+        "racks": true,
+        "suppliers": true
+      },
+      "sha256": "e622bcf3dc8bfb7cd8addd0ea36a02e93913835e0eb0af172e51beff1b92b23e",
+      "independentVisualAcceptance": "Reviewed; see acceptanceRecord and its stated verification limits",
+      "ownerVisualAcceptance": "Accepted, 27 November 2026",
+      "accountState": {
+        "active": true,
+        "mfaEnrolledAndConfirmed": true,
+        "authenticatedMfaSession": true
+      },
+      "roleContext": "Staff Member with explicit Devices/IPAM/Racks Read overrides; other inventory sections have no grant",
+      "localVisualInspection": "Original local inspection retained below; all 38 subsequently independently reviewed and owner visually accepted, as recorded in acceptanceRecord.",
+      "acceptanceRecord": "https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7211815146",
+      "historicalLocalVisualInspection": "Opened locally for framing, legibility, fictional data, caption and alt review; independent and owner visual acceptance pending"
+    },
+    {
+      "file": "racks-rear-read-only.png",
+      "requirements": [
+        "B2-13-S03",
+        "B2-13-S05",
+        "B2-15-S04"
+      ],
+      "caption": "Rear elevation shows the patch panel and Right 0U PDU; left and right are viewed from the selected face.",
+      "alt": "Read-only Training Rack Rear elevation with Training Patch Panel at U10 and Training Rear PDU on the right 0U rail.",
+      "applicationRevision": "fdc677920bfc52f48f641b3d6d1344c902a6a9b0",
+      "documentationStart": "e9ff3e18fb1eca21f91c856c93e8a8ba6b67963e",
+      "schema": 31,
+      "browser": "Chromium 155.0.8059.79",
+      "automation": "Playwright 1.56.1",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1050
+      },
+      "theme": "light",
+      "capturedAt": "2026-11-27T05:48:42.198Z",
+      "fixture": "Isolated fictional training inventory; documentation address ranges only",
+      "role": "training-reader",
+      "permissions": {
+        "read": {
+          "Devices": true,
+          "IPAM": true,
+          "Racks": true
+        },
+        "edit": {
+          "Devices": false,
+          "IPAM": false,
+          "Racks": false
+        }
+      },
+      "featureConfiguration": {
+        "devices": true,
+        "equipment_lifecycle": true,
+        "ipam": true,
+        "it_assets": true,
+        "racks": true,
+        "suppliers": true
+      },
+      "sha256": "3fecf8c498cc8fa13116de3347c7608a21af6c0e144459d352dd66db4d9f29c4",
+      "independentVisualAcceptance": "Reviewed; see acceptanceRecord and its stated verification limits",
+      "ownerVisualAcceptance": "Accepted, 27 November 2026",
+      "accountState": {
+        "active": true,
+        "mfaEnrolledAndConfirmed": true,
+        "authenticatedMfaSession": true
+      },
+      "roleContext": "Staff Member with explicit Devices/IPAM/Racks Read overrides; other inventory sections have no grant",
+      "localVisualInspection": "Original local inspection retained below; all 38 subsequently independently reviewed and owner visually accepted, as recorded in acceptanceRecord.",
+      "acceptanceRecord": "https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7211815146",
+      "historicalLocalVisualInspection": "Opened locally for framing, legibility, fictional data, caption and alt review; independent and owner visual acceptance pending"
+    },
+    {
+      "file": "racks-enclosure-form.png",
+      "requirements": [
+        "B2-14-S01",
+        "B2-14-S02"
+      ],
+      "caption": "The enclosure form records measured physical dimensions. This new Training Expansion Rack draft is unsaved.",
+      "alt": "Add Network Rack Enclosure form with Training Expansion Rack, Training Equipment Room, Wall-mounted cabinet, 12U and 600 mm width and depth.",
+      "applicationRevision": "fdc677920bfc52f48f641b3d6d1344c902a6a9b0",
+      "documentationStart": "e9ff3e18fb1eca21f91c856c93e8a8ba6b67963e",
+      "schema": 31,
+      "browser": "Chromium 155.0.8059.79",
+      "automation": "Playwright 1.56.1",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1050
+      },
+      "theme": "light",
+      "capturedAt": "2026-11-27T05:49:12.528Z",
+      "fixture": "Isolated fictional training inventory; documentation address ranges only",
+      "role": "training-editor",
+      "permissions": {
+        "read": {
+          "Devices": true,
+          "IPAM": true,
+          "Racks": true
+        },
+        "edit": {
+          "Devices": true,
+          "IPAM": true,
+          "Racks": true
+        }
+      },
+      "featureConfiguration": {
+        "devices": true,
+        "equipment_lifecycle": true,
+        "ipam": true,
+        "it_assets": true,
+        "racks": true,
+        "suppliers": true
+      },
+      "sha256": "cea7b5ba52445b83bf89aec960020ed296b2c799c57e67e7d692631ab95a34c3",
+      "independentVisualAcceptance": "Reviewed; see acceptanceRecord and its stated verification limits",
+      "ownerVisualAcceptance": "Accepted, 27 November 2026",
+      "accountState": {
+        "active": true,
+        "mfaEnrolledAndConfirmed": true,
+        "authenticatedMfaSession": true
+      },
+      "roleContext": "Staff Member with explicit Devices/IPAM/Racks Edit overrides; other inventory sections have no grant",
+      "localVisualInspection": "Original local inspection retained below; all 38 subsequently independently reviewed and owner visually accepted, as recorded in acceptanceRecord.",
+      "acceptanceRecord": "https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7211815146",
+      "historicalLocalVisualInspection": "Opened locally for framing, legibility, fictional data, caption and alt review; independent and owner visual acceptance pending"
+    },
+    {
+      "file": "racks-specification-correction.png",
+      "requirements": [
+        "B2-14-S03"
+      ],
+      "caption": "Review a proposed width correction from 600 to 650 mm. Mounted equipment will not move; this correction has not been confirmed.",
+      "alt": "Confirm Rack Specification Correction dialog warning that mounted equipment will not be moved, above the Training Rack correction draft.",
+      "applicationRevision": "fdc677920bfc52f48f641b3d6d1344c902a6a9b0",
+      "documentationStart": "e9ff3e18fb1eca21f91c856c93e8a8ba6b67963e",
+      "schema": 31,
+      "browser": "Chromium 155.0.8059.79",
+      "automation": "Playwright 1.56.1",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1050
+      },
+      "theme": "light",
+      "capturedAt": "2026-11-27T05:49:13.706Z",
+      "fixture": "Isolated fictional training inventory; documentation address ranges only",
+      "role": "training-editor",
+      "permissions": {
+        "read": {
+          "Devices": true,
+          "IPAM": true,
+          "Racks": true
+        },
+        "edit": {
+          "Devices": true,
+          "IPAM": true,
+          "Racks": true
+        }
+      },
+      "featureConfiguration": {
+        "devices": true,
+        "equipment_lifecycle": true,
+        "ipam": true,
+        "it_assets": true,
+        "racks": true,
+        "suppliers": true
+      },
+      "sha256": "67956bf9408c39a72d45459952b7349aaa46232ec9a7088b1beeb9272236336d",
+      "independentVisualAcceptance": "Reviewed; see acceptanceRecord and its stated verification limits",
+      "ownerVisualAcceptance": "Accepted, 27 November 2026",
+      "accountState": {
+        "active": true,
+        "mfaEnrolledAndConfirmed": true,
+        "authenticatedMfaSession": true
+      },
+      "roleContext": "Staff Member with explicit Devices/IPAM/Racks Edit overrides; other inventory sections have no grant",
+      "localVisualInspection": "Original local inspection retained below; all 38 subsequently independently reviewed and owner visually accepted, as recorded in acceptanceRecord.",
+      "acceptanceRecord": "https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7211815146",
+      "historicalLocalVisualInspection": "Opened locally for framing, legibility, fictional data, caption and alt review; independent and owner visual acceptance pending"
+    },
+    {
+      "file": "racks-device-placement.png",
+      "requirements": [
+        "B2-15-S01"
+      ],
+      "caption": "Place an existing Device at a free Front position. Its recorded 1U height is read-only in this form; the proposed move is unsaved.",
+      "alt": "Place Device / Horizontal Accessory at U11 with training-switch-01, Front, Start U11 and read-only height 1U.",
+      "applicationRevision": "fdc677920bfc52f48f641b3d6d1344c902a6a9b0",
+      "documentationStart": "e9ff3e18fb1eca21f91c856c93e8a8ba6b67963e",
+      "schema": 31,
+      "browser": "Chromium 155.0.8059.79",
+      "automation": "Playwright 1.56.1",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1050
+      },
+      "theme": "light",
+      "capturedAt": "2026-11-27T05:49:14.720Z",
+      "fixture": "Isolated fictional training inventory; documentation address ranges only",
+      "role": "training-editor",
+      "permissions": {
+        "read": {
+          "Devices": true,
+          "IPAM": true,
+          "Racks": true
+        },
+        "edit": {
+          "Devices": true,
+          "IPAM": true,
+          "Racks": true
+        }
+      },
+      "featureConfiguration": {
+        "devices": true,
+        "equipment_lifecycle": true,
+        "ipam": true,
+        "it_assets": true,
+        "racks": true,
+        "suppliers": true
+      },
+      "sha256": "e08e94539e3eb4d1529fef1489a1e2972e2406a063cbdfa4921869ff24be61eb",
+      "independentVisualAcceptance": "Reviewed; see acceptanceRecord and its stated verification limits",
+      "ownerVisualAcceptance": "Accepted, 27 November 2026",
+      "accountState": {
+        "active": true,
+        "mfaEnrolledAndConfirmed": true,
+        "authenticatedMfaSession": true
+      },
+      "roleContext": "Staff Member with explicit Devices/IPAM/Racks Edit overrides; other inventory sections have no grant",
+      "localVisualInspection": "Original local inspection retained below; all 38 subsequently independently reviewed and owner visually accepted, as recorded in acceptanceRecord.",
+      "acceptanceRecord": "https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7211815146",
+      "historicalLocalVisualInspection": "Opened locally for framing, legibility, fictional data, caption and alt review; independent and owner visual acceptance pending"
+    },
+    {
+      "file": "racks-accessory-placement.png",
+      "requirements": [
+        "B2-15-S02"
+      ],
+      "caption": "A horizontal patch panel uses central U space on the selected face; this placement is an unsaved draft.",
+      "alt": "Horizontal Accessory placement for Training Additional Patch Panel at Front U1, height 1U and 24 patch-panel ports.",
+      "applicationRevision": "fdc677920bfc52f48f641b3d6d1344c902a6a9b0",
+      "documentationStart": "e9ff3e18fb1eca21f91c856c93e8a8ba6b67963e",
+      "schema": 31,
+      "browser": "Chromium 155.0.8059.79",
+      "automation": "Playwright 1.56.1",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1050
+      },
+      "theme": "light",
+      "capturedAt": "2026-11-27T05:50:01.674Z",
+      "fixture": "Isolated fictional training inventory; documentation address ranges only",
+      "role": "training-editor",
+      "permissions": {
+        "read": {
+          "Devices": true,
+          "IPAM": true,
+          "Racks": true
+        },
+        "edit": {
+          "Devices": true,
+          "IPAM": true,
+          "Racks": true
+        }
+      },
+      "featureConfiguration": {
+        "devices": true,
+        "equipment_lifecycle": true,
+        "ipam": true,
+        "it_assets": true,
+        "racks": true,
+        "suppliers": true
+      },
+      "sha256": "2ac21ffa09480d2f39ce8e47c40b2d7d913f0c98830a1ccaef7803f358c00192",
+      "independentVisualAcceptance": "Reviewed; see acceptanceRecord and its stated verification limits",
+      "ownerVisualAcceptance": "Accepted, 27 November 2026",
+      "accountState": {
+        "active": true,
+        "mfaEnrolledAndConfirmed": true,
+        "authenticatedMfaSession": true
+      },
+      "roleContext": "Staff Member with explicit Devices/IPAM/Racks Edit overrides; other inventory sections have no grant",
+      "localVisualInspection": "Original local inspection retained below; all 38 subsequently independently reviewed and owner visually accepted, as recorded in acceptanceRecord.",
+      "acceptanceRecord": "https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7211815146",
+      "historicalLocalVisualInspection": "Opened locally for framing, legibility, fictional data, caption and alt review; independent and owner visual acceptance pending"
+    },
+    {
+      "file": "racks-collision-warning.png",
+      "requirements": [
+        "B2-15-S05"
+      ],
+      "caption": "A 12U horizontal accessory cannot fit on the occupied Front face. The form offers no valid Start U and warns before saving.",
+      "alt": "Horizontal Accessory form with height 12U, no available Start U positions and No available positions for this type, height and face warning.",
+      "applicationRevision": "fdc677920bfc52f48f641b3d6d1344c902a6a9b0",
+      "documentationStart": "e9ff3e18fb1eca21f91c856c93e8a8ba6b67963e",
+      "schema": 31,
+      "browser": "Chromium 155.0.8059.79",
+      "automation": "Playwright 1.56.1",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1050
+      },
+      "theme": "light",
+      "capturedAt": "2026-11-27T05:50:02.626Z",
+      "fixture": "Isolated fictional training inventory; documentation address ranges only",
+      "role": "training-editor",
+      "permissions": {
+        "read": {
+          "Devices": true,
+          "IPAM": true,
+          "Racks": true
+        },
+        "edit": {
+          "Devices": true,
+          "IPAM": true,
+          "Racks": true
+        }
+      },
+      "featureConfiguration": {
+        "devices": true,
+        "equipment_lifecycle": true,
+        "ipam": true,
+        "it_assets": true,
+        "racks": true,
+        "suppliers": true
+      },
+      "sha256": "b9161c3c36842bcef4cd6ea27c0bd10de0bc1ba171d5c72d3d1d7f8680c504f0",
+      "independentVisualAcceptance": "Reviewed; see acceptanceRecord and its stated verification limits",
+      "ownerVisualAcceptance": "Accepted, 27 November 2026",
+      "accountState": {
+        "active": true,
+        "mfaEnrolledAndConfirmed": true,
+        "authenticatedMfaSession": true
+      },
+      "roleContext": "Staff Member with explicit Devices/IPAM/Racks Edit overrides; other inventory sections have no grant",
+      "localVisualInspection": "Original local inspection retained below; all 38 subsequently independently reviewed and owner visually accepted, as recorded in acceptanceRecord.",
+      "acceptanceRecord": "https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7211815146",
+      "historicalLocalVisualInspection": "Opened locally for framing, legibility, fictional data, caption and alt review; independent and owner visual acceptance pending"
+    },
+    {
+      "file": "racks-shelf-removal-review.png",
+      "requirements": [
+        "B2-16-S03"
+      ],
+      "caption": "Review the replacement shelf for training-printer-01 before removing its current shelf; no removal has been confirmed.",
+      "alt": "Remove Rack Shelf review for training-printer-01 with reassignment to Training Rack Shelf U5 selected and Confirm Shelf Removal available.",
+      "applicationRevision": "fdc677920bfc52f48f641b3d6d1344c902a6a9b0",
+      "documentationStart": "e9ff3e18fb1eca21f91c856c93e8a8ba6b67963e",
+      "schema": 31,
+      "browser": "Chromium 155.0.8059.79",
+      "automation": "Playwright 1.56.1",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1050
+      },
+      "theme": "light",
+      "capturedAt": "2026-11-27T05:50:03.495Z",
+      "fixture": "Isolated fictional training inventory; documentation address ranges only",
+      "role": "training-editor",
+      "permissions": {
+        "read": {
+          "Devices": true,
+          "IPAM": true,
+          "Racks": true
+        },
+        "edit": {
+          "Devices": true,
+          "IPAM": true,
+          "Racks": true
+        }
+      },
+      "featureConfiguration": {
+        "devices": true,
+        "equipment_lifecycle": true,
+        "ipam": true,
+        "it_assets": true,
+        "racks": true,
+        "suppliers": true
+      },
+      "sha256": "48d867ec03febec4cf668d1014bb1a5a5788b1df2c67dd7cfde5d6d8bda6ac12",
+      "independentVisualAcceptance": "Reviewed; see acceptanceRecord and its stated verification limits",
+      "ownerVisualAcceptance": "Accepted, 27 November 2026",
+      "accountState": {
+        "active": true,
+        "mfaEnrolledAndConfirmed": true,
+        "authenticatedMfaSession": true
+      },
+      "roleContext": "Staff Member with explicit Devices/IPAM/Racks Edit overrides; other inventory sections have no grant",
+      "localVisualInspection": "Original local inspection retained below; all 38 subsequently independently reviewed and owner visually accepted, as recorded in acceptanceRecord.",
+      "acceptanceRecord": "https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7211815146",
+      "historicalLocalVisualInspection": "Opened locally for framing, legibility, fictional data, caption and alt review; independent and owner visual acceptance pending"
+    },
+    {
+      "file": "optional-six-feature-cards.png",
+      "requirements": [
+        "B2-17-S01"
+      ],
+      "caption": "All six Optional Features are enabled in this fictional administrator fixture; enabling a feature does not grant account permissions.",
+      "alt": "Optional Features showing Devices, IP Address Management, Network Racks, Suppliers, Equipment Lifecycle and IT Assets enabled.",
+      "applicationRevision": "fdc677920bfc52f48f641b3d6d1344c902a6a9b0",
+      "documentationStart": "e9ff3e18fb1eca21f91c856c93e8a8ba6b67963e",
+      "schema": 31,
+      "browser": "Chromium 155.0.8059.79",
+      "automation": "Playwright 1.56.1",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1439
+      },
+      "theme": "light",
+      "capturedAt": "2026-11-27T05:50:37.802Z",
+      "fixture": "Isolated fictional training inventory; documentation address ranges only",
+      "role": "training-admin",
+      "permissions": {
+        "read": {
+          "Devices": true,
+          "IPAM": true,
+          "Racks": true
+        },
+        "edit": {
+          "Devices": true,
+          "IPAM": true,
+          "Racks": true
+        }
+      },
+      "featureConfiguration": {
+        "devices": true,
+        "equipment_lifecycle": true,
+        "ipam": true,
+        "it_assets": true,
+        "racks": true,
+        "suppliers": true
+      },
+      "sha256": "4c96438bfd7f1e8a5792f11eef7c34b569faf014668c4fe6fad5361c594fde29",
+      "independentVisualAcceptance": "Reviewed; see acceptanceRecord and its stated verification limits",
+      "ownerVisualAcceptance": "Accepted, 27 November 2026",
+      "captureExtent": "Full page; browser viewport remains 1440 \u00d7 1050",
+      "accountState": {
+        "active": true,
+        "mfaEnrolledAndConfirmed": true,
+        "authenticatedMfaSession": true
+      },
+      "roleContext": "Administrator",
+      "localVisualInspection": "Original local inspection retained below; all 38 subsequently independently reviewed and owner visually accepted, as recorded in acceptanceRecord.",
+      "acceptanceRecord": "https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7211815146",
+      "historicalLocalVisualInspection": "Opened locally for framing, legibility, fictional data, caption and alt review; independent and owner visual acceptance pending"
+    },
+    {
+      "file": "optional-existing-subnet-chooser.png",
+      "requirements": [
+        "B2-18-S01",
+        "B2-18-S03",
+        "B2-18-S04"
+      ],
+      "caption": "Link to IPAM deliberately selects an existing containing subnet for the exact saved basic address. No link has been confirmed.",
+      "alt": "Link to IPAM dialog for training-basic-printer at 192.0.2.30 with Lab Network 192.0.2.0/24 selected and Cancel or Link to IPAM actions.",
+      "applicationRevision": "fdc677920bfc52f48f641b3d6d1344c902a6a9b0",
+      "documentationStart": "e9ff3e18fb1eca21f91c856c93e8a8ba6b67963e",
+      "schema": 31,
+      "browser": "Chromium 155.0.8059.79",
+      "automation": "Playwright 1.56.1",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1050
+      },
+      "theme": "light",
+      "capturedAt": "2026-11-27T05:51:20.877Z",
+      "fixture": "Isolated fictional training inventory; documentation address ranges only",
+      "role": "training-editor",
+      "permissions": {
+        "read": {
+          "Devices": true,
+          "IPAM": true,
+          "Racks": true
+        },
+        "edit": {
+          "Devices": true,
+          "IPAM": true,
+          "Racks": true
+        }
+      },
+      "featureConfiguration": {
+        "devices": true,
+        "equipment_lifecycle": true,
+        "ipam": true,
+        "it_assets": true,
+        "racks": true,
+        "suppliers": true
+      },
+      "sha256": "62ae23d87d32c091b6769d7a08d7f22a08fa7d561afa88e00235e97fe89b9347",
+      "independentVisualAcceptance": "Reviewed; see acceptanceRecord and its stated verification limits",
+      "ownerVisualAcceptance": "Accepted, 27 November 2026",
+      "accountState": {
+        "active": true,
+        "mfaEnrolledAndConfirmed": true,
+        "authenticatedMfaSession": true
+      },
+      "roleContext": "Staff Member with explicit Devices/IPAM/Racks Edit overrides; other inventory sections have no grant",
+      "localVisualInspection": "Original local inspection retained below; all 38 subsequently independently reviewed and owner visually accepted, as recorded in acceptanceRecord.",
+      "acceptanceRecord": "https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7211815146",
+      "historicalLocalVisualInspection": "Opened locally for framing, legibility, fictional data, caption and alt review; independent and owner visual acceptance pending"
+    },
+    {
+      "file": "optional-racks-off-location.png",
+      "requirements": [
+        "B2-19-S01",
+        "B2-19-S03"
+      ],
+      "caption": "With Network Racks off, the saved shelf relationship protects Location Area during unrelated Device editing. Hidden controls do not mean a detached Device.",
+      "alt": "Edit Device General form for training-printer-01 with protected Training Equipment Room Location Area and Rack placement controls hidden while Network Racks is off.",
+      "applicationRevision": "fdc677920bfc52f48f641b3d6d1344c902a6a9b0",
+      "documentationStart": "e9ff3e18fb1eca21f91c856c93e8a8ba6b67963e",
+      "schema": 31,
+      "browser": "Chromium 155.0.8059.79",
+      "automation": "Playwright 1.56.1",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1050
+      },
+      "theme": "light",
+      "capturedAt": "2026-11-27T05:51:50.488Z",
+      "fixture": "Isolated fictional training inventory; documentation address ranges only",
+      "role": "training-editor",
+      "permissions": {
+        "read": {
+          "Devices": true,
+          "IPAM": true,
+          "Racks": false
+        },
+        "edit": {
+          "Devices": true,
+          "IPAM": true,
+          "Racks": false
+        }
+      },
+      "featureConfiguration": {
+        "devices": true,
+        "equipment_lifecycle": true,
+        "ipam": true,
+        "it_assets": true,
+        "racks": false,
+        "suppliers": true
+      },
+      "sha256": "580f11dfa16f22507e233f8f275d4ad4be1d230d131aaa9f933ad23061b4995f",
+      "independentVisualAcceptance": "Reviewed; see acceptanceRecord and its stated verification limits",
+      "ownerVisualAcceptance": "Accepted, 27 November 2026",
+      "accountState": {
+        "active": true,
+        "mfaEnrolledAndConfirmed": true,
+        "authenticatedMfaSession": true
+      },
+      "roleContext": "Staff Member with explicit Devices/IPAM/Racks Edit overrides; other inventory sections have no grant",
+      "localVisualInspection": "Original local inspection retained below; all 38 subsequently independently reviewed and owner visually accepted, as recorded in acceptanceRecord.",
+      "acceptanceRecord": "https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7211815146",
+      "historicalLocalVisualInspection": "Opened locally for framing, legibility, fictional data, caption and alt review; independent and owner visual acceptance pending"
+    }
+  ],
+  "historicalCaptureStatus": "Proposed instructional images; independent and owner visual acceptance pending",
+  "acceptanceRecord": "https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7211815146",
+  "nativeConfirmationSubstitution": {
+    "requirement": "B2-17-S02",
+    "wording": "Disable Network Racks? Saved data and permissions will be retained.",
+    "status": "Owner-approved written visual substitution; no additional capture required"
+  }
+}

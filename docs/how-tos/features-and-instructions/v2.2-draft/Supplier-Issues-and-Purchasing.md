@@ -1,8 +1,14 @@
 # Supplier Issues And Purchasing
 
-> **Draft v2.2 — Unreleased.** This guide describes Stage 4 Batch 4.2 on the development branch. Use the [published v2.1 guides](../README.md) for the current release.
+> **Draft v2.2 — Unreleased.** v2.1 remains the published release. These instructions describe v2.2.
 
-Use Purchasing to track problems with companies you buy from. A Supplier Issue has a title, a main description and a current status. It belongs to the Supplier company for its entire life. You can link the people handling it and keep a dated record of what happened. For an observation that needs no tracked status, use a [Supplier or Contact Note](Supplier-Management.md#keep-supplier-and-contact-notes).
+Use Purchasing to track problems with companies you buy from. A Supplier Issue has a title, a main description and a current status. It belongs to the Supplier company for its entire life. You can link the people handling it and keep a dated record of what happened. For an observation that needs no tracked status, use a [Supplier or Contact Note](Supplier-Management.md#record-correct-or-delete-notes).
+
+## What Purchasing Covers
+
+This area is the Supplier directory, Supplier Issues, contacts, notes and their reporting. It does not create purchase orders, budgets, invoices, payment records, approval chains, accounts or automated replenishment. A Billing Issue is a tracked problem category, not an accounting transaction. Keep financial and procurement processing in the organisation's appropriate systems.
+
+Supplier Issues concern the Supplier company and its contacts. Employee **My Tickets / Department Tickets** and the IT **Service Desk** concern support work on permitted equipment, with separate permissions, status rules and privacy. Creating or resolving a Supplier Issue does not create, close or transfer a Service Desk ticket, receive replacement equipment or alter stock. [Service Desk instructions](Service-Desk-Tickets.md)
 
 ## Get Access
 
@@ -25,6 +31,10 @@ Supplier access is independent of Devices and IT Assets. To see the infrastructu
 
 On a narrow screen, each row in Recent Supplier Issues shows its details beneath the title. In the full Issues list, scroll within the table to reach columns that extend beyond the visible area. **No Active Supplier Issues** means there are no Open or In Progress Issues in the recent list. Use **View All Issues** to check completed records. The **Active Issues** count on a Supplier's **Overview** is local to that company and combines Open and In Progress.
 
+![Purchasing Dashboard with Northlight supplier totals and recent Mouse delivery query.](screenshots/batch-7c/purchasing-journey.png)
+
+*The connected journey has one active Supplier Issue. Purchasing totals concern Suppliers and their Issues, not an employee Service Desk queue.*
+
 ## Record An Issue
 
 You need Suppliers Edit. First check the company's Issues list for an existing record about the same problem.
@@ -40,6 +50,10 @@ You need Suppliers Edit. First check the company's Issues list for an existing r
 
 The creation form sets Open automatically. It lets you link active contacts and leave the category blank.
 
+![Add Supplier Issue with title, description, Jo Patel and Delivery Documentation category.](screenshots/batch-7c/supplier-issue-add.png)
+
+*The Issue is still a draft; its inline Delivery Documentation category has already been saved separately. No stock or employee ticket changes result.*
+
 ## Find And Update An Existing Issue
 
 1. Open the company's **Notes & Issues → Issues**, or open **Purchasing → View All Issues**. Use **Filter Issues By Status** and **Filter Issues By Category** together to narrow the list. The default **All Statuses** and **All Categories** show the full list. Retired categories remain available for finding earlier assignments.
@@ -48,8 +62,6 @@ The creation form sets Open automatically. It lets you link active contacts and 
 4. To record progress, enter text in **New Dated Update (Optional)** and choose **Save Issue Changes**. The application dates and attributes the new entry. Older entries and the main description remain in place. Use one update per meaningful step so another colleague can follow the timeline.
 5. To correct an earlier update, choose its **Edit** control, enter the corrected **Issue Update** and choose **Save Changes**. You can correct updates recorded by a different editor. The corrected text appears in the same chronological position. The original date and author remain visible, along with the correction actor and time. The protected audit keeps the original text and each correction.
 6. To leave a form, use **Cancel**, the header close button or **Escape**. If you have unsaved changes, choose whether to keep editing or discard. If a save reports that the record changed, review your unsaved text, reopen the Issue and compare with the latest record before applying your changes.
-
-![Mobile dark Issue Details scrolled to a corrected entry in Chronological Updates, with original and correction attribution](../../../development-handovers/evidence/stage-4-batch-42/images/issue-update-history-dark-390.png)
 
 ### Choose The Current Status
 
@@ -73,6 +85,18 @@ Caffoot Lite does not send automatic notifications about these changes. Keep you
 3. Choose **Save Issue Changes**. The Issue keeps its identity and complete history.
 4. Open **Contacts**, select the new contact and look under **Associated Supplier Issues**. Choose **View Supplier Issue** to confirm it opens the same record. The outgoing contact no longer lists that Issue after removal. That person's ordinary notes remain under **Contact Notes**.
 
+![Supplier Issue Details showing In Progress, Jo Patel and a dated update.](screenshots/batch-7c/supplier-issue-update.png)
+
+*Saved In Progress Issue with a dated update. The status belongs to Supplier work; it is separate from employee tickets and stock.*
+
+![Supplier Issue Details with Kim Cooper selected and the corrected dated update attribution.](screenshots/batch-7c/supplier-issue-handover.png)
+
+*Kim is now the linked contact. The corrected update retains its original author/date and a correction attribution; earlier contact notes are not transferred.*
+
+![Northlight Supplier Issues list with In Progress Mouse delivery query, Kim Cooper and retired Delivery Documentation category.](screenshots/batch-7c/supplier-issues.png)
+
+*The saved Issue remains linked to its retired category and Kim. Status and category filters narrow this Supplier list.*
+
 ## Manage Issue Categories
 
 The Issue Category catalogue classifies Issues. Supplier company Categories are maintained separately in the Supplier Directory. The starting Issue Categories are **Damaged Equipment**, **Delivery**, **Incorrect Equipment**, **Warranty**, **Billing**, **Technical Support**, **Service Quality** and **Other**.
@@ -82,9 +106,21 @@ The Issue Category catalogue classifies Issues. Supplier company Categories are 
 3. Select **Retire** and confirm **Retire Issue Category** to remove it from new selections. Existing Issues keep the retired category and can still be filtered by it. An Issue already using it can retain that assignment when edited.
 4. Select **Reactivate** and confirm **Reactivate Issue Category** to make the same entry available for new assignments. **Cancel** leaves the catalogue as it was before the current action.
 
-![Desktop dark Manage Issue Categories showing the retired Replacement Parts category and its Reactivate button](../../../development-handovers/evidence/stage-4-batch-42/images/issue-categories-dark-1440.png)
-
 The same catalogue keeps retired categories visible for review and reactivation.
+
+![Manage Issue Categories showing Delivery Documentation Retired with Rename and Reactivate.](screenshots/batch-7c/issue-category-retired.png)
+
+*Retiring Delivery Documentation retains the existing Issue and offers Reactivate. It is not Supplier company-category archiving.*
+
+## Validation, Empty Lists And Cancellation
+
+Issue Title is required and allows up to 160 characters. Main Description and each dated Issue Update allow up to 12,000 characters; the description and a corrected update cannot be blank. A new dated update is optional when saving other Issue changes. Issue Category names allow up to 70 characters. New category/contact assignments must be active and contacts must belong to the same Supplier. There is no Issue deletion, move-to-another-company or update-deletion control.
+
+**No Issues Match These Filters** is different from **No Active Supplier Issues** on the recent Dashboard. Clear both status/category filters to inspect completed records. **No Contacts Available.** does not prevent an otherwise valid Issue with no contact links. **No Updates Yet.** is valid before a dated update is added. Cancelling an unsaved Issue or update leaves saved records unchanged, while an inline category already saved remains in its separate catalogue. Reopen after a stale-save rejection and review the current version before reapplying text; do not create another Issue to bypass it.
+
+![Supplier Issue form showing a changed-record rejection while the unsaved update remains visible.](screenshots/batch-7c/supplier-issue-stale-rejected.png)
+
+*A separately saved company note makes this Issue form stale. Its attempted update is rejected; refresh and review current information before trying again.*
 
 ## Review Retention And Audit
 
@@ -102,6 +138,4 @@ The same catalogue keeps retired categories visible for review and reactivation.
 
 ![Desktop light Purchasing Dashboard showing four live summary cards, recent active Issues and the four-status breakdown](../../../development-handovers/evidence/stage-6-6-batch-3/screenshots/purchasing-dashboard-light-1440.png)
 
-![Mobile dark Supplier Issue Details showing the Issue status and details](../../../development-handovers/evidence/stage-6-6-batch-3/screenshots/supplier-issue-details-dark-390.png)
-
-See the [Batch 3 capture record](../../../development-handovers/evidence/stage-6-6-batch-3/README.md), [Supplier Management](Supplier-Management.md) and [Batch 4.2 approval](https://github.com/Caffoot/Caffoot-Lite/issues/411).
+[Connected example: a laptop from Supplier and stock to its final write-off](Connected-Equipment-Journey.md).

@@ -2,7 +2,7 @@
 
 Welcome to the Caffoot Lite user guides. These instructions cover the published v2.1 Docker/SQLite edition ([release](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v2.1)). Unreleased v2.2 features are documented separately and are not part of the published v2.1 guides. Established inventory and security safeguards remain, with the approved modular interface and subnet-first workflows.
 
-The guides describe the **real application**, use fictional examples and distinguish viewer and editor permissions. They are maintained here as the shared source for GitHub and website help references. The separate [Development Guide](../../development-guide/README.md) explains the implementation for developers.
+The guides describe the **real application**, use fictional examples and distinguish viewer and editor permissions. They are maintained here as the shared source for GitHub and website help references.
 
 ## Find your guide
 
@@ -43,4 +43,4 @@ All signed-in users can open **My Account → Help & Guides** for short built-in
 
 ## Draft v2.2 — Not Published / Not Production Guidance
 
-The published v2.1 guides above remain current. The separate [draft v2.2 guides](../../how-tos/features-and-instructions/v2.2-draft/README.md) describe implemented development features through Batch 3.4. Manual Batch 3.4 acceptance is deferred, not passed. These drafts are not installation, upgrade or restore instructions.
+The published v2.1 guides above remain current. The separate [draft v2.2 guides](../../how-tos/features-and-instructions/v2.2-draft/README.md) cover infrastructure, accounts, Staff and Departments, equipment stock and custody, Suppliers, Equipment Lifecycle, Service Desk and administration. v2.2 remains unreleased; its isolated-review installation and recovery guidance is not a production upgrade procedure.

@@ -1,6 +1,6 @@
 # Caffoot Lite — Development Guide
 
-> **Current integration — 19 November 2026:** Stages 1–4 are development-complete/owner-accepted and merged into `milestone-1` at verified HEAD `c1b5f8008e8ba56840d9790e3ba1c7e91ad35e0b` (schema 24). Stage 5 has four frozen approved HTML designs and six planned batches #420–#425 under [#419](https://github.com/Caffoot/Caffoot-Lite/issues/419); **Batch 5.1 is separately authorised and under review**. v2.1 remains published and v2.2 unreleased. See [Development Status](Development-Status.md), the [Stage 4 sign-off](https://github.com/Caffoot/Caffoot-Lite/issues/369#issuecomment-7007760294) and the [draft v2.2 guides](../how-tos/features-and-instructions/v2.2-draft/README.md). Dated older review checkpoints are historical.
+> **Version boundary:** Published v2.1 uses schema 10. The unreleased v2.2 application checkpoint is `0251b43a3b5d41d626aa022c6d7f9b4d860433da`, schema 31, including Stages 1–5 and subsequent integrated corrections. [Development Status](Development-Status.md) records exact checkpoints and outstanding acceptance; [draft v2.2 guides](../how-tos/features-and-instructions/v2.2-draft/README.md) explain the workflows.
 
 Welcome. This guide explains **how Caffoot Lite actually works**, from the everyday user experience through to the Python backend, SQLite database and tests. It is written for the product owner, new contributors and maintainers.
 
@@ -8,13 +8,13 @@ Welcome. This guide explains **how Caffoot Lite actually works**, from the every
 
 ## In simple terms
 
-**Current development target: v2.2 (Milestone 01).** Stages 1–3 added Staff/Departments, assignments/My Equipment, IT Assets stock/circulation, Device registration/reissue, Associated Equipment, direct handovers and reporting. **Stage 4 is also completed and integrated**, adding Suppliers, Supplier Issues/Purchasing, equipment supplier associations and Equipment Lifecycle. See [Development Status](Development-Status.md), the [active handover](../development-handovers/milestone-01.md) and the [historical Stage 1–3 documentation review](Stage-1-3-Documentation-Review.md). The [Service Desk foundation](Service-Desk-Foundation.md) is under review in [PR #437](https://github.com/Caffoot/Caffoot-Lite/pull/437). Each later Stage 5 batch awaits its own authorisation. Deferred manual/native and Stage 6 compatibility/upgrade/restore acceptance remain outstanding. The v2.2 guides describe an unreleased development branch, not production installation or upgrade instructions.
+**Current development target: v2.2 (Milestone 01).** The integrated application includes roles and optional features; Staff/Departments and equipment custody; IT Assets stock/circulation; Suppliers and Lifecycle; and employee/technician Service Desk, reporting, templates and notifications. See [Development Status](Development-Status.md), the [active handover](../development-handovers/milestone-01.md), [release inventory](Milestone-01-Release-Inventory.md) and [draft release notes](../Release-Notes-v2.2.md). Integration does not complete outstanding native/manual, supported-upgrade, complete-volume recovery, security or release acceptance.
 
-Caffoot Lite helps small IT teams document their devices, IP addresses, network racks and changes. The earlier HTML release saves its inventory in one browser. The Docker application keeps a **shared inventory** in a central SQLite database so authorised users see the same information.
+Caffoot Lite helps small IT teams manage infrastructure, people, equipment custody and support work. Devices, IPAM and Network Racks share identities and access checks with the Staff directory, stock, Suppliers, Lifecycle and Service Desk. The earlier HTML release saves its inventory in one browser. The Docker application keeps a **shared inventory** in a central SQLite database so authorised users see the same information.
 
 Think of it as three parts:
 
-1. **The browser** displays familiar Devices, IPAM, Racks and Change History screens, together with the approved accounts and sign-in features.
+1. **The browser** displays infrastructure, Staff/Departments, stock, Purchasing, Service Desk and Audit Trail screens according to effective access and enabled features. Employees have restricted My Equipment and ticket views; administrators manage accounts and settings.
 2. **The server** checks who is signed in, whether they may make the requested change, and whether the inventory will remain valid.
 3. **SQLite** keeps the accepted records. It sits in the container's persistent `/data` directory so normal container recreation need not remove inventory.
 
@@ -33,7 +33,7 @@ For example, when somebody edits a device, the browser requests an exclusive, te
 | [05 — Inventory and migration](05-Inventory-and-Migration.md) | Data relationships, v1.3.3 compatibility and importing |
 | [06 — Coding and naming conventions](06-Coding-and-Naming-Conventions.md) | Mandatory standards for naming, UI labels, refactoring and documentation |
 | [07 — Function and code reference](07-Function-and-Code-Reference.md) | Where to find an implementation before changing it |
-| [Full Function Index](Function-Index.md) | Named runtime definitions, bridge methods and selected maintenance helpers, with current declaration locations; not a call graph or reference-count report |
+| [Full Function Index](Function-Index.md) | Existing named runtime definitions and bridge methods linked to the approved application source; use the code reference for later additions |
 | [08 — Testing and maintenance](08-Testing-and-Maintenance.md) | How to check a change and protect the published baseline |
 | [Security fixes and releases — owner checklist](Security-Fixes-and-Releases.md) | The short, safe path from private report or approved change to a verified release |
 | [v2.0.3 development handover (historical)](../historical/development-handovers/v2.0.3.md) | Completed v2.0.3 decisions and work, kept as a dated record |
@@ -52,8 +52,8 @@ All contributors should first read [CONTRIBUTING.md](../../CONTRIBUTING.md) and 
 - [`compose.yaml`](../../compose.yaml), [`portainer-v2.1.yaml`](../../portainer-v2.1.yaml) and [`Dockerfile`](../../Dockerfile): deployment configuration.
 - [`app/caffoot-lite.html` at v1.3.3](https://github.com/Caffoot/Caffoot-Lite/blob/v1.3.3/app/caffoot-lite.html): **published** inventory behaviour to preserve.
 
-For current installation instructions see [`INSTALLATION.md`](../../INSTALLATION.md). The [root README](../../README.md) describes the published v2.1 edition and links to earlier releases.
+For current installation instructions see [`INSTALLATION.md`](../../INSTALLATION.md). The [root README](../../README.md) introduces unreleased v2.2 and links separately to the published v2.1 download and installation guidance.
 
 ## Before making a change
 
-Read the approved scope for the proposed change, inspect the current main-branch source, review the Function Index and relevant tests, and compare established inventory behaviour with the **published v2.1 baseline**, using earlier releases when a compatibility question arises rather than assumptions. Historical audit findings may already have been fixed. Source renaming for clarity is a welcome, separately approved maintenance activity: update every dependent reference, test and guide. [Future requests](https://github.com/Caffoot/Caffoot-Lite/labels/future%20request) are suggestions, not permission to start implementation.
+Read the approved scope for the proposed change, inspect the exact authorised source revision, review the Function Index and relevant tests, and compare established inventory behaviour with the **published v2.1 baseline**, using earlier releases when a compatibility question arises rather than assumptions. Historical audit findings may already have been fixed. Source renaming for clarity is a welcome, separately approved maintenance activity: update every dependent reference, test and guide. [Future requests](https://github.com/Caffoot/Caffoot-Lite/labels/future%20request) are suggestions, not permission to start implementation.

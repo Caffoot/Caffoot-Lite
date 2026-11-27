@@ -1,6 +1,6 @@
 # Equipment Lifecycle
 
-> **Draft v2.2 — Unreleased.** This guide describes the development version in [draft PR #418](https://github.com/Caffoot/Caffoot-Lite/pull/418). Use the [published v2.1 guides](../README.md) for the released application.
+> **Draft v2.2 — Unreleased.** v2.1 remains the published release. These instructions describe v2.2.
 
 Equipment Lifecycle helps IT staff review warranty cover and plan replacements for physical equipment already recorded in Caffoot Lite. Dates stay with the same Device through moves, returns and reissues. The dates and Dashboard warnings are informational. Device status, rack placement and IP allocations continue to use their existing controls.
 
@@ -11,7 +11,7 @@ Equipment Lifecycle helps IT staff review warranty cover and plan replacements f
 - With **Devices Edit**, you can enter or correct **Purchase Date**, **Original In Service Date** and **Warranty Expiry**. The **Planned Replacement Date** override and **Use Calculated Date** also require Administrator access.
 - Stock issue and reissue require the existing **Devices Edit** and **IT Assets Edit** permissions. The automatic first-service record uses those permissions, including when Equipment Lifecycle is switched off. Ordinary staff can use their permitted [My Equipment](Device-Assignments-and-My-Equipment.md) view.
 
-Use an existing physical Device. Virtual Machines have no equipment dates or lifespan settings. See [Roles, Section Permissions And MFA](Roles-Section-Permissions-and-MFA.md) for help locating your effective permissions.
+Use an existing physical Device. Standalone quantity/individually tracked IT Asset accessories do not have these per-Device lifecycle date fields. Virtual Machines have no equipment dates or lifespan settings. See [Roles, Section Permissions And MFA](Roles-Section-Permissions-and-MFA.md) for help locating your effective permissions.
 
 ## UK Date Format
 
@@ -39,14 +39,6 @@ All four dates are optional. Enter a valid calendar date. Purchase Date and Orig
 
 **Example.** A supplier confirms that a laptop bought on 6 October 2026 has three years of cover. Enter the confirmed 6 October 2029 Warranty Expiry instead of accepting the 12-month suggestion. For a commissioned router with an unknown purchase date, enter the known Original In Service Date and leave Purchase Date blank.
 
-![Mobile light Edit Device Hardware tab showing all four lifecycle dates, Use Suggestion, the calculated date and Save Device](../../../development-handovers/evidence/stage-4-batch-44-corrected/lifecycle/device-edit-light-390.png)
-
-*Corrected UK DD/MM/YYYY Edit Device form; the warranty suggestion is not saved until you accept it.*
-
-![Genuine mobile Edit Device screenshot with the accessible UK calendar open](../../../development-handovers/evidence/stage-4-batch-44-corrected/lifecycle/device-edit-calendar-light-390.png)
-
-*The calendar uses UK day/month/year ordering even when the browser's default locale differs.*
-
 ### Set Or Remove A Manual Replacement Override
 
 1. As an Administrator with **Devices Edit**, open **Edit Device → Hardware → Equipment Lifecycle**.
@@ -55,16 +47,28 @@ All four dates are optional. Enter a valid calendar date. Purchase Date and Orig
 
 **Example.** A router covered by a contract will be replaced on 30 June 2030. Save that date as an override. If the contract plan changes, select **Use Calculated Date** and save to put the router back on the type lifespan schedule.
 
+![AST-LAP-014 Hardware lifecycle editor with dates, original first service and administrator replacement override draft.](screenshots/batch-7d/lifecycle-date-editor.png)
+
+*Purchase and evidenced Warranty Expiry are proposed alongside the retained first-service date. A manual replacement override is shown as an unsaved example, then cleared before saving the calculated-date journey.*
+
 ## Record First Service From Stock
 
 1. Follow [Receive Stock And Stock Inventory](IT-Assets-Stock-Intake.md) to record the delivery and carry out the applicable checks. Receiving, checking, preparing or registering held equipment leaves the service date blank.
 2. Follow [Device Stock Registration And Reissue](Device-Stock-Registration-and-Reissue.md) to register an eligible unit and issue the canonical Device from Ready stock. Use the actual **Date Issued**.
-3. On the first genuine documented issue, Caffoot Lite saves that date, the holder assignment and the stock movement together. A Date Issued in the future is rejected when the transaction would capture a first-service date. Correct the date and submit again once the physical issue occurs.
-4. For a return, later issue or direct handover of the same equipment, keep using the same Device record. Its previously recorded dates are retained. For infrastructure or older equipment whose first use was never recorded, enter a known date in Edit Device. Leave it blank if you cannot verify it.
+3. For automatic capture, the Device must have a stock-registration record, no previous stock issue or return and no earlier Device assignment, with Original In Service Date still blank. On that qualifying first physical issue, Caffoot Lite saves the date, holder assignment and stock movement together. A Date Issued in the future is rejected when the transaction would capture a first-service date. Correct the date and submit again once the physical issue occurs.
+4. For a return, later issue or direct handover of the same equipment, keep using the same Device record. Its previously recorded dates are retained. A legacy Device returned from deployment is not treated as a newly commissioned stock registration. A deliberately cleared service date is not repopulated by a later reissue with prior history. For infrastructure or older equipment whose first use was never recorded, enter a known date in Edit Device. Leave it blank if you cannot verify it.
 
 **Example.** IT receives a batch of desktops on Monday, registers one as Ready on Tuesday and physically issues it on Wednesday. Its first-service date is Wednesday. If Equipment Lifecycle is off on Wednesday, the date is still recorded. An authorised user can see it after the feature is enabled again.
 
 **Duplicate** opens a new Device record with independent dates. The new Device starts without the source's dates, replacement override or history. **Add Device** and **Duplicate Device** have no lifecycle date fields. Use Edit Device after creating the physical record.
+
+For example, AST-LAP-014 retains its original first-service date of 05/11/2026 after reissue. With a three-year Laptop lifespan, its replacement falls in 2029 rather than restarting at Sarah’s issue. The fictional purchase date is 03/11/2026 and warranty date is 15/12/2026.
+
+![AST-LAP-016 Reissue Existing Device showing future first-service date rejection with Lifecycle disabled.](screenshots/batch-7d/first-service-future-rejected-while-off.png)
+
+*With Lifecycle disabled, the qualifying first issue still rejects a future first-service date. No custody or first-service save occurred from this rejected proposal.*
+
+For example, after a valid first issue of AST-LAP-016 to Priya on 27/11/2026 while Lifecycle is off, re-enable Lifecycle and check that **Original In Service Date** is 27/11/2026.
 
 ## Use The IT Dashboard
 
@@ -86,6 +90,10 @@ With a 90-day warranty warning, a warranty expiring in exactly 90 days appears u
 
 *The Dashboard with Include Retired Devices selected. The Former Reception PC appears in the list for historical review.*
 
+![Lifecycle Dashboard with warning counters, named date-boundary examples and Include Retired showing historical AST-LAP-014.](screenshots/batch-7d/lifecycle-boundaries-and-retired.png)
+
+*Named warranty examples distinguish yesterday, today, day 90 and day 91 under the 90-day rule. Include Retired with All Conditions retains AST-LAP-014 and its 15/12 warranty for historical review, while Retired Devices stay outside the four active counters.*
+
 ## Enable And Configure Equipment Lifecycle
 
 1. Sign in as an Administrator and verify MFA. Open **Settings & Data → Optional Features**.
@@ -106,9 +114,9 @@ With a 90-day warranty warning, a warranty expiring in exactly 90 days appears u
 
 To turn off Lifecycle, return to the card, switch it off and confirm. The Lifecycle Settings entry, Equipment Lifecycle date controls and Dashboard tab are hidden until re-enabled. Settings and dates are retained. Authorised stock transactions continue to capture eligible first-service dates.
 
-![Mobile dark Lifecycle Settings with separate Warning Periods and Expected Equipment Lifespan cards](../../../development-handovers/evidence/stage-4-batch-44-corrected/lifecycle/settings-dark-390.png)
+![Lifecycle Settings showing warranty and replacement warning days, per-type lifespans, Save Settings and Cancel.](screenshots/batch-7d/lifecycle-settings.png)
 
-*Lifecycle Settings on a narrow screen. The archived Legacy Server type retains its seven-year lifespan.*
+*Administrator settings keep independent default 90-day warning periods and per-type lifespans. A blank lifespan is different from a numeric year count. This view makes no settings change.*
 
 ## Archive Or Restore A Device Type
 
@@ -127,11 +135,19 @@ The standard physical **Server** Device Type uses an internal legacy identity an
 
 Creating a new custom type called **Server**, or renaming a different type to **Server**, is blocked because that name is reserved for the standard physical Server type. Administrators do not need to rename or reclassify any existing Devices to apply this distinction. On the Add/Edit Device form, **Server** and **Server (Custom)** are separate choices when both existing type identities are available; selecting either retains its corresponding saved identity.
 
+## Missing Dates, Rejections And Effects On Equipment
+
+Clearing an optional Purchase Date, Original In Service Date or Warranty Expiry is supported through Edit Device and normal Save. To clear a fixed replacement override, an administrator uses **Use Calculated Date** and saves. A blank baseline or lifespan gives no calculated replacement; a calculation beyond the supported four-digit calendar range also gives no date. Blank warranty/replacement dates generate no corresponding warning, so an empty warning list is not a complete-date or safe-equipment certificate.
+
+For example, **29/02/2024** is valid, **29/02/2023** is rejected, and tomorrow is invalid for Purchase Date/Original In Service Date under UTC today. Warranty Expiry and an administrator's manual Planned Replacement Date can be in the past or future; there is no additional mandatory purchase/service/warranty chronological ordering. A lifespan of zero, a fractional year, 101 years or negative warning days is rejected. Blank lifespan is allowed; zero warning days means due today plus already overdue/expired items. **No Devices match the current selection.** can result from filters, missing dates or no warnings; Clear Filters restores the default warning selection, not every Device without dates.
+
+A warning never performs retirement, write-off, purchase, renewal, data wiping, equipment movement, email or scheduled reminder. Review the underlying facts and follow the separate authorised [physical return/write-off](IT-Assets-Issue-Return-and-Write-Off.md) and [Device status](Devices.md) procedures. Feature disable retains saved dates/settings and hides controls, apart from the expressly approved automatic first-service capture during an otherwise eligible stock issue.
+
 ## Audit, Backup And Troubleshooting
 
 The existing **Audit Trail** records successful changes to lifecycle dates and settings, including the affected Device or setting, previous and new values, actor and time. Lifecycle settings audit details require Administrator access. Device history follows the existing Audit Trail and Devices permissions. Rejected saves or discarded drafts do not create successful change records.
 
-Lifecycle dates and settings are part of the full application database. Keep the persistent data volume using the supported [backup and restore guidance](../Migration-Backup-and-Restore.md). Legacy inventory JSON import has no lifecycle date fields to restore and does not infer a service date for old equipment.
+Lifecycle dates and settings are part of the full application database. Keep the persistent data volume using the draft [backup and restore guidance](Legacy-Import-and-Docker-Upgrade.md#back-up-a-complete-installation). Legacy inventory JSON import has no lifecycle date fields to restore and does not infer a service date for old equipment.
 
 | What You See | What To Check |
 | --- | --- |
@@ -145,4 +161,4 @@ Lifecycle dates and settings are part of the full application database. Keep the
 
 Related procedures include [Optional Features](Optional-Features-and-Link-To-IPAM.md), [Stock Registration And Reissue](Device-Stock-Registration-and-Reissue.md), [Associated Equipment And Direct Handovers](Associated-Equipment.md) and [Equipment Supplier Integration](Equipment-Supplier-Integration.md).
 
-See [the corrected application evidence](../../../development-handovers/evidence/stage-4-batch-44-corrected/README.md) for desktop/mobile, light/dark and open-calendar screenshots. The [original pre-correction evidence](../../../development-handovers/evidence/stage-4-batch-44/Application-Report.md) is preserved as historical evidence.
+[Connected example: a laptop from Supplier and stock to its final write-off](Connected-Equipment-Journey.md).

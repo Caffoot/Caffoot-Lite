@@ -1,0 +1,1850 @@
+{
+  "status": "Independently reviewed and product-owner visually accepted on 27 November 2026; targeted refresh backlog retained",
+  "authorisation": "https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7211852349",
+  "applicationRevision": "fdc677920bfc52f48f641b3d6d1344c902a6a9b0",
+  "schema": 31,
+  "documentationStart": "8c790ad91a969b35a2b610f7fe7dd4e8a87daea4",
+  "newImageCount": 25,
+  "newImagesByGuide": {
+    "Roles-Section-Permissions-and-MFA.md": 18,
+    "Staff-Members.md": 7
+  },
+  "reusedImageCount": 3,
+  "sharedImageUses": [
+    "account-security-voluntary.png illustrates both voluntary MFA starting controls (B3-R8) and My Account password change (B3-R11).",
+    "staff-left-company-retained.png is embedded in Staff Members and cross-linked from account employment instructions; it is the actual saved Alex offboarding result."
+  ],
+  "images": [
+    {
+      "file": "access-change-review.png",
+      "requirements": [
+        "B3-R3-S01",
+        "B3-R3-S02"
+      ],
+      "caption": "Dave\u2019s proposed Racks change replaces the Read override with Inherit, giving effective Edit. One account and two stored sessions would be affected. This preview was cancelled.",
+      "alt": "Review Access Change for dave.example showing before and after section access, one affected account, two sessions to end, Cancel and Confirm Change.",
+      "applicationRevision": "fdc677920bfc52f48f641b3d6d1344c902a6a9b0",
+      "documentationStart": "8c790ad91a969b35a2b610f7fe7dd4e8a87daea4",
+      "schema": 31,
+      "browser": "Chromium 156.0.8078.79",
+      "automation": "Playwright 1.62.0",
+      "viewport": {
+        "width": 1440,
+        "height": 1200
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1200
+      },
+      "deviceScaleFactor": 1,
+      "theme": "light",
+      "fullPage": false,
+      "capturedAt": "2026-11-27T06:59:17.233787+00:00",
+      "fixture": "Isolated fictional local HTTPS/SQLite training fixture; Accounts Department, Training Office, AC-LAP-07; example.invalid addresses only",
+      "actor": "training-admin",
+      "subject": "dave.example",
+      "accountContexts": {
+        "training-admin": {
+          "account_id": 1,
+          "roles": [
+            [
+              "Staff Member"
+            ]
+          ],
+          "overrides": {},
+          "account_state": [
+            1,
+            1,
+            1,
+            0
+          ],
+          "effective_permissions": {},
+          "mfa_mandatory": true,
+          "mfa_required_at_sign_in": true
+        },
+        "dave.example": {
+          "account_id": 8,
+          "roles": [
+            [
+              "Staff Member"
+            ],
+            [
+              "IT Staff"
+            ]
+          ],
+          "overrides": {
+            "Devices": "read",
+            "Racks": "read"
+          },
+          "account_state": [
+            1,
+            0,
+            1,
+            0
+          ],
+          "effective_permissions": {
+            "Devices": "read",
+            "IPAM": "edit",
+            "IT Assets": "edit",
+            "Racks": "read"
+          },
+          "mfa_mandatory": true,
+          "mfa_required_at_sign_in": true
+        }
+      },
+      "featureConfiguration": {
+        "devices": true,
+        "ipam": true,
+        "racks": true,
+        "suppliers": true,
+        "equipment_lifecycle": true,
+        "it_assets": true
+      },
+      "sha256": "0509eebd4339089d2758bf0eefde1475ca971cb020db7ff9bff2e324d0175f4e",
+      "guide": "Roles-Section-Permissions-and-MFA.md",
+      "guideUses": [
+        "Roles-Section-Permissions-and-MFA.md#set-an-individual-section-override"
+      ],
+      "independentVisualAcceptance": "recorded \u2014 https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7212506766",
+      "ownerVisualAcceptance": "accepted \u2014 https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7212506766",
+      "localVisualInspection": "Opened individually for framing, legibility, actual state, fictional data and empty secret fields; no QR/setup secrets present."
+    },
+    {
+      "file": "account-administrator-eligible.png",
+      "requirements": [
+        "B3-R4-S02"
+      ],
+      "caption": "Alex\u2019s authenticator is enrolled and email verified, so Make admin is available. No promotion has been applied.",
+      "alt": "Alex Morgan Account Controls with Authenticator Enrolled, Email Address Verified and an available Make admin button.",
+      "applicationRevision": "fdc677920bfc52f48f641b3d6d1344c902a6a9b0",
+      "documentationStart": "8c790ad91a969b35a2b610f7fe7dd4e8a87daea4",
+      "schema": 31,
+      "browser": "Chromium 156.0.8078.79",
+      "automation": "Playwright 1.62.0",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1050
+      },
+      "deviceScaleFactor": 1,
+      "theme": "light",
+      "fullPage": false,
+      "capturedAt": "2026-11-27T06:55:20.471004+00:00",
+      "fixture": "Isolated fictional local HTTPS/SQLite training fixture; Accounts Department, Training Office, AC-LAP-07; example.invalid addresses only",
+      "actor": "training-admin",
+      "subject": "alex.morgan",
+      "accountContexts": {
+        "training-admin": {
+          "account_id": 1,
+          "roles": [
+            [
+              "Staff Member"
+            ]
+          ],
+          "overrides": {},
+          "account_state": [
+            1,
+            1,
+            1,
+            0
+          ],
+          "effective_permissions": {},
+          "mfa_mandatory": true,
+          "mfa_required_at_sign_in": true
+        },
+        "alex.morgan": {
+          "account_id": 2,
+          "roles": [
+            [
+              "Staff Member"
+            ],
+            [
+              "IT Staff"
+            ]
+          ],
+          "overrides": {},
+          "account_state": [
+            1,
+            0,
+            1,
+            0
+          ],
+          "effective_permissions": {
+            "Devices": "edit",
+            "IPAM": "edit",
+            "IT Assets": "edit",
+            "Racks": "edit"
+          },
+          "mfa_mandatory": true,
+          "mfa_required_at_sign_in": true
+        }
+      },
+      "featureConfiguration": {
+        "devices": true,
+        "ipam": true,
+        "racks": true,
+        "suppliers": true,
+        "equipment_lifecycle": true,
+        "it_assets": true
+      },
+      "sha256": "99e676f7eb080ed930690fe2e3ea20d3818e66ec94d7189800313a3c77bcf473",
+      "guide": "Roles-Section-Permissions-and-MFA.md",
+      "guideUses": [
+        "Roles-Section-Permissions-and-MFA.md#make-an-existing-user-an-administrator"
+      ],
+      "independentVisualAcceptance": "recorded \u2014 https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7212506766",
+      "ownerVisualAcceptance": "accepted \u2014 https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7212506766",
+      "localVisualInspection": "Opened individually for framing, legibility, actual state, fictional data and empty secret fields; no QR/setup secrets present."
+    },
+    {
+      "file": "account-administrator-protected.png",
+      "requirements": [
+        "B3-R4-S03"
+      ],
+      "caption": "The signed-in account is also the only active administrator in this fixture. Its own disable, demotion, reset and deletion controls are protected.",
+      "alt": "Your administrator account, Account Controls tab, with the self-protection warning and disabled Disable Login, Remove admin, Reset Password and Delete User controls.",
+      "applicationRevision": "fdc677920bfc52f48f641b3d6d1344c902a6a9b0",
+      "documentationStart": "8c790ad91a969b35a2b610f7fe7dd4e8a87daea4",
+      "schema": 31,
+      "browser": "Chromium 156.0.8078.79",
+      "automation": "Playwright 1.62.0",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1050
+      },
+      "deviceScaleFactor": 1,
+      "theme": "light",
+      "fullPage": false,
+      "capturedAt": "2026-11-27T06:55:21.748106+00:00",
+      "fixture": "Isolated fictional local HTTPS/SQLite training fixture; Accounts Department, Training Office, AC-LAP-07; example.invalid addresses only",
+      "actor": "training-admin",
+      "subject": "training-admin",
+      "accountContexts": {
+        "training-admin": {
+          "account_id": 1,
+          "roles": [
+            [
+              "Staff Member"
+            ]
+          ],
+          "overrides": {},
+          "account_state": [
+            1,
+            1,
+            1,
+            0
+          ],
+          "effective_permissions": {},
+          "mfa_mandatory": true,
+          "mfa_required_at_sign_in": true
+        }
+      },
+      "featureConfiguration": {
+        "devices": true,
+        "ipam": true,
+        "racks": true,
+        "suppliers": true,
+        "equipment_lifecycle": true,
+        "it_assets": true
+      },
+      "sha256": "b82e1b3586aa527835d9b1b1950fe95d315b48d90b192d6a95040d583d744b56",
+      "guide": "Roles-Section-Permissions-and-MFA.md",
+      "guideUses": [
+        "Roles-Section-Permissions-and-MFA.md#make-an-existing-user-an-administrator"
+      ],
+      "independentVisualAcceptance": "recorded \u2014 https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7212506766",
+      "ownerVisualAcceptance": "accepted \u2014 https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7212506766",
+      "localVisualInspection": "Opened individually for framing, legibility, actual state, fictional data and empty secret fields; no QR/setup secrets present."
+    },
+    {
+      "file": "account-email-unverified.png",
+      "requirements": [
+        "B3-R9-S01"
+      ],
+      "caption": "Jamie\u2019s saved fictional address is Not Verified. Save Personal Details alone does not verify an address.",
+      "alt": "My Account Overview with jamie.taylor@example.invalid, Not Verified status and Verify Email.",
+      "applicationRevision": "fdc677920bfc52f48f641b3d6d1344c902a6a9b0",
+      "documentationStart": "8c790ad91a969b35a2b610f7fe7dd4e8a87daea4",
+      "schema": 31,
+      "browser": "Chromium 156.0.8078.79",
+      "automation": "Playwright 1.62.0",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1050
+      },
+      "deviceScaleFactor": 1,
+      "theme": "light",
+      "fullPage": false,
+      "capturedAt": "2026-11-27T06:57:00.463089+00:00",
+      "fixture": "Isolated fictional local HTTPS/SQLite training fixture; Accounts Department, Training Office, AC-LAP-07; example.invalid addresses only",
+      "actor": "jamie.taylor",
+      "subject": "jamie.taylor",
+      "accountContexts": {
+        "jamie.taylor": {
+          "account_id": 3,
+          "roles": [
+            [
+              "Staff Member"
+            ]
+          ],
+          "overrides": {},
+          "account_state": [
+            1,
+            0,
+            0,
+            0
+          ],
+          "effective_permissions": {},
+          "mfa_mandatory": false,
+          "mfa_required_at_sign_in": false
+        }
+      },
+      "featureConfiguration": {
+        "devices": true,
+        "ipam": true,
+        "racks": true,
+        "suppliers": true,
+        "equipment_lifecycle": true,
+        "it_assets": true
+      },
+      "sha256": "043c835c03f0a9e8c93bd9bf2f5f5028a17cdc560cdee64531299ead39f3246c",
+      "guide": "Roles-Section-Permissions-and-MFA.md",
+      "guideUses": [
+        "Roles-Section-Permissions-and-MFA.md#prepare-verified-email-recovery"
+      ],
+      "independentVisualAcceptance": "recorded \u2014 https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7212506766",
+      "ownerVisualAcceptance": "accepted \u2014 https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7212506766",
+      "localVisualInspection": "Opened individually for framing, legibility, actual state, fictional data and empty secret fields; no QR/setup secrets present."
+    },
+    {
+      "file": "account-email-verification.png",
+      "requirements": [
+        "B3-R9-S02"
+      ],
+      "caption": "The existing isolated mail-sink fixture supplied the confirmation-request state. Current Password and Email Confirmation Code are empty. This illustration does not establish external mail delivery.",
+      "alt": "Verify Email Address form with empty Current Password and eight-digit Email Confirmation Code fields, Resend Confirmation Code, Cancel and Verify Email Address.",
+      "applicationRevision": "fdc677920bfc52f48f641b3d6d1344c902a6a9b0",
+      "documentationStart": "8c790ad91a969b35a2b610f7fe7dd4e8a87daea4",
+      "schema": 31,
+      "browser": "Chromium 156.0.8078.79",
+      "automation": "Playwright 1.62.0",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1599
+      },
+      "deviceScaleFactor": 1,
+      "theme": "light",
+      "fullPage": true,
+      "capturedAt": "2026-11-27T06:57:01.336500+00:00",
+      "fixture": "Isolated fictional local HTTPS/SQLite training fixture; Accounts Department, Training Office, AC-LAP-07; example.invalid addresses only",
+      "actor": "jamie.taylor",
+      "subject": "jamie.taylor",
+      "accountContexts": {
+        "jamie.taylor": {
+          "account_id": 3,
+          "roles": [
+            [
+              "Staff Member"
+            ]
+          ],
+          "overrides": {},
+          "account_state": [
+            1,
+            0,
+            0,
+            0
+          ],
+          "effective_permissions": {},
+          "mfa_mandatory": false,
+          "mfa_required_at_sign_in": false
+        }
+      },
+      "featureConfiguration": {
+        "devices": true,
+        "ipam": true,
+        "racks": true,
+        "suppliers": true,
+        "equipment_lifecycle": true,
+        "it_assets": true
+      },
+      "sha256": "e6c98f4a02354b4e62ac122d84cf386e6c287006cb6df13d8268033b164bbb91",
+      "guide": "Roles-Section-Permissions-and-MFA.md",
+      "guideUses": [
+        "Roles-Section-Permissions-and-MFA.md#prepare-verified-email-recovery"
+      ],
+      "independentVisualAcceptance": "recorded \u2014 https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7212506766",
+      "ownerVisualAcceptance": "accepted \u2014 https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7212506766",
+      "localVisualInspection": "Opened individually for framing, legibility, actual state, fictional data and empty secret fields; no QR/setup secrets present."
+    },
+    {
+      "file": "account-login-disabled.png",
+      "requirements": [
+        "B3-R5-S02"
+      ],
+      "caption": "Sarah\u2019s saved login is Disabled while employment remains Active. Enable Login is available; this is not an offboarding result.",
+      "alt": "Sarah Lewis Account Controls with Disabled badge, Active Employment Status and the red Enable Login panel.",
+      "applicationRevision": "fdc677920bfc52f48f641b3d6d1344c902a6a9b0",
+      "documentationStart": "8c790ad91a969b35a2b610f7fe7dd4e8a87daea4",
+      "schema": 31,
+      "browser": "Chromium 156.0.8078.79",
+      "automation": "Playwright 1.62.0",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1050
+      },
+      "deviceScaleFactor": 1,
+      "theme": "light",
+      "fullPage": false,
+      "capturedAt": "2026-11-27T06:55:24.384374+00:00",
+      "fixture": "Isolated fictional local HTTPS/SQLite training fixture; Accounts Department, Training Office, AC-LAP-07; example.invalid addresses only",
+      "actor": "training-admin",
+      "subject": "sarah.lewis",
+      "accountContexts": {
+        "training-admin": {
+          "account_id": 1,
+          "roles": [
+            [
+              "Staff Member"
+            ]
+          ],
+          "overrides": {},
+          "account_state": [
+            1,
+            1,
+            1,
+            0
+          ],
+          "effective_permissions": {},
+          "mfa_mandatory": true,
+          "mfa_required_at_sign_in": true
+        },
+        "sarah.lewis": {
+          "account_id": 5,
+          "roles": [
+            [
+              "Staff Member"
+            ]
+          ],
+          "overrides": {},
+          "account_state": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "effective_permissions": {},
+          "mfa_mandatory": false,
+          "mfa_required_at_sign_in": false
+        }
+      },
+      "featureConfiguration": {
+        "devices": true,
+        "ipam": true,
+        "racks": true,
+        "suppliers": true,
+        "equipment_lifecycle": true,
+        "it_assets": true
+      },
+      "sha256": "79f0e84949ae1113a01c696386343e26cfc5e96117e55ff7d022bcb185f814e3",
+      "guide": "Roles-Section-Permissions-and-MFA.md",
+      "guideUses": [
+        "Roles-Section-Permissions-and-MFA.md#enable-disable-or-delete-a-login"
+      ],
+      "independentVisualAcceptance": "recorded \u2014 https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7212506766",
+      "ownerVisualAcceptance": "accepted \u2014 https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7212506766",
+      "localVisualInspection": "Opened individually for framing, legibility, actual state, fictional data and empty secret fields; no QR/setup secrets present."
+    },
+    {
+      "file": "account-mfa-removal-eligible.png",
+      "requirements": [
+        "B3-R8-S02"
+      ],
+      "caption": "Priya\u2019s enrolled MFA is optional for her baseline-only access. The expanded removal form has empty password and authenticator fields; no removal has been submitted.",
+      "alt": "My Account Security with MFA Enabled, expanded Remove MFA, empty Current Password and Current Authenticator Code fields and Confirm MFA Removal.",
+      "applicationRevision": "fdc677920bfc52f48f641b3d6d1344c902a6a9b0",
+      "documentationStart": "8c790ad91a969b35a2b610f7fe7dd4e8a87daea4",
+      "schema": 31,
+      "browser": "Chromium 156.0.8078.79",
+      "automation": "Playwright 1.62.0",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1264
+      },
+      "deviceScaleFactor": 1,
+      "theme": "light",
+      "fullPage": true,
+      "capturedAt": "2026-11-27T07:00:03.471554+00:00",
+      "fixture": "Isolated fictional local HTTPS/SQLite training fixture; Accounts Department, Training Office, AC-LAP-07; example.invalid addresses only",
+      "actor": "priya.shah",
+      "subject": "priya.shah",
+      "accountContexts": {
+        "priya.shah": {
+          "account_id": 6,
+          "roles": [
+            [
+              "Staff Member"
+            ]
+          ],
+          "overrides": {},
+          "account_state": [
+            1,
+            0,
+            1,
+            0
+          ],
+          "effective_permissions": {},
+          "mfa_mandatory": false,
+          "mfa_required_at_sign_in": true
+        }
+      },
+      "featureConfiguration": {
+        "devices": true,
+        "ipam": true,
+        "racks": true,
+        "suppliers": true,
+        "equipment_lifecycle": true,
+        "it_assets": true
+      },
+      "sha256": "dd0102e0e224acfbecd5dd4d4c4214d062cc58515ece258ffc04251cb2da6faa",
+      "guide": "Roles-Section-Permissions-and-MFA.md",
+      "guideUses": [
+        "Roles-Section-Permissions-and-MFA.md#voluntary-enrolment-and-eligible-removal"
+      ],
+      "independentVisualAcceptance": "recorded \u2014 https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7212506766",
+      "ownerVisualAcceptance": "accepted \u2014 https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7212506766",
+      "localVisualInspection": "Opened individually for framing, legibility, actual state, fictional data and empty secret fields; no QR/setup secrets present."
+    },
+    {
+      "file": "account-mfa-removal-protected.png",
+      "requirements": [
+        "B3-R8-S03"
+      ],
+      "caption": "This administrator\u2019s MFA is mandatory. Security shows MFA Enabled and provides no Remove MFA action.",
+      "alt": "Administrator My Account Security showing Administrator account role and MFA Enabled, with no Remove MFA control.",
+      "applicationRevision": "fdc677920bfc52f48f641b3d6d1344c902a6a9b0",
+      "documentationStart": "8c790ad91a969b35a2b610f7fe7dd4e8a87daea4",
+      "schema": 31,
+      "browser": "Chromium 156.0.8078.79",
+      "automation": "Playwright 1.62.0",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1050
+      },
+      "deviceScaleFactor": 1,
+      "theme": "light",
+      "fullPage": false,
+      "capturedAt": "2026-11-27T06:56:59.346949+00:00",
+      "fixture": "Isolated fictional local HTTPS/SQLite training fixture; Accounts Department, Training Office, AC-LAP-07; example.invalid addresses only",
+      "actor": "training-admin",
+      "subject": "training-admin",
+      "accountContexts": {
+        "training-admin": {
+          "account_id": 1,
+          "roles": [
+            [
+              "Staff Member"
+            ]
+          ],
+          "overrides": {},
+          "account_state": [
+            1,
+            1,
+            1,
+            0
+          ],
+          "effective_permissions": {},
+          "mfa_mandatory": true,
+          "mfa_required_at_sign_in": true
+        }
+      },
+      "featureConfiguration": {
+        "devices": true,
+        "ipam": true,
+        "racks": true,
+        "suppliers": true,
+        "equipment_lifecycle": true,
+        "it_assets": true
+      },
+      "sha256": "435cb7e75cd70b4ed43902f9c1aaeedf2fdfaa64f30461795764fb8ab47a3829",
+      "guide": "Roles-Section-Permissions-and-MFA.md",
+      "guideUses": [
+        "Roles-Section-Permissions-and-MFA.md#voluntary-enrolment-and-eligible-removal"
+      ],
+      "independentVisualAcceptance": "recorded \u2014 https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7212506766",
+      "ownerVisualAcceptance": "accepted \u2014 https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7212506766",
+      "localVisualInspection": "Opened individually for framing, legibility, actual state, fictional data and empty secret fields; no QR/setup secrets present."
+    },
+    {
+      "file": "account-personal-details.png",
+      "requirements": [
+        "B3-R1-S01"
+      ],
+      "caption": "Saved Personal Details for taylor.cole: the account uses Tay Cole and an unverified email. Resolve any saved Staff/account differences separately.",
+      "alt": "Manage taylor.cole, Personal Details tab, with read-only username, saved Tay Cole display name and Not Verified email.",
+      "applicationRevision": "fdc677920bfc52f48f641b3d6d1344c902a6a9b0",
+      "documentationStart": "8c790ad91a969b35a2b610f7fe7dd4e8a87daea4",
+      "schema": 31,
+      "browser": "Chromium 156.0.8078.79",
+      "automation": "Playwright 1.62.0",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1050
+      },
+      "deviceScaleFactor": 1,
+      "theme": "light",
+      "fullPage": false,
+      "capturedAt": "2026-11-27T06:55:19.245875+00:00",
+      "fixture": "Isolated fictional local HTTPS/SQLite training fixture; Accounts Department, Training Office, AC-LAP-07; example.invalid addresses only",
+      "actor": "training-admin",
+      "subject": "taylor.cole",
+      "accountContexts": {
+        "training-admin": {
+          "account_id": 1,
+          "roles": [
+            [
+              "Staff Member"
+            ]
+          ],
+          "overrides": {},
+          "account_state": [
+            1,
+            1,
+            1,
+            0
+          ],
+          "effective_permissions": {},
+          "mfa_mandatory": true,
+          "mfa_required_at_sign_in": true
+        },
+        "taylor.cole": {
+          "account_id": 4,
+          "roles": [
+            [
+              "Staff Member"
+            ]
+          ],
+          "overrides": {},
+          "account_state": [
+            1,
+            0,
+            0,
+            0
+          ],
+          "effective_permissions": {},
+          "mfa_mandatory": false,
+          "mfa_required_at_sign_in": false
+        }
+      },
+      "featureConfiguration": {
+        "devices": true,
+        "ipam": true,
+        "racks": true,
+        "suppliers": true,
+        "equipment_lifecycle": true,
+        "it_assets": true
+      },
+      "sha256": "394d7fcca46446160cec335738111b21cf063d22b2c4d0c6c3a9e3492ada214c",
+      "guide": "Roles-Section-Permissions-and-MFA.md",
+      "guideUses": [
+        "Roles-Section-Permissions-and-MFA.md#save-personal-details"
+      ],
+      "independentVisualAcceptance": "recorded \u2014 https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7212506766",
+      "ownerVisualAcceptance": "accepted \u2014 https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7212506766",
+      "localVisualInspection": "Opened individually for framing, legibility, actual state, fictional data and empty secret fields; no QR/setup secrets present."
+    },
+    {
+      "file": "account-reset-password.png",
+      "requirements": [
+        "B3-R6-S01"
+      ],
+      "caption": "Reset Password for Jamie Taylor, before entry or confirmation. Both temporary password fields are empty.",
+      "alt": "Reset Password dialogue for jamie.taylor with empty Temporary Password and Confirm Temporary Password, session warning, Cancel and Reset Password.",
+      "applicationRevision": "fdc677920bfc52f48f641b3d6d1344c902a6a9b0",
+      "documentationStart": "8c790ad91a969b35a2b610f7fe7dd4e8a87daea4",
+      "schema": 31,
+      "browser": "Chromium 156.0.8078.79",
+      "automation": "Playwright 1.62.0",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1050
+      },
+      "deviceScaleFactor": 1,
+      "theme": "light",
+      "fullPage": false,
+      "capturedAt": "2026-11-27T06:55:23.050638+00:00",
+      "fixture": "Isolated fictional local HTTPS/SQLite training fixture; Accounts Department, Training Office, AC-LAP-07; example.invalid addresses only",
+      "actor": "training-admin",
+      "subject": "jamie.taylor",
+      "accountContexts": {
+        "training-admin": {
+          "account_id": 1,
+          "roles": [
+            [
+              "Staff Member"
+            ]
+          ],
+          "overrides": {},
+          "account_state": [
+            1,
+            1,
+            1,
+            0
+          ],
+          "effective_permissions": {},
+          "mfa_mandatory": true,
+          "mfa_required_at_sign_in": true
+        },
+        "jamie.taylor": {
+          "account_id": 3,
+          "roles": [
+            [
+              "Staff Member"
+            ]
+          ],
+          "overrides": {},
+          "account_state": [
+            1,
+            0,
+            0,
+            0
+          ],
+          "effective_permissions": {},
+          "mfa_mandatory": false,
+          "mfa_required_at_sign_in": false
+        }
+      },
+      "featureConfiguration": {
+        "devices": true,
+        "ipam": true,
+        "racks": true,
+        "suppliers": true,
+        "equipment_lifecycle": true,
+        "it_assets": true
+      },
+      "sha256": "f8da157fb697694cf0ee2d8601e62d1cb53df7abd4dc8e9d9def7101b4dda5ae",
+      "guide": "Roles-Section-Permissions-and-MFA.md",
+      "guideUses": [
+        "Roles-Section-Permissions-and-MFA.md#reset-a-staff-members-password"
+      ],
+      "independentVisualAcceptance": "recorded \u2014 https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7212506766",
+      "ownerVisualAcceptance": "accepted \u2014 https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7212506766",
+      "localVisualInspection": "Opened individually for framing, legibility, actual state, fictional data and empty secret fields; no QR/setup secrets present."
+    },
+    {
+      "file": "account-security-voluntary.png",
+      "requirements": [
+        "B3-R8-S01",
+        "B3-R11-S01"
+      ],
+      "caption": "Jamie has the baseline Staff Member role and no wider grants. Security shows the empty password-change form and safe voluntary MFA starting screen; enrolment has not begun.",
+      "alt": "My Account Security for a baseline Staff Member, with empty current, new and confirm password fields, MFA not yet enrolled and Start MFA enrolment.",
+      "applicationRevision": "fdc677920bfc52f48f641b3d6d1344c902a6a9b0",
+      "documentationStart": "8c790ad91a969b35a2b610f7fe7dd4e8a87daea4",
+      "schema": 31,
+      "browser": "Chromium 156.0.8078.79",
+      "automation": "Playwright 1.62.0",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1050
+      },
+      "deviceScaleFactor": 1,
+      "theme": "light",
+      "fullPage": false,
+      "capturedAt": "2026-11-27T06:56:55.409693+00:00",
+      "fixture": "Isolated fictional local HTTPS/SQLite training fixture; Accounts Department, Training Office, AC-LAP-07; example.invalid addresses only",
+      "actor": "jamie.taylor",
+      "subject": "jamie.taylor",
+      "accountContexts": {
+        "jamie.taylor": {
+          "account_id": 3,
+          "roles": [
+            [
+              "Staff Member"
+            ]
+          ],
+          "overrides": {},
+          "account_state": [
+            1,
+            0,
+            0,
+            0
+          ],
+          "effective_permissions": {},
+          "mfa_mandatory": false,
+          "mfa_required_at_sign_in": false
+        }
+      },
+      "featureConfiguration": {
+        "devices": true,
+        "ipam": true,
+        "racks": true,
+        "suppliers": true,
+        "equipment_lifecycle": true,
+        "it_assets": true
+      },
+      "sha256": "c822c20d51263921a794bb2377572587bdb63f9edc95b4d20ee55ad61ef3af5e",
+      "guide": "Roles-Section-Permissions-and-MFA.md",
+      "guideUses": [
+        "Roles-Section-Permissions-and-MFA.md#voluntary-enrolment-and-eligible-removal",
+        "Roles-Section-Permissions-and-MFA.md#change-your-password-from-my-account"
+      ],
+      "independentVisualAcceptance": "recorded \u2014 https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7212506766",
+      "ownerVisualAcceptance": "accepted \u2014 https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7212506766",
+      "localVisualInspection": "Opened individually for framing, legibility, actual state, fictional data and empty secret fields; no QR/setup secrets present."
+    },
+    {
+      "file": "authenticator-challenge.png",
+      "requirements": [
+        "B3-R7-S02"
+      ],
+      "caption": "Tim\u2019s IT Staff account requires the authenticator challenge after password entry. The password has cleared and the code field is empty; the dots are the application\u2019s placeholder.",
+      "alt": "Verify Your Identity screen with an empty Authenticator Code field, six placeholder dots, Verify and Sign In, Back to Sign In and Forgot Password.",
+      "applicationRevision": "fdc677920bfc52f48f641b3d6d1344c902a6a9b0",
+      "documentationStart": "8c790ad91a969b35a2b610f7fe7dd4e8a87daea4",
+      "schema": 31,
+      "browser": "Chromium 156.0.8078.79",
+      "automation": "Playwright 1.62.0",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1050
+      },
+      "deviceScaleFactor": 1,
+      "theme": "light",
+      "fullPage": false,
+      "capturedAt": "2026-11-27T06:58:16.704886+00:00",
+      "fixture": "Isolated fictional local HTTPS/SQLite training fixture; Accounts Department, Training Office, AC-LAP-07; example.invalid addresses only",
+      "actor": "Signed out / restricted pre-session screen",
+      "subject": "tim.example",
+      "accountContexts": {
+        "tim.example": {
+          "account_id": 7,
+          "roles": [
+            [
+              "Staff Member"
+            ],
+            [
+              "IT Staff"
+            ]
+          ],
+          "overrides": {},
+          "account_state": [
+            1,
+            0,
+            1,
+            0
+          ],
+          "effective_permissions": {
+            "Devices": "edit",
+            "IPAM": "edit",
+            "IT Assets": "edit",
+            "Racks": "edit"
+          },
+          "mfa_mandatory": true,
+          "mfa_required_at_sign_in": true
+        }
+      },
+      "featureConfiguration": {
+        "devices": true,
+        "ipam": true,
+        "racks": true,
+        "suppliers": true,
+        "equipment_lifecycle": true,
+        "it_assets": true
+      },
+      "sha256": "ef69644e74d0856d1c419b341e3ec6e4022382bb9cc7932335a14404994a166d",
+      "guide": "Roles-Section-Permissions-and-MFA.md",
+      "guideUses": [
+        "Roles-Section-Permissions-and-MFA.md#sign-in-after-enrolment"
+      ],
+      "independentVisualAcceptance": "recorded \u2014 https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7212506766",
+      "ownerVisualAcceptance": "accepted \u2014 https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7212506766",
+      "localVisualInspection": "Opened individually for framing, legibility, actual state, fictional data and empty secret fields; no QR/setup secrets present."
+    },
+    {
+      "file": "mandatory-password-change.png",
+      "requirements": [
+        "B3-R6-S02"
+      ],
+      "caption": "After an assisted reset, Jamie must choose a personal password before entering the workspace. Both new password fields are empty.",
+      "alt": "Change Your Password screen with mandatory-change explanation, empty New Password and Confirm New Password fields, Change Password and Back to Sign In.",
+      "applicationRevision": "fdc677920bfc52f48f641b3d6d1344c902a6a9b0",
+      "documentationStart": "8c790ad91a969b35a2b610f7fe7dd4e8a87daea4",
+      "schema": 31,
+      "browser": "Chromium 156.0.8078.79",
+      "automation": "Playwright 1.62.0",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1050
+      },
+      "deviceScaleFactor": 1,
+      "theme": "light",
+      "fullPage": false,
+      "capturedAt": "2026-11-27T06:58:50.121334+00:00",
+      "fixture": "Isolated fictional local HTTPS/SQLite training fixture; Accounts Department, Training Office, AC-LAP-07; example.invalid addresses only",
+      "actor": "Signed out / restricted pre-session screen",
+      "subject": "jamie.taylor",
+      "accountContexts": {
+        "jamie.taylor": {
+          "account_id": 3,
+          "roles": [
+            [
+              "Staff Member"
+            ]
+          ],
+          "overrides": {},
+          "account_state": [
+            1,
+            0,
+            0,
+            1
+          ],
+          "effective_permissions": {},
+          "mfa_mandatory": false,
+          "mfa_required_at_sign_in": false
+        }
+      },
+      "featureConfiguration": {
+        "devices": true,
+        "ipam": true,
+        "racks": true,
+        "suppliers": true,
+        "equipment_lifecycle": true,
+        "it_assets": true
+      },
+      "sha256": "4e40e29b5c1231d6d3d95b04b96477ab8553593cc211a939095dd45fe750f316",
+      "guide": "Roles-Section-Permissions-and-MFA.md",
+      "guideUses": [
+        "Roles-Section-Permissions-and-MFA.md#after-an-administrator-gives-you-a-temporary-password"
+      ],
+      "independentVisualAcceptance": "recorded \u2014 https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7212506766",
+      "ownerVisualAcceptance": "accepted \u2014 https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7212506766",
+      "localVisualInspection": "Opened individually for framing, legibility, actual state, fictional data and empty secret fields; no QR/setup secrets present."
+    },
+    {
+      "file": "recovery-request.png",
+      "requirements": [
+        "B3-R10-S01"
+      ],
+      "caption": "Request a Recovery Code starts with an empty Username field. Recovery prerequisites and the administrator fallback remain visible.",
+      "alt": "Request a Recovery Code screen with empty Username, Request Recovery Code and Back To Sign In.",
+      "applicationRevision": "fdc677920bfc52f48f641b3d6d1344c902a6a9b0",
+      "documentationStart": "8c790ad91a969b35a2b610f7fe7dd4e8a87daea4",
+      "schema": 31,
+      "browser": "Chromium 156.0.8078.79",
+      "automation": "Playwright 1.62.0",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1050
+      },
+      "deviceScaleFactor": 1,
+      "theme": "light",
+      "fullPage": false,
+      "capturedAt": "2026-11-27T06:58:17.847188+00:00",
+      "fixture": "Isolated fictional local HTTPS/SQLite training fixture; Accounts Department, Training Office, AC-LAP-07; example.invalid addresses only",
+      "actor": "Signed out / restricted pre-session screen",
+      "subject": null,
+      "accountContexts": {},
+      "featureConfiguration": {
+        "devices": true,
+        "ipam": true,
+        "racks": true,
+        "suppliers": true,
+        "equipment_lifecycle": true,
+        "it_assets": true
+      },
+      "sha256": "ae2efb2a544af7eb589e2899aa661aaa7094b1f14d22fd1dcb3eed10cce6fe8b",
+      "guide": "Roles-Section-Permissions-and-MFA.md",
+      "guideUses": [
+        "Roles-Section-Permissions-and-MFA.md#recover-your-password-from-sign-in"
+      ],
+      "independentVisualAcceptance": "recorded \u2014 https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7212506766",
+      "ownerVisualAcceptance": "accepted \u2014 https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7212506766",
+      "localVisualInspection": "Opened individually for framing, legibility, actual state, fictional data and empty secret fields; no QR/setup secrets present."
+    },
+    {
+      "file": "recovery-reset.png",
+      "requirements": [
+        "B3-R10-S02",
+        "B3-R10-S03"
+      ],
+      "caption": "The neutral response after requesting recovery for fictional recovery-owner confirms neither eligibility nor delivery. All recovery, password and authenticator fields are empty.",
+      "alt": "Reset Your Password with neutral request response, empty recovery code, new password, confirmation and authenticator fields, Recover Password, Request Another Code and Back To Sign In.",
+      "applicationRevision": "fdc677920bfc52f48f641b3d6d1344c902a6a9b0",
+      "documentationStart": "8c790ad91a969b35a2b610f7fe7dd4e8a87daea4",
+      "schema": 31,
+      "browser": "Chromium 156.0.8078.79",
+      "automation": "Playwright 1.62.0",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1050
+      },
+      "deviceScaleFactor": 1,
+      "theme": "light",
+      "fullPage": true,
+      "capturedAt": "2026-11-27T06:58:18.121332+00:00",
+      "fixture": "Isolated fictional local HTTPS/SQLite training fixture; Accounts Department, Training Office, AC-LAP-07; example.invalid addresses only",
+      "actor": "Signed out / restricted pre-session screen",
+      "subject": null,
+      "accountContexts": {},
+      "featureConfiguration": {
+        "devices": true,
+        "ipam": true,
+        "racks": true,
+        "suppliers": true,
+        "equipment_lifecycle": true,
+        "it_assets": true
+      },
+      "sha256": "749f387310eb0068de181df01dbf2dafb6cb010de425860337bbd85158d48606",
+      "guide": "Roles-Section-Permissions-and-MFA.md",
+      "guideUses": [
+        "Roles-Section-Permissions-and-MFA.md#recover-your-password-from-sign-in"
+      ],
+      "independentVisualAcceptance": "recorded \u2014 https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7212506766",
+      "ownerVisualAcceptance": "accepted \u2014 https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7212506766",
+      "localVisualInspection": "Opened individually for framing, legibility, actual state, fictional data and empty secret fields; no QR/setup secrets present."
+    },
+    {
+      "file": "role-configuration.png",
+      "requirements": [
+        "B3-R2-S01",
+        "B3-R2-S02"
+      ],
+      "caption": "Equipment Auditors is an unsaved role draft with IT Assets Read. Review Changes is still required; this role has not been created.",
+      "alt": "Create Role dialogue with Equipment Auditors, Enabled selected, IT Assets Read and all other section grants set to No Access.",
+      "applicationRevision": "fdc677920bfc52f48f641b3d6d1344c902a6a9b0",
+      "documentationStart": "8c790ad91a969b35a2b610f7fe7dd4e8a87daea4",
+      "schema": 31,
+      "browser": "Chromium 156.0.8078.79",
+      "automation": "Playwright 1.62.0",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1050
+      },
+      "deviceScaleFactor": 1,
+      "theme": "light",
+      "fullPage": false,
+      "capturedAt": "2026-11-27T06:55:25.645115+00:00",
+      "fixture": "Isolated fictional local HTTPS/SQLite training fixture; Accounts Department, Training Office, AC-LAP-07; example.invalid addresses only",
+      "actor": "training-admin",
+      "subject": null,
+      "accountContexts": {
+        "training-admin": {
+          "account_id": 1,
+          "roles": [
+            [
+              "Staff Member"
+            ]
+          ],
+          "overrides": {},
+          "account_state": [
+            1,
+            1,
+            1,
+            0
+          ],
+          "effective_permissions": {},
+          "mfa_mandatory": true,
+          "mfa_required_at_sign_in": true
+        }
+      },
+      "featureConfiguration": {
+        "devices": true,
+        "ipam": true,
+        "racks": true,
+        "suppliers": true,
+        "equipment_lifecycle": true,
+        "it_assets": true
+      },
+      "sha256": "28cb014ba993fba27e78792f95f8e05fc75af6e359fee5da2d07af63749e9664",
+      "guide": "Roles-Section-Permissions-and-MFA.md",
+      "guideUses": [
+        "Roles-Section-Permissions-and-MFA.md#create-a-custom-role"
+      ],
+      "independentVisualAcceptance": "recorded \u2014 https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7212506766",
+      "ownerVisualAcceptance": "accepted \u2014 https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7212506766",
+      "localVisualInspection": "Opened individually for framing, legibility, actual state, fictional data and empty secret fields; no QR/setup secrets present."
+    },
+    {
+      "file": "roles-directory.png",
+      "requirements": [
+        "B3-R2-S03"
+      ],
+      "caption": "Manage Roles shows the protected Staff Member baseline and the enabled IT Staff definition.",
+      "alt": "Manage Roles directory showing protected Staff Member with no section grants, and enabled IT Staff with Devices, IPAM, Racks and IT Assets Edit.",
+      "applicationRevision": "fdc677920bfc52f48f641b3d6d1344c902a6a9b0",
+      "documentationStart": "8c790ad91a969b35a2b610f7fe7dd4e8a87daea4",
+      "schema": 31,
+      "browser": "Chromium 156.0.8078.79",
+      "automation": "Playwright 1.62.0",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1050
+      },
+      "deviceScaleFactor": 1,
+      "theme": "light",
+      "fullPage": false,
+      "capturedAt": "2026-11-27T06:55:25.492699+00:00",
+      "fixture": "Isolated fictional local HTTPS/SQLite training fixture; Accounts Department, Training Office, AC-LAP-07; example.invalid addresses only",
+      "actor": "training-admin",
+      "subject": null,
+      "accountContexts": {
+        "training-admin": {
+          "account_id": 1,
+          "roles": [
+            [
+              "Staff Member"
+            ]
+          ],
+          "overrides": {},
+          "account_state": [
+            1,
+            1,
+            1,
+            0
+          ],
+          "effective_permissions": {},
+          "mfa_mandatory": true,
+          "mfa_required_at_sign_in": true
+        }
+      },
+      "featureConfiguration": {
+        "devices": true,
+        "ipam": true,
+        "racks": true,
+        "suppliers": true,
+        "equipment_lifecycle": true,
+        "it_assets": true
+      },
+      "sha256": "ec6b0ea3f584a76f2d7bfc3f829de3cb5185390d43b8e9f56cb06cb9fba91e5c",
+      "guide": "Roles-Section-Permissions-and-MFA.md",
+      "guideUses": [
+        "Roles-Section-Permissions-and-MFA.md#create-a-custom-role"
+      ],
+      "independentVisualAcceptance": "recorded \u2014 https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7212506766",
+      "ownerVisualAcceptance": "accepted \u2014 https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7212506766",
+      "localVisualInspection": "Opened individually for framing, legibility, actual state, fictional data and empty secret fields; no QR/setup secrets present."
+    },
+    {
+      "file": "sign-in.png",
+      "requirements": [
+        "B3-R7-S01"
+      ],
+      "caption": "The sign-in form starts with empty Username and Password fields.",
+      "alt": "Desktop light Welcome Back sign-in screen with empty Username and Password fields, Sign In and Forgot Password.",
+      "applicationRevision": "fdc677920bfc52f48f641b3d6d1344c902a6a9b0",
+      "documentationStart": "8c790ad91a969b35a2b610f7fe7dd4e8a87daea4",
+      "schema": 31,
+      "browser": "Chromium 156.0.8078.79",
+      "automation": "Playwright 1.62.0",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1050
+      },
+      "deviceScaleFactor": 1,
+      "theme": "light",
+      "fullPage": false,
+      "capturedAt": "2026-11-27T06:58:16.216200+00:00",
+      "fixture": "Isolated fictional local HTTPS/SQLite training fixture; Accounts Department, Training Office, AC-LAP-07; example.invalid addresses only",
+      "actor": "Signed out / restricted pre-session screen",
+      "subject": null,
+      "accountContexts": {},
+      "featureConfiguration": {
+        "devices": true,
+        "ipam": true,
+        "racks": true,
+        "suppliers": true,
+        "equipment_lifecycle": true,
+        "it_assets": true
+      },
+      "sha256": "e096443a3f0f8a5d13fe975d96d108d251c37a89f7d57fd8180365f21b5d310c",
+      "guide": "Roles-Section-Permissions-and-MFA.md",
+      "guideUses": [
+        "Roles-Section-Permissions-and-MFA.md#sign-in-after-enrolment"
+      ],
+      "independentVisualAcceptance": "recorded \u2014 https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7212506766",
+      "ownerVisualAcceptance": "accepted \u2014 https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7212506766",
+      "localVisualInspection": "Opened individually for framing, legibility, actual state, fictional data and empty secret fields; no QR/setup secrets present."
+    },
+    {
+      "file": "staff-add-form.png",
+      "requirements": [
+        "B3-S2-S01"
+      ],
+      "caption": "An unsaved Add Staff Member draft using fictional Jordan Rivers. Create Caffoot Login is off; no new Staff record has been saved from this draft.",
+      "alt": "Add Staff Member form with Jordan Rivers, Accounts Department, Service Coordinator job title, Create Caffoot Login off, Cancel and Save Staff Member.",
+      "applicationRevision": "fdc677920bfc52f48f641b3d6d1344c902a6a9b0",
+      "documentationStart": "8c790ad91a969b35a2b610f7fe7dd4e8a87daea4",
+      "schema": 31,
+      "browser": "Chromium 156.0.8078.79",
+      "automation": "Playwright 1.62.0",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1050
+      },
+      "deviceScaleFactor": 1,
+      "theme": "light",
+      "fullPage": true,
+      "capturedAt": "2026-11-27T06:54:33.559496+00:00",
+      "fixture": "Isolated fictional local HTTPS/SQLite training fixture; Accounts Department, Training Office, AC-LAP-07; example.invalid addresses only",
+      "actor": "training-admin",
+      "subject": null,
+      "accountContexts": {
+        "training-admin": {
+          "account_id": 1,
+          "roles": [
+            [
+              "Staff Member"
+            ]
+          ],
+          "overrides": {},
+          "account_state": [
+            1,
+            1,
+            1,
+            0
+          ],
+          "effective_permissions": {},
+          "mfa_mandatory": true,
+          "mfa_required_at_sign_in": true
+        }
+      },
+      "featureConfiguration": {
+        "devices": true,
+        "ipam": true,
+        "racks": true,
+        "suppliers": true,
+        "equipment_lifecycle": true,
+        "it_assets": true
+      },
+      "sha256": "d0c1897bd403b76e2d4a1fcaf0dc8c49dc522eb3ae815ad18c66c4d7442701fe",
+      "guide": "Staff-Members.md",
+      "guideUses": [
+        "Staff-Members.md#add-a-person-without-a-login"
+      ],
+      "independentVisualAcceptance": "recorded \u2014 https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7212506766",
+      "ownerVisualAcceptance": "accepted \u2014 https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7212506766",
+      "localVisualInspection": "Opened individually for framing, legibility, actual state, fictional data and empty secret fields; no QR/setup secrets present."
+    },
+    {
+      "file": "staff-create-login.png",
+      "requirements": [
+        "B3-S3-S01"
+      ],
+      "caption": "The existing Jordan record has an unsaved optional login draft. The two initial password fields are empty and the default role is Staff Member.",
+      "alt": "Edit Staff Member for Jordan Rivers with Create Caffoot Login on, jordan.rivers username, empty Initial Password and Confirm Initial Password, and Staff Member default role.",
+      "applicationRevision": "fdc677920bfc52f48f641b3d6d1344c902a6a9b0",
+      "documentationStart": "8c790ad91a969b35a2b610f7fe7dd4e8a87daea4",
+      "schema": 31,
+      "browser": "Chromium 156.0.8078.79",
+      "automation": "Playwright 1.62.0",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1370
+      },
+      "deviceScaleFactor": 1,
+      "theme": "light",
+      "fullPage": true,
+      "capturedAt": "2026-11-27T06:55:16.762479+00:00",
+      "fixture": "Isolated fictional local HTTPS/SQLite training fixture; Accounts Department, Training Office, AC-LAP-07; example.invalid addresses only",
+      "actor": "training-admin",
+      "subject": null,
+      "accountContexts": {
+        "training-admin": {
+          "account_id": 1,
+          "roles": [
+            [
+              "Staff Member"
+            ]
+          ],
+          "overrides": {},
+          "account_state": [
+            1,
+            1,
+            1,
+            0
+          ],
+          "effective_permissions": {},
+          "mfa_mandatory": true,
+          "mfa_required_at_sign_in": true
+        }
+      },
+      "featureConfiguration": {
+        "devices": true,
+        "ipam": true,
+        "racks": true,
+        "suppliers": true,
+        "equipment_lifecycle": true,
+        "it_assets": true
+      },
+      "sha256": "096b61a359d6b6810b290ba3b0933fa55e18dc08b86907ccbe1c886e48991703",
+      "guide": "Staff-Members.md",
+      "guideUses": [
+        "Staff-Members.md#create-and-link-an-optional-caffoot-login"
+      ],
+      "independentVisualAcceptance": "recorded \u2014 https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7212506766",
+      "ownerVisualAcceptance": "accepted \u2014 https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7212506766",
+      "localVisualInspection": "Opened individually for framing, legibility, actual state, fictional data and empty secret fields; no QR/setup secrets present."
+    },
+    {
+      "file": "staff-directory-administrator.png",
+      "requirements": [
+        "B3-S1-S01",
+        "B3-S1-S03"
+      ],
+      "caption": "Administrator view: usernames and login badges help distinguish Staff identities, including a migrated record whose name is not recorded.",
+      "alt": "Administrator Staff Members directory with linked usernames, Linked Login or No Login badges, Staff Status, View Details and Edit.",
+      "applicationRevision": "fdc677920bfc52f48f641b3d6d1344c902a6a9b0",
+      "documentationStart": "8c790ad91a969b35a2b610f7fe7dd4e8a87daea4",
+      "schema": 31,
+      "browser": "Chromium 156.0.8078.79",
+      "automation": "Playwright 1.62.0",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1160
+      },
+      "deviceScaleFactor": 1,
+      "theme": "light",
+      "fullPage": true,
+      "capturedAt": "2026-11-27T06:54:33.363381+00:00",
+      "fixture": "Isolated fictional local HTTPS/SQLite training fixture; Accounts Department, Training Office, AC-LAP-07; example.invalid addresses only",
+      "actor": "training-admin",
+      "subject": null,
+      "accountContexts": {
+        "training-admin": {
+          "account_id": 1,
+          "roles": [
+            [
+              "Staff Member"
+            ]
+          ],
+          "overrides": {},
+          "account_state": [
+            1,
+            1,
+            1,
+            0
+          ],
+          "effective_permissions": {},
+          "mfa_mandatory": true,
+          "mfa_required_at_sign_in": true
+        }
+      },
+      "featureConfiguration": {
+        "devices": true,
+        "ipam": true,
+        "racks": true,
+        "suppliers": true,
+        "equipment_lifecycle": true,
+        "it_assets": true
+      },
+      "sha256": "2b2612bd72d93935b343f1a25f01fbe3e91ed33096af54ec6f2162876aeb3257",
+      "guide": "Staff-Members.md",
+      "guideUses": [
+        "Staff-Members.md#find-a-staff-member"
+      ],
+      "independentVisualAcceptance": "recorded \u2014 https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7212506766",
+      "ownerVisualAcceptance": "accepted \u2014 https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7212506766",
+      "localVisualInspection": "Opened individually for framing, legibility, actual state, fictional data and empty secret fields; no QR/setup secrets present."
+    },
+    {
+      "file": "staff-directory-non-administrator.png",
+      "requirements": [
+        "B3-S1-S05"
+      ],
+      "caption": "Staff Members Read view after Alex\u2019s employment change: employment status is visible, while linked usernames, login badges and editing actions are absent.",
+      "alt": "Non-administrator Staff Members directory showing names, Departments, job titles, employment status and View Details, without login badges or Edit.",
+      "applicationRevision": "fdc677920bfc52f48f641b3d6d1344c902a6a9b0",
+      "documentationStart": "8c790ad91a969b35a2b610f7fe7dd4e8a87daea4",
+      "schema": 31,
+      "browser": "Chromium 156.0.8078.79",
+      "automation": "Playwright 1.62.0",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1160
+      },
+      "deviceScaleFactor": 1,
+      "theme": "light",
+      "fullPage": true,
+      "capturedAt": "2026-11-27T06:56:13.971754+00:00",
+      "fixture": "Isolated fictional local HTTPS/SQLite training fixture; Accounts Department, Training Office, AC-LAP-07; example.invalid addresses only",
+      "actor": "directory.reader",
+      "subject": null,
+      "accountContexts": {
+        "directory.reader": {
+          "account_id": 9,
+          "roles": [
+            [
+              "Staff Member"
+            ]
+          ],
+          "overrides": {
+            "Staff Members": "read"
+          },
+          "account_state": [
+            1,
+            0,
+            1,
+            0
+          ],
+          "effective_permissions": {
+            "Staff Members": "read"
+          },
+          "mfa_mandatory": true,
+          "mfa_required_at_sign_in": true
+        }
+      },
+      "featureConfiguration": {
+        "devices": true,
+        "ipam": true,
+        "racks": true,
+        "suppliers": true,
+        "equipment_lifecycle": true,
+        "it_assets": true
+      },
+      "sha256": "05dde96bec0a61262d13ea82c363a4775e0e1ab9056154aa5b373b2bb563d7e1",
+      "guide": "Staff-Members.md",
+      "guideUses": [
+        "Staff-Members.md#find-a-staff-member"
+      ],
+      "independentVisualAcceptance": "recorded \u2014 https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7212506766",
+      "ownerVisualAcceptance": "accepted \u2014 https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7212506766",
+      "localVisualInspection": "Opened individually for framing, legibility, actual state, fictional data and empty secret fields; no QR/setup secrets present."
+    },
+    {
+      "file": "staff-edit-form.png",
+      "requirements": [
+        "B3-S2-S02"
+      ],
+      "caption": "Edit Staff Member displays Jordan\u2019s existing Department, job title and location. This illustration does not claim an edit has been saved.",
+      "alt": "Edit Staff Member for Jordan Rivers with Accounts, Service Coordinator, Training Office, Active status and Create Caffoot Login off.",
+      "applicationRevision": "fdc677920bfc52f48f641b3d6d1344c902a6a9b0",
+      "documentationStart": "8c790ad91a969b35a2b610f7fe7dd4e8a87daea4",
+      "schema": 31,
+      "browser": "Chromium 156.0.8078.79",
+      "automation": "Playwright 1.62.0",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1050
+      },
+      "deviceScaleFactor": 1,
+      "theme": "light",
+      "fullPage": true,
+      "capturedAt": "2026-11-27T06:55:16.573610+00:00",
+      "fixture": "Isolated fictional local HTTPS/SQLite training fixture; Accounts Department, Training Office, AC-LAP-07; example.invalid addresses only",
+      "actor": "training-admin",
+      "subject": null,
+      "accountContexts": {
+        "training-admin": {
+          "account_id": 1,
+          "roles": [
+            [
+              "Staff Member"
+            ]
+          ],
+          "overrides": {},
+          "account_state": [
+            1,
+            1,
+            1,
+            0
+          ],
+          "effective_permissions": {},
+          "mfa_mandatory": true,
+          "mfa_required_at_sign_in": true
+        }
+      },
+      "featureConfiguration": {
+        "devices": true,
+        "ipam": true,
+        "racks": true,
+        "suppliers": true,
+        "equipment_lifecycle": true,
+        "it_assets": true
+      },
+      "sha256": "be4e78b7c3f6366f375754fde9eadd8739e025f45fe205d8c94aa09cc92d0942",
+      "guide": "Staff-Members.md",
+      "guideUses": [
+        "Staff-Members.md#edit-staff-and-shared-personal-details"
+      ],
+      "independentVisualAcceptance": "recorded \u2014 https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7212506766",
+      "ownerVisualAcceptance": "accepted \u2014 https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7212506766",
+      "localVisualInspection": "Opened individually for framing, legibility, actual state, fictional data and empty secret fields; no QR/setup secrets present."
+    },
+    {
+      "file": "staff-left-company-retained.png",
+      "requirements": [
+        "B3-S5-S03"
+      ],
+      "caption": "Saved offboarding result: Alex is Left Company, the linked login is Disabled and AC-LAP-07 remains assigned. No equipment return has been recorded.",
+      "alt": "Alex Morgan Staff Details showing Left Company, Disabled Caffoot Login, MFA and roles retained, Reactivate, outstanding AC-LAP-07 and its assignment history.",
+      "applicationRevision": "fdc677920bfc52f48f641b3d6d1344c902a6a9b0",
+      "documentationStart": "8c790ad91a969b35a2b610f7fe7dd4e8a87daea4",
+      "schema": 31,
+      "browser": "Chromium 156.0.8078.79",
+      "automation": "Playwright 1.62.0",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1304
+      },
+      "deviceScaleFactor": 1,
+      "theme": "light",
+      "fullPage": true,
+      "capturedAt": "2026-11-27T06:59:18.545482+00:00",
+      "fixture": "Isolated fictional local HTTPS/SQLite training fixture; Accounts Department, Training Office, AC-LAP-07; example.invalid addresses only",
+      "actor": "training-admin",
+      "subject": "alex.morgan",
+      "accountContexts": {
+        "training-admin": {
+          "account_id": 1,
+          "roles": [
+            [
+              "Staff Member"
+            ]
+          ],
+          "overrides": {},
+          "account_state": [
+            1,
+            1,
+            1,
+            0
+          ],
+          "effective_permissions": {},
+          "mfa_mandatory": true,
+          "mfa_required_at_sign_in": true
+        },
+        "alex.morgan": {
+          "account_id": 2,
+          "roles": [
+            [
+              "Staff Member"
+            ],
+            [
+              "IT Staff"
+            ]
+          ],
+          "overrides": {},
+          "account_state": [
+            0,
+            0,
+            1,
+            0
+          ],
+          "effective_permissions": {
+            "Devices": "edit",
+            "IPAM": "edit",
+            "IT Assets": "edit",
+            "Racks": "edit"
+          },
+          "mfa_mandatory": true,
+          "mfa_required_at_sign_in": true
+        }
+      },
+      "featureConfiguration": {
+        "devices": true,
+        "ipam": true,
+        "racks": true,
+        "suppliers": true,
+        "equipment_lifecycle": true,
+        "it_assets": true
+      },
+      "sha256": "26df714cf370b949237a02f137c1a111ffafe32c2045423600136c5abb22554d",
+      "guide": "Staff-Members.md",
+      "guideUses": [
+        "Staff-Members.md#mark-as-left-company-or-reactivate"
+      ],
+      "independentVisualAcceptance": "recorded \u2014 https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7212506766",
+      "ownerVisualAcceptance": "accepted \u2014 https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7212506766",
+      "localVisualInspection": "Opened individually for framing, legibility, actual state, fictional data and empty secret fields; no QR/setup secrets present."
+    },
+    {
+      "file": "staff-resolve-differences.png",
+      "requirements": [
+        "B3-S4-S01",
+        "B3-S4-S02"
+      ],
+      "caption": "Taylor/Tay and the two fictional email addresses are saved differences. Both resolution selectors still say Leave Both Values Unchanged.",
+      "alt": "Edit Staff Member showing Staff Taylor versus Account Tay, different saved emails and separate Resolve Difference selectors set to Leave Both Values Unchanged.",
+      "applicationRevision": "fdc677920bfc52f48f641b3d6d1344c902a6a9b0",
+      "documentationStart": "8c790ad91a969b35a2b610f7fe7dd4e8a87daea4",
+      "schema": 31,
+      "browser": "Chromium 156.0.8078.79",
+      "automation": "Playwright 1.62.0",
+      "viewport": {
+        "width": 1440,
+        "height": 1050
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1050
+      },
+      "deviceScaleFactor": 1,
+      "theme": "light",
+      "fullPage": true,
+      "capturedAt": "2026-11-27T06:55:17.946537+00:00",
+      "fixture": "Isolated fictional local HTTPS/SQLite training fixture; Accounts Department, Training Office, AC-LAP-07; example.invalid addresses only",
+      "actor": "training-admin",
+      "subject": "taylor.cole",
+      "accountContexts": {
+        "training-admin": {
+          "account_id": 1,
+          "roles": [
+            [
+              "Staff Member"
+            ]
+          ],
+          "overrides": {},
+          "account_state": [
+            1,
+            1,
+            1,
+            0
+          ],
+          "effective_permissions": {},
+          "mfa_mandatory": true,
+          "mfa_required_at_sign_in": true
+        },
+        "taylor.cole": {
+          "account_id": 4,
+          "roles": [
+            [
+              "Staff Member"
+            ]
+          ],
+          "overrides": {},
+          "account_state": [
+            1,
+            0,
+            0,
+            0
+          ],
+          "effective_permissions": {},
+          "mfa_mandatory": false,
+          "mfa_required_at_sign_in": false
+        }
+      },
+      "featureConfiguration": {
+        "devices": true,
+        "ipam": true,
+        "racks": true,
+        "suppliers": true,
+        "equipment_lifecycle": true,
+        "it_assets": true
+      },
+      "sha256": "79a1331cbb48a86294ab07a5364f89cb98aef1799ef7fa2a95266980915a1654",
+      "guide": "Staff-Members.md",
+      "guideUses": [
+        "Staff-Members.md#resolve-a-difference-between-staff-and-account-details"
+      ],
+      "independentVisualAcceptance": "recorded \u2014 https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7212506766",
+      "ownerVisualAcceptance": "accepted \u2014 https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7212506766",
+      "localVisualInspection": "Opened individually for framing, legibility, actual state, fictional data and empty secret fields; no QR/setup secrets present."
+    }
+  ],
+  "reusedImages": [
+    {
+      "id": "RE02",
+      "file": "../../../../../development-handovers/evidence/native-acceptance-corrections/screenshots/permissions-controls-1440-light.png",
+      "requirements": [
+        "B3-R1-S04",
+        "B3-R4-S01",
+        "B3-R5-S01"
+      ],
+      "caption": "Morgan\u2019s initial Active employment/login controls; promotion unavailable. This is not Alex\u2019s later eligibility or offboarding result.",
+      "alt": "Morgan Reed Account Controls with Active employment, Disable Login and unavailable Make admin, plus Reset Password and Delete User.",
+      "sourceRevision": "bf5a016039b9812c0825644b47c6b619bbad653e",
+      "schema": 31,
+      "browser": "Chromium 155.0.8059.79",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1000
+      },
+      "theme": "light",
+      "capturedAt": null,
+      "metadataLimitations": [
+        "Original per-file capture timestamp not recorded.",
+        "Do not infer the new capture fixture, current browser or currently enabled features for this historical image.",
+        "Complete original actor grants and six-feature configuration were not recorded per file; only the visible state and original provenance are asserted."
+      ],
+      "fixture": "Original isolated fictional local HTTPS/SQLite fixture; Morgan Reed / morgan.reed, Fictional Operations; active baseline Staff Member, no MFA enrolled, no section grants, IT Staff unchecked; Suppliers off visibly",
+      "provenance": "../../../../../development-handovers/evidence/native-acceptance-corrections/README.md",
+      "originalHashes": "../../../../../development-handovers/evidence/native-acceptance-corrections/screenshot-sha256.json",
+      "sha256": "0804af4301cf4d7df5e74ff87891d80d1c1da5e54230aec45ea3aeb41c412e2b",
+      "reuseApproval": "https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7211852349",
+      "independentReuseAssessment": "Accepted in issuecomment-7210689297 for narrow stated use",
+      "ownerReuseApproval": "Accepted in issuecomment-7210689297 and explicitly authorised for 7B",
+      "guideUses": [
+        "Roles-Section-Permissions-and-MFA.md#enable-disable-or-delete-a-login"
+      ]
+    },
+    {
+      "id": "RE04",
+      "file": "../../../../../development-handovers/evidence/native-acceptance-corrections/screenshots/permissions-permissions-1440-light.png",
+      "requirements": [
+        "B3-R1-S03"
+      ],
+      "caption": "Morgan\u2019s inherited and effective No Access example, including Suppliers Feature Disabled. This is not a later access-change result.",
+      "alt": "Morgan Reed Permissions tab with eight Inherit selectors, inherited and effective No Access, and Suppliers Feature Disabled.",
+      "sourceRevision": "bf5a016039b9812c0825644b47c6b619bbad653e",
+      "schema": 31,
+      "browser": "Chromium 155.0.8059.79",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1000
+      },
+      "theme": "light",
+      "capturedAt": null,
+      "metadataLimitations": [
+        "Original per-file capture timestamp not recorded.",
+        "Do not infer the new capture fixture, current browser or currently enabled features for this historical image.",
+        "Complete original actor grants and six-feature configuration were not recorded per file; only the visible state and original provenance are asserted."
+      ],
+      "fixture": "Original isolated fictional local HTTPS/SQLite fixture; Morgan Reed / morgan.reed, Fictional Operations; active baseline Staff Member, no MFA enrolled, no section grants, IT Staff unchecked; Suppliers off visibly",
+      "provenance": "../../../../../development-handovers/evidence/native-acceptance-corrections/README.md",
+      "originalHashes": "../../../../../development-handovers/evidence/native-acceptance-corrections/screenshot-sha256.json",
+      "sha256": "147ee08cae8d6b8a9d1525adad3107ca40f3f8c94c182da72a5803ff9c38f170",
+      "reuseApproval": "https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7211852349",
+      "independentReuseAssessment": "Accepted in issuecomment-7210689297 for narrow stated use",
+      "ownerReuseApproval": "Accepted in issuecomment-7210689297 and explicitly authorised for 7B",
+      "guideUses": [
+        "Roles-Section-Permissions-and-MFA.md#review-an-account"
+      ]
+    },
+    {
+      "id": "RE06",
+      "file": "../../../../../development-handovers/evidence/native-acceptance-corrections/screenshots/permissions-roles-1440-light.png",
+      "requirements": [
+        "B3-R1-S02"
+      ],
+      "caption": "Morgan\u2019s saved membership: protected Staff Member selected, IT Staff unchecked. This is not a subsequent membership change.",
+      "alt": "Morgan Reed Roles tab with protected Staff Member selected, IT Staff unchecked, Close and Done.",
+      "sourceRevision": "bf5a016039b9812c0825644b47c6b619bbad653e",
+      "schema": 31,
+      "browser": "Chromium 155.0.8059.79",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "raster": {
+        "width": 1440,
+        "height": 1000
+      },
+      "theme": "light",
+      "capturedAt": null,
+      "metadataLimitations": [
+        "Original per-file capture timestamp not recorded.",
+        "Do not infer the new capture fixture, current browser or currently enabled features for this historical image.",
+        "Complete original actor grants and six-feature configuration were not recorded per file; only the visible state and original provenance are asserted."
+      ],
+      "fixture": "Original isolated fictional local HTTPS/SQLite fixture; Morgan Reed / morgan.reed, Fictional Operations; active baseline Staff Member, no MFA enrolled, no section grants, IT Staff unchecked; Suppliers off visibly",
+      "provenance": "../../../../../development-handovers/evidence/native-acceptance-corrections/README.md",
+      "originalHashes": "../../../../../development-handovers/evidence/native-acceptance-corrections/screenshot-sha256.json",
+      "sha256": "038749978b4dd85537149a8311219e6abf222515a3af4fbf9b4cbccbf416cdd6",
+      "reuseApproval": "https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7211852349",
+      "independentReuseAssessment": "Accepted in issuecomment-7210689297 for narrow stated use",
+      "ownerReuseApproval": "Accepted in issuecomment-7210689297 and explicitly authorised for 7B",
+      "guideUses": [
+        "Roles-Section-Permissions-and-MFA.md#review-an-account"
+      ]
+    }
+  ],
+  "acceptanceRecord": "https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7212506766"
+}

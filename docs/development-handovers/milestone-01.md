@@ -1,6 +1,26 @@
 # Milestone 01 Development Handover — v2.2 Target
 
-## Native Acceptance Corrections — 26 November 2026
+## Current Boundary — 27 November 2026
+
+Published v2.1 remains at tagged source `c3237114108cad9f7d4e57657b6aed5e0091a5ef`, schema 10. The owner-approved integrated v2.2 application is `0251b43a3b5d41d626aa022c6d7f9b4d860433da`, schema 31. It includes Stages 1–5, Stage 6 integration work and the merged corrections through PRs #486, #490 and #493. Documentation started Batch 8 from accepted checkpoint `5338f3903d39714999fab068025d99869be44c63` on `docs/milestone-01-release-preparation`.
+
+[Owner-approved Batch 8 scope](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7224076263) follows [7F–7H draft acceptance](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7224015412). PR #472 stays draft and issue #366 stays open. Independent documentation review and owner acceptance remain separate. Native acceptance is paused after Test 69 with Test 70 next; deferred manual checks, supported upgrade and complete-volume recovery, private exports, independent audit #443 and final release gates remain outstanding. No production, website, merge or publication approval follows from documentation completion.
+
+### Repository Release-File Preparation — 27 November 2026
+
+The owner [accepted all eight documentation batches](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7227585243) at `8c680f3cd540a91df50299b8243f480fc9857242` and [authorised this targeted release-file preparation](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7227639584). The existing draft Compose/Portainer candidates now require a supplied IANA time zone and retain source-build/private-image routes; root source-build Compose passes `TZ` through without a default or changed storage. Issue forms cover the forthcoming feature areas. About and built-in help describe the integrated product and link to accepted, explicitly unreleased guides; the published v2.1 label, legacy format identifiers, original artwork and both published guide paths remain intact.
+
+Configuration and template checks are recorded with the exact commits in the [existing PR #472 summary](https://github.com/Caffoot/Caffoot-Lite/pull/472), together with the remaining release-time file transitions and any separately approvable release-workflow changes. No functions, application feature behaviour, security or release checks are changed. This preparation awaits independent review and owner acceptance; it does not establish native, upgrade/recovery or production acceptance, a public image, merge or publication.
+
+### Final Batch 8 Documentation Correction — 27 November 2026
+
+Continues documentation `7b70912e52941c828ecc20d8b6391348d938354b` under the [owner's final correction](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7224538338). The root README now introduces the complete implemented v2.2 product with four existing desktop-light images, clear unreleased status and published v2.1 installation guidance. Wider content corrections cover live summaries/navigation, domain references, source-build boundaries, account-permissions illustration, audit prerequisites and email guidance. [Existing documentation register](../development-guide/Milestone-01-Documentation-Register.md#owner-directed-final-batch-8-correction--27-november-2026) records scope, image provenance, focused checks and remaining gates. The first README checkpoint `73f4dd13589f20838171ed83b3376d01c48c9687` is pushed and remotely verified. The final correction commit is reported in PR #472 and the completion summary.
+
+The required documentation workflow and read-only release preflight separate the unreleased README target from the published installation version and retain their compatibility safeguards. Explicit publication remains strict; ten focused preflight tests and the read-only CLI pass. Application source, original image bytes, published guide copies and historical evidence remain intact. PR #472 stays draft/open and #366 open; stop for independent review and separate owner acceptance. No native/runtime testing, new captures/reports, website work, promotion, merge, deployment or publication.
+
+The dated handover entries below preserve their original scope and results; they do not override the current boundary above.
+
+## Historical Native Acceptance Corrections — 26 November 2026
 
 The five approved corrections are implemented on `fix/native-acceptance-corrections`, from verified baseline `eff18a7acc2ec78e251562882c41af154bd929ed`, schema 31. Application source is `bf5a016039b9812c0825644b47c6b619bbad653e`. Friendly audit labels preserve recorded evidence; Manage Permissions has aligned fields and four fixed-navigation tabs; linked offboarding is atomic with administrator safeguards and safe legacy reconciliation; equipment mutations refresh/invalidate Department data with request-order protection. [Full changes, focused verification and genuine screenshots](evidence/native-acceptance-corrections/README.md).
 

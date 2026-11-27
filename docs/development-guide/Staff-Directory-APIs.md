@@ -1,5 +1,7 @@
 # Staff Members And Departments Backend APIs
 
+> **Historical implementation contract.** The checkpoint, schema and pending-review wording below describe the original development stage. Use [Development Status](Development-Status.md) for the current integrated application and acceptance boundary, and the [v2.2 instructions](../how-tos/features-and-instructions/v2.2-draft/README.md) for current procedures. Original technical decisions and evidence are retained.
+
 Batch 3.2 builds on accepted schema 14 at `97368e734f3e8008a9acc929b999a198eca1cf3f`.
 Its [authorisation](https://github.com/Caffoot/Caffoot-Lite/issues/368#issuecomment-6877568738)
 covers backend operations only. No interface, navigation, assignment, recipient

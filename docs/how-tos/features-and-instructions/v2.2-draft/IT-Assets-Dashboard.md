@@ -1,6 +1,6 @@
 # IT Assets Overview And Low Stock Warnings
 
-> **Draft v2.2 — Unreleased.** These instructions describe the implementation on `milestone-1` at `753b3266893987addb11406ef8303adb03c3c112`. v2.1 remains the published release.
+> **Draft v2.2 — Unreleased.** v2.1 remains the published release. These instructions describe v2.2.
 
 The IT Assets **Overview** brings together the organisation's current equipment balances, preparation backlog, stock movements and optional Low Stock warnings. It helps a technician answer practical questions: what is held, what can be issued now, which items need checks and which quantity-based items are below their configured minimum?
 
@@ -8,7 +8,7 @@ The dashboard reports the existing stock records; opening it does not receive, i
 
 ![IT Assets Overview in the light theme, with current stock cards, category distribution, readiness, held-stock classification, minimum-stock attention items and movement history reporting.](../../../development-handovers/evidence/stock-dashboard/dashboard-light-1440.png)
 
-*Approved application capture with fictional data. The first/default tab is **Overview**. This image shows a viewer with both IT Assets and Devices access; the classification and available actions depend on permissions. The owner approved the genuine dashboard captures in [PR #398](https://github.com/Caffoot/Caffoot-Lite/pull/398#issuecomment-6929275962). Figures illustrate that capture, not your organisation's current stock.*
+*Overview shows a viewer with IT Assets and Devices access. Classification and available actions depend on permissions; figures describe fictional stock.*
 
 ## Before You Start
 
@@ -39,6 +39,18 @@ The switch and permissions are separate. The built-in **IT Staff** role defaults
 
 If the cards show 25 Physically Held, 15 Ready and ten Awaiting Checks / Preparation, there are 25 held units altogether. Adding the Ready and awaiting figures explains the held figure; adding all three would count the same equipment twice.
 
+![Empty IT Assets Overview before any stock has been received.](screenshots/batch-7c/stock-empty.png)
+
+*Before the first receipt, this example has no stock. Check filters and history before repeating a delivery.*
+
+![Keyboard Stock Item Details with held fifty, Ready eight, awaiting forty-two and minimum stock level ten.](screenshots/batch-7c/readiness-eight-of-fifty.png)
+
+*Fifty keyboards are physically held; only eight are Ready against minimum ten. The minimum compares Ready units, rather than the full held quantity.*
+
+![IT Assets Overview with mixed stock, classifications, reporting controls and low-stock attention.](screenshots/batch-7c/stock-mixed-overview.png)
+
+*Mixed quantity and individually tracked stock use complete held totals. The 90-day reporting control affects movement reporting, not current stock arithmetic.*
+
 ## Choose A Category And Reporting Period
 
 1. Set **Equipment Category** to the category you want to inspect, or keep **All Categories**.
@@ -46,7 +58,7 @@ If the cards show 25 Physically Held, 15 Ready and ten Awaiting Checks / Prepara
 3. Review the refreshed selection. The category applies to the stock and activity selection. The period applies to **Stock Movements**, **Recent Activity** and the **Written Off** card.
 4. Keep the distinction between current balances and activity over time: changing the period does not turn Physically Held, Ready or Currently Issued into historical snapshots.
 
-Movement reporting uses effective corrected quantities against the original business date. A correction entered today for a receipt from two months ago affects the reporting interval containing that receipt's date. Direct Device reassignment is shown in its custody history; it does not invent a new physical stock receipt or appear as a fresh stock issue in the movement totals.
+The reporting window includes today and the preceding 29 or 89 UTC calendar dates. It uses recorded business dates, rather than the time you opened the page. Movement reporting uses effective corrected quantities against the original business date. A correction entered today for a receipt from two months ago affects the reporting interval containing that receipt's date. Direct Device reassignment is shown in its custody history; it does not invent a new physical stock receipt or appear as a fresh stock issue in the movement totals.
 
 For example, fictional Harbour View Library currently holds 18 keyboards. A write-off 45 days ago appears in **Last 90 Days** but not **Last 30 Days**. Switching between those periods does not change the current 18 held keyboards. A filter with no qualifying activity can show an empty movement table while current stock remains positive.
 
@@ -63,6 +75,14 @@ With the required Devices access:
 5. Read the selection explanation above the destination table. Choose **Clear Dashboard Filters** to return that table to its full existing view. The Overview's own category/period selectors remain separate controls.
 
 **Held Stock Classification**, when permitted, distinguishes **Unregistered Quantity Stock**, **Registered Canonical Devices** and **Individually Tracked IT Assets**. These describe how the same held equipment is represented. Registering one of ten held desktops changes it from unregistered to registered-held; Physically Held stays ten. Physically issuing that registered Device reduces held by one. Stock item totals can already include their registered units: the separate Device rows are not additional stock.
+
+### Empty Selections And Saving
+
+**No stock categories recorded.**, **No equipment is physically held.** and **No Data For This Selection** describe different parts of the report. **No items below minimum or awaiting checks in this selection.** means no attention rows for that selection; it does not certify that every physical item has been inspected. Use All Categories and both permitted reporting periods when investigating missing activity. The category/period selectors refresh reporting; there is no reporting Save or Cancel and they make no stock changes. A failed load is not a zero-stock result.
+
+![Read-only USB Keyboard stock details with held fifty and Ready eight, without a readiness editor.](screenshots/batch-7c/read-only-stock-details.png)
+
+*IT Assets Read can inspect stock details and recorded checks, but cannot change readiness or receive or issue stock.*
 
 ## Configure An Optional Minimum Stock Level
 
@@ -86,6 +106,10 @@ A blank minimum means no warning. Zero is a configured minimum; a valid non-nega
 
 A warning offers **View / Update** for an editor or **View Details** for a read-only viewer. Use the existing receipt or preparation workflow for the actual stock situation. The warning does not place an order, reserve stock, send equipment to a recipient or automatically confirm checks.
 
+![Filtered Stock Inventory with USB Keyboards Low Stock and Clear Dashboard Filters.](screenshots/batch-7c/low-stock-drill.png)
+
+*The Low Stock drill-down identifies the eight-Ready keyboard item below minimum ten. Clear Dashboard Filters returns to the full stock list.*
+
 ## Permissions, Complete Totals And Privacy
 
 IT Assets-only viewers receive complete organisation-wide stock totals and correct Low Stock calculations, including registered equipment. Removing Devices Read must not make a genuinely low item appear sufficient or make held stock disappear from an aggregate.
@@ -93,6 +117,10 @@ IT Assets-only viewers receive complete organisation-wide stock totals and corre
 That aggregate permission does not disclose Device identities, Device-specific histories, a Device-only count or the three-way **Held Stock Classification** breakdown. For IT Assets-only viewers, aggregate cards/category displays are informational, while authorised stock-item warnings can still open their stock details. The separate individual Device list is permission-filtered and need not account for every unit included in the complete aggregate.
 
 Read-only access offers no stock-changing controls. Changing a feature switch or permission does not erase records; subsequent requests apply the current access rules. **My Equipment** remains a separate safe personal/shared view, not access to organisation-wide stock reporting.
+
+![IT Assets-only Overview with complete totals and restricted Device classification guidance.](screenshots/batch-7c/assets-only-protected.png)
+
+*IT Assets Read without Devices Read receives complete aggregate totals, while Device identities, classifications and Device drill-down stay protected.*
 
 ## Troubleshooting
 
@@ -108,10 +136,10 @@ Read-only access offers no stock-changing controls. Changing a feature switch or
 | A filtered table omits expected records | Read its dashboard-selection explanation and choose **Clear Dashboard Filters**; also check the Overview category selection. |
 | Stock fails to load | Use **Reload Stock**, check your session and effective permissions, and review the displayed error before retrying. Opening or reloading reporting changes no stock. |
 
-## Related Guides And Acceptance Boundary
+## Related Guides
 
 [Receive Stock And Stock Inventory](IT-Assets-Stock-Intake.md) · [Issue, Return And Write Off](IT-Assets-Issue-Return-and-Write-Off.md) · [Device Registration And Reissue](Device-Stock-Registration-and-Reissue.md) · [Correct Stock Movement](IT-Assets-Correct-Movement.md).
 
-The [genuine dashboard evidence](../../../development-handovers/evidence/stock-dashboard/Report.md) records the existing checks and capture provenance. Owner approval of those images does not establish native Safari, private-installation, full upgrade/restore or release acceptance. Remaining documentation and manual acceptance items are recorded in the [documentation review items](../../../development-guide/Stage-1-3-Documentation-Review.md).
-
 [← Draft v2.2 Guides](README.md) · [Published v2.1 Guides](../README.md)
+
+[Connected example: a laptop from Supplier and stock to its final write-off](Connected-Equipment-Journey.md).

@@ -1,6 +1,6 @@
 # Device Assignments And My Equipment
 
-> **Draft v2.2 — Unreleased.** This guide includes the Stage 6.4 Shared Devices review changes. It is for development review, not production installation, upgrade or restore. Use the [published v2.1 guides](../README.md) for the released application. Batch 3.4 native/manual acceptance remains deferred; release acceptance is separate.
+> **Draft v2.2 — Unreleased.** v2.1 remains the published release. These instructions describe v2.2.
 
 An assignment records one Staff Member or one or more Departments using an existing Device during a single physical custody period. Staff Details, Department Details and Device Details read the same saved relationship. My Equipment gives a linked person a limited view of their personal assignments and their Department's shared equipment.
 
@@ -24,19 +24,19 @@ Initial allocation is not a stock receipt and does not mark a Device Ready. Thes
 - **Readiness** records whether held equipment has passed its applicable checks and can be issued. A returned Device can be held while Awaiting Preparation.
 - **Assignment** records current and previous holders, dates and responsible accounts. A Staff/Department status change does not automatically close an assignment.
 
-## Before An Initial Assignment
-
-You need **Devices Edit**, with Devices enabled. Starting from Staff Details also requires Staff Members Read. Device Details provides a restricted recipient picker without requiring broad Staff Members or Departments access.
-
 Virtual machines do not have an **Assigned To** tab in Device Details because they cannot be physically allocated. Other applicable Device Details tabs remain available according to the existing permissions and feature settings. Physical Devices retain the Assigned To tab, including any saved assignment history.
 
 ![App-VM-01 Device Details Overview showing applicable tabs without Assigned To.](screenshots/milestone-01-sidebar-device-staff-corrections/virtual-device-light.png)
 
-*Draft v2.2 — A virtual machine is not physically assigned.* [Dark mode](screenshots/milestone-01-sidebar-device-staff-corrections/virtual-device-dark.png)
+*A virtual machine is not physically assigned.*
 
 ![Reception-PC Assigned To tab showing Alex Morgan and the retained assignment history.](screenshots/milestone-01-sidebar-device-staff-corrections/physical-device-assigned.png)
 
-*Draft v2.2 — Physical Device custody and history remain available to authorised users.* [Capture provenance](screenshots/milestone-01-sidebar-device-staff-corrections/Provenance.txt) · [Owner-approved correction evidence](https://github.com/Caffoot/Caffoot-Lite/pull/485#issuecomment-7216358365)
+*Physical Device custody and history remain available to authorised users.*
+
+## Before An Initial Assignment
+
+You need **Devices Edit**, with Devices enabled. Starting from Staff Details also requires Staff Members Read. Device Details provides a restricted recipient picker without requiring broad Staff Members or Departments access.
 
 Only **Desktop**, **Laptop** and **Printer** qualify for initial allocation. A Device must:
 
@@ -48,6 +48,10 @@ Only **Desktop**, **Laptop** and **Printer** qualify for initial allocation. A D
 Choose an **Active** Staff Member or one or more non-archived Departments. A person's login is optional and does not determine equipment eligibility. Other Device types, virtual machines and previously assigned or stock-recorded Devices cannot use this route to bypass stock, preparation or history safeguards.
 
 See [Roles, Section Permissions And MFA](Roles-Section-Permissions-and-MFA.md) and [Optional Features](Optional-Features-and-Link-To-IPAM.md) for access controls.
+
+![AST-LAP-015 Assigned To with Unassigned status and Assign Device action.](screenshots/batch-7d/unused-device-unassigned.png)
+
+*AST-LAP-015 is an independent Device with no current holder or physical stock receipt. Initial allocation is available only while it remains eligible.*
 
 ## Assign From Staff Details
 
@@ -85,6 +89,14 @@ The recipient picker reveals only eligible recipient names and identifiers neede
 
 Departments share one custody period. Each selected Department has equal access to the Device under its existing membership and permissions. [Departments And Shared Equipment](Departments-and-Shared-Equipment.md)
 
+![Assign Device dialog selecting Department custody and Accounts for AST-PRN-01.](screenshots/batch-7d/assign-printer-department.png)
+
+*This unsaved assignment selects Accounts for one shared physical printer. Membership affects access, rather than creating another physical issue.*
+
+![Assign Device recipient selection with a changed or reserved Device rejection.](screenshots/batch-7d/initial-allocation-rejected.png)
+
+*A real edit reservation invalidates this initial allocation. The complete selection is rejected; Alex does not receive a partially saved assignment.*
+
 ## Change The Departments Sharing A Device
 
 1. With **Devices Edit** and Devices enabled, open an assigned Desktop, Laptop or Printer and choose **Assigned To → Manage Departments**.
@@ -97,7 +109,7 @@ Choose **Cancel** to close the form and keep the saved selection. If a change is
 
 ![Manage Departments for a Device shared by Accounts, Sales and HR](../../../development-handovers/evidence/stage-6-4/screenshots/manage-departments-desktop-light.png)
 
-*Search and tick the Departments sharing the Device, then choose **Save Changes**.* [Capture provenance](../../../development-handovers/evidence/stage-6-4/README.md)
+*Search and tick the Departments sharing the Device, then choose **Save Changes**.*
 
 ## Read Current Assignments And History
 
@@ -108,6 +120,18 @@ In Device Details → **Assigned To**, **Current Assignment** shows the present 
 Staff Details shows a person's current equipment and corresponding history. Department Details → Equipment shows each Device shared with that Department, plus any outstanding IT Assets issued to it. Staff personal assignments remain in Staff Details. With independent IT Assets access, genuine stock movements appear alongside the original relationships. Hidden stock information must not be interpreted as an absence of stock history.
 
 Devices with assignment history are protected against ordinary deletion and inventory replacements that would remove those relationships. The administrator’s separate Clean Start operation clears those records and their history along with the rest of the operational data. [Clean Start](Service-Desk-Administration.md#clear-operational-data-with-clean-start)
+
+![Read-only AST-LAP-014 Assigned To with current Sarah and ended Alex custody and dated movement history.](screenshots/batch-7d/read-only-current-and-history.png)
+
+*Devices/IT Assets Read can review AST-LAP-014’s current Sarah custody and earlier Alex history, without assignment, return, write-off or editing controls.*
+
+![Retired AST-LAP-014 Assigned To with closed Alex and Sarah assignments and retained return/preparation/write-off movements.](screenshots/batch-7d/final-canonical-custody-history.png)
+
+*The final Retired Device keeps its identity and Alex/Sarah history. Physical return, damaged write-off and operational Retired are distinct recorded facts; nothing was deleted or generally reactivated.*
+
+![AST-LAP-014 Assigned To showing Alex Morgan and its assignment history.](screenshots/batch-7c/alex-saved-custody.png)
+
+*Saved current custody belongs to Alex. The original Device and assignment history remain the authoritative identity; registration was a different event.*
 
 ## Physical Return, Reissue And Direct Handover
 
@@ -135,11 +159,19 @@ The old holder stays recorded until the complete save succeeds. Cancellation or 
 
 If the Device or current holder changes while the form is open, reopen **Reassign Device** from the refreshed **Assigned To** tab. Check current custody before choosing the new recipient. The server rejects an unchanged selection.
 
-On a narrow screen, scroll inside **Reassign Device** to reach the preparation checks and the **Cancel** and **Confirm Ready And Reassign** buttons. [Mobile view with a classic scrollbar](../../../development-handovers/evidence/stage-6-6-batch-3/screenshots/classic-reassign-dark-390x844.png)
+On a narrow screen, scroll inside **Reassign Device** to reach the preparation checks and the **Cancel** and **Confirm Ready And Reassign** buttons.
 
 ![Reassign Device in desktop light mode. The form shows the fictional laptop, the selected new Staff holder and the preparation checks.](screenshots/stage-6-6-batch-1/direct-handover-devices-only-desktop-light.png)
 
 Devices-only handover needs Devices Edit. A Device with recorded stock history also requires IT Assets enabled and IT Assets Edit. Use [Associated Equipment And Direct Handover](Associated-Equipment.md#reassign-a-workstation-directly) for the full missing-accessory scenario and recovery guidance. [Correct Movement](IT-Assets-Correct-Movement.md) handles eligible stock-recording mistakes separately. A new holder can raise a separate ticket after a valid assignment. [Ticket privacy after handover](Service-Desk-Administration.md#what-happens-to-service-desk-tickets-when-equipment-changes-hands)
+
+![AST-LAP-015 showing current Sarah custody and retained ended Alex assignment after confirmed preparation and reassignment.](screenshots/batch-7d/direct-handover-saved.png)
+
+*This separate AST-LAP-015 demonstration records a checked direct handover from Alex to Sarah on 27/11. It has no storeroom return and does not replace the AST-LAP-014 return/reissue journey.*
+
+![AST-LAP-014 Assigned To showing current Sarah Lewis and closed Alex Morgan physical custody.](screenshots/batch-7c/same-device-sarah-history.png)
+
+*Sarah now holds the same AST-LAP-014. Alex’s ended custody and actual return remain in its history; preparation and reissue did not create a replacement identity or restart first service.*
 
 ## My Equipment
 
@@ -156,7 +188,7 @@ My Equipment is for a person signing in with a login linked to an active Staff M
 
 ![My Account Overview for a fictional Staff Member with the Open My Equipment shortcut.](../../../development-handovers/evidence/stage-6-6-batch-3/screenshots/my-account-1440-light.png)
 
-*Open My Equipment brings you to the personal and Department lists.* [Mobile view and capture provenance](../../../development-handovers/evidence/stage-6-6-batch-3/README.md#application-screenshots)
+*Open My Equipment brings you to the personal and Department lists.*
 
 1. In **Search Equipment**, enter part of a name, type, manufacturer, model or operating system. Use **Equipment Type** or **Equipment Kind** to narrow both tables. **Clear Filters** restores the full list your account can see.
 2. On a narrow screen, scroll each table horizontally to reach **Assigned date**, **Details** and **Report A Problem**.
@@ -167,15 +199,23 @@ My Equipment is for a person signing in with a login linked to an active Staff M
 
 *The two sections show current custody. The cable quantity is the outstanding quantity.*
 
-![Studio Laptop Details in mobile dark mode showing recorded hardware, serial number and Microsoft Teams.](../../../development-handovers/evidence/stage-6-6-batch-2/screenshots/equipment-details-mobile-dark.png)
+The employee Details view excludes network configuration, licence keys, credentials, private notes, stock totals and former holders.
 
-*The dialogue shows the fields this account can see. Network configuration, licence keys, credentials, private notes, stock totals and former holders are excluded.* [Desktop and mobile captures and provenance](../../../development-handovers/evidence/stage-6-6-batch-2/README.md#application-screenshots)
+If the recorded software list is long, scroll inside **Details** to reach the actions. Escape closes the details and returns keyboard focus to the equipment row's **Details** button.
 
-If the recorded software list is long, scroll inside **Details** to reach the actions. Escape closes the details and returns keyboard focus to the equipment row's **Details** button. [Long software list on mobile](../../../development-handovers/evidence/stage-6-6-batch-3/screenshots/classic-equipment-details-dark-390.png)
-
-The server checks the active Staff link and current custody on every request. Without a current Department there is no Department-shared list. An inactive or unlinked Staff record gives no self-service equipment visibility. Authorised IT staff can still resolve outstanding assignments. A current Department member can see equipment still shared with their archived Department until an authorised change ends that relationship.
+The server checks the active Staff link and current custody on every request. Without a current Department there is no Department-shared list. A Left Company or unlinked Staff record gives no self-service equipment visibility. Left Company also disables its linked login and revokes sessions/proofs; reactivation leaves login enabling as a separate administrator decision. Authorised IT staff can still resolve outstanding assignments. A current Department member can see equipment still shared with their archived Department until an authorised change ends that relationship.
 
 Devices and IT Assets obey independent feature switches. Disabling one hides its equipment and blocks its protected actions while preserving saved relationships. Ordinary baseline Staff access therefore exposes personal/shared equipment without opening the organisation's inventory pages.
+
+### Visibility, Empty Results And Permission Changes
+
+**No matching equipment** means the filters excluded the records already available to you: select **Clear Filters**. **No equipment available** means no current records were returned for that personal or Department section. Missing manufacturer/model/serial fields show **Not recorded**; a Laptop/Desktop with no eligible recorded software shows **No installed software is recorded for this Device.** These are recorded inventory facts, not live detection results.
+
+Details reloads authorised equipment before displaying it. A changed assignment or Department membership can produce **Equipment details could not be loaded or are no longer available.** Close it, reopen My Equipment and check with IT. Old rows in an already-open page do not preserve access; already displayed information cannot be recalled from the viewer's memory or screenshots.
+
+Removing general Devices/IT Assets Read does not, by itself, remove an active linked person's personal My Equipment access. It removes the corresponding general inventory permission; self-service still follows current custody, membership, feature switches and valid sign-in. Role/permission changes can revoke sessions, requiring a fresh sign-in. Disabling the account ends its sessions and blocks all authenticated access. Disabling Devices hides Device records and Device-linked accessories; independently issued IT Assets remain subject to IT Assets being enabled. Disabling IT Assets hides its issues while enabled Devices can remain visible.
+
+Only the permitted Device name/type, manufacturer/model, serial number, recorded operating system, assignment date and eligible Laptop/Desktop software names are returned for self-service. IT Asset rows expose their permitted description, issue date and outstanding quantity. IP/MAC addresses, network settings, licence keys, credentials, private notes, Supplier/purchase details, lifecycle records, stock totals and former-holder history are not supplied by this view. Software names come from recognised saved catalogue flags; orphan fields and **Other / Not Listed** are not presented as an installed-application inventory.
 
 ### Example: A Partial Return And Department Move
 
@@ -183,7 +223,43 @@ This example is fictional. **Priya Shah** in Accounts holds one laptop and two q
 
 IT records one adapter's actual return. Priya's next My Equipment request shows one outstanding adapter, rather than the original two. If Priya moves to Sales, the Accounts printer disappears from the shared list. The remaining adapter and laptop stay personally assigned to Priya, and the printer remains assigned to Accounts. Nothing is duplicated or physically returned by the membership change.
 
-Marking Priya Inactive removes her self-service equipment visibility and retains the outstanding assignments for authorised IT staff. Her login status is managed separately. Administrators handle login access separately, and IT resolves equipment through actual return, write-off or handover workflows.
+Marking Priya **Left Company** disables her linked login, revokes its sessions/proofs and removes self-service equipment visibility while retaining outstanding assignments for authorised IT staff. **Reactivate** alone does not enable the login. IT records actual return, write-off or handover separately. [Linked account security](Roles-Section-Permissions-and-MFA.md#employment-status-and-linked-login-security)
+
+![Employee-safe equipment Details with recorded hardware fields and Close and Report A Problem.](screenshots/batch-7e/employee-safe-device-details.png)
+
+*Employee Details offers a safe recorded-equipment summary. It does not grant access to network identities, Supplier purchase information, private IT notes or protected historical records.*
+
+![Priya’s My Equipment before changing Accounts membership, showing the shared AST-PRN-01 printer.](screenshots/batch-7e/priya-membership-before.png)
+
+*Priya’s current Accounts membership grants the shared Accounts printer. This preserved view precedes her membership change and moves no physical equipment.*
+
+![Priya’s My Equipment after moving to Sales, with personal AST-LAP-016 and no Accounts shared printer.](screenshots/batch-7e/priya-membership-after.png)
+
+*Priya is now in Sales. The unchanged Accounts printer is absent; AST-LAP-016 is a separately recorded personal first issue. Membership did not move the Accounts printer or confer an IT role.*
+
+![Sarah’s My Equipment showing current AST-LAP-015 and its outstanding associated keyboards.](screenshots/batch-7e/sarah-current-equipment.png)
+
+*Sarah’s current list contains independent AST-LAP-015 and its explicit keyboard issue. Retired/written-off AST-LAP-014 and its former holders’ IT history are not employee equipment.*
+
+![Employee-safe USB Keyboards Details showing outstanding quantity two and safe equipment fields.](screenshots/batch-7e/employee-safe-asset-quantity.png)
+
+*The employee asset summary shows only Sarah’s outstanding quantity and safe identity fields, not full stock totals, Supplier details or movement history.*
+
+![Employee-safe AST-LAP-016 Details with Windows 11 Pro and recorded Google Chrome, without private IT fields.](screenshots/batch-7e/employee-recorded-software.png)
+
+*Priya’s permitted Details shows recorded Windows and Google Chrome names for her current AST-LAP-016. Private IT notes are excluded.*
+
+![Alex’s My Equipment with personal laptop and mouse and shared Accounts printer.](screenshots/batch-7c/alex-before-handover.png)
+
+*Alex sees the personally assigned AST-LAP-014 and outstanding mouse, plus the Accounts printer shared through current membership. This is the preserved pre-handover state.*
+
+![Alex’s refreshed My Equipment list with AST-LAP-014 shared with Accounts after the real personal-to-Department handover.](screenshots/batch-7e/r1-alex-department-equipment.png)
+
+*In this alternative handover example, AST-LAP-014 moves from Alex to Accounts. Alex remains an Accounts member, so the refreshed list shows it under Shared with My Department rather than Assigned to Me.*
+
+![Equipment Details displaying Equipment details could not be loaded or are no longer available after Priya lost Accounts membership.](screenshots/batch-7e/r2-equipment-details-denied.png)
+
+*After Priya moves from Accounts to Sales, the Accounts printer is no longer available to her. Opening Details from an older list checks current access and displays the unavailable message; refresh the list to see current equipment.*
 
 ## Troubleshooting And Recovery
 
@@ -200,7 +276,7 @@ Marking Priya Inactive removes her self-service equipment visibility and retains
 
 The server checks current session, rights, recipient eligibility and saved equipment state when submitting each operation. Viewing an item or retaining an earlier open form does not guarantee a later mutation remains authorised.
 
-## Related Guides And Acceptance Items
+## Related Guides
 
 - [Staff Members](Staff-Members.md)
 - [Departments And Shared Equipment](Departments-and-Shared-Equipment.md)
@@ -209,6 +285,6 @@ The server checks current session, rights, recipient eligibility and saved equip
 - [Issue, Return And Write Off](IT-Assets-Issue-Return-and-Write-Off.md)
 - [Correct Movement](IT-Assets-Correct-Movement.md)
 
-The reused image belongs to the [owner-approved Batch 3.8 application captures](https://github.com/Caffoot/Caffoot-Lite/pull/389#issuecomment-6908629303). [Earlier assignment evidence](../../../development-handovers/evidence/stage-3-batch-34/Report.md) records deferred native/manual acceptance. Current explicitly approved illustrations of initial allocation and direct handover remain documentation acceptance items; functional HTML previews are not used as screenshots.
-
 [← Draft v2.2 Guides](README.md) · [Published v2.1 Guides](../README.md)
+
+[Connected equipment example — Supplier, stock, assignment and later use](Connected-Equipment-Journey.md).

@@ -1,6 +1,6 @@
 # Supplier Management
 
-> **Draft v2.2 — unreleased.** These instructions describe Supplier Management in the Stage 4 development application through Batch 4.3, schema 23. Continue to use the [v2.1 guides](../README.md) for the published version. The examples here use fictional businesses and contacts.
+> **Draft v2.2 — Unreleased.** v2.1 remains the published release. These instructions describe v2.2.
 
 Suppliers holds the companies your organisation buys from. A company can have several offices and contacts, one shared company address and separate notes about the company or individual people. Supplier access is independent of Devices and IT Assets. Open **Purchasing → Suppliers** from the workspace sidebar. Supplier Details provides **Overview**, **Locations**, **Contacts** and **Notes & Issues**. If you can read an enabled equipment section, **Supplied Equipment** and the **Supplier Equipment** Overview metric also appear. See [Supplier Issues And Purchasing](Supplier-Issues-and-Purchasing.md) for the tracked Issues workflow.
 
@@ -27,6 +27,10 @@ If Suppliers is missing, check the organisation's switch, the user's active role
 
 An archived supplier is still searchable. Retired categories remain visible on suppliers that already use them. Use **All Categories** to find a record whose only category is archived.
 
+![Supplier Directory with search, category filters and main office towns.](../../../development-handovers/evidence/stage-6-6-batch-3/screenshots/supplier-directory-light-1440.png)
+
+*Search companies and filter their recorded categories before adding a Supplier.*
+
 ## Add And Correct A Supplier
 
 You need Suppliers Edit and the feature enabled.
@@ -42,6 +46,22 @@ You need Suppliers Edit and the feature enabled.
 
 **Example.** Add Northlight Technology Ltd with Hardware and Networking. Record Manchester as its Main Office. Enter Kim Cooper as a company-wide account manager and Jo Patel as a Main Office technical support contact. Add a Leeds branch later and assign Jo to both locations.
 
+### Valid Fields And Empty Results
+
+Supplier Name, Location Name and Contact Name are required in their respective forms and allow up to 160 characters. Supplier/Contact role and town/country fields allow 160; Category Name allows 70, Address 400, Postcode 40, Supplier Description 4,000 and notes 12,000. Telephone entries allow 80 characters each; email entries 254 each. Use one valid email per line; `jo@` is invalid. Website/professional-link URLs allow up to 2,048 characters and must begin with HTTP or HTTPS, include a host and contain no embedded username/password or spaces. `example.org` alone and `javascript:` links are rejected. Professional links need both a label and URL.
+
+Choose company-wide scope **or** one or more locations; neither and conflicting scope are rejected. Newly linked categories/locations must be active. Existing archived assignments can remain when editing the same record. A case-only spelling change does not free a name used by another Supplier/category. Invalid values or stale revisions save none of the requested operation.
+
+**No Suppliers Match These Filters**, **No Contacts Match These Filters** and **No Notes Match Your Filter** refer to the current list/filter. Clear the relevant filter and check retained archived records before creating another company or person. A company with no recorded contacts can still be a valid Supplier.
+
+![Add Supplier form showing Northlight company details, Hardware category, address fields and Jo Patel contact.](screenshots/batch-7c/supplier-add.png)
+
+*A representative unsaved Northlight company/contact draft. The continuing journey already has its saved Northlight record; this demonstration draft is discarded, rather than creating a duplicate.*
+
+![Supplier Details Overview with company information and actions beside the heading.](../../../development-handovers/evidence/stage-6-6-batch-3/screenshots/supplier-details-light-1440.png)
+
+*Overview brings company information, status and permitted related records together.*
+
 ## Manage Supplier Categories
 
 Supplier categories classify companies. Suppliers Edit can create, rename, archive or reactivate categories for this directory.
@@ -54,6 +74,10 @@ Supplier categories classify companies. Suppliers Edit can create, rename, archi
 
 Initial categories include Hardware, Software, Licensing, Networking, Telecommunications, Office Supplies, Professional Services and Other. A rename or archive is retained when the feature is switched off and back on.
 
+![Manage Supplier Categories showing Hardware, Software and other company categories with management actions.](screenshots/batch-7c/supplier-categories.png)
+
+*Supplier company categories have their own Archive and Reactivate controls. This catalogue is independent of Issue Categories and company lifecycle actions.*
+
 ## Manage Locations And The Company Address
 
 1. Open **Locations** on Supplier Details. The location marked **Primary Address** supplies the address shown on Overview.
@@ -63,6 +87,10 @@ Initial categories include Hardware, Software, Licensing, Networking, Telecommun
 5. Review **Contacts At This Location**. The list includes company-wide people and people explicitly assigned to this location. Use a contact's name or **View** to open the same Contact Details record used elsewhere.
 
 The current primary location is protected from individual permanent deletion. A location with contacts linked directly to it is also protected. See [Archive, Reactivate Or Delete](#archive-reactivate-or-delete).
+
+![Supplier Locations showing Main Office and Leeds Branch with their current actions.](screenshots/batch-7c/supplier-locations.png)
+
+*Northlight has a Main Office and Leeds Branch. Jo is a company-wide contact; the Main Office has protected deletion rules.*
 
 ## Manage Contacts
 
@@ -74,6 +102,10 @@ The current primary location is protected from individual permanent deletion. A 
 6. For a person covering several locations, edit the original Contact and tick the additional locations. Future searches and notes use the same Contact record. Archived locations already assigned to that contact remain identifiable when you edit it.
 
 **Example.** Open Jo Patel's Contact Details, choose **Edit Contact**, select both Main Office and Leeds Branch, and save. Each location lists Jo once. A note on Jo's record is available wherever you open that Contact.
+
+![Add Contact form for Kim Cooper with Leeds Branch selected.](screenshots/batch-7c/supplier-contact.png)
+
+*Kim is an unsaved location-specific contact for Leeds; company-wide and selected-location scopes are independent choices.*
 
 ## Record, Correct Or Delete Notes
 
@@ -87,6 +119,14 @@ A Supplier Note belongs to the company. A Contact Note belongs to one contact. E
 
 Only put work-related information in notes. Keep passwords, tokens, sensitive personal material and payment details in your approved systems. Supplier Read includes access to the contact details and notes stored in this section.
 
+![Add Note for Jo Patel containing a fictional delivery coordination note.](screenshots/batch-7c/contact-note.png)
+
+*This unsaved note belongs to Jo, rather than the company. Keep factual work information in the appropriate note owner.*
+
+![Northlight Notes showing company and Jo Patel notes, author labels and owner filter.](screenshots/batch-7c/supplier-notes.png)
+
+*Saved company and contact notes retain their owners and authors. Supplier Note history protects the company from deletion; Archive retains it.*
+
 ## Archive, Reactivate Or Delete
 
 Review the record and its links before confirming a lifecycle action. Read users can inspect retained records. Suppliers Edit is required to make local lifecycle changes.
@@ -97,7 +137,15 @@ Review the record and its links before confirming a lifecycle action. Read users
 4. When Delete is unavailable, read the explanation with the lifecycle actions. On Supplier Details it appears under the header buttons. Notes protect their company and owning contact even after the note is removed. Issue history protects the company and contacts that have been linked to it. A directly linked location is protected by its contact relationships. The application checks again when you confirm.
 5. To abandon an action, select **Cancel** or press **Escape** before confirming. If someone changed the record first, close the rejected dialog, reopen the record and review the new details before retrying.
 
-Records with canonical supply history have stronger permanent retention. Any cross-section **Disable** or **Re-enable** action requires a verified administrator and confirmation of the named affected sections. Batch 4.3 lets equipment editors confirm Supplier links on Devices and stock receipts. Existing free-text receipt names stay as originally recorded. For explicit assignments, the Supplier Equipment total and historical corrections, see [Equipment Supplier Integration](Equipment-Supplier-Integration.md).
+Records with canonical supply history have stronger permanent retention. Any cross-section **Disable** or **Re-enable** action requires a verified administrator and confirmation of the named affected sections. Equipment editors can confirm Supplier links on Devices and stock receipts. Existing free-text receipt names stay as originally recorded. For explicit assignments, the Supplier Equipment total and historical corrections, see [Equipment Supplier Integration](Equipment-Supplier-Integration.md).
+
+![Archive Supplier confirmation for Northlight, retaining its recorded history.](screenshots/batch-7c/supplier-archive-protection.png)
+
+*Archive is a proposed lifecycle action, retaining notes, Issues and equipment links. This confirmation is cancelled for the continuing journey.*
+
+![Disable Supplier confirmation naming Northlight, affected sections and retained associations and supply history.](screenshots/batch-7c/supplier-disable-impact.png)
+
+*Only the administrator sees Disable. Review the actual affected sections and retained-history warning before confirming; this preview is cancelled.*
 
 ## Troubleshooting And Related Tasks
 
@@ -112,16 +160,4 @@ Records with canonical supply history have stronger permanent retention. Any cro
 
 See [Optional Features](Optional-Features-and-Link-To-IPAM.md) for organisation-wide settings and [Roles, Section Permissions And MFA](Roles-Section-Permissions-and-MFA.md) for access and sign-in help.
 
-## Application Screenshots
-
-These desktop and mobile examples use fictional Supplier records. See the [Batch 3 capture record](../../../development-handovers/evidence/stage-6-6-batch-3/README.md).
-
-![Desktop light Supplier Directory with search and category filters](../../../development-handovers/evidence/stage-6-6-batch-3/screenshots/supplier-directory-light-1440.png)
-
-The Supplier Directory presents the main office town alongside each company and provides the live category filter.
-
-![Mobile dark Add Supplier form showing the first Contact and the form actions](../../../development-handovers/evidence/stage-6-6-batch-3/screenshots/supplier-add-contact-dark-390.png)
-
-Scroll down to reach the Contact entry and save controls on a narrow screen.
-
-![Desktop light Supplier Details on the Overview tab with the company actions beside the heading](../../../development-handovers/evidence/stage-6-6-batch-3/screenshots/supplier-details-light-1440.png)
+[Connected example: a laptop from Supplier and stock to its final write-off](Connected-Equipment-Journey.md).

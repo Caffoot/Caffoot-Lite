@@ -1,6 +1,6 @@
 # Associated Equipment And Direct Device Handover
 
-> **Draft v2.2 — Unreleased.** These instructions describe the implementation on `milestone-1` at `753b3266893987addb11406ef8303adb03c3c112`. v2.1 remains the published release.
+> **Draft v2.2 — Unreleased.** v2.1 remains the published release. These instructions describe v2.2.
 
 Associated Equipment records which accessories belong with a particular Device's assignment. For example, a technician can explicitly link a monitor, keyboard and mouse to a workstation issued to Alex. Equipment issued to the same person or Department is not linked automatically: Alex's other monitor may belong with a different workstation.
 
@@ -9,7 +9,7 @@ The association refers to the original equipment issue and the Device's actual h
 ## Before You Start
 
 - **Devices** and **IT Assets** must both be enabled. Viewing the tab needs effective **Devices Read** and **IT Assets Read**; adding equipment needs **Devices Edit** and **IT Assets Edit**.
-- The Device must have a current Staff Member or Department assignment before you can add accessories. New equipment cannot be issued to an inactive Staff Member or archived Department.
+- The Device must have a current Staff Member or Department assignment before you can add accessories. New equipment cannot be issued to a Left Company Staff Member or archived Department.
 - To issue and associate new equipment, the particular stock item or individual unit must already be **Ready To Issue**. Held equipment awaiting checks or preparation is unavailable.
 - To associate an existing issue, it must still be outstanding, belong to the exact current holder and be eligible for association. An issue already associated with another Device cannot be linked again.
 
@@ -37,6 +37,14 @@ Use this route when the accessory is physically available and has not yet been i
 
 The issue and association save together. For example, issue a keyboard for an Accounts and Sales workstation through **Issue And Associate**. One stock issue and one explicit association are recorded. If Sales later stops sharing that workstation, the issue and associated quantity stay with the same custody period. For two newly issued keyboards, held and Ready stock each reduce by two, and their original issue is explicitly associated with this Device's holder. If validation fails, neither the issue nor its link is saved. The separate ordinary **Issue Equipment** confirmation is described in [Issue, Return And Write Off](IT-Assets-Issue-Return-and-Write-Off.md); this combined action retains its **Add Equipment** submission.
 
+![Add Equipment form selecting one Office Mouse for Alex’s AST-LAP-014.](screenshots/batch-7d/associate-mouse-draft.png)
+
+*Issue And Associate will give one Ready mouse to the laptop’s existing Alex custody. The holder is derived from that custody and cannot be freely changed here.*
+
+![AST-LAP-014 Associated Equipment showing the saved current Office Mouse issue.](screenshots/batch-7d/associated-mouse-saved.png)
+
+*The mouse issue is now explicitly linked to this Device custody. It is not inferred from the same holder, name or purchase.*
+
 ## Associate Already Issued Equipment
 
 Use this route when the right equipment has already been issued to this exact holder and you need to record which Device it accompanies.
@@ -50,6 +58,10 @@ Use this route when the right equipment has already been issued to this exact ho
 The entire outstanding original issue is linked. If three mice remain outstanding on that issue, this action links that issue's three; it is not a way to select one mouse from the line or move it to another person. No further stock is issued or deducted. If the list says **No Eligible Issued Equipment**, check the original recipient, outstanding balance and existing associations rather than creating a second issue.
 
 In both routes, **Cancel** abandons unsaved work; a discard prompt lets you keep editing. A stale or failed save leaves existing records unchanged. Reload after a holder or stock change and select the equipment again using current information.
+
+![Add Equipment showing the original two-unit outstanding keyboard issue and No Stock Deduction.](screenshots/batch-7d/associate-entire-existing-issue.png)
+
+*Associate Already Issued Equipment links the entire two-keyboard outstanding issue for Sarah’s AST-LAP-015 custody. It does not issue stock or deduct quantity again.*
 
 ## Check The Accessory’s Current Department
 
@@ -72,13 +84,17 @@ Partial returns leave the remaining quantity outstanding with its original holde
 
 Every explicitly associated outstanding accessory must be resolved before a prepared Device can be reissued from stock or reassigned directly, including accessories linked during a former assignment. Real accessory actions are separate saved events: cancelling a later workstation handover does not undo them.
 
+![AST-LAP-014 current Alex custody with outstanding-accessory handover protection.](screenshots/batch-7d/handover-blocked-by-accessory.png)
+
+*Alex still holds the laptop. Outstanding associated equipment prevents direct reassignment until each accessory is resolved; changing a person’s Department does not resolve it.*
+
 ## Reassign A Workstation Directly
 
 Direct reassignment records a prepared Device moving from its current holder straight to a different Staff Member or Department assignment. Use it for a genuine handover. When equipment actually returns to the storeroom, use [Return → Preparation → Reissue Existing Device](Device-Stock-Registration-and-Reissue.md) instead.
 
 1. Resolve **all** explicitly associated outstanding equipment first using the actual returns, damage dispositions or missing-equipment write-offs above. Accessories do not follow the workstation to its next holder automatically.
 2. Open **Device Details → Assigned To → Reassign Device** for the currently assigned physical Device. The selected Device is fixed on the existing form; it is not a bulk reassignment screen.
-3. Choose **Recipient Type**. Select the new Staff Member under **Find A Recipient**, or search and tick the applicable Departments for an eligible shared Device.
+3. Choose **Recipient Type**. Select the new Staff Member under **Find A Recipient**, or search and tick the applicable Departments for an eligible shared Device. The current single holder is omitted. A changed shared selection can retain one current Department, but an unchanged selection is rejected.
 4. Enter the actual **Date Reassigned** and an optional **Reassignment Note**. The date cannot precede the current issue or be in the future.
 5. Physically check and prepare the workstation. Complete its displayed **Preparation Checks** only after doing the work. These checks start unchecked.
 6. Choose **Confirm Ready And Reassign** as the explicit confirmation that the Device is ready for its new holder.
@@ -91,6 +107,20 @@ For Desktop, Laptop and physical Server, preparation requires **Checked Working*
 ### Permissions For A Direct Handover
 
 Direct reassignment requires effective **Devices Edit**. A Device with recorded stock history additionally requires enabled **IT Assets** and **IT Assets Edit**. Devices-only reassignment remains available for eligible Devices without stock history when IT Assets is off. Switching IT Assets off never bypasses outstanding accessory resolution or grants stock access. Read-only users cannot reassign.
+
+![Reassignment Details for AST-LAP-014 with current-holder protection and preparation checks.](screenshots/batch-7d/direct-handover-checks.png)
+
+*This separate direct-handover draft leaves Sarah as current holder until the complete save succeeds. Working and data-preparation checks are mandatory. It is cancelled, so no new handover is recorded.*
+
+![AST-LAP-015 showing current Sarah custody and retained ended Alex assignment after confirmed preparation and reassignment.](screenshots/batch-7d/direct-handover-saved.png)
+
+*This separate AST-LAP-015 demonstration records a checked direct handover from Alex to Sarah on 27/11. It has no storeroom return and does not replace the AST-LAP-014 return/reissue journey.*
+
+## Relationship And Cancellation Limits
+
+**Add Equipment** links the original outstanding issue as a whole; it has no partial-line split, generic unlink or accessory transfer button. Use actual returns/write-offs and new issues when physical custody changes. A current empty table can coexist with outstanding history from an earlier holder. Successful association changes no Device identity, and linking an already-issued line changes no Ready or held quantity. All saved returns/write-offs remain even if a later Add Equipment or handover is cancelled.
+
+A shared Device has one custody period. An already-issued standalone accessory must belong to an eligible Department currently sharing it; a new Issue And Associate for multiple Departments uses that Device custody as its recipient. The association follows the current Department selection during that custody, while the original issue label remains historical. It does not make separate physical copies or move old tickets to the new holder. Employee visibility is restricted through [My Equipment](Device-Assignments-and-My-Equipment.md#visibility-empty-results-and-permission-changes); full ticket instructions remain in their specialised guide.
 
 ## Worked Example: Alex Leaves And Sarah Receives The Workstation
 
@@ -118,10 +148,10 @@ If step 5 fails, Alex stays the workstation's recorded holder. The accessory ret
 | The holder or equipment changed while editing | Reload before retrying. A stale save cannot transfer equipment using an old assignment or consume unavailable stock. |
 | The Device is being edited elsewhere | Finish/cancel that edit or wait for the technician, then reload. Preserve the original Device rather than duplicating it. |
 
-## Related Guides And Screenshot Acceptance
+## Related Guides
 
 [Issue, Return And Write Off](IT-Assets-Issue-Return-and-Write-Off.md) · [Device Registration And Reissue](Device-Stock-Registration-and-Reissue.md) · [Device Assignments And My Equipment](Device-Assignments-and-My-Equipment.md) · [Departments And Shared Equipment](Departments-and-Shared-Equipment.md).
 
-The [genuine Associated Equipment and handover gallery](../../../development-handovers/evidence/associated-equipment-final/Report.md) preserves development evidence. Its report distinguishes agent inspection from owner visual acceptance. No standalone HTML preview is presented here as an approved application screenshot; outstanding image approval is tracked in the [documentation review items](../../../development-guide/Stage-1-3-Documentation-Review.md).
-
 [← Draft v2.2 Guides](README.md) · [Published v2.1 Guides](../README.md)
+
+[Connected example: a laptop from Supplier and stock to its final write-off](Connected-Equipment-Journey.md).

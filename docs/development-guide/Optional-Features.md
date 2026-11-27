@@ -1,5 +1,18 @@
 # Optional Features — Development Foundation
 
+<a id="current-baseline-and-historical-scope--26-november-2026"></a>
+## Current Baseline And Historical Scope — 27 November 2026
+
+The current owner-approved application baseline is `0251b43a3b5d41d626aa022c6d7f9b4d860433da` (schema 31). All six switches are live: Devices, IPAM, Network Racks, Suppliers, Equipment Lifecycle and IT Assets. Earlier Stage 2/3 checkpoints and unavailable Stage 4 labels below are retained historical implementation descriptions, not the current availability table. Stages 4–5 are integrated at this baseline; final release/acceptance gates remain outstanding. No separate Service Desk switch exists.
+
+Use the [reconciled Optional Features guide](../how-tos/features-and-instructions/v2.2-draft/Optional-Features-and-Link-To-IPAM.md) for current administrator procedures and independent access/retention requirements, and the standalone [Devices](../how-tos/features-and-instructions/v2.2-draft/Devices.md), [IPAM](../how-tos/features-and-instructions/v2.2-draft/IPAM.md) and [Network Racks](../how-tos/features-and-instructions/v2.2-draft/Racks.md) drafts for inventory work. Equipment Lifecycle uses Devices rights for physical Device information and administrator rights for settings/manual replacement overrides; it has no independent permission column.
+
+All-off administrators retain authorised security/account/role history through the underlying history API, but Dashboard/Audit Trail navigation is unavailable without readable Devices, IPAM or Racks. Current Audit Trail timestamps remain ISO-style UTC (`YYYY-MM-DD HH:mm:ss UTC`), despite UK calendar-date entry elsewhere. Stock specification metadata remains foundation-only, with no general screen/API. These documented boundaries do not authorise application changes.
+
+[Batch 2 source, links and screenshot review](Milestone-01-Batch-2-Review.md) records the reconciliation. Native acceptance stays deferred at Test 70; supported upgrades, complete-volume restoration, independent audit #443 and release gates remain outstanding. No published v2.2 image or upgrade acceptance is implied.
+
+## Preserved Foundation And Dated Checkpoints
+
 This is unpublished v2.2 development under [issue #238](https://github.com/Caffoot/Caffoot-Lite/issues/238#issuecomment-6821230015). At the verified `milestone-1` integration HEAD `753b3266893987addb11406ef8303adb03c3c112` (17 November 2026, schema 20), Stage 2 and Stage 3 Batches 3.1–3.12 are merged. The implementation includes Staff/Departments, assignments, stock intake and readiness, issue/return/write-off, Device registration/reissue, Associated Equipment, Correct Movement and dashboard/Minimum Stock Level reporting. Dated development reports retain their original review checkpoints; use [Development Status](Development-Status.md) for current integration and acceptance boundaries. Batch 3.4 manual/native acceptance and wider Stage 6 verification remain deferred; Stages 4–6 are not completed. No published v2.2 installation, release or deployment is established by these merges.
 
 [Stock Circulation](IT-Assets-Issue-Return-and-Write-Off.md) updates the existing IT Assets card description to match implemented workflows: “Receive, issue and return equipment, record checks and write off unusable items.” The card remains in Additional Features with the same styling, controls and disable confirmation. See the expanded [draft Optional Features guide](../how-tos/features-and-instructions/v2.2-draft/Optional-Features-and-Link-To-IPAM.md) for administrator procedures, independent section use, basic IPv4, explicit linking, Rack preservation and troubleshooting.

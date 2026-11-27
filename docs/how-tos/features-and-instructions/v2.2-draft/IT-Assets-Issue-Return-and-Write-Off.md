@@ -1,6 +1,6 @@
 # IT Assets: Issue, Return And Write Off
 
-> **Draft v2.2 — Unreleased.** These instructions describe the implementation on `milestone-1` at `753b3266893987addb11406ef8303adb03c3c112`. v2.1 remains the published release. Use these feature instructions on an authorised development or acceptance instance; they are not installation, upgrade or restore instructions.
+> **Draft v2.2 — Unreleased.** v2.1 remains the published release. These instructions describe v2.2.
 
 Use IT Assets to record who has equipment, what has physically returned and which items can safely be issued again. An issue reduces available stock; a genuine return records what came back; preparation confirms which returned items are ready; a write-off records equipment that must leave usable inventory. Each action keeps the original equipment identity and a permanent movement record.
 
@@ -9,6 +9,20 @@ This guide follows equipment after [receipt and checking](IT-Assets-Stock-Intake
 ## Date Format For Stock Movements
 
 Use UK **DD/MM/YYYY** for Date Issued, Date Returned, Date Checked, Date Reassigned and Date Written Off (for example, **18/11/2026**), or choose from the calendar button. Caffoot Lite preserves the event as an ISO `YYYY-MM-DD` value internally and retains the original stock movement, validation, future-date and handover safeguards. An invalid typed date cannot be saved. For accessibility and calendar-keyboard help, see [UK Date Entry And Calendar Controls](README.md#uk-date-entry-and-calendar-controls).
+
+### Date Validation Depends On The Action
+
+Always enter the actual date of a completed event. The date control rejects impossible dates such as 31/11/2026. The implemented additional rules are:
+
+| Operation | Additional Date Restriction |
+| --- | --- |
+| Return against an original issue | Date Returned cannot precede that issue's date. |
+| First return of an eligible unassigned Device with no stock history | Date Returned cannot be later than today's UTC calendar date. |
+| Direct handover | Date Reassigned cannot precede the current issue or be later than today's UTC date. |
+| Issue which first captures Original In Service Date | Date Issued cannot be later than today's UTC date, including while Lifecycle is off. |
+| Write-off of outstanding issued equipment | Date Written Off cannot precede the original issue. |
+
+Ordinary receipts, ordinary stock issues, preparation and other write-offs do not acquire all of those extra restrictions. Later reissues which do not capture first service retain their existing date validation. An accepted field is not proof that equipment physically moved or that checks were completed. See [first-service eligibility](Equipment-Lifecycle.md#record-first-service-from-stock).
 
 ## Before You Start
 
@@ -64,6 +78,18 @@ The Department holds one shared allocation of eight. Its ten Staff Members do no
 
 **Cancel** leaves an unsaved form without issuing equipment. Where a discard prompt appears, choose **Keep Editing** to retain your entries or confirm discarding them. In the final confirmation, **Back To Edit** restores the same form values; it is the route to check dates, notes or selections before saving.
 
+![Issue Equipment draft with eight keyboards, Alex Morgan and the original issue date.](screenshots/batch-7d/quantity-issue-draft.png)
+
+*Eight of ten Ready units are proposed for Alex from a separate twenty-keyboard demonstration receipt. Nothing is issued until the confirmation succeeds.*
+
+![Confirm Issue Equipment summary for eight Correction Training Keyboards to Alex, with Back To Edit and Confirm Issue.](screenshots/batch-7d/quantity-issue-confirmation.png)
+
+*Confirm Issue Equipment retains the exact equipment, quantity and recipient. Back To Edit returns to the draft; Cancel records no issue.*
+
+![Issue Equipment with the individual mouse serial/asset identity and Sarah as proposed recipient.](screenshots/batch-7d/individual-issue-selection.png)
+
+*An individually tracked mouse is selected by its own identity. This draft is cancelled, so it does not add another issue to the connected journey.*
+
 ## Return Equipment
 
 1. Open **Return Equipment**. In **Select Issued Equipment**, select the original outstanding issue. Check its original issue date, recipient and outstanding quantity. An authorised **Return Equipment** link on Staff/Department equipment preselects that issue.
@@ -84,7 +110,7 @@ The three remaining issued mice are still with Learning. The two physically retu
 
 Do not enter eight as returned simply to close the original issue. An item which has not come back must remain outstanding or, if genuinely missing and authorised for write-off, follow [Write Off Missing Issued Equipment](#write-off-missing-issued-equipment).
 
-Individual units keep their permanent identities. Equipment can return from an inactive Staff Member or archived Department; their status does not erase the original issue.
+Individual units keep their permanent identities. Equipment can return from a Left Company Staff Member or archived Department; their status does not erase the original issue.
 
 If the recorded original issue quantity is wrong, choose **Correct Movement**
 beside the selected issue information. The [existing correction workflow](IT-Assets-Correct-Movement.md#correct-an-issue-while-returning-equipment)
@@ -99,8 +125,6 @@ In the original **Device Details → Assigned To** tab, choose **Return Equipmen
 The same canonical Device remains in Devices. Its original assignment closes permanently, with a dated return and responsible technician. Return does not change its IP address, Rack, Location, operational status or specifications. Merely becoming unassigned, imported or retired does not place a Device in stock. There is no separate Place In Stock workflow.
 
 ### Return A Currently Unassigned Device
-
-[Changed-screen evidence and review status](../../../development-handovers/evidence/unassigned-device-return/Report.md#changed-screen-gallery--awaiting-owner-visual-acceptance).
 
 1. Open the existing **Device Details → Assigned To** tab for the actual physical Device.
 2. Choose **Return Equipment**. Both Devices Edit and IT Assets Edit are required, with their features enabled. The Device must be physical, currently unassigned and have no previous stock movements. Existing issued/assigned equipment keeps its original return route; held, prepared or written-off equipment cannot be returned again.
@@ -127,6 +151,18 @@ Operational Status, IP, Rack, Location and existing history remain unchanged.
 Disabling IT Assets retains the existing Devices-only controls and denies stock
 returns without changing saved stock or Device records.
 
+![Return form for AST-LAP-014 from Alex, one returned and zero Ready or damaged.](screenshots/batch-7d/canonical-device-return.png)
+
+*The laptop’s real physical return closes Alex’s original custody and enters Awaiting Preparation with Ready zero. It is not a mere unassignment.*
+
+![Unsaved Return Equipment form with five of eight outstanding keyboards entered as returned, three Ready, two damaged and a write-off reason.](screenshots/batch-7d/partial-return-five-three-two.png)
+
+*Before selecting Record Return, enter five returned, three checked Ready and two damaged for write-off. If the return is saved successfully, three of the eight originally outstanding keyboards remain with Alex. The preview is not a saved return.*
+
+![Fixed unassigned Device return with physical-return statement and Date Returned cannot be in the future rejection.](screenshots/batch-7d/unassigned-return-physical-protection.png)
+
+*This existing unassigned Device has no recorded issue to close. Its fixed one-unit physical return would enter Awaiting Preparation; a future return is rejected and records nothing.*
+
 ## Prepare Returned Equipment
 
 In **Stock Inventory**, choose the item's **View / Update**, then **Prepare Returned Equipment**. For a returned managed Device, use **View / Update** under **Registered Devices In Stock History**.
@@ -147,6 +183,14 @@ In **Stock Inventory**, choose the item's **View / Update**, then **Prepare Retu
 If the applicable preparation has not been completed and confirmed, leave the equipment Awaiting Preparation.
 
 The original receipt-readiness controls cannot bypass returned-equipment checks. Receipt guidance remains in [Receive Stock And Stock Inventory](IT-Assets-Stock-Intake.md).
+
+![Prepare Returned Equipment for AST-LAP-014 with working and data-preparation checks confirmed.](screenshots/batch-7d/returned-device-preparation.png)
+
+*The original laptop is checked working and its data wiped/reset before becoming Ready. Preparation changes readiness without adding another held unit or new Device.*
+
+![Laptop stock readiness editor showing one unregistered Ready unit, one returned registered unit and the registered-Device readiness safeguard.](screenshots/batch-7c/returned-device-readiness-protection.png)
+
+*The returned registered Device cannot be made Ready by increasing the stock item’s receipt-readiness total. Its own Prepare Returned Equipment checks are required; this out-of-range draft is discarded.*
 
 ## Write Off Equipment
 
@@ -171,6 +215,14 @@ Write-off history is permanent. A genuine write-off has no general reactivation 
 
 For one missing mouse from an outstanding quantity of three, the result is two still outstanding and one written off. Physically Held and Ready do not increase: the missing mouse never came back. A physically returned broken mouse follows the return-and-damage procedure instead. See [Associated Equipment](Associated-Equipment.md) for a complete leaving-day handover example.
 
+![AST-LAP-014 return from Sarah with one damaged/write-off unit, zero Ready and a factual fictional reason.](screenshots/batch-7d/damaged-canonical-return.png)
+
+*AST-LAP-014 physically returns damaged: returned one, Ready zero and damaged/write-off one. This actual return/disposition closes Sarah’s custody and adds no usable held laptop; a genuinely missing Device would use the separate Write Off route.*
+
+![Retired AST-LAP-014 Assigned To with closed Alex and Sarah assignments and retained return/preparation/write-off movements.](screenshots/batch-7d/final-canonical-custody-history.png)
+
+*The final Retired Device keeps its identity and Alex/Sarah history. Physical return, damaged write-off and operational Retired are distinct recorded facts; nothing was deleted or generally reactivated.*
+
 ## Read Stock And Equipment History
 
 **Stock Inventory** distinguishes Physically Held, Ready, Awaiting Checks, Awaiting Preparation, Currently Issued and Written Off. Physically Held includes awaiting equipment; it excludes issued and written-off quantities. Registered Devices retain their own identities in a separate table.
@@ -184,6 +236,16 @@ For one missing mouse from an outstanding quantity of three, the result is two s
 **Movement History** includes genuine receipts, issues, returns, readiness changes, registration, reassignment, write-offs and corrections. **Receipt History** retains original Supplier, specifications, quantities and checks. Later events do not rewrite earlier facts. Supplier means the purchasing source, separately from Manufacturer. The event date describes when the action happened; the recorded time identifies when it was entered.
 
 With independent access, Staff/Department equipment shows actual outstanding Asset quantities and original Device relationships. **My Equipment** shows only the signed-in person's safe personal equipment and **Shared with My Department**, including remaining quantities. It grants no stock, directory or Device administration rights. Membership changes and independent feature switches apply on the next request; disabling a feature retains its data and history.
+
+### Empty Choices And Rejected Operations
+
+**No Outstanding Equipment**, **No Ready Registered Devices** or **No Eligible Equipment** can mean no current selection satisfies the particular workflow. A Device being unassigned does not make it Ready. Reopen the original issue or Device, check the saved holder/state and use **Reload Stock** after a failed load. Never choose a similar item simply to make a form submit.
+
+All issue/return/preparation/write-off quantities are whole units: positive for an actual movement, zero allowed for optional Ready/damaged dispositions, and no more than the relevant current balance. Ready plus damaged cannot exceed returned. Notes and mandatory reasons allow up to 2,000 characters. Blank mandatory reasons, insufficient checks, excessive quantities, duplicate units, stale versions, ended sessions and revoked permissions reject the operation. For partial returns, check the outstanding remainder before closing the form. Returning or writing off a Device leaves its accessory issues outstanding until resolved separately.
+
+![Movement History with original receipt twenty, effective ten and appended reasoned correction records.](screenshots/batch-7d/correction-attributed-history.png)
+
+*The original twenty-unit receipt and both attributed corrections remain. Its effective quantity is ten; prior issue/return facts and physical Device identities are preserved.*
 
 ## Troubleshooting And Recovery
 
@@ -202,14 +264,10 @@ With independent access, Staff/Department equipment shows actual outstanding Ass
 
 Cancelling affects the current unsaved form. It does not reverse a return, write-off or other action already saved separately. Notes and history remain subject to their access permissions; ordinary **My Equipment** viewers receive only their safe personal/shared equipment view, not this stock administration interface.
 
-## Related Guides And Review Items
+## Related Guides
 
 [Receive Stock And Stock Inventory](IT-Assets-Stock-Intake.md) · [Device Registration And Reissue](Device-Stock-Registration-and-Reissue.md) · [Associated Equipment And Direct Handover](Associated-Equipment.md) · [Correct Stock Movement](IT-Assets-Correct-Movement.md) · [IT Assets Overview And Low Stock](IT-Assets-Dashboard.md).
 
-Genuine development screenshots are retained in the linked evidence reports. Approval of a functional preview alone does not make it an approved application screenshot. The [documentation review items](../../../development-guide/Stage-1-3-Documentation-Review.md) record image and remaining manual acceptance requirements. No production upgrade, backup or restore acceptance is claimed here.
+[Roles And MFA](Roles-Section-Permissions-and-MFA.md) · [← Draft v2.2 Guides](README.md) · [Published v2.1 Guides](../README.md)
 
-![Mobile dark Return Equipment form for an unassigned fictional device](../../../development-handovers/evidence/stage-6-6-batch-3/screenshots/stock-unassigned-return-dark-390.png)
-
-More current examples show [writing off an issued device in mobile dark](../../../development-handovers/evidence/stage-6-6-batch-3/screenshots/stock-issued-writeoff-dark-390.png) and [reviewing Movement History in desktop light](../../../development-handovers/evidence/stage-6-6-batch-3/screenshots/stock-movement-history-light-1440.png).
-
-[Implementation And Screenshots](../../../development-handovers/evidence/stock-circulation/Report.md) · [Roles And MFA](Roles-Section-Permissions-and-MFA.md) · [← Draft v2.2 Guides](README.md) · [Published v2.1 Guides](../README.md)
+[Connected example: a laptop from Supplier and stock to its final write-off](Connected-Equipment-Journey.md).

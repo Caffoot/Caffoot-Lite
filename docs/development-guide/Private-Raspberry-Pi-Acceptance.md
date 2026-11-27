@@ -1,6 +1,6 @@
 # Private Raspberry Pi Acceptance — Owner Runbook
 
-**Development testing only.** Use this procedure for an explicitly authorised private acceptance build, not a production update or public release. The owner's 24 November 2026 SSH session recovered the existing checkout and successfully built the Stage 6.6 ARM64 image. The subsequent Portainer update was initiated; startup and functional acceptance are not yet confirmed.
+**Development testing only.** Use this procedure for an explicitly authorised private acceptance build, not a production update or public release. The owner's 24 November 2026 SSH session recovered the existing checkout and successfully built the Stage 6.6 ARM64 image. At that 24 November checkpoint, the subsequent Portainer update was initiated and startup/functional acceptance had not yet been confirmed. For later acceptance progress and the current pause after Test 69, see [Development Status](Development-Status.md).
 
 ## Fixed test boundary
 

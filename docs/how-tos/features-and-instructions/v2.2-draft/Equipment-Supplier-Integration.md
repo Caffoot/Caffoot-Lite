@@ -1,6 +1,6 @@
 # Equipment Supplier Integration
 
-> **Draft v2.2 — unreleased.** These instructions describe the Stage 4 development application. The examples use fictional companies and equipment. For the published release, use the [v2.1 guides](../README.md).
+> **Draft v2.2 — Unreleased.** v2.1 remains the published release. These instructions describe v2.2.
 
 A purchasing Supplier is the company that provided equipment. A Manufacturer identifies who made it. For example, a laptop manufactured by Dell might be purchased from Northlight Technology Ltd. Record Dell under Manufacturer and Northlight Technology Ltd under Supplier.
 
@@ -8,7 +8,7 @@ A purchasing Supplier is the company that provided equipment. A Manufacturer ide
 
 1. An administrator signs in using an authenticator and opens **Settings & Data → Optional Features**.
 2. In **Additional Features**, enable **Suppliers**. Enable **Devices** or **IT Assets** as appropriate for the workflows your organisation uses.
-3. In **Permissions**, check the user's role and account overrides. The switches and effective permissions apply independently. See [Roles, Section Permissions And MFA](Roles-Section-Permissions-and-MFA.md).
+3. In **Staff → Permissions → Manage Roles**, check reusable grants; use **Staff Members → Staff Details → Manage Permissions → Permissions** for individual overrides. The switches and effective permissions apply independently. See [Roles, Section Permissions And MFA](Roles-Section-Permissions-and-MFA.md).
 4. Ask the colleague to open the relevant equipment workflow. Devices Edit allows the chooser on the Device form, and IT Assets Edit allows it on the receiving form. The chooser gives authorised equipment editors available company names even if they have no Supplier Directory access. Suppliers Edit is needed to add a company.
 
 Devices Read lets a colleague see the recorded Supplier name on Device Details while Suppliers is enabled. To open the full company record from Device Details they also need Suppliers Read. IT Assets receipt history keeps the originally recorded Supplier text available to authorised IT Assets readers.
@@ -23,11 +23,13 @@ Devices Read lets a colleague see the recorded Supplier name on Device Details w
 
 **Example.** Create Meeting Room Laptop, set its Manufacturer to Dell and select Northlight Technology Ltd as Supplier. If you duplicate the laptop to record another unit, check the blank Supplier field and record its own purchase information if known.
 
-![Desktop dark Edit Device showing the linked Supplier field and Add Supplier control at the end of Device Identity](../../../development-handovers/evidence/stage-4-batch-43/images/device-identity-dark-1440.png)
-
-*Device Identity on the existing General tab. Manufacturer and Model remain on the Hardware tab.*
+Manufacturer and Model remain on the Hardware tab.
 
 If an existing company is unavailable for new selections, the saved Device can still show its linked name. Leave the field alone to retain it. To correct it, select another available company, enter the correct text or clear the field, then save. When Suppliers is switched off, the field and associated display are hidden. Saving an unrelated Device edit retains the existing Supplier data, which becomes visible again when the feature is re-enabled.
+
+![Add Device Supplier chooser offering Northlight to an equipment editor without Supplier directory access.](screenshots/batch-7c/minimal-supplier-chooser.png)
+
+*This Devices/IT Assets editor has no Suppliers Read. It can choose the minimal company identity; typing alone is not an explicit canonical link. The Device draft is discarded.*
 
 ## Add A Company From An Equipment Form
 
@@ -53,6 +55,10 @@ If **+ Add Supplier** is missing but company choices are available, ask a collea
 
 With Suppliers switched off, **Supplier (Optional)** still accepts text on the receiving form. Existing confirmed associations and original receipt facts are retained. If a chosen company becomes unavailable before saving, review the error and select another available company or record text. **Issue Equipment** and **Get From Stock** continue to use their existing stock workflows without a Supplier selection. No receipt is inferred for the unit being issued or registered.
 
+![Receipt History showing DEMO-104 two-laptop delivery, checks and Northlight association.](screenshots/batch-7c/receipt-history.png)
+
+*The original two-laptop receipt is saved with its checks, date, Sam and Supplier. Later associations and readiness history are separate records.*
+
 ## Assign A Supplier To Existing Devices
 
 An administrator needs Devices Edit with Devices and Suppliers enabled. An ordinary Devices editor can correct one Device in its own form.
@@ -69,6 +75,14 @@ An administrator needs Devices Edit with Devices and Suppliers enabled. An ordin
 
 **Example.** You find a purchase order listing three independently purchased laptops from Northlight Technology Ltd. Search for the three Device Names, select the matching records and confirm the same Supplier. If you change the search before choosing **Assign Supplier**, check the selection again.
 
+![Assign Supplier confirmation for two selected Devices with Northlight explicitly selected.](screenshots/batch-7c/bulk-device-supplier.png)
+
+*The administrator is confirming links on two original Devices. This proposal does not change custody, stock or configuration.*
+
+![Assign Supplier dialog showing selected Device missing, changed or reserved rejection.](screenshots/batch-7c/bulk-device-supplier-rejected.png)
+
+*A real edit reservation on one selected Device rejects the entire proposed Supplier assignment. Neither Device receives a partial link.*
+
 ## Link, Correct Or Remove A Historical Receipt Association
 
 You need IT Assets Edit while IT Assets and Suppliers are enabled. Use the original delivery record and any supporting delivery note to verify the Supplier.
@@ -79,13 +93,23 @@ You need IT Assets Edit while IT Assets and Suppliers are enabled. Use the origi
 4. To remove a mistaken link, choose **Remove Supplier Association** on that receipt and select **Confirm Removal**. The original receipt text, date, quantity and stock movements remain in history. The supplier's record retains the historical protection and the correction is recorded in the Audit Trail.
 5. Select **Cancel** or close the dialog to abandon the correction. If a receipt changes between selection and confirmation, no selected receipt is updated. Refresh Receipt History and review the current links before trying again.
 
-![Mobile dark Receipt History scrolled to the Supplier column with original invoice text and Link, Change and Remove actions](../../../development-handovers/evidence/stage-4-batch-43/images/receipt-history-dark-390.png)
-
 *On a narrow screen, scroll the table sideways to reach all receipt columns and actions.*
 
 **Example.** A receipt was recorded with the free-text name “Northlight”. The invoice confirms the company was Northlight Technology Ltd. Use **Link Supplier** on that receipt. If a later check shows the invoice belonged to a different delivery, choose **Change Supplier** or **Remove Supplier Association** as appropriate. The original recorded “Northlight” remains visible in the Supplier column.
 
 Only individual deliveries can be corrected here. A row in Stock Inventory can represent several deliveries, each with a different Supplier. Supplier assignment does not change any Physically Held, Ready To Issue or issued quantities.
+
+![Remove Supplier Association confirmation retaining the original two-laptop receipt.](screenshots/batch-7c/receipt-supplier-removal.png)
+
+*Removing this one current association retains the original Northlight receipt text and delivery facts. It is not deletion or a stock adjustment.*
+
+![Original Northlight two-laptop receipt with Link Supplier after the current association was removed.](screenshots/batch-7c/receipt-supplier-unlinked.png)
+
+*The current link is removed while Northlight remains the original receipt Supplier text. The receipt quantity, checks and date are unchanged.*
+
+![Assign Supplier confirmation for two selected receipts with Northlight selected.](screenshots/batch-7c/receipt-multiple-assignment.png)
+
+*Two receipt associations are proposed together for restoration to Northlight. Each original Supplier string and physical delivery stays recorded.*
 
 ## Review What A Supplier Provided
 
@@ -107,6 +131,22 @@ A delivery keeps its original quantity after issue, return, preparation or write
 
 If **Supplied Equipment** and **Supplier Equipment** are both absent, check whether you can read at least one enabled equipment section. A Supplier reader with only Devices Read sees only Device rows and their permitted quantities. A Supplier reader with only IT Assets Read sees only permitted receipt rows. If a company or equipment record becomes unavailable, reopen its current list and check your permissions and feature switches.
 
+### Interpret Totals And Separate Associations
+
+**Supplier Equipment** measures original associated supply, not current held, Ready or outstanding stock. A quantity correction changes effective stock calculations; this Supplier view still uses the immutable original receipt quantity. For example, a recorded receipt originally containing 20 later corrected to ten contributes 20 to this historical Supplier metric while effective stock is ten. Review Movement History for effective balances rather than using this metric as a stocktake or financial total.
+
+Registration does not automatically copy a receipt's Supplier association onto its new Device. Record a Device association explicitly if appropriate. A stock-derived Device explicitly linked later is listed without another quantity contribution; its original supply belongs to its receipt. An equipment editor's minimal chooser is not permission to read contacts, notes or Issues. A reader lacking Devices access may have Device-related source rows withheld, so permitted source totals can differ between users.
+
+**No Supplied Equipment Recorded** means no readable associated source rows for this Supplier; **No Equipment Matches This Type** means its current type filter has no rows. Clear All Equipment Types and check the independent feature/read permissions before inferring that a Supplier has never supplied equipment. Existing original receipt text remains even when Suppliers is off; canonical chooser and associated displays are hidden and records retained.
+
+![Northlight Supplied Equipment with original fifty-keyboard receipt, independent Device and stock-derived Device, without double counting.](screenshots/batch-7c/supplier-original-fifty-one.png)
+
+*For this association demonstration, Northlight is linked to the original fifty-keyboard receipt, independent AST-LAP-015 and stock-derived AST-LAP-014. The original-supply metric is 51: the stock-derived Device adds no extra receipt quantity.*
+
+![Northlight Supplier Overview for a Suppliers-only reader, without Supplied Equipment or equipment metric.](screenshots/batch-7c/supplier-reader-protected-equipment.png)
+
+*Suppliers Read alone does not reveal Device or stock equipment rows. Their independent Read rights are required.*
+
 ## Manage Supplier Availability And Retention
 
 1. With an administrator account and Suppliers enabled, open the company under **Purchasing → Suppliers**. Review its status and the explanation beside the available actions.
@@ -114,7 +154,7 @@ If **Supplied Equipment** and **Supplier Equipment** are both absent, check whet
 3. To make the company selectable again, open the same company and choose **Re-enable**. Review the latest warning before confirming. If the impact changes while the dialog is open, reopen the company and review it again.
 4. Use the **Audit Trail** to check the recorded changes if your account has the required access. A correction or removal leaves the earlier relationship in the retained audit record. A company with confirmed supply history remains protected from deletion.
 
-For company, location and contact lifecycle actions, see [Supplier Management](Supplier-Management.md). Keep the complete application data volume when following your organisation's SQLite backup process. The published v1.3.3 JSON import is an inventory migration path. Complete v2.2 installation, recovery and upgrade acceptance is tracked separately.
+For company, location and contact lifecycle actions, see [Supplier Management](Supplier-Management.md). Keep the complete application data volume when following your organisation's SQLite backup process. The published v1.3.3 JSON import is an inventory migration path. For isolated v2.2 review only, see [installation and recovery](Installation.md).
 
 ## Troubleshoot Access And Confirmations
 
@@ -126,4 +166,4 @@ For company, location and contact lifecycle actions, see [Supplier Management](S
 | A confirmation says a selected record changed | Close the dialog, refresh the current inventory or Receipt History, and review the newly saved record before selecting again. |
 | The Supplier Equipment total differs between two authorised accounts | Compare effective Devices Read and IT Assets Read and the switches. Each total uses only the source records the signed-in account can read. |
 
-More desktop and mobile captures, their exact source revision, and verification details are available in the [Batch 4.3 application evidence](../../../development-handovers/evidence/stage-4-batch-43/Application-Report.md).
+[Connected example: a laptop from Supplier and stock to its final write-off](Connected-Equipment-Journey.md).

@@ -34,7 +34,7 @@ def _read_required(root, name):
     return path.read_text(encoding="utf-8")
 
 
-def check_release_files(root, version):
+def check_release_files(root, version, *, allow_unreleased_readme=False):
     """Verify the requested version is consistent across the release files."""
     root = Path(root)
     version = normalise_version(version)
@@ -48,8 +48,24 @@ def check_release_files(root, version):
     notes_path = f"docs/historical/release-notes/Release-Notes-{version}.md"
     notes = _read_required(root, notes_path)
 
+    readme_heading = re.match(
+        r"# Caffoot Lite (v[0-9]+\.[0-9]+(?:\.[0-9]+)?)(?: — [^\n]+)?\s*\n",
+        readme,
+    )
+    readme_matches = bool(readme_heading and readme_heading.group(1) == version)
+    if not readme_matches and allow_unreleased_readme and readme_heading:
+        # A read-only PR check may prepare the next version while preserving
+        # the published installation files. Explicit publication stays strict.
+        next_version = readme_heading.group(1)
+        draft_notes = _read_required(root, f"docs/Release-Notes-{next_version}.md")
+        readme_matches = bool(
+            re.search(re.escape(next_version) + r" is unreleased", readme, re.I)
+            and f"{version} remains" in readme
+            and re.search(r"draft[^\n]*unreleased", draft_notes, re.I)
+        )
+
     expected = {
-        "README.md": (readme.startswith(f"# Caffoot Lite {version}\n")),
+        "README.md": readme_matches,
         "INSTALLATION.md": (
             installation.startswith(f"# Caffoot Lite {version} —")
         ),
@@ -107,15 +123,16 @@ def main():
 
     root = Path(__file__).resolve().parent.parent
     requested = args.version
-    if requested is None:
-        readme = _read_required(root, "README.md")
-        match = re.match(r"# Caffoot Lite (v[0-9.]+)\s*\n", readme)
+    read_only = requested is None
+    if read_only:
+        installation = _read_required(root, "INSTALLATION.md")
+        match = re.match(r"# Caffoot Lite (v[0-9]+\.[0-9]+(?:\.[0-9]+)?) —", installation)
         if match is None:
-            parser.error("Cannot detect a release version from README.md")
+            parser.error("Cannot detect the published version from INSTALLATION.md")
         requested = match.group(1)
 
     try:
-        version = check_release_files(root, requested)
+        version = check_release_files(root, requested, allow_unreleased_readme=read_only)
     except ReleasePreflightError as error:
         parser.exit(1, f"Release preparation failed: {error}\n")
 
@@ -123,7 +140,11 @@ def main():
         with open(args.github_output, "a", encoding="utf-8") as output_file:
             output_file.write(f"version={version}\n")
 
-    print(f"Release preparation files agree for {version}; nothing published.")
+    if read_only:
+        print(f"Published installation files agree for {version}; "
+              "README version notices checked; nothing published.")
+    else:
+        print(f"Release preparation files agree for {version}; nothing published.")
 
 
 if __name__ == "__main__":

@@ -1,24 +1,26 @@
 # Draft v2.2 User And Administrator Guides
 
-> **Draft v2.2 — Unreleased.** Stage 6.6 Batch 2 adds My Equipment, unread Service Desk replies and readable Audit Trail records in the schema 31 draft candidate. The [Batch 2 verification record](../../../development-handovers/evidence/stage-6-6-batch-2/README.md) lists completed focused checks, application screenshots and remaining acceptance gates. Use the [published v2.1 guides](https://github.com/Caffoot/Caffoot-Lite/tree/v2.1/docs/how-tos/features-and-instructions) for the current release.
+> **Draft v2.2 — Unreleased.** v2.1 remains the published release. These instructions describe v2.2.
 
-Caffoot Lite brings accounts, Staff Members, Departments, Devices and optional IT Assets together so your team can record who holds equipment, what is physically in stock and what is ready to issue. These guides explain workflows for ordinary users, IT technicians and administrators, including Suppliers and Equipment Lifecycle in Stage 4. Examples use fictional people, organisations and equipment.
+Caffoot Lite v2.2 — Everyday IT Management connects Devices, IPAM and Network Racks with accounts, Staff Members, Departments and optional IT Assets. Record who holds equipment, what is physically in stock and what is ready to issue; keep Supplier and lifecycle information alongside it; and handle support through employee tickets and the IT Service Desk. These guides explain the connected workflows, permissions, reporting, email and administration for employees, IT technicians and administrators. Examples use fictional people, organisations and equipment.
 
 Start with the task you need to complete. Each feature guide explains its permissions, controls, numbered procedures, examples and recovery steps. A missing section may mean the feature is switched off or your account lacks permission; ask an administrator to check before creating duplicate records.
 
 ## Move Around The Application
 
-On desktop, the left-hand navigation scrolls independently of the main page when the expanded menu is taller than the window. Scroll over the sidebar, or use the keyboard to reach the permitted links. **Settings & Data** (administrators only) and **Collapse Menu** remain reachable at the bottom. For example, if IT, Staff and Purchasing are expanded, scroll down to Settings & Data from either IT Assets Overview or Device Inventory. Collapsing a group or the menu does not change your permissions. Mobile navigation layout is unchanged.
+On desktop, the left-hand navigation scrolls independently of the main page when the expanded menu is taller than the window. Scroll over the sidebar, or use the keyboard to reach the permitted links. **Settings & Data** (administrators only) and **Collapse Menu** remain reachable at the bottom. For example, if IT, Staff and Purchasing are expanded, scroll down to Settings & Data from either IT Assets Overview or Device Inventory. Collapsing a group or the menu does not change your permissions.
 
 ![IT Assets Overview with the expanded sidebar scrolled to Settings & Data and Collapse Menu.](screenshots/milestone-01-sidebar-device-staff-corrections/sidebar-it-assets-overview-light.png)
 
-*Draft v2.2 — Scroll within the desktop sidebar rather than moving the main page. The lower links remain reachable at a short 1440 × 600 viewport.* [Dark mode](screenshots/milestone-01-sidebar-device-staff-corrections/sidebar-it-assets-overview-dark.png)
+*Scroll within the desktop sidebar rather than moving the main page. The lower links remain reachable at a short 1440 × 600 viewport.*
 
 ![Device Inventory with the same sidebar scrolled to the bottom and Settings & Data and Collapse Menu visible.](screenshots/milestone-01-sidebar-device-staff-corrections/sidebar-device-inventory-light.png)
 
-*Draft v2.2 — The same navigation works from Device Inventory.* [Dark mode](screenshots/milestone-01-sidebar-device-staff-corrections/sidebar-device-inventory-dark.png) · [Capture provenance](screenshots/milestone-01-sidebar-device-staff-corrections/Provenance.txt) · [Owner-approved correction evidence](https://github.com/Caffoot/Caffoot-Lite/pull/485#issuecomment-7216358365)
+*The same navigation works from Device Inventory.*
 
 ## Import, Upgrade And Recovery
+
+Use [Installation — isolated private review](Installation.md) for the separate draft v2.2 Docker/Portainer/Compose setup, storage, HTTPS and first-administrator steps. There is no public v2.2 image or production deployment procedure established here.
 
 Use [Import Legacy Inventory Or Upgrade Docker](Legacy-Import-and-Docker-Upgrade.md) to review a standalone v1.3.3 export, understand protected Device conflicts, rehearse a v2.1 Docker upgrade on an isolated copy, or recover a complete Docker installation with its matching image.
 
@@ -28,9 +30,27 @@ In v2.2, Caffoot Lite's date-entry controls show and accept **DD/MM/YYYY** regar
 
 Type a date with slashes, or enter eight consecutive digits (for example, `15032023`), which are formatted as `15/03/2023`. Use the calendar button on the same field if you prefer not to type. The calendar begins each week on Monday and includes the month, year and labelled days. With keyboard focus inside the calendar, use the arrow keys to move by day or week, Home/End for the beginning/end of the week, Page Up/Down to move months, Shift+Page Up/Down to move years, Enter to select and Escape to close it.
 
-Only real calendar dates are accepted: **29/02/2024** is valid, but **29/02/2023** is not. Fields with existing restrictions, such as no future Purchase Date or Date Issued, keep those restrictions. An invalid date is shown with a validation message and is not submitted as a replacement for the previous recorded value. Clearing an optional date remains possible. The calendar preserves existing permissions, readonly fields, Cancel and unsaved-change/discard behaviour.
+Only real calendar dates are accepted: **29/02/2024** is valid, but **29/02/2023** is not. Fields with existing restrictions, such as no future Purchase Date or qualifying first-service Date Issued, keep those restrictions. An invalid date is shown with a validation message and is not submitted as a replacement for the previous recorded value. Clearing an optional date remains possible. The calendar preserves existing permissions, readonly fields, Cancel and unsaved-change/discard behaviour.
 
 This is a change to how dates are **entered and shown**, not to the dates already saved, the actual event times, the configured timezone, lifecycle calculations, or stock movement history. Existing published v2.1 instructions and records are unchanged.
+
+## Infrastructure
+
+| Task | Guide |
+| --- | --- |
+| Find, record, edit and manage physical Devices or virtual machines | [Devices — Creating, Editing and Managing Equipment](Devices.md) |
+| Manage subnets, address blocks, VLANs, reservations and address allocations | [IPAM — Subnets, VLANs and Individual Addresses](IPAM.md) |
+| Record racks, inspect elevations, place equipment and manage shelves/accessories | [Network Racks](Racks.md) |
+| Enable optional features, record basic IPv4 or explicitly link to IPAM | [Optional Features, Basic IPv4 And Link To IPAM](Optional-Features-and-Link-To-IPAM.md) |
+
+### A Sensible Infrastructure Setup Order
+
+1. Agree which infrastructure areas the organisation uses. An administrator enables the required Optional Features and grants access separately.
+2. If using managed IPAM, record the real addressable subnets first, with their purpose and gateway/VLAN where applicable. An Address Block is optional and cannot substitute for a subnet.
+3. If recording rack-mounted or shelf equipment, add the measured rack and any actual shelf accessories. Check the intended face and free span.
+4. Search Devices before adding equipment. Save it with no address, an eligible basic IPv4 address, or a managed allocation using the corresponding guide.
+5. Reopen the Device and related IPAM/Rack records to verify the saved result. Use the specialised assignment/stock guides for custody or physical issue; Add Device alone does not complete those tasks.
+6. Review authorised Audit Trail records where navigation is available. An audit entry explains a change; it is not a backup or proof of a physical action.
 
 ## Accounts And Access
 
@@ -55,6 +75,10 @@ An application account is the identity used to sign in. A Staff Member is a pers
 | Assign an existing Device or view personal/Department equipment | [Device Assignments And My Equipment](Device-Assignments-and-My-Equipment.md) |
 
 Staff Members and Departments are core functions, with independent section permissions. You do not need to populate them to use Caffoot Lite's infrastructure inventory. **My Equipment** gives linked Staff an appropriately restricted view of their equipment; it does not grant access to IT inventory or another person's private details.
+
+## Connected Equipment Example
+
+[Follow Aster Services and laptop AST-LAP-014](Connected-Equipment-Journey.md) from Supplier information and physical receipt to Device registration, personal/Department visibility, return/reissue or direct handover, lifecycle review and eventual write-off. The example links the detailed instructions; it is not a compulsory application sequence.
 
 ## Stock And Technician Workflows
 
@@ -86,7 +110,7 @@ For a new delivery, follow Receive Stock → check/readiness → Issue Equipment
 | Use Purchasing, file or correct Issues, hand them over between contacts and manage Issue Categories | [Supplier Issues And Purchasing](Supplier-Issues-and-Purchasing.md) |
 | Record, correct or review Supplier associations on Devices and stock receipts | [Equipment Supplier Integration](Equipment-Supplier-Integration.md) |
 
-Suppliers starts switched off and uses its own section permissions. Supplier Management, Supplier Issues/Purchasing and Equipment Supplier Integration are owner-accepted and integrated on the unreleased development branch through merged PRs #414–#416. The Supplier Equipment view and schema 23 work are part of that integration, not a remaining draft PR.
+Suppliers starts switched off and uses its own section permissions. Use Supplier Equipment to review linked Devices and stock receipts without duplicating their inventory records.
 
 ## Equipment Lifecycle
 
@@ -94,12 +118,13 @@ Suppliers starts switched off and uses its own section permissions. Supplier Man
 | --- | --- |
 | Record dates, review Dashboard warnings, configure warning periods and lifespans, archive or restore types | [Equipment Lifecycle](Equipment-Lifecycle.md) |
 
-Equipment Lifecycle is independently optional and starts switched off. Stage 4.4 is owner-accepted and merged via PR #418 into the unreleased development branch; these instructions remain draft v2.2, not published v2.1 features.
+Equipment Lifecycle is independently optional and starts switched off. Enabling it makes its date controls, settings and warnings available without replacing equipment or changing physical stock.
 
 ## Service Desk
 
 | Task | Guide |
 | --- | --- |
+| Follow Alex and Sam through one connected support request | [Connected Service Desk Journey](Connected-Service-Desk-Journey.md) |
 | Raise, find, reply to and reopen tickets for personal and Department equipment | [Employee ticket instructions](Service-Desk-Tickets.md#raise-a-support-request) |
 | Use the IT queue, record tickets, handle technician actions and attachments, and understand equipment privacy | [Service Desk Tickets](Service-Desk-Tickets.md) |
 | Grant technician access, configure Working Hours, Excluded Dates and Ticket Categories, and protect ticket-linked records | [Administer The Service Desk](Service-Desk-Administration.md) |
@@ -108,16 +133,8 @@ Equipment Lifecycle is independently optional and starts switched off. Stage 4.4
 | Configure the IT support mailbox, check notification recipients and troubleshoot missing mail | [Service Desk email settings](Service-Desk-Administration.md#configure-the-it-support-mailbox) |
 | Edit and publish templates, set company branding and send a sample | [Email Templates And Company Branding](Email-Templates-and-Company-Branding.md) |
 
-The foundation, IT queue and employee ticket workflows are integrated through [PRs #437](https://github.com/Caffoot/Caffoot-Lite/pull/437), [#438](https://github.com/Caffoot/Caffoot-Lite/pull/438) and [#439](https://github.com/Caffoot/Caffoot-Lite/pull/439). Service Desk settings and reporting are integrated through [PR #440](https://github.com/Caffoot/Caffoot-Lite/pull/440), and Email Templates and Company Branding through [PR #441](https://github.com/Caffoot/Caffoot-Lite/pull/441). The notification instructions cover the Stage 5.6 development changes submitted in [PR #442](https://github.com/Caffoot/Caffoot-Lite/pull/442).
+Employees use My Tickets and Department Tickets for eligible equipment. Technicians use the separately permissioned IT Service Desk. Administrators manage its calendar, categories and email settings.
 
 ## Audit Trail
 
-Use [Read The Audit Trail](Audit-Trail.md) to search authorised event-time names and original references, inspect label provenance and export the history available to your account.
-
-## Publication And Acceptance
-
-Stages 1–5 are integrated into `milestone-1`. Stage 6.2 import protection and its draft guide are under review. Batch 3.4 manual/native acceptance, broader Raspberry Pi/native Safari and private-installation checks, and Stage 6.3 complete-volume restoration remain deferred. [Stage 6.2 evidence](../../../development-handovers/evidence/stage-6-2/README.md)
-
-Images used here are genuine application captures with an identified approval source and captions describing their scope. Functional HTML previews are retained as development references, never presented as application screenshots. Missing or outdated images and remaining wording discrepancies are listed in the [documentation review record](../../../development-guide/Stage-1-3-Documentation-Review.md).
-
-For implementation checkpoints and dated evidence, see [Development Status](../../../development-guide/Development-Status.md), the [active milestone handover](../../../development-handovers/milestone-01.md), [documentation plan #366](https://github.com/Caffoot/Caffoot-Lite/issues/366), [master tracker #351](https://github.com/Caffoot/Caffoot-Lite/issues/351) and [Stage 3 decisions #368](https://github.com/Caffoot/Caffoot-Lite/issues/368).
+Use [Read The Audit Trail](Audit-Trail.md) to search authorised event-time names and original references, understand recorded labels and export the history available to your account.

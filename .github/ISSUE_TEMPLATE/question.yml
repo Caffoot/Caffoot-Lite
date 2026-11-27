@@ -10,20 +10,39 @@ body:
 
         Please check our [Installation Guide](https://github.com/Caffoot/Caffoot-Lite/blob/main/INSTALLATION.md) and [Feature Guides](https://github.com/Caffoot/Caffoot-Lite/blob/main/docs/how-tos/features-and-instructions/README.md) if they might help. You can still ask here if you get stuck.
 
-        Please do not post passwords, tokens, authentication codes or private information.
+        Categories cover published and forthcoming features; availability depends on your version. Please do not post passwords, tokens, authentication codes or private information. For a security or privacy concern, use our [Security Reporting Guide](https://github.com/Caffoot/Caffoot-Lite/blob/main/SECURITY.md).
+  - type: input
+    id: version
+    attributes:
+      label: "Caffoot Lite Version Or Review Commit"
+      description: "Optional. Check My Account > About Caffoot Lite; for an unreleased review build, include the source commit or private image reference without credentials."
+      placeholder: "Copy the version or review commit you are using"
+    validations:
+      required: false
   - type: dropdown
     id: area
     attributes:
       label: "What Is Your Question About?"
       options:
-        - "Installation / Portainer"
+        - "Installation / Docker Compose / Portainer"
         - "Sign-In & MFA"
+        - "Dashboard"
+        - "Audit Trail / Change History"
+        - "Settings & Data / Optional Features"
+        - "Help & Guides / About"
         - "Device Inventory"
+        - "Staff Members & Departments"
+        - "My Equipment / Shared Equipment"
+        - "IT Assets / Stock / Custody"
+        - "Suppliers / Purchasing / Equipment Lifecycle"
+        - "Service Desk / My Tickets / Department Tickets"
+        - "Service Desk Working Hours / Time Zone / Reports"
+        - "Email / Notifications / Templates / Branding"
         - "IPAM"
         - "Network Racks"
         - "Users & Permissions"
         - "My Account"
-        - "Backup & Restore"
+        - "Import / Backup / Upgrade / Recovery"
         - "Contributing To Caffoot Lite"
         - "Something Else"
     validations:

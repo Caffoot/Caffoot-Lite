@@ -1,6 +1,6 @@
 # Administer The Service Desk
 
-> **Draft v2.2 — Unreleased.** This guide covers employee and technician access, ticket email, the support calendar, categories, reporting and the effect of equipment changes on stored tickets and files.
+> **Draft v2.2 — Unreleased.** v2.1 remains the published release. These instructions describe v2.2.
 
 ## Verify Employee Access
 
@@ -14,22 +14,22 @@ An employee needs no general inventory, directory or Service Desk grant for thes
 
 ![Employee Department Tickets in Purchasing with its current shared-equipment support requests.](../../../development-handovers/evidence/employee-service-desk/department-tickets-desktop-light.png)
 
-*Verify the view using an employee’s signed-in account. The Department name identifies the active shared audience.* [Capture details](../../../development-handovers/evidence/employee-service-desk/README.md)
+*Verify the view using an employee’s signed-in account. The Department name identifies the active shared audience.*
 
 ## Give A Technician Access
 
 Sign in as an administrator using your authenticator. Check that the prospective technician has an enabled account and the required access to the equipment they support. Devices and IT Assets have independent feature switches and permissions.
 
-1. Open **Staff → Permissions → Manage Roles**. Select **Manage** beside the role you want to change. To grant access to just one authorised person, open **Manage Permissions** in their **Staff Details** and review their section permissions instead.
+1. Open **Staff → Permissions → Manage Roles**. Select **Manage** beside the role you want to change. To grant access to just one authorised person, open **Staff Details → Manage Permissions → Permissions** and review their **Inherited**, **Override** and **Effective** section levels instead.
 2. Find **Service Desk**. Choose **Read** for someone who may review the technician queue or **Edit** for someone who may record technician actions. Review their effective **Devices** and **IT Assets** access as well. Each ticket is subject to its equipment section's enabled state and effective Read permission.
 3. Review the proposed changes and the accounts affected. The IT Staff role was assigned automatically during an earlier upgrade, so check the actual list before granting access to the whole role. Use an individual grant if the role has members who should have employee access only.
 4. Confirm the change when the preview is correct or cancel it to keep the current permissions. Review any individual **No Access** override if an expected inherited permission is missing. The application applies its existing account, MFA and session rules to the change.
 
 Ordinary Staff use equipment-scoped access through their Staff account link. They need no Service Desk, general inventory or Staff Directory grant for that access. The separate Service Desk permission governs the wider technician queue. [Roles, Section Permissions And MFA](Roles-Section-Permissions-and-MFA.md) · [Optional Features](Optional-Features-and-Link-To-IPAM.md)
 
-![Service Desk permission in the existing Manage User access controls, with Inherit and effective No Access shown for an example account.](../../../development-handovers/evidence/service-desk-foundation/it-staff-dave-1440.png)
+![Manage Permissions for fictional Morgan Reed, with the Permissions tab showing section overrides and effective access, including Service Desk.](../../../development-handovers/evidence/native-acceptance-corrections/screenshots/permissions-permissions-1440-light.png)
 
-*The Service Desk permission uses the existing per-account controls. Captured from the draft v2.2 application with fictional data.* [Capture details](../../../development-handovers/evidence/service-desk-foundation/README.md)
+*Use the Permissions tab to review the inherited, override and effective Service Desk level alongside equipment access.*
 
 ## Verify A Technician’s Access
 
@@ -40,27 +40,18 @@ Ordinary Staff use equipment-scoped access through their Staff account link. The
 
 When troubleshooting, check the effective role and individual override, account status, MFA, the equipment feature switch and the equipment section’s Read access. The Service Desk uses the existing permission model and the Devices and IT Assets switches.
 
-## Verify Unread Reply Indicators
+## Understand Unread Reply Indicators
 
-Unread indicators in draft v2.2 are personal to the signed-in account. They count distinct tickets in the navigation and workspace tabs and qualifying unread replies against individual tickets and Updates. They are not a new permission, a workload target or a shared Department read flag.
+Read state is saved separately for each account and message and survives a restart. Opening Overview does not acknowledge replies: select **Updates** and wait for the conversation to load. A failed load retains unread indicators. Reading a shared ticket does not acknowledge it for other accounts, and a later reply becomes unread again. Internal IT notes contribute only to authorised IT indicators. Clean Start clears receipts with their tickets.
 
-1. Verify the employee or technician's access using the preceding instructions. For a technician, check **Service Desk** read access and the corresponding enabled equipment section. For an employee, check the active Staff account link and current equipment custody or Department membership. A read-only technician can acknowledge their own permitted conversation without editing it.
-2. Use fictional acceptance records and two separately authenticated accounts with legitimate access to the same Department ticket. Send an employee-visible IT update from a third authorised account. Confirm that the recipient accounts each see an unread reply and that the sending account does not count its own reply.
-3. From one recipient account, open the ticket at Overview, then select Updates. Confirm only that account's eligible unread replies clear. Sign out and sign in again, or use another browser for the same account, to confirm its read state persists. The other account must still have its own unread reply.
-4. Add an internal IT note. Verify it contributes only to authorised IT counts, not to the employee's counts. A status or assignment change, an edit to an existing reply, and the original ticket attachment placeholder are not new replies.
-5. When checking a failed conversation load, confirm its unread indication is retained. A later reply must remain unread if it arrived after the loaded snapshot. An account that loses access through a Department membership, custody, role or feature change must not receive counts for the restricted records or be able to acknowledge them using an earlier conversation.
-6. Use the existing sign-in and access troubleshooting if badges do not appear. Zero indicators are hidden. Check filters, both employee tabs and other pages before assuming a ticket is missing. Do not grant additional permissions just to make a badge appear. See [Recognise And Read New Replies](Service-Desk-Tickets.md#recognise-and-read-new-replies).
-
-The read state is stored in the application database as separate account/message receipts (development schema 31). Published v2.1 does not contain Service Desk ticket history. The schema 31 development migration is additive; it does not initialise existing private-development messages as read or change existing ticket history. Focused checks verified schema 30→31 and a fictional database from published v2.1, receipt persistence across an application restart, and Clean Start clearing receipts with their tickets. Native and full deployment acceptance remain pending.
-
-Focused permission, database and browser evidence is available in the [Batch 2 verification record](../../../development-handovers/evidence/stage-6-6-batch-2/README.md).
+If badges seem wrong, check filters, both employee tabs and other pages, then check the current equipment assignment and access. Do not grant wider permissions merely to make a badge appear. See [Recognise And Read New Replies](Service-Desk-Tickets.md#recognise-and-read-new-replies).
 
 ## Configure The IT Support Mailbox
 
 The **Ticket Created** email alerts IT when someone raises a request for their own or their Department’s assigned Device or IT Asset. It contains the ticket reference, its initial **Open** status and a link to the authorised IT ticket view. The description, attachments and request subject stay inside Caffoot Lite.
 
 1. Sign in as an administrator with your authenticator. Open **Settings & Data → Email Settings**.
-2. Under **Outgoing Email Settings**, enter the **Server Address**, **Port**, **Connection Security**, SMTP authentication details and **Sender Identity** supplied by your mail administrator. Keep credentials private. If you are editing an existing installation and the SMTP username stays the same, leave **Password** blank to keep the saved password. Select the TLS option your provider requires. [SMTP fields and security](../Settings-and-Change-History.md#email-and-the-audit-trail)
+2. Under **Outgoing Email Settings**, enter the **Server Address**, **Port**, **Connection Security**, SMTP authentication details and **Sender Identity** supplied by your mail administrator. Keep credentials private. If you are editing an existing installation and the SMTP username stays the same, leave **Password** blank to keep the saved password. Select the TLS option your provider requires. [Complete v2.2 SMTP fields and security](Email-Templates-and-Company-Branding.md#configure-outgoing-email-smtp)
 3. Under **Service Desk Notifications**, enter one mailbox in **IT Support Email Address**. For example, use `it-support@example.invalid` for a shared mailbox, or enter the address of the administrator who checks new requests. Give the people who monitor a shared mailbox their own authorised Caffoot Lite accounts. Enter the address alone, without a display name or a list of mailboxes.
 4. Select **Save Email Settings**. If the address is rejected, correct it and save again. **Discard Changes** reloads the last saved settings. To stop **Ticket Created** mail, clear the address and save. The other approved events use their own eligible recipients.
 5. Under **Send A Test Email**, enter your IT mailbox in **Recipient Email Address** and select **Send Test Email**. Check the mailbox and its junk folder. A successful connection test means your mail server accepted the test for sending. It can still take time to reach the mailbox. Wait at least 30 seconds between tests.
@@ -68,7 +59,7 @@ The **Ticket Created** email alerts IT when someone raises a request for their o
 
 ![Email Settings with an example IT Support Email Address beneath Sender Identity.](../../../development-handovers/evidence/service-desk-notifications/email-settings-desktop-light.png)
 
-*The mailbox field uses the existing outgoing email configuration and Save Email Settings button.* [Capture details](../../../development-handovers/evidence/service-desk-notifications/README.md)
+*The mailbox field uses the existing outgoing email configuration and Save Email Settings button.*
 
 ## Check Which Service Desk Emails Are Sent
 
@@ -105,7 +96,7 @@ New installations start with **Monday to Friday 09:00–17:00**, **Saturday and 
 
 ![Weekly Support Schedule and schedule preview in the draft application.](../../../development-handovers/evidence/service-desk-reporting/working-hours-desktop-light.png)
 
-*An administrator can open or close each day independently and preview the schedule before saving.* [Capture details](../../../development-handovers/evidence/service-desk-reporting/README.md)
+*An administrator can open or close each day independently and preview the schedule before saving.*
 
 The calendar measures eligible resolution time. People with access to their equipment can submit tickets outside working hours, on closed days and on excluded dates. [Employee ticket instructions](Service-Desk-Tickets.md#raise-a-support-request)
 
@@ -119,7 +110,7 @@ Use **Excluded Dates** for holidays, training days and other one-off closures. A
 
 ![An excluded Christmas shutdown date listed with its reason and Remove action.](../../../development-handovers/evidence/service-desk-reporting/excluded-dates-desktop-light.png)
 
-*Registered dates appear in chronological order and each retains its reason.* [Capture details](../../../development-handovers/evidence/service-desk-reporting/README.md)
+*Registered dates appear in chronological order and each retains its reason.*
 
 ## Manage Ticket Categories
 
@@ -130,7 +121,7 @@ Use **Excluded Dates** for holidays, training days and other one-off closures. A
 
 ![The Ticket Categories settings page with alphabetical entries and Rename and Hide actions.](../../../development-handovers/evidence/service-desk-reporting/ticket-categories-desktop-light.png)
 
-*Category management affects the shared list used by employees and IT. Existing tickets retain the labels recorded for them.* [Capture details](../../../development-handovers/evidence/service-desk-reporting/README.md)
+*Category management affects the shared list used by employees and IT. Existing tickets retain the labels recorded for them.*
 
 A renamed category keeps its identity. Earlier ticket classifications and their labels stay available, including when an administrator hides a category. Only an authorised technician can correct a submitted ticket’s category. When a correction makes **Affected Software** inapplicable, the prior selection is kept in the ticket history and the active field is cleared. [Correct ticket details](Service-Desk-Tickets.md#review-and-correct-ticket-details)
 
@@ -150,19 +141,19 @@ For reporting periods, attribution and display examples, see [Read Service Desk 
 1. Tell technicians to check the audience before attaching files. Files on the original report follow the verified equipment assignment. The **Updates** composer starts internal, and files inherit each update’s visibility.
 2. Select a filename in **Ticket Details → Updates** to download it. The server rechecks the signed-in account, equipment access, ticket scope and parent message on every request. A saved link does not grant access.
 3. With Service Desk Edit, choose **Remove** beside an attachment and confirm **Remove Attachment**. The file is removed from the ticket’s retained quota. The attributed removal appears in the ticket’s **History**, under the visibility of the parent message. A file already downloaded or captured in a backup can still exist in that copy.
-4. Use the organisation’s rules for offline handling and backups. Files are stored with the database. Caffoot Lite checks file contents and sizes and serves them as downloads. Malware scanning is scheduled outside this milestone.
+4. Use the organisation’s rules for offline handling and backups. Ticket attachment bytes are stored in the SQLite database; protect the complete persistent installation when backing up. Caffoot Lite checks file contents and sizes and serves them as downloads. Caffoot Lite does not scan attachments for malware. Follow your organisation’s file-security procedures.
 
 Up to 10 MB is allowed per file and 100 MB retained per ticket. If two technicians upload at the same time and their combined files would exceed the limit, only the first update that fits is saved. The rejected technician can retry after reducing the selection or after an authorised removal. [Technician instructions](Service-Desk-Tickets.md#add-a-note-share-an-update-or-manage-files)
 
 ![The draft Service Desk Ticket History showing attributed lifecycle and attachment changes.](../../../development-handovers/evidence/it-service-desk/history-desktop-light.png)
 
-*The integrated Ticket History records the author, time and action. Internal history remains within authorised IT access.* [Capture details](../../../development-handovers/evidence/it-service-desk/README.md)
+*The integrated Ticket History records the author, time and action. Internal history remains within authorised IT access.*
 
 ## What Happens to Service Desk Tickets When Equipment Changes Hands
 
 Caffoot Lite records the equipment and its assignment when a ticket is raised. The original Device or IT Asset keeps its identity as it changes hands. Authorised IT can still review the ticket, its replies, attachments and attributed history under the equipment's section permissions.
 
-After a physical transfer, **My Tickets** shows eligible tickets from each employee’s current personal assignment. **Department Tickets** uses live Staff membership and the Departments assigned to the Device’s current physical custody period. IT-created and employee-created Device tickets and new associated accessory tickets follow the same rule. An associated accessory ticket also requires the original accessory issue to remain in custody. The ticket number and all original records remain in **IT → Service Desk** for technicians with access.
+After a physical transfer, **My Tickets** shows eligible tickets from each employee’s current personal assignment. **Department Tickets** uses live Staff membership and the Departments assigned to the Device’s current physical custody period. All current Department relationships are equal: there is no primary or owning Department with extra historical rights. Adding/removing Departments during continuing custody is not a physical stock movement. IT-created and employee-created Device tickets and new associated accessory tickets follow the same rule. An associated accessory ticket also requires the original accessory issue to remain in custody. The ticket number and all original records remain in **IT → Service Desk** for technicians with access.
 
 | Change | Worked example |
 | --- | --- |
@@ -177,11 +168,33 @@ The employee **Create Ticket** warning applies to every Department-assigned Devi
 ### Review A Historical Accessory Ticket
 
 1. With **Service Desk Read**, **IT Assets Read** and IT Assets enabled, open **IT → Service Desk**. Look up the original ticket number and check its issue, updates and history.
-2. If the issue is associated with a Device and the ticket predates the approved warning or the association, employee access requires a verifiable original audience. Where that audience cannot be established, the ticket and permitted files are available only to authorised IT.
+2. If the issue is associated with a Device and the ticket predates the confidentiality warning or the association, employee access requires a verifiable original audience. Where that audience cannot be established, the ticket and permitted files are available only to authorised IT.
 3. Check current equipment in **Device Details → Associated Equipment**. If the problem continues, an eligible employee can use **My Equipment → Report A Problem**, read the warning and raise a new request. The new ticket’s employee audience follows the Device’s current Departments.
 4. Check removals with a test employee account. Opening, replying, downloading and queued notification delivery all recheck the ticket’s audience. Adding a Department restores access to eligible current-period tickets created with the new rule.
 
 [Historical access on upgrade](Legacy-Import-and-Docker-Upgrade.md#historical-associated-equipment-tickets)
+
+![Priya’s My Equipment before changing Accounts membership, showing the shared AST-PRN-01 printer.](screenshots/batch-7e/priya-membership-before.png)
+
+*Priya’s current Accounts membership grants the shared Accounts printer. This preserved view precedes her membership change and moves no physical equipment.*
+
+![Priya’s My Equipment after moving to Sales, with personal AST-LAP-016 and no Accounts shared printer.](screenshots/batch-7e/priya-membership-after.png)
+
+*Priya is now in Sales. The unchanged Accounts printer is absent; AST-LAP-016 is a separately recorded personal first issue. Membership did not move the Accounts printer or confer an IT role.*
+
+![Employee ticket window showing the former personal ticket is not available, without its historical content.](screenshots/batch-7e/former-personal-ticket-unavailable.png)
+
+*Alex’s old AST-LAP-014 ticket is unavailable after that custody ended. An old reference does not grant employee access to retained IT history or the next holder’s records.*
+
+![IT-only AST-LAP-014 Associated Equipment showing no current association and retained historical Office Mouse issue and return.](screenshots/batch-7e/it-only-former-accessory-history.png)
+
+*Sam’s authorised IT view retains the former mouse association after AST-LAP-014 custody ends. The current association is empty; the old mouse belongs to historical IT records, not Sarah’s or Alex’s employee equipment access.*
+
+![Alex’s refreshed My Equipment list with AST-LAP-014 shared with Accounts after the real personal-to-Department handover.](screenshots/batch-7e/r1-alex-department-equipment.png)
+
+*In this alternative handover example, AST-LAP-014 moves from Alex to Accounts. Alex remains an Accounts member, so the refreshed list shows it under Shared with My Department rather than Assigned to Me.*
+
+After the personal-to-Accounts handover, Alex can see the shared AST-LAP-014 but cannot open its earlier personal-custody ticket SD-0001. Authorised IT retains access to the historical ticket.
 
 ## Check Affected Software And Category Corrections
 
@@ -197,7 +210,7 @@ Changing a ticket’s category does not edit the Device’s installed applicatio
 2. Before confirming a supported legacy inventory import, check that it includes the current records for all ticket-linked Devices. A compatible import keeps each matching Device in place, including its identity and ticket history.
 3. If the import would remove a ticket-linked Device or replace it with a different record, the confirmation is rejected. Review the source and retain the required original records before attempting another import. The rejected import leaves the saved inventory and tickets intact.
 
-Use the normal legacy export review and confirmation steps. A supported inventory import operates on inventory records. Recovery of Service Desk data uses the database or volume backup. [Inventory And Migration](../../../development-guide/05-Inventory-and-Migration.md)
+Use the normal legacy export review and confirmation steps. A supported inventory import operates on inventory records. Recovery of Service Desk data uses the database or volume backup.
 
 ## Clear Operational Data With Clean Start
 
@@ -218,11 +231,13 @@ Clean Start returns Caffoot Lite to an empty operational starting point. Before 
 
 The reset restores the standard inventory options, category lists and lifecycle defaults. User accounts, roles, permission overrides, sign-in safeguards, Optional Features choices and central **Change History** are retained. The central reset entry records the action without copying ticket contents.
 
-The reset is one database operation, including attachments. An error rolls back the entire operation. Equipment assignments and returns are part of the reset. Ordinary deletion and legacy inventory import continue to protect referenced equipment. [Device Assignments And My Equipment](Device-Assignments-and-My-Equipment.md)
+Service Desk message read receipts are cleared with their tickets. Central Audit Trail records are retained; there is no ordinary ticket-delete or automatic ticket-expiry control in this baseline.
+
+The reset is one database operation, including ticket attachments. An error rolls back the entire operation. Equipment assignments and returns are part of the reset. Ordinary deletion and legacy inventory import continue to protect referenced equipment. [Device Assignments And My Equipment](Device-Assignments-and-My-Equipment.md)
 
 ![System Maintenance shows Review Clear System with an explanation that the operation clears operational records and restores default catalogues.](../../../development-handovers/evidence/service-desk-foundation/clean-start-1440.png)
 
-*System Maintenance shows the reset scope before you open the confirmation.* [Capture details](../../../development-handovers/evidence/service-desk-foundation/README.md)
+*System Maintenance shows the reset scope before you open the confirmation.*
 
 ## Check Access When Something Looks Wrong
 
@@ -233,4 +248,6 @@ The reset is one database operation, including attachments. An error rolls back 
 | A ticket appears in IT history only after an equipment move | The ticket may belong to an ended assignment. Current assignment access starts with eligible tickets for that assignment. |
 | Clean Start is rejected | Review the confirmation and administrator permissions first. If the reset reports a database error, the operational records are still available. |
 
-For employee-facing explanations, see [Service Desk Tickets](Service-Desk-Tickets.md). For source and test coverage, see [Service Desk Foundation](../../../development-guide/Service-Desk-Foundation.md).
+For employee-facing explanations, see [Service Desk Tickets](Service-Desk-Tickets.md).
+
+[Follow the connected Aster Services support request](Connected-Service-Desk-Journey.md) · [Draft v2.2 guides](README.md)

@@ -1,6 +1,6 @@
 # Register Computers From Stock And Reissue Devices
 
-> **Draft v2.2 — Not Yet Published.** This guide describes the implementation on `milestone-1` at `753b3266893987addb11406ef8303adb03c3c112`. Use the [published v2.1 guides](../README.md) for current production instructions. These draft procedures do not establish installation, upgrade, native/manual or release acceptance.
+> **Draft v2.2 — Unreleased.** v2.1 remains the published release. These instructions describe v2.2.
 
 ## What Registration And Reissue Do
 
@@ -32,7 +32,7 @@ Have the actual equipment available when checking identities and recording a phy
 ## Receive And Check New Computers
 
 1. Open **IT → IT Assets → Receive Stock**. Choose **New Stock Entry**, or receive more into a matching existing item.
-2. Select **Desktop**, **Laptop** or **Physical Server**, and **Quantity-Based Stock**. The registration route uses quantity-based computer stock; individually tracked accessories follow their own issue workflow.
+2. Select **Desktop**, **Laptop** or **Server**, and **Quantity-Based Stock**. The registration route uses quantity-based computer stock; individually tracked accessories follow their own issue workflow.
 3. Record Manufacturer, Model / Description and any known common Processor, Memory Size/Unit, Storage Capacity/Unit and Storage Type. Use separate stock entries for different recorded configurations.
 4. Enter Quantity Received, Date Received and optional purchasing Supplier. Manufacturer and Supplier are separate facts.
 5. Confirm the receipt and condition checks for equipment actually checked. Enter **Checked & Ready To Issue**, review the Receipt Summary and choose **Record Receipt**.
@@ -44,7 +44,7 @@ See the [full stock-intake guide](IT-Assets-Stock-Intake.md) for partial checks,
 
 ![Accepted existing Add New Device form with Brand New — Get From Stock and a Ready Unregistered Computer Stock selection](../../../development-handovers/evidence/device-stock-registration/stock/get-from-stock-desktop-light.png)
 
-*Genuine application capture from the [accepted Batch 3.9 gallery](https://github.com/Caffoot/Caffoot-Lite/issues/351#issuecomment-6912071679), using fictional stock. Selecting the source has not yet saved a Device or moved stock.*
+*Selecting a stock source has not yet saved a Device or moved stock.*
 
 1. Open **IT → Devices → Add Device**. In the existing **General** tab, choose **Brand New — Get From Stock**.
 2. Under **Ready Unregistered Computer Stock**, select the correct batch. The list shows its actual unregistered Ready quantity. It excludes already registered Devices, awaiting equipment, issued stock and written-off stock.
@@ -68,6 +68,14 @@ If the source is stale or no longer available, read the inline message beside th
 
 If a connection interruption leaves the outcome uncertain, look for the Device and its movement before opening a new registration. Do not create another permanent Device to bypass a stale selection or unknown save result.
 
+![Add Device General form for AST-LAP-014, DEMO-AST-014 and the selected Ready stock source.](screenshots/batch-7c/register-ast-lap-014.png)
+
+*The Device draft selects one Ready laptop from the two-unit receipt. Registration will retain one permanent AST-LAP-014 identity and will not assign it.*
+
+![Stock Inventory with two-laptop total and separate registered AST-LAP-014 row.](screenshots/batch-7c/registered-stock-accounting.png)
+
+*The laptop item still represents two held units: one unregistered Ready unit plus AST-LAP-014 as a registered Ready Device. Never add the Device row to the item total again.*
+
 ## Worked Example: Receive, Register, Issue, Return And Reissue
 
 All names and equipment in this example are fictional. Aster Services receives ten identical desktops, checks all ten and records them Ready To Issue. Technician Sam registers **AST-PC-014** from that stock, then issues it to Staff Member Priya Shah using Reissue Existing Device.
@@ -90,7 +98,7 @@ The stock-item total includes its registered unit. Do not count both the item to
 2. Open **IT → IT Assets → Reissue Existing Device**. You can also start from an eligible registered Device's Stock Inventory details or **Device Details → Assigned To → Reissue Existing Device**.
 3. Select **Ready Registered Device**. Choices exclude awaiting equipment, assigned/issued equipment, written-off or virtual Devices, and Devices with outstanding Associated Equipment.
 4. In **Assign To**, choose **Staff Member** or **Department**.
-5. Use **Find A Recipient** and select the intended Staff Member, or use **Find A Department** and tick the applicable Departments for an eligible shared Device. Inactive Staff and archived Departments cannot receive a new assignment. The restricted search provides eligible names and identities without granting the full directory.
+5. Use **Find A Recipient** and select the intended Staff Member, or use **Find A Department** and tick the applicable Departments for an eligible shared Device. Left Company Staff and archived Departments cannot receive a new assignment. The restricted search provides eligible names and identities without granting the full directory.
 6. Verify **Date Issued** and enter **Issue Note (Optional)** where useful, for example “Prepared desktop issued for reception cover”.
 7. Check the selected machine and recipient, then choose **Reissue Existing Device** when the equipment is actually issued.
 8. Check the current holder in the Device, Staff or Department equipment view. A linked employee can see permitted personal or Department-shared equipment through [My Equipment](Device-Assignments-and-My-Equipment.md).
@@ -99,7 +107,19 @@ A successful operation records a new permanent dated assignment and its matching
 
 For an eligible Desktop, Laptop or Printer, select **Department** to search and tick the new Department list. If several Departments receive the Device, the stock issue records its custody as the recipient. Outstanding accessories must be resolved through the existing physical workflow before the new issue. Resolve them using [Associated Equipment](Associated-Equipment.md) before reissue. A missing accessory must follow its approved return/write-off handling; recording it as physically returned when it is missing would make stock inaccurate.
 
-In the Batch 4.4 draft, a genuine first issue of a Device registered from stock also records its **Original In Service Date** when the qualifying history is available. This happens even if Equipment Lifecycle is switched off. See [Record First Service From Stock](Equipment-Lifecycle.md#record-first-service-from-stock) for the date rules and what happens on later reissues.
+In v2.2, a qualifying first issue of a Device registered from stock also records its **Original In Service Date** when the qualifying history is available. This happens even if Equipment Lifecycle is switched off. See [Record First Service From Stock](Equipment-Lifecycle.md#record-first-service-from-stock) for the date rules and what happens on later reissues.
+
+![Reissue Existing Device form selecting AST-LAP-014, Alex Morgan and 05/11/2026.](screenshots/batch-7c/reissue-to-alex.png)
+
+*This is the unsaved first issue of the already registered Ready Device to Alex. The explicit issue will reduce held/Ready by one and preserve Device identity.*
+
+![AST-LAP-014 Assigned To showing Alex Morgan and its assignment history.](screenshots/batch-7c/alex-saved-custody.png)
+
+*Saved current custody belongs to Alex. The original Device and assignment history remain the authoritative identity; registration was a different event.*
+
+![Reissue Existing Device with no Ready registered Devices while AST-LAP-014 awaits preparation.](screenshots/batch-7c/awaiting-device-not-reissuable.png)
+
+*AST-LAP-014 is Awaiting Preparation, so it is absent from the Ready registered Device chooser. The returned identity and history remain saved.*
 
 ## Return And Prepare The Same Device
 
@@ -122,6 +142,20 @@ To prepare a returned registered Device:
 | Other physical equipment | Working/condition checks and applicable preparation, including data clearing where needed |
 
 Preparation preserves Physically Held and the original return. If checks are outstanding, leave the machine Awaiting Preparation. If damaged beyond reuse, use the appropriate **Write Off** procedure rather than marking it ready. **Cancel** leaves the saved preparation state unchanged. Full return, partial-return and damaged-equipment procedures are in [Issue, Return And Write Off](IT-Assets-Issue-Return-and-Write-Off.md).
+
+![Laptop stock readiness editor showing one unregistered Ready unit, one returned registered unit and the registered-Device readiness safeguard.](screenshots/batch-7c/returned-device-readiness-protection.png)
+
+*The returned registered Device cannot be made Ready by increasing the stock item’s receipt-readiness total. Its own Prepare Returned Equipment checks are required; this out-of-range draft is discarded.*
+
+![AST-LAP-014 Assigned To showing current Sarah Lewis and closed Alex Morgan physical custody.](screenshots/batch-7c/same-device-sarah-history.png)
+
+*Sarah now holds the same AST-LAP-014. Alex’s ended custody and actual return remain in its history; preparation and reissue did not create a replacement identity or restart first service.*
+
+## Supplier And Lifecycle Data Are Separate
+
+A stock registration takes common technical specifications from its source, not an employee, IP address, saved lifecycle dates or a new purchasing decision. The source receipt retains its original Supplier information. A canonical Supplier association on the Device is separately recorded through the [Device Supplier field](Equipment-Supplier-Integration.md#record-a-supplier-on-one-device); do not assume registration copied that association. **Add Device** has no Lifecycle date fields: save the physical Device, then use Edit Device → Hardware for known Purchase Date and warranty information. Only a qualifying first stock issue automatically records first service.
+
+Reissue is not a way to reactivate genuinely written-off equipment. A written-off Device retains its identity/history and is excluded. An operationally Retired Device and a written-off unit are distinct facts; review the physical and operational records with IT before any further use.
 
 ## Optional Hardware Details
 
@@ -171,12 +205,8 @@ hidden suggestions, custom values and historical Device records remain intact.
 
 Use factual equipment notes and avoid passwords, recovery information or unrelated personal details. Stock rights do not expose unrestricted Staff records; linked employees see only their permitted equipment relationships. The server rechecks permissions, recipient eligibility and balances when saving, including after an account's access changes.
 
-![Mobile dark Reissue Existing Device form for fictional stock](../../../development-handovers/evidence/stage-6-6-batch-3/screenshots/stock-reissue-dark-390.png)
-
-## Related Guidance And Screenshots
+## Related Guidance
 
 Continue with [stock intake](IT-Assets-Stock-Intake.md), [Issue, Return And Write Off](IT-Assets-Issue-Return-and-Write-Off.md), [assignments and My Equipment](Device-Assignments-and-My-Equipment.md), [Associated Equipment and handovers](Associated-Equipment.md), [corrections](IT-Assets-Correct-Movement.md) and [IT Assets reporting](IT-Assets-Dashboard.md).
 
-The [registration and storage evidence gallery](../../../development-handovers/evidence/device-stock-registration/Report.md) preserves genuine fictional desktop/mobile light/dark captures and their source manifest. The owner accepted the revised gallery with [Batch 3.9](https://github.com/Caffoot/Caffoot-Lite/issues/351#issuecomment-6912071679); its earlier checkpoint descriptions remain dated development history. The unchanged Get From Stock controls are illustrated above. Reissue captures predate the current Overview tab and Cancel wording; a refreshed complete navigation/cancellation capture remains an acceptance item. Functional HTML previews are not user-guide screenshots.
-
-The [technical source mapping](../../../development-guide/Device-Stock-Registration-and-Reissue.md) explains implementation boundaries for maintainers. Native Pi/Safari, private-export, complete upgrade/restore and release acceptance must be established separately; this guide does not declare them complete.
+[Connected example: a laptop from Supplier and stock to its final write-off](Connected-Equipment-Journey.md).

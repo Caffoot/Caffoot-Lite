@@ -103,11 +103,13 @@ The published **v2.1** release provides self-hosted device inventory, subnet-fir
 
 The **v2.1 interface** has been released. [Issue #282](https://github.com/Caffoot/Caffoot-Lite/issues/282) preserves the original integration requirements and development history.
 
-**Domainless computer sign-in, SSO, remote management, service desk and monitoring are not features of the current release.** They belong to the long-term discussion until their requirements, risks and implementation are individually approved.
+**Unreleased v2.2 — Everyday IT Management** extends that foundation with Staff Members and Departments, roles and optional features, equipment stock/custody and handovers, Suppliers and Lifecycle, and employee/technician Service Desk with email and reporting. These workflows are implemented in development; they are not included in the published v2.1 download. See the [draft v2.2 guides](../how-tos/features-and-instructions/v2.2-draft/README.md).
+
+**Domainless computer sign-in, SSO, remote management and monitoring remain future proposals.** They require their own approved requirements, security review and implementation. The Service Desk is part of unreleased v2.2, rather than an unimplemented long-term idea.
 
 ## From vision to work
 
-Milestone 01 now targets unreleased v2.2, with accepted and partly implemented work recorded in [Development Status](../development-guide/Development-Status.md). This does not change the long-term vision or make future capabilities published features.
+Milestone 01 now targets unreleased v2.2, with integrated functionality and outstanding acceptance recorded in [Development Status](../development-guide/Development-Status.md). This does not change the long-term vision or make future capabilities published features.
 
 The six [long-term planning milestones](PROPOSED-MILESTONES.md) are now recorded as GitHub Milestones #20–#25 and group possible future work into understandable outcomes. It does not authorise development, assign release numbers or promise dates.
 
