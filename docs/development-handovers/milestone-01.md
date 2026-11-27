@@ -1,6 +1,14 @@
 # Milestone 01 Development Handover — v2.2 Target
 
-## Native Acceptance Corrections — 26 November 2026
+## Current Boundary — 27 November 2026
+
+Published v2.1 remains at tagged source `c3237114108cad9f7d4e57657b6aed5e0091a5ef`, schema 10. The owner-approved integrated v2.2 application is `0251b43a3b5d41d626aa022c6d7f9b4d860433da`, schema 31. It includes Stages 1–5, Stage 6 integration work and the merged corrections through PRs #486, #490 and #493. Documentation started Batch 8 from accepted checkpoint `5338f3903d39714999fab068025d99869be44c63` on `docs/milestone-01-release-preparation`.
+
+[Owner-approved Batch 8 scope](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7224076263) follows [7F–7H draft acceptance](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7224015412). PR #472 stays draft and issue #366 stays open. Independent documentation review and owner acceptance remain separate. Native acceptance is paused after Test 69 with Test 70 next; deferred manual checks, supported upgrade and complete-volume recovery, private exports, independent audit #443 and final release gates remain outstanding. No production, website, merge or publication approval follows from documentation completion.
+
+The dated handover entries below preserve their original scope and results; they do not override the current boundary above.
+
+## Historical Native Acceptance Corrections — 26 November 2026
 
 The five approved corrections are implemented on `fix/native-acceptance-corrections`, from verified baseline `eff18a7acc2ec78e251562882c41af154bd929ed`, schema 31. Application source is `bf5a016039b9812c0825644b47c6b619bbad653e`. Friendly audit labels preserve recorded evidence; Manage Permissions has aligned fields and four fixed-navigation tabs; linked offboarding is atomic with administrator safeguards and safe legacy reconciliation; equipment mutations refresh/invalidate Department data with request-order protection. [Full changes, focused verification and genuine screenshots](evidence/native-acceptance-corrections/README.md).
 

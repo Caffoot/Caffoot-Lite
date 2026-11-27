@@ -41,7 +41,7 @@ Read-only users can view permitted original records and correction history but c
 7. When the preview is correct and the action is enabled, choose the orange **Save Correction** button at the bottom of the form.
 8. Check the saved result: before/after quantities, reason, actor, recorded time and correction reference. Review the updated effective quantity and relevant stock/outstanding balance.
 
-A successful save appends the correction and updates calculated balances together. The original transaction, its Supplier provenance, original holder and later chronological records remain. The correction does not change a movement's equipment, event date, recipient, specifications or preparation checks.
+A successful save appends the correction and updates calculated balances together. The original transaction, its recorded Supplier information, original holder and later chronological records remain. The correction does not change a movement's equipment, event date, recipient, specifications or preparation checks.
 
 ![Correct Movement showing original twenty, proposed ten, reason, impact balances and readiness to save.](screenshots/batch-7d/correction-twenty-to-ten.png)
 

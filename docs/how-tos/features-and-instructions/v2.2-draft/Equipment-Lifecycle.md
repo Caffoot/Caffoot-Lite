@@ -39,10 +39,6 @@ All four dates are optional. Enter a valid calendar date. Purchase Date and Orig
 
 **Example.** A supplier confirms that a laptop bought on 6 October 2026 has three years of cover. Enter the confirmed 6 October 2029 Warranty Expiry instead of accepting the 12-month suggestion. For a commissioned router with an unknown purchase date, enter the known Original In Service Date and leave Purchase Date blank.
 
-*Corrected UK DD/MM/YYYY Edit Device form; the warranty suggestion is not saved until you accept it.*
-
-*The calendar uses UK day/month/year ordering even when the browser's default locale differs.*
-
 ### Set Or Remove A Manual Replacement Override
 
 1. As an Administrator with **Devices Edit**, open **Edit Device → Hardware → Equipment Lifecycle**.
@@ -122,8 +118,6 @@ With a 90-day warranty warning, a warranty expiring in exactly 90 days appears u
 
 To turn off Lifecycle, return to the card, switch it off and confirm. The Lifecycle Settings entry, Equipment Lifecycle date controls and Dashboard tab are hidden until re-enabled. Settings and dates are retained. Authorised stock transactions continue to capture eligible first-service dates.
 
-*Lifecycle Settings on a narrow screen. The archived Legacy Server type retains its seven-year lifespan.*
-
 ![Lifecycle Settings showing warranty and replacement warning days, per-type lifespans, Save Settings and Cancel.](screenshots/batch-7d/lifecycle-settings.png)
 
 *Administrator settings keep independent default 90-day warning periods and per-type lifespans. A blank lifespan is different from a numeric year count. This view makes no settings change.*
@@ -157,7 +151,7 @@ A warning never performs retirement, write-off, purchase, renewal, data wiping, 
 
 The existing **Audit Trail** records successful changes to lifecycle dates and settings, including the affected Device or setting, previous and new values, actor and time. Lifecycle settings audit details require Administrator access. Device history follows the existing Audit Trail and Devices permissions. Rejected saves or discarded drafts do not create successful change records.
 
-Lifecycle dates and settings are part of the full application database. Keep the persistent data volume using the supported [backup and restore guidance](../Migration-Backup-and-Restore.md). Legacy inventory JSON import has no lifecycle date fields to restore and does not infer a service date for old equipment.
+Lifecycle dates and settings are part of the full application database. Keep the persistent data volume using the draft [backup and restore guidance](Legacy-Import-and-Docker-Upgrade.md#back-up-a-complete-installation). Legacy inventory JSON import has no lifecycle date fields to restore and does not infer a service date for old equipment.
 
 | What You See | What To Check |
 | --- | --- |

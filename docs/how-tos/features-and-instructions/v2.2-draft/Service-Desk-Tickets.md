@@ -40,7 +40,7 @@ Keep the reference shown after you submit. A new personal or Department request 
 
 ![Create Ticket draft with equipment-access rejection after Accounts was removed from the shared printer.](screenshots/batch-7e/changed-equipment-ticket-rejected.png)
 
-*Removing Accounts while Alex’s form is open makes this equipment ineligible. The actual server rejects Create Ticket and saves no request; the draft cannot retain stale access. Accounts is re-added afterwards within the same physical custody.*
+*Removing Accounts while Alex’s form is open makes this equipment ineligible. The application rejects Create Ticket and saves no request; the draft cannot retain stale access.*
 
 ## Shared Device Ticket Confidentiality
 
@@ -51,8 +51,6 @@ Keep confidential, personal and sensitive information out of the subject, descri
 The Device’s current Departments can read new associated accessory tickets raised by eligible employees or by IT. For example, Sales can follow a new ticket about the USB cable associated with the printer once its Department is added to the same custody period. An earlier accessory ticket may be available only to authorised IT if its original audience cannot be verified. Ask IT to look up the original ticket number if you need help with it.
 
 A physical return, reassignment, write-off or reissue ends the previous employee audience. Fully returning an accessory issue also ends employee access to its tickets. Authorised IT can still review the previous ticket. Internal IT notes and their attachments remain in the technician workspace. [Assignment and ticket privacy](Service-Desk-Administration.md#what-happens-to-service-desk-tickets-when-equipment-changes-hands)
-
-See the [confidentiality examples below](#shared-device-ticket-confidentiality) for the shared printer and an associated accessory.
 
 ![Create Ticket for shared AST-PRN-01 with Department confidentiality warning before the writing fields.](screenshots/batch-7e/department-confidentiality-warning.png)
 
@@ -101,8 +99,6 @@ If your Department membership or equipment custody changes, the same existing ac
 ![Department Tickets with an unread count beside My Tickets, the Department Tickets tab and the ticket number.](../../../development-handovers/evidence/stage-6-6-batch-2/screenshots/unread-department-tickets-desktop-light.png)
 
 *The sidebar and tab count tickets. The number beside the ticket reference counts replies on that ticket.*
-
-The [Overview and Updates examples below](#recognise-and-read-new-replies) show the unread badge before and after reading the conversation.
 
 ![Employee ticket Overview with Updates unread badge still present and the current shared-equipment request.](screenshots/batch-7e/overview-retains-unread.png)
 
@@ -308,7 +304,7 @@ Files must be genuine PNG, JPEG, PDF, TXT, DOCX or XLSX. Each file may be up to 
 - In **IT → IT Assets → Stock Inventory**, open the stock item and find **Linked Tickets** in **Stock Item Details**. Individually tracked stock can show tickets for its non-Device units. For equipment registered as a Device, use the Device’s own details.
 - The Device **Tickets** tab and stock item **Linked Tickets** section require Service Desk Read as well as access to the equipment. If the list is empty, check the equipment record before asking an administrator to review access.
 
-![Printer-015 Device Details with the Tickets tab selected and linked ticket rows showing their status and View Details actions.](../../../development-handovers/evidence/it-service-desk/device-linked-tickets-desktop-light.png)
+![Printer-015 Device Details with the Tickets tab selected and ticket-reference buttons and Open status badges.](../../../development-handovers/evidence/it-service-desk/device-linked-tickets-desktop-light.png)
 
 *Open a linked ticket from the Device’s Tickets tab; closing it returns to the equipment view.*
 

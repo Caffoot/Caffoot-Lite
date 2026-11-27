@@ -18,17 +18,18 @@ Caffoot Lite v2.1 was published on **8 November 2026**. The current release incl
 
 ## In development — v2.2, not published
 
-**Milestone 01 — Everyday IT Management** targets v2.2. **Stages 1–4 have completed development and integration** on the separate `milestone-1` branch, verified at `c1b5f8008e8ba56840d9790e3ba1c7e91ad35e0b` (schema 24) on 19 November 2026. They are not published features in v2.1.
+**Milestone 01 — Everyday IT Management** targets v2.2. Its development features include:
 
-- **Stage 1 and 2:** accepted shared roles, IT Staff/MFA protections and optional Devices/IPAM/Racks foundations.
-- **Stage 3:** accepted Staff Members/Departments, equipment assignments and My Equipment; optional IT Assets with receipt, stock movement, Device registration/reissue, Associated Equipment, direct handover and stock reporting.
-- **Stage 4:** owner-accepted Supplier Management, company-owned Supplier Issues and Purchasing Dashboard, supplier/equipment integration and configurable Equipment Lifecycle. [Four merged batches #410–#413 and formal sign-off](https://github.com/Caffoot/Caffoot-Lite/issues/369#issuecomment-7007760294).
+- Shared roles, individual permissions, MFA and optional-feature controls.
+- Staff Members, Departments, equipment assignments and My Equipment.
+- Optional IT Assets for receipt, preparation, issue, return, Device registration/reissue, associated accessories, handover, quantity corrections and stock reporting.
+- Suppliers, Supplier Issues, Purchasing, equipment-supplier associations and Equipment Lifecycle.
+- Employee and technician Service Desk workflows, shared-equipment privacy, unread replies, working-time reporting, notification templates and company branding.
+- Protected legacy inventory import, unified Staff/login administration and more readable Audit Trail details.
 
-**Next planned Stage 5:** The [Service Desk and Central Email Templates tracker #419](https://github.com/Caffoot/Caffoot-Lite/issues/419) records four frozen, owner-approved HTML designs and the agreed six-batch sequence [#420–#425](https://github.com/Caffoot/Caffoot-Lite/issues/420). **No Stage 5 application development or individual batch is authorised yet.** Ordinary Staff Member My/Department Tickets access and authorised IT Staff Service Desk access are already approved; later implementation must retain the agreed privacy and existing security model. No extra dashboards, KPIs, work-credit schemes or redesigned interfaces are authorised.
+**v2.2 remains unreleased.** These features are integrated in development and are not included in published v2.1. Installation, upgrade and complete-volume recovery for the current candidate still require verification, alongside outstanding native/manual, security and release checks. No release date is promised.
 
-**Still outstanding:** explicitly deferred native Raspberry Pi/Safari and other manual evidence, Stage 6 integrated security/compatibility and full-volume upgrade/backup/restore acceptance, and separate owner approval for the final milestone merge, deployment and release. [Development Status](docs/development-guide/Development-Status.md), [Milestone tracker #351](https://github.com/Caffoot/Caffoot-Lite/issues/351) and [draft v2.2 guides](docs/how-tos/features-and-instructions/v2.2-draft/README.md) contain the current boundaries.
-
-**v2.2 remains unreleased.** No release date is promised. The draft guides are not published installation or upgrade instructions. The [six planning milestones](docs/product-direction/PROPOSED-MILESTONES.md) preserve earlier planning context, while later explicit owner decisions control current scope.
+Read the [draft v2.2 guides](docs/how-tos/features-and-instructions/v2.2-draft/README.md) and [draft release notes](docs/Release-Notes-v2.2.md). The [six planning milestones](docs/product-direction/PROPOSED-MILESTONES.md) retain the longer-term context; proposals require their own agreed scope before development.
 
 ## Ideas under consideration — not yet scheduled
 
@@ -57,4 +58,4 @@ Please [report security vulnerabilities privately](SECURITY.md), not in public i
 
 ---
 
-*Updated: 19 November 2026. Published v2.1, integrated unreleased work, Stage 5 planning and unscheduled proposals are distinguished above.*
+*Updated: 27 November 2026. v2.1 is published; v2.2 is unreleased.*

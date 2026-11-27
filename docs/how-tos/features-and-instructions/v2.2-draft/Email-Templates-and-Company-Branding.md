@@ -107,7 +107,6 @@ A variable is a token in double braces. For example, `{{ticket_number}}` becomes
 3. Choose **Save as Draft** and review the preview. If you need a mail-client check, send a fictional test using **Send Test Email To**. The sample address and reference are for review. To test a real alert, use the [mailbox verification steps](Service-Desk-Administration.md#configure-the-it-support-mailbox).
 4. Choose **Publish**, then check that **Published** or **Published Default** appears. To abandon unsaved changes, select another template and confirm that you want to discard the edits. To switch back to the built-in wording, load **Restore Default**, save the draft and publish it.
 
-
 ## Restore One Template To Its Default
 
 1. Select the template you want to reset. Choose **Restore Default** and confirm that you want to load the original wording for that template. Cancel the prompt to keep the current editor text.

@@ -1,8 +1,8 @@
 # 07 — Function and code reference
 
-The Batch 3.12 review branch adds `backend/stock_reporting.py:read_stock_report`, `backend/schema.py:migrate_it_staff_stock_default` and the Overview rendering/filter functions in `interface/stock-intake.js`. See the [dashboard contract and upgrade boundary](IT-Assets-Dashboard.md) and [actual verification limits](../development-handovers/evidence/stock-dashboard/Report.md).
+Stock reporting uses `backend/stock_reporting.py:read_stock_report`, `backend/schema.py:migrate_it_staff_stock_default` and the Overview rendering/filter functions in `interface/stock-intake.js`. See the [dashboard contract and upgrade boundary](IT-Assets-Dashboard.md) and [actual verification limits](../development-handovers/evidence/stock-dashboard/Report.md).
 
-Batch 3.9 adds [`device_stock.py`](../../backend/device_stock.py) for atomic stock
+Stock registration uses [`device_stock.py`](../../backend/device_stock.py) for atomic stock
 registration and separate canonical reissue, and
 [`device_storage.py`](../../backend/device_storage.py) for optional storage
 validation. `create_device_in_transaction` reuses the normal writer without a
@@ -14,7 +14,7 @@ and assignment protections remain. See [the source/transaction mapping](Device-S
 
 This page tells you where to look. Search for a function's exact name, then read the source and its callers before changing anything. Line numbers change, so this guide uses file paths and searchable identifiers.
 
-For the full source-pinned list of named declarations, owning bridge methods and selected maintenance helpers with current line locations, see the [Function Index](Function-Index.md). It complements this short maintainer reference; the index contains no reference counts or example-call-site report and is not a runtime call graph.
+For the retained source-pinned list of named declarations, owning bridge methods and selected maintenance helpers at its recorded revision, see the [Function Index](Function-Index.md). It complements this short maintainer reference; the index contains no reference counts or example-call-site report and is not a runtime call graph.
 
 ## Entry points
 

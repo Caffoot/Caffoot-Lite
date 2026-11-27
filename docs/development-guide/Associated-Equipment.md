@@ -1,5 +1,7 @@
 # Associated Equipment — Backend Operations
 
+> **Historical implementation contract.** The checkpoint, schema and pending-review wording below describe the original development stage. Use [Development Status](Development-Status.md) for the current integrated application and acceptance boundary, and the [v2.2 instructions](../how-tos/features-and-instructions/v2.2-draft/README.md) for current procedures. Original technical decisions and evidence are retained.
+
 **Checkpoints A–D are complete for review on draft PR #391.** Schema 18
 provides explicit associations; Schema 19 adds audited direct assignment closure
 and successor links on the same canonical assignment table. Its separate

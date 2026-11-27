@@ -1,8 +1,9 @@
 # Optional Features — Development Foundation
 
-## Current Baseline And Historical Scope — 26 November 2026
+<a id="current-baseline-and-historical-scope--26-november-2026"></a>
+## Current Baseline And Historical Scope — 27 November 2026
 
-The current documentation review baseline is `fdc677920bfc52f48f641b3d6d1344c902a6a9b0` (schema 31). All six switches are live: Devices, IPAM, Network Racks, Suppliers, Equipment Lifecycle and IT Assets. Earlier Stage 2/3 checkpoints and unavailable Stage 4 labels below are retained historical implementation descriptions, not the current availability table. Stages 4–5 are integrated at this baseline; final release/acceptance gates remain outstanding. No separate Service Desk switch exists.
+The current owner-approved application baseline is `0251b43a3b5d41d626aa022c6d7f9b4d860433da` (schema 31). All six switches are live: Devices, IPAM, Network Racks, Suppliers, Equipment Lifecycle and IT Assets. Earlier Stage 2/3 checkpoints and unavailable Stage 4 labels below are retained historical implementation descriptions, not the current availability table. Stages 4–5 are integrated at this baseline; final release/acceptance gates remain outstanding. No separate Service Desk switch exists.
 
 Use the [reconciled Optional Features guide](../how-tos/features-and-instructions/v2.2-draft/Optional-Features-and-Link-To-IPAM.md) for current administrator procedures and independent access/retention requirements, and the standalone [Devices](../how-tos/features-and-instructions/v2.2-draft/Devices.md), [IPAM](../how-tos/features-and-instructions/v2.2-draft/IPAM.md) and [Network Racks](../how-tos/features-and-instructions/v2.2-draft/Racks.md) drafts for inventory work. Equipment Lifecycle uses Devices rights for physical Device information and administrator rights for settings/manual replacement overrides; it has no independent permission column.
 

@@ -138,6 +138,4 @@ Issue Title is required and allows up to 160 characters. Main Description and ea
 
 ![Desktop light Purchasing Dashboard showing four live summary cards, recent active Issues and the four-status breakdown](../../../development-handovers/evidence/stage-6-6-batch-3/screenshots/purchasing-dashboard-light-1440.png)
 
-See the , [Supplier Management](Supplier-Management.md) and .
-
 [Connected example: a laptop from Supplier and stock to its final write-off](Connected-Equipment-Journey.md).

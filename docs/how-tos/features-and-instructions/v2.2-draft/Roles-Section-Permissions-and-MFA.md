@@ -212,7 +212,7 @@ For the depicted Sarah example, **Delete User** opens the browser-native confirm
 
 ## Employment Status And Linked Login Security
 
-Employment has two current choices: **Active** and **Left Company**. Older evidence may call the latter inactive; this is not a separate temporary-absence status.
+Employment has two choices: **Active** and **Left Company**. Left Company records a leaver rather than a temporary absence.
 
 1. Check the person in **Staff → Staff Members → View Details**. Review outstanding equipment using the necessary equipment permissions.
 2. With **Staff Members Edit** and administrator authority for a linked person, select **Mark As Left Company**, or use **Manage Permissions → Account Controls → Employment Status**. Read and confirm the warning; **Cancel** saves nothing. The Add/Edit Staff form applies the same policy.
@@ -278,8 +278,6 @@ Caffoot Lite records the administrator, affected account and change in the audit
 
 If you see **Unable to sign in. Please check your credentials or contact your administrator.**, check your username and password. The same message covers incorrect credentials and unavailable accounts. At **Verify Your Identity**, check the time on your authenticator device and try the next code if the previous one expired. After repeated failures, wait for the temporary sign-in limit to expire. For lost credentials, see [Account Recovery](../../../development-guide/Account-Recovery.md) or contact your administrator.
 
-
-
 ### Voluntary Enrolment And Eligible Removal
 
 A Staff-only account with no wider grants or enabled additional role can enrol voluntarily through **My Account → Security → Multi-Factor Authentication**. Enter your password, select **Start MFA enrolment**, scan the QR code or enter its key, then enter the six-digit code and select **Confirm MFA**. Return to sign-in and use the authenticator afterwards.
@@ -315,7 +313,6 @@ Removal is unavailable for Administrators, accounts with any enabled additional 
 4. When you see **Password changed successfully. Sign in again with your new password.**, enter the new password on the sign-in screen and provide your authenticator code if prompted. Only that fresh sign-in opens the workspace.
 
 **Back to Sign In** clears the form. The restricted password-change screen expires after five minutes and cannot open normal application pages. The password change remains required the next time you sign in with the temporary password. If the change screen expires, begin again at sign-in. If the administrator resets the account again, use the latest temporary password. If the account is disabled, ask your administrator to check its status. A verified-email recovery can also complete the required password change when recovery is available and you choose a different password.
-
 
 ### Change Your Password From My Account
 
@@ -371,13 +368,11 @@ If no email arrives, check the junk folder and ask your administrator to check y
 
 ![Invalid or expired confirmation in desktop light mode, highlighted with an exclamation indicator.](screenshots/milestone-01-authentication-corrections/recovery-rejected-desktop-light.png)
 
-[Mobile light rejection](screenshots/milestone-01-authentication-corrections/recovery-rejected-mobile-light.png) · [Mobile dark rejection](screenshots/milestone-01-authentication-corrections/recovery-rejected-mobile-dark.png)
-
 *A rejected recovery attempt shows a generic message. Check your username and the current code without sharing them.*
 
 ### Password Values And Lost Authenticators
 
-Use long, unique passwords and communicate initial or temporary values privately. The current implementation rejects an empty password; it does not display or enforce a documented minimum length, complexity score or mandatory expiry period. Password and confirmation must match exactly. A mandatory replacement must differ from the temporary password. Initial account creation does not itself set the assisted-reset mandatory-change flag; ask the new user to change their initial password in My Account.
+Use long, unique passwords and communicate initial or temporary values privately. Caffoot Lite rejects an empty password; it does not display or enforce a documented minimum length, complexity score or mandatory expiry period. Password and confirmation must match exactly. A mandatory replacement must differ from the temporary password. Initial account creation does not itself set the assisted-reset mandatory-change flag; ask the new user to change their initial password in My Account.
 
 An emailed eight-digit recovery code is a password-recovery proof, not a backup authenticator code. There is no user-facing set of downloadable MFA recovery codes or administrator MFA-reset button in these account controls. A lost required authenticator prevents email recovery as well as normal sign-in. Contact the system operator privately; the [host-only recovery reference](../../../development-guide/Account-Recovery.md#last-resort-sole-administrator-recovery) has limited eligibility and is not a general account bypass. Do not delete an account, create duplicate Staff or remove permissions as an improvised recovery procedure.
 

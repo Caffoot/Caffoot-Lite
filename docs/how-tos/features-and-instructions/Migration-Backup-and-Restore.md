@@ -58,7 +58,7 @@ A restoration test is safest in a *separate test folder/isolated installation* r
 3. Start the target container and verify HTTPS identity, administrator sign-in, inventory, related IPAM/rack data and any account permissions.
 4. Keep the original known-working files until recovery has been verified. Do not delete your only database or TLS private key just to run an acceptance test.
 
-The product owner verified a local stopped-container copy/restore on a disposable Raspberry Pi test host. That proves basic local recovery, **not** that a separate off-site backup already exists or that storage failure cannot cause data loss.
+Verify recovery from your own protected backup in an isolated installation before relying on it. Keep a separate off-site copy to protect against host or storage failure.
 
 ## Distinguish maintenance from recovery
 

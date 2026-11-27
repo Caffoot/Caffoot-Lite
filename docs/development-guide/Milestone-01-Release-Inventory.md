@@ -1,5 +1,11 @@
 # Milestone 01 — Draft v2.2 Release Inventory
 
+## Current Release Preparation — 27 November 2026
+
+The owner-approved integrated application is `0251b43a3b5d41d626aa022c6d7f9b4d860433da`, schema 31; published v2.1 remains schema 10. [Draft v2.2 release notes](../Release-Notes-v2.2.md) summarise the user-visible changes and link to the maintained instructions. This inventory retains the individual requirement/source/evidence entries and their historical review stages; it is not replaced by the release summary. The [documentation register](Milestone-01-Documentation-Register.md#current-editorial-boundary--27-november-2026) records the current editorial boundary and evidence-to-guide links. Independent documentation review, owner acceptance and all native, upgrade/recovery, security and release gates remain separate. No v2.2 image, release or website publication is established.
+
+The original inventory below remains dated evidence. Earlier pending-development statements are not the current integration status.
+
 > **Working inventory, not release notes or final feature approval.** 26 November 2026. Published baseline [v2.1](https://github.com/Caffoot/Caffoot-Lite/tree/v2.1) `c3237114108cad9f7d4e57657b6aed5e0091a5ef`, schema 10; unreleased integration [milestone-1 checkpoint](https://github.com/Caffoot/Caffoot-Lite/tree/fdc677920bfc52f48f641b3d6d1344c902a6a9b0) `fdc677920bfc52f48f641b3d6d1344c902a6a9b0`, schema 31. Authority: [#366 inventory requirement](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7185503954) and [approved work plan](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7196554739).
 
 ## Initial feature reconciliation

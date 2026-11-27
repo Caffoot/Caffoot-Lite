@@ -6,7 +6,7 @@ Use the handover to pick up where the last session finished. The relevant GitHub
 
 ## Current work
 
-Caffoot Lite v2.1 is the published baseline; v2.2 is unreleased. Stage 1 and Stage 2 are accepted. Stage 3 Batches 3.1–3.12 and subsequent focused corrections are merged on `milestone-1` through `753b3266893987addb11406ef8303adb03c3c112` (schema 20), verified 17 November 2026. This includes stock circulation, registration/reissue, Associated Equipment, direct handovers, corrections and Overview/Low Stock reporting. Batch 3.4 manual/native and Stage 6 compatibility/full upgrade/restore acceptance remain deferred. The [Milestone 01 handover](milestone-01.md) records current status and dated evidence; [Development Status](../development-guide/Development-Status.md) records merge checkpoints. Use the [draft v2.2 guides](../how-tos/features-and-instructions/v2.2-draft/README.md) for implemented development workflows and [historical handovers](../historical/development-handovers/) for completed release work.
+Caffoot Lite v2.1 is published; v2.2 is unreleased. The approved integrated application checkpoint is `0251b43a3b5d41d626aa022c6d7f9b4d860433da`, schema 31. The [Milestone 01 handover](milestone-01.md) and [Development Status](../development-guide/Development-Status.md) distinguish current boundaries from dated records. Use the [draft v2.2 guides](../how-tos/features-and-instructions/v2.2-draft/README.md) for development workflows and [historical handovers](../historical/development-handovers/) for published-release history. Outstanding native/manual, upgrade/recovery, security and release gates remain separate.
 
 ## Keeping this useful
 

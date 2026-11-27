@@ -199,7 +199,7 @@ My Equipment is for a person signing in with a login linked to an active Staff M
 
 *The two sections show current custody. The cable quantity is the outstanding quantity.*
 
-*The dialogue shows the fields this account can see. Network configuration, licence keys, credentials, private notes, stock totals and former holders are excluded.*
+The employee Details view excludes network configuration, licence keys, credentials, private notes, stock totals and former holders.
 
 If the recorded software list is long, scroll inside **Details** to reach the actions. Escape closes the details and returns keyboard focus to the equipment row's **Details** button.
 
@@ -247,17 +247,17 @@ Marking Priya **Left Company** disables her linked login, revokes its sessions/p
 
 ![Employee-safe AST-LAP-016 Details with Windows 11 Pro and recorded Google Chrome, without private IT fields.](screenshots/batch-7e/employee-recorded-software.png)
 
-*Priya’s permitted Details shows recorded Windows and Google Chrome names for her current AST-LAP-016. The fictional private IT note stays excluded from the employee projection.*
+*Priya’s permitted Details shows recorded Windows and Google Chrome names for her current AST-LAP-016. Private IT notes are excluded.*
 
 ![Alex’s My Equipment with personal laptop and mouse and shared Accounts printer.](screenshots/batch-7c/alex-before-handover.png)
 
 *Alex sees the personally assigned AST-LAP-014 and outstanding mouse, plus the Accounts printer shared through current membership. This is the preserved pre-handover state.*
 
-![R1: Alex’s refreshed My Equipment list with AST-LAP-014 shared with Accounts after the real personal-to-Department handover.](screenshots/batch-7e/r1-alex-department-equipment.png)
+![Alex’s refreshed My Equipment list with AST-LAP-014 shared with Accounts after the real personal-to-Department handover.](screenshots/batch-7e/r1-alex-department-equipment.png)
 
 *In this alternative handover example, AST-LAP-014 moves from Alex to Accounts. Alex remains an Accounts member, so the refreshed list shows it under Shared with My Department rather than Assigned to Me.*
 
-![R2: Equipment Details displaying Equipment details could not be loaded or are no longer available after Priya lost Accounts membership.](screenshots/batch-7e/r2-equipment-details-denied.png)
+![Equipment Details displaying Equipment details could not be loaded or are no longer available after Priya lost Accounts membership.](screenshots/batch-7e/r2-equipment-details-denied.png)
 
 *After Priya moves from Accounts to Sales, the Accounts printer is no longer available to her. Opening Details from an older list checks current access and displays the unavailable message; refresh the list to see current equipment.*
 

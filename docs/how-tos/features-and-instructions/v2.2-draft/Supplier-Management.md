@@ -27,6 +27,10 @@ If Suppliers is missing, check the organisation's switch, the user's active role
 
 An archived supplier is still searchable. Retired categories remain visible on suppliers that already use them. Use **All Categories** to find a record whose only category is archived.
 
+![Supplier Directory with search, category filters and main office towns.](../../../development-handovers/evidence/stage-6-6-batch-3/screenshots/supplier-directory-light-1440.png)
+
+*Search companies and filter their recorded categories before adding a Supplier.*
+
 ## Add And Correct A Supplier
 
 You need Suppliers Edit and the feature enabled.
@@ -53,6 +57,10 @@ Choose company-wide scope **or** one or more locations; neither and conflicting 
 ![Add Supplier form showing Northlight company details, Hardware category, address fields and Jo Patel contact.](screenshots/batch-7c/supplier-add.png)
 
 *A representative unsaved Northlight company/contact draft. The continuing journey already has its saved Northlight record; this demonstration draft is discarded, rather than creating a duplicate.*
+
+![Supplier Details Overview with company information and actions beside the heading.](../../../development-handovers/evidence/stage-6-6-batch-3/screenshots/supplier-details-light-1440.png)
+
+*Overview brings company information, status and permitted related records together.*
 
 ## Manage Supplier Categories
 
@@ -151,15 +159,5 @@ Records with canonical supply history have stronger permanent retention. Any cro
 | A save is rejected because the record changed | Preserve your intended changes, cancel the form and reopen the record. Review the latest data before applying a correction. |
 
 See [Optional Features](Optional-Features-and-Link-To-IPAM.md) for organisation-wide settings and [Roles, Section Permissions And MFA](Roles-Section-Permissions-and-MFA.md) for access and sign-in help.
-
-## Application Screenshots
-
-![Desktop light Supplier Directory with search and category filters](../../../development-handovers/evidence/stage-6-6-batch-3/screenshots/supplier-directory-light-1440.png)
-
-The Supplier Directory presents the main office town alongside each company and provides the live category filter.
-
-Scroll down to reach the Contact entry and save controls on a narrow screen.
-
-![Desktop light Supplier Details on the Overview tab with the company actions beside the heading](../../../development-handovers/evidence/stage-6-6-batch-3/screenshots/supplier-details-light-1440.png)
 
 [Connected example: a laptop from Supplier and stock to its final write-off](Connected-Equipment-Journey.md).

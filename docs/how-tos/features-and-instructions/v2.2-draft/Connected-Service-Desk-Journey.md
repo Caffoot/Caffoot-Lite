@@ -2,7 +2,7 @@
 
 > **Draft v2.2 — Unreleased.** v2.1 remains the published release. These instructions describe v2.2.
 
-At fictional **Aster Services**, **Alex Morgan** in **Accounts** uses laptop **AST-LAP-014**, issued by technician **Sam Taylor** in the [Connected Equipment Journey](Connected-Equipment-Journey.md). During Alex's continuing personal custody, the laptop's display flickers after waking. This example connects existing controls; it creates no application records and is not a test result. The ticket number below is illustrative: use the number your installation actually returns.
+At fictional **Aster Services**, **Alex Morgan** in **Accounts** uses laptop **AST-LAP-014**, issued by technician **Sam Taylor** in the [Connected Equipment Journey](Connected-Equipment-Journey.md). During Alex's continuing personal custody, the laptop's display flickers after waking. The ticket number below is illustrative: use the number your installation actually returns.
 
 ## Prepare Access And Protect The Conversation
 

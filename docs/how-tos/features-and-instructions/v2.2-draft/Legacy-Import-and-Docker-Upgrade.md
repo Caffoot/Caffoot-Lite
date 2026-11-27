@@ -70,7 +70,7 @@ For any separately authorised isolated upgrade, first identify the original imag
 
 ### Historical Associated Equipment Tickets
 
-After the Stage 6.4 correction, authorised IT can still open historical associated accessory tickets in **IT → Service Desk** with the existing Service Desk and IT Assets permissions. When the original employee audience cannot be verified, those tickets and their files are available only to authorised IT. This covers earlier tickets raised against issues that have since been explicitly associated with a Device. Existing ticket numbers, replies, attachments and audit records are retained.
+Authorised IT can still open historical associated accessory tickets in **IT → Service Desk** with the existing Service Desk and IT Assets permissions. When the original employee audience cannot be verified, those tickets and their files are available only to authorised IT. This covers earlier tickets raised against issues that have since been explicitly associated with a Device. Existing ticket numbers, replies, attachments and audit records are retained.
 
 During upgrade checks, sign in as a representative Staff Member and confirm that a saved link to a restricted historical ticket is unavailable. Confirm the same ticket still opens for an authorised technician. If the equipment still needs support, an eligible employee can open **My Equipment → Report A Problem** and submit a new ticket after reading the shared-equipment warning. Standalone IT Asset and canonical Device tickets retain their existing access rules. [Ticket privacy and custody](Service-Desk-Administration.md#what-happens-to-service-desk-tickets-when-equipment-changes-hands)
 
@@ -112,7 +112,7 @@ Use trusted external host/volume backup tooling selected for your installation. 
 
 ## Restore A Complete Installation
 
-This is draft administrator guidance for a separately authorised recovery, current schema-31 complete-volume recovery has not been established. Protect the original backup and source. Recovering a snapshot returns to its capture time; later changes are absent unless separately preserved and supported recovery is established. Do not improvise a merge between old and upgraded databases.
+This is draft administrator guidance for a separately authorised recovery. Current schema-31 complete-volume recovery has not been established. Protect the original backup and source. Recovering a snapshot returns to its capture time; later changes are absent unless separately preserved and supported recovery is established. Do not improvise a merge between old and upgraded databases.
 
 1. Create a new, isolated target. Confirm its container is stopped and its `/data` mapping is a new empty volume or a new empty bind directory. Check the mapping before extracting. Keep the source and earlier recovery copies available.
 2. Extract with the external tool, restoring all paths, numeric ownership and modes. Make sure the application user `10001:10001` inside the container can read and write its data and traverse the mount. For a standard rootful bind mount, an administrator can prepare a new directory with `sudo install -d -m 0750 -o 10001 -g 10001 /path/to/new-data` before restoring. For rootless Docker or user namespace remapping, check the ownership as seen inside a container using that mapping. The host IDs can differ. Preserve restrictive modes on private files.

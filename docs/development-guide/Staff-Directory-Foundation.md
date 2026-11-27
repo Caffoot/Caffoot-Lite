@@ -1,5 +1,7 @@
 # Staff Members And Departments Foundation
 
+> **Historical implementation contract.** The checkpoint, schema and pending-review wording below describe the original development stage. Use [Development Status](Development-Status.md) for the current integrated application and acceptance boundary, and the [v2.2 instructions](../how-tos/features-and-instructions/v2.2-draft/README.md) for current procedures. Original technical decisions and evidence are retained.
+
 The foundation was accepted in PR #377. The following describes its migration;
 [Batch 3.2 APIs](Staff-Directory-APIs.md) extend future account creation and Staff
 operations without changing schema 14 or rerunning its upgrade.

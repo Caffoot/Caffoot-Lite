@@ -126,8 +126,6 @@ The same canonical Device remains in Devices. Its original assignment closes per
 
 ### Return A Currently Unassigned Device
 
-.
-
 1. Open the existing **Device Details → Assigned To** tab for the actual physical Device.
 2. Choose **Return Equipment**. Both Devices Edit and IT Assets Edit are required, with their features enabled. The Device must be physical, currently unassigned and have no previous stock movements. Existing issued/assigned equipment keeps its original return route; held, prepared or written-off equipment cannot be returned again.
 3. Check the fixed Device identity, enter the actual **Date Returned** and an optional **Return Note**.

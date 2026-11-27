@@ -1,6 +1,8 @@
 # 02 — SQLite database
 
-> **Stage 6.2 integration checkpoint — 24 November 2026.** `milestone-1` at `2107de3668b08c5abdfdae6fe231a3114bbfc380` uses schema **28**. Published v2.1 uses schema **10**. The isolated upgrade reached schema 28 through normal application startup. [Development Status](Development-Status.md) · [Stage 6.2 evidence](../development-handovers/evidence/stage-6-2/README.md)
+> **Version boundary:** Published v2.1 uses schema 10. The owner-approved unreleased v2.2 application checkpoint is `0251b43a3b5d41d626aa022c6d7f9b4d860433da`, schema 31, including Stages 1–5 and subsequent integrated corrections. See [Development Status](Development-Status.md) for exact checkpoints and outstanding acceptance. Integration is not production upgrade or release approval.
+
+> **Historical Stage 6.2 checkpoint — 24 November 2026:** `2107de3668b08c5abdfdae6fe231a3114bbfc380` used schema 28. Its isolated schema-10 → 28 result remains in the [Stage 6.2 evidence](../development-handovers/evidence/stage-6-2/README.md). It does not establish current schema-31 upgrade/recovery acceptance.
 
 > **Historical Batch 3.12 review branch:** Schema 20 updates the built-in IT Staff default and preserves existing account levels through compatibility overrides. No stock tables or journal entries are migrated. See [dashboard and upgrade contract](IT-Assets-Dashboard.md). Earlier dated checkpoints below retain their historical scope.
 
@@ -12,7 +14,7 @@ The code keeps Devices, IPAM and Racks records in separate tables, along with ac
 
 ## Source and schema version
 
-**Batch 3.10 Checkpoint D:** Schema 19 adds nullable `handover_event_id` and
+**Historical Batch 3.10 Checkpoint D:** Schema 19 adds nullable `handover_event_id` and
 `successor_assignment_id` references to the canonical `device_assignments` table.
 The audited direct closure is separate from the existing physical-return guard.
 Referenced preparation audits and assignment links are immutable. Registered
@@ -22,7 +24,7 @@ Schema 18, existing records, grants and feature choices, and rejects altered
 definitions transactionally. See [the approved sequence](Direct-Handover-Decision.md)
 and [the writer contract](Associated-Equipment.md#direct-handover-checkpoint-d).
 
-**Batch 3.10 Checkpoint A:** Schema 18 adds one empty, permanent explicit
+**Historical Batch 3.10 Checkpoint A:** Schema 18 adds one empty, permanent explicit
 `device_equipment_associations` table and protected history reads. Stock and
 assignment schemas remain unchanged. No existing recipient match creates an
 association. See [Associated Equipment](Associated-Equipment.md) for migration,
@@ -45,8 +47,9 @@ The exact definitions are in [`backend/schema.py`](../../backend/schema.py). The
 | `it_asset_stock_entries` | numbered `id`, movement, item/unit, quantity, states, recipient/assignment references | Immutable whole-unit transfers; receipt, readiness, issue, return and write-off APIs |
 | `departments` | independent text `id`, unique `name`, `archived` | Flat Department records |
 | `staff_members` | independent text `id`, optional unique `account_id`, optional `department_id`, profile details, `active` | Directory records independent of logins |
-| `device_assignments` | numbered `id`, canonical `device_id`, exactly one `staff_id`/`department_id`, dated recipient/actor snapshots | Current allocations and retained history; schema 15, unique open allocation per Device; schema-17 guarded `closure_movement_id` |
+| `device_assignments` | numbered `id`, canonical `device_id`, Staff or Department custody, dated recipient/actor snapshots | One open custody period per Device; schema-17 guarded closure, schema-19 handover links, schema-29 equal Department relationships |
 | `device_equipment_associations` | numbered `id`, original `device_assignment_id`, unique accessory `issue_entry_id`, operation key/hash, dated actor snapshot | Schema 18 explicit links only; no copied quantities, automatic association or stock movement |
+| `device_assignment_departments` | assignment/Department relationship and attributed add/remove fields | Schema 29 equal current and retained Department links within one custody period |
 | `inventory_devices` | `id`, case-insensitive unique `name`, `record_json`, `revision`, `ordinal` | Device identity, variable device properties, optimistic revision and original list order |
 | `inventory_subnets` | `id`, `record_json`, `ordinal` | Subnet records |
 | `inventory_vlans` | `id`, `record_json`, `ordinal` | VLAN records |
@@ -56,7 +59,7 @@ The exact definitions are in [`backend/schema.py`](../../backend/schema.py). The
 | `inventory_settings` | `key`, `value_json` | Managed lists, optional/historical top-level inventory settings |
 | `inventory_change_history` | auto-increment `id`, `record_json` | Change History records |
 | `accounts` | numeric `id`, unique `username`, `password_hash`, `is_admin`, `mfa_secret`, `mfa_confirmed`, `active` | Local users and account security |
-| `account_permissions` | (`account_id`, `section`), `level` | `Devices`/`IPAM`/`Racks` read or edit grants |
+| `account_permissions` | (`account_id`, `section`), `level` | Historical v2.1 grants; current role policy uses role permissions and account overrides |
 | `account_sessions` | `token_hash`, `account_id`, `expires_at`, `created_at` | Expiring sessions; expiry index |
 | `device_edit_reservations` | `device_id`, `account_id`, `expires_at`, `base_revision` | Current exclusive per-device editing reservation |
 
@@ -102,3 +105,9 @@ and their dependencies within a single authorised transaction.
 Schema 25 adds `service_desk_categories`, `service_desk_tickets`, `service_desk_events`, `service_desk_messages`, `service_desk_attachments` and `service_desk_closures`. Equipment foreign keys retain the canonical record. The original assignment remains linked to the ticket, and Clean Start removes each ticket and its dependent records in the inventory transaction. See [Service Desk Foundation](Service-Desk-Foundation.md).
 
 Schema 26 adds the nullable `affected_software` label to `service_desk_tickets`. Existing tickets retain their contents and start with an empty software field. Employee ticket creation validates the optional selection against the authorised Laptop or Desktop. Category corrections record the previous software and category in attributed ticket history before clearing a selection that no longer applies. [Service Desk Foundation](Service-Desk-Foundation.md#employee-tickets)
+
+## Later Integrated Storage
+
+Schema 27 stores effective Service Desk calendars and per-account reporting preferences. Schema 28 adds `email_templates` and `email_branding`, including managed logo bytes. Schema 29 adds `device_assignment_departments` and the shared-custody safeguards. Schema 30 adds temporary-password change state and limited password-change proofs. Schema 31 adds `service_desk_message_reads`, with independent account/message read receipts. The exact table definitions remain in [schema.py](../../backend/schema.py), [shared_device_schema.py](../../backend/shared_device_schema.py), [service_desk_schema.py](../../backend/service_desk_schema.py) and [email_templates.py](../../backend/email_templates.py).
+
+Staff offboarding reconciliation runs at schema 31 without adding a new migration number. It disables enabled logins linked to inactive Staff and revokes sessions/proofs transactionally, retaining identities and equipment history; a last-active-administrator conflict rolls back startup. See [upgrade safeguards](../how-tos/features-and-instructions/v2.2-draft/Legacy-Import-and-Docker-Upgrade.md#left-company-linked-login-reconciliation). No current production upgrade/recovery result is implied.

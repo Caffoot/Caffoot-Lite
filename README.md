@@ -7,11 +7,11 @@ Free, open-source IP address management (IPAM), device inventory and network rac
 
 **Release and download status:** Check the [official GitHub Releases page](https://github.com/Caffoot/Caffoot-Lite/releases) for the latest published version and verified images. Source code on `main` is not, by itself, proof of a published Docker image.
 
-**In development — v2.2:** [Milestone 01 — Everyday IT Management](https://github.com/Caffoot/Caffoot-Lite/milestone/20) remains unreleased. **Stages 1–4 are development-complete, owner-accepted and integrated** on `milestone-1` at verified HEAD `c1b5f8008e8ba56840d9790e3ba1c7e91ad35e0b` (schema 24). Stage 3 adds Staff Members, Departments, My Equipment and optional IT Assets/stock workflows; Stage 4 adds Supplier Management, Supplier Issues, the Purchasing Dashboard, equipment/supplier integration and Equipment Lifecycle. Stage 5 has four frozen approved designs and an agreed six-batch plan [#419–#425](https://github.com/Caffoot/Caffoot-Lite/issues/419), but **its implementation is not yet authorised**. Stage 6 integrated, native/manual, compatibility, upgrade and full backup/restore acceptance remain outstanding. See [verified development status](docs/development-guide/Development-Status.md) and the [draft v2.2 guides](docs/how-tos/features-and-instructions/v2.2-draft/README.md). **Published v2.1 installation guidance continues to apply to public installs.**
+**In development — v2.2:** Milestone 01 — Everyday IT Management adds Staff Members and Departments, equipment assignments and stock workflows, Suppliers and Equipment Lifecycle, and a Service Desk with email templates and reporting. **v2.2 is unreleased.** Read the [draft v2.2 guides](docs/how-tos/features-and-instructions/v2.2-draft/README.md) and [draft release notes](docs/Release-Notes-v2.2.md) for the upcoming version. Use the published v2.1 installation guidance for public installs.
 
 Caffoot Lite brings IPAM, device inventory, rack documentation and Audit Trail together for small businesses, IT teams and home labs. v2.1 introduces a modern, responsive interface, clearer physical-server/VM forms, subnet-first networking, optional VLANs, guided bulk subnet creation and improved account/email workflows. It retains central SQLite storage, HTTPS, administrator-managed access, MFA and five-minute device editing reservations.
 
-The repository root contains the Docker application's source: `backend/`, `inventory.html`, `setup.html`, `assets/`, `Dockerfile`, `compose.yaml`, `tests/` and documentation. The old `next/` development folder and standalone HTML build copy remain excluded, as established in v2.0.1. The original standalone version remains separately available in the [published v1.3.3 release](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v1.3.3).
+The repository contains the Docker application source, its modular interface, tests and documentation. The original standalone version remains available in the [published v1.3.3 release](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v1.3.3).
 
 Keep track of your devices, IP addresses and network racks in one place. Caffoot Lite combines a shared infrastructure inventory with user permissions and Change History, without requiring a complicated setup.
 
@@ -29,7 +29,7 @@ Keep track of your devices, IP addresses and network racks in one place. Caffoot
 
 ![Caffoot Lite v2.1 Network Racks in light theme, showing rack units and capacity details](caffoot-v2.1-racks-light-cropped.png)
 
-*These screenshots show the published v2.1 light-theme interface. The IPAM replacement uses fictional addresses and contains no browser controls.*
+*These screenshots show the published v2.1 light-theme interface. The examples use fictional inventory.*
 
 ## Install Caffoot Lite
 
@@ -53,7 +53,7 @@ See the [complete Features and Instructions user guides](docs/how-tos/features-a
 
 ## What's next?
 
-Read the [public roadmap](ROADMAP.md) for released functionality, future proposals and longer-term product direction. Published versions are listed in [GitHub Releases](https://github.com/Caffoot/Caffoot-Lite/releases); website work follows its own approval and deployment process. Milestone 01 targets **unreleased v2.2**; accepted development and pending work are distinguished in [Development Status](docs/development-guide/Development-Status.md). Only the published v2.1 installation guidance above applies to public installs.
+Read the [public roadmap](ROADMAP.md) for released functionality, future proposals and longer-term product direction. Published versions are listed in [GitHub Releases](https://github.com/Caffoot/Caffoot-Lite/releases). Milestone 01 targets **unreleased v2.2**; see its [draft release notes](docs/Release-Notes-v2.2.md). Only the published v2.1 installation guidance above applies to public installs.
 
 ## Help Build Caffoot Lite
 
@@ -103,9 +103,8 @@ For direct HTTPS, verify and trust the application certificate before entering c
 - [v2.0.3 development handover (historical)](docs/historical/development-handovers/v2.0.3.md)
 - [Security-fix and release checklist, including the owner-controlled one-click publishing process](docs/development-guide/Security-Fixes-and-Releases.md)
 - [Standalone v1.3.3 release](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v1.3.3)
-- [Historical v2.0/v2.0.1 implementation specification #215](https://github.com/Caffoot/Caffoot-Lite/issues/215) and [release tracker #218](https://github.com/Caffoot/Caffoot-Lite/issues/218); [Feature Request form](https://github.com/Caffoot/Caffoot-Lite/issues/new/choose)
 
 **Version history:** [v2.0](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v2.0) introduced the Docker/SQLite multi-user edition. [v2.0.1](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v2.0.1) moved the Docker source to the repository root. v2.0.2 delivered a focused security correction. v2.0.3 updates the documentation, code-reference baseline and existing browser regression coverage without changing the supported inventory data format.
 
 
-v2.1 upgrades the existing database to schema 10. Outstanding older-format email proofs are invalidated; account permissions, MFA and inventory are retained. Back up the entire stopped `/data` first. Rollback requires the complete matching pre-upgrade backup and old image; an old binary must not open the upgraded database. See the [upgrade instructions](INSTALLATION.md#upgrading-v203-to-v21). v2.1 was published on 8 November 2026. Verify the relevant public image and architecture before installation; future releases and website publication remain separate decisions.
+v2.1 upgrades the existing database to schema 10. Outstanding older-format email proofs are invalidated; account permissions, MFA and inventory are retained. Back up the entire stopped `/data` first. Rollback requires the complete matching pre-upgrade backup and old image; an old binary must not open the upgraded database. See the [upgrade instructions](INSTALLATION.md#upgrading-v203-to-v21). v2.1 was published on 8 November 2026. Verify the relevant public image and architecture before installation; v2.2 remains unreleased.

@@ -1,6 +1,6 @@
 # 03 — Frontend, backend and API
 
-**Version boundary:** Published v2.1 is the tagged schema-10 release. `main` includes accepted but unreleased Stage 1/schema 12; this `milestone-1` development branch is schema 15 through merged Stage 3 Batch 3.4. Batch 3.4 manual/native acceptance remains deferred, not passed. See [Development Status](Development-Status.md) for source checkpoints; documentation synchronisation does not release v2.2.
+**Version boundary:** Published v2.1 uses schema 10. The owner-approved unreleased v2.2 application checkpoint is `0251b43a3b5d41d626aa022c6d7f9b4d860433da`, schema 31, including Stages 1–5 and subsequent integrated corrections. See [Development Status](Development-Status.md) for exact checkpoints and outstanding acceptance. Integration is not production upgrade or release approval.
 
 ## In simple terms
 
@@ -51,7 +51,7 @@ The live route list is defined by the conditions in `Handler.do_GET` and `Handle
 | Other established inventory | `/api/inventory/record/save`, `/api/inventory/record/delete`, `/api/inventory/settings/save`, `/api/inventory/device-catalogue/change`, `/api/inventory/reset` |
 | v1.3.3 import | `/api/import/preview`, `/api/import/access-point-choices`, `/api/import/confirm`, `/api/import/cancel` |
 
-The `milestone-1` development branch integrates mandatory enrolment and eligible MFA removal into the existing sign-in and My Account screens in Batch 04. See the [exact fields and security contract](Role-Permissions.md#existing-account-mfa-operations). Authenticated `/account` serves the existing interface for own-account operations without inventory grants; `/api/session` reports server-derived `mfa_removal_eligible`. Static interface resources contain templates/code only; inventory and administrator data still require their established API permissions. The [administrator role contract](Role-Permissions.md#administrator-role-operations) covers server-computed previews and atomic confirmation. The old direct-permission route returns HTTP 410 and cannot mutate access. These routes use the same HTTPS server, not a second service. The backend derives the user from the validated session rather than trusting a browser-supplied user ID. The exact JSON request/response fields should always be read from the handler and its matching UI caller.
+v2.2 integrates mandatory enrolment and eligible MFA removal into the existing sign-in and My Account screens. See the [exact fields and security contract](Role-Permissions.md#existing-account-mfa-operations). Authenticated `/account` serves the existing interface for own-account operations without inventory grants; `/api/session` reports server-derived `mfa_removal_eligible`. Static interface resources contain templates/code only; inventory and administrator data still require their established API permissions. The [administrator role contract](Role-Permissions.md#administrator-role-operations) covers server-computed previews and atomic confirmation. The old direct-permission route returns HTTP 410 and cannot mutate access. These routes use the same HTTPS server, not a second service. The backend derives the user from the validated session rather than trusting a browser-supplied user ID. The exact JSON request/response fields should always be read from the handler and its matching UI caller.
 
 ## Example: editing a device
 

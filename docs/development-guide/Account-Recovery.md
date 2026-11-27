@@ -1,8 +1,8 @@
 # Account Recovery — Caffoot Lite v2.1
 
-These controls are included in the published v2.1 application. The implementation and acceptance history is recorded in [issue #282](https://github.com/Caffoot/Caffoot-Lite/issues/282); they were not part of v2.0.3.
+These controls are included in published v2.1; they were not part of v2.0.3.
 
-Unreleased source has a stricter role-based MFA policy and additional enrolment/removal routes. Those do not change the published v2.1 recovery instructions below. See [Development Status](Development-Status.md) and [Role Permissions](Role-Permissions.md) for branch-specific details.
+Unreleased source has a stricter role-based MFA policy and additional enrolment/removal routes. Those do not change the published v2.1 recovery instructions below. See the separate [draft v2.2 account instructions](../how-tos/features-and-instructions/v2.2-draft/Roles-Section-Permissions-and-MFA.md) for that version.
 
 ## Normal Recovery
 
@@ -20,7 +20,6 @@ Codes expire after 15 minutes and work once. Five failed code/MFA confirmations 
 
 SQLite contains only a keyed digest and challenge metadata, never a plain code. The private 32-byte `account-email-secret.key` beside SQLite must be backed up with the **entire** private data directory, including SMTP configuration and TLS. Keep it a private regular file with mode 0600. Do not copy it into the application image, publish it, or replace it while live challenges remain. If it is lost, restore the matching private backup; do not delete data or edit SQLite to bypass confirmation. The application refuses unusable or publicly readable secret files.
 
-The owner verified real email-address confirmation on an earlier private build. That individual check did not establish full Forgot Password delivery, confirmation, reset, required MFA and subsequent sign-in. Consult the v2.1 release and recorded checks for later evidence; do not interpret this earlier result as comprehensive acceptance.
 
 ## Last-Resort Sole-Administrator Recovery
 

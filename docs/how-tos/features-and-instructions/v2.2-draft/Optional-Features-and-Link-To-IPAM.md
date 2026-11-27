@@ -96,7 +96,7 @@ Enabling one area never silently enables another. Some linked operations need bo
 
 A fictional training team wants to record printers and enclosures without managing addresses. Enable Devices and Network Racks, leaving IPAM off. Give its inventory editor Devices Edit and Racks Edit through the separate permission workflow. Record an address-free printer and an actual shelf association. Enabling IPAM later will not create subnets or link any basic addresses; an IPAM editor must prepare the networks and a user with both Edit grants must deliberately link a saved basic address.
 
-For a lifecycle review, enable Equipment Lifecycle and use **Lifecycle Settings** to open its administrator configuration. Follow [Equipment Lifecycle](Equipment-Lifecycle.md) for warning periods/lifespans, physical Device dates, manual override permissions and Save/Cancel behaviour. Enabling the switch does not fill missing dates or automatically retire, return or replace equipment. While Lifecycle is off, authorised stock transactions still capture eligible first-service dates; the switch hides lifecycle controls/warnings rather than preventing that provenance from being recorded.
+For a lifecycle review, enable Equipment Lifecycle and use **Lifecycle Settings** to open its administrator configuration. Follow [Equipment Lifecycle](Equipment-Lifecycle.md) for warning periods/lifespans, physical Device dates, manual override permissions and Save/Cancel behaviour. Enabling the switch does not fill missing dates or automatically retire, return or replace equipment. While Lifecycle is off, authorised stock transactions still capture eligible first-service dates; the switch hides lifecycle controls/warnings while retaining that first-service information.
 
 ## Understand Basic And Managed IP Addresses
 
@@ -219,6 +219,5 @@ Feature and permission restrictions apply to direct requests as well as visible 
 - [Receive Stock And Stock Inventory](IT-Assets-Stock-Intake.md) — configure and receive equipment with IT Assets enabled.
 - [Issue, Return And Write Off](IT-Assets-Issue-Return-and-Write-Off.md) — circulate equipment and preserve stock history.
 - [Device Stock Registration And Reissue](Device-Stock-Registration-and-Reissue.md) — when stock work also needs canonical Device access.
--  — the maintained technical contract and evidence references.
 
 [← Draft v2.2 Guides](README.md) · [Published v2.1 Guides](https://github.com/Caffoot/Caffoot-Lite/tree/c3237114108cad9f7d4e57657b6aed5e0091a5ef/docs/how-tos/features-and-instructions)

@@ -1,12 +1,28 @@
 # Milestone 01 — Documentation Review Register
 
-**Current status — 27 November 2026:** Batches 7C, 7D and 7E have separate owner draft-evidence acceptance (41/36/25 new paths; 102 combined; 7E has 23 distinct image contents). Original captures, provenance and requirement mappings remain unchanged; accepted instructions retain the approved merged corrections. Batch 8 editorial findings and publication approval remain outstanding. The exact approved application baseline is now `0251b43a3b5d41d626aa022c6d7f9b4d860433da`, schema 31. 7F/7G are authorised but blocked here by unavailable retained fixtures; no new pack has been delivered. [Reconciliation, exact approval, allocations and blocker](Milestone-01-7F-7G-Reconciliation.md). Earlier checkpoint notices below are preserved historical records; this current status controls.
+## Current Editorial Boundary — 27 November 2026
 
-## Current Approved R1–R3 Delivery — 27 November 2026
+[Batch 8 owner approval](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7224076263) starts from accepted documentation `5338f3903d39714999fab068025d99869be44c63` and integrated application `0251b43a3b5d41d626aa022c6d7f9b4d860433da`, schema 31. [7F–7H draft acceptance](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7224015412) supersedes the earlier fixture-dependent capture stop for that illustration-only delivery. The [existing illustration record](Milestone-01-7F-7H-Illustrations.md) retains its exact reuse list and text-only gaps.
+
+The [v2.2 instructions](../how-tos/features-and-instructions/v2.2-draft/README.md) contain user tasks and necessary draft/version limits. Process banners, provenance links and internal test/review commentary are removed; useful procedures, examples, warnings and instructional links remain. Existing desktop-light images are placed with their tasks, the ten-template editor replaces the older overview, and the linked-ticket alternative text distinguishes status badges from ticket-reference controls. Dark/mobile, obsolete branding and redundant instructional embeds are removed without deleting their source files. All original manifests, image bytes, hashes, approvals and historical reports remain in place. Their capture-time captions and alt text remain historical records rather than a claim that the current editorial wording is identical.
+
+Traceability continues from the existing topic records and image registers to the same guide paths: [infrastructure](Milestone-01-Batch-2-Review.md), [accounts and people](Milestone-01-Batch-3-Review.md), [equipment and Suppliers](Milestone-01-Batch-4-Review.md), [Service Desk, email and audit](Milestone-01-Batch-5-Review.md), [installation and recovery](Milestone-01-Batch-6-Review.md), [7A](../how-tos/features-and-instructions/v2.2-draft/screenshots/batch-7a/Coverage.md), [7B](../how-tos/features-and-instructions/v2.2-draft/screenshots/batch-7b/Coverage.md), [7C](../how-tos/features-and-instructions/v2.2-draft/screenshots/batch-7c/Coverage.md), [7D](../how-tos/features-and-instructions/v2.2-draft/screenshots/batch-7d/Coverage.md) and [7E](../how-tos/features-and-instructions/v2.2-draft/screenshots/batch-7e/Coverage.md). The original requirements and limitations are retained, including unpictured first-run/enrolment and Recording Coverage states; editorial cleanup does not certify additional runtime or native acceptance.
+
+[Draft release notes](../Release-Notes-v2.2.md) present upcoming features without claiming a release. [Proposed permanent standards](Proposed-Documentation-Standards.md) provide exact AGENTS.md/contributor wording for separate explicit approval; neither standards file is changed. PR #472 stays draft and #366 open. Independent review and owner acceptance of Batch 8 remain outstanding; all existing application, security, native and release gates remain unchanged.
+
+### Material Retained For A Separate Organisation Decision
+
+The eight published v2.1 guides intentionally exist at two URL paths and must remain byte-identical for existing installation links and the release-documentation check. Do not delete either copy as ordinary duplication. Earlier development contracts, superseded reconciliation notices and overlapping screenshot galleries are historical records; consolidation or relocation would require an owner-approved destination and redirects/reference repairs. None is deleted or moved here. The Function Index retains its existing named entries with repaired links into the approved application source; unresolved historical bindings link to their module without inventing a declaration line. No new function inventory is generated. The code reference points to later modules.
+
+The dated register entries below preserve their original scope, counts, results and then-current decisions. They do not override this current boundary.
+
+**Historical pre-7F status — 27 November 2026:** Batches 7C, 7D and 7E have separate owner draft-evidence acceptance (41/36/25 new paths; 102 combined; 7E has 23 distinct image contents). Original captures, provenance and requirement mappings remain unchanged; accepted instructions retain the approved merged corrections. Batch 8 editorial findings and publication approval remain outstanding. The exact approved application baseline is now `0251b43a3b5d41d626aa022c6d7f9b4d860433da`, schema 31. 7F/7G are authorised but blocked here by unavailable retained fixtures; no new pack has been delivered. [Reconciliation, exact approval, allocations and blocker](Milestone-01-7F-7G-Reconciliation.md). Earlier checkpoint notices below are preserved historical records; this current status controls.
+
+## Historical Approved R1–R3 Delivery — 27 November 2026
 
 [Owner approval](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7218233916) supersedes the earlier R1–R3 capture/budget stop for exactly these three views. **All 99 originals remain unchanged; cumulative totals are now 7E 25/25 and combined 102/102.** My Equipment is 6/6 and custody/membership confidentiality 5/5; other 7E allocations remain 5/4/5, and 7C/7D remain unchanged. [Actual R1–R3 views, matched original before frames, provenance and focused verification](../how-tos/features-and-instructions/v2.2-draft/screenshots/batch-7e/R1-R3.md). R1/R3 follow the same genuine personal-to-Accounts event; R2 follows actual membership loss. IT retention is an API check, not an IT screenshot. Independent review and separate owner acceptance remain pending. Earlier proposal, gap and ceiling paragraphs below are preserved as dated history, not current execution instructions. PR #472 remains draft; stop after this checkpoint with no further packs.
 
-## Current Independent-Review Corrections — 27 November 2026
+## Historical Independent-Review Corrections — 27 November 2026
 
 [Independent review](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7217975857) identified inaccurate README automation wording and three 7E mapping claims. [Correction evidence and bounded visual-gap proposal](Milestone-01-Batches-7C-7E-Review-Corrections.md) records capture-time Playwright 1.62.1 for all 99 new images, corrected mappings and essential gaps for matched holder lists, equipment Details denial and person-to-Department paired views. All 99 delivered PNGs, original requirements, accepted written instructions and allocation ceilings remain preserved. No replacement capture or visual waiver is approved; the correction checkpoint is documentation only. Earlier delivery/check counts remain historical records, not proof of those missing views. PR #472 stays draft; stop for independent review.
 
@@ -26,7 +42,7 @@
 
 **41/42 new desktop light images**, plus narrow original RE07/RE08 reuse; all **23 groups / 120 owned states and five shared references** retained. [Pack and direct image links](../how-tos/features-and-instructions/v2.2-draft/screenshots/batch-7c/README.md) · [complete coverage](../how-tos/features-and-instructions/v2.2-draft/screenshots/batch-7c/Coverage.md) · [provenance](../how-tos/features-and-instructions/v2.2-draft/screenshots/batch-7c/manifest.json) · [focused verification](../how-tos/features-and-instructions/v2.2-draft/screenshots/batch-7c/Verification.md). Category counts: dashboard 5/6, intake/readiness 7/7, registration/reissue 6/6, Suppliers 8/8, Issues/Purchasing 7/7, integration 8/8. Independent ChatGPT review and separate owner visual/privacy/caption/alt acceptance pending; no publication approval. The original Alex My Equipment frame belongs to the connected 7C journey and will be reused for 7E. Pre-handover fixture preparation preserves later-pack states; undelivered 7D/7E illustrations are not part of this checkpoint. Continue to separately verified 7D under consolidated owner approval after this checkpoint succeeds.
 
-## Current Reconciliation — 27 November 2026
+## Historical Reconciliation — 27 November 2026
 
 **Batch 7B: 25 new images and three narrow reuse images independently reviewed and owner visually accepted.** [Decision](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7212506766). All 16 groups/79 specifications, original image bytes and provenance remain. Independent review opened all 25 PNGs and matched coverage/alt text, but did not recompute every hash or repeat the complete static suite. Earlier pending/checkpoint wording below is historical.
 
@@ -58,7 +74,7 @@ This first register enumerates all Markdown and other text documentation/configu
 Review status must distinguish listed, reviewed with findings, corrected, independently checked and owner approved. Update the last column with actual findings, links checked and revision-pinned evidence; record missing evidence rather than assuming a pass. Final acceptance and #443 remain separate.
 
 
-## Current Accepted Documentation Status — 27 November 2026
+## Historical Accepted Documentation Status — 27 November 2026
 
 **Batches 1–6 written/source work is owner accepted.** [Owner decision](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7200681167) supersedes pending wording in the preserved dated checkpoint sections below; [independent Batch 5/6 review](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7200665379) and earlier Batch 2–4 records retain their focused-review limitations. File-level written/source statuses reflect that acceptance. None implies visual, runtime, security, upgrade/recovery or release acceptance.
 
@@ -364,7 +380,7 @@ Packs 7C–7H and Batch 8 remain unauthorised. Native acceptance remains paused 
 | [docs/historical/release-notes/Release-Notes-v2.1.md](https://github.com/Caffoot/Caffoot-Lite/blob/fdc677920bfc52f48f641b3d6d1344c902a6a9b0/docs/historical/release-notes/Release-Notes-v2.1.md) | Historical / preserve | 8 | Listed — review pending | Content, links and evidence not yet audited. |
 | [docs/historical/website/Website-Release-Preparation.md](https://github.com/Caffoot/Caffoot-Lite/blob/fdc677920bfc52f48f641b3d6d1344c902a6a9b0/docs/historical/website/Website-Release-Preparation.md) | Historical / preserve | 8 | Listed — review pending | Content, links and evidence not yet audited. |
 
-## Current published-version guide source (8)
+## Historical published-version guide source (8)
 
 | File | Version applicability | Batch | Status | Findings / links / evidence |
 | --- | --- | --- | --- | --- |

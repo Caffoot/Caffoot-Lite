@@ -1,5 +1,7 @@
 # IT Assets Stock Intake
 
+> **Historical implementation contract.** The checkpoint, schema and pending-review wording below describe the original development stage. Use [Development Status](Development-Status.md) for the current integrated application and acceptance boundary, and the [v2.2 instructions](../how-tos/features-and-instructions/v2.2-draft/README.md) for current procedures. Original technical decisions and evidence are retained.
+
 > Unreleased v2.2. Batch 3.7 merged and was visually accepted via PR #388 at
 > `7f91f5d42feb3916cfab060abd5ca4b1558a92ba`. The dated verification below records
 > that batch. [Batch 3.8 circulation](IT-Assets-Issue-Return-and-Write-Off.md) extends

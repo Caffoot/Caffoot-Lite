@@ -141,7 +141,7 @@ For reporting periods, attribution and display examples, see [Read Service Desk 
 1. Tell technicians to check the audience before attaching files. Files on the original report follow the verified equipment assignment. The **Updates** composer starts internal, and files inherit each update’s visibility.
 2. Select a filename in **Ticket Details → Updates** to download it. The server rechecks the signed-in account, equipment access, ticket scope and parent message on every request. A saved link does not grant access.
 3. With Service Desk Edit, choose **Remove** beside an attachment and confirm **Remove Attachment**. The file is removed from the ticket’s retained quota. The attributed removal appears in the ticket’s **History**, under the visibility of the parent message. A file already downloaded or captured in a backup can still exist in that copy.
-4. Use the organisation’s rules for offline handling and backups. Ticket attachment bytes are stored in the SQLite database; protect the complete persistent installation when backing up. Caffoot Lite checks file contents and sizes and serves them as downloads. Malware scanning is scheduled outside this milestone.
+4. Use the organisation’s rules for offline handling and backups. Ticket attachment bytes are stored in the SQLite database; protect the complete persistent installation when backing up. Caffoot Lite checks file contents and sizes and serves them as downloads. Caffoot Lite does not scan attachments for malware. Follow your organisation’s file-security procedures.
 
 Up to 10 MB is allowed per file and 100 MB retained per ticket. If two technicians upload at the same time and their combined files would exceed the limit, only the first update that fits is saved. The rejected technician can retry after reducing the selection or after an authorised removal. [Technician instructions](Service-Desk-Tickets.md#add-a-note-share-an-update-or-manage-files)
 
@@ -168,7 +168,7 @@ The employee **Create Ticket** warning applies to every Department-assigned Devi
 ### Review A Historical Accessory Ticket
 
 1. With **Service Desk Read**, **IT Assets Read** and IT Assets enabled, open **IT → Service Desk**. Look up the original ticket number and check its issue, updates and history.
-2. If the issue is associated with a Device and the ticket predates the approved warning or the association, employee access requires a verifiable original audience. Where that audience cannot be established, the ticket and permitted files are available only to authorised IT.
+2. If the issue is associated with a Device and the ticket predates the confidentiality warning or the association, employee access requires a verifiable original audience. Where that audience cannot be established, the ticket and permitted files are available only to authorised IT.
 3. Check current equipment in **Device Details → Associated Equipment**. If the problem continues, an eligible employee can use **My Equipment → Report A Problem**, read the warning and raise a new request. The new ticket’s employee audience follows the Device’s current Departments.
 4. Check removals with a test employee account. Opening, replying, downloading and queued notification delivery all recheck the ticket’s audience. Adding a Department restores access to eligible current-period tickets created with the new rule.
 
@@ -190,11 +190,11 @@ The employee **Create Ticket** warning applies to every Department-assigned Devi
 
 *Sam’s authorised IT view retains the former mouse association after AST-LAP-014 custody ends. The current association is empty; the old mouse belongs to historical IT records, not Sarah’s or Alex’s employee equipment access.*
 
-![R1: Alex’s refreshed My Equipment list with AST-LAP-014 shared with Accounts after the real personal-to-Department handover.](screenshots/batch-7e/r1-alex-department-equipment.png)
+![Alex’s refreshed My Equipment list with AST-LAP-014 shared with Accounts after the real personal-to-Department handover.](screenshots/batch-7e/r1-alex-department-equipment.png)
 
 *In this alternative handover example, AST-LAP-014 moves from Alex to Accounts. Alex remains an Accounts member, so the refreshed list shows it under Shared with My Department rather than Assigned to Me.*
 
-![R3: Employee ticket SD-0001 showing Ticket not found after the recorded R1 personal-to-Accounts custody change.](screenshots/batch-7e/r3-original-personal-ticket-denied.png)
+![Employee ticket SD-0001 showing Ticket not found after the personal-to-Accounts handover.](screenshots/batch-7e/r3-original-personal-ticket-denied.png)
 
 *After the personal-to-Accounts handover, Alex can see the shared AST-LAP-014 but cannot open its earlier personal-custody ticket SD-0001. Authorised IT retains access to the historical ticket.*
 
@@ -250,6 +250,6 @@ The reset is one database operation, including ticket attachments. An error roll
 | A ticket appears in IT history only after an equipment move | The ticket may belong to an ended assignment. Current assignment access starts with eligible tickets for that assignment. |
 | Clean Start is rejected | Review the confirmation and administrator permissions first. If the reset reports a database error, the operational records are still available. |
 
-For employee-facing explanations, see [Service Desk Tickets](Service-Desk-Tickets.md). For source and test coverage, see .
+For employee-facing explanations, see [Service Desk Tickets](Service-Desk-Tickets.md).
 
 [Follow the connected Aster Services support request](Connected-Service-Desk-Journey.md) · [Draft v2.2 guides](README.md)
