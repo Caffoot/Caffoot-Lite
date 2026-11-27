@@ -2,9 +2,9 @@
 
 [← All feature guides](README.md)
 
-> **Draft v2.2 — Unreleased.** Reconciled against application baseline `fdc677920bfc52f48f641b3d6d1344c902a6a9b0` (schema 31), 26 November 2026. Use the [published v2.1 guide](https://github.com/Caffoot/Caffoot-Lite/blob/c3237114108cad9f7d4e57657b6aed5e0091a5ef/docs/how-tos/features-and-instructions/IPAM.md) for that release. Approved current desktop illustrations and final acceptance remain outstanding; see the [Batch 2 review record](../../../development-guide/Milestone-01-Batch-2-Review.md). Examples are fictional and use documentation address ranges.
+> **Draft v2.2 — Unreleased.** Reconciled against application baseline `fdc677920bfc52f48f641b3d6d1344c902a6a9b0` (schema 31), 26 November 2026. Use the [published v2.1 guide](https://github.com/Caffoot/Caffoot-Lite/blob/c3237114108cad9f7d4e57657b6aed5e0091a5ef/docs/how-tos/features-and-instructions/IPAM.md) for that release. Batch 7A proposed desktop illustrations are included below; visual and final acceptance remain outstanding; see the [Batch 2 review record](../../../development-guide/Milestone-01-Batch-2-Review.md). Examples are fictional and use documentation address ranges.
 
-> **Documentation status — 27 November 2026:** Focused independent reviews are recorded and [owner written/source acceptance of Batches 1–6](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7200681167) is recorded. Current visual/privacy/caption/alt approval remains outstanding; [Batch 7 reconciliation and proposed capture packs](../../../development-guide/Milestone-01-Batch-7-Review.md) await independent review and owner acceptance. Capture scope and method need separate authorisation.
+> **Documentation status — 27 November 2026:** Batches 1–6 written/source work and [Batch 7.1/bounded 7.2](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7210689297) are owner accepted. [Batch 7A](screenshots/batch-7a/README.md) is authorised for at most 40 desktop light-theme images. The proposed illustrations below await independent ChatGPT review and product-owner visual/privacy/caption/alt acceptance; no publication approval is implied.
 
 ## Understand the records
 
@@ -37,6 +37,14 @@ IP Address Management (IPAM) records planned address space and saved allocations
 | Gateway · Reserved / Assigned | The subnet gateway is protected. Change the network or its eligible network Device, rather than editing it as a spare address. |
 
 Usable capacity excludes network/broadcast addresses. Utilisation includes Assigned and Reserved addresses; an unallocated gateway is counted as reserved without creating an allocation record. Basic Device addresses are excluded from next-available suggestions, but are not counted as managed assignments. Therefore a basic address can still look Available in the grid, and an Available total is not an allocation guarantee.
+
+![Manage Subnets listing Lab Network 192.0.2.0/24 and Training Review Network 198.51.100.0/26 with gateway and VLAN information.](screenshots/batch-7a/ipam-manage-subnets.png)
+
+*Draft v2.2 — Manage Subnets shows the two standalone fictional networks and their network actions. Visual acceptance pending.*
+
+![Lab Network IP Addresses grid showing gateway 192.0.2.1, Device-owned .10 and .20, reserved .40 and .41, and Available addresses.](screenshots/batch-7a/ipam-address-grid.png)
+
+*Draft v2.2 — Lab Network address cards distinguish protected gateway, Assigned, Reserved and Available states. Basic .30 remains unlinked. Visual acceptance pending.*
 
 ## Worked example — add one subnet
 
@@ -105,6 +113,10 @@ A Device can have no primary IP. A new basic IPv4 address is entered with IPAM o
 Use [the complete Link to IPAM procedure](Optional-Features-and-Link-To-IPAM.md#deliberately-link-a-saved-basic-address): both features enabled and both Edit grants; saved Device **Details → Network → Network Identity → IPAM Association → Link to IPAM**; choose an existing containing managed subnet; check conflicts; deliberately confirm. **No suitable existing subnet** disables submission. Cancel changes nothing. Linking saves the Device association and Assigned allocation together, retaining existing address notes. Finish/cancel any Device edit first. Stale address/revision, active edit or allocation conflict saves neither part.
 
 **Basic IPs Outside Subnets** on **IPAM → Overview** is visible only with both Devices Read and IPAM Read. It counts non-empty basic addresses outside all managed network ranges. A basic address inside a network is excluded; an Address Block alone is not a managed network. Zero does not mean all addresses are linked. Network/broadcast boundaries count as inside for this statistic even though they are unusable for managed linking. Inspect the exact association instead of treating the count as a conversion tool.
+
+![IPAM Overview showing two networks, 316 usable addresses and Basic IPs Outside Subnets count 1.](screenshots/batch-7a/ipam-overview-basic-count.png)
+
+*Draft v2.2 — Basic IPs Outside Subnets is 1: the offsite printer is basic and outside the two managed networks. A count does not prove linking. Visual acceptance pending.*
 
 ## Bulk Reserve Or Release Addresses
 

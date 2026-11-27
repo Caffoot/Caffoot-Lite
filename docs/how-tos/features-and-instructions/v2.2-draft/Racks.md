@@ -2,9 +2,9 @@
 
 [← Draft v2.2 Guides](README.md)
 
-> **Draft v2.2 — Unreleased.** Reconciled against `fdc677920bfc52f48f641b3d6d1344c902a6a9b0` (schema 31), 26 November 2026. These instructions build on the preserved [published v2.1 guide](https://github.com/Caffoot/Caffoot-Lite/blob/c3237114108cad9f7d4e57657b6aed5e0091a5ef/docs/how-tos/features-and-instructions/Racks.md). Approved current desktop illustrations and final acceptance remain outstanding; see the [Batch 2 review record](../../../development-guide/Milestone-01-Batch-2-Review.md). Examples are fictional.
+> **Draft v2.2 — Unreleased.** Reconciled against `fdc677920bfc52f48f641b3d6d1344c902a6a9b0` (schema 31), 26 November 2026. These instructions build on the preserved [published v2.1 guide](https://github.com/Caffoot/Caffoot-Lite/blob/c3237114108cad9f7d4e57657b6aed5e0091a5ef/docs/how-tos/features-and-instructions/Racks.md). Batch 7A proposed desktop illustrations are included below; visual and final acceptance remain outstanding; see the [Batch 2 review record](../../../development-guide/Milestone-01-Batch-2-Review.md). Examples are fictional.
 
-> **Documentation status — 27 November 2026:** Focused independent reviews are recorded and [owner written/source acceptance of Batches 1–6](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7200681167) is recorded. Current visual/privacy/caption/alt approval remains outstanding; [Batch 7 reconciliation and proposed capture packs](../../../development-guide/Milestone-01-Batch-7-Review.md) await independent review and owner acceptance. Capture scope and method need separate authorisation.
+> **Documentation status — 27 November 2026:** Batches 1–6 written/source work and [Batch 7.1/bounded 7.2](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7210689297) are owner accepted. [Batch 7A](screenshots/batch-7a/README.md) is authorised for at most 40 desktop light-theme images. The proposed illustrations below await independent ChatGPT review and product-owner visual/privacy/caption/alt acceptance; no publication approval is implied.
 
 ## What Network Racks Records
 
@@ -116,6 +116,10 @@ A separately saved shelf remains if you cancel the Device draft. **Duplicate** c
 5. Reopen the destination racks and Device Details to verify the outcome. **Cancel** retains the old shelf and all linked Device associations, apart from any independently saved replacement shelf.
 
 The server rechecks the exact shelf preview, full linked-Device set, revisions, permissions, destinations and active edit reservations. A changed record or another editor blocks removal without applying a subset. Resolve the reported reason and reopen a fresh review. Do not delete the parent rack to bypass it.
+
+![Read-only Location tab for training-printer-01 showing Tabletop / Shelf Mounted and Training Rack, Shelf U3, Front.](screenshots/batch-7a/devices-details-shelf-location.png)
+
+*Draft v2.2 — The saved printer derives its Front U3 location from Training Printer Shelf; it occupies no separate U footprint. Visual acceptance pending.*
 
 ## Edit A Rack Or Correct Its Specifications
 
