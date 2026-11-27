@@ -160,6 +160,8 @@ In **Add Staff Member** or **Edit Staff Member**, the **Equipment And Ticket Acc
 
 ![Edit Staff Member for Alex Morgan with Left Company selected and guidance about retained equipment and unavailable new assignments.](screenshots/milestone-01-sidebar-device-staff-corrections/staff-left-company-light.png)
 
+![Staff Details for a staff member who has left the company, showing retained equipment and the message that new assignments are unavailable.](screenshots/milestone-01-native-followups/staff-details-left-company.png)
+
 *Draft v2.2 — Existing assignments remain for tracking and return; changing status is not a physical return.* [Dark mode](screenshots/milestone-01-sidebar-device-staff-corrections/staff-left-company-dark.png) · [Capture provenance](screenshots/milestone-01-sidebar-device-staff-corrections/Provenance.txt) · [Owner-approved correction evidence](https://github.com/Caffoot/Caffoot-Lite/pull/485#issuecomment-7216358365)
 
 **Assigned Equipment** shows Devices and outstanding IT Assets assigned directly to the person, according to your access. **Assignment History** retains the original relationships and responsible accounts.

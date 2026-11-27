@@ -78,6 +78,8 @@ Related: [Roles, Section Permissions And MFA](Roles-Section-Permissions-and-MFA.
 
 ![Expanded Technical Details showing the original Supplier reference, historical name fallback and unchanged Device reference.](../../../development-handovers/evidence/milestone-01-audit-details/audit-legacy-technical.png)
 
+![Restricted Activity Details with Technical Details expanded, showing unavailable before-and-after values without disclosing Supplier names or values.](screenshots/milestone-01-native-followups/audit-values-unavailable.png)
+
 *Expand Technical Details to inspect the original recorded values, including unchanged context. A missing historical name is not reconstructed from today's catalogue.*
 
 ![Device Activity Details showing the previous and new Primary IP Address and Asset Tag values.](../../../development-handovers/evidence/milestone-01-audit-details/audit-device-changes.png)
