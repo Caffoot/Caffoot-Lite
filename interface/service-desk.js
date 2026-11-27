@@ -436,6 +436,7 @@ window.caffootServiceDesk = (() => {
                         from.value = report.preference.from || '';
                         to.value = report.preference.to || '';
                         dates.hidden = period.value !== 'custom';
+                        window.caffootUkDates?.sync(dates);
                         initialised = true;
                     }
                     today = report.today;
@@ -460,6 +461,7 @@ window.caffootServiceDesk = (() => {
             if (!from.value && !to.value && today) {
                 from.value = today.slice(0, 8) + '01';
                 to.value = today;
+                window.caffootUkDates?.sync(dates);
             }
             if (!from.value || !to.value || from.value > to.value || !from.validity.valid || !to.validity.valid) {
                 ++latest;

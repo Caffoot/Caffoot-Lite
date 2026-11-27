@@ -29,7 +29,7 @@ jobs:
         run: |
           npm install --prefix "$RUNNER_TEMP/caffoot-browser-tests" --no-save --no-package-lock --no-audit --no-fund playwright@1.56.1
           "$RUNNER_TEMP/caffoot-browser-tests/node_modules/.bin/playwright" install --with-deps chromium
-      - name: Reproduce saved-date restoration failure on unchanged application
+      - name: Verify saved-date restoration against real sign-in and independent preferences
         env:
           NODE_PATH: ${{ runner.temp }}/caffoot-browser-tests/node_modules
           CAFFOOT_BATCH3_OUTPUT: ${{ runner.temp }}/batch3-correction-evidence
@@ -38,8 +38,9 @@ jobs:
           test "$(git rev-parse HEAD)" = "$EXPECTED_REVISION"
           mkdir -p "$CAFFOOT_BATCH3_OUTPUT"
           export CAFFOOT_CHROMIUM_PATH="$(node -p "require('playwright').chromium.executablePath()")"
-          CAFFOOT_BATCH3_BASELINE=1 node tests/milestone-01-correction-batch-3.cjs
-          test -s "$CAFFOOT_BATCH3_OUTPUT/baseline-restored-dates.png"
+          node tests/milestone-01-correction-batch-3.cjs
+          test -s "$CAFFOOT_BATCH3_OUTPUT/restored-empty-dates.png"
+          test -s "$CAFFOOT_BATCH3_OUTPUT/restored-populated-dates.png"
           printf "Revision: %s\n" "$EXPECTED_REVISION" > "$CAFFOOT_BATCH3_OUTPUT/Provenance.txt"
           "$CAFFOOT_CHROMIUM_PATH" --version >> "$CAFFOOT_BATCH3_OUTPUT/Provenance.txt"
           (cd "$CAFFOOT_BATCH3_OUTPUT" && sha256sum *.png >> Provenance.txt)

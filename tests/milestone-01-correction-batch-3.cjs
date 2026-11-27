@@ -137,6 +137,41 @@ async function run() {
             }
         } else {
             assert.deepEqual(displayed,['01/01/2020','01/01/2020']);
+            const screenshot = async name => {
+                if (!screenshotFolder) return;
+                fs.mkdirSync(screenshotFolder,{recursive:true});
+                await page.screenshot({path:path.join(screenshotFolder,name+'.png'),animations:'disabled'});
+            };
+            await screenshot('restored-empty-dates');
+            const ukDate = instance.date.split('-').reverse().join('/');
+            // Start with a different technician: their preference must not inherit Alex's.
+            await signOut(page,instance);
+            await signIn(page,instance,'Sam Taylor');
+            assert.equal(await period.inputValue(),'this-month');
+            const populated = {period:'custom',from:instance.date,to:instance.date};
+            await period.selectOption('custom');
+            assert.equal(await visible.last().inputValue(),ukDate,'Default To date must be visible');
+            await visible.first().fill(ukDate);
+            await visible.first().press('Tab');
+            await visible.last().fill(ukDate);
+            await visible.last().press('Tab');
+            const populatedResult = await waitForPreference(page,instance,populated);
+            assert.deepEqual(populatedResult.counts,{created:4,closed:2,reopened:1});
+            await signOut(page,instance);
+            await signIn(page,instance,'Sam Taylor');
+            assert.equal(await period.inputValue(),'custom');
+            assert.deepEqual(await sources.evaluateAll(inputs=>inputs.map(input=>input.value)),[instance.date,instance.date]);
+            assert.deepEqual(await visible.evaluateAll(inputs=>inputs.map(input=>input.value)),[ukDate,ukDate]);
+            const weekend = [0,6].includes(new Date(instance.date).getUTCDay());
+            assert.deepEqual(await report.locator('[data-report-metric]').allTextContents(),['4','2','1',weekend?'0h 0m':'1h 0m']);
+            await screenshot('restored-populated-dates');
+            await signOut(page,instance);
+            await signIn(page,instance,'Alex Morgan');
+            assert.equal(await period.inputValue(),'custom');
+            assert.deepEqual(await visible.evaluateAll(inputs=>inputs.map(input=>input.value)),['01/01/2020','01/01/2020']);
+            assert.deepEqual(await report.locator('[data-report-metric]').allTextContents(),['0','0','0','—']);
+            assert.deepEqual((await waitForPreference(page,instance,saved)).counts,{created:0,closed:0,reopened:0});
+            console.log('Empty and populated custom dates restored after real sign-out and sign-in; independent technician preferences verified.');
         }
         assert.deepEqual(errors,[]);
         await context.close();
