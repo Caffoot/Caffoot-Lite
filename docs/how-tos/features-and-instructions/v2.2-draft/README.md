@@ -10,6 +10,14 @@ Start with the task you need to complete. Each feature guide explains its permis
 
 On desktop, the left-hand navigation scrolls independently of the main page when the expanded menu is taller than the window. Scroll over the sidebar, or use the keyboard to reach the permitted links. **Settings & Data** (administrators only) and **Collapse Menu** remain reachable at the bottom. For example, if IT, Staff and Purchasing are expanded, scroll down to Settings & Data from either IT Assets Overview or Device Inventory. Collapsing a group or the menu does not change your permissions. Mobile navigation layout is unchanged.
 
+![IT Assets Overview with the expanded sidebar scrolled to Settings & Data and Collapse Menu.](screenshots/milestone-01-sidebar-device-staff-corrections/sidebar-it-assets-overview-light.png)
+
+*Draft v2.2 — Scroll within the desktop sidebar rather than moving the main page. The lower links remain reachable at a short 1440 × 600 viewport.* [Dark mode](screenshots/milestone-01-sidebar-device-staff-corrections/sidebar-it-assets-overview-dark.png)
+
+![Device Inventory with the same sidebar scrolled to the bottom and Settings & Data and Collapse Menu visible.](screenshots/milestone-01-sidebar-device-staff-corrections/sidebar-device-inventory-light.png)
+
+*Draft v2.2 — The same navigation works from Device Inventory.* [Dark mode](screenshots/milestone-01-sidebar-device-staff-corrections/sidebar-device-inventory-dark.png) · [Capture provenance](screenshots/milestone-01-sidebar-device-staff-corrections/Provenance.txt) · [Owner-approved correction evidence](https://github.com/Caffoot/Caffoot-Lite/pull/485#issuecomment-7216358365)
+
 ## Import, Upgrade And Recovery
 
 Use [Import Legacy Inventory Or Upgrade Docker](Legacy-Import-and-Docker-Upgrade.md) to review a standalone v1.3.3 export, understand protected Device conflicts, rehearse a v2.1 Docker upgrade on an isolated copy, or recover a complete Docker installation with its matching image.
