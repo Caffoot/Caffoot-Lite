@@ -629,12 +629,32 @@ async function run(){
   assert.ok(await page.getByText('Security At A Glance',{exact:true}).isVisible());
   await page.locator('[data-action="select-account-section"][data-section="help"]').first().click();
   await page.locator('.account-screen .expander').first().waitFor();
-  assert.equal(await page.locator('.account-screen .expander').count(),6,
-    'Help & Guides must preserve all six published help topics');
-  assert.equal(await page.locator('.account-screen .expander a').count(),8,
-    'All eight published guide links must remain available');
-  const fullGuides=page.locator('.account-screen a[href*="Features%20and%20Instructions"]');
-  assert.ok(await fullGuides.count()>0,'Approved full user documentation link must remain');
+  const draftGuideRoot='https://github.com/Caffoot/Caffoot-Lite/blob/8c680f3cd540a91df50299b8243f480fc9857242/docs/how-tos/features-and-instructions/v2.2-draft/';
+  const expectedHelpTopics=[
+    ['Getting Started',['README.md']],
+    ['Import From v1.3.3',['Legacy-Import-and-Docker-Upgrade.md']],
+    ['Devices, IPAM And Racks',['Devices.md','IPAM.md','Racks.md']],
+    ['Staff, Departments And My Equipment',['Staff-Members.md','Departments-and-Shared-Equipment.md','Device-Assignments-and-My-Equipment.md']],
+    ['Accounts, Roles And MFA',['Roles-Section-Permissions-and-MFA.md']],
+    ['IT Assets And Equipment Custody',['IT-Assets-Issue-Return-and-Write-Off.md']],
+    ['Suppliers And Equipment Lifecycle',['Supplier-Management.md','Equipment-Lifecycle.md']],
+    ['Service Desk And Email',['Service-Desk-Tickets.md','Service-Desk-Administration.md','Email-Templates-and-Company-Branding.md']],
+    ['Audit Trail And Optional Features',['Audit-Trail.md','Optional-Features-and-Link-To-IPAM.md']],
+    ['Database Backup And Recovery',['Legacy-Import-and-Docker-Upgrade.md']],
+    ['Appearance',['README.md']]
+  ];
+  const actualHelpTopics=await page.locator('.account-screen .expander').evaluateAll(expanders=>
+    expanders.map(expander=>[
+      expander.querySelector('button[data-action="toggle-account-help"]').textContent.replace(/\s*⌄\s*$/,'').trim(),
+      Array.from(expander.querySelectorAll('a'),link=>link.getAttribute('href'))
+    ]));
+  assert.deepEqual(actualHelpTopics,expectedHelpTopics.map(([topic,files])=>
+    [topic,files.map(file=>draftGuideRoot+file)]),
+    'Help & Guides must contain all eleven approved v2.2 topics and their nineteen exact draft guide links');
+  const fullGuides=page.getByRole('link',{name:/^Open Draft v2\.2 Guides/});
+  assert.equal(await fullGuides.count(),1,'Approved full draft documentation link must remain');
+  assert.equal(await fullGuides.getAttribute('href'),draftGuideRoot+'README.md');
+  assert.ok(await fullGuides.isVisible(),'Full draft documentation link must be visible');
   await page.locator('[data-action="select-account-section"][data-section="about"]').first().click();
   assert.ok(await page.getByText('Published Release',{exact:true}).isVisible());
   assert.ok(await page.getByText('v2.1',{exact:true}).isVisible());
