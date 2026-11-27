@@ -56,6 +56,7 @@ async function main(){
  const body=page.locator('#audit-detail-body'),technical=body.locator('details');
  const summary=technical.locator('summary');
  const mainRows=body.locator(':scope > .diff-row');
+ const mainText=()=>mainRows.evaluateAll(rows=>rows.map(row=>row.innerText).join('\\n'));
  async function open(label,reason){
    let row=page.locator('tr[data-audit-index]').filter({hasText:label});
    if(reason)row=row.filter({hasText:reason});
@@ -74,12 +75,12 @@ async function main(){
    await page.screenshot({path:path.join(output,name+'.png'),animations:'disabled'});
  }
  let trigger=await open('AST-LAP-014','Equipment Supplier association');
- assert.equal(await mainRows.count(),1);assert.match(await mainRows.innerText(),/Supplier\s+Not assigned\s+Northlight Ltd/);
- assert.doesNotMatch(await mainRows.innerText(),/Northlight Services|deviceId|supplierId/);
+ assert.equal(await mainRows.count(),1);assert.match(await mainText(),/Supplier\s+Not assigned\s+Northlight Ltd/);
+ assert.doesNotMatch(await mainText(),/Northlight Services|deviceId|supplierId/);
  await shot('audit-supplier-name');await close(trigger);
  trigger=await open('Legacy Laptop','Equipment Supplier association');
- assert.match(await mainRows.innerText(),/Historical name not recorded/);
- assert.doesNotMatch(await mainRows.innerText(),/Northlight Services/);
+ assert.match(await mainText(),/Historical name not recorded/);
+ assert.doesNotMatch(await mainText(),/Northlight Services/);
  await summary.focus();await page.keyboard.press('Enter');assert.equal(await technical.evaluate(el=>el.open),true);
  assert.match(await technical.innerText(),/Internal Record ID/);
  assert.match(await technical.innerText(),/Record Name Source/);
@@ -89,11 +90,11 @@ async function main(){
  await shot('audit-legacy-technical');await close(trigger);
  trigger=await open('Recorded Device Example');
  assert.equal(await mainRows.count(),2);
- assert.match(await mainRows.innerText(),/Primary IP Address/);assert.match(await mainRows.innerText(),/Asset Tag/);
- assert.doesNotMatch(await mainRows.innerText(),/Device Reference|Status/);
+ assert.match(await mainText(),/Primary IP Address/);assert.match(await mainText(),/Asset Tag/);
+ assert.doesNotMatch(await mainText(),/Device Reference|Status/);
  await shot('audit-device-changes');await close(trigger);
  for(const [label,field] of [['Recorded IPAM Example','Reserved For Device Reference'],['Recorded Rack Example','Height (U)'],['Recorded Staff Example','Department Reference'],['Recorded Department Example','Name'],['Recorded Role Example','Roles and permissions'],['Recorded Security Example','MFA status'],['Recorded Settings Example','Enabled']]){
-   trigger=await open(label);assert.ok((await mainRows.innerText()).includes(field));await close(trigger);
+   trigger=await open(label);assert.ok((await mainText()).includes(field));await close(trigger);
  }
  trigger=await open('Recorded Value Example');const values=await mainRows.allTextContents();
  for(const text of ['Null (recorded)','Empty (recorded)','False','0','Not recorded','<script>fictional</script>'])assert.ok(values.join(' ').includes(text),text);
