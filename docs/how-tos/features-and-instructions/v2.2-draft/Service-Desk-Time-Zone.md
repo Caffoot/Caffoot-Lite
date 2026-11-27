@@ -49,6 +49,10 @@ For a separate review checkout, the [draft Docker Compose example](compose-v2.2-
 2. Open **Settings & Data → Service Desk → Working Hours**. Under **Weekly Schedule Preview**, check that **Installation Time Zone** shows the IANA name you entered. A warning at the top of the settings panel means the app could not apply a valid zone.
 3. Open **IT → Service Desk**. Check that **Service Desk Activity** can show period totals and **Technician Activity** again. The average may still be unavailable for a period containing a closure with incomplete working-time history. See [how the dashboard presents each case](Service-Desk-Tickets.md#read-service-desk-activity).
 
+![Working Hours showing the weekly support schedule and Installation Time Zone in Weekly Schedule Preview.](../../../development-handovers/evidence/service-desk-reporting/working-hours-desktop-light.png)
+
+*Check Installation Time Zone in the preview after applying the deployment setting.*
+
 ![Administrator warning in Working Hours when the deployment time zone is missing.](../../../development-handovers/evidence/service-desk-reporting/missing-timezone-desktop-light.png)
 
 *Set a valid IANA zone in the deployment configuration and recreate the service to clear this warning.* [Capture details](../../../development-handovers/evidence/service-desk-reporting/README.md)

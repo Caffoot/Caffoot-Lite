@@ -1,7 +1,5 @@
 # Manage Email Templates And Company Branding
 
-> **Current status — 27 November 2026:** Batches 7C, 7D and 7E have separate owner draft-evidence acceptance (41/36/25 new paths; 102 combined; 7E has 23 distinct image contents). Original captures, provenance and requirement mappings remain unchanged; accepted instructions retain the approved merged corrections. Batch 8 editorial findings and publication approval remain outstanding. The exact approved application baseline is now `0251b43a3b5d41d626aa022c6d7f9b4d860433da`, schema 31. 7F/7G are authorised but blocked here by unavailable retained fixtures; no new pack has been delivered. [Current reconciliation and retained editorial limits](../../../development-guide/Milestone-01-7F-7G-Reconciliation.md). Earlier capture-time status notices are historical; publication remains unauthorised.
-
 > **Draft v2.2 — Unreleased.** These instructions describe the Email Templates settings in the v2.2 development application. For the published release, see the [v2.1 Settings guide](../Settings-and-Change-History.md).
 
 > **Written/source reconciliation:** Documentation Batch 5, application baseline `fdc677920bfc52f48f641b3d6d1344c902a6a9b0` (schema 31). Focused independent reviews are recorded and [owner written/source acceptance of Batches 1–6](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7200681167) is recorded. Current visual/privacy/caption/alt approval remains outstanding; [Batch 7 reconciliation and proposed capture packs](../../../development-guide/Milestone-01-Batch-7-Review.md) await independent review and owner acceptance. Capture scope and method need separate authorisation. Desktop capture remains deferred; existing historical/mobile images retain their original provenance. [Source review and exact screenshot requirements](../../../development-guide/Milestone-01-Batch-5-Review.md).
@@ -32,6 +30,10 @@ SMTP is the outgoing mail service. Obtain its server, port, transport and relay/
 
 A successful test means SMTP accepted that test message for sending. It does not verify anyone's saved account email address, issue an account recovery code, or establish recovery eligibility. The person verifies their own saved address through **My Account**. Recovery separately requires an active eligible account, a verified saved address and the applicable MFA. A fictional template code cannot verify or recover an account.
 
+![Email Settings showing SMTP server, connection security, sender identity, IT Support Email Address and the test-email controls.](../../../development-handovers/evidence/service-desk-notifications/email-settings-desktop-light.png)
+
+*Configure the outgoing server and sender, save the settings, then send a test to a mailbox you control.*
+
 ## Open Email Templates
 
 1. Sign in with an active administrator account and complete the authenticator step. A technician or employee account cannot manage these settings, even if it can use the Service Desk.
@@ -41,7 +43,7 @@ A successful test means SMTP accepted that test message for sending. It does not
 
 ![Email Templates in the integrated Settings page, with the template list, Ticket Closed editor, available variables and live preview.](../../../development-handovers/evidence/email-templates-branding/templates-desktop-light.png)
 
-*The selected template controls the variables and required details you see. On a phone, scroll down from the list to the editor and preview.* [Capture details](../../../development-handovers/evidence/email-templates-branding/README.md)
+*Choose a notification on the left, edit its wording in the centre and review the sample on the right.*
 
 ## Edit The Subject And Message
 

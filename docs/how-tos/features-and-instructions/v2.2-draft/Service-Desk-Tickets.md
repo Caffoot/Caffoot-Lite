@@ -1,7 +1,5 @@
 # Service Desk Tickets
 
-> **Current status — 27 November 2026:** Batches 7C, 7D and 7E have separate owner draft-evidence acceptance (41/36/25 new paths; 102 combined; 7E has 23 distinct image contents). Original captures, provenance and requirement mappings remain unchanged; accepted instructions retain the approved merged corrections. Batch 8 editorial findings and publication approval remain outstanding. The exact approved application baseline is now `0251b43a3b5d41d626aa022c6d7f9b4d860433da`, schema 31. 7F/7G are authorised but blocked here by unavailable retained fixtures; no new pack has been delivered. [Current reconciliation and retained editorial limits](../../../development-guide/Milestone-01-7F-7G-Reconciliation.md). Earlier capture-time status notices are historical; publication remains unauthorised.
-
 > **Current Batch 7E capture status — 27 November 2026:** [New desktop light illustrations](screenshots/batch-7e/README.md) use the approved merged schema-31 baseline. Independent ChatGPT review and separate owner visual/privacy/caption/alt acceptance remain pending. Earlier written/source and capture-status paragraphs retain their dated scope; the current pack status controls these new images. Published v2.1 and targeted correction-refresh requirements remain unchanged.
 
 > **Draft v2.2 — Unreleased.** Use **My Tickets** to raise and follow requests for equipment assigned to you or your Department. Technicians use **IT → Service Desk**. See [Find Tickets In The IT Queue](#find-tickets-in-the-it-queue) and [Read Service Desk Activity](#read-service-desk-activity).
@@ -46,13 +44,7 @@ The Device’s current Departments can read new associated accessory tickets rai
 
 A physical return, reassignment, write-off or reissue ends the previous employee audience. Fully returning an accessory issue also ends employee access to its tickets. Authorised IT can still review the previous ticket. Internal IT notes and their attachments remain in the technician workspace. [Assignment and ticket privacy](Service-Desk-Administration.md#what-happens-to-service-desk-tickets-when-equipment-changes-hands)
 
-![Mobile Create Ticket for the Main Office Printer with the confidentiality warning above Subject](../../../development-handovers/evidence/stage-6-4/screenshots/ticket-confidentiality-mobile-dark.png)
-
-*The warning appears before Subject and Description, including when Report A Problem preselects the Device.* [Capture provenance](../../../development-handovers/evidence/stage-6-4/README.md)
-
-![Create Ticket showing the confidentiality warning for the printer’s linked USB cable.](../../../development-handovers/evidence/stage-6-4/screenshots/accessory-confidentiality-mobile-dark.png)
-
-*Report A Problem preselects the accessory and shows who may see its reports and files.* [Capture provenance](../../../development-handovers/evidence/stage-6-4/README.md)
+See the [desktop confidentiality examples](#batch-7e-desktop-illustrations) for the shared printer and an associated accessory.
 
 ## Find And Review Your Tickets
 
@@ -86,9 +78,7 @@ If your Department membership or equipment custody changes, the same existing ac
 
 *The sidebar and tab count tickets. The number beside the ticket reference counts replies on that ticket.*
 
-![Ticket Overview on a mobile-sized dark screen with an unread reply badge beside Updates.](../../../development-handovers/evidence/stage-6-6-batch-2/screenshots/unread-updates-tab-mobile-dark.png)
-
-*The unread reply remains while Overview is open. Select Updates to load the conversation.* [Desktop and mobile captures and provenance](../../../development-handovers/evidence/stage-6-6-batch-2/README.md#application-screenshots)
+The [desktop Overview and Updates examples](#batch-7e-desktop-illustrations) show the unread badge before and after reading the conversation.
 
 ## Reply To IT Or Reopen A Ticket
 
@@ -163,6 +153,10 @@ The IT **Current Workload** and **Ticket Queue** refresh automatically every 30 
 
 If a temporary refresh failure occurs, the last successful results remain visible and the queue shows **Automatic refresh failed. Retrying…**. These results may be out of date until the next successful refresh. If access is withdrawn or the session ends, inaccessible results are cleared or the application returns you to sign-in. The automatic queue refresh does not reload historical reporting or the employee ticket lists.
 
+![The IT ticket queue with Search Tickets, Status, Priority, Assignment, Assigned Technician and Sort By controls.](../../../development-handovers/evidence/milestone-01-service-desk-corrections/queue-auto-created.png)
+
+*Use the queue filters to narrow the list, then open a ticket from its row.*
+
 ## Read Unread Replies In The IT Queue
 
 In **IT → Service Desk**, the sidebar badge counts distinct accessible tickets with unread replies across the IT queue, independently of status, assignment, search and pagination. The number beside each ticket number counts that ticket's unread replies. An authorised technician can have a different total from an employee because the IT view includes permitted internal notes.
@@ -187,9 +181,9 @@ With authorised **Service Desk** and equipment access, open **IT → Service Des
 3. For **Custom Date Range**, enter both **From** and **To**. Both dates are included, and **To** must be on or after **From**. The figures update when both dates are valid. Reporting dates follow the installation time zone.
 4. Read **Tickets Created**, **Closure Events**, **Tickets Reopened** and **Average Resolution Time**. Then read **Technician Activity** for **Work Started** and **Tickets Closed** in the same period.
 
-![The integrated Service Desk dashboard showing current workload, activity totals, technician activity and the queue.](../../../development-handovers/evidence/service-desk-reporting/dashboard-desktop-light.png)
+![Service Desk showing Current Workload, a Custom Date Range, activity totals and Technician Activity.](../../../development-handovers/evidence/milestone-01-service-desk-corrections/restored-populated-dates.png)
 
-*The reporting period applies to Service Desk Activity and Technician Activity. Current Workload remains live.* [Capture details](../../../development-handovers/evidence/service-desk-reporting/README.md)
+*From and To select the reporting period for Service Desk Activity and Technician Activity. Current Workload remains live.*
 
 ### What The Figures Count
 
@@ -227,7 +221,7 @@ If a colleague changes the ticket while a technician action is open, the applica
 
 ![Ticket Details Overview showing Close Ticket on the left and Close Window on the right. Ticket Category and Priority have pencil Edit buttons beside their headings.](../../../development-handovers/evidence/stage-6-6-batch-3/screenshots/ticket-details-light-1440.png)
 
-*Overview presents the three tabs and groups technician actions in the footer. Priority and category are corrected within Ticket Information.* [Dark and mobile captures](../../../development-handovers/evidence/stage-6-6-batch-3/README.md#application-screenshots)
+*Overview presents the three tabs and groups technician actions in the footer. Priority and category are corrected within Ticket Information.*
 
 ## Assign, Pause, Resolve Or Reopen A Ticket
 
@@ -265,6 +259,10 @@ Files must be genuine PNG, JPEG, PDF, TXT, DOCX or XLSX. Each file may be up to 
 - In **IT → Devices → Device Inventory**, open the Device and select the **Tickets** tab. Select a linked ticket to open its details. Closing the ticket returns you to the same page of the Device’s **Tickets** tab.
 - In **IT → IT Assets → Stock Inventory**, open the stock item and find **Linked Tickets** in **Stock Item Details**. Individually tracked stock can show tickets for its non-Device units. For equipment registered as a Device, use the Device’s own details.
 - The Device **Tickets** tab and stock item **Linked Tickets** section require Service Desk Read as well as access to the equipment. If the list is empty, check the equipment record before asking an administrator to review access.
+
+![Printer-015 Device Details with the Tickets tab selected and linked ticket rows with Open actions.](../../../development-handovers/evidence/it-service-desk/device-linked-tickets-desktop-light.png)
+
+*Open a linked ticket from the Device’s Tickets tab; closing it returns to the equipment view.*
 
 The [administrator guide](Service-Desk-Administration.md) covers access, historical privacy and retention.
 
