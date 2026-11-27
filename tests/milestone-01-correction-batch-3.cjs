@@ -31,7 +31,7 @@ async function startServer(zone, label) {
         'import runpy; runpy.run_path("tests/fixtures/service_desk_reporting.py", run_name="__main__")',
         database, zone], {cwd: root, encoding:'utf8'});
     assert.equal(seed.status, 0, seed.stderr);
-    python(`import sqlite3,sys\nfrom backend.accounts import hash_password\nwith sqlite3.connect(sys.argv[1]) as db:\n    db.execute('UPDATE accounts SET password_hash=?', (hash_password(sys.argv[2]),))\n    db.execute('DELETE FROM account_sessions')`, database, password);
+    python(`import sqlite3,sys\nfrom backend.accounts import hash_password\nfrom backend.mfa import new_secret\nwith sqlite3.connect(sys.argv[1]) as db:\n    db.execute('UPDATE accounts SET password_hash=?', (hash_password(sys.argv[2]),))\n    for (identity,) in db.execute('SELECT id FROM accounts').fetchall():\n        db.execute('UPDATE accounts SET mfa_secret=? WHERE id=?', (new_secret(), identity))\n    db.execute('DELETE FROM account_sessions')`, database, password);
     const logfile = path.join(temporary, label + '.log');
     const fd = fs.openSync(logfile, 'w');
     const server = spawn('python3', ['-c',
@@ -41,7 +41,7 @@ async function startServer(zone, label) {
         CAFFOOT_HOST:'127.0.0.1', CAFFOOT_SERVER_ADDRESS:'127.0.0.1', CAFFOOT_WEB_ADDRESS:base, CAFFOOT_PORT:String(port)
     }});
     fs.closeSync(fd);
-    return {server, base, logfile, date:seed.stdout.trim()};
+    return {server, base, logfile, database, date:seed.stdout.trim()};
 }
 
 async function openServiceDesk(page) {
@@ -63,7 +63,7 @@ async function signIn(page, instance, username) {
     await page.locator('#password').fill(password);
     await page.locator('#submit').click();
     await page.getByRole('heading', {name:'Verify Your Identity'}).waitFor();
-    const code = python('from backend.mfa import code_at; import time; print(code_at("JBSWY3DPEHPK3PXP", time.time()))');
+    const code = python(`import sqlite3,sys,time\nfrom backend.mfa import code_at\nwith sqlite3.connect(sys.argv[1]) as db:\n    secret = db.execute("SELECT mfa_secret FROM accounts WHERE username=?", (sys.argv[2],)).fetchone()[0]\n    print(code_at(secret, time.time()))`, instance.database, username);
     await page.locator('#code').fill(code);
     await page.locator('#app[aria-busy="false"]').waitFor();
     await openServiceDesk(page);
