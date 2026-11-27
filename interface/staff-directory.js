@@ -54,6 +54,9 @@ function sharedStaffField(label,name,record,draft,type='text',required=false) {
     <select class="input" id="staff-resolve-${name}" name="resolve-${name}" aria-describedby="staff-saved-${name}"><option value="">Leave Both Values Unchanged</option><option value="staff" ${selected==='staff'?'selected':''}>Keep Staff Value</option><option value="account" ${selected==='account'?'selected':''}>Keep Account Value</option></select>
   </div>`;
 }
+function equipmentAccessGuidance(active){
+  return (active?'Equipment can be assigned to eligible staff members. Access to tickets is governed by the linked account and its permissions.':'Existing equipment assignments are retained for tracking and return. New equipment assignments are unavailable while this staff member is marked as Left Company.')+' Use Return Equipment to record physical returns.';
+}
 function renderStaffForm(record, createLogin=false, draft=null) {
   const editing=!!record;
   record=record||{firstName:'',lastName:'',email:'',departmentId:null,jobTitle:'',telephone:'',location:'',active:true,accountId:null};
@@ -84,7 +87,7 @@ function renderStaffForm(record, createLogin=false, draft=null) {
     <div class="staff-role-note"><span class="role-name">Staff Member</span><strong>Default Role</strong><p>The baseline role is assigned to every new ordinary login. It does not grant general Devices, IT Assets, IPAM or Network Racks access.</p><p>After saving, use Manage Permissions in Staff Details to review individual access.</p></div>
     <div class="staff-mfa-hint"><strong>MFA And Security</strong><p>Existing password, MFA and account safeguards still apply. Any enabled additional role requires MFA.</p></div></div>`;
   const login=`<div class="card card-padded staff-login-card">${cardHeading('Caffoot Login','Optional account access, managed using the existing permissions system.','shield','orange')}${loginContent}</div>`;
-  const guidance='<div class="card card-padded staff-security-summary"><h3>Equipment And Ticket Access</h3><p class="sub">A Staff record can hold equipment assignments without a login. A linked login later provides only the personal access allowed by the baseline Staff Member role.</p><div class="divider"></div><div class="staff-quickpoints"><div><span class="point-dot"></span><span>Assigned equipment stays linked to this Staff Member.</span></div><div><span class="point-dot"></span><span>Eligible linked users can use My Equipment and, when Service Desk is enabled, My Tickets or Department Tickets for permitted equipment.</span></div><div><span class="point-dot"></span><span>No automatic IT inventory permission or department-based grant.</span></div></div><p class="formhint" style="margin-top:14px">Initial Device assignments are available. Use Return Equipment to record physical returns.</p></div>';
+  const guidance='<div class="card card-padded staff-security-summary"><h3>Equipment And Ticket Access</h3><p class="sub">A Staff record can hold equipment assignments without a login. A linked login later provides only the personal access allowed by the baseline Staff Member role.</p><div class="divider"></div><div class="staff-quickpoints"><div><span class="point-dot"></span><span>Assigned equipment stays linked to this Staff Member.</span></div><div><span class="point-dot"></span><span>Eligible linked users can use My Equipment and, when Service Desk is enabled, My Tickets or Department Tickets for permitted equipment.</span></div><div><span class="point-dot"></span><span>No automatic IT inventory permission or department-based grant.</span></div></div><p class="formhint" id="staff-equipment-access-guidance" style="margin-top:14px">'+equipmentAccessGuidance(record.active)+'</p></div>';
   return header(editing?'Edit Staff Member':'Add Staff Member','A Staff profile does not require a Caffoot login.',button('Back To Staff Members','staff-back'))+`<section class="section active staff-mode-view"><form id="staff-record-form" class="preview-aligned-form" data-id="${record.id||''}" data-revision="${escapeHtml(record.revision||'')}" autocomplete="off"><div class="staff-main-grid">${personal}<div class="staff-side-stack">${login}${guidance}</div></div><div class="staff-actions"><p>Save the Staff record and optional login together.</p><div class="staff-action-buttons">${button('Cancel','staff-back')}<button class="btn primary" type="submit">Save Staff Member</button></div></div>${draft?.feedback||'<p class="formhint" id="preview-form-feedback" role="status"></p>'}</form></section>`;
 }
 
@@ -452,6 +455,10 @@ function renderDepartments() {
   });
   document.addEventListener('change',event=>{
     if(event.target?.id==='staff-directory-status'){statusFilter=event.target.value;redraw();}
+    if(event.target?.id==='preview-active'){
+      const guidance=event.target.form?.querySelector('#staff-equipment-access-guidance');
+      if(guidance)guidance.textContent=equipmentAccessGuidance(event.target.value==='true');
+    }
     if(event.target?.id==='staff-create-login'){
       const checked=event.target.checked,fields=document.getElementById('staff-login-fields');
       if(fields){fields.hidden=!checked;fields.querySelectorAll('[name="username"],[name="password"],[name="confirmPassword"]').forEach(input=>input.required=checked);}

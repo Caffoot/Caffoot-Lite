@@ -28,6 +28,16 @@ Initial allocation is not a stock receipt and does not mark a Device Ready. Thes
 
 You need **Devices Edit**, with Devices enabled. Starting from Staff Details also requires Staff Members Read. Device Details provides a restricted recipient picker without requiring broad Staff Members or Departments access.
 
+Virtual machines do not have an **Assigned To** tab in Device Details because they cannot be physically allocated. Other applicable Device Details tabs remain available according to the existing permissions and feature settings. Physical Devices retain the Assigned To tab, including any saved assignment history.
+
+![App-VM-01 Device Details Overview showing applicable tabs without Assigned To.](screenshots/milestone-01-sidebar-device-staff-corrections/virtual-device-light.png)
+
+*Draft v2.2 — A virtual machine is not physically assigned.* [Dark mode](screenshots/milestone-01-sidebar-device-staff-corrections/virtual-device-dark.png)
+
+![Reception-PC Assigned To tab showing Alex Morgan and the retained assignment history.](screenshots/milestone-01-sidebar-device-staff-corrections/physical-device-assigned.png)
+
+*Draft v2.2 — Physical Device custody and history remain available to authorised users.* [Capture provenance](screenshots/milestone-01-sidebar-device-staff-corrections/Provenance.txt) · [Owner-approved correction evidence](https://github.com/Caffoot/Caffoot-Lite/pull/485#issuecomment-7216358365)
+
 Only **Desktop**, **Laptop** and **Printer** qualify for initial allocation. A Device must:
 
 - be physical and have **Active** status;

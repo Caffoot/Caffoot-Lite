@@ -270,6 +270,11 @@ html.dark #app .switch-row.account-status-control[data-account-status="disabled"
 
 /* Use the measured Dashboard shared navigation, independent of page CSS. */
 #sidebar {gap:12px;}
+/* Desktop sidebar scrolling is independent of the current page stylesheet. */
+@media(min-width:721px){
+  #sidebar{position:sticky;top:0;height:100vh;min-height:0;overflow-y:auto;}
+  #sidebar > *{flex-shrink:0;}
+}
 #sidebar .nav-item {font-size:13px;}
 #sidebar.collapsed .nav-item {justify-content:center;padding:12px;}
 @media(max-width:720px){#sidebar:not(.collapsed) .brand {margin:0 0 16px;}#sidebar:not(.collapsed) .brand img {width:36px;height:36px;}}
