@@ -6,6 +6,20 @@ Caffoot Lite brings accounts, Staff Members, Departments, Devices and optional I
 
 Start with the task you need to complete. Each feature guide explains its permissions, controls, numbered procedures, examples and recovery steps. A missing section may mean the feature is switched off or your account lacks permission; ask an administrator to check before creating duplicate records.
 
+## Move Around The Application
+
+On desktop, the left-hand navigation scrolls independently of the main page when the expanded menu is taller than the window. Scroll over the sidebar, or use the keyboard to reach the permitted links. **Settings & Data** (administrators only) and **Collapse Menu** remain reachable at the bottom. For example, if IT, Staff and Purchasing are expanded, scroll down to Settings & Data from either IT Assets Overview or Device Inventory. Collapsing a group or the menu does not change your permissions. Mobile navigation layout is unchanged.
+
+![IT Assets Overview with the expanded sidebar scrolled to Settings & Data and Collapse Menu.](screenshots/milestone-01-sidebar-device-staff-corrections/sidebar-it-assets-overview-light.png)
+
+*Draft v2.2 — Scroll within the desktop sidebar rather than moving the main page. The lower links remain reachable at a short 1440 × 600 viewport.* [Dark mode](screenshots/milestone-01-sidebar-device-staff-corrections/sidebar-it-assets-overview-dark.png)
+
+![Device Inventory with the same sidebar scrolled to the bottom and Settings & Data and Collapse Menu visible.](screenshots/milestone-01-sidebar-device-staff-corrections/sidebar-device-inventory-light.png)
+
+*Draft v2.2 — The same navigation works from Device Inventory.* [Dark mode](screenshots/milestone-01-sidebar-device-staff-corrections/sidebar-device-inventory-dark.png) · [Capture provenance](screenshots/milestone-01-sidebar-device-staff-corrections/Provenance.txt) · [Owner-approved correction evidence](https://github.com/Caffoot/Caffoot-Lite/pull/485#issuecomment-7216358365)
+
+> **Correction evidence — 27 November 2026:** The new Batch 2 correction captures show the shared desktop sidebar, virtual/physical Device Details and Active/Left Company guidance at `6feba03d`. Earlier screenshots retain their original provenance and approval scope; where an older capture shows the previous Staff guidance, virtual Assigned To tab or clipped navigation, refresh or replace that view before publication. No blanket screenshot or release approval is implied.
+
 ## Import, Upgrade And Recovery
 
 Use [Installation — isolated private review](Installation.md) for the separate draft v2.2 Docker/Portainer/Compose setup, storage, HTTPS and first-administrator steps. There is no public v2.2 image or production deployment procedure established here.

@@ -171,6 +171,18 @@ From Alex’s Staff Details, the browser-native confirmation reads **“Mark As 
 
 ## Work With Equipment
 
+> **Correction evidence — 27 November 2026:** The two status views below and their dark variants are owner-approved at `6feba03d`. Earlier Add/Edit Staff, Create Login and Resolve Difference images (including Batch 7B and historical captures) predate the corrected guidance; preserve their provenance and refresh any that show the old guidance before publication. This does not approve the remaining Batch 7B images.
+
+In **Add Staff Member** or **Edit Staff Member**, the **Equipment And Ticket Access** guidance follows the selected Staff Status. For Active, it explains that equipment can be assigned to eligible Staff and that ticket access depends on the linked account and its permissions. For Left Company, it explains that existing assignments remain for tracking and return, and new assignments are unavailable. Changing the selection updates the guidance immediately; it does not change saved status, equipment custody or login access until the existing Save and confirmation workflow succeeds. Use **Return Equipment** to record actual physical returns. Cancel leaves the saved record unchanged.
+
+![Edit Staff Member for Alex Morgan with Active selected and equipment eligibility and ticket access guidance.](screenshots/milestone-01-sidebar-device-staff-corrections/staff-active-light.png)
+
+*Draft v2.2 — Active Staff guidance.* [Dark mode](screenshots/milestone-01-sidebar-device-staff-corrections/staff-active-dark.png)
+
+![Edit Staff Member for Alex Morgan with Left Company selected and guidance about retained equipment and unavailable new assignments.](screenshots/milestone-01-sidebar-device-staff-corrections/staff-left-company-light.png)
+
+*Draft v2.2 — Existing assignments remain for tracking and return; changing status is not a physical return.* [Dark mode](screenshots/milestone-01-sidebar-device-staff-corrections/staff-left-company-dark.png) · [Capture provenance](screenshots/milestone-01-sidebar-device-staff-corrections/Provenance.txt) · [Owner-approved correction evidence](https://github.com/Caffoot/Caffoot-Lite/pull/485#issuecomment-7216358365)
+
 **Assigned Equipment** shows Devices and outstanding IT Assets assigned directly to the person, according to your access. **Assignment History** retains the original relationships and responsible accounts.
 
 With Devices Edit, **Assign Equipment** records an eligible initial Device allocation to an active person. With IT Assets Edit, **Issue Equipment** opens stock issue for them. **Return Equipment** beside outstanding stock remains available for Staff who have left. Device returns require both relevant equipment permissions. Follow [Device Assignments And My Equipment](Device-Assignments-and-My-Equipment.md) and the linked stock guides for the full checks.

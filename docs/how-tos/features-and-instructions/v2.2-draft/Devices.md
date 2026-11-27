@@ -79,13 +79,13 @@ The **Details** action opens the read-only Device view. Opening and viewing a De
 | Network | Recorded IP and permitted network relationships, including explicit basic-IP linking when eligible. |
 | Software | Recorded platform, software and applicable server services. |
 | Location | Recorded mounting/location and permitted Rack or shelf information. |
-| Assigned To | Current custody and relevant assignment information, subject to access. |
+| Assigned To | Physical Devices only: current custody and relevant assignment information, subject to access. Virtual machines do not show this tab. |
 | Associated Equipment | Explicitly associated accessories where authorised. |
 | Virtual Machines | Recorded hosted guests for relevant physical servers. |
 | History | Retained historical type details where present; not the full organisation Audit Trail. |
 | Tickets | Linked support tickets where Service Desk and Devices access allow the view. |
 
-Available tabs and fields depend on type, recorded information, enabled features and effective access. Missing related data is not proof that no relationship exists. **My Equipment** is a separate restricted employee view, not an alternative route into the IT Device Inventory.
+Available tabs and fields depend on type, recorded information, enabled features and effective access. Virtual machines do not have an **Assigned To** tab in Device Details because they cannot be physically allocated. Other applicable Device Details tabs remain available according to the existing permissions and feature settings. Physical Devices retain the Assigned To tab, including any saved assignment history. See the [corrected virtual and physical Device screenshots](Device-Assignments-and-My-Equipment.md#choose-the-correct-workflow) and [desktop navigation guidance](README.md#move-around-the-application). Missing related data is not proof that no relationship exists. **My Equipment** is a separate restricted employee view, not an alternative route into the IT Device Inventory.
 
 ![Read-only Device Details Overview for training-switch-01, including its active status, managed primary IP and recorded location.](screenshots/batch-7a/devices-details-overview.png)
 
