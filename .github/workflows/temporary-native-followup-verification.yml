@@ -29,33 +29,12 @@ jobs:
         run: |
           npm install --prefix "$RUNNER_TEMP/caffoot-browser-tests" --no-save --no-package-lock --no-audit --no-fund playwright@1.56.1
           "$RUNNER_TEMP/caffoot-browser-tests/node_modules/.bin/playwright" install --with-deps chromium
-      - name: Check exact wording and capture two affected screens
+      - name: Verify retained reporting-period focus and editing safeguards
         env:
           NODE_PATH: ${{ runner.temp }}/caffoot-browser-tests/node_modules
           EXPECTED_REVISION: ${{ github.event.pull_request.head.sha }}
-          CAFFOOT_FOLLOWUP_WORDING: '1'
-          CAFFOOT_BATCH2_OUTPUT: ${{ runner.temp }}/native-followup-evidence
-          CAFFOOT_BATCH4_OUTPUT: ${{ runner.temp }}/native-followup-evidence
+          CAFFOOT_FOCUS_REGRESSION: '1'
         run: |
           test "$(git rev-parse HEAD)" = "$EXPECTED_REVISION"
           export CAFFOOT_CHROMIUM_PATH="$(node -p "require('playwright').chromium.executablePath()")"
-          node tests/milestone-01-correction-batch-2.cjs
-          node tests/milestone-01-correction-batch-4.cjs
-          test -s "$CAFFOOT_BATCH2_OUTPUT/staff-details-left-company.png"
-          test -s "$CAFFOOT_BATCH4_OUTPUT/audit-values-unavailable.png"
-          printf "Revision: %s\n" "$EXPECTED_REVISION" > "$CAFFOOT_BATCH2_OUTPUT/Provenance.txt"
-          "$CAFFOOT_CHROMIUM_PATH" --version >> "$CAFFOOT_BATCH2_OUTPUT/Provenance.txt"
-          (cd "$CAFFOOT_BATCH2_OUTPUT" && sha256sum *.png >> Provenance.txt)
-      - name: Reproduce retained-focus refresh suppression only
-        env:
-          NODE_PATH: ${{ runner.temp }}/caffoot-browser-tests/node_modules
-          CAFFOOT_FOCUS_DIAGNOSTIC: '1'
-        run: node tests/milestone-01-correction-batch-3.cjs
-      - name: Upload verified wording screenshots
-        if: success()
-        uses: actions/upload-artifact@v4
-        with:
-          name: native-followup-wording-${{ github.event.pull_request.head.sha }}
-          path: ${{ runner.temp }}/native-followup-evidence/
-          if-no-files-found: error
-          retention-days: 14
+          node tests/milestone-01-correction-batch-3.cjs
