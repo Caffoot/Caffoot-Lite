@@ -269,6 +269,8 @@ These images follow the fictional training journey. Read the caption to distingu
 
 ## Batch 7E Desktop Illustrations
 
+> **Illustration limits corrected after independent review:** The former-personal-ticket image shows **Ticket not found**, not equipment Details denial or a matched person-to-Department pair. Sarah’s AST-LAP-015 list is a separate current-equipment example, not the after-list for Alex’s AST-LAP-014. The accepted instructions below/above remain; matched holder-list, equipment Details-denial and person-to-Department visual gaps are explicitly outstanding. [Corrected coverage](screenshots/batch-7e/Coverage.md) · [Evidence and proposed next step](../../../development-guide/Milestone-01-Batches-7C-7E-Review-Corrections.md#essential-visual-gaps-and-proposal). No new capture or visual substitution has been approved.
+
 These images follow the fictional training journey. Read the caption to distinguish a draft, a cancelled preview and a saved outcome. [Complete original coverage and limits](screenshots/batch-7e/Coverage.md).
 
 ![Employee-safe equipment Details with recorded hardware fields and Close and Report A Problem.](screenshots/batch-7e/employee-safe-device-details.png)

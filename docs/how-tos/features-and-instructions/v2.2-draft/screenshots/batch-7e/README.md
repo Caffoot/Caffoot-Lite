@@ -1,5 +1,7 @@
 # Batch 7E — Desktop Instructional Screenshots
 
+> **Independent-review correction — 27 November 2026:** The new captures used Playwright **1.62.1**, as recorded dynamically at capture time. Earlier reused images retain their own versions and provenance. [Evidence, corrected 7E mappings and pending visual-gap proposal](../../../../../development-guide/Milestone-01-Batches-7C-7E-Review-Corrections.md). This documentation correction adds or changes no image.
+
 **27 November 2026. 22 new desktop light images, maximum 22; 10 groups and 52 owned specifications retained, with shared references.** Independent ChatGPT review and separate product-owner visual/privacy/caption/alt acceptance remain pending. No publication approval.
 
 Authority: [consolidated owner approval](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7217032947). [Coverage](Coverage.md) · [provenance manifest](manifest.json) · [verification](Verification.md). The category ceilings are ceilings, not quotas.
@@ -14,7 +16,7 @@ Authority: [consolidated owner approval](https://github.com/Caffoot/Caffoot-Lite
 
 ## Fixture, Sequence And Provenance
 
-Application `000818f42e854e4a1fee8692b9ffaaa52b5c788d`, schema 31, from the exact approved merged branch; documentation reconciliation checkpoint `19e148efc866c054842c628ea2a6fde4420e2347`. All non-documentation mode/blob identities match that application baseline. No unmerged correction branch was integrated. Genuine disposable SQLite and local loopback HTTPS application on Linux, using existing installed Playwright 1.62.0 and Chromium 156.0.8078.79; no extra packages, browser, virtual display, cloud desktop or private deployment. No screenshot editing, cropping, masking, compositing or fabricated application UI.
+Application `000818f42e854e4a1fee8692b9ffaaa52b5c788d`, schema 31, from the exact approved merged branch; documentation reconciliation checkpoint `19e148efc866c054842c628ea2a6fde4420e2347`. All non-documentation mode/blob identities match that application baseline. No unmerged correction branch was integrated. Genuine disposable SQLite and local loopback HTTPS application on Linux, using existing installed Playwright 1.62.1 and Chromium 156.0.8078.79; no extra packages, browser, virtual display, cloud desktop or private deployment. No screenshot editing, cropping, masking, compositing or fabricated application UI.
 
 The fixture reuses repository schema, account/MFA/role/Staff helpers and the existing Supplier, stock, Device and equipment browser-navigation patterns. Accounts, Sales and IT are fictional Departments. Sam Taylor has effective Devices, IT Assets, Suppliers, Staff Members, Departments and Service Desk Edit overrides on the protected baseline Staff Member role. training-admin is an active MFA-confirmed administrator; equipment.editor has only Devices/IT Assets Edit; equipment.reader has Devices/IT Assets Read; assets.reader has IT Assets Read alone; supplier.reader has Suppliers Read alone. Alex Morgan, Sarah Lewis and Priya Shah have only baseline Staff Member access and linked Active Staff records. All six optional features are enabled unless the per-image manifest records otherwise. Read/Edit grants apply only with the feature enabled; administrator access is independent of ordinary overrides. Baseline employees use /account, not the protected /inventory route.
 
@@ -85,3 +87,7 @@ Stop after this pack for independent ChatGPT review and separate product-owner v
 - [Device-Assignments-and-My-Equipment](../../Device-Assignments-and-My-Equipment.md)
 - [Service-Desk-Administration](../../Service-Desk-Administration.md)
 - [Service-Desk-Tickets](../../Service-Desk-Tickets.md)
+
+## Essential Visual Gaps Identified In Independent Review
+
+The original 22 images remain preserved, with their original captions, alt text and capture metadata. Sarah’s AST-LAP-015 list is a separate current-equipment example, not the after view for Alex’s AST-LAP-014. The former personal-ticket image shows **Ticket not found**, not equipment Details denial or a paired person-to-Department handover. Matched holder lists, equipment Details denial and the person-to-Department pair remain essential visual gaps; the written procedures remain accurate but are not an approved visual substitution. [Corrected exact mappings](Coverage.md) · [Bounded existing-evidence assessment and approval-dependent proposal](../../../../../development-guide/Milestone-01-Batches-7C-7E-Review-Corrections.md#essential-visual-gaps-and-proposal). No new capture, replacement, allocation reinterpretation or coverage waiver is authorised by this correction.

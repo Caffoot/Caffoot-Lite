@@ -344,8 +344,7 @@
       "file": "sarah-current-equipment.png",
       "allocation": "My Equipment and safe equipment Details",
       "states": [
-        "B3-E3-S02",
-        "B3-E5-S02"
+        "B3-E3-S02"
       ],
       "caption": "Sarah\u2019s current list contains independent AST-LAP-015 and its explicit keyboard issue. Retired/written-off AST-LAP-014 and its former holders\u2019 IT history are not employee equipment.",
       "alt": "Sarah\u2019s My Equipment showing current AST-LAP-015 and its outstanding associated keyboards.",
@@ -392,7 +391,8 @@
       "sha256": "26dd6ab9c92e5a3910a01a7c7296f618f0cc0df29ddfab61ea80f392e3e0faa2",
       "urlPath": "/account#equipment",
       "independentVisualAcceptance": "pending",
-      "ownerVisualAcceptance": "pending"
+      "ownerVisualAcceptance": "pending",
+      "evidenceLimitations": "Sarah\u2019s current AST-LAP-015 list only. This is not a matched after-list for AST-LAP-014 and does not illustrate a person-to-Department custody change."
     },
     {
       "file": "employee-safe-asset-quantity.png",
@@ -451,10 +451,7 @@
       "file": "former-personal-ticket-unavailable.png",
       "allocation": "Handover and membership confidentiality",
       "states": [
-        "B3-E5-S02",
-        "B3-E5-S03",
-        "B3-E5-S04",
-        "B5-A8-S01"
+        "B3-E5-S04"
       ],
       "caption": "Alex\u2019s old AST-LAP-014 ticket is unavailable after that custody ended. An old reference does not grant employee access to retained IT history or the next holder\u2019s records.",
       "alt": "Employee ticket window showing the former personal ticket is not available, without its historical content.",
@@ -501,7 +498,8 @@
       "sha256": "945e0833ee898878591c2868575aa86033b22aac5738668966e035ed211bcd3a",
       "urlPath": "/account#my-tickets",
       "independentVisualAcceptance": "pending",
-      "ownerVisualAcceptance": "pending"
+      "ownerVisualAcceptance": "pending",
+      "evidenceLimitations": "Employee-sided Ticket not found for former AST-LAP-014 ticket SD-0001 after ended custody/retirement only. No equipment Details denial, matched holder lists, person-to-Department pair or IT-side historical ticket screen is pictured."
     },
     {
       "file": "employee-recorded-software.png",
@@ -1292,7 +1290,17 @@
       ],
       "sourcePack": "7C",
       "id": "Shared-7C-alex-before-handover",
-      "provenanceLimitations": "Exact original Batch 7C bytes, actor, timestamp and caption; these shared uses do not relabel the image as a later outcome. Batch 7C independent/owner visual acceptance remains pending."
+      "provenanceLimitations": "Exact original Batch 7C bytes, actor, timestamp and caption; these shared uses do not relabel the image as a later outcome. Batch 7C independent/owner visual acceptance remains pending.",
+      "partialStateUses": [
+        {
+          "state": "B3-E5-S02",
+          "limit": "AST-LAP-014 personal employee list before custody change only; no matching employee after-list."
+        },
+        {
+          "state": "B5-A8-S01",
+          "limit": "Personal before context only; no matched Department after-view."
+        }
+      ]
     },
     {
       "file": "docs/how-tos/features-and-instructions/v2.2-draft/screenshots/batch-7b/staff-left-company-retained.png",
@@ -1408,5 +1416,29 @@
     "e-warnings.cjs": "9db1e081b3cc675805130634fa4470da26c8956a5353320dac950da4bc858282",
     "e-conversation.cjs": "a3b9e56f17792615bfeeb7bf7611aa835539597dec99694ec46c06d8bde15c07",
     "e-historical-accessory.cjs": "31f1a584d932a0f26aceb2ee5c15add0e460502ddace4fdc40d4be61fb3a2895"
+  },
+  "independentReviewCorrections": {
+    "review": "https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7217975857",
+    "startingDocumentationRevision": "ecb9ccef3aeec250d8211055e12f0e8f6e041ea6",
+    "removedInaccurateImageStateAssociations": {
+      "sarah-current-equipment.png": [
+        "B3-E5-S02"
+      ],
+      "former-personal-ticket-unavailable.png": [
+        "B3-E5-S02",
+        "B3-E5-S03",
+        "B5-A8-S01"
+      ]
+    },
+    "preservedNewImages": 22,
+    "proposal": "../../../../../development-guide/Milestone-01-Batches-7C-7E-Review-Corrections.md#essential-visual-gaps-and-proposal",
+    "captureApproval": "not granted; no captures undertaken",
+    "pendingEssentialVisualStates": [
+      "B3-E5-S02",
+      "B3-E5-S03",
+      "B3-E4-S04",
+      "B5-A8-S01"
+    ],
+    "sourceAutomation": "Playwright 1.62.1 for new captures; historical 7B reuse remains Playwright 1.62.0"
   }
 }

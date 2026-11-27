@@ -1,5 +1,9 @@
 # Milestone 01 — Batch 7 Screenshot Reconciliation
 
+## Current Independent-Review Corrections — 27 November 2026
+
+[Independent review](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7217975857) identified inaccurate README automation wording and three 7E mapping claims. [Correction evidence and bounded visual-gap proposal](Milestone-01-Batches-7C-7E-Review-Corrections.md) records capture-time Playwright 1.62.1 for all 99 new images, corrected mappings and essential gaps for matched holder lists, equipment Details denial and person-to-Department paired views. All 99 delivered PNGs, original requirements, accepted written instructions and allocation ceilings remain preserved. No replacement capture or visual waiver is approved; the correction checkpoint is documentation only. Earlier delivery/check counts remain historical records, not proof of those missing views. PR #472 stays draft; stop for independent review.
+
 ## Batch 7E Delivery And Consolidated Stop — 27 November 2026
 
 **22/22 new desktop light images**, plus exact 7C pre-handover reuse and one narrow accepted 7B offboarding reference; all **10 groups / 52 owned states and one shared reference** retained. [Pack/direct images and guides](../how-tos/features-and-instructions/v2.2-draft/screenshots/batch-7e/README.md) · [coverage](../how-tos/features-and-instructions/v2.2-draft/screenshots/batch-7e/Coverage.md) · [manifest](../how-tos/features-and-instructions/v2.2-draft/screenshots/batch-7e/manifest.json) · [verification](../how-tos/features-and-instructions/v2.2-draft/screenshots/batch-7e/Verification.md). Counts: My Equipment 4/4, ticket creation/warnings 5/5, ticket navigation 4/4, unread/replies 5/5, custody/membership confidentiality 4/4. The 7B offboarding image is its separate AC-LAP-07 fixture, with original acceptance and limitations; no relabelling as this journey’s current state.
