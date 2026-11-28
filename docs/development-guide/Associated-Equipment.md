@@ -1,6 +1,6 @@
 # Associated Equipment — Backend Operations
 
-> **Historical implementation contract.** The checkpoint, schema and pending-review wording below describe the original development stage. Use [Development Status](Development-Status.md) for the current integrated application and acceptance boundary, and the [v2.2 instructions](../how-tos/features-and-instructions/v2.2-draft/README.md) for current procedures. Original technical decisions and evidence are retained.
+> **Historical implementation contract.** The checkpoint, schema and pending-review wording below describe the original development stage. Use [Development Status](Development-Status.md) for the current integrated application and acceptance boundary, and the [v2.2 instructions](../how-tos/features-and-instructions/v2.2/README.md) for current procedures. Original technical decisions and evidence are retained.
 
 **Checkpoints A–D are complete for review on draft PR #391.** Schema 18
 provides explicit associations; Schema 19 adds audited direct assignment closure
@@ -253,7 +253,7 @@ Both original backend writer contracts and Schema 18 are unchanged.
 passed. Twelve genuine desktop/mobile light/dark captures, source hashes and
 limits are in [the C evidence report](../development-handovers/evidence/associated-equipment/Report.md).
 The Function Index contains 977 definitions; JavaScript/Python syntax and diff
-checks passed. [Draft user instructions](../how-tos/features-and-instructions/v2.2-draft/Associated-Equipment.md)
+checks passed. [Draft user instructions](../how-tos/features-and-instructions/v2.2/Associated-Equipment.md)
 cover implemented behaviour. Existing accepted screenshots remain intact.
 
 ## Direct Handover Checkpoint D
@@ -323,7 +323,7 @@ are E's next step; native/private-data acceptance remains deferred.
 
 ## Remaining Acceptance
 
-Checkpoint E adds [final draft instructions](../how-tos/features-and-instructions/v2.2-draft/Associated-Equipment.md),
+Checkpoint E adds [final draft instructions](../how-tos/features-and-instructions/v2.2/Associated-Equipment.md),
 [36 genuine source-matched captures and acceptance evidence](../development-handovers/evidence/associated-equipment-final/Report.md),
 the direct journey in CI and 64 adjacent passing regressions. Final-head Actions
 are reported in PR #391. Keep PR #391 draft; no merge,

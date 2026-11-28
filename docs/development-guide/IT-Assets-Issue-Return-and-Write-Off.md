@@ -1,6 +1,6 @@
 # IT Assets: Issue, Return And Write Off
 
-> **Historical implementation contract.** The checkpoint, schema and pending-review wording below describe the original development stage. Use [Development Status](Development-Status.md) for the current integrated application and acceptance boundary, and the [v2.2 instructions](../how-tos/features-and-instructions/v2.2-draft/README.md) for current procedures. Original technical decisions and evidence are retained.
+> **Historical implementation contract.** The checkpoint, schema and pending-review wording below describe the original development stage. Use [Development Status](Development-Status.md) for the current integrated application and acceptance boundary, and the [v2.2 instructions](../how-tos/features-and-instructions/v2.2/README.md) for current procedures. Original technical decisions and evidence are retained.
 
 > **Unreleased v2.2 — Implemented For Draft Review.** Batch 3.8 starts from `milestone-1`
 > at `7f91f5d42feb3916cfab060abd5ca4b1558a92ba`, following merged and visually
@@ -64,7 +64,7 @@ PR CI also checks the complete backend. The real browser flow
 passed with 52 desktop/mobile light/dark captures. Docker passed separately at
 `e78358b`; the final display-only change is also checked in PR CI. See the
 [final evidence, commands and limits](../development-handovers/evidence/stock-circulation/Report.md)
-and [draft user instructions](../how-tos/features-and-instructions/v2.2-draft/IT-Assets-Issue-Return-and-Write-Off.md).
+and [draft user instructions](../how-tos/features-and-instructions/v2.2/IT-Assets-Issue-Return-and-Write-Off.md).
 Product-owner visual acceptance and merge approval remain pending.
 
 The dated checkpoint sections below preserve the implementation sequence.

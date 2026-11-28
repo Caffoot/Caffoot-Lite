@@ -1,0 +1,33 @@
+# Caffoot Lite v2.2 release candidate — UNRELEASED.
+# Build from the authorised review checkout; no public v2.2 image is offered.
+# Future publication target only: ghcr.io/caffoot/caffoot-lite:v2.2
+# Retain this source build. Final Portainer files prepare the intended public tag
+# before strict preflight under owner approval; image availability is conditional
+# on the unchanged publication workflow and its public-access verification.
+# Until then, use this source build or the private-image Portainer example.
+services:
+  caffoot-lite:
+    build:
+      context: ../../../..
+      dockerfile: Dockerfile
+    environment:
+      # Set your organisation's IANA time zone. "Europe/London" is a UK example only.
+      TZ: "${TZ:?Set TZ to your organisation's IANA time zone}"
+      CAFFOOT_WEB_ADDRESS: "${CAFFOOT_WEB_ADDRESS:?Set the HTTPS browser address in CAFFOOT_WEB_ADDRESS}"
+      CAFFOOT_SERVER_ADDRESS: "${CAFFOOT_SERVER_ADDRESS:?Set the server IP or hostname in CAFFOOT_SERVER_ADDRESS}"
+      CAFFOOT_PORT: "${CAFFOOT_PORT:-8080}"
+    ports:
+      - "${CAFFOOT_PORT:-8080}:8080"
+    # The default uses a Docker-managed named volume. Keep CAFFOOT_DATA_PATH
+    # unchanged if an existing installation uses a custom host directory.
+    volumes:
+      - "${CAFFOOT_DATA_PATH:-caffoot_data}:/data"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import ssl, urllib.request; urllib.request.urlopen('https://127.0.0.1:8080/health', context=ssl._create_unverified_context(), timeout=3)"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+volumes:
+  caffoot_data:

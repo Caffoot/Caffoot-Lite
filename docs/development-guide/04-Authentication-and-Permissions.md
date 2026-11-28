@@ -48,7 +48,7 @@ Administrator role lifecycle, membership and individual override requests now us
 
 ## My account, Users and Settings
 
-The published v2.1 interface presents **Users** only to administrators and keeps system **Settings & Data** administrator-only. **My Account** contains personal security, appearance and Help/About controls. In v2.2, individual account controls are in Staff Details → Manage Permissions; shared role controls are under Staff → Permissions. Sign-in enrolment and My Account MFA use the shared account policy. The shared policy blocks wider access until mandatory enrolment is complete. See the [route contract and security rules](Role-Permissions.md#existing-account-mfa-operations) and [draft user procedures](../how-tos/features-and-instructions/v2.2-draft/Roles-Section-Permissions-and-MFA.md) for the implemented version.
+The published v2.1 interface presents **Users** only to administrators and keeps system **Settings & Data** administrator-only. **My Account** contains personal security, appearance and Help/About controls. In v2.2, individual account controls are in Staff Details → Manage Permissions; shared role controls are under Staff → Permissions. Sign-in enrolment and My Account MFA use the shared account policy. The shared policy blocks wider access until mandatory enrolment is complete. See the [route contract and security rules](Role-Permissions.md#existing-account-mfa-operations) and [draft user procedures](../how-tos/features-and-instructions/v2.2/Roles-Section-Permissions-and-MFA.md) for the implemented version.
 
 ## Administrator audit history
 

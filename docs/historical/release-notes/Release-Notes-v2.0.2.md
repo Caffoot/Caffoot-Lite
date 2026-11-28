@@ -20,7 +20,7 @@ Detailed security advisory information will be coordinated through [GitHub Secur
 
 ## Installing or upgrading
 
-**After the v2.0.2 release and image build are published**, use the versioned image `ghcr.io/caffoot/caffoot-lite:v2.0.2` for AMD64 PCs and ARM64 systems including Raspberry Pi 5. For a new installation, use [the v2.0.2 Portainer stack](../portainer/portainer-v2.0.2.yaml) or build from the v2.0.2 source tag using [INSTALLATION.md](../../../INSTALLATION.md).
+**After the v2.0.2 release and image build are published**, use the versioned image `ghcr.io/caffoot/caffoot-lite:v2.0.2` for AMD64 PCs and ARM64 systems including Raspberry Pi 5. For a new installation, use [the v2.0.2 Portainer stack](../portainer/portainer-v2.0.2.yaml) or build from the v2.0.2 source tag using [INSTALLATION.md](../installation/INSTALLATION-v2.1.md).
 
-For an existing v2.0.1 installation, **update the image tag in your existing stack, not the volume or stack identity**. Stop the container and make a verified backup of the original `/data` before upgrading. Preserve both `caffoot.sqlite3` and `tls/`, then confirm the inventory, account sign-in and HTTPS certificate identity after restart. See the [upgrade instructions](../../../INSTALLATION.md#upgrading-an-existing-v201-installation-to-v202).
+For an existing v2.0.1 installation, **update the image tag in your existing stack, not the volume or stack identity**. Stop the container and make a verified backup of the original `/data` before upgrading. Preserve both `caffoot.sqlite3` and `tls/`, then confirm the inventory, account sign-in and HTTPS certificate identity after restart. See the [upgrade instructions](../installation/INSTALLATION-v2.1.md#upgrading-an-existing-v201-installation-to-v202).
 

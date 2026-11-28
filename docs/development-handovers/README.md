@@ -6,7 +6,7 @@ Use the handover to pick up where the last session finished. The relevant GitHub
 
 ## Current work
 
-Caffoot Lite v2.1 is published; v2.2 is unreleased. The approved integrated application checkpoint is `0251b43a3b5d41d626aa022c6d7f9b4d860433da`, schema 31. The [Milestone 01 handover](milestone-01.md) and [Development Status](../development-guide/Development-Status.md) distinguish current boundaries from dated records. Use the [draft v2.2 guides](../how-tos/features-and-instructions/v2.2-draft/README.md) for development workflows and [historical handovers](../historical/development-handovers/) for published-release history. Outstanding native/manual, upgrade/recovery, security and release gates remain separate.
+Milestone 01 targets unreleased Caffoot Lite v2.2. The approved integrated application checkpoint is `a23670bdd2b520feda6003a35a45be6df7561fc5`, schema 31. The [Milestone 01 handover](milestone-01.md) and [Development Status](../development-guide/Development-Status.md) distinguish current boundaries from dated records. Use the [draft v2.2 guides](../how-tos/features-and-instructions/v2.2/README.md) for development workflows and [historical handovers](../historical/development-handovers/) for published-release history. Outstanding native/manual, upgrade/recovery, security and release gates remain separate.
 
 ## Keeping this useful
 

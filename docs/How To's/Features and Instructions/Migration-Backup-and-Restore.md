@@ -1,78 +1,41 @@
-# Migration, Backup and Restore
+# Caffoot Lite v2.1 — Migration, Backup and Restore
 
-[← All feature guides](README.md)
+The published **v2.1** instructions are preserved in the **[archived guide](../../historical/features-and-instructions/v2.1/Migration-Backup-and-Restore.md)**. Use that guide for v2.1; [choose another version](README.md) for the unreleased v2.2 target.
 
-## Two different jobs
+## Original v2.1 Sections
 
-**Import from published Caffoot Lite v1.3.3** is a **one-way migration** from the earlier single-browser HTML application into the Docker/SQLite inventory.
+<a id="migration-backup-and-restore"></a>
 
-**Ongoing Docker backup and restore** means protecting the application's persistent SQLite database and HTTPS identity using tools outside Caffoot Lite. It is **not** a repeat of the old browser JSON export feature.
+[Migration, Backup and Restore — v2.1](../../historical/features-and-instructions/v2.1/Migration-Backup-and-Restore.md#migration-backup-and-restore)
 
-## Before you migrate
+<a id="two-different-jobs"></a>
 
-1. Identify the version of the *HTML* Caffoot Lite file you currently use. Direct imports into the Docker edition are supported from **published v1.3.3** only.
-2. If your HTML copy is older, update it to v1.3.3 first, review its inventory and export a fresh JSON backup from that published version.
-3. Keep the original HTML file and backup somewhere safe. Migration is one-way, and does not turn your new Docker database back into an HTML backup.
-4. Set up the Docker edition with its first administrator, MFA, HTTPS and persistent **/data** directory **before** importing. Import does not create or replace the administrator's password/MFA/user accounts.
+[Two different jobs — v2.1](../../historical/features-and-instructions/v2.1/Migration-Backup-and-Restore.md#two-different-jobs)
 
-## Import into Docker/SQLite — step by step
+<a id="before-you-migrate"></a>
 
-1. Sign in as an administrator.
-2. Open **Settings & Data** and find the **Import Inventory** section heading.
-3. Under **Import from published v1.3.3**, choose **Choose Backup File** and select the fresh JSON export from published v1.3.3.
-4. Read the **Import Inventory from v1.3.3** review screen. Check device, IPAM, rack and historical/custom fields, plus any required corrections. Where access-point mounting choices are required, review each selection; older mount assignments may need to be cleared for those specific records.
-5. If anything looks wrong, **Cancel**, correct the source or review choice as appropriate, then start again. The review is not the final save.
-6. Explicitly **Confirm** the supported inventory replacement only when the proposed results are correct.
-7. After completion, navigate through **Devices**, **IPAM**, **Network Racks**, **Settings & Data** and **Audit Trail** to check the imported inventory and linked information.
+[Before you migrate — v2.1](../../historical/features-and-instructions/v2.1/Migration-Backup-and-Restore.md#before-you-migrate)
 
-The importer preserves supported inventory data and relationships. It does **not** import user accounts, passwords, roles or MFA from the standalone browser edition. Never use a migration import as an informal way to merge two independent Docker installations.
+<a id="import-into-dockersqlite--step-by-step"></a>
 
-## Where Docker data lives
+[Import into Docker/SQLite — step by step — v2.1](../../historical/features-and-instructions/v2.1/Migration-Backup-and-Restore.md#import-into-dockersqlite--step-by-step)
 
-The container uses **/data/caffoot.sqlite3** for SQLite and **/data/tls** for persistent HTTPS certificate material. The data mount must survive image updates and container recreation.
+<a id="where-docker-data-lives"></a>
 
-For a **new standard installation**, Docker automatically creates the named `caffoot_data` volume and mounts it at `/data` inside the container. The volume's actual name may be prefixed with the Portainer stack or Compose project name. Find it under **Portainer → Volumes**. No host folder needs to be created manually.
+[Where Docker data lives — v2.1](../../historical/features-and-instructions/v2.1/Migration-Backup-and-Restore.md#where-docker-data-lives)
 
-A **custom host directory** is also supported, for example `/srv/caffoot-lite/data:/data`. Configure write permissions for the application's non-root UID/GID `10001:10001`.
+<a id="make-a-manual-consistent-backup"></a>
 
-For **existing installations**, keep the original `/data` mount. Do not change from a host directory to an empty named volume simply because the new example uses one; data does not migrate automatically. See the [installation guide](../../../INSTALLATION.md) for both storage choices.
+[Make a manual consistent backup — v2.1](../../historical/features-and-instructions/v2.1/Migration-Backup-and-Restore.md#make-a-manual-consistent-backup)
 
-## Make a manual consistent backup
+<a id="restore-safely"></a>
 
-Use your existing trusted Docker, server or NAS backup tools. For a simple **stopped-container** file backup:
+[Restore safely — v2.1](../../historical/features-and-instructions/v2.1/Migration-Backup-and-Restore.md#restore-safely)
 
-1. Ensure no one is making inventory changes; stop the Caffoot container in Portainer or Docker.
-2. Identify the actual named volume in **Portainer → Volumes** (it may be stack-prefixed) or locate your custom host bind mount. Use a trusted volume-backup utility or temporary helper container for a named volume, or a stopped-container directory copy for a bind mount. Copy the **entire persistent data directory**, including the database and TLS certificate/key material, to a protected backup destination.
-3. Verify that the copy contains the expected database and TLS files.
-4. Start the normal container again and confirm that sign-in and inventory still work.
-5. Store a separate backup **off the Caffoot server** for resilience against hardware failure, and protect the files from unauthorised access.
+<a id="distinguish-maintenance-from-recovery"></a>
 
-Do not copy an actively changing SQLite database as ordinary files and assume it is consistent. Use a stopped-container copy or a backup utility that explicitly supports SQLite consistency.
+[Distinguish maintenance from recovery — v2.1](../../historical/features-and-instructions/v2.1/Migration-Backup-and-Restore.md#distinguish-maintenance-from-recovery)
 
-## Restore safely
+<a id="v21-upgrade-and-subnet-first-compatibility"></a>
 
-A restoration test is safest in a *separate test folder/isolated installation* rather than by overwriting your only functioning database.
-
-1. Check that the backup is complete and corresponds to the intended installation.
-2. Stop the target container, then restore the complete saved data into the **existing named volume or host directory mounted as /data**, retaining correct ownership/permissions. Identify the target volume carefully; switching to a new empty volume does not automatically restore or migrate the original data.
-3. Start the target container and verify HTTPS identity, administrator sign-in, inventory, related IPAM/rack data and any account permissions.
-4. Keep the original known-working files until recovery has been verified. Do not delete your only database or TLS private key just to run an acceptance test.
-
-Verify recovery from your own protected backup in an isolated installation before relying on it. Keep a separate off-site copy to protect against host or storage failure.
-
-## Distinguish maintenance from recovery
-
-- **Container recreate/update:** should retain the existing mounted data, but does not itself make a backup.
-- **v1.3.3 JSON import:** a one-way inventory migration, not a Docker database backup.
-- **Clear System / Clean Start:** a destructive inventory maintenance action, not a restore mechanism.
-- **Audit Trail:** explains saved changes but is not a copy of the application database.
-
-For exact deployment examples, environment names and certificate verification, follow [Docker and Portainer installation](../../../INSTALLATION.md).
-## v2.1 upgrade and subnet-first compatibility
-
-The v2.1 importer preserves older tagged/unclassified records and the new optional-VLAN/VPN-gateway records. Opening an old subnet does not assign a purpose or migrate it. The subnet-first JSON changes do not themselves require another schema migration. The full v2.1 upgrade reaches schema 10 and retains existing account/security data; see the installation upgrade instructions. New untagged/VPN records must not be made compatible by inventing VLAN 0 or a gateway.
-
-Keep a consistent pre-upgrade private data backup. Earlier releases do not implement the new subnet rules; successful v2.1 round trips do not certify downgrading a new inventory to an older application. For an upgrade, preserve the existing `/data` mount and make a consistent complete backup before replacing the image.
-
-
-For a Docker version upgrade, stop and back up **all** of `/data`, including SQLite/sidecars, TLS and `account-email-secret.key` when present, with original ownership/modes. Keep that key with its matching database; it is not included by copying only SQLite. Restore the complete pre-upgrade backup with the old image for rollback; never open a schema-10 database using v2.0.3. See [the v2.1 upgrade steps](../../../INSTALLATION.md#upgrading-v203-to-v21).
+[v2.1 upgrade and subnet-first compatibility — v2.1](../../historical/features-and-instructions/v2.1/Migration-Backup-and-Restore.md#v21-upgrade-and-subnet-first-compatibility)

@@ -21,6 +21,6 @@ The standalone HTML edition remains available separately from the [v1.3.3 releas
 
 ## Installation
 
-For Raspberry Pi 5/ARM64 and PC/AMD64, use the tagged image **`ghcr.io/caffoot/caffoot-lite:v2.0.1`** after its official build and publication. Follow the [Docker and Portainer installation guide](../../../INSTALLATION.md) or copy the [Portainer stack](../portainer/portainer-v2.0.1.yaml). Set your own HTTPS address, port and persistent data path. The automatic GitHub source ZIP/tar.gz are source snapshots rather than ready-to-run Docker application downloads.
+For Raspberry Pi 5/ARM64 and PC/AMD64, use the tagged image **`ghcr.io/caffoot/caffoot-lite:v2.0.1`** after its official build and publication. Follow the [Docker and Portainer installation guide](../installation/INSTALLATION-v2.1.md) or copy the [Portainer stack](../portainer/portainer-v2.0.1.yaml). Set your own HTTPS address, port and persistent data path. The automatic GitHub source ZIP/tar.gz are source snapshots rather than ready-to-run Docker application downloads.
 
 See the [complete user guides](../../How%20To's/Features%20and%20Instructions/README.md) and [approved specification](https://github.com/Caffoot/Caffoot-Lite/issues/215).

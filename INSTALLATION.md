@@ -1,220 +1,174 @@
-# Caffoot Lite v2.1 — Docker / SQLite installation
+# Caffoot Lite v2.2 — Docker / SQLite installation
 
-**New installation?** Start with the two quick-start methods below. **Existing installation?** Read the [v2.0.3 → v2.1 upgrade instructions](#upgrading-v203-to-v21) first to protect your existing data.
+> **Draft v2.2 — Unreleased.** No public v2.2 image or supported production upgrade/recovery is offered. The procedure below is for separately authorised isolated review only.
 
-**Published release:** [Caffoot Lite v2.1](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v2.1) (8 November 2026). Before deploying, verify the public `ghcr.io/caffoot/caffoot-lite:v2.1` image is available for your AMD64 or ARM64 host. The release and a source checkout alone do not prove registry availability.
+**Using published v2.1?** Follow the [v2.1 feature guides](docs/historical/features-and-instructions/v2.1/README.md) and [v2.1 installation guide](docs/historical/installation/INSTALLATION-v2.1.md). These archived instructions remain available for existing installations.
 
-Caffoot Lite retains its SQLite database, HTTPS identity, accounts, MFA and permissions. For everyday use, see the [user guides](docs/how-tos/features-and-instructions/README.md). Importing a published v1.3.3 JSON inventory is a separate one-way migration, not a Docker upgrade or a full installation backup.
+This guide explains the existing draft examples for an installation that has already been authorised for isolated review. A container is the running application; an image is the packaged application it starts from. A Docker volume or bind mount holds persistent data outside that replaceable container. A new empty mount creates a new installation; it does not copy an existing one.
 
-## Quick start — new installations
+## Decide Which Procedure Applies
 
-Choose **Portainer** or **Docker Compose** below. Both use the same published v2.1 image and persistent Docker-managed volume. You need a Docker host (for example, a Raspberry Pi or PC), and either Portainer or Docker Engine with the Compose plugin.
-
-> **Already running Caffoot Lite?** Do **not** create a new stack or replace your existing volume. Follow [Upgrading v2.0.3 to v2.1](#upgrading-v203-to-v21) instead. Keep the current `/data` mount, HTTPS identity, environment and secrets.
-
-### Shared v2.1 installation configuration
-
-Copy this configuration into Portainer's Web editor **or** save it as `compose.yaml` for Docker Compose. It matches the repository's [v2.1 stack](portainer-v2.1.yaml).
-
-```yaml
-# IMPORTANT — CHANGE THE EXAMPLE IP ADDRESSES BEFORE DEPLOYING.
-# Replace 192.168.1.100 in CAFFOOT_WEB_ADDRESS and
-# CAFFOOT_SERVER_ADDRESS with your own Docker server's IP address.
-# These addresses are examples only, not installation defaults.
-# If you change port 8443, update all three port settings consistently.
-services:
-  caffoot-lite:
-    image: ghcr.io/caffoot/caffoot-lite:v2.1
-    container_name: caffoot-lite
-    restart: unless-stopped
-    environment:
-      CAFFOOT_WEB_ADDRESS: "https://192.168.1.100:8443"
-      CAFFOOT_SERVER_ADDRESS: "192.168.1.100"
-      CAFFOOT_PORT: "8443"
-    ports:
-      - "8443:8080"
-    volumes:
-      - caffoot_data:/data
-    healthcheck:
-      test: ["CMD", "python", "-c", "import ssl,urllib.request; urllib.request.urlopen('https://127.0.0.1:8080/health',context=ssl._create_unverified_context(),timeout=3)"]
-      interval: 30s
-      timeout: 5s
-      retries: 3
-
-volumes:
-  caffoot_data:
-```
-
-Before deploying, change **both** occurrences of the example IP address `192.168.1.100` to your Docker host's IP address. For example, if it is `192.168.1.50`, use `https://192.168.1.50:8443` for `CAFFOOT_WEB_ADDRESS` and `192.168.1.50` for `CAFFOOT_SERVER_ADDRESS`.
-
-Port `8443` may stay as shown. If it is already in use, change `CAFFOOT_PORT`, the port in `CAFFOOT_WEB_ADDRESS`, and the **host-side** port in `ports` together (for example, `8444:8080`). Keep the container-side port `8080` unchanged.
-
-### Method 1 — Portainer
-
-1. Sign in to **Portainer** and open **Stacks → Add stack**.
-2. Name the stack `caffoot-lite`, then select **Web editor**.
-3. Paste the **shared installation configuration** above, with your server IP (and port if needed).
-4. Click **Deploy the stack**.
-5. Check that the Caffoot Lite container starts. Portainer will pull `ghcr.io/caffoot/caffoot-lite:v2.1`; the published image must be publicly accessible for the pull to succeed.
-
-Docker creates the `caffoot_data` named volume automatically. You do **not** need to create a host folder for a normal new installation.
-
-### Method 2 — Docker Compose
-
-1. Install **Docker Engine** and the **Docker Compose plugin** on your computer or Raspberry Pi.
-2. Open a terminal and create an installation folder:
-
-   ```sh
-   mkdir -p ~/caffoot-lite
-   cd ~/caffoot-lite
-   ```
-
-3. Create `compose.yaml` with `nano compose.yaml` (or a text editor). Paste the **same shared installation configuration** above, update the server IP, then save it. In `nano`, press **Ctrl+O**, **Enter**, then **Ctrl+X**.
-4. From that folder, start Caffoot Lite:
-
-   ```sh
-   docker compose up -d
-   ```
-
-5. Check that it is running:
-
-   ```sh
-   docker compose ps
-   ```
-
-This method pulls the **published v2.1 image**; it does not build the application from source. Docker creates the persistent named volume automatically.
-
-Useful commands (run from the folder containing `compose.yaml`):
-
-| Task | Command |
+| Your situation | Start here |
 | --- | --- |
-| View logs | `docker compose logs -f` |
-| Stop | `docker compose stop` |
-| Start again | `docker compose start` |
-| Restart | `docker compose restart` |
+| New, separately authorised disposable v2.2 review instance | Follow this guide with a distinct stack/project, endpoint and empty storage. |
+| Existing Docker instance or review data that must survive | Identify its image and actual `/data` first; use [upgrade, backup and recovery](docs/how-tos/features-and-instructions/v2.2/Legacy-Import-and-Docker-Upgrade.md). Never paste a new-install example over its settings. |
+| Published standalone v1.3.3 HTML inventory | Prepare the destination first, then use [one-way legacy import](docs/how-tos/features-and-instructions/v2.2/Legacy-Import-and-Docker-Upgrade.md#import-legacy-inventory). Its JSON is not a Docker installation backup. |
 
-Press **Ctrl+C** to stop following logs; this does not stop the application. **Do not run `docker compose down -v`**: `-v` can remove the persistent data volume.
+## Prerequisites And Preparation
 
-### Finish setup — either method
+1. Obtain authorisation for the exact review revision and installation. Identify the Docker host, operator, intended browser address and a free host port. Have access to Docker Engine with the **Docker Compose plugin**, or an existing Portainer environment capable of running a Docker stack. Host administrator/Docker permissions can expose the installation's secrets; limit them appropriately.
+2. Check that the actual image supports the host architecture, such as AMD64 or ARM64. No public multi-architecture v2.2 image is available. Do not use an image for another architecture or infer successful startup from a successful build.
+3. Reserve separate storage and capacity for the image/build, growing SQLite data, ticket attachment bytes, profile/branding images and complete protected backup copies. No universal minimum disk/RAM requirement is specified. Check free capacity for the intended workload and retention; the 100 MB attachment allowance is per ticket, not an installation storage cap.
+4. Choose a distinct review project/stack, container identity, host endpoint and data mount. Keep production and other installations inaccessible to this review stack. Copied data may contain active accounts, private files and SMTP settings: isolate it and use controlled mail destinations before exercising notifications. Never reuse a production mount for an isolated review.
+5. Keep the existing repository YAML unchanged. Make your installation-specific copy or Portainer editor configuration privately. Protect saved environment/configuration and backups. Do not put passwords, mail credentials or private certificates in Git, tickets or screenshots.
+6. Select the organisation's IANA time zone before starting. `Europe/London` is a **UK example**, not a default. The draft examples require `TZ` through the shell, a private environment file or Portainer stack environment settings. There is no default; an empty or missing value fails configuration validation. Use an IANA name, not a fixed clock offset. [Time zone configuration and warnings](docs/how-tos/features-and-instructions/v2.2/Service-Desk-Time-Zone.md)
 
-1. Open `https://YOUR-SERVER-IP:8443` in your browser (substitute your IP and chosen port).
-2. The app generates a **self-signed HTTPS certificate** on first start. Your browser will not automatically trust it. **Before entering credentials**, verify the certificate identity and SHA-256 fingerprint against a separately trusted copy, using [the certificate instructions below](#advanced-https-docker-compose-and-portainer-configuration). Do not simply bypass an unverified certificate warning.
-3. Once the connection is trusted, follow the on-screen administrator setup and MFA instructions.
+## Understand The Draft Examples
 
-**Protect your data:** keep the complete `/data` volume (including SQLite, TLS and any private account-email key), and back it up to a protected location **outside the Docker host**. A JSON inventory import/export is **not** a substitute for a complete Docker backup. See [External backup and recovery](#external-backup-and-recovery-of-your-docker-installation).
+[Portainer candidate](portainer-v2.2.yaml) takes an authorised private image through `CAFFOOT_V22_PREVIEW_IMAGE`; it has **no public v2.2 tag**. It uses example server IP `192.168.1.100`, host port 8443, fixed container name `caffoot-lite`, and named `caffoot_data` storage. Those values must be reviewed for a new isolated instance so it cannot collide with another installation.
 
-For reverse proxies, custom host storage, certificate management or source builds, see the advanced sections below.
+[Compose draft](docs/how-tos/features-and-instructions/v2.2/compose-v2.2.yaml) builds from the authorised source checkout. Its `build.context: ../../../..` resolves from the draft directory to the repository root, using the root Dockerfile. It requires web/server environment values, defaults the published port to 8080 and uses `${CAFFOOT_DATA_PATH:-caffoot_data}:/data`. Do not move this file to another directory and assume its relative build context still resolves correctly. Use the explicit file path from the repository root as shown below, or deliberately correct a private copy's context to the verified source root.
 
----
+The root `compose.yaml` is also a source-build configuration. It passes the operator's `TZ` through without a default; if unset, the application retains its missing-zone warning and incomplete Service Desk metrics. Set it explicitly for a usable support calendar. Root `portainer-v2.2.yaml` and `INSTALLATION.md` prepare the unreleased v2.2 candidate.
 
-## Advanced: HTTPS Docker Compose and Portainer configuration
+Both draft files are complete **unreleased release-candidate configurations**, not a supported production upgrade. Their comments identify `ghcr.io/caffoot/caffoot-lite:v2.2` solely as a future publication target; no active setting pulls that tag. The Compose file keeps its source build and Portainer keeps its required private-image option. After the required acceptance and separate owner approval for release finalisation, prepare the intended public tag in the root and guide Portainer examples before strict release preflight. Its availability remains conditional on the unchanged owner-only publication workflow building and pushing the exact tested revision, verifying AMD64/ARM64 and anonymous public access, and then publishing the GitHub Release. Public installation directions and announcements must wait for that verification and their separate approval. The Compose source-build route remains available. Preserve the actual architecture, project and `/data` mount during any separately approved transition.
 
-Set **your own** browser address and certificate identities before running Compose. Nothing is hard-coded for a particular installer. For example, in a local `.env` file alongside `compose.yaml`:
+### Environment And Ports
 
-```dotenv
-CAFFOOT_WEB_ADDRESS=https://192.168.1.100:8080
-CAFFOOT_SERVER_ADDRESS=192.168.1.100
-CAFFOOT_PORT=8080
-```
+For fictional Aster Services, a direct review endpoint might be `https://192.0.2.40:8446`. Documentation-range addresses below are illustrations; replace them with reachable addresses for your host.
 
-Replace the example IP with your own. For an HTTPS reverse proxy, use the **external** browser origin (for example `https://inventory.example.uk`) and set `CAFFOOT_SERVER_ADDRESS` to the hostname or IP used by the proxy for the encrypted upstream connection. Never derive the trusted origin from client-supplied Host or forwarding headers. The web address and server address are required; the published port defaults to 8080 and must be between 1 and 65535; Compose refuses to start without them. Keep `.env` out of source control.
+| Setting | Meaning and checks |
+| --- | --- |
+| `CAFFOOT_WEB_ADDRESS` | Exact canonical HTTPS browser origin, such as `https://192.0.2.40:8446`. No path, trailing slash, credentials, query or fragment. For a reverse proxy, use its external HTTPS origin. This also supplies the trusted origin used for protected requests and links; do not derive it from arbitrary forwarding headers. |
+| `CAFFOOT_SERVER_ADDRESS` | Hostname/IP used to establish the application's TLS identity, without a scheme or port. For direct access, align it with the host part of the browser URL. The TLS source accepts comma-separated identities if genuinely needed. Existing stored certificates are not silently regenerated when it changes. |
+| `CAFFOOT_PORT` | Published **host** port, numeric 1–65535. Set it consistently with the browser URL and left side of `ports`. It does not change the fixed internal listener. |
+| `ports` | Host-to-container mapping. For the example: `8446:8080`; preserve the container side **8080**. The supplied examples publish on Docker host interfaces; restrict reachability using the intended network/firewall. |
+| `TZ` | The support calendar's installation-wide IANA zone, e.g. `Europe/London` for a UK team or the correct zone elsewhere. It has no silent UTC/browser fallback for Service Desk metrics. |
+| `/data` mapping | Persist the actual named volume or bind directory. Preserve it exactly for existing installations. Docker may prefix a named volume with the project/stack name. |
 
-**For VPS or reverse-proxy deployments:** the Compose/Portainer `ports` mapping publishes Caffoot's HTTPS host port on the Docker host's network interfaces. If only your reverse proxy should connect, restrict access to that host port with your existing firewall or private network configuration; do not leave it unnecessarily reachable from the wider internet. For direct access, permit only the intended connections and use a trusted HTTPS certificate. Caffoot's own login, MFA and permissions remain mandatory whether accessed directly or through a proxy.
-
-For a published v2.1 source build, use a separate clean checkout of [tag `v2.1`](https://github.com/Caffoot/Caffoot-Lite/tree/v2.1). A checkout of the unreleased v2.2 documentation or milestone branch builds that revision, not published v2.1. The [draft v2.2 installation guide](docs/how-tos/features-and-instructions/v2.2-draft/Installation.md) is limited to separately authorised isolated review.
-
-From the verified v2.1 repository root run `docker compose up --build -d`, then open `CAFFOOT_WEB_ADDRESS` in the browser. The application serves the inventory interface at `/inventory` and administrator/account setup at `/setup`. The health endpoint for direct access is `https://<server-address>:<published-port>/health`. The published port can be changed with `CAFFOOT_PORT`; the container always listens internally on port 8080. Include the published port in the browser address for direct access unless it is 443. For a reverse proxy, use the external HTTPS domain in `CAFFOOT_WEB_ADDRESS`, the application server IP/hostname in `CAFFOOT_SERVER_ADDRESS`, and the published host port in `CAFFOOT_PORT`. A self-signed certificate is generated once and stored under the persistent `/data/tls` volume path. A browser will not automatically trust it; verify the certificate identity/fingerprint out of band and establish trust before using real credentials. For a reverse proxy, configure HTTPS to the upstream and verify its certificate through an explicitly managed trust policy; do not assume plain HTTP upstream is supported.
-
-To inspect the certificate fingerprint after startup, run this from the directory containing `compose.yaml`:
-
-```sh
-docker compose exec caffoot-lite openssl x509 -in /data/tls/server.crt -noout -fingerprint -sha256 -subject -dates -ext subjectAltName
-```
-
-Compare the SHA-256 fingerprint against a separately trusted copy before trusting the certificate in your browser or reverse proxy. The certificate's Subject Alternative Name must include the IP address or hostname used to reach the Caffoot server. If you change `CAFFOOT_SERVER_ADDRESS` after first startup, the existing persisted certificate is **not** silently regenerated; inspect its identities and explicitly plan a safe replacement if required. Keep the private key private. A self-signed certificate is not publicly trusted merely because the application generated it.
-
-The container's own HTTPS health check is a local liveness probe and does not establish external certificate trust. Do not delete the persistent data volume or host bind-mount folder if retaining inventory or certificate identity.  The certificate is not automatically renewed; before expiry, plan a controlled certificate rotation and update client/proxy trust. Never delete the data volume as a certificate-rotation shortcut.
-
-## Full user instructions
-
-For worked examples and detailed steps covering **Devices, IPAM, Racks, Users and MFA, Settings and Change History**, see the shared [Features and Instructions user guide](docs/how-tos/features-and-instructions/README.md). The short help inside **My account → Help & Guides** remains available without public Internet access.
-
-## Appearance and font availability
-
-The Docker edition retains the existing Caffoot hedgehog artwork. The released v2.1 Sign In and About screens carry the full tagline **“Simplicity in everything. Your infrastructure. Your users. Your data.”** The shorter **“Infrastructure, Simplified.”** wording remains part of the brand where appropriate. The inventory interface now serves its core Tailwind utilities from the bundled local stylesheet rather than executing remote Tailwind JavaScript. The setup and inventory interfaces request the **Inter** font when an external font service is reachable. When it is not, readable local system-font fallbacks apply. Internet access is **not required** for normal local HTTPS sign-in, MFA, inventory access, editing or SQLite database operations. Local inventory workflows remain available without external font delivery.
-
-## Advanced: Portainer storage and deployment options
-
-The [quick-start configuration above](#shared-v21-installation-configuration) is the same as the repository's [v2.1 stack](portainer-v2.1.yaml). The GHCR package must be **Public** to permit anonymous pulls; never embed an access token in a public stack. The separate [historical v2.0.3 stack](docs/historical/portainer/portainer-v2.0.3.yaml) remains available. Existing installations must retain their actual `/data` mapping, environment and secrets.
-
-The supplied example uses **192.168.1.100:8443 as a placeholder**. Replace it with the address of your server before deploying. Its standard storage mapping is:
+Illustrative service fragment for a **new isolated** instance only (not a complete stack):
 
 ```yaml
-volumes:
-  - caffoot_data:/data
+environment:
+  TZ: "Europe/London" # UK example only
+  CAFFOOT_WEB_ADDRESS: "https://192.0.2.40:8446"
+  CAFFOOT_SERVER_ADDRESS: "192.0.2.40"
+  CAFFOOT_PORT: "8446"
+ports:
+  - "8446:8080"
 ```
 
-The stack declares `caffoot_data` in a separate top-level `volumes:` section. Docker automatically creates and manages this persistent volume. For a normal new installation, you do **not** need to create or change the permissions of a host folder. The actual volume may have a project/stack prefix (for example, `yourstack_caffoot_data`): use **Portainer → Volumes** to identify the real name.
+The image defaults to `/data/caffoot.sqlite3` and `/data/tls`. Advanced `CAFFOOT_DB_PATH` or `CAFFOOT_TLS_DIR` overrides change what storage must be persisted and backed up; the supplied examples do not need them. Do not relocate those paths casually. The default listener binds inside the container on `0.0.0.0:8080`.
 
-**Prefer a custom host folder?** You can replace the named-volume mapping with `/srv/caffoot-lite/data:/data` or another folder of your choice. For the optional bind mount, prepare the folder with permissions for the container's non-root UID/GID `10001:10001`:
+## Choose Persistent Storage
 
-```sh
-sudo install -d -m 0750 -o 10001 -g 10001 /srv/caffoot-lite/data
-```
+1. For a new standard instance, retain a named volume declaration and its `:/data` mapping. Docker creates it. Record the actual mount source from the container inspection, not merely the short YAML name.
+2. For a deliberately chosen bind mount, use a new host directory, for example `/srv/caffoot-review/data:/data`, and prepare its access for container UID/GID **10001:10001**. On a standard rootful host, an administrator can prepare a new directory with `sudo install -d -m 0750 -o 10001 -g 10001 /srv/caffoot-review/data`. Rootless Docker/user namespaces may map host IDs differently; verify ownership as seen inside the container rather than applying guessed IDs to existing data.
+3. Keep the complete mount: SQLite stores accounts/MFA/permissions, inventory, Staff/custody, tickets/messages/attachment bytes, templates and branding. TLS files, optional private SMTP settings and the account-email proof key also persist as files. See [complete backup contents](docs/how-tos/features-and-instructions/v2.2/Legacy-Import-and-Docker-Upgrade.md#back-up-a-complete-installation).
+4. Before changing an existing container, record its mount and preserve that exact storage. A renamed project, new volume or extra enclosing directory can make an old installation appear empty. Never remove a volume or use `docker compose down -v` as an update or repair step.
 
-If using a bind mount, the now-unused top-level `volumes: caffoot_data:` declaration can be removed. Any other valid host path is fine if it is writable by the application user.
+## Method 1 — Portainer Stack Editor
 
-**Existing installations must retain their current `/data` mapping.** Changing an existing host path to a new named volume without migrating data can cause the application to appear empty while the original database remains in the previous storage location.
+1. In the authorised Docker environment, verify that the exact private review image exists locally or is available through an explicitly authorised private pull route. Inspect its full `org.opencontainers.image.revision` label, image identity and architecture. A local private image name follows the established `caffoot-lite:private-<first-12-of-SHA>` pattern only when it was actually built from that source; a tag alone is not proof. Do not publish it to make a pull work.
+2. In Portainer choose **Stacks → Add stack**, use a distinct review name, then **Web editor**. Paste a private copy of the [Portainer candidate](portainer-v2.2.yaml).
+3. Supply the correct IANA `TZ` and `CAFFOOT_V22_PREVIEW_IMAGE` through the stack's environment settings, or replace the `image:` expression in this private editor copy with the verified authorised image reference. The required-variable expressions intentionally fail when no image or time zone is supplied. Never insert a token into a shared stack definition.
+4. Review/change the example addresses, all three host-port references, `TZ`, container name and storage for this isolated instance. Keep the service name `caffoot-lite`. For an existing instance, stop here and follow its preserved upgrade/configuration procedure instead of changing its mount.
+5. Select **Deploy the stack**. Check the container's actual image, mount, running status and health in Portainer. A local-only image must already exist on the selected Docker host; do not request a registry re-pull for it. If image access fails, stop and resolve the authorised image route; no public v2.2 registry fallback is specified.
+6. Continue with HTTPS verification and initial setup below. Deployment/healthy status alone does not prove browser trust, authentication or data preservation.
 
-If 8443 is occupied, change **both** the published `ports` value (e.g. `8444:8080`) and `CAFFOOT_WEB_ADDRESS` / `CAFFOOT_PORT`. Keep internal port `8080` fixed. After deployment, open the configured HTTPS address, complete first-run administrator setup and required MFA. Check the certificate identity and establish trust before entering real credentials, as explained above.
+Portainer labels can vary by installed version. The established flow uses **Web editor** for creation and the existing stack's **Editor → Update the stack** for updates. Use the update procedure and storage mapping established for your existing installation.
 
-### Upgrading v2.0.3 to v2.1
+## Method 2 — Docker Compose Source Build
 
-1. Confirm the intended v2.1 image is actually published, or use only an explicitly authorised private candidate. Record its full source revision and architecture. Do not deploy an unverified or unavailable image.
-2. Stop the existing application and take a consistent, protected backup of the **entire existing `/data` mount**. Include `caffoot.sqlite3` (and any SQLite sidecar files), `tls/`, `account-email-secret.key` when present, and all other installation files. Preserve UID/GID `10001:10001`, modes, ownership and private keys. Keep the exact current stack/environment and a verified old image reference separately. Test recovery on a disposable copy, never on the sole live data.
-3. Update only the image in the existing stack. Keep the same `/data` named volume or bind mount, published port, HTTPS origin/server identity, environment and secrets. Do not create a second stack or import JSON as an upgrade step.
-4. v2.1 applies additive migrations through schema 10. Inventory, accounts, password/MFA material, permissions and history are retained. Old-format email proofs are intentionally invalidated: request a new code. The separate private email-signing key must remain with its matching database; never regenerate a missing key while usable challenges exist.
-5. After startup, verify sign-in/MFA, permissions, Devices/IPAM/Racks, Audit Trail/history, certificate fingerprint and existing addresses/rack positions. Check saved historical values and the accepted subnet-first behaviour. Verify restart/recreation with the same persistent mount.
-6. **Rollback is a restore, not a database downgrade.** Stop v2.1. Preserve its data separately if investigation is needed. Restore the complete matching pre-upgrade `/data` backup with original permissions into the intended stopped installation, then run the recorded old image. Do not start v2.0.3 against the upgraded database; the older application rejects newer schemas and cannot understand all new data. Changes made after the backup are not recovered by that rollback. Do not mix an old database with unrelated TLS/private recovery keys.
+Use a separate isolated instance for v2.2 review; keep production on the published release.
 
-### Upgrading an existing v2.0.1 installation to v2.0.2
+1. Use a clean checkout at the exact authorised application candidate and record `git rev-parse HEAD`. Keep local changes/other branches safe. Confirm that the Dockerfile and draft build context identify this checkout. Never label an unverified working tree as an exact source revision.
+2. In the shell from that repository root, provide the values for your isolated instance. Example only:
 
-To upgrade to v2.0.2, update the **existing** Portainer stack in place rather than creating a second stack. Stop the current container, make a consistent external backup of the **entire existing `/data` mount** (including `caffoot.sqlite3` and `tls/`), then change only the existing image tag from `v2.0.1` to `v2.0.2` and redeploy. **Keep the same existing named volume or host directory mapped to `/data`**, along with your HTTPS address and published port. If your current stack uses a custom bind mount, retain that actual mapping instead of copying the named-volume example over it. Do not delete or replace the volume.
+   ```sh
+   export CAFFOOT_WEB_ADDRESS='https://192.0.2.40:8446'
+   export CAFFOOT_SERVER_ADDRESS='192.0.2.40'
+   export CAFFOOT_PORT='8446'
+   export TZ='Europe/London' # UK example only; choose your organisation's zone
+   ```
 
-After the updated container starts, verify your existing account can sign in, the inventory is intact and the HTTPS certificate identity is unchanged. If anything is wrong, stop the container and recover from your verified external backup; do not perform recovery experiments against your only live data copy. No routine JSON export/import is part of a Docker version upgrade.
+3. Put your private configuration copy beside the original draft file, using a distinct filename, so `../../../..` still resolves to the same source root; if storing it elsewhere, explicitly set its build context to the absolute verified source root. The `TZ` expression reads the exported IANA name; no YAML edit is needed for it. A private `.env` file can supply these values instead; use an explicit `--env-file /path/to/private.env` consistently if it is outside Compose's normal environment-file location. Keep it outside Git and protect it as installation configuration. Retain the intended `/data` mapping. Use a distinct project consistently; for illustration, commands below use `aster-review`. In every command replace `/path/to/private-review.yaml` with the absolute path to that edited private copy.
+4. Validate the configuration without starting services:
 
-### Upgrading an existing v2.0.2 installation to v2.0.3
+   ```sh
+   docker compose -p aster-review -f /path/to/private-review.yaml config --quiet
+   ```
 
-Keep your existing Portainer stack and **the exact same `/data` volume or host-directory mapping**. Stop Caffoot Lite and back up the complete persistent data (including `caffoot.sqlite3` and `tls/`) using your trusted external backup process. Change only the image tag in the existing stack from `v2.0.2` to `v2.0.3`, then redeploy. Keep your HTTPS address, published port, permissions and storage configuration as they were. Do not create a second stack, replace a working named volume or import a JSON backup as part of the upgrade.
+   Check the private configuration's correct build context before running the commands. Do not print expanded configuration containing secrets into public records.
 
-Afterwards, check sign-in and MFA, your existing Devices/IPAM/Racks data, Change History and HTTPS certificate identity. If any problem appears, stop and use your verified backup/recovery plan rather than testing destructive changes on your only live data.
+5. Build from the verified clean source, supplying its actual full SHA as the build argument (replace `VERIFIED_FULL_SHA`):
 
-**Earlier installations:** The v2.0.1 → v2.0.2 instructions immediately above are retained because older release notes link directly to that heading. You can read those historical steps before planning an upgrade to the current version.
+   ```sh
+   docker compose -p aster-review -f /path/to/private-review.yaml build --build-arg CAFFOOT_SOURCE_REVISION=VERIFIED_FULL_SHA
+   docker compose -p aster-review -f /path/to/private-review.yaml up -d
+   ```
 
-## Building directly from the source repository
+   The label records what the builder supplies; verify it against the source and actual resulting image. The draft file itself sets no revision build argument. If a private build proxy needs an extra trusted CA, the Dockerfile supports the existing BuildKit secret `proxy_ca`; follow the approved environment's trusted-build configuration. Do not disable certificate verification or invent a different source/image as a workaround.
 
-Clone the published v2.1 release and use the repository-root [`compose.yaml`](compose.yaml) and [`Dockerfile`](Dockerfile). Set your local `.env` values as shown above, then run `docker compose up --build -d` from the root. For Portainer's Git-repository mode, use repository `https://github.com/Caffoot/Caffoot-Lite.git`, reference `v2.1` and Compose path `compose.yaml`. The repository-root `compose.yaml` already uses the named `caffoot_data` volume by default. For an existing deployment that uses a host folder, keep the existing `CAFFOOT_DATA_PATH` value in `.env` (or your existing mapping) instead of moving to a fresh volume. You can explicitly set `CAFFOOT_DATA_PATH=/srv/caffoot-lite/data` for a new custom bind-mount installation, after preparing that directory with the correct permissions. Compose may prefix named volumes with the project name; check the actual volume name before running backups.
+6. With the same file/project options, use `docker compose ps` and `docker compose logs caffoot-lite` to check startup, and inspect the actual image architecture/revision and `/data` mount. Keep logs private. Use **Ctrl+C** to stop following logs, not to delete storage.
 
-The service is named `caffoot-lite`, and the image build copies `backend/`, `inventory.html`, `setup.html` and the required `assets/` from the root. The same `/data` backup and HTTPS rules apply.
+The Dockerfile uses Python 3.12 Alpine with OpenSSL and IANA tzdata, packages the backend/setup/interface and required local assets, and runs as `10001:10001`. Its source revision label defaults to `development` unless supplied. Build-context ignore files and explicit COPY paths are packaging controls; they do not certify an arbitrary private checkout contains no secrets.
 
-## External backup and recovery of your Docker installation
+## Verify HTTPS Identity Before Setup
 
-The Docker edition does **not** offer an ongoing in-app JSON export/restore service. The fresh **v1.3.3** JSON import described below is only for one-way migration.
+1. Open the configured HTTPS browser address only after confirming it is the intended container/host. The server creates a self-signed certificate/key once under `/data/tls` and reuses them. A browser warning is expected for an untrusted self-signed issuer; do not enter credentials until the identity is independently verified and trust established.
+2. From trusted host administration, inspect the certificate using the same Compose file/project options, or the equivalent exec into the intended Portainer container:
 
-The application stores its SQLite database at `/data/caffoot.sqlite3`, with persistent HTTPS certificate material under `/data/tls` and the private `account-email-secret.key` when created. Include every installation file, not just SQLite. Keep the **entire** `/data` mount when recreating or updating the container. For new installations, the default is a **Docker-managed named volume**, not an ordinary host directory. Docker may prefix the name with the stack or Compose project name. Existing installations may instead use a custom host directory, which must be preserved.
+   ```sh
+   docker compose -p aster-review -f /path/to/private-review.yaml exec caffoot-lite openssl x509 -in /data/tls/server.crt -noout -fingerprint -sha256 -subject -dates -ext subjectAltName
+   ```
 
-Use your existing external container/volume backup solution. For a straightforward **manual copy**, first stop the Caffoot container so SQLite is no longer being written, then copy the entire persistent data directory to a separately protected backup location.
+3. Compare the SHA-256 fingerprint with a separately trusted copy and check the Subject Alternative Name includes the hostname/IP actually used. Keep `server.key` private. The generated certificate is not automatically publicly trusted or automatically renewed; plan controlled rotation before expiry and update client/proxy trust.
+4. If the identity has changed unexpectedly, stop and verify mount/image/host before trusting it. Changing `CAFFOOT_SERVER_ADDRESS` does not silently replace the stored certificate. An incomplete certificate/key pair is a startup error, not permission to delete the whole volume.
+5. For an authorised reverse proxy, keep the external HTTPS origin and encrypted upstream identity consistent and explicitly verify the upstream certificate. The source server serves HTTPS; this guide establishes no plain-HTTP upstream or automatic certificate-service procedure.
 
-**Named-volume backup:** In **Portainer → Volumes**, identify the **actual** volume used by the Caffoot Lite stack; the name may include the stack name. Confirm that it contains the expected database and `tls` directory. With Caffoot Lite stopped, use a trusted Docker volume-backup utility or temporary helper container to copy the complete volume contents. Do not assume the files are always under `/var/lib/docker/volumes`; Docker chooses the storage location.
+The container health check requests `https://127.0.0.1:8080/health` without checking certificate trust. It establishes local liveness only. Check the browser endpoint, actual certificate, authentication and persisted data separately.
 
-**Host-directory backup:** If you chose a bind mount such as `/srv/caffoot-lite/data:/data`, stop Caffoot Lite and copy the **entire configured host directory**, including SQLite and TLS files.
+## Create The Initial Administrator And First Sign-In
 
-**Restoring a backup:** Use a separate isolated installation whenever practical. Stop the target container and identify the intended named volume or bind directory mapped to `/data`. Restore the complete saved contents with their original ownership and permissions, then start the matching application image. Verify the HTTPS certificate identity, sign-in, MFA, inventory and permissions. Keep the original backup and working installation until recovery is verified; do not overwrite your only working data or delete certificate files to test restoration.
+A fresh database has no fixed/default administrator password and no public registration. Restrict reachability while completing the initial setup so only the intended administrator can claim it. Outgoing email is not required for initial administration.
 
-Keep backup copies **outside the Docker host** so a storage failure does not destroy both the installation and its backup. Verify your own restore process before relying on it. Protect backups containing credentials, MFA, TLS and private account-email key material.
+1. Open the trusted browser origin; `/setup` serves setup/sign-in. On an empty database choose **Get Started**, then **Create Your Administrator**. Enter your chosen **Username**, **Password** and **Confirm Password**. For a fictional example use `aster.admin`, with a unique secret stored securely rather than a published example password.
+2. Choose **Continue To Authenticator Setup**. Correct any field error, including mismatched confirmation, before continuing. **Back** returns to the welcome step before account submission; an already created pending administrator should resume enrolment rather than create another account.
+3. On **Secure Your Account**, scan the private QR code with your authenticator. If needed use **Can't scan? Show setup key**. Enter the current six-digit **Authenticator Code** and choose **Confirm MFA Setup**. Keep the QR code, setup key and authenticator codes private. An invalid code leaves setup incomplete; check the selected account and device clock before trying again.
+4. At **You're All Set!**, choose **Continue to Sign In**. Enter **Username** and **Password**, then **Sign In**. The enrolled account sees **Verify Your Identity**: enter **Authenticator Code** and choose **Verify & Sign In**.
+5. If setup was interrupted, use **Finish Administrator Setup → Continue Enrolment** with the original credentials. Do not clear the database to restart enrolment. Unexpected first-run setup on an existing installation is a reason to stop and check the mount.
+6. After sign-in, use **My Account** to review personal/security settings and verify an email address when SMTP is configured. A successful SMTP test is not account verification or recovery eligibility. Later promotion of another administrator has its own verified-email/MFA/no-pending-password-change requirements; the initial setup exception is deliberate. [Accounts and MFA](docs/how-tos/features-and-instructions/v2.2/Roles-Section-Permissions-and-MFA.md)
+7. An administrator reviews **Settings & Data → Optional Features**, granting section access separately, and checks **Service Desk → Working Hours → Installation Time Zone**. Fresh feature choices and employee equipment eligibility follow their guides; do not assume every optional section is enabled. [Initial workflow index](docs/how-tos/features-and-instructions/v2.2/README.md)
 
-## Published v1.3.3 import compatibility boundary
+## Confirm Startup And Persistence
 
-v2.1 accepts only backups freshly exported from [published v1.3.3](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v1.3.3). Users of earlier standalone HTML versions must upgrade to v1.3.3, check their inventory and export from there.
+1. Confirm the intended container is running/healthy and read its relevant logs for migration, origin, TLS or storage errors. Health confirms local liveness; check access and data separately.
+2. Sign in through trusted HTTPS and check the expected installation: existing accounts/data for an upgrade/recovery, or the new setup for a deliberately empty review instance. Open representative permitted records and verify feature choices and the applied time zone.
+3. As part of separately authorised installation verification, recreate/restart using the **same** mount and settings, then check sign-in, HTTPS fingerprint and records remain. Recreating is not a backup. Do not run deletion or recovery rehearsals merely because this guide lists verification steps.
+4. Retain image identity, configuration and a protected complete off-host backup/recovery plan. [Backup, recovery and matching-image rollback](docs/how-tos/features-and-instructions/v2.2/Legacy-Import-and-Docker-Upgrade.md#back-up-a-complete-installation)
 
-Import may ask you to review legacy computer or Access Point mounting choices before confirming replacement. Read each proposed correction and the inventory counts; cancel if they do not describe your intended inventory. Confirmation replaces central inventory while retaining Docker accounts, permissions and MFA. Keep the original export and a complete Docker backup; JSON import cannot recover a full installation. Follow [Migration, Backup and Restore](docs/how-tos/features-and-instructions/Migration-Backup-and-Restore.md) for the complete procedure.
+## Troubleshoot Without Discarding Data
+
+| Symptom | Checks and safe response |
+| --- | --- |
+| Image missing, pull denied or wrong architecture | Confirm selected Docker host, authorised local/private image identity and architecture. A private local tag is not a public registry image. Stop rather than publish or guess a v2.2 tag. |
+| Build cannot verify package-server TLS | Check the approved trusted CA/BuildKit-secret configuration with the environment administrator. Keep TLS verification enabled; no build was performed here. |
+| Container does not start | Read the targeted logs and validate actual web origin, numeric host port, server identity, mount permissions and database compatibility. Startup initialises/migrates the database before serving HTTPS; a later configuration failure does not prove no migration occurred. Preserve that copy and use matching-image recovery if needed. |
+| Address unreachable or host port occupied | Check reachable host/DNS, matching URL and left port mapping, firewall and another container using that port. Keep internal 8080; do not stop unrelated services or change an existing mount to fix networking. |
+| Browser certificate warning/mismatch | Compare independent trusted fingerprint, SAN, date/expiry and actual host/mount. Establish trust deliberately. Do not bypass an unexplained warning or delete persistent identity. |
+| Permission denied writing data/private file | Check `10001:10001` inside the container, rootless mappings, layout and restrictive file modes; do not make credential files world-readable. |
+| Empty setup appears for an existing installation | Stop, inspect actual mount/project/volume name and archive layout. Do not create a replacement administrator on the wrong empty volume. |
+| Service Desk time warning | Set the correct valid IANA `TZ` in the actual service configuration and recreate with the same storage/settings. Metrics may remain incomplete for unknown historical periods; ticket operations continue. |
+| Sign-in/MFA fails | Confirm intended instance/account, actual system/device time and current authenticator. Use the documented account/recovery controls; never edit database security flags as an installation shortcut. |
+| Storage is full | Stop new writes as appropriate, preserve current files, and arrange capacity/backup with the host administrator. Do not delete database, ticket bytes or TLS material to make room. |
+
+[Time zone](docs/how-tos/features-and-instructions/v2.2/Service-Desk-Time-Zone.md) · [Service Desk administration](docs/how-tos/features-and-instructions/v2.2/Service-Desk-Administration.md) · [Legacy import, upgrade and recovery](docs/how-tos/features-and-instructions/v2.2/Legacy-Import-and-Docker-Upgrade.md) · [Draft guides](docs/how-tos/features-and-instructions/v2.2/README.md)
+
+## Upgrade, Backup And Recovery
+
+For an existing Docker instance, read [the accepted upgrade and complete-volume recovery procedure](docs/how-tos/features-and-instructions/v2.2/Legacy-Import-and-Docker-Upgrade.md) before changing anything. Preserve the actual `/data` mount, environment, HTTPS identity and matching image; take a consistent protected backup of the complete stopped volume. JSON import is a one-way legacy inventory migration, never a Docker upgrade or full backup. Rollback requires the complete matching pre-upgrade backup and old image, never an old binary against a newer database. Supported v2.1 → v2.2 upgrade, complete-volume recovery and private-export acceptance for the final candidate remain release gates; do not experiment against production or the only live copy.
+
+## Before A Public v2.2 Installation Is Offered
+
+Separately verify the exact final image revision, AMD64/ARM64 availability and anonymous public pull, new installation, supported upgrade and complete-volume recovery. Obtain release approval before activating `ghcr.io/caffoot/caffoot-lite:v2.2` in the root stack or removing unreleased/private-review notices. Current source-build Compose and private-image Portainer settings remain in effect until that authorised transition.

@@ -14,7 +14,7 @@ Authorisation: [owner continuation](https://github.com/Caffoot/Caffoot-Lite/issu
 
 ## Devices Checkpoint
 
-[Devices draft](../how-tos/features-and-instructions/v2.2-draft/Devices.md) retains the first pass and adds complete storage/boot/ZFS, host/guest and catalogue procedures. Corrected the new-Device status description (new records start Active), inherited VM platform, and assigned-service archive restriction. Stock, custody, Supplier, Lifecycle and ticket operations link to their specialised draft guides; their full reviews remain in later authorised batches. Stock specification metadata remains foundation-only: no claim of a general stock specification screen/API.
+[Devices draft](../how-tos/features-and-instructions/v2.2/Devices.md) retains the first pass and adds complete storage/boot/ZFS, host/guest and catalogue procedures. Corrected the new-Device status description (new records start Active), inherited VM platform, and assigned-service archive restriction. Stock, custody, Supplier, Lifecycle and ticket operations link to their specialised draft guides; their full reviews remain in later authorised batches. Stock specification metadata remains foundation-only: no claim of a general stock specification screen/API.
 
 | Source At Application Baseline | What Was Checked |
 | --- | --- |
@@ -30,7 +30,7 @@ Static checks accompany each topic checkpoint. Screenshot review and final cross
 
 ## IPAM And Network Racks Checkpoint
 
-Created standalone [IPAM](../how-tos/features-and-instructions/v2.2-draft/IPAM.md) and [Network Racks](../how-tos/features-and-instructions/v2.2-draft/Racks.md) drafts, building on the preserved existing guides. Added the index entries and direct Device links.
+Created standalone [IPAM](../how-tos/features-and-instructions/v2.2/IPAM.md) and [Network Racks](../how-tos/features-and-instructions/v2.2/Racks.md) drafts, building on the preserved existing guides. Added the index entries and direct Device links.
 
 | Source At Application Baseline | Reconciliation |
 | --- | --- |
@@ -59,7 +59,7 @@ The tag's Racks prose names older **Rack Placement / Mount device** controls alt
 
 ## Optional Features And Related Infrastructure Review
 
-The [Optional Features user guide](../how-tos/features-and-instructions/v2.2-draft/Optional-Features-and-Link-To-IPAM.md) now has explicit access and retained-data requirements for all six switches, independent-use examples, Lifecycle settings/manual override boundaries and eligible stock first-service capture while Lifecycle is off. It retains the all-off administrator history API versus unavailable Audit Trail navigation distinction. There is no separate Service Desk switch. [The technical foundation](Optional-Features.md#current-baseline-and-historical-scope--26-november-2026) receives a current-baseline section; its original Stage 2/3 implementation descriptions and design decisions remain below it, clearly historical.
+The [Optional Features user guide](../how-tos/features-and-instructions/v2.2/Optional-Features-and-Link-To-IPAM.md) now has explicit access and retained-data requirements for all six switches, independent-use examples, Lifecycle settings/manual override boundaries and eligible stock first-service capture while Lifecycle is off. It retains the all-off administrator history API versus unavailable Audit Trail navigation distinction. There is no separate Service Desk switch. [The technical foundation](Optional-Features.md#current-baseline-and-historical-scope--26-november-2026) receives a current-baseline section; its original Stage 2/3 implementation descriptions and design decisions remain below it, clearly historical.
 
 Sources rechecked at the application baseline: [feature API and six-switch allowlist](https://github.com/Caffoot/Caffoot-Lite/blob/fdc677920bfc52f48f641b3d6d1344c902a6a9b0/backend/feature_settings.py), [effective feature access](https://github.com/Caffoot/Caffoot-Lite/blob/fdc677920bfc52f48f641b3d6d1344c902a6a9b0/backend/permissions.py#L91-L109), [Lifecycle access and first service](https://github.com/Caffoot/Caffoot-Lite/blob/fdc677920bfc52f48f641b3d6d1344c902a6a9b0/backend/equipment_lifecycle.py#L132-L298), [stock first-service caller](https://github.com/Caffoot/Caffoot-Lite/blob/fdc677920bfc52f48f641b3d6d1344c902a6a9b0/backend/device_stock.py#L140-L154), [session eligibility](https://github.com/Caffoot/Caffoot-Lite/blob/fdc677920bfc52f48f641b3d6d1344c902a6a9b0/backend/server.py#L545-L570), [essential history projection](https://github.com/Caffoot/Caffoot-Lite/blob/fdc677920bfc52f48f641b3d6d1344c902a6a9b0/backend/history_permissions.py#L66-L105), [current six cards and save](https://github.com/Caffoot/Caffoot-Lite/blob/fdc677920bfc52f48f641b3d6d1344c902a6a9b0/interface/application.js#L10320-L10373), [Rack-off protection](https://github.com/Caffoot/Caffoot-Lite/blob/fdc677920bfc52f48f641b3d6d1344c902a6a9b0/backend/device_rack_fields.py).
 

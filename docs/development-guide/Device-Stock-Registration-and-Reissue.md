@@ -1,6 +1,6 @@
 # Device Stock Registration And Reissue
 
-> **Historical implementation contract.** The checkpoint, schema and pending-review wording below describe the original development stage. Use [Development Status](Development-Status.md) for the current integrated application and acceptance boundary, and the [v2.2 instructions](../how-tos/features-and-instructions/v2.2-draft/README.md) for current procedures. Original technical decisions and evidence are retained.
+> **Historical implementation contract.** The checkpoint, schema and pending-review wording below describe the original development stage. Use [Development Status](Development-Status.md) for the current integrated application and acceptance boundary, and the [v2.2 instructions](../how-tos/features-and-instructions/v2.2/README.md) for current procedures. Original technical decisions and evidence are retained.
 
 > Draft v2.2 — Not Yet Published. Batch 3.9 is in development; no visual acceptance,
 > merge, release or deployment is claimed.
@@ -171,7 +171,7 @@ all existing gates remain. Complete final-head verification is still pending.
 
 ## Documentation And Final Source Checkpoint
 
-The [draft user guide](../how-tos/features-and-instructions/v2.2-draft/Device-Stock-Registration-and-Reissue.md)
+The [draft user guide](../how-tos/features-and-instructions/v2.2/Device-Stock-Registration-and-Reissue.md)
 explains both entry points, direct Add versus receipt/registration/reissue,
 preparation, independent permissions, optional hardware and the ten-computer
 example. Current guide indexes and the active handover point to the batch;

@@ -3,8 +3,8 @@
 This is unreleased Milestone 01 development. The published v2.1 installation
 is unchanged. Batch 3.4 merged via PR #382 at
 `05b162aa10a74994c970d0b6dbf111dc59b47513`; manual acceptance is deferred,
-not passed. See the [draft user guide](../how-tos/features-and-instructions/v2.2-draft/Device-Assignments-and-My-Equipment.md).
-The sections below retain the historical initial-allocation contract. Current schema-29-and-later shared Devices support several equal Departments in one physical custody period; see [Shared Devices](../../backend/shared_devices.py) and the [current assignment guide](../how-tos/features-and-instructions/v2.2-draft/Device-Assignments-and-My-Equipment.md). [Batch 3.8 circulation](IT-Assets-Issue-Return-and-Write-Off.md) adds protected stock projections and Schema 17 one-way closure; no original assignment field becomes editable.
+not passed. See the [draft user guide](../how-tos/features-and-instructions/v2.2/Device-Assignments-and-My-Equipment.md).
+The sections below retain the historical initial-allocation contract. Current schema-29-and-later shared Devices support several equal Departments in one physical custody period; see [Shared Devices](../../backend/shared_devices.py) and the [current assignment guide](../how-tos/features-and-instructions/v2.2/Device-Assignments-and-My-Equipment.md). [Batch 3.8 circulation](IT-Assets-Issue-Return-and-Write-Off.md) adds protected stock projections and Schema 17 one-way closure; no original assignment field becomes editable.
 Scope: [Batch 3.4](https://github.com/Caffoot/Caffoot-Lite/issues/368#issuecomment-6881744109).
 
 Schema 15 introduces `device_assignments`. Each dated record references the

@@ -1,6 +1,6 @@
 # Staff Members And Departments Foundation
 
-> **Historical implementation contract.** The checkpoint, schema and pending-review wording below describe the original development stage. Use [Development Status](Development-Status.md) for the current integrated application and acceptance boundary, and the [v2.2 instructions](../how-tos/features-and-instructions/v2.2-draft/README.md) for current procedures. Original technical decisions and evidence are retained.
+> **Historical implementation contract.** The checkpoint, schema and pending-review wording below describe the original development stage. Use [Development Status](Development-Status.md) for the current integrated application and acceptance boundary, and the [v2.2 instructions](../how-tos/features-and-instructions/v2.2/README.md) for current procedures. Original technical decisions and evidence are retained.
 
 The foundation was accepted in PR #377. The following describes its migration;
 [Batch 3.2 APIs](Staff-Directory-APIs.md) extend future account creation and Staff
@@ -13,7 +13,7 @@ The published release remains v2.1. Operational APIs, Staff screens/navigation
 and initial Device assignments are now merged in Batches 3.2–3.4 through PR #382
 at `05b162aa10a74994c970d0b6dbf111dc59b47513` (schema 15). Batch 3.4 manual
 acceptance is deferred, not passed. The IT Assets feature switch and stock
-workflows remain pending. See the [draft Staff guide](../how-tos/features-and-instructions/v2.2-draft/Staff-Members.md).
+workflows remain pending. See the [draft Staff guide](../how-tos/features-and-instructions/v2.2/Staff-Members.md).
 The sections below describe this foundation batch, not the complete current system.
 
 ## Records And Upgrade
