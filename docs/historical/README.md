@@ -13,6 +13,6 @@ This directory preserves version-specific release material and completed website
 
 When a newer version is prepared for release, keep its Portainer YAML in the repository root and move the superseded version's YAML into this historical folder. Do not remove existing users' referenced files or alter their data volume mappings. Moving a file in `main` does not change previously published Git tags, releases or Docker images.
 
-For the **current installation**, start with the [main README](../../README.md) and [installation guide](../../INSTALLATION.md). The README identifies v2.1 as published and distinguishes unreleased development.
+For **public v2.1 installation**, use the [archived installation guide](installation/INSTALLATION-v2.1.md) or [published v2.1 tag](https://github.com/Caffoot/Caffoot-Lite/tree/v2.1). The [root README](../../README.md) and [root installation guide](../../INSTALLATION.md) prepare unreleased v2.2 on this branch; isolated review is not a production release.
 
 Earlier standalone and Docker releases remain accessible through [GitHub Releases](https://github.com/Caffoot/Caffoot-Lite/releases).

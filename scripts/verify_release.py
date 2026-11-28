@@ -262,6 +262,13 @@ def check_release_files(root, version, *, allow_unreleased_readme=False):
         guide_index = _read_required(root, f"docs/how-tos/features-and-instructions/{version}/README.md")
         if UNRELEASED_PATTERN.search(guide_index):
             raise ReleasePreflightError("Publication rejects unreleased permanent guides")
+        guide_directory = root / f"docs/how-tos/features-and-instructions/{version}"
+        for guide in guide_directory.glob("*.md"):
+            if re.search(r"(?im)^>\s*\*\*draft[^\n]*unreleased", guide.read_text(encoding="utf-8")):
+                raise ReleasePreflightError(f"Publication rejects unreleased guide: {guide.name}")
+        guide_stack = _read_required(root, f"docs/how-tos/features-and-instructions/{version}/portainer-{version}.yaml")
+        if guide_stack != stack:
+            raise ReleasePreflightError("Publication requires the same final public stack in the permanent guide")
         for name in ("interface/screens/my-account.html", "interface/screens/settings.html", "interface/application.js"):
             text = _read_required(root, name)
             if re.search(re.escape(version) + r" is (?:an? )?unreleased", text, re.I):

@@ -43,6 +43,13 @@ Once those checks pass, GitHub creates the new tag at the **exact tested commit*
 
 Website publication, production deployment and any security-advisory disclosure remain separate decisions.
 
+For the target-version branch, `python3 scripts/verify_release.py` validates the explicitly **unreleased candidate** without granting publication rights. It also retains checks for older published and split README/installation baselines. The normal `release-documentation` job uses that same selection and retains both legacy-guide byte-equality checks.
+
+`python3 scripts/verify_release.py --version v2.2` remains the **strict publication path** and intentionally fails on the current candidate. Before it can pass, obtain the applicable acceptance and release approvals, activate the exact verified public image in both the root and permanent-guide Portainer files, reconcile final instructions/notes and remove their candidate notices, and archive the genuinely completed active handover as `docs/historical/development-handovers/v2.2.md`. Mark it historical and record `Release acceptance: complete` only after actual acceptance; the declaration is a file-consistency condition, not a substitute for the owner's decision. Reconcile all active handover links. If the accepted guide content changes, first commit it, then update Help & Guides to that immutable permanent-path commit and recheck the affected links.
+
+The publication workflow still enforces its separate owner-only protected-main/manual entry, exact tested commit, required regression/security checks, version/collision/newer-version, architecture, public-pull and revision-label safeguards. Repository consistency alone proves none of those external results.
+
+
 The existing [release documentation check](../../.github/workflows/release-documentation.yml) retains the protected-branch job identifier `release-documentation`. The [backend tests](../../.github/workflows/backend-tests.yml), [browser tests](../../.github/workflows/browser-compat.yml), [Docker lifecycle test](../../.github/workflows/compose-lifecycle.yml) and [Git history secret scan](../../.github/workflows/git-history-secrets.yml) have different triggers. Inspect the actual run for the relevant commit: **a skipped or untriggered workflow is not a pass**. See [GitHub Actions](https://github.com/Caffoot/Caffoot-Lite/actions).
 
 ### Archive the completed development handover before publication

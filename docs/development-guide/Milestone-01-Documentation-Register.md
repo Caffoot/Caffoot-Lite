@@ -1,5 +1,9 @@
 # Milestone 01 — Documentation Review Register
 
+## Current Repository Position — 28 November 2026
+
+All eight editorial batches and the earlier repository preparation were accepted and merged in PR #472 at `a23670bdd2b520feda6003a35a45be6df7561fc5`. Draft PR #494 prepares the permanent unreleased v2.2 paths, version presentation and release checks under its separate owner-approved scope; it does not reopen those batches. [Current status and remaining gates](Development-Status.md) · [Transition checks and release-dependent actions](../development-handovers/milestone-01.md#v22-repository-transition--28-november-2026).
+
 ## Current Editorial Boundary — 27 November 2026
 
 [Batch 8 owner approval](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7224076263) starts from accepted documentation `5338f3903d39714999fab068025d99869be44c63` and integrated application `0251b43a3b5d41d626aa022c6d7f9b4d860433da`, schema 31. [7F–7H draft acceptance](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7224015412) supersedes the earlier fixture-dependent capture stop for that illustration-only delivery. The [existing illustration record](Milestone-01-7F-7H-Illustrations.md) retains its exact reuse list and text-only gaps.

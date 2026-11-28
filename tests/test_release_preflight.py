@@ -12,7 +12,6 @@ from verify_release import (  # noqa: E402
     ReleasePreflightError,
     check_release_files,
     check_repository_files,
-    check_candidate_files,
     GUIDE_NAMES,
     normalise_version,
 )
@@ -175,9 +174,12 @@ class CandidatePreflightTests(unittest.TestCase):
             content = (self.root / name).read_text().splitlines()[0] + "\nPublished release.\n"
             self.write(name, content)
         self.write("portainer-v2.2.yaml", "services:\n  caffoot-lite:\n    image: ghcr.io/caffoot/caffoot-lite:v2.2\n")
+        self.write("docs/how-tos/features-and-instructions/v2.2/portainer-v2.2.yaml",
+                   (self.root / "portainer-v2.2.yaml").read_text())
         for name in ("interface/screens/my-account.html", "interface/application.js"):
             self.change(name, "v2.2 is an unreleased review candidate; ", "")
         self.write("docs/how-tos/features-and-instructions/v2.2/README.md", "Published v2.2 guides.\n")
+        self.write("docs/how-tos/features-and-instructions/v2.2/Devices.md", "Published Device guide.\n")
         (self.root / "docs/development-handovers/milestone-01.md").unlink()
         self.write("docs/historical/development-handovers/v2.2.md", "HISTORICAL\nRelease acceptance: complete\n")
 
@@ -297,12 +299,26 @@ class CandidatePreflightTests(unittest.TestCase):
         with self.assertRaisesRegex(ReleasePreflightError, "final public image"):
             check_release_files(self.root, "v2.2")
 
+    def test_publication_rejects_private_guide_stack(self):
+        self.prepare_final_release()
+        self.write("docs/how-tos/features-and-instructions/v2.2/portainer-v2.2.yaml", "image: private:review\n")
+        with self.assertRaisesRegex(ReleasePreflightError, "final public stack"):
+            check_release_files(self.root, "v2.2")
+
+    def test_read_only_keeps_older_published_and_split_baseline_paths(self):
+        self.assertEqual(check_repository_files(self.root), "v2.0.3")
+        self.write("README.md", "# Caffoot Lite v2.2 — Everyday IT Management\n"
+                   "v2.2 is unreleased. v2.0.3 remains published.\n")
+        self.write("docs/Release-Notes-v2.2.md", "Draft — Unreleased.\n")
+        self.assertEqual(check_repository_files(self.root), "v2.0.3")
+
     def test_publication_rejects_leftover_notices(self):
         for name, notice in (("INSTALLATION.md", "Draft — Unreleased.\n"),
                              ("docs/historical/release-notes/Release-Notes-v2.2.md", "Draft — Unreleased.\n"),
                              ("interface/screens/my-account.html", "v2.2 is an unreleased review candidate.\n"),
                              ("interface/screens/settings.html", "v2.2 is unreleased.\n"),
-                             ("docs/how-tos/features-and-instructions/v2.2/README.md", "Draft — Unreleased.\n")):
+                             ("docs/how-tos/features-and-instructions/v2.2/README.md", "Draft — Unreleased.\n"),
+                             ("docs/how-tos/features-and-instructions/v2.2/Devices.md", "> **Draft v2.2 — Unreleased.**\n")):
             with self.subTest(name=name):
                 self.prepare_final_release()
                 self.write(name, (self.root / name).read_text() + notice)

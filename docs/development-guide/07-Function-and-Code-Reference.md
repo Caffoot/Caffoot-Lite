@@ -247,3 +247,9 @@ status action immediately after profile/login content and before the equipment
 placeholder. The action's permission, confirmation and handler are unchanged.
 See the [consolidated Batch 3.4 review](../development-handovers/evidence/stage-3-batch-34/Visual-Review.md)
 for active/inactive administrator/restricted views and current visual follow-ups.
+
+## Release Consistency Checks
+
+[`scripts/verify_release.py`](../../scripts/verify_release.py) is a read-only maintenance tool. `check_repository_files` chooses candidate, published or older split-baseline validation for normal PR checks; `check_candidate_files` requires consistent unreleased v2.2 documents, private-image/TZ configuration, installed-version About panels, permanent guide links and an active handover. `check_release_files` is the strict explicit-version publication path. `check_compatibility_files` protects both existing guide directories and historical stack/note pairs. The required workflow calls the same verifier; its existing guide byte-equality checks remain in place.
+
+The release verifier and tests are outside the retained application [Function Index](Function-Index.md)'s documented scope. No application functions were added, removed or renamed in this transition. See the [release checklist](Security-Fixes-and-Releases.md) for the remaining publication conditions.
