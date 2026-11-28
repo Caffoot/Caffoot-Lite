@@ -7767,7 +7767,7 @@ function openIpModal(ip) {
                     '</div></section>';
             } else if (section === 'help') {
                 // The authoritative Markdown user guides are shared with GitHub and the future website.
-                const guideRoot = 'https://github.com/Caffoot/Caffoot-Lite/blob/8c680f3cd540a91df50299b8243f480fc9857242/docs/how-tos/features-and-instructions/v2.2-draft/';
+                const guideRoot = 'https://github.com/Caffoot/Caffoot-Lite/blob/4fef71258d7827b5556919183a894534a6a791e8/docs/how-tos/features-and-instructions/v2.2/';
                 const helpTopics = [
                     ["Getting Started", "Create your administrator on first run and enrol MFA. Administrators choose the optional features and access needed by the team. Fresh installations start with optional features off.", [["Getting Started", "README.md"]]],
                     ["Import From v1.3.3", "Choose a fresh published v1.3.3 JSON export, review required corrections and explicitly confirm replacement. This is a one-way migration, not an ongoing database backup.", [["Legacy Import", "Legacy-Import-and-Docker-Upgrade.md"]]],
@@ -7790,7 +7790,7 @@ function openIpModal(ip) {
                 body = '<section class="settings-panel settings-about"><div class="settings-about-brand">' +
                     '<img src="../assets/caffoot-icon-1024.png" alt="Caffoot hedgehog logo" width="76" height="76">' +
                     renderInterfaceTemplate("settings/about-summary",[]) +
-                    '<div class="settings-about-version"><span>Published Release</span><strong>Caffoot Lite v2.1</strong></div>' +
+                    '<div class="settings-about-version"><span>Installed Version</span><strong>Caffoot Lite v2.2</strong></div>' +
                     '<p>Manage infrastructure, Staff, equipment custody, Suppliers and Service Desk work using a shared central SQLite database with authorised multi-user access. v2.2 is an unreleased review candidate; v2.1 remains the published release.</p>' +
                     '<h4>Project & Documentation</h4><div class="settings-about-links">' +
                     renderInterfaceTemplate("settings/repository-link",[]) +

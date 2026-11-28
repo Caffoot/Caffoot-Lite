@@ -35,7 +35,7 @@ For a **new standard installation**, Docker automatically creates the named `caf
 
 A **custom host directory** is also supported, for example `/srv/caffoot-lite/data:/data`. Configure write permissions for the application's non-root UID/GID `10001:10001`.
 
-For **existing installations**, keep the original `/data` mount. Do not change from a host directory to an empty named volume simply because the new example uses one; data does not migrate automatically. See the [installation guide](../../../INSTALLATION.md) for both storage choices.
+For **existing installations**, keep the original `/data` mount. Do not change from a host directory to an empty named volume simply because the new example uses one; data does not migrate automatically. See the [installation guide](../../../docs/historical/installation/INSTALLATION-v2.1.md) for both storage choices.
 
 ## Make a manual consistent backup
 
@@ -67,7 +67,7 @@ Verify recovery from your own protected backup in an isolated installation befor
 - **Clear System / Clean Start:** a destructive inventory maintenance action, not a restore mechanism.
 - **Audit Trail:** explains saved changes but is not a copy of the application database.
 
-For exact deployment examples, environment names and certificate verification, follow [Docker and Portainer installation](../../../INSTALLATION.md).
+For exact deployment examples, environment names and certificate verification, follow [Docker and Portainer installation](../../../docs/historical/installation/INSTALLATION-v2.1.md).
 ## v2.1 upgrade and subnet-first compatibility
 
 The v2.1 importer preserves older tagged/unclassified records and the new optional-VLAN/VPN-gateway records. Opening an old subnet does not assign a purpose or migrate it. The subnet-first JSON changes do not themselves require another schema migration. The full v2.1 upgrade reaches schema 10 and retains existing account/security data; see the installation upgrade instructions. New untagged/VPN records must not be made compatible by inventing VLAN 0 or a gateway.
@@ -75,4 +75,4 @@ The v2.1 importer preserves older tagged/unclassified records and the new option
 Keep a consistent pre-upgrade private data backup. Earlier releases do not implement the new subnet rules; successful v2.1 round trips do not certify downgrading a new inventory to an older application. For an upgrade, preserve the existing `/data` mount and make a consistent complete backup before replacing the image.
 
 
-For a Docker version upgrade, stop and back up **all** of `/data`, including SQLite/sidecars, TLS and `account-email-secret.key` when present, with original ownership/modes. Keep that key with its matching database; it is not included by copying only SQLite. Restore the complete pre-upgrade backup with the old image for rollback; never open a schema-10 database using v2.0.3. See [the v2.1 upgrade steps](../../../INSTALLATION.md#upgrading-v203-to-v21).
+For a Docker version upgrade, stop and back up **all** of `/data`, including SQLite/sidecars, TLS and `account-email-secret.key` when present, with original ownership/modes. Keep that key with its matching database; it is not included by copying only SQLite. Restore the complete pre-upgrade backup with the old image for rollback; never open a schema-10 database using v2.0.3. See [the v2.1 upgrade steps](../../../docs/historical/installation/INSTALLATION-v2.1.md#upgrading-v203-to-v21).

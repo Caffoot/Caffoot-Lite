@@ -25,7 +25,7 @@ The guides describe the **real application**, use fictional examples and disting
 5. Review the result across Devices, IPAM, Racks and **Audit Trail**.
 6. If colleagues will use the system, create their accounts and explicitly grant section access.
 
-The detailed [Docker/Portainer installation instructions](../../../INSTALLATION.md) are separate from everyday feature guidance.
+The detailed [Docker/Portainer installation instructions](../../../docs/historical/installation/INSTALLATION-v2.1.md) are separate from everyday feature guidance.
 
 ## How the shared application behaves
 
@@ -43,4 +43,4 @@ All signed-in users can open **My Account → Help & Guides** for short built-in
 
 ## Draft v2.2 — Not Published / Not Production Guidance
 
-The published v2.1 guides above remain current. The separate [draft v2.2 guides](../../how-tos/features-and-instructions/v2.2-draft/README.md) cover infrastructure, accounts, Staff and Departments, equipment stock and custody, Suppliers, Equipment Lifecycle, Service Desk and administration. v2.2 remains unreleased; its isolated-review installation and recovery guidance is not a production upgrade procedure.
+The published v2.1 guides above remain current. The separate [draft v2.2 guides](../../how-tos/features-and-instructions/v2.2/README.md) cover infrastructure, accounts, Staff and Departments, equipment stock and custody, Suppliers, Equipment Lifecycle, Service Desk and administration. v2.2 remains unreleased; its isolated-review installation and recovery guidance is not a production upgrade procedure.

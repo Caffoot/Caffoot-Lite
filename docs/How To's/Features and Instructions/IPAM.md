@@ -4,7 +4,7 @@
 
 *The screenshots show the published v2.1 light-theme interface with fictional demonstration data.*
 
-These instructions describe the published v2.1 workflow. Check the [installation guide](../../../INSTALLATION.md) for the versioned image and deployment safeguards.
+These instructions describe the published v2.1 workflow. Check the [installation guide](../../../docs/historical/installation/INSTALLATION-v2.1.md) for the versioned image and deployment safeguards.
 
 ## Understand the records
 

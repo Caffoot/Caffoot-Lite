@@ -52,7 +52,7 @@ Settings & Data retains administrator inventory migration, safety checks, mainte
 
 ## Upgrade, Backup And Compatibility
 
-Follow [INSTALLATION.md](../../../INSTALLATION.md#upgrading-v203-to-v21). Stop and protect the **entire** existing `/data` mount, including SQLite/sidecars, TLS, private account-email key when present and all other installation files, with original ownership/modes. Preserve the current mount, environment, HTTPS origin and ports. Do not substitute a fresh volume or import JSON as an upgrade step.
+Follow [INSTALLATION.md](../installation/INSTALLATION-v2.1.md#upgrading-v203-to-v21). Stop and protect the **entire** existing `/data` mount, including SQLite/sidecars, TLS, private account-email key when present and all other installation files, with original ownership/modes. Preserve the current mount, environment, HTTPS origin and ports. Do not substitute a fresh volume or import JSON as an upgrade step.
 
 The application applies additive migrations through schema 10. Existing inventory, accounts, MFA, permissions and history are retained. Rollback requires the complete matching pre-upgrade backup and old image; an older binary must not open the upgraded database. Post-backup changes are not recovered by that rollback.
 

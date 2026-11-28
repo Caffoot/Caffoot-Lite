@@ -21,68 +21,13 @@ jobs:
         run: |
           python3 - <<'PY'
           from pathlib import Path
-          import re
 
-          readme = Path('README.md').read_text(encoding='utf-8')
-          version_pattern = r'(v[0-9]+\.[0-9]+(?:\.[0-9]+)?)'
-          match = re.match(r'# Caffoot Lite ' + version_pattern + r'(?: — [^\n]+)?\s*\n', readme)
-          if not match:
-              raise SystemExit('README title must identify its product version')
-          readme_version = match.group(1)
+          from scripts.verify_release import check_repository_files
 
-          # Installation guidance identifies the published baseline independently
-          # of a README preparing an explicitly unreleased next version.
-          installation = Path('INSTALLATION.md').read_text(encoding='utf-8')
-          published = re.match(r'# Caffoot Lite ' + version_pattern + r' — ', installation)
-          if not published:
-              raise SystemExit('Installation title must identify the published version')
-          version = published.group(1)
-          if readme_version != version:
-              draft_notes = Path(f'docs/Release-Notes-{readme_version}.md')
-              if not draft_notes.is_file():
-                  raise SystemExit('Unreleased README version needs draft release notes')
-              if not re.search(re.escape(readme_version) + r' is unreleased', readme, re.I):
-                  raise SystemExit('README must explicitly mark its next version unreleased')
-              if not re.search(r'draft[^\n]*unreleased', draft_notes.read_text(encoding='utf-8'), re.I):
-                  raise SystemExit('Next-version release notes must remain draft and unreleased')
-              if f'{version} remains' not in readme:
-                  raise SystemExit('README must retain the published installation baseline')
-
-          current_stack = f'portainer-{version}.yaml'
-          current_notes = f'docs/historical/release-notes/Release-Notes-{version}.md'
-          required = (
-              'README.md',
-              'INSTALLATION.md',
-              current_stack,
-              current_notes,
-              f'docs/historical/development-handovers/{version}.md',
-              "docs/How To's/Features and Instructions/README.md",
-              'docs/how-tos/features-and-instructions/README.md',
-              'docs/development-guide/README.md',
-          )
-          for name in required:
-              if not Path(name).is_file():
-                  raise SystemExit(f'Expected release document missing: {name}')
-              print('OK:', name)
-
-          root_stacks = {path.name for path in Path('.').glob('portainer-v*.yaml')}
-          if root_stacks != {current_stack}:
-              raise SystemExit(f'Expected only {current_stack} in the repository root; found {sorted(root_stacks)}')
-
-          # Older releases keep their historical Portainer files and notes.
-          older_stacks = {
-              path.name.removeprefix('portainer-').removesuffix('.yaml')
-              for path in Path('docs/historical/portainer').glob('portainer-v*.yaml')
-          }
-          older_notes = {
-              path.name.removeprefix('Release-Notes-').removesuffix('.md')
-              for path in Path('docs/historical/release-notes').glob('Release-Notes-v*.md')
-          } - {version}
-          if older_stacks != older_notes:
-              raise SystemExit(
-                  'Historical release notes and Portainer examples disagree: '
-                  f'{sorted(older_stacks ^ older_notes)}'
-              )
+          # The shared verifier distinguishes unreleased candidates from published
+          # and older split-baseline files. This job never selects publication mode.
+          version = check_repository_files(Path('.'))
+          print('Read-only repository consistency passed:', version)
 
           # Published older installations use the previous guide URLs.
           # Both directories must contain matching, byte-identical guides.

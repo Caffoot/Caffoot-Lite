@@ -629,7 +629,7 @@ async function run(){
   assert.ok(await page.getByText('Security At A Glance',{exact:true}).isVisible());
   await page.locator('[data-action="select-account-section"][data-section="help"]').first().click();
   await page.locator('.account-screen .expander').first().waitFor();
-  const draftGuideRoot='https://github.com/Caffoot/Caffoot-Lite/blob/8c680f3cd540a91df50299b8243f480fc9857242/docs/how-tos/features-and-instructions/v2.2-draft/';
+  const versionGuideRoot='https://github.com/Caffoot/Caffoot-Lite/blob/4fef71258d7827b5556919183a894534a6a791e8/docs/how-tos/features-and-instructions/v2.2/';
   const expectedHelpTopics=[
     ['Getting Started',['README.md']],
     ['Import From v1.3.3',['Legacy-Import-and-Docker-Upgrade.md']],
@@ -649,15 +649,15 @@ async function run(){
       Array.from(expander.querySelectorAll('a'),link=>link.getAttribute('href'))
     ]));
   assert.deepEqual(actualHelpTopics,expectedHelpTopics.map(([topic,files])=>
-    [topic,files.map(file=>draftGuideRoot+file)]),
-    'Help & Guides must contain all eleven approved v2.2 topics and their nineteen exact draft guide links');
-  const fullGuides=page.getByRole('link',{name:/^Open Draft v2\.2 Guides/});
+    [topic,files.map(file=>versionGuideRoot+file)]),
+    'Help & Guides must contain all eleven approved v2.2 topics and their nineteen exact permanent guide links');
+  const fullGuides=page.getByRole('link',{name:/^Open v2\.2 Guides/});
   assert.equal(await fullGuides.count(),1,'Approved full draft documentation link must remain');
-  assert.equal(await fullGuides.getAttribute('href'),draftGuideRoot+'README.md');
+  assert.equal(await fullGuides.getAttribute('href'),versionGuideRoot+'README.md');
   assert.ok(await fullGuides.isVisible(),'Full draft documentation link must be visible');
   await page.locator('[data-action="select-account-section"][data-section="about"]').first().click();
-  assert.ok(await page.getByText('Published Release',{exact:true}).isVisible());
-  assert.ok(await page.getByText('v2.1',{exact:true}).isVisible());
+  assert.ok(await page.getByText('Installed Version',{exact:true}).isVisible());
+  assert.ok(await page.getByText('v2.2',{exact:true}).isVisible());
   await page.locator('.account-screen [data-action="caffoot-licences"]').click();
   await page.locator('#modal-content').getByRole('heading',{name:'Software Licences'}).waitFor();
   assert.ok((await page.locator('#modal-content').textContent()).includes('MIT License'));

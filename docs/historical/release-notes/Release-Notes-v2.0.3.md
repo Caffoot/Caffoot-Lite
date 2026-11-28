@@ -21,11 +21,11 @@ Caffoot Lite v2.0.3 is a small maintenance release for the established Docker/SQ
 
 ## Installing or upgrading
 
-Only **after** the v2.0.3 GitHub Release and Docker image have been separately approved, built and published, use `ghcr.io/caffoot/caffoot-lite:v2.0.3` on AMD64 or ARM64. For a new installation, see the [v2.0.3 Portainer example](../portainer/portainer-v2.0.3.yaml) and [installation guide](../../../INSTALLATION.md).
+Only **after** the v2.0.3 GitHub Release and Docker image have been separately approved, built and published, use `ghcr.io/caffoot/caffoot-lite:v2.0.3` on AMD64 or ARM64. For a new installation, see the [v2.0.3 Portainer example](../portainer/portainer-v2.0.3.yaml) and [installation guide](../installation/INSTALLATION-v2.1.md).
 
 For an existing installation, first stop the application and make a verified external backup of **all** persistent `/data` files, including `caffoot.sqlite3` and `tls/`. Update **only the image tag in the same stack**, keeping the existing volume or bind mount, address and port. Verify sign-in, inventory and the HTTPS certificate identity afterwards. Never create a replacement empty data volume to upgrade.
 
-Read the [upgrade instructions](../../../INSTALLATION.md#upgrading-an-existing-v202-installation-to-v203) before changing a live system. The original v2.0.1 → v2.0.2 upgrade section remains available for older release links.
+Read the [upgrade instructions](../installation/INSTALLATION-v2.1.md#upgrading-an-existing-v202-installation-to-v203) before changing a live system. The original v2.0.1 → v2.0.2 upgrade section remains available for older release links.
 
 ## Release verification
 
