@@ -216,7 +216,8 @@ class CandidatePreflightTests(unittest.TestCase):
         (self.root / "docs/development-handovers/milestone-01.md").unlink()
         self.write("docs/historical/development-handovers/v2.2.md", "HISTORICAL\nRelease acceptance: complete\n")
         for name in ("compose.yaml", "SECURITY.md", "docs/Community-Participation.md",
-                     "docs/historical/README.md"):
+                     "docs/historical/README.md", "docs/development-handovers/README.md",
+                     "docs/product-direction/VISION.md"):
             self.write(name, "Version-specific history is retained.\n")
         for name in ("ROADMAP.md", "docs/development-guide/README.md"):
             self.write(name, "Caffoot Lite v2.2 is the current release.\n")
@@ -225,6 +226,17 @@ class CandidatePreflightTests(unittest.TestCase):
                               ("docs/development-guide/Development-Status.md", "Current Boundary")):
             self.write(name, f"## {heading}\nv2.2 is the current release.\n"
                        "## Historical Record\nv2.1 remains the published release. Draft v2.2 — Unreleased.\n")
+        for name in ("docs/product-direction/PROPOSED-MILESTONES.md",
+                     "docs/product-direction/FEATURE-BRAINSTORM.md"):
+            self.write(name, "> **Current direction:** v2.2 is the current release.\n"
+                       "> **Historical decision update:** Draft v2.2 — Unreleased.\n")
+        for name, paragraphs in (
+            ("AGENTS.md", "- Write approachable, thorough guidance.\n"
+                          "- Maintain **version-specific truth**: use accurate release wording.\n"),
+            ("CONTRIBUTING.md", "**Our standard for all current and future feature instructions is accuracy.**\n"
+                                "7. **Version and release accuracy:** use accurate release wording.\n"),
+        ):
+            self.write(name, (self.root / name).read_text() + "\n## Documentation policy\n" + paragraphs)
 
     def test_candidate_read_only_passes(self):
         self.prepare_candidate()
@@ -390,7 +402,10 @@ class CandidatePreflightTests(unittest.TestCase):
                 name = surface.split(" [", 1)[0]
                 before = (self.root / name).read_text()
                 notice = "Draft v2.2 — Unreleased. v2.1 remains the published release.\n"
-                if "[Current" in surface or "[Start" in surface:
+                if "[paragraph:" in surface:
+                    selected = scope[surface]
+                    self.write(name, before.replace(selected, selected + " " + notice.strip(), 1))
+                elif "[Current" in surface or "[Start" in surface:
                     first, rest = before.split("\n", 1)
                     self.write(name, first + "\n" + notice + rest)
                 else:
@@ -442,6 +457,13 @@ class CandidatePreflightTests(unittest.TestCase):
                 self.change(name, "v2.2", "v2.3")
                 with self.assertRaisesRegex(ReleasePreflightError, "target|mismatch|current-version"):
                     check_release_files(self.root, "v2.2")
+
+    def test_current_paragraph_cannot_be_omitted_to_bypass_publication_scan(self):
+        self.prepare_final_release()
+        self.write("docs/product-direction/PROPOSED-MILESTONES.md",
+                   "> **Historical decision update:** Draft v2.2 — Unreleased.\n")
+        with self.assertRaisesRegex(ReleasePreflightError, "Missing or ambiguous current paragraph"):
+            check_release_files(self.root, "v2.2")
 
     def test_current_section_cannot_be_omitted_to_bypass_publication_scan(self):
         self.prepare_final_release()

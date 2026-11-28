@@ -214,6 +214,14 @@ def _current_section(text, heading, name):
     return match[1]
 
 
+def _current_paragraph(text, prefix, name):
+    """Require a named current paragraph while preserving adjacent historical text."""
+    matches = [line for line in text.splitlines() if line.startswith(prefix)]
+    if len(matches) != 1:
+        raise ReleasePreflightError(f"Missing or ambiguous current paragraph in {name}: {prefix}")
+    return matches[0]
+
+
 def publication_notice_scope(root, version):
     """Collect current public text; keep dated evidence and compatibility sections."""
     root = Path(root)
@@ -222,7 +230,8 @@ def publication_notice_scope(root, version):
              "interface/screens/my-account.html", "interface/screens/settings.html",
              "interface/application.js", "ROADMAP.md", "SECURITY.md",
              "docs/Community-Participation.md", "docs/development-guide/README.md",
-             "docs/historical/README.md"]
+             "docs/historical/README.md", "docs/development-handovers/README.md",
+             "docs/product-direction/VISION.md"]
     guides = root / f"docs/how-tos/features-and-instructions/{version}"
     names += [str(path.relative_to(root)) for path in sorted(guides.rglob("*"))
               if path.suffix in {".md", ".yaml", ".yml"}
@@ -232,6 +241,15 @@ def publication_notice_scope(root, version):
                           ("CONTRIBUTING.md", "Start With An Agreed Scope"),
                           ("docs/development-guide/Development-Status.md", "Current Boundary")):
         scope[f"{name} [{heading}]"] = _current_section(_read_required(root, name), heading, name)
+    for name, prefix in (
+        ("docs/product-direction/PROPOSED-MILESTONES.md", "> **Current direction:**"),
+        ("docs/product-direction/FEATURE-BRAINSTORM.md", "> **Current direction:**"),
+        ("AGENTS.md", "- Write approachable, thorough"),
+        ("AGENTS.md", "- Maintain **version-specific truth**:"),
+        ("CONTRIBUTING.md", "**Our standard for all current and future feature instructions"),
+        ("CONTRIBUTING.md", "7. **Version and release accuracy:**"),
+    ):
+        scope[f"{name} [paragraph: {prefix}]"] = _current_paragraph(_read_required(root, name), prefix, name)
     for directory in ("docs/how-tos/features-and-instructions", "docs/How To's/Features and Instructions"):
         for guide in sorted(GUIDE_NAMES):
             name = f"{directory}/{guide}"
