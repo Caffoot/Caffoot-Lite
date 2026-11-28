@@ -113,6 +113,17 @@ Installation, backup/restore, security, recovery, troubleshooting and developer 
 
 **Review gate:** For each feature PR, link the updated guide, check the procedures against actual source and approved screens, verify current image provenance and links, and list any genuinely deferred screenshots or manual checks. Do not mark unfinished documentation or owner visual approval as completed. A complete guide cannot substitute for required software testing, version acceptance or separate merge/release approval.
 
+## Target-Version Branch And Release Preparation Standard
+
+Apply this standard to every future release, not just Milestone 01. The owner explicitly agrees the target release and integration branch at the start of each milestone (for example, v2.3 on `milestone-2`, if approved). Keep `main` and the current published release accurate and unchanged until their separately authorised release transition.
+
+- Maintain the milestone branch's active release-facing files for its own target version throughout development: README, installation instructions, root Portainer/Compose configuration, permanent version-specific user and administrator guide locations, navigation and Help & Guides links, About/version presentation, release notes and relevant release tooling. Update them alongside approved feature work; do not leave a large version-conversion or file-relocation exercise until publication.
+- Clearly identify the candidate as unreleased and distinguish its installed/target version from the actual published release. Prepare future image/tag/link destinations without claiming that they are already available. Never present an unverified installation, upgrade, backup or recovery procedure as supported or passed.
+- Preserve older published guidance, historical releases and evidence, legacy format identifiers and compatibility URLs. Archive superseded active release files in their agreed locations; obtain separate approval before destructive changes or restructuring.
+- Verify candidate-version consistency in the normal read-only development/PR checks. Keep explicit publication checks strict and separate; no relaxation of owner approval, protected-main, exact-revision, required tests, version, collision, compatibility, architecture or image-availability safeguards. Changes to these checks require their own scoped approval.
+- Before the final acceptance and release review, complete all practicable target-version preparation and reconcile outstanding evidence. Record the exact genuinely release-dependent actions that remain; avoid last-minute substantive documentation, configuration or version changes. Recheck affected evidence if the reviewed candidate changes.
+- Preparing a milestone branch does not authorise a merge, deployment, tag, image, release, website publication or marketing activity. Preserve the approved acceptance and publication sequence and obtain each separate owner approval.
+
 ## Protect Existing Installations
 
 Preserve user data, permissions, existing features and self-hosted installation compatibility unless an explicitly approved specification changes them. Renaming an **internal identifier** is different from renaming an API payload key, exported record field, database column, user-visible file format or other established contract. External contract changes require separate compatibility review, migration planning and approval.
