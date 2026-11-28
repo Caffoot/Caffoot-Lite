@@ -7767,7 +7767,7 @@ function openIpModal(ip) {
                     '</div></section>';
             } else if (section === 'help') {
                 // The authoritative Markdown user guides are shared with GitHub and the future website.
-                const guideRoot = 'https://github.com/Caffoot/Caffoot-Lite/blob/4fef71258d7827b5556919183a894534a6a791e8/docs/how-tos/features-and-instructions/v2.2/';
+                const guideRoot = 'https://github.com/Caffoot/Caffoot-Lite/blob/e0e1ee3e45f43e1ca029cb88a55ff27b373efe5b/docs/how-tos/features-and-instructions/v2.2/';
                 const helpTopics = [
                     ["Getting Started", "Create your administrator on first run and enrol MFA. Administrators choose the optional features and access needed by the team. Fresh installations start with optional features off.", [["Getting Started", "README.md"]]],
                     ["Import From v1.3.3", "Choose a fresh published v1.3.3 JSON export, review required corrections and explicitly confirm replacement. This is a one-way migration, not an ongoing database backup.", [["Legacy Import", "Legacy-Import-and-Docker-Upgrade.md"]]],

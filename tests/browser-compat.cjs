@@ -629,7 +629,7 @@ async function run(){
   assert.ok(await page.getByText('Security At A Glance',{exact:true}).isVisible());
   await page.locator('[data-action="select-account-section"][data-section="help"]').first().click();
   await page.locator('.account-screen .expander').first().waitFor();
-  const versionGuideRoot='https://github.com/Caffoot/Caffoot-Lite/blob/4fef71258d7827b5556919183a894534a6a791e8/docs/how-tos/features-and-instructions/v2.2/';
+  const versionGuideRoot='https://github.com/Caffoot/Caffoot-Lite/blob/e0e1ee3e45f43e1ca029cb88a55ff27b373efe5b/docs/how-tos/features-and-instructions/v2.2/';
   const expectedHelpTopics=[
     ['Getting Started',['README.md']],
     ['Import From v1.3.3',['Legacy-Import-and-Docker-Upgrade.md']],
