@@ -1,6 +1,6 @@
 # Network Racks — Enclosures, Elevations And Equipment Placement
 
-> **Draft v2.2 — Unreleased.** v2.1 remains the published release. These instructions describe v2.2.
+> **Draft v2.2 — Unreleased.** These instructions describe v2.2.
 
 [← Draft v2.2 Guides](README.md)
 

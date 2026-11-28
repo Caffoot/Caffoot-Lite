@@ -1,6 +1,6 @@
 # Staff Members
 
-> **Draft v2.2 — Unreleased.** v2.1 remains the published release. These instructions describe v2.2.
+> **Draft v2.2 — Unreleased.** These instructions describe v2.2.
 
 Staff Members is the directory of people who may hold equipment. Use it to record a person’s contact details, Department and Staff status, review their assigned equipment and, with administrator access, manage their optional login and individual permissions. A person can hold equipment without a Caffoot login.
 
@@ -206,6 +206,6 @@ A linked person opens **My Equipment** for limited personal/shared information w
 - [Device Assignments And My Equipment](Device-Assignments-and-My-Equipment.md)
 - [Issue, Return And Write Off](IT-Assets-Issue-Return-and-Write-Off.md)
 
-[← Draft v2.2 Guides](README.md) · [Published v2.1 Guides](../../../historical/features-and-instructions/v2.1/README.md)
+[← Draft v2.2 Guides](README.md)
 
 [Connected equipment example — Supplier, stock, assignment and later use](Connected-Equipment-Journey.md).

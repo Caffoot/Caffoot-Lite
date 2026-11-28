@@ -1,6 +1,6 @@
 # Devices — Creating, Editing and Managing Equipment
 
-> **Draft v2.2 — Unreleased.** v2.1 remains the published release. These instructions describe v2.2.
+> **Draft v2.2 — Unreleased.** These instructions describe v2.2.
 
 [← All feature guides](README.md)
 

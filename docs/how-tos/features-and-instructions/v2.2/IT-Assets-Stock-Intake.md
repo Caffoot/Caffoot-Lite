@@ -1,6 +1,6 @@
 # IT Assets: Receive Stock And Stock Inventory
 
-> **Draft v2.2 — Unreleased.** v2.1 remains the published release. These instructions describe v2.2.
+> **Draft v2.2 — Unreleased.** These instructions describe v2.2.
 
 > For the Supplier selector and retrospective receipt corrections, see [Equipment Supplier Integration](Equipment-Supplier-Integration.md#record-a-supplier-when-equipment-arrives).
 

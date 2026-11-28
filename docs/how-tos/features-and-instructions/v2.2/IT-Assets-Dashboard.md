@@ -1,6 +1,6 @@
 # IT Assets Overview And Low Stock Warnings
 
-> **Draft v2.2 — Unreleased.** v2.1 remains the published release. These instructions describe v2.2.
+> **Draft v2.2 — Unreleased.** These instructions describe v2.2.
 
 The IT Assets **Overview** brings together the organisation's current equipment balances, preparation backlog, stock movements and optional Low Stock warnings. It helps a technician answer practical questions: what is held, what can be issued now, which items need checks and which quantity-based items are below their configured minimum?
 
@@ -140,6 +140,6 @@ Read-only access offers no stock-changing controls. Changing a feature switch or
 
 [Receive Stock And Stock Inventory](IT-Assets-Stock-Intake.md) · [Issue, Return And Write Off](IT-Assets-Issue-Return-and-Write-Off.md) · [Device Registration And Reissue](Device-Stock-Registration-and-Reissue.md) · [Correct Stock Movement](IT-Assets-Correct-Movement.md).
 
-[← Draft v2.2 Guides](README.md) · [Published v2.1 Guides](../../../historical/features-and-instructions/v2.1/README.md)
+[← Draft v2.2 Guides](README.md)
 
 [Connected example: a laptop from Supplier and stock to its final write-off](Connected-Equipment-Journey.md).

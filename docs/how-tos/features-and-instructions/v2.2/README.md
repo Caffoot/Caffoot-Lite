@@ -1,6 +1,6 @@
 # Draft v2.2 User And Administrator Guides
 
-> **Draft v2.2 — Unreleased.** v2.1 remains the published release. These instructions describe v2.2.
+> **Draft v2.2 — Unreleased.** These instructions describe v2.2.
 
 Caffoot Lite v2.2 — Everyday IT Management connects Devices, IPAM and Network Racks with accounts, Staff Members, Departments and optional IT Assets. Record who holds equipment, what is physically in stock and what is ready to issue; keep Supplier and lifecycle information alongside it; and handle support through employee tickets and the IT Service Desk. These guides explain the connected workflows, permissions, reporting, email and administration for employees, IT technicians and administrators. Examples use fictional people, organisations and equipment.
 
@@ -32,7 +32,7 @@ Type a date with slashes, or enter eight consecutive digits (for example, `15032
 
 Only real calendar dates are accepted: **29/02/2024** is valid, but **29/02/2023** is not. Fields with existing restrictions, such as no future Purchase Date or qualifying first-service Date Issued, keep those restrictions. An invalid date is shown with a validation message and is not submitted as a replacement for the previous recorded value. Clearing an optional date remains possible. The calendar preserves existing permissions, readonly fields, Cancel and unsaved-change/discard behaviour.
 
-This is a change to how dates are **entered and shown**, not to the dates already saved, the actual event times, the configured timezone, lifecycle calculations, or stock movement history. Existing published v2.1 instructions and records are unchanged.
+This is a change to how dates are **entered and shown**, not to the dates already saved, the actual event times, the configured timezone, lifecycle calculations, or stock movement history.
 
 ## Infrastructure
 

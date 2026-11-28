@@ -1,6 +1,6 @@
 # Associated Equipment And Direct Device Handover
 
-> **Draft v2.2 — Unreleased.** v2.1 remains the published release. These instructions describe v2.2.
+> **Draft v2.2 — Unreleased.** These instructions describe v2.2.
 
 Associated Equipment records which accessories belong with a particular Device's assignment. For example, a technician can explicitly link a monitor, keyboard and mouse to a workstation issued to Alex. Equipment issued to the same person or Department is not linked automatically: Alex's other monitor may belong with a different workstation.
 
@@ -152,6 +152,6 @@ If step 5 fails, Alex stays the workstation's recorded holder. The accessory ret
 
 [Issue, Return And Write Off](IT-Assets-Issue-Return-and-Write-Off.md) · [Device Registration And Reissue](Device-Stock-Registration-and-Reissue.md) · [Device Assignments And My Equipment](Device-Assignments-and-My-Equipment.md) · [Departments And Shared Equipment](Departments-and-Shared-Equipment.md).
 
-[← Draft v2.2 Guides](README.md) · [Published v2.1 Guides](../../../historical/features-and-instructions/v2.1/README.md)
+[← Draft v2.2 Guides](README.md)
 
 [Connected example: a laptop from Supplier and stock to its final write-off](Connected-Equipment-Journey.md).

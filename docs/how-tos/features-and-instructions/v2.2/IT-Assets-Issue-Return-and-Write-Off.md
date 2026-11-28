@@ -1,6 +1,6 @@
 # IT Assets: Issue, Return And Write Off
 
-> **Draft v2.2 — Unreleased.** v2.1 remains the published release. These instructions describe v2.2.
+> **Draft v2.2 — Unreleased.** These instructions describe v2.2.
 
 Use IT Assets to record who has equipment, what has physically returned and which items can safely be issued again. An issue reduces available stock; a genuine return records what came back; preparation confirms which returned items are ready; a write-off records equipment that must leave usable inventory. Each action keeps the original equipment identity and a permanent movement record.
 
@@ -268,6 +268,6 @@ Cancelling affects the current unsaved form. It does not reverse a return, write
 
 [Receive Stock And Stock Inventory](IT-Assets-Stock-Intake.md) · [Device Registration And Reissue](Device-Stock-Registration-and-Reissue.md) · [Associated Equipment And Direct Handover](Associated-Equipment.md) · [Correct Stock Movement](IT-Assets-Correct-Movement.md) · [IT Assets Overview And Low Stock](IT-Assets-Dashboard.md).
 
-[Roles And MFA](Roles-Section-Permissions-and-MFA.md) · [← Draft v2.2 Guides](README.md) · [Published v2.1 Guides](../../../historical/features-and-instructions/v2.1/README.md)
+[Roles And MFA](Roles-Section-Permissions-and-MFA.md) · [← Draft v2.2 Guides](README.md)
 
 [Connected example: a laptop from Supplier and stock to its final write-off](Connected-Equipment-Journey.md).

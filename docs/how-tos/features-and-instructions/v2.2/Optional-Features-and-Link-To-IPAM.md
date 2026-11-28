@@ -1,6 +1,6 @@
 # Optional Features, Basic IPv4 And Link To IPAM
 
-> **Draft v2.2 — Unreleased.** v2.1 remains the published release. These instructions describe v2.2.
+> **Draft v2.2 — Unreleased.** These instructions describe v2.2.
 
 ## Choose The Features Your Organisation Uses
 
@@ -197,7 +197,7 @@ When Rack information is unavailable, related views may show **Rack information 
 | --- | --- |
 | A feature is enabled but absent from my navigation | Check your section permission, MFA and account status with an administrator. Enabling a feature grants no account access. |
 | I cannot change Optional Features | The controls require an active, MFA-verified administrator. Ordinary section Edit rights are insufficient. |
-| Suppliers is missing | Check the Suppliers switch and effective section access. Suppliers is part of the unreleased v2.2 candidate, not published v2.1. |
+| Suppliers is missing | Check the Suppliers switch and effective section access. |
 | A feature switch appears to revert | Wait for the pending save, read its error and check the reloaded saved state. Verify your session before trying again. |
 | I cannot edit the Device's IP | Determine whether it is managed. Managed changes require enabled IPAM and IPAM Edit; turning IPAM off preserves the address read-only. |
 | I cannot start a new basic address with IPAM on | The basic entry route starts with IPAM disabled. A previously basic Device remains editable after re-enabling; a new managed address uses the normal subnet workflow. |
@@ -220,4 +220,4 @@ Feature and permission restrictions apply to direct requests as well as visible 
 - [Issue, Return And Write Off](IT-Assets-Issue-Return-and-Write-Off.md) — circulate equipment and preserve stock history.
 - [Device Stock Registration And Reissue](Device-Stock-Registration-and-Reissue.md) — when stock work also needs canonical Device access.
 
-[← Draft v2.2 Guides](README.md) · [Published v2.1 Guides](https://github.com/Caffoot/Caffoot-Lite/tree/c3237114108cad9f7d4e57657b6aed5e0091a5ef/docs/how-tos/features-and-instructions)
+[← Draft v2.2 Guides](README.md)

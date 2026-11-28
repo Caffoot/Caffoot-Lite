@@ -1,6 +1,6 @@
 # Device Assignments And My Equipment
 
-> **Draft v2.2 — Unreleased.** v2.1 remains the published release. These instructions describe v2.2.
+> **Draft v2.2 — Unreleased.** These instructions describe v2.2.
 
 An assignment records one Staff Member or one or more Departments using an existing Device during a single physical custody period. Staff Details, Department Details and Device Details read the same saved relationship. My Equipment gives a linked person a limited view of their personal assignments and their Department's shared equipment.
 
@@ -285,6 +285,6 @@ The server checks current session, rights, recipient eligibility and saved equip
 - [Issue, Return And Write Off](IT-Assets-Issue-Return-and-Write-Off.md)
 - [Correct Movement](IT-Assets-Correct-Movement.md)
 
-[← Draft v2.2 Guides](README.md) · [Published v2.1 Guides](../../../historical/features-and-instructions/v2.1/README.md)
+[← Draft v2.2 Guides](README.md)
 
 [Connected equipment example — Supplier, stock, assignment and later use](Connected-Equipment-Journey.md).

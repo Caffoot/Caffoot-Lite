@@ -1,6 +1,6 @@
 # A Connected Equipment Example — Aster Services
 
-> **Draft v2.2 — Unreleased.** v2.1 remains the published release. These instructions describe v2.2.
+> **Draft v2.2 — Unreleased.** These instructions describe v2.2.
 
 This fictional example connects tasks that already exist. It is not a new application workflow or a compulsory order for every organisation. Follow the detailed linked guide for each form, required field, confirmation and rejection. Record only real physical events and checks in your own installation.
 

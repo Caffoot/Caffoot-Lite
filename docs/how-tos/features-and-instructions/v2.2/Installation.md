@@ -1,6 +1,6 @@
 # Install An Isolated v2.2 Review Instance
 
-> **Draft v2.2 — Unreleased.** v2.1 remains the published release. These instructions describe v2.2.
+> **Draft v2.2 — Unreleased.** These instructions describe v2.2.
 
 This guide explains the existing draft examples for an installation that has already been authorised for isolated review. A container is the running application; an image is the packaged application it starts from. A Docker volume or bind mount holds persistent data outside that replaceable container. A new empty mount creates a new installation; it does not copy an existing one.
 
@@ -27,7 +27,7 @@ This guide explains the existing draft examples for an installation that has alr
 
 [Compose draft](compose-v2.2.yaml) builds from the authorised source checkout. Its `build.context: ../../../..` resolves from the draft directory to the repository root, using the root Dockerfile. It requires web/server environment values, defaults the published port to 8080 and uses `${CAFFOOT_DATA_PATH:-caffoot_data}:/data`. Do not move this file to another directory and assume its relative build context still resolves correctly. Use the explicit file path from the repository root as shown below, or deliberately correct a private copy's context to the verified source root.
 
-The root `compose.yaml` is also a source-build configuration. It passes the operator's `TZ` through without a default; if unset, the application retains its missing-zone warning and incomplete Service Desk metrics. Set it explicitly for a usable support calendar. Root `portainer-v2.2.yaml` and `INSTALLATION.md` prepare the unreleased v2.2 candidate. Published v2.1 instructions remain in the [archived installation guide](../../../historical/installation/INSTALLATION-v2.1.md) and [published tag](https://github.com/Caffoot/Caffoot-Lite/tree/v2.1).
+The root `compose.yaml` is also a source-build configuration. It passes the operator's `TZ` through without a default; if unset, the application retains its missing-zone warning and incomplete Service Desk metrics. Set it explicitly for a usable support calendar. Root `portainer-v2.2.yaml` and `INSTALLATION.md` prepare the unreleased v2.2 candidate.
 
 Both draft files are complete **unreleased release-candidate configurations**, not a supported production upgrade. Their comments identify `ghcr.io/caffoot/caffoot-lite:v2.2` solely as a future publication target; no active setting pulls that tag. The Compose file keeps its source build and Portainer keeps its required private-image option. After the required acceptance and separate owner approval for release finalisation, prepare the intended public tag in the root and guide Portainer examples before strict release preflight. Its availability remains conditional on the unchanged owner-only publication workflow building and pushing the exact tested revision, verifying AMD64/ARM64 and anonymous public access, and then publishing the GitHub Release. Public installation directions and announcements must wait for that verification and their separate approval. The Compose source-build route remains available. Preserve the actual architecture, project and `/data` mount during any separately approved transition.
 

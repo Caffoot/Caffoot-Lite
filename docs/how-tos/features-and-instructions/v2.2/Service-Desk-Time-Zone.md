@@ -1,6 +1,6 @@
 # Set The Service Desk Time Zone
 
-> **Draft v2.2 — Unreleased.** v2.1 remains the published release. These instructions describe v2.2.
+> **Draft v2.2 — Unreleased.** These instructions describe v2.2.
 
 The Service Desk uses one installation time zone for working hours, excluded dates and reporting dates. A named time zone follows local clock changes automatically. Ticket creation, updates and the live queue remain available while the time zone needs attention.
 

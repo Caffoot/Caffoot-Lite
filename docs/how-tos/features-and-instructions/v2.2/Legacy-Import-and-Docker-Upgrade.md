@@ -1,6 +1,6 @@
 # Import Legacy Inventory Or Upgrade Docker
 
-> **Draft v2.2 — Unreleased.** v2.1 remains the published release. These instructions describe v2.2.
+> **Draft v2.2 — Unreleased.** These instructions describe v2.2.
 
 Choose the procedure for the installation you already have.
 

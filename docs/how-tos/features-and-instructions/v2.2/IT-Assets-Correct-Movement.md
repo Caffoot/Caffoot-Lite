@@ -1,6 +1,6 @@
 # Correct Stock Movement
 
-> **Draft v2.2 — Unreleased.** v2.1 remains the published release. These instructions describe v2.2.
+> **Draft v2.2 — Unreleased.** These instructions describe v2.2.
 
 Use **Correct Movement** when a receipt, issue, return or write-off quantity was recorded incorrectly. For example, a technician might have entered 20 keyboards received when the delivery actually contained ten. The correction keeps the original transaction and adds a dated record containing the correct total, your name and an explanation.
 
@@ -126,6 +126,6 @@ The supported kinds are an original Received, Issued, Returned or Written Off qu
 
 [Issue, Return And Write Off](IT-Assets-Issue-Return-and-Write-Off.md) · [Receive Stock And Stock Inventory](IT-Assets-Stock-Intake.md) · [Associated Equipment](Associated-Equipment.md) · [IT Assets Overview](IT-Assets-Dashboard.md).
 
-[← Draft v2.2 Guides](README.md) · [Published v2.1 Guides](../../../historical/features-and-instructions/v2.1/README.md)
+[← Draft v2.2 Guides](README.md)
 
 [Connected example: a laptop from Supplier and stock to its final write-off](Connected-Equipment-Journey.md).

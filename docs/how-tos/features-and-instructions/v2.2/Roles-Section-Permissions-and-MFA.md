@@ -1,12 +1,12 @@
 # Roles, Section Permissions And MFA
 
-> **Draft v2.2 — Unreleased.** v2.1 remains the published release. These instructions describe v2.2.
+> **Draft v2.2 — Unreleased.** These instructions describe v2.2.
 
 [← Draft v2.2 Guides](README.md)
 
 Caffoot Lite links a person’s sign-in account to their Staff directory record. The account controls sign-in and access. The Staff record holds their Department, Staff status and equipment relationships. A receptionist may need only their own equipment list; a technician may edit Devices; an administrator manages accounts and organisation settings. Roles let an administrator reuse a set of permissions, while individual overrides provide deliberate exceptions for one person.
 
-MFA means **multi-factor authentication**: signing in with a password and a changing six-digit code from an authenticator app. In v2.2, wider Read access as well as Edit access requires MFA. An enabled additional role also requires MFA even when it grants no section access. Do not apply the published v2.1 read-only MFA rule to this development version.
+MFA means **multi-factor authentication**: signing in with a password and a changing six-digit code from an authenticator app. In v2.2, wider Read access as well as Edit access requires MFA. An enabled additional role also requires MFA even when it grants no section access.
 
 ## Before You Start
 

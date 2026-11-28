@@ -1,6 +1,6 @@
 # Register Computers From Stock And Reissue Devices
 
-> **Draft v2.2 — Unreleased.** v2.1 remains the published release. These instructions describe v2.2.
+> **Draft v2.2 — Unreleased.** These instructions describe v2.2.
 
 ## What Registration And Reissue Do
 

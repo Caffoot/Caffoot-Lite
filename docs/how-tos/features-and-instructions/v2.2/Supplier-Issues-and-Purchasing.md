@@ -1,6 +1,6 @@
 # Supplier Issues And Purchasing
 
-> **Draft v2.2 — Unreleased.** v2.1 remains the published release. These instructions describe v2.2.
+> **Draft v2.2 — Unreleased.** These instructions describe v2.2.
 
 Use Purchasing to track problems with companies you buy from. A Supplier Issue has a title, a main description and a current status. It belongs to the Supplier company for its entire life. You can link the people handling it and keep a dated record of what happened. For an observation that needs no tracked status, use a [Supplier or Contact Note](Supplier-Management.md#record-correct-or-delete-notes).
 

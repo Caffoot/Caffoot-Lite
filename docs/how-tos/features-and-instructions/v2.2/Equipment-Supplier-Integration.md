@@ -1,6 +1,6 @@
 # Equipment Supplier Integration
 
-> **Draft v2.2 — Unreleased.** v2.1 remains the published release. These instructions describe v2.2.
+> **Draft v2.2 — Unreleased.** These instructions describe v2.2.
 
 A purchasing Supplier is the company that provided equipment. A Manufacturer identifies who made it. For example, a laptop manufactured by Dell might be purchased from Northlight Technology Ltd. Record Dell under Manufacturer and Northlight Technology Ltd under Supplier.
 

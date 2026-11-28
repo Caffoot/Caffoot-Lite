@@ -1,12 +1,12 @@
 # Manage Email Templates And Company Branding
 
-> **Draft v2.2 — Unreleased.** v2.1 remains the published release. These instructions describe v2.2.
+> **Draft v2.2 — Unreleased.** These instructions describe v2.2.
 
 Use **Email Templates** to change the words and formatting in seven Service Desk notifications and three account and security emails. Use **Company Branding** to give supported emails a shared company name, colours, footer and optional logo. Changing wording never changes notification events, recipients, access rules or required system-managed ticket/security details. [Approved Service Desk events and recipients](Service-Desk-Administration.md#check-which-service-desk-emails-are-sent)
 
 ## Configure Outgoing Email (SMTP)
 
-SMTP is the outgoing mail service. Obtain its server, port, transport and relay/sender requirements from your mail administrator before saving. Email is optional: sign-in, inventory and permitted ticket operations continue without it. These are unreleased v2.2 instructions; the published v2.1 guide remains a separate version reference.
+SMTP is the outgoing mail service. Obtain its server, port, transport and relay/sender requirements from your mail administrator before saving. Email is optional: sign-in, inventory and permitted ticket operations continue without it.
 
 1. Sign in as an active administrator with confirmed MFA. Open **Settings & Data → Email Settings → Outgoing Email Settings**.
 2. Under **SMTP Server**, complete the following fields. For fictional Aster Services, the server might be `smtp.example.invalid`; this example cannot deliver mail.

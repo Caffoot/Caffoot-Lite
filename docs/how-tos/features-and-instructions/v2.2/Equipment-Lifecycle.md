@@ -1,6 +1,6 @@
 # Equipment Lifecycle
 
-> **Draft v2.2 — Unreleased.** v2.1 remains the published release. These instructions describe v2.2.
+> **Draft v2.2 — Unreleased.** These instructions describe v2.2.
 
 Equipment Lifecycle helps IT staff review warranty cover and plan replacements for physical equipment already recorded in Caffoot Lite. Dates stay with the same Device through moves, returns and reissues. The dates and Dashboard warnings are informational. Device status, rack placement and IP allocations continue to use their existing controls.
 

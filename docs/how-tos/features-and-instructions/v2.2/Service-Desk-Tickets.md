@@ -1,6 +1,6 @@
 # Service Desk Tickets
 
-> **Draft v2.2 — Unreleased.** v2.1 remains the published release. These instructions describe v2.2.
+> **Draft v2.2 — Unreleased.** These instructions describe v2.2.
 
 ## Check Which Equipment Is Assigned To You
 

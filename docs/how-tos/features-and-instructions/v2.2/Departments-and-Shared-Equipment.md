@@ -1,6 +1,6 @@
 # Departments And Shared Equipment
 
-> **Draft v2.2 — Unreleased.** v2.1 remains the published release. These instructions describe v2.2.
+> **Draft v2.2 — Unreleased.** These instructions describe v2.2.
 
 Departments group Staff Members and provide a holder for equipment used collectively, such as an Accounts printer. They are simple independent groups, without subdepartments or management trees. Membership is optional and grants no application permissions.
 
@@ -205,6 +205,6 @@ The server rechecks permissions, status and associations at save time. A button 
 - [Device Stock Registration And Reissue](Device-Stock-Registration-and-Reissue.md)
 - [Associated Equipment](Associated-Equipment.md)
 
-[← Draft v2.2 Guides](README.md) · [Published v2.1 Guides](../../../historical/features-and-instructions/v2.1/README.md)
+[← Draft v2.2 Guides](README.md)
 
 [Connected equipment example — Supplier, stock, assignment and later use](Connected-Equipment-Journey.md).

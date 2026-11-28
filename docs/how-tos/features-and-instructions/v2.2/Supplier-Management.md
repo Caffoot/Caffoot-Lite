@@ -1,6 +1,6 @@
 # Supplier Management
 
-> **Draft v2.2 — Unreleased.** v2.1 remains the published release. These instructions describe v2.2.
+> **Draft v2.2 — Unreleased.** These instructions describe v2.2.
 
 Suppliers holds the companies your organisation buys from. A company can have several offices and contacts, one shared company address and separate notes about the company or individual people. Supplier access is independent of Devices and IT Assets. Open **Purchasing → Suppliers** from the workspace sidebar. Supplier Details provides **Overview**, **Locations**, **Contacts** and **Notes & Issues**. If you can read an enabled equipment section, **Supplied Equipment** and the **Supplier Equipment** Overview metric also appear. See [Supplier Issues And Purchasing](Supplier-Issues-and-Purchasing.md) for the tracked Issues workflow.
 
