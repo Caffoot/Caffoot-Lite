@@ -11,6 +11,78 @@ GUIDE_NAMES = {
     "Migration-Backup-and-Restore.md", "Racks.md",
     "Settings-and-Change-History.md", "Users-Permissions-and-MFA.md",
 }
+LEGACY_GUIDE_ANCHORS = {'Devices.md': ['devices--creating-editing-and-managing-equipment',
+                'what-a-device-record-represents',
+                'prepare-before-you-add-a-device',
+                'worked-example--add-a-switch',
+                'view-an-existing-device',
+                'edit-save-and-cancel',
+                'duplicate-a-device',
+                'remove-or-retire-a-device',
+                'virtual-machines',
+                'v21-device-forms',
+                'v21-shelves-and-software',
+                'v21-device-choice-and-location-corrections',
+                'troubleshooting'],
+ 'Getting-Started.md': ['getting-started-with-caffoot-lite',
+                        'your-first-visit',
+                        'where-to-find-things',
+                        'worked-example--build-a-small-lab-inventory',
+                        'using-caffoot-with-colleagues',
+                        'common-first-questions'],
+ 'IPAM.md': ['ipam--subnets-vlans-and-individual-addresses',
+             'understand-the-records',
+             'worked-example--add-one-subnet',
+             'add-multiple-subnets',
+             'edit-an-individual-ip',
+             'reserve-and-release-a-spare-address',
+             'give-an-address-to-a-device',
+             'edit-delete-or-bulk-manage-networks',
+             'common-questions'],
+ 'Migration-Backup-and-Restore.md': ['migration-backup-and-restore',
+                                     'two-different-jobs',
+                                     'before-you-migrate',
+                                     'import-into-dockersqlite--step-by-step',
+                                     'where-docker-data-lives',
+                                     'make-a-manual-consistent-backup',
+                                     'restore-safely',
+                                     'distinguish-maintenance-from-recovery',
+                                     'v21-upgrade-and-subnet-first-compatibility'],
+ 'README.md': ['caffoot-lite--features-and-instructions',
+               'find-your-guide',
+               'a-sensible-order-for-building-your-inventory',
+               'how-the-shared-application-behaves',
+               'help-inside-caffoot-lite',
+               'draft-v22--not-published--not-production-guidance'],
+ 'Racks.md': ['racks--enclosures-and-equipment-placement',
+              'what-is-recorded',
+              'worked-example--create-a-rack',
+              'mount-a-device-in-a-rack',
+              'move-or-unmount-equipment',
+              'add-an-accessory',
+              'edit-the-rack-versus-correcting-dimensions',
+              'delete-safely',
+              'troubleshooting',
+              'shelves-and-existing-placement'],
+ 'Settings-and-Change-History.md': ['settings-audit-trail-and-personal-preferences',
+                                    'two-different-settings-areas',
+                                    'my-account--step-by-step',
+                                    'settings--data-administrator',
+                                    'review-audit-trail',
+                                    'example--a-change-made-by-a-colleague',
+                                    'important-cautions',
+                                    'email-and-the-audit-trail'],
+ 'Users-Permissions-and-MFA.md': ['users-permissions-and-multi-factor-authentication',
+                                  'account-basics',
+                                  'create-a-user--worked-example',
+                                  'understand-the-permission-levels',
+                                  'permissions-apply-to-changed-fields',
+                                  'set-up-or-change-mfa',
+                                  'change-an-accounts-status-or-permissions',
+                                  'two-people-editing-at-once',
+                                  'troubleshooting',
+                                  'verified-email-and-password-recovery']}
+
 UNRELEASED_PATTERN = re.compile(r"\b(?:unreleased|draft|review candidate|private review only)\b", re.I)
 VERSION_PATTERN = re.compile(r"v[0-9]+\.[0-9]+(?:\.[0-9]+)?\Z")
 
@@ -70,6 +142,39 @@ def check_compatibility_files(root, version):
     for name in sorted(GUIDE_NAMES):
         if (official / name).read_bytes() != (original / name).read_bytes():
             raise ReleasePreflightError(f"Published guide compatibility copy differs: {name}")
+    if tuple(map(int, version[1:].split("."))) >= (2, 2):
+        archive = root / "docs/historical/features-and-instructions/v2.1"
+        if {p.name for p in archive.glob("*.md")} != GUIDE_NAMES:
+            raise ReleasePreflightError("The complete archived v2.1 guide set is required")
+        for name, anchors in LEGACY_GUIDE_ANCHORS.items():
+            archived = _read_required(root, str(archive.relative_to(root) / name))
+            if _heading_anchors(archived) != anchors:
+                raise ReleasePreflightError(f"Archived v2.1 heading anchors changed: {name}")
+            destination = f"../../historical/features-and-instructions/v2.1/{name}"
+            for directory in (official, original):
+                path = directory / name
+                if path.is_symlink() or (archive / name).is_symlink():
+                    raise ReleasePreflightError("Compatibility guides must be real files")
+                notice = path.read_text(encoding="utf-8")
+                if f"]({destination})" not in notice or "v2.1" not in notice:
+                    raise ReleasePreflightError(f"Missing archived v2.1 destination: {path}")
+                for anchor in anchors:
+                    if (f'<a id="{anchor}"></a>' not in notice
+                            or f"]({destination}#{anchor})" not in notice):
+                        raise ReleasePreflightError(f"Missing legacy anchor or archived section: {path}#{anchor}")
+                if name == "README.md":
+                    target = f"../../how-tos/features-and-instructions/{version}/README.md"
+                    if f"]({target})" not in notice or notice.find(target) > notice.find(destination):
+                        raise ReleasePreflightError("Version index must prioritise the target guides")
+                for target in re.findall(r"\]\(([^)]+)\)", notice):
+                    local = (directory / target.split("#", 1)[0]).resolve()
+                    if not local.is_file():
+                        raise ReleasePreflightError(f"Broken compatibility destination: {path}: {target}")
+        installation = _read_required(root, "INSTALLATION.md")
+        for target in ("docs/historical/features-and-instructions/v2.1/README.md",
+                       "docs/historical/installation/INSTALLATION-v2.1.md"):
+            if f"]({target})" not in installation:
+                raise ReleasePreflightError("Root installation must retain explicit v2.1 archive links")
     _read_required(root, "docs/development-guide/README.md")
     stacks = {p.stem.removeprefix("portainer-")
               for p in (root / "docs/historical/portainer").glob("portainer-v*.yaml")}
@@ -77,6 +182,24 @@ def check_compatibility_files(root, version):
              for p in (root / "docs/historical/release-notes").glob("Release-Notes-v*.md")} - {version}
     if stacks != notes:
         raise ReleasePreflightError("Historical release notes and Portainer examples disagree")
+
+
+def _heading_anchors(text):
+    """List original guide section addresses, including repeated headings."""
+    anchors = []
+    seen = {}
+    for heading in re.findall(r"^#{1,6} (.+)$", text, re.M):
+        slug = re.sub(r"[^\w\- ]", "", heading.lower()).replace(" ", "-")
+        count = seen.get(slug, 0)
+        seen[slug] = count + 1
+        anchors.append(slug + (f"-{count}" if count else ""))
+    return anchors
+
+
+def _check_required_time_zone(stack):
+    """Require the operator to supply their organisation's IANA time zone."""
+    if not re.search(r'^\s*TZ:\s*"\$\{TZ:\?[^}]*IANA[^}]+\}"\s*$', stack, re.M):
+        raise ReleasePreflightError("Portainer stack must require a configurable IANA TZ")
 
 
 def _check_installed_about(root, version, *, candidate=False):
@@ -149,8 +272,7 @@ def check_candidate_files(root, version):
     images = re.findall(r"^\s*image:\s*(.+?)\s*$", stack, re.M)
     if images != ["${CAFFOOT_V22_PREVIEW_IMAGE:?Set CAFFOOT_V22_PREVIEW_IMAGE to your private review image}"]:
         raise ReleasePreflightError("Candidate stack must require the private review image")
-    if not re.search(r'TZ:\s*"\$\{TZ:\?[^}]*IANA[^}]+\}"', stack):
-        raise ReleasePreflightError("Candidate stack must require a configurable IANA TZ")
+    _check_required_time_zone(stack)
     if not re.search(r"\bunreleased\b", stack, re.I):
         raise ReleasePreflightError("Candidate stack needs an unreleased notice")
     guide_stack = _read_required(root, f"docs/how-tos/features-and-instructions/{version}/portainer-{version}.yaml")
@@ -169,6 +291,10 @@ def check_candidate_files(root, version):
     if (root / ".github/workflows/v2-release-image.yml").exists():
         raise ReleasePreflightError("The old tag-triggered publishing workflow must be removed")
     check_compatibility_files(root, version)
+    for directory in ("docs/how-tos/features-and-instructions", "docs/How To's/Features and Instructions"):
+        index = _read_required(root, f"{directory}/README.md")
+        if f"{version} is unreleased" not in index:
+            raise ReleasePreflightError("Candidate version indexes need an explicit unreleased notice")
     return version
 
 
@@ -257,6 +383,7 @@ def check_release_files(root, version, *, allow_unreleased_readme=False):
             )
 
     if tuple(map(int, version[1:].split("."))) >= (2, 2):
+        _check_required_time_zone(stack)
         _check_installed_about(root, version)
         _check_guide_links(root, version)
         guide_index = _read_required(root, f"docs/how-tos/features-and-instructions/{version}/README.md")

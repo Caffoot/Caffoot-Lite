@@ -7,6 +7,7 @@ This directory preserves version-specific release material and completed website
 **Completed development handovers:** Each release-preparation PR moves the finished active handover into `docs/historical/development-handovers/` using a version-specific filename (for example `v2.0.3.md`). These documents are **historical snapshots**, never permission to restart old tasks. The [v2.0.3 handover](development-handovers/v2.0.3.md) is the first archived example.
 
 - [Release notes](release-notes/) — version history, including published v2.1 and explicitly unreleased v2.2 notes; the original release-preparation wording is preserved inside the records.
+- [Complete v2.1 feature guides](features-and-instructions/v2.1/README.md) — all eight original guides, with their existing screenshot paths retained.
 - [Published v2.1 installation guide](installation/INSTALLATION-v2.1.md) — original claims retained, with links corrected for this location.
 - [Previous Portainer examples](portainer/) — older, published version-specific installation stacks. The [published v2.1 Portainer example](portainer/portainer-v2.1.yaml) is archived here.
 - [Website release preparation](website/Website-Release-Preparation.md) — the original Docker/SQLite website-launch planning record.

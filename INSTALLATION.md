@@ -2,6 +2,8 @@
 
 > **Draft v2.2 — Unreleased.** v2.1 remains the published release. For public installations use the [published v2.1 tag](https://github.com/Caffoot/Caffoot-Lite/tree/v2.1) and [v2.1 installation guide](docs/historical/installation/INSTALLATION-v2.1.md). No public v2.2 image or supported production upgrade/recovery is offered. The current procedure below is for separately authorised isolated review only.
 
+**Using published v2.1?** Follow the [v2.1 feature guides](docs/historical/features-and-instructions/v2.1/README.md) and [v2.1 installation guide](docs/historical/installation/INSTALLATION-v2.1.md). These archived instructions remain available for existing installations.
+
 This guide explains the existing draft examples for an installation that has already been authorised for isolated review. A container is the running application; an image is the packaged application it starts from. A Docker volume or bind mount holds persistent data outside that replaceable container. A new empty mount creates a new installation; it does not copy an existing one.
 
 ## Decide Which Procedure Applies
@@ -29,7 +31,7 @@ This guide explains the existing draft examples for an installation that has alr
 
 The root `compose.yaml` is also a source-build configuration. It passes the operator's `TZ` through without a default; if unset, the application retains its missing-zone warning and incomplete Service Desk metrics. Set it explicitly for a usable support calendar. Root `portainer-v2.2.yaml` and `INSTALLATION.md` prepare the unreleased v2.2 candidate. Published v2.1 instructions remain in the [archived installation guide](docs/historical/installation/INSTALLATION-v2.1.md) and [published tag](https://github.com/Caffoot/Caffoot-Lite/tree/v2.1).
 
-Both draft files are complete **unreleased release-candidate configurations**, not a supported production upgrade. Their comments identify `ghcr.io/caffoot/caffoot-lite:v2.2` solely as a future publication target; no active setting pulls that tag. The Compose file keeps its source build and Portainer keeps its required private-image option. Only after separate release approval and image verification may an operator replace the build/private image with that public target. Preserve the actual architecture, project and `/data` mount during any separately approved transition.
+Both draft files are complete **unreleased release-candidate configurations**, not a supported production upgrade. Their comments identify `ghcr.io/caffoot/caffoot-lite:v2.2` solely as a future publication target; no active setting pulls that tag. The Compose file keeps its source build and Portainer keeps its required private-image option. After the required acceptance and separate owner approval for release finalisation, prepare the intended public tag in the root and guide Portainer examples before strict release preflight. Its availability remains conditional on the unchanged owner-only publication workflow building and pushing the exact tested revision, verifying AMD64/ARM64 and anonymous public access, and then publishing the GitHub Release. Public installation directions and announcements must wait for that verification and their separate approval. The Compose source-build route remains available. Preserve the actual architecture, project and `/data` mount during any separately approved transition.
 
 ### Environment And Ports
 

@@ -136,12 +136,20 @@ class CandidatePreflightTests(unittest.TestCase):
         self.version = "v2.0.3"
         self.write_files()
         self.version = "v2.2"
+        repository = Path(__file__).resolve().parents[1]
+        for directory in ("docs/how-tos/features-and-instructions",
+                          "docs/How To's/Features and Instructions",
+                          "docs/historical/features-and-instructions/v2.1"):
+            for name in GUIDE_NAMES:
+                self.write(f"{directory}/{name}", (repository / directory / name).read_text())
         self.write("docs/historical/portainer/portainer-v2.0.3.yaml", "image: old published\n")
         (self.root / "portainer-v2.0.3.yaml").unlink()
         v = self.version
         self.write("README.md", f"# Caffoot Lite {v} — Everyday IT Management\n"
                    f"{v} is unreleased. v2.1 remains the published download.\n")
-        self.write("INSTALLATION.md", f"# Caffoot Lite {v} — Installation\nDraft {v} — Unreleased.\n")
+        self.write("INSTALLATION.md", f"# Caffoot Lite {v} — Installation\nDraft {v} — Unreleased.\n"
+                   "[v2.1 guides](docs/historical/features-and-instructions/v2.1/README.md)\n"
+                   "[v2.1 installation](docs/historical/installation/INSTALLATION-v2.1.md)\n")
         self.write(f"docs/historical/release-notes/Release-Notes-{v}.md",
                    f"# Caffoot Lite {v} — Release notes\nDraft — Unreleased.\n")
         self.write("docs/historical/installation/INSTALLATION-v2.1.md", "Published v2.1 guide\n")
@@ -173,7 +181,11 @@ class CandidatePreflightTests(unittest.TestCase):
         for name in ("README.md", "INSTALLATION.md", "docs/historical/release-notes/Release-Notes-v2.2.md"):
             content = (self.root / name).read_text().splitlines()[0] + "\nPublished release.\n"
             self.write(name, content)
-        self.write("portainer-v2.2.yaml", "services:\n  caffoot-lite:\n    image: ghcr.io/caffoot/caffoot-lite:v2.2\n")
+        self.write("INSTALLATION.md", (self.root / "INSTALLATION.md").read_text()
+                   + "[v2.1 guides](docs/historical/features-and-instructions/v2.1/README.md)\n"
+                   "[v2.1 installation](docs/historical/installation/INSTALLATION-v2.1.md)\n")
+        self.write("portainer-v2.2.yaml", "services:\n  caffoot-lite:\n    image: ghcr.io/caffoot/caffoot-lite:v2.2\n"
+                   "    environment:\n      TZ: \"${TZ:?Set TZ to your organisation's IANA time zone}\"\n")
         self.write("docs/how-tos/features-and-instructions/v2.2/portainer-v2.2.yaml",
                    (self.root / "portainer-v2.2.yaml").read_text())
         for name in ("interface/screens/my-account.html", "interface/application.js"):

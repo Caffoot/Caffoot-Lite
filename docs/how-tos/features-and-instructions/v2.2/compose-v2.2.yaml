@@ -1,7 +1,9 @@
 # Caffoot Lite v2.2 release candidate — UNRELEASED.
 # Build from the authorised review checkout; no public v2.2 image is offered.
 # Future publication target only: ghcr.io/caffoot/caffoot-lite:v2.2
-# At the approved release transition, replace build with the verified image.
+# Retain this source build. Final Portainer files prepare the intended public tag
+# before strict preflight under owner approval; image availability is conditional
+# on the unchanged publication workflow and its public-access verification.
 # Until then, use this source build or the private-image Portainer example.
 services:
   caffoot-lite:

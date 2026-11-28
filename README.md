@@ -140,7 +140,7 @@ For direct HTTPS, verify and trust the application certificate before entering c
 - [v2.1 development handover — historical evidence](docs/historical/development-handovers/v2.1.md)
 - [v2.0.3 release notes](docs/historical/release-notes/Release-Notes-v2.0.3.md)
 - [Releases and version history](https://github.com/Caffoot/Caffoot-Lite/releases)
-- [Published v2.1 user guides and screenshots](docs/how-tos/features-and-instructions/README.md)
+- [Published v2.1 user guides and screenshots](docs/historical/features-and-instructions/v2.1/README.md)
 - [Contributing To Caffoot Lite — mandatory naming, UI and documentation standards](CONTRIBUTING.md)
 - [Development Guide](docs/development-guide/README.md)
 - [Public roadmap](ROADMAP.md)
