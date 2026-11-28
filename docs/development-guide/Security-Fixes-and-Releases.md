@@ -51,6 +51,23 @@ The public image need not exist before the workflow that creates it. The unchang
 
 The publication workflow still enforces its separate owner-only protected-main/manual entry, exact tested commit, required regression/security checks, version/collision/newer-version, architecture, public-pull and revision-label safeguards. Repository consistency alone proves none of those external results.
 
+### Mandatory Publication Notice, Link And Version Scan
+
+During Stage 6.7, inventory and prepare the final wording after verified native, upgrade and recovery evidence. Keep truthful candidate notices until the owner authorises finalisation after the required offline website preparation and independent audit. Recheck affected acceptance/audit evidence after final changes. Record the inventory, exceptions and exact final-head results in the master milestone tracker and release PR; obtain independent review and separate owner acceptance. Unresolved notices or links block release.
+
+Explicit `--version` preflight for v2.2 and later runs `check_publication_notices` automatically. The existing publishing workflow uses that preflight without a workflow change. A successful explicit CLI run lists every scanned surface so its output can be retained as release evidence. The current inventory has 63 surfaces:
+
+- Entire root README, installation, Compose and target Portainer files; target release notes; application shell, both Help & Guides fragments and the application script containing Settings About/help; roadmap, security and community participation pages; developer-guide and historical indexes.
+- All Markdown and YAML files beneath the permanent target guide directory, including future subdirectories, except `screenshots/` evidence records.
+- Only **Current release and next work** in AGENTS.md, **Start With An Agreed Scope** in CONTRIBUTING.md and **Current Boundary** in Development-Status.md. Missing current sections fail. Dated status records and reusable contributor/release-policy examples remain historical or procedural references.
+- The introduction of every compatibility notice at both legacy paths, including both version indexes, up to **Original v2.1 Sections**. The v2.1 archive, installation links and original section labels/anchors remain version-specific compatibility guidance. Candidate references in an introduction must still be reconciled at finalisation.
+
+The scan rejects unreleased, private/isolated-review and release/review-candidate notices, release-specific draft labels, obsolete image-availability warnings, prior-version-current claims and incorrect target descriptions/titles. Current indexes/status must name the requested version. Local Markdown/image links and section addresses must resolve. Existing About/version, immutable Help & Guides, final public image, root/guide equality, required configurable IANA TZ, complete v2.1 archive, legacy-anchor and accepted-handover checks remain mandatory.
+
+Exceptions are deliberate: older release notes/archives/tags, dated milestone evidence and screenshot provenance are not active release claims; original compatibility labels and retained HTML anchors/image addresses may contain old draft wording. Ordinary product actions such as **Save as Draft**, email-template drafts and cancelled form drafts remain valid. Historical v2.1 installation access stays prominent in root installation during and after finalisation. External availability and exact immutable content still require separate verification; local link checks do not prove public image access or owner acceptance.
+
+Read-only candidate checks continue to require truthful unreleased notices and private-image/TZ settings. The candidate selector remains specific to the approved v2.2/Milestone 01 transition; each later milestone needs its own scoped adaptation and tests. Do not claim that preparing this permanent publication gate validates an unapproved v2.3 candidate.
+
 
 The existing [release documentation check](../../.github/workflows/release-documentation.yml) retains the protected-branch job identifier `release-documentation`. The [backend tests](../../.github/workflows/backend-tests.yml), [browser tests](../../.github/workflows/browser-compat.yml), [Docker lifecycle test](../../.github/workflows/compose-lifecycle.yml) and [Git history secret scan](../../.github/workflows/git-history-secrets.yml) have different triggers. Inspect the actual run for the relevant commit: **a skipped or untriggered workflow is not a pass**. See [GitHub Actions](https://github.com/Caffoot/Caffoot-Lite/actions).
 

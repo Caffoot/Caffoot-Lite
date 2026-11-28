@@ -6,7 +6,9 @@
 
 # Caffoot Lite v2.2 release candidate — UNRELEASED, private review only.
 # Future publication target only: ghcr.io/caffoot/caffoot-lite:v2.2
-# Replace image only after separate owner approval and public-image verification.
+# After owner-approved finalisation, prepare the intended public tag before strict preflight.
+# Availability depends on the unchanged publication workflow building/pushing and
+# verifying AMD64/ARM64 and anonymous access before the Release and announcement.
 # Use an authorised private v2.2 review image for your server architecture.
 # Change the example server IP address and port to suit your installation.
 # New installations use a Docker-managed named volume for persistent data.

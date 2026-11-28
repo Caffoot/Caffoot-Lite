@@ -285,6 +285,6 @@ The server checks current session, rights, recipient eligibility and saved equip
 - [Issue, Return And Write Off](IT-Assets-Issue-Return-and-Write-Off.md)
 - [Correct Movement](IT-Assets-Correct-Movement.md)
 
-[← Draft v2.2 Guides](README.md) · [Published v2.1 Guides](../README.md)
+[← Draft v2.2 Guides](README.md) · [Published v2.1 Guides](../../../historical/features-and-instructions/v2.1/README.md)
 
 [Connected equipment example — Supplier, stock, assignment and later use](Connected-Equipment-Journey.md).

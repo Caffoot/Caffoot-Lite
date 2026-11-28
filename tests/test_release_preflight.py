@@ -12,7 +12,9 @@ from verify_release import (  # noqa: E402
     ReleasePreflightError,
     check_release_files,
     check_repository_files,
+    publication_notice_scope,
     GUIDE_NAMES,
+    LEGACY_GUIDE_ANCHORS,
     normalise_version,
 )
 
@@ -137,11 +139,20 @@ class CandidatePreflightTests(unittest.TestCase):
         self.write_files()
         self.version = "v2.2"
         repository = Path(__file__).resolve().parents[1]
-        for directory in ("docs/how-tos/features-and-instructions",
-                          "docs/How To's/Features and Instructions",
-                          "docs/historical/features-and-instructions/v2.1"):
-            for name in GUIDE_NAMES:
-                self.write(f"{directory}/{name}", (repository / directory / name).read_text())
+        archive = "docs/historical/features-and-instructions/v2.1"
+        for name in GUIDE_NAMES:
+            self.write(f"{archive}/{name}", (repository / archive / name).read_text())
+            target = f"../../historical/features-and-instructions/v2.1/{name}"
+            notice = f"# v2.1 Guide\n[Published v2.1 guide]({target})\n"
+            if name == "README.md":
+                notice = ("# Versioned Guides\n"
+                          "[v2.2 guides](../../how-tos/features-and-instructions/v2.2/README.md)\n"
+                          f"v2.2 is unreleased; [v2.1 archive]({target})\n")
+            notice += "## Original v2.1 Sections\n"
+            for anchor in LEGACY_GUIDE_ANCHORS[name]:
+                notice += f'<a id="{anchor}"></a>\n[Original v2.1 section]({target}#{anchor})\n'
+            for directory in ("docs/how-tos/features-and-instructions", "docs/How To's/Features and Instructions"):
+                self.write(f"{directory}/{name}", notice)
         self.write("docs/historical/portainer/portainer-v2.0.3.yaml", "image: old published\n")
         (self.root / "portainer-v2.0.3.yaml").unlink()
         v = self.version
@@ -189,11 +200,31 @@ class CandidatePreflightTests(unittest.TestCase):
         self.write("docs/how-tos/features-and-instructions/v2.2/portainer-v2.2.yaml",
                    (self.root / "portainer-v2.2.yaml").read_text())
         for name in ("interface/screens/my-account.html", "interface/application.js"):
-            self.change(name, "v2.2 is an unreleased review candidate; ", "")
+            self.change(name, "v2.2 is an unreleased review candidate; v2.1 remains the published release.",
+                        "v2.2 is the current release.")
+        for directory in ("docs/how-tos/features-and-instructions", "docs/How To's/Features and Instructions"):
+            for name in GUIDE_NAMES:
+                path = f"{directory}/{name}"
+                text = (self.root / path).read_text()
+                text = text.replace("v2.2 — Unreleased", "v2.2 — Current Release")
+                text = text.replace("v2.2 is unreleased;", "v2.2 is published;")
+                text = text.replace("the development target, not a published production upgrade", "the current release")
+                text = text.replace("the unreleased v2.2 target", "v2.2")
+                self.write(path, text)
         self.write("docs/how-tos/features-and-instructions/v2.2/README.md", "Published v2.2 guides.\n")
         self.write("docs/how-tos/features-and-instructions/v2.2/Devices.md", "Published Device guide.\n")
         (self.root / "docs/development-handovers/milestone-01.md").unlink()
         self.write("docs/historical/development-handovers/v2.2.md", "HISTORICAL\nRelease acceptance: complete\n")
+        for name in ("compose.yaml", "SECURITY.md", "docs/Community-Participation.md",
+                     "docs/historical/README.md"):
+            self.write(name, "Version-specific history is retained.\n")
+        for name in ("ROADMAP.md", "docs/development-guide/README.md"):
+            self.write(name, "Caffoot Lite v2.2 is the current release.\n")
+        for name, heading in (("AGENTS.md", "Current release and next work"),
+                              ("CONTRIBUTING.md", "Start With An Agreed Scope"),
+                              ("docs/development-guide/Development-Status.md", "Current Boundary")):
+            self.write(name, f"## {heading}\nv2.2 is the current release.\n"
+                       "## Historical Record\nv2.1 remains the published release. Draft v2.2 — Unreleased.\n")
 
     def test_candidate_read_only_passes(self):
         self.prepare_candidate()
@@ -336,6 +367,130 @@ class CandidatePreflightTests(unittest.TestCase):
                 self.write(name, (self.root / name).read_text() + notice)
                 with self.assertRaisesRegex(ReleasePreflightError, "Publication rejects"):
                     check_release_files(self.root, "v2.2")
+
+    def test_final_portainer_requires_supplied_iana_zone(self):
+        valid = '      TZ: "${TZ:?Set TZ to your organisation\'s IANA time zone}"\n'
+        for replacement in ("", '      TZ: "Europe/London"\n',
+                            '      TZ: "${TZ:-Europe/London}"\n', '      TZ: "${TZ}"\n',
+                            '      TZ: "${TZ:?Set a zone}"\n'):
+            with self.subTest(replacement=replacement):
+                self.prepare_final_release()
+                for name in ("portainer-v2.2.yaml", "docs/how-tos/features-and-instructions/v2.2/portainer-v2.2.yaml"):
+                    self.change(name, valid, replacement)
+                with self.assertRaisesRegex(ReleasePreflightError, "configurable IANA TZ"):
+                    check_release_files(self.root, "v2.2")
+
+    def test_publication_scans_every_declared_current_surface(self):
+        self.prepare_final_release()
+        self.write("docs/how-tos/features-and-instructions/v2.2/nested/Guide.md", "These instructions describe v2.2.\n")
+        self.write("docs/how-tos/features-and-instructions/v2.2/compose-v2.2.yaml", "services: {}\n")
+        scope = publication_notice_scope(self.root, "v2.2")
+        for surface in scope:
+            with self.subTest(surface=surface):
+                name = surface.split(" [", 1)[0]
+                before = (self.root / name).read_text()
+                notice = "Draft v2.2 — Unreleased. v2.1 remains the published release.\n"
+                if "[Current" in surface or "[Start" in surface:
+                    first, rest = before.split("\n", 1)
+                    self.write(name, first + "\n" + notice + rest)
+                else:
+                    self.write(name, notice + before)
+                with self.assertRaisesRegex(ReleasePreflightError, "Publication rejects"):
+                    check_release_files(self.root, "v2.2")
+                self.write(name, before)
+
+    def test_publication_rejects_notice_variants_and_stale_version_claims(self):
+        notices = ("Private-review-only instructions.", "Isolated review instance.",
+                   "Draft v2.2 guides", "Draft Portainer example", "v2.2 review candidate",
+                   "v2.2 is not yet published.", "Future publication target only.",
+                   "No public v2.2 image is available.", "No supported production upgrade is offered.",
+                   "v2.2 production upgrade and recovery acceptance remain outstanding.",
+                   "v2.1 remains the published release.", "v2.1 remains the current published download.",
+                   "v2.1 is the published Docker/SQLite baseline.", "Current release: v2.1",
+                   "v2.1 is the only currently published release.",
+                   "**Published baseline:** [Caffoot Lite v2.1](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v2.1).",
+                   "## Available now — v2.1", "## Install The Published Release — v2.1",
+                   "These instructions describe v2.3.", "Current development target: v2.3")
+        for notice in notices:
+            with self.subTest(notice=notice):
+                self.prepare_final_release()
+                self.write("docs/how-tos/features-and-instructions/v2.2/Devices.md", notice + "\n")
+                with self.assertRaisesRegex(ReleasePreflightError, "Publication rejects"):
+                    check_release_files(self.root, "v2.2")
+
+    def test_publication_preserves_historical_and_product_draft_words(self):
+        self.prepare_final_release()
+        for name in ("README.md", "docs/historical/release-notes/Release-Notes-v2.2.md",
+                     "docs/how-tos/features-and-instructions/v2.2/README.md"):
+            self.write(name, (self.root / name).read_text() + "Save as Draft and publish email templates.\n")
+        self.write("docs/how-tos/features-and-instructions/v2.2/screenshots/README.md",
+                   "Historical v2.2 draft — unreleased review evidence.\n")
+        self.write("docs/how-tos/features-and-instructions/v2.2/screenshots/example-draft.png", "Image fixture\n")
+        self.write("docs/how-tos/features-and-instructions/v2.2/Devices.md",
+                   'These instructions describe v2.2. Save as Draft, Saved Draft Ready and publish email templates.\n'
+                   'Cancel the Device draft. v2.1 was published in 2026.\n'
+                   '<a id="department-details--unreleased-v22"></a>\n'
+                   '[Original image](screenshots/example-draft.png)\n')
+        self.assertEqual(check_release_files(self.root, "v2.2"), "v2.2")
+        self.assertEqual(check_repository_files(self.root), "v2.2")
+
+    def test_publication_requires_target_in_current_indexes_and_status(self):
+        for name in ("docs/how-tos/features-and-instructions/v2.2/README.md", "ROADMAP.md",
+                     "docs/development-guide/README.md", "docs/development-guide/Development-Status.md"):
+            with self.subTest(name=name):
+                self.prepare_final_release()
+                self.change(name, "v2.2", "v2.3")
+                with self.assertRaisesRegex(ReleasePreflightError, "target|mismatch|current-version"):
+                    check_release_files(self.root, "v2.2")
+
+    def test_current_section_cannot_be_omitted_to_bypass_publication_scan(self):
+        self.prepare_final_release()
+        self.write("docs/development-guide/Development-Status.md", "## Historical Record\nv2.2\n")
+        with self.assertRaisesRegex(ReleasePreflightError, "Missing current release section"):
+            check_release_files(self.root, "v2.2")
+
+    def test_archive_and_both_compatibility_destinations_and_anchors_are_required(self):
+        archive = "docs/historical/features-and-instructions/v2.1/Devices.md"
+        for fault in ("archive", "archive heading", "anchor", "section link", "destination", "index"):
+            with self.subTest(fault=fault):
+                self.prepare_candidate()
+                if fault == "archive":
+                    (self.root / archive).unlink()
+                elif fault == "archive heading":
+                    self.change(archive, "## What a device record represents", "## Renamed section")
+                else:
+                    for directory in ("docs/how-tos/features-and-instructions", "docs/How To's/Features and Instructions"):
+                        name = f"{directory}/Devices.md"
+                        if fault == "anchor":
+                            self.change(name, '<a id="what-a-device-record-represents"></a>', '')
+                        elif fault == "section link":
+                            self.change(name, "Devices.md#what-a-device-record-represents", "Devices.md#missing")
+                        elif fault == "destination":
+                            self.change(name, "../../historical/features-and-instructions/v2.1/Devices.md", "v2.2/Devices.md")
+                        else:
+                            self.change(f"{directory}/README.md", "../../how-tos/features-and-instructions/v2.2/README.md", "v2.2/README.md")
+                with self.assertRaises(ReleasePreflightError):
+                    check_repository_files(self.root)
+
+    def test_root_installation_keeps_v21_archive_access_after_publication(self):
+        for target in ("docs/historical/features-and-instructions/v2.1/README.md",
+                       "docs/historical/installation/INSTALLATION-v2.1.md"):
+            with self.subTest(target=target):
+                self.prepare_final_release()
+                self.change("INSTALLATION.md", target, "README.md")
+                with self.assertRaisesRegex(ReleasePreflightError, "explicit v2.1 archive"):
+                    check_release_files(self.root, "v2.2")
+
+    def test_publication_checks_active_links_and_retained_section_addresses(self):
+        for target in ("Missing.md", "README.md#missing"):
+            with self.subTest(target=target):
+                self.prepare_final_release()
+                self.write("docs/how-tos/features-and-instructions/v2.2/Devices.md", f"[Read guide]({target})\n")
+                with self.assertRaisesRegex(ReleasePreflightError, "broken.*link"):
+                    check_release_files(self.root, "v2.2")
+        self.write("docs/how-tos/features-and-instructions/v2.2/README.md", "# v2.2 Guides\n\n## Using Devices\n")
+        self.write("docs/how-tos/features-and-instructions/v2.2/Devices.md", "[Read guide](README.md#using-devices)\n")
+        self.assertEqual(check_release_files(self.root, "v2.2"), "v2.2")
 
 
 if __name__ == "__main__":

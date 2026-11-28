@@ -126,6 +126,6 @@ The supported kinds are an original Received, Issued, Returned or Written Off qu
 
 [Issue, Return And Write Off](IT-Assets-Issue-Return-and-Write-Off.md) · [Receive Stock And Stock Inventory](IT-Assets-Stock-Intake.md) · [Associated Equipment](Associated-Equipment.md) · [IT Assets Overview](IT-Assets-Dashboard.md).
 
-[← Draft v2.2 Guides](README.md) · [Published v2.1 Guides](../README.md)
+[← Draft v2.2 Guides](README.md) · [Published v2.1 Guides](../../../historical/features-and-instructions/v2.1/README.md)
 
 [Connected example: a laptop from Supplier and stock to its final write-off](Connected-Equipment-Journey.md).

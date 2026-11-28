@@ -2,8 +2,10 @@
 """Check release filenames and version details without publishing anything."""
 
 import argparse
+import html
 import re
 from pathlib import Path
+from urllib.parse import unquote
 
 
 GUIDE_NAMES = {
@@ -83,7 +85,7 @@ LEGACY_GUIDE_ANCHORS = {'Devices.md': ['devices--creating-editing-and-managing-e
                                   'troubleshooting',
                                   'verified-email-and-password-recovery']}
 
-UNRELEASED_PATTERN = re.compile(r"\b(?:unreleased|draft|review candidate|private review only)\b", re.I)
+UNRELEASED_PATTERN = re.compile(r"\b(?:unreleased|draft\s+v[0-9]|review candidate|private review only)\b", re.I)
 VERSION_PATTERN = re.compile(r"v[0-9]+\.[0-9]+(?:\.[0-9]+)?\Z")
 
 
@@ -144,6 +146,8 @@ def check_compatibility_files(root, version):
             raise ReleasePreflightError(f"Published guide compatibility copy differs: {name}")
     if tuple(map(int, version[1:].split("."))) >= (2, 2):
         archive = root / "docs/historical/features-and-instructions/v2.1"
+        if any(directory.is_symlink() for directory in (official, original, archive)):
+            raise ReleasePreflightError("Compatibility directories must be real directories")
         if {p.name for p in archive.glob("*.md")} != GUIDE_NAMES:
             raise ReleasePreflightError("The complete archived v2.1 guide set is required")
         for name, anchors in LEGACY_GUIDE_ANCHORS.items():
@@ -200,6 +204,112 @@ def _check_required_time_zone(stack):
     """Require the operator to supply their organisation's IANA time zone."""
     if not re.search(r'^\s*TZ:\s*"\$\{TZ:\?[^}]*IANA[^}]+\}"\s*$', stack, re.M):
         raise ReleasePreflightError("Portainer stack must require a configurable IANA TZ")
+
+
+def _current_section(text, heading, name):
+    """Read a required current section without scanning dated records below it."""
+    match = re.search(r"(?ms)^## " + re.escape(heading) + r"[^\n]*\n(.*?)(?=^## |\Z)", text)
+    if not match:
+        raise ReleasePreflightError(f"Missing current release section in {name}: {heading}")
+    return match[1]
+
+
+def publication_notice_scope(root, version):
+    """Collect current public text; keep dated evidence and compatibility sections."""
+    root = Path(root)
+    names = ["README.md", "INSTALLATION.md", "compose.yaml", f"portainer-{version}.yaml",
+             f"docs/historical/release-notes/Release-Notes-{version}.md", "inventory.html",
+             "interface/screens/my-account.html", "interface/screens/settings.html",
+             "interface/application.js", "ROADMAP.md", "SECURITY.md",
+             "docs/Community-Participation.md", "docs/development-guide/README.md",
+             "docs/historical/README.md"]
+    guides = root / f"docs/how-tos/features-and-instructions/{version}"
+    names += [str(path.relative_to(root)) for path in sorted(guides.rglob("*"))
+              if path.suffix in {".md", ".yaml", ".yml"}
+              and "screenshots" not in path.relative_to(guides).parts]
+    scope = {name: _read_required(root, name) for name in names}
+    for name, heading in (("AGENTS.md", "Current release and next work"),
+                          ("CONTRIBUTING.md", "Start With An Agreed Scope"),
+                          ("docs/development-guide/Development-Status.md", "Current Boundary")):
+        scope[f"{name} [{heading}]"] = _current_section(_read_required(root, name), heading, name)
+    for directory in ("docs/how-tos/features-and-instructions", "docs/How To's/Features and Instructions"):
+        for guide in sorted(GUIDE_NAMES):
+            name = f"{directory}/{guide}"
+            text = _read_required(root, name)
+            # Original section labels retain old addresses and historical wording.
+            scope[f"{name} [compatibility introduction]"] = text.split("## Original v2.1 Sections", 1)[0]
+    return scope
+
+
+def check_publication_notices(root, version):
+    """Reject leftover candidate notices and incorrect current-version claims."""
+    scope = publication_notice_scope(root, version)
+    number = r"v[0-9]+\.[0-9]+(?:\.[0-9]+)?"
+    candidate = re.compile(
+        r"\bunreleased\b|\b(?:release|review)[ -]candidate\b|"
+        r"\b(?:private|isolated)[ -]review\b|CAFFOOT_V22_PREVIEW_IMAGE|"
+        r"\bnot (?:yet )?(?:published|production guidance)\b|"
+        r"\bfuture publication target\b|"
+        r"\bdraft\s+(?:" + number + r"|guides?|instructions?|release notes?|"
+        r"Portainer|Compose|examples?|configuration|installation)\b|"
+        + number + r"\s+draft\b|"
+        r"\bno public\s+(?:multi-architecture\s+)?" + number + r"\s+(?:image|release)|"
+        r"\bno supported production (?:upgrade|recovery)\b|"
+        r"\b(?:production upgrade(?: and recovery)?|recovery|release|native/manual) "
+        r"acceptance (?:remain[s]?|is) outstanding\b", re.I)
+    claims = re.compile(
+        r"(" + number + r")\s+(?:is|remains)\s+(?:the\s+)?"
+        r"(?:(?:only|current|currently)\s+)*(?:published|released|latest|current)"
+        r"(?:\s+(?:Docker/SQLite|production))?\s*(?:release|download|baseline)?|"
+        r"(?:current|latest|published)\s+(?:release|download|baseline)\s*(?:is|[—:=-])?\s*(?:Caffoot Lite\s+)?(" + number + r")|"
+        r"(?:available now|install the published release)\s*[—:=-]\s*(" + number + r")", re.I)
+    descriptions = re.compile(
+        r"(?:(?:these\s+)?(?:instructions|guides)\s+(?:describe|cover)\s+(?:Caffoot Lite\s+)?|"
+        r"(?:target(?: version)?|current version)\s*[:—=-]?\s*)(" + number + r")", re.I)
+    for name, text in scope.items():
+        # Addresses and retained HTML anchors can contain historical words.
+        visible = re.sub(r"\]\([^)]+\)", "]", text)
+        visible = re.sub(r"https?://[^\s\"'<>]+", "", visible)
+        visible = html.unescape(re.sub(r"<[^>]+>", " ", visible))
+        visible = re.sub(r"[*_`\[\]]", "", visible)
+        if candidate.search(visible):
+            raise ReleasePreflightError(f"Publication rejects obsolete candidate notice in {name}")
+        for match in claims.finditer(visible):
+            claimed = next(group for group in match.groups() if group)
+            if claimed.lower() != version:
+                raise ReleasePreflightError(f"Publication rejects stale current-version claim in {name}: {claimed}")
+        for match in descriptions.finditer(visible):
+            if match[1].lower() != version:
+                raise ReleasePreflightError(f"Publication rejects target mismatch in {name}: {match[1]}")
+        title = re.search(r"(?m)^# (?:Caffoot Lite )?(" + number + r")\b", visible)
+        if title and title[1].lower() != version and "[compatibility introduction]" not in name:
+            raise ReleasePreflightError(f"Publication rejects target title mismatch in {name}: {title[1]}")
+        _check_publication_links(root, name.split(" [", 1)[0], text)
+    # These are maintained current indexes, so a missing target is also an error.
+    for name in (f"docs/how-tos/features-and-instructions/{version}/README.md",
+                 "docs/development-guide/Development-Status.md [Current Boundary]",
+                 "docs/development-guide/README.md", "ROADMAP.md",
+                 "AGENTS.md [Current release and next work]",
+                 "CONTRIBUTING.md [Start With An Agreed Scope]"):
+        if version not in scope[name]:
+            raise ReleasePreflightError(f"Publication target {version} missing from {name}")
+    return tuple(scope)
+
+
+def _check_publication_links(root, name, text):
+    """Check local document and image destinations, including section addresses."""
+    source = Path(root) / name
+    for target in re.findall(r"\]\(([^)]+)\)", text):
+        if re.match(r"[a-z]+:|/", target, re.I):
+            continue
+        path, _, fragment = unquote(target).partition("#")
+        destination = (source.parent / path).resolve() if path else source
+        if not destination.exists():
+            raise ReleasePreflightError(f"Publication rejects broken local link in {name}: {target}")
+        if fragment and destination.suffix == ".md":
+            contents = destination.read_text(encoding="utf-8")
+            if fragment not in _heading_anchors(contents) and f'id="{fragment}"' not in contents:
+                raise ReleasePreflightError(f"Publication rejects broken section link in {name}: {target}")
 
 
 def _check_installed_about(root, version, *, candidate=False):
@@ -384,15 +494,9 @@ def check_release_files(root, version, *, allow_unreleased_readme=False):
 
     if tuple(map(int, version[1:].split("."))) >= (2, 2):
         _check_required_time_zone(stack)
+        check_publication_notices(root, version)
         _check_installed_about(root, version)
         _check_guide_links(root, version)
-        guide_index = _read_required(root, f"docs/how-tos/features-and-instructions/{version}/README.md")
-        if UNRELEASED_PATTERN.search(guide_index):
-            raise ReleasePreflightError("Publication rejects unreleased permanent guides")
-        guide_directory = root / f"docs/how-tos/features-and-instructions/{version}"
-        for guide in guide_directory.glob("*.md"):
-            if re.search(r"(?im)^>\s*\*\*draft[^\n]*unreleased", guide.read_text(encoding="utf-8")):
-                raise ReleasePreflightError(f"Publication rejects unreleased guide: {guide.name}")
         guide_stack = _read_required(root, f"docs/how-tos/features-and-instructions/{version}/portainer-{version}.yaml")
         if guide_stack != stack:
             raise ReleasePreflightError("Publication requires the same final public stack in the permanent guide")
@@ -460,6 +564,9 @@ def main():
     if read_only:
         print(f"Read-only repository consistency passed for {version}; nothing published.")
     else:
+        if tuple(map(int, version[1:].split("."))) >= (2, 2):
+            for name in publication_notice_scope(root, version):
+                print(f"Publication notice/link/version scan passed: {name}")
         print(f"Release preparation files agree for {version}; nothing published.")
 
 

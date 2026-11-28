@@ -152,6 +152,6 @@ If step 5 fails, Alex stays the workstation's recorded holder. The accessory ret
 
 [Issue, Return And Write Off](IT-Assets-Issue-Return-and-Write-Off.md) · [Device Registration And Reissue](Device-Stock-Registration-and-Reissue.md) · [Device Assignments And My Equipment](Device-Assignments-and-My-Equipment.md) · [Departments And Shared Equipment](Departments-and-Shared-Equipment.md).
 
-[← Draft v2.2 Guides](README.md) · [Published v2.1 Guides](../README.md)
+[← Draft v2.2 Guides](README.md) · [Published v2.1 Guides](../../../historical/features-and-instructions/v2.1/README.md)
 
 [Connected example: a laptop from Supplier and stock to its final write-off](Connected-Equipment-Journey.md).
