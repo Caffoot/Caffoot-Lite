@@ -157,7 +157,7 @@ class CandidatePreflightTests(unittest.TestCase):
         (self.root / "portainer-v2.0.3.yaml").unlink()
         v = self.version
         self.write("README.md", f"# Caffoot Lite {v} — Everyday IT Management\n"
-                   f"{v} is unreleased. v2.1 remains the published download.\n")
+                   f"{v} is unreleased.\n")
         self.write("INSTALLATION.md", f"# Caffoot Lite {v} — Installation\nDraft {v} — Unreleased.\n"
                    "[v2.1 guides](docs/historical/features-and-instructions/v2.1/README.md)\n"
                    "[v2.1 installation](docs/historical/installation/INSTALLATION-v2.1.md)\n")
@@ -170,11 +170,11 @@ class CandidatePreflightTests(unittest.TestCase):
         guide = ("https://github.com/Caffoot/Caffoot-Lite/blob/" + "a" * 40
                  + f"/docs/how-tos/features-and-instructions/{v}/README.md")
         self.write("interface/screens/my-account.html", f"Installed Version</label><b>{v}</b>"
-                   f"{v} is an unreleased review candidate; v2.1 remains the published release."
+                   f"{v} is an unreleased review candidate."
                    f'<a href="{guide}">Guides</a>')
         self.write("interface/screens/settings.html", f'<a href="{guide}">Guides</a>')
         self.write("interface/application.js", f"Installed Version</span><strong>Caffoot Lite {v}</strong>"
-                   f"{v} is an unreleased review candidate; v2.1 remains the published release."
+                   f"{v} is an unreleased review candidate."
                    f"const guideRoot = '{guide.removesuffix('README.md')}';")
         stack = ("# UNRELEASED, private review only\nservices:\n  caffoot-lite:\n"
                  "    image: ${CAFFOOT_V22_PREVIEW_IMAGE:?Set CAFFOOT_V22_PREVIEW_IMAGE to your private review image}\n"
@@ -200,7 +200,7 @@ class CandidatePreflightTests(unittest.TestCase):
         self.write("docs/how-tos/features-and-instructions/v2.2/portainer-v2.2.yaml",
                    (self.root / "portainer-v2.2.yaml").read_text())
         for name in ("interface/screens/my-account.html", "interface/application.js"):
-            self.change(name, "v2.2 is an unreleased review candidate; v2.1 remains the published release.",
+            self.change(name, "v2.2 is an unreleased review candidate.",
                         "v2.2 is the current release.")
         for directory in ("docs/how-tos/features-and-instructions", "docs/How To's/Features and Instructions"):
             for name in GUIDE_NAMES:
@@ -238,9 +238,22 @@ class CandidatePreflightTests(unittest.TestCase):
         ):
             self.write(name, (self.root / name).read_text() + "\n## Documentation policy\n" + paragraphs)
 
-    def test_candidate_read_only_passes(self):
+    def test_target_only_candidate_readme_passes(self):
         self.prepare_candidate()
+        self.assertNotIn("v2.1", (self.root / "README.md").read_text())
         self.assertEqual(check_repository_files(self.root), "v2.2")
+
+    def test_target_only_candidate_still_requires_complete_previous_archive(self):
+        archives = [f"docs/historical/features-and-instructions/v2.1/{name}" for name in GUIDE_NAMES]
+        archives += ["docs/historical/installation/INSTALLATION-v2.1.md",
+                     "docs/historical/portainer/portainer-v2.1.yaml",
+                     "docs/historical/release-notes/Release-Notes-v2.1.md"]
+        for name in archives:
+            with self.subTest(name=name):
+                self.prepare_candidate()
+                (self.root / name).unlink()
+                with self.assertRaises(ReleasePreflightError):
+                    check_repository_files(self.root)
 
     def test_candidate_cannot_be_published(self):
         self.prepare_candidate()

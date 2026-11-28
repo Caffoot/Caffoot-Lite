@@ -12,7 +12,7 @@ The first sentence describes how Caffoot Lite should work: easy to install, unde
 
 **Short description:** Keep **Infrastructure, Simplified.** wherever shorter wording is more appropriate, rather than removing it from every existing location.
 
-**Current placements:** the repository README and the released v2.1 Sign In/About screens carry the approved wording. Any website use or further design changes need separate review and approval. This brand decision is not permission to change the released application or website without approval.
+**Current placements:** the repository README and Sign In/About screens carry the approved wording. Any website use or further design changes need separate review and approval. This brand decision is not permission to change the released application or website without approval.
 
 
 This is our long-term product motto: simplicity in how Caffoot Lite works, and control over the infrastructure, identities and information an organisation manages. It expresses the direction we're working towards, not a claim that every planned capability is available today.
@@ -97,13 +97,13 @@ When considering a feature, ask:
 
 Features should earn their place by making the product more useful, not by making a longer feature list.
 
-## What is available now
+## Current Development Target — Unreleased v2.2
 
-The published **v2.1** release provides self-hosted device inventory, subnet-first IPv4 IPAM, rack documentation, Audit Trail, a refreshed interface, a central SQLite database, permissions, multi-user access and multi-factor authentication. [View the release](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v2.1).
+Caffoot Lite provides self-hosted device inventory, subnet-first IPv4 IPAM, rack documentation, Audit Trail, a refreshed interface, a central SQLite database, permissions, multi-user access and multi-factor authentication.
 
-The **v2.1 interface** has been released. [Issue #282](https://github.com/Caffoot/Caffoot-Lite/issues/282) preserves the original integration requirements and development history.
+[Issue #282](https://github.com/Caffoot/Caffoot-Lite/issues/282) preserves the original interface integration requirements and development history.
 
-**Unreleased v2.2 — Everyday IT Management** extends that foundation with Staff Members and Departments, roles and optional features, equipment stock/custody and handovers, Suppliers and Lifecycle, and employee/technician Service Desk with email and reporting. These workflows are implemented in development; they are not included in the published v2.1 download. See the [draft v2.2 guides](../how-tos/features-and-instructions/v2.2/README.md).
+**Unreleased v2.2 — Everyday IT Management** extends that foundation with Staff Members and Departments, roles and optional features, equipment stock/custody and handovers, Suppliers and Lifecycle, and employee/technician Service Desk with email and reporting. These workflows are implemented in development; no public v2.2 image or supported production upgrade is offered. See the [draft v2.2 guides](../how-tos/features-and-instructions/v2.2/README.md).
 
 **Domainless computer sign-in, SSO, remote management and monitoring remain future proposals.** They require their own approved requirements, security review and implementation. The Service Desk is part of unreleased v2.2, rather than an unimplemented long-term idea.
 

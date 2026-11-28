@@ -387,11 +387,9 @@ def check_candidate_files(root, version):
             raise ReleasePreflightError(f"Candidate version does not match {name}")
         if not re.search(r"\b(?:draft[^\n]*unreleased|" + re.escape(version) + r" is unreleased)\b", text, re.I):
             raise ReleasePreflightError(f"{name} needs an explicit unreleased notice")
-    readme = documents["README.md"]
-    baseline = re.search(r"(v[0-9]+\.[0-9]+(?:\.[0-9]+)?) remains", readme)
-    if not baseline or baseline[1] == version:
-        raise ReleasePreflightError("Candidate README must retain its published baseline")
-    previous = baseline[1]
+    # This v2.2 transition keeps the previous release's complete archive without
+    # requiring the target README to advertise that release as current.
+    previous = "v2.1"
     for name in (f"docs/historical/installation/INSTALLATION-{previous}.md",
                  f"docs/historical/portainer/portainer-{previous}.yaml",
                  f"docs/historical/release-notes/Release-Notes-{previous}.md"):

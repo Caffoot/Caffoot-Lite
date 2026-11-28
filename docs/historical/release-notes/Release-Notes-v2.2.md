@@ -1,6 +1,6 @@
 # Caffoot Lite v2.2 — Everyday IT Management
 
-> **Draft — Unreleased.** v2.1 remains the published release. These notes describe the upcoming v2.2 features and are not production installation or upgrade instructions. No v2.2 release date or public image is available.
+> **Draft — Unreleased.** These notes describe the upcoming v2.2 features and are not production installation or upgrade instructions. No v2.2 release date or public image is available.
 
 v2.2 brings people, equipment and support work together. Keep one permanent Device record while receiving, assigning, returning, preparing and reissuing equipment; give employees a restricted view of their equipment and support requests; and keep purchasing and lifecycle information alongside the inventory.
 
@@ -65,5 +65,3 @@ Date controls use **DD/MM/YYYY**, with keyboard-accessible calendars. Desktop na
 Published v2.1 uses schema 10; the v2.2 candidate uses schema 31. A supported production v2.1 → v2.2 upgrade and complete-volume recovery for the current candidate have not been established. The draft [installation](../../how-tos/features-and-instructions/v2.2/Installation.md) and [upgrade/recovery](../../how-tos/features-and-instructions/v2.2/Legacy-Import-and-Docker-Upgrade.md) guides are for separately authorised isolated review.
 
 Preserve the complete stopped `/data` mount, private configuration and matching image before any authorised upgrade. An older image must not open an upgraded database; rollback needs its complete matching pre-upgrade backup. Inventory JSON cannot restore accounts, MFA, tickets, attachments, branding, TLS or private email settings.
-
-For public installation, use the [published v2.1 instructions](../installation/INSTALLATION-v2.1.md) and [v2.1 release notes](Release-Notes-v2.1.md).

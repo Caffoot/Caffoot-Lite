@@ -5,13 +5,13 @@ Your infrastructure. Your users. Your data.
 
 Free, open-source IT management for **small businesses, IT teams and home labs**. Keep infrastructure, people, equipment and support work together in one self-hosted application.
 
-> **v2.2 is unreleased.** This README introduces the implemented v2.2 functionality. **v2.1 remains the current published download** and does not include the new people, stock, purchasing or Service Desk workflows. No public v2.2 image, release date or supported production v2.1 → v2.2 upgrade is available. Use the [published v2.1 installation guide](docs/historical/installation/INSTALLATION-v2.1.md) for public installations.
+> **v2.2 is unreleased.** This README introduces the implemented v2.2 functionality. No public v2.2 image, release date or supported production v2.1 → v2.2 upgrade is available.
 
 Caffoot Lite connects Device inventory, IP address management (IPAM) and Network Racks with Staff Members, Departments, equipment custody and stock. Receive a laptop, register it once, issue it with its accessories, handle a support request, then return, prepare and reissue the same Device. Supplier and lifecycle information stay alongside the equipment, while employees see only their eligible equipment and support conversations.
 
 It runs in Docker with a shared SQLite database, HTTPS, administrator-managed accounts, multi-factor authentication (MFA) and permissions checked by the server. Choose the optional features your organisation needs; switching one off retains its data and permissions. There is no public account registration.
 
-**[Prepare an isolated v2.2 review instance](INSTALLATION.md)** · **[Explore the draft v2.2 guides](docs/how-tos/features-and-instructions/v2.2/README.md)** · **[Read the draft release notes](docs/historical/release-notes/Release-Notes-v2.2.md)** · **[Install published v2.1](docs/historical/installation/INSTALLATION-v2.1.md)** · **[See the roadmap](ROADMAP.md)**
+**[Prepare an isolated v2.2 review instance](INSTALLATION.md)** · **[Explore the draft v2.2 guides](docs/how-tos/features-and-instructions/v2.2/README.md)** · **[Read the draft release notes](docs/historical/release-notes/Release-Notes-v2.2.md)** · **[See the roadmap](ROADMAP.md)**
 
 ## Infrastructure In One Place
 
@@ -87,16 +87,11 @@ The responsive interface supports light/dark themes, independently scrolling des
 
 *Illustrations show the implemented, unreleased v2.2 application in desktop light theme, using fictional records. Available navigation and actions depend on enabled features and permissions.*
 
-## Install The Published Release — v2.1
+## Prepare An Isolated v2.2 Review Instance
 
-**v2.1 image reference:** `ghcr.io/caffoot/caffoot-lite:v2.1`. Before pulling, verify the v2.1 GitHub Release, its AMD64/ARM64 image manifest and anonymous registry access. Older releases remain in [version history](https://github.com/Caffoot/Caffoot-Lite/releases).
+The [v2.2 installation guide](INSTALLATION.md) explains the private-image [Portainer example](portainer-v2.2.yaml), [source-build Compose example](docs/how-tos/features-and-instructions/v2.2/compose-v2.2.yaml), required IANA time zone, storage, HTTPS, initial administrator setup and MFA. These routes require separate authorisation for the exact review revision and installation. No public v2.2 image is offered; GitHub source ZIPs are not Docker installation packages.
 
-The archived [`portainer-v2.1.yaml`](docs/historical/portainer/portainer-v2.1.yaml) is the published v2.1 example. Before using that example, verify the v2.1 release/image exists, then edit the server address and port. The root [`portainer-v2.2.yaml`](portainer-v2.2.yaml) is for separately authorised isolated private review only and requires a verified private image. **Existing installations must keep their exact `/data` mapping, environment and secrets; never replace a working stack with an empty-volume example.** Historical [v2.0.3 Portainer instructions](docs/historical/portainer/portainer-v2.0.3.yaml) remain available. The branch’s [`compose.yaml`](compose.yaml) and [`Dockerfile`](Dockerfile) build its source revision; they do not provide a released v2.2 installation. Use the published v2.1 source/tag for a v2.1 source build. GitHub source ZIPs are not Docker installation packages.
-
-**Read the [installation and HTTPS guide](docs/historical/installation/INSTALLATION-v2.1.md)** for complete Portainer/Docker Compose steps, initial administrator setup, MFA, reverse proxy, certificate trust and data backups. No public registration is offered.
-
-
-The separate [draft v2.2 installation](docs/how-tos/features-and-instructions/v2.2/Installation.md) and [upgrade/recovery guide](docs/how-tos/features-and-instructions/v2.2/Legacy-Import-and-Docker-Upgrade.md) are for separately authorised isolated review. Supported production upgrades and complete-volume recovery for v2.2 remain outstanding.
+**Existing installations must keep their exact `/data` mapping, environment and secrets; never replace a working stack with an empty-volume example.** Use the [upgrade, backup and recovery guide](docs/how-tos/features-and-instructions/v2.2/Legacy-Import-and-Docker-Upgrade.md) for isolated rehearsals. Supported production upgrades and complete-volume recovery for v2.2 remain outstanding.
 
 ## Help Build Caffoot Lite
 
@@ -115,7 +110,7 @@ You can contribute by reporting a bug, testing the application, improving a help
 
 ## Migrating Your Standalone Inventory
 
-For the published Docker migration, export a fresh JSON backup using **published Caffoot Lite v1.3.3**. Users of earlier standalone HTML editions must first upgrade to v1.3.3. After setting up your administrator account, go to **Settings & Data → Import Inventory**, review the proposed replacement and confirm it. This is a **one-way migration**, not a routine database backup. It does not replace user accounts, MFA or permissions. The [draft v2.2 import instructions](docs/how-tos/features-and-instructions/v2.2/Legacy-Import-and-Docker-Upgrade.md#import-legacy-inventory) also explain protected Device conflicts: a replacement cannot change or remove equipment with protected relationships.
+For legacy inventory migration, export a fresh JSON backup using **published Caffoot Lite v1.3.3**. Users of earlier standalone HTML editions must first upgrade to v1.3.3. After setting up your administrator account, go to **Settings & Data → Import Inventory**, review the proposed replacement and confirm it. This is a **one-way migration**, not a routine database backup. It does not replace user accounts, MFA or permissions. The [draft v2.2 import instructions](docs/how-tos/features-and-instructions/v2.2/Legacy-Import-and-Docker-Upgrade.md#import-legacy-inventory) also explain protected Device conflicts: a replacement cannot change or remove equipment with protected relationships.
 
 ## Where Your Data Is Stored
 
@@ -123,33 +118,28 @@ For the published Docker migration, export a fresh JSON backup using **published
 
 **Existing installations:** Keep your original `/data` mapping when updating, whether it is a named volume or custom host directory. Switching to a different, empty volume does **not** migrate your existing database and can make the application appear empty.
 
-**Optional custom location:** You may replace `caffoot_data:/data` with a host bind mount such as `/srv/caffoot-lite/data:/data`. Give the container's non-root UID/GID `10001:10001` access to the directory. See the [installation guide](docs/historical/installation/INSTALLATION-v2.1.md).
+**Optional custom location:** You may replace `caffoot_data:/data` with a host bind mount such as `/srv/caffoot-lite/data:/data`. Give the container's non-root UID/GID `10001:10001` access to the directory. See the [v2.2 installation guide](INSTALLATION.md).
 
 ## Backups and HTTPS
 
 The authoritative database and HTTPS certificate material live under the persistent Docker `/data` mount (`caffoot.sqlite3`, `tls/`, `account-email-secret.key` when present, and all other installation files). Keep this directory when restarting or recreating the container. Back it up with trusted **external** Docker/volume/file backup tools; for a manual consistent copy, stop the container first. Keep securely protected backups away from the host and verify that they can be restored. No in-app ongoing Docker JSON backup/restore is provided. Inventory or Audit Trail JSON cannot recover accounts, MFA, tickets, attachments, branding, TLS or private email settings.
 
-For direct HTTPS, verify and trust the application certificate before entering credentials. Configure reverse proxies for HTTPS upstream connections, trusted certificates and restricted exposure of the published Docker port. See [INSTALLATION.md](docs/historical/installation/INSTALLATION-v2.1.md).
+For direct HTTPS, verify and trust the application certificate before entering credentials. Configure reverse proxies for HTTPS upstream connections, trusted certificates and restricted exposure of the published Docker port. See [INSTALLATION.md](INSTALLATION.md).
 
 ## Documentation
 
 - [Draft v2.2 user and administrator guides](docs/how-tos/features-and-instructions/v2.2/README.md)
 - [Draft v2.2 release notes](docs/historical/release-notes/Release-Notes-v2.2.md)
-- [Published v2.1 installation, HTTPS, Portainer and backup instructions](docs/historical/installation/INSTALLATION-v2.1.md)
-- [v2.1 release notes](docs/historical/release-notes/Release-Notes-v2.1.md)
-- [v2.1 development handover — historical evidence](docs/historical/development-handovers/v2.1.md)
-- [v2.0.3 release notes](docs/historical/release-notes/Release-Notes-v2.0.3.md)
 - [Releases and version history](https://github.com/Caffoot/Caffoot-Lite/releases)
-- [Published v2.1 user guides and screenshots](docs/historical/features-and-instructions/v2.1/README.md)
+- [Archived guides, installation examples and release records](docs/historical/README.md)
 - [Contributing To Caffoot Lite — mandatory naming, UI and documentation standards](CONTRIBUTING.md)
 - [Development Guide](docs/development-guide/README.md)
 - [Public roadmap](ROADMAP.md)
 - [Ideas under consideration](https://github.com/Caffoot/Caffoot-Lite/labels/future%20request)
-- [v2.0.3 development handover (historical)](docs/historical/development-handovers/v2.0.3.md)
 - [Security-fix and release checklist, including the owner-controlled one-click publishing process](docs/development-guide/Security-Fixes-and-Releases.md)
 - [Standalone v1.3.3 release](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v1.3.3)
 
 **Version history:** [v2.0](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v2.0) introduced the Docker/SQLite multi-user edition. [v2.0.1](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v2.0.1) moved the Docker source to the repository root. v2.0.2 delivered a focused security correction. v2.0.3 updated the documentation, code-reference baseline and existing browser regression coverage without changing the supported inventory data format.
 
 
-The published v2.1 upgrade changes the existing database to schema 10. Outstanding older-format email proofs are invalidated; account permissions, MFA and inventory are retained. Back up the entire stopped `/data` first. Rollback requires the complete matching pre-upgrade backup and old image; an old binary must not open the upgraded database. See the [upgrade instructions](docs/historical/installation/INSTALLATION-v2.1.md#upgrading-v203-to-v21). v2.1 was published on 8 November 2026. Verify the relevant public image and architecture before installation; v2.2 remains unreleased.
+v2.1 was published on 8 November 2026, introducing schema 10 and invalidating outstanding older-format email proofs while retaining account permissions, MFA and inventory. The [v2.2 upgrade and recovery guide](docs/how-tos/features-and-instructions/v2.2/Legacy-Import-and-Docker-Upgrade.md) retains the schema, complete-backup and matching-image rollback requirements for isolated review; production upgrade acceptance remains outstanding.
