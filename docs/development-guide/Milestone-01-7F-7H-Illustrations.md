@@ -43,7 +43,7 @@ The table lists the remaining-guide illustrations, including suitable images ret
 | Audit-Trail | Understand the affected record | [audit-device-changes.png](../development-handovers/evidence/milestone-01-audit-details/audit-device-changes.png) |
 | Audit-Trail | Understand the affected record | [audit-supplier-name.png](../development-handovers/evidence/milestone-01-audit-details/audit-supplier-name.png) |
 | Audit-Trail | Understand the affected record | [audit-legacy-technical.png](../development-handovers/evidence/milestone-01-audit-details/audit-legacy-technical.png) |
-| Audit-Trail | Understand the affected record | [audit-values-unavailable.png](../how-tos/features-and-instructions/v2.2-draft/screenshots/milestone-01-native-followups/audit-values-unavailable.png) |
+| Audit-Trail | Understand the affected record | [audit-values-unavailable.png](../how-tos/features-and-instructions/v2.2/screenshots/milestone-01-native-followups/audit-values-unavailable.png) |
 | Audit-Trail | Follow history by record | [audit-asset-history-desktop-light.png](../development-handovers/evidence/stage-6-6-batch-2/screenshots/audit-asset-history-desktop-light.png) |
 | Legacy-Import-and-Docker-Upgrade | Import Legacy Inventory | [01-access-point-review.png](../development-handovers/evidence/stage-6-2/01-access-point-review.png) |
 | Legacy-Import-and-Docker-Upgrade | Import Legacy Inventory | [02-replacement-review.png](../development-handovers/evidence/stage-6-2/02-replacement-review.png) |

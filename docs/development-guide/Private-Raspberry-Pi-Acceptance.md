@@ -19,7 +19,7 @@ docker ps -a --filter name=caffoot --format 'table {{.Names}}\t{{.Image}}\t{{.Po
 docker inspect caffoot-v21-private-caffoot-lite-1 caffoot-lite --format '{{.Name}}{{range .Mounts}}{{printf "\n  %s: %s -> %s" .Type .Source .Destination}}{{end}}'
 ```
 
-Both named volumes above were confirmed separate on 24 November. Repeat this check before future image updates. Stop if the stack identities, mounts or isolation differ. Check available storage and retain access to the matching old image. For data that needs preservation, use the [complete stopped-volume backup procedure](../how-tos/features-and-instructions/v2.2-draft/Legacy-Import-and-Docker-Upgrade.md#back-up-a-complete-installation) before updating.
+Both named volumes above were confirmed separate on 24 November. Repeat this check before future image updates. Stop if the stack identities, mounts or isolation differ. Check available storage and retain access to the matching old image. For data that needs preservation, use the [complete stopped-volume backup procedure](../how-tos/features-and-instructions/v2.2/Legacy-Import-and-Docker-Upgrade.md#back-up-a-complete-installation) before updating.
 
 ## 2. The four familiar SSH commands
 

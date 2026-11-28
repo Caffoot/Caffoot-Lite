@@ -103,7 +103,7 @@ The published **v2.1** release provides self-hosted device inventory, subnet-fir
 
 The **v2.1 interface** has been released. [Issue #282](https://github.com/Caffoot/Caffoot-Lite/issues/282) preserves the original integration requirements and development history.
 
-**Unreleased v2.2 — Everyday IT Management** extends that foundation with Staff Members and Departments, roles and optional features, equipment stock/custody and handovers, Suppliers and Lifecycle, and employee/technician Service Desk with email and reporting. These workflows are implemented in development; they are not included in the published v2.1 download. See the [draft v2.2 guides](../how-tos/features-and-instructions/v2.2-draft/README.md).
+**Unreleased v2.2 — Everyday IT Management** extends that foundation with Staff Members and Departments, roles and optional features, equipment stock/custody and handovers, Suppliers and Lifecycle, and employee/technician Service Desk with email and reporting. These workflows are implemented in development; they are not included in the published v2.1 download. See the [draft v2.2 guides](../how-tos/features-and-instructions/v2.2/README.md).
 
 **Domainless computer sign-in, SSO, remote management and monitoring remain future proposals.** They require their own approved requirements, security review and implementation. The Service Desk is part of unreleased v2.2, rather than an unimplemented long-term idea.
 

@@ -4,7 +4,7 @@
 
 ## Current Approved R1–R3 Delivery — 27 November 2026
 
-[Owner approval](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7218233916) supersedes the earlier R1–R3 capture/budget stop for exactly these three views. **All 99 originals remain unchanged; cumulative totals are now 7E 25/25 and combined 102/102.** My Equipment is 6/6 and custody/membership confidentiality 5/5; other 7E allocations remain 5/4/5, and 7C/7D remain unchanged. [Actual R1–R3 views, matched original before frames, provenance and focused verification](../how-tos/features-and-instructions/v2.2-draft/screenshots/batch-7e/R1-R3.md). R1/R3 follow the same genuine personal-to-Accounts event; R2 follows actual membership loss. IT retention is an API check, not an IT screenshot. Independent review and separate owner acceptance remain pending. Earlier proposal, gap and ceiling paragraphs below are preserved as dated history, not current execution instructions. PR #472 remains draft; stop after this checkpoint with no further packs.
+[Owner approval](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7218233916) supersedes the earlier R1–R3 capture/budget stop for exactly these three views. **All 99 originals remain unchanged; cumulative totals are now 7E 25/25 and combined 102/102.** My Equipment is 6/6 and custody/membership confidentiality 5/5; other 7E allocations remain 5/4/5, and 7C/7D remain unchanged. [Actual R1–R3 views, matched original before frames, provenance and focused verification](../how-tos/features-and-instructions/v2.2/screenshots/batch-7e/R1-R3.md). R1/R3 follow the same genuine personal-to-Accounts event; R2 follows actual membership loss. IT retention is an API check, not an IT screenshot. Independent review and separate owner acceptance remain pending. Earlier proposal, gap and ceiling paragraphs below are preserved as dated history, not current execution instructions. PR #472 remains draft; stop after this checkpoint with no further packs.
 
 ## Current Independent-Review Corrections — 27 November 2026
 
@@ -12,7 +12,7 @@
 
 ## Batch 7E Delivery And Consolidated Stop — 27 November 2026
 
-**22/22 new desktop light images**, plus exact 7C pre-handover reuse and one narrow accepted 7B offboarding reference; all **10 groups / 52 owned states and one shared reference** retained. [Pack/direct images and guides](../how-tos/features-and-instructions/v2.2-draft/screenshots/batch-7e/README.md) · [coverage](../how-tos/features-and-instructions/v2.2-draft/screenshots/batch-7e/Coverage.md) · [manifest](../how-tos/features-and-instructions/v2.2-draft/screenshots/batch-7e/manifest.json) · [verification](../how-tos/features-and-instructions/v2.2-draft/screenshots/batch-7e/Verification.md). Counts: My Equipment 4/4, ticket creation/warnings 5/5, ticket navigation 4/4, unread/replies 5/5, custody/membership confidentiality 4/4. The 7B offboarding image is its separate AC-LAP-07 fixture, with original acceptance and limitations; no relabelling as this journey’s current state.
+**22/22 new desktop light images**, plus exact 7C pre-handover reuse and one narrow accepted 7B offboarding reference; all **10 groups / 52 owned states and one shared reference** retained. [Pack/direct images and guides](../how-tos/features-and-instructions/v2.2/screenshots/batch-7e/README.md) · [coverage](../how-tos/features-and-instructions/v2.2/screenshots/batch-7e/Coverage.md) · [manifest](../how-tos/features-and-instructions/v2.2/screenshots/batch-7e/manifest.json) · [verification](../how-tos/features-and-instructions/v2.2/screenshots/batch-7e/Verification.md). Counts: My Equipment 4/4, ticket creation/warnings 5/5, ticket navigation 4/4, unread/replies 5/5, custody/membership confidentiality 4/4. The 7B offboarding image is its separate AC-LAP-07 fixture, with original acceptance and limitations; no relabelling as this journey’s current state.
 
 **Combined delivery: 99/100 new images; 54 groups, 286 owned states and seven shared references retained.** Separate remotely verified checkpoints: 7C `a9f607b132edf1125580eb41c27ee9c8eee80902`; 7D `03b4f2c5090a10dc6c0ad66463e4f309a4719796`. 7E follows those successful checkpoints. Original accepted instructions, historical/correction evidence and targeted refresh backlog remain; the new use of earlier illustrations does not certify them as later captures. Routine and unpictured variants have explicit written dispositions, not invented runtime passes.
 
@@ -20,11 +20,11 @@
 
 ## Batch 7D Delivery — 27 November 2026
 
-**36/36 new desktop light images**, with three genuinely matching 7C references; all **21 groups / 114 owned states and one shared reference** retained. [Pack/images](../how-tos/features-and-instructions/v2.2-draft/screenshots/batch-7d/README.md) · [coverage](../how-tos/features-and-instructions/v2.2-draft/screenshots/batch-7d/Coverage.md) · [manifest](../how-tos/features-and-instructions/v2.2-draft/screenshots/batch-7d/manifest.json) · [verification](../how-tos/features-and-instructions/v2.2-draft/screenshots/batch-7d/Verification.md). Category counts: Departments 7/7, custody 5/5, circulation 8/8, associations/handover 6/6, corrections 4/4, lifecycle 6/6. Independent review and separate owner visual acceptance remain pending. 7C was separately committed, pushed and remotely verified at `a9f607b132edf1125580eb41c27ee9c8eee80902` before this documentation delivery. Continue to 7E only after this checkpoint succeeds.
+**36/36 new desktop light images**, with three genuinely matching 7C references; all **21 groups / 114 owned states and one shared reference** retained. [Pack/images](../how-tos/features-and-instructions/v2.2/screenshots/batch-7d/README.md) · [coverage](../how-tos/features-and-instructions/v2.2/screenshots/batch-7d/Coverage.md) · [manifest](../how-tos/features-and-instructions/v2.2/screenshots/batch-7d/manifest.json) · [verification](../how-tos/features-and-instructions/v2.2/screenshots/batch-7d/Verification.md). Category counts: Departments 7/7, custody 5/5, circulation 8/8, associations/handover 6/6, corrections 4/4, lifecycle 6/6. Independent review and separate owner visual acceptance remain pending. 7C was separately committed, pushed and remotely verified at `a9f607b132edf1125580eb41c27ee9c8eee80902` before this documentation delivery. Continue to 7E only after this checkpoint succeeds.
 
 ## Batch 7C Delivery — 27 November 2026
 
-**41/42 new desktop light images**, plus narrow original RE07/RE08 reuse; all **23 groups / 120 owned states and five shared references** retained. [Pack and direct image links](../how-tos/features-and-instructions/v2.2-draft/screenshots/batch-7c/README.md) · [complete coverage](../how-tos/features-and-instructions/v2.2-draft/screenshots/batch-7c/Coverage.md) · [provenance](../how-tos/features-and-instructions/v2.2-draft/screenshots/batch-7c/manifest.json) · [focused verification](../how-tos/features-and-instructions/v2.2-draft/screenshots/batch-7c/Verification.md). Category counts: dashboard 5/6, intake/readiness 7/7, registration/reissue 6/6, Suppliers 8/8, Issues/Purchasing 7/7, integration 8/8. Independent ChatGPT review and separate owner visual/privacy/caption/alt acceptance pending; no publication approval. The original Alex My Equipment frame belongs to the connected 7C journey and will be reused for 7E. Pre-handover fixture preparation preserves later-pack states; undelivered 7D/7E illustrations are not part of this checkpoint. Continue to separately verified 7D under consolidated owner approval after this checkpoint succeeds.
+**41/42 new desktop light images**, plus narrow original RE07/RE08 reuse; all **23 groups / 120 owned states and five shared references** retained. [Pack and direct image links](../how-tos/features-and-instructions/v2.2/screenshots/batch-7c/README.md) · [complete coverage](../how-tos/features-and-instructions/v2.2/screenshots/batch-7c/Coverage.md) · [provenance](../how-tos/features-and-instructions/v2.2/screenshots/batch-7c/manifest.json) · [focused verification](../how-tos/features-and-instructions/v2.2/screenshots/batch-7c/Verification.md). Category counts: dashboard 5/6, intake/readiness 7/7, registration/reissue 6/6, Suppliers 8/8, Issues/Purchasing 7/7, integration 8/8. Independent ChatGPT review and separate owner visual/privacy/caption/alt acceptance pending; no publication approval. The original Alex My Equipment frame belongs to the connected 7C journey and will be reused for 7E. Pre-handover fixture preparation preserves later-pack states; undelivered 7D/7E illustrations are not part of this checkpoint. Continue to separately verified 7D under consolidated owner approval after this checkpoint succeeds.
 
 ## Current Reconciliation — 27 November 2026
 
@@ -42,9 +42,9 @@ PR #472 remains draft, open and unmerged; #366 remains open. Native Test 70, upg
 
 [Batch 7.1/bounded 7.2 independent review and owner decision](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7210689297) remain accepted, including the narrow reuse proposals. Four unrelated historical image contexts remain unresolved; none is newly used here.
 
-**Batch 7A complete: 38/40 images independently reviewed and owner visually accepted.** [Acceptance](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7211815146) replaces B2-17-S02 with **“Disable Network Racks? Saved data and permissions will be retained.”** in Optional Features. [Live 7A coverage](../how-tos/features-and-instructions/v2.2-draft/screenshots/batch-7a/Coverage.md), manifest, guides and register are reconciled, retaining all 19 groups/85 specifications and dated historical blocked/review records. No 7A capture or retest.
+**Batch 7A complete: 38/40 images independently reviewed and owner visually accepted.** [Acceptance](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7211815146) replaces B2-17-S02 with **“Disable Network Racks? Saved data and permissions will be retained.”** in Optional Features. [Live 7A coverage](../how-tos/features-and-instructions/v2.2/screenshots/batch-7a/Coverage.md), manifest, guides and register are reconciled, retaining all 19 groups/85 specifications and dated historical blocked/review records. No 7A capture or retest.
 
-**Batch 7B authorised and delivered as proposed instructions:** [owner scope/method](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7211852349) permits at most 28 new desktop light images plus RE02/RE04/RE06. Actual new count **25: accounts 18, Staff 7**, with one Security screen shared for voluntary enrolment and password change. Native deletion/Left Company confirmations use exact written wording. [Pack/provenance](../how-tos/features-and-instructions/v2.2-draft/screenshots/batch-7b/README.md), [all 16 groups/79 specifications](../how-tos/features-and-instructions/v2.2-draft/screenshots/batch-7b/Coverage.md) and [static verification](../how-tos/features-and-instructions/v2.2-draft/screenshots/batch-7b/Verification.md). New images await independent ChatGPT review and separate owner visual/privacy/caption/alt acceptance. Publication remains unauthorised.
+**Batch 7B authorised and delivered as proposed instructions:** [owner scope/method](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7211852349) permits at most 28 new desktop light images plus RE02/RE04/RE06. Actual new count **25: accounts 18, Staff 7**, with one Security screen shared for voluntary enrolment and password change. Native deletion/Left Company confirmations use exact written wording. [Pack/provenance](../how-tos/features-and-instructions/v2.2/screenshots/batch-7b/README.md), [all 16 groups/79 specifications](../how-tos/features-and-instructions/v2.2/screenshots/batch-7b/Coverage.md) and [static verification](../how-tos/features-and-instructions/v2.2/screenshots/batch-7b/Verification.md). New images await independent ChatGPT review and separate owner visual/privacy/caption/alt acceptance. Publication remains unauthorised.
 
 No 7C–7H or Batch 8 is authorised. Original requirement contracts and the dated reconciliation below remain historical traceability, superseded only as to these explicit illustration decisions. No unrelated source/image inventory investigation, application testing, CI monitoring or deferred acceptance work was repeated.
 
@@ -107,7 +107,7 @@ Only the listed identical substate is shared. All other specifications remain un
 
 Further overlaps are **sequencing opportunities, without a numeric merge**: B2-02/B5-T12 (Device Details versus Tickets/navigation); B2-18/B2-07 (link controls versus count boundaries); B3-R1/B5-A1 (baseline no-access tabs versus granted technician access); B3-D4/B4-E3/B5-A8 (continuing shared custody, actual handover and paired ticket confidentiality); B4-C3/B4-D3/B4-K2 (unassigned return versus previously issued canonical Device); B4-I4/B4-B4 (original supply metric versus effective stock); B5-A7/B6-Z3 (saved calendar/DST versus startup timezone history); B5-A9/B6-M3 (reset/delete protection versus protected import and late rejection); B6-I3/I4/Z1 (external update/configuration routes); B6-R4 and application guides (post-restore proof versus ordinary operations). They cannot be counted as duplicates simply because a screen appears in both.
 
-The [connected Service Desk journey](../how-tos/features-and-instructions/v2.2-draft/Connected-Service-Desk-Journey.md) introduces no extra original screenshot group. Its stages 1–10 use B5-T1/T2, E1/E3/E8, T7/T9, T11/T5/T6, T10, T6, A5/A7 and H1–H6 in that order. Preserve the same Alex, Sam and canonical laptop and distinguish assignment, first actual support work, closure and reopening. The equipment journey's separate return/reissue and direct handover routes are alternatives; do not overwrite the earlier fixture before continuity evidence is recorded.
+The [connected Service Desk journey](../how-tos/features-and-instructions/v2.2/Connected-Service-Desk-Journey.md) introduces no extra original screenshot group. Its stages 1–10 use B5-T1/T2, E1/E3/E8, T7/T9, T11/T5/T6, T10, T6, A5/A7 and H1–H6 in that order. Preserve the same Alex, Sam and canonical laptop and distinguish assignment, first actual support work, closure and reopening. The equipment journey's separate return/reissue and direct handover routes are alternatives; do not overwrite the earlier fixture before continuity evidence is recorded.
 
 ## Existing Evidence Assessment
 
@@ -192,7 +192,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B2-01 — Devices: unfiltered inventory plus one combined-filter result and Overview drill-down
 
-**Source:** [Batch 2 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-2-Review.md#exact-outstanding-desktop-states), row 1. **Primary guide/section:** [Devices — Find equipment and understand your inventory](../how-tos/features-and-instructions/v2.2-draft/Devices.md#find-equipment-and-understand-your-inventory). **Primary pack:** 7A.
+**Source:** [Batch 2 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-2-Review.md#exact-outstanding-desktop-states), row 1. **Primary guide/section:** [Devices — Find equipment and understand your inventory](../how-tos/features-and-instructions/v2.2/Devices.md#find-equipment-and-understand-your-inventory). **Primary pack:** 7A.
 
 **Original contract:** Devices Read; visible fictional records; identify any separately enabled related sections
 
@@ -210,7 +210,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B2-02 — Devices: Details Overview, Hardware, Network, Location and current conditional tabs
 
-**Source:** [Batch 2 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-2-Review.md#exact-outstanding-desktop-states), row 2. **Primary guide/section:** [Devices — View an existing device](../how-tos/features-and-instructions/v2.2-draft/Devices.md#view-an-existing-device). **Primary pack:** 7A.
+**Source:** [Batch 2 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-2-Review.md#exact-outstanding-desktop-states), row 2. **Primary guide/section:** [Devices — View an existing device](../how-tos/features-and-instructions/v2.2/Devices.md#view-an-existing-device). **Primary pack:** 7A.
 
 **Original contract:** Devices Read; IPAM/Racks Read where illustrated
 
@@ -230,7 +230,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B2-03 — Devices: Add, Edit and Duplicate physical forms with Save/Cancel/Back and validation
 
-**Source:** [Batch 2 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-2-Review.md#exact-outstanding-desktop-states), row 3. **Primary guide/section:** [Devices — Edit, save and cancel](../how-tos/features-and-instructions/v2.2-draft/Devices.md#edit-save-and-cancel). **Primary pack:** 7A.
+**Source:** [Batch 2 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-2-Review.md#exact-outstanding-desktop-states), row 3. **Primary guide/section:** [Devices — Edit, save and cancel](../how-tos/features-and-instructions/v2.2/Devices.md#edit-save-and-cancel). **Primary pack:** 7A.
 
 **Original contract:** Devices Edit; IPAM/Racks Edit only for illustrated related changes
 
@@ -250,7 +250,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B2-04 — Devices: physical Server pools/VDEVs and independent versus linked boot
 
-**Source:** [Batch 2 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-2-Review.md#exact-outstanding-desktop-states), row 4. **Primary guide/section:** [Devices — Record Storage, ZFS Pools And Boot Drives](../how-tos/features-and-instructions/v2.2-draft/Devices.md#record-storage-zfs-pools-and-boot-drives). **Primary pack:** 7A.
+**Source:** [Batch 2 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-2-Review.md#exact-outstanding-desktop-states), row 4. **Primary guide/section:** [Devices — Record Storage, ZFS Pools And Boot Drives](../how-tos/features-and-instructions/v2.2/Devices.md#record-storage-zfs-pools-and-boot-drives). **Primary pack:** 7A.
 
 **Original contract:** Devices Edit, physical Server
 
@@ -269,7 +269,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B2-05 — Devices: host and VM resources plus per-guest host-change review
 
-**Source:** [Batch 2 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-2-Review.md#exact-outstanding-desktop-states), row 5. **Primary guide/section:** [Devices — Complete A Host And Guest Inventory](../how-tos/features-and-instructions/v2.2-draft/Devices.md#complete-a-host-and-guest-inventory). **Primary pack:** 7A.
+**Source:** [Batch 2 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-2-Review.md#exact-outstanding-desktop-states), row 5. **Primary guide/section:** [Devices — Complete A Host And Guest Inventory](../how-tos/features-and-instructions/v2.2/Devices.md#complete-a-host-and-guest-inventory). **Primary pack:** 7A.
 
 **Original contract:** Devices Edit, eligible host and guests
 
@@ -288,7 +288,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B2-06 — Devices: type archive/rename/delete warning and hardware/software/service catalogue
 
-**Source:** [Batch 2 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-2-Review.md#exact-outstanding-desktop-states), row 6. **Primary guide/section:** [Devices — Manage Device Types And Locations](../how-tos/features-and-instructions/v2.2-draft/Devices.md#manage-device-types-and-locations). **Primary pack:** 7A.
+**Source:** [Batch 2 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-2-Review.md#exact-outstanding-desktop-states), row 6. **Primary guide/section:** [Devices — Manage Device Types And Locations](../how-tos/features-and-instructions/v2.2/Devices.md#manage-device-types-and-locations). **Primary pack:** 7A.
 
 **Original contract:** Devices Edit; fictional affected records
 
@@ -308,7 +308,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B2-07 — IPAM: Overview/basic-count outside, inside-but-basic and explicitly linked
 
-**Source:** [Batch 2 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-2-Review.md#exact-outstanding-desktop-states), row 7. **Primary guide/section:** [IPAM — Basic Addresses And Explicit Linking](../how-tos/features-and-instructions/v2.2-draft/IPAM.md#basic-addresses-and-explicit-linking). **Primary pack:** 7A.
+**Source:** [Batch 2 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-2-Review.md#exact-outstanding-desktop-states), row 7. **Primary guide/section:** [IPAM — Basic Addresses And Explicit Linking](../how-tos/features-and-instructions/v2.2/IPAM.md#basic-addresses-and-explicit-linking). **Primary pack:** 7A.
 
 **Original contract:** Devices Read + IPAM Read; documented state for each image
 
@@ -326,7 +326,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B2-08 — IPAM: Manage Subnets and address grid/page/status filters
 
-**Source:** [Batch 2 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-2-Review.md#exact-outstanding-desktop-states), row 8. **Primary guide/section:** [IPAM — Before You Start And Find Your Networks](../how-tos/features-and-instructions/v2.2-draft/IPAM.md#before-you-start-and-find-your-networks). **Primary pack:** 7A.
+**Source:** [Batch 2 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-2-Review.md#exact-outstanding-desktop-states), row 8. **Primary guide/section:** [IPAM — Before You Start And Find Your Networks](../how-tos/features-and-instructions/v2.2/IPAM.md#before-you-start-and-find-your-networks). **Primary pack:** 7A.
 
 **Original contract:** IPAM Read; fictional block/standalone networks, gateway and states
 
@@ -344,7 +344,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B2-09 — IPAM: single subnet/block and multiple-subnet generator/preview with row error
 
-**Source:** [Batch 2 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-2-Review.md#exact-outstanding-desktop-states), row 9. **Primary guide/section:** [IPAM — Add multiple subnets](../how-tos/features-and-instructions/v2.2-draft/IPAM.md#add-multiple-subnets). **Primary pack:** 7A.
+**Source:** [Batch 2 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-2-Review.md#exact-outstanding-desktop-states), row 9. **Primary guide/section:** [IPAM — Add multiple subnets](../how-tos/features-and-instructions/v2.2/IPAM.md#add-multiple-subnets). **Primary pack:** 7A.
 
 **Original contract:** IPAM Edit
 
@@ -364,7 +364,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B2-10 — IPAM: independent Configure IP, Device-owned notes and historical reservation release
 
-**Source:** [Batch 2 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-2-Review.md#exact-outstanding-desktop-states), row 10. **Primary guide/section:** [IPAM — Edit an individual IP](../how-tos/features-and-instructions/v2.2-draft/IPAM.md#edit-an-individual-ip). **Primary pack:** 7A.
+**Source:** [Batch 2 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-2-Review.md#exact-outstanding-desktop-states), row 10. **Primary guide/section:** [IPAM — Edit an individual IP](../how-tos/features-and-instructions/v2.2/IPAM.md#edit-an-individual-ip). **Primary pack:** 7A.
 
 **Original contract:** IPAM Edit; Devices access only where shown
 
@@ -383,7 +383,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B2-11 — IPAM: bulk reservation/release preview and protected-skip count
 
-**Source:** [Batch 2 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-2-Review.md#exact-outstanding-desktop-states), row 11. **Primary guide/section:** [IPAM — Bulk Reserve Or Release Addresses](../how-tos/features-and-instructions/v2.2-draft/IPAM.md#bulk-reserve-or-release-addresses). **Primary pack:** 7A.
+**Source:** [Batch 2 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-2-Review.md#exact-outstanding-desktop-states), row 11. **Primary guide/section:** [IPAM — Bulk Reserve Or Release Addresses](../how-tos/features-and-instructions/v2.2/IPAM.md#bulk-reserve-or-release-addresses). **Primary pack:** 7A.
 
 **Original contract:** IPAM Edit
 
@@ -403,7 +403,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B2-12 — IPAM: deletion blocked and eligible Move Devices & Delete Subnet review
 
-**Source:** [Batch 2 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-2-Review.md#exact-outstanding-desktop-states), row 12. **Primary guide/section:** [IPAM — Delete A Subnet Or Block Safely](../how-tos/features-and-instructions/v2.2-draft/IPAM.md#delete-a-subnet-or-block-safely). **Primary pack:** 7A.
+**Source:** [Batch 2 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-2-Review.md#exact-outstanding-desktop-states), row 12. **Primary guide/section:** [IPAM — Delete A Subnet Or Block Safely](../how-tos/features-and-instructions/v2.2/IPAM.md#delete-a-subnet-or-block-safely). **Primary pack:** 7A.
 
 **Original contract:** IPAM Edit, Devices enabled/readable for displayed dependencies
 
@@ -423,7 +423,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B2-13 — Racks: Inventory, Front/Rear, equipment/capacity and read-only elevation
 
-**Source:** [Batch 2 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-2-Review.md#exact-outstanding-desktop-states), row 13. **Primary guide/section:** [Racks — Find A Rack And Read Capacity](../how-tos/features-and-instructions/v2.2-draft/Racks.md#find-a-rack-and-read-capacity). **Primary pack:** 7A.
+**Source:** [Batch 2 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-2-Review.md#exact-outstanding-desktop-states), row 13. **Primary guide/section:** [Racks — Find A Rack And Read Capacity](../how-tos/features-and-instructions/v2.2/Racks.md#find-a-rack-and-read-capacity). **Primary pack:** 7A.
 
 **Original contract:** Racks Read; Devices Read where occupants shown
 
@@ -443,7 +443,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B2-14 — Racks: enclosure add/edit/specification correction confirmation
 
-**Source:** [Batch 2 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-2-Review.md#exact-outstanding-desktop-states), row 14. **Primary guide/section:** [Racks — Edit A Rack Or Correct Its Specifications](../how-tos/features-and-instructions/v2.2-draft/Racks.md#edit-a-rack-or-correct-its-specifications). **Primary pack:** 7A.
+**Source:** [Batch 2 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-2-Review.md#exact-outstanding-desktop-states), row 14. **Primary guide/section:** [Racks — Edit A Rack Or Correct Its Specifications](../how-tos/features-and-instructions/v2.2/Racks.md#edit-a-rack-or-correct-its-specifications). **Primary pack:** 7A.
 
 **Original contract:** Racks Edit
 
@@ -463,7 +463,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B2-15 — Racks: Device placement, horizontal accessory, vertical left/right 0U and invalid collision
 
-**Source:** [Batch 2 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-2-Review.md#exact-outstanding-desktop-states), row 15. **Primary guide/section:** [Racks — Place An Existing Rack-Mounted Device](../how-tos/features-and-instructions/v2.2-draft/Racks.md#place-an-existing-rack-mounted-device). **Primary pack:** 7A.
+**Source:** [Batch 2 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-2-Review.md#exact-outstanding-desktop-states), row 15. **Primary guide/section:** [Racks — Place An Existing Rack-Mounted Device](../how-tos/features-and-instructions/v2.2/Racks.md#place-an-existing-rack-mounted-device). **Primary pack:** 7A.
 
 **Original contract:** Racks Edit; Devices readable/enabled for Device placement
 
@@ -484,7 +484,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B2-16 — Racks/Devices: linked shelf Device, moved shelf location and complete removal review
 
-**Source:** [Batch 2 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-2-Review.md#exact-outstanding-desktop-states), row 16. **Primary guide/section:** [Racks — Remove A Shelf That Holds Devices](../how-tos/features-and-instructions/v2.2-draft/Racks.md#remove-a-shelf-that-holds-devices). **Primary pack:** 7A.
+**Source:** [Batch 2 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-2-Review.md#exact-outstanding-desktop-states), row 16. **Primary guide/section:** [Racks — Remove A Shelf That Holds Devices](../how-tos/features-and-instructions/v2.2/Racks.md#remove-a-shelf-that-holds-devices). **Primary pack:** 7A.
 
 **Original contract:** Devices Edit + Racks Edit
 
@@ -504,7 +504,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B2-17 — Optional Features: all six current cards and disable confirmation
 
-**Source:** [Batch 2 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-2-Review.md#exact-outstanding-desktop-states), row 17. **Primary guide/section:** [Optional-Features-and-Link-To-IPAM — Find And Read The Feature Cards](../how-tos/features-and-instructions/v2.2-draft/Optional-Features-and-Link-To-IPAM.md#find-and-read-the-feature-cards). **Primary pack:** 7A.
+**Source:** [Batch 2 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-2-Review.md#exact-outstanding-desktop-states), row 17. **Primary guide/section:** [Optional-Features-and-Link-To-IPAM — Find And Read The Feature Cards](../how-tos/features-and-instructions/v2.2/Optional-Features-and-Link-To-IPAM.md#find-and-read-the-feature-cards). **Primary pack:** 7A.
 
 **Original contract:** MFA-verified administrator; no real private account data
 
@@ -523,7 +523,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B2-18 — Optional Features: basic link action, no-suitable/existing-subnet chooser, before/after result
 
-**Source:** [Batch 2 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-2-Review.md#exact-outstanding-desktop-states), row 18. **Primary guide/section:** [Optional-Features-and-Link-To-IPAM — Deliberately Link A Saved Basic Address](../how-tos/features-and-instructions/v2.2-draft/Optional-Features-and-Link-To-IPAM.md#deliberately-link-a-saved-basic-address). **Primary pack:** 7A.
+**Source:** [Batch 2 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-2-Review.md#exact-outstanding-desktop-states), row 18. **Primary guide/section:** [Optional-Features-and-Link-To-IPAM — Deliberately Link A Saved Basic Address](../how-tos/features-and-instructions/v2.2/Optional-Features-and-Link-To-IPAM.md#deliberately-link-a-saved-basic-address). **Primary pack:** 7A.
 
 **Original contract:** Devices Edit + IPAM Edit, both features enabled
 
@@ -544,7 +544,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B2-19 — Optional Features: Racks-off protected Device versus re-enabled placement
 
-**Source:** [Batch 2 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-2-Review.md#exact-outstanding-desktop-states), row 19. **Primary guide/section:** [Optional-Features-and-Link-To-IPAM — Preserve Devices When Network Racks Is Off](../how-tos/features-and-instructions/v2.2-draft/Optional-Features-and-Link-To-IPAM.md#preserve-devices-when-network-racks-is-off). **Primary pack:** 7A.
+**Source:** [Batch 2 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-2-Review.md#exact-outstanding-desktop-states), row 19. **Primary guide/section:** [Optional-Features-and-Link-To-IPAM — Preserve Devices When Network Racks Is Off](../how-tos/features-and-instructions/v2.2/Optional-Features-and-Link-To-IPAM.md#preserve-devices-when-network-racks-is-off). **Primary pack:** 7A.
 
 **Original contract:** Devices Edit, Racks switch deliberately off/on
 
@@ -562,7 +562,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B3-R1 — Staff → Staff Members → Taylor → Manage Permissions, all four tabs
 
-**Source:** [Batch 3 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-3-Review.md#exact-outstanding-desktop-screenshot-requirements), original ID `B3-R1`. **Primary guide/section:** [Roles-Section-Permissions-and-MFA — Review An Account](../how-tos/features-and-instructions/v2.2-draft/Roles-Section-Permissions-and-MFA.md#review-an-account). **Primary pack:** 7B.
+**Source:** [Batch 3 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-3-Review.md#exact-outstanding-desktop-screenshot-requirements), original ID `B3-R1`. **Primary guide/section:** [Roles-Section-Permissions-and-MFA — Review An Account](../how-tos/features-and-instructions/v2.2/Roles-Section-Permissions-and-MFA.md#review-an-account). **Primary pack:** 7B.
 
 **Original contract:** Administrator; linked ordinary account, Roles memberships, Permissions Inherited/Override/Effective and Feature Disabled, Personal Details verification, Account Controls, Close/Done; pending MFA warning in Roles
 
@@ -582,7 +582,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B3-R2 — Staff → Permissions → Manage Roles → + Create Role / Manage
 
-**Source:** [Batch 3 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-3-Review.md#exact-outstanding-desktop-screenshot-requirements), original ID `B3-R2`. **Primary guide/section:** [Roles-Section-Permissions-and-MFA — Create And Maintain Roles](../how-tos/features-and-instructions/v2.2-draft/Roles-Section-Permissions-and-MFA.md#create-and-maintain-roles). **Primary pack:** 7B.
+**Source:** [Batch 3 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-3-Review.md#exact-outstanding-desktop-screenshot-requirements), original ID `B3-R2`. **Primary guide/section:** [Roles-Section-Permissions-and-MFA — Create And Maintain Roles](../how-tos/features-and-instructions/v2.2/Roles-Section-Permissions-and-MFA.md#create-and-maintain-roles). **Primary pack:** 7B.
 
 **Original contract:** Administrator; Equipment Auditors, IT Assets Read, Enabled, protected built-ins, Review Changes/Cancel/Delete Role; blank/duplicate name rejection
 
@@ -602,7 +602,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B3-R3 — Review Access Change
 
-**Source:** [Batch 3 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-3-Review.md#exact-outstanding-desktop-screenshot-requirements), original ID `B3-R3`. **Primary guide/section:** [Roles-Section-Permissions-and-MFA — When A Preview Changes Or Expires](../how-tos/features-and-instructions/v2.2-draft/Roles-Section-Permissions-and-MFA.md#when-a-preview-changes-or-expires). **Primary pack:** 7B.
+**Source:** [Batch 3 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-3-Review.md#exact-outstanding-desktop-screenshot-requirements), original ID `B3-R3`. **Primary guide/section:** [Roles-Section-Permissions-and-MFA — When A Preview Changes Or Expires](../how-tos/features-and-instructions/v2.2/Roles-Section-Permissions-and-MFA.md#when-a-preview-changes-or-expires). **Primary pack:** 7B.
 
 **Original contract:** Administrator; Tim/Dave membership and override before/after, Affected Accounts, Sessions To End, Confirm Change/Cancel; stale/expired nothing-saved outcome
 
@@ -622,7 +622,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B3-R4 — Account Controls → Make administrator
 
-**Source:** [Batch 3 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-3-Review.md#exact-outstanding-desktop-screenshot-requirements), original ID `B3-R4`. **Primary guide/section:** [Roles-Section-Permissions-and-MFA — Make An Existing User An Administrator](../how-tos/features-and-instructions/v2.2-draft/Roles-Section-Permissions-and-MFA.md#make-an-existing-user-an-administrator). **Primary pack:** 7B.
+**Source:** [Batch 3 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-3-Review.md#exact-outstanding-desktop-screenshot-requirements), original ID `B3-R4`. **Primary guide/section:** [Roles-Section-Permissions-and-MFA — Make An Existing User An Administrator](../how-tos/features-and-instructions/v2.2/Roles-Section-Permissions-and-MFA.md#make-an-existing-user-an-administrator). **Primary pack:** 7B.
 
 **Original contract:** Administrator; Alex with unverified email and later confirmed MFA/verified email, Make admin eligibility and disabled/enabled button; own/last-admin protected state
 
@@ -640,7 +640,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B3-R5 — Account Controls → Disable Login / Enable Login / Delete User
 
-**Source:** [Batch 3 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-3-Review.md#exact-outstanding-desktop-screenshot-requirements), original ID `B3-R5`. **Primary guide/section:** [Roles-Section-Permissions-and-MFA — Enable, Disable Or Delete A Login](../how-tos/features-and-instructions/v2.2-draft/Roles-Section-Permissions-and-MFA.md#enable-disable-or-delete-a-login). **Primary pack:** 7B.
+**Source:** [Batch 3 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-3-Review.md#exact-outstanding-desktop-screenshot-requirements), original ID `B3-R5`. **Primary guide/section:** [Roles-Section-Permissions-and-MFA — Enable, Disable Or Delete A Login](../how-tos/features-and-instructions/v2.2/Roles-Section-Permissions-and-MFA.md#enable-disable-or-delete-a-login). **Primary pack:** 7B.
 
 **Original contract:** Administrator; non-self ordinary linked active then disabled login; deletion confirmation and Cancel; retained Staff record; no secrets
 
@@ -660,7 +660,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B3-R6 — Account Controls → Reset Password; sign-in → Change Your Password
 
-**Source:** [Batch 3 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-3-Review.md#exact-outstanding-desktop-screenshot-requirements), original ID `B3-R6`. **Primary guide/section:** [Roles-Section-Permissions-and-MFA — Reset A Staff Member’s Password](../how-tos/features-and-instructions/v2.2-draft/Roles-Section-Permissions-and-MFA.md#reset-a-staff-members-password). **Primary pack:** 7B.
+**Source:** [Batch 3 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-3-Review.md#exact-outstanding-desktop-screenshot-requirements), original ID `B3-R6`. **Primary guide/section:** [Roles-Section-Permissions-and-MFA — Reset A Staff Member’s Password](../how-tos/features-and-instructions/v2.2/Roles-Section-Permissions-and-MFA.md#reset-a-staff-members-password). **Primary pack:** 7B.
 
 **Original contract:** Administrator resets Jamie; target ordinary user; two empty temporary fields/Cancel/Reset Password; target empty new/confirm fields, mandatory-change warning and success/re-sign-in; mismatch/expiry
 
@@ -680,7 +680,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B3-R7 — Sign In → Verify Your Identity / Secure Your Account
 
-**Source:** [Batch 3 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-3-Review.md#exact-outstanding-desktop-screenshot-requirements), original ID `B3-R7`. **Primary guide/section:** [Roles-Section-Permissions-and-MFA — Required Enrolment At Sign-In](../how-tos/features-and-instructions/v2.2-draft/Roles-Section-Permissions-and-MFA.md#required-enrolment-at-sign-in). **Primary pack:** 7B.
+**Source:** [Batch 3 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-3-Review.md#exact-outstanding-desktop-screenshot-requirements), original ID `B3-R7`. **Primary guide/section:** [Roles-Section-Permissions-and-MFA — Required Enrolment At Sign-In](../how-tos/features-and-instructions/v2.2/Roles-Section-Permissions-and-MFA.md#required-enrolment-at-sign-in). **Primary pack:** 7B.
 
 **Original contract:** Ordinary IT Staff requiring MFA; Username/Password, code challenge, Confirm MFA Setup/Back to Sign In; neutral failure/throttling; hide QR/setup key values
 
@@ -700,7 +700,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B3-R8 — My Account → Security → Multi-Factor Authentication / Remove MFA
 
-**Source:** [Batch 3 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-3-Review.md#exact-outstanding-desktop-screenshot-requirements), original ID `B3-R8`. **Primary guide/section:** [Roles-Section-Permissions-and-MFA — Voluntary Enrolment And Eligible Removal](../how-tos/features-and-instructions/v2.2-draft/Roles-Section-Permissions-and-MFA.md#voluntary-enrolment-and-eligible-removal). **Primary pack:** 7B.
+**Source:** [Batch 3 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-3-Review.md#exact-outstanding-desktop-screenshot-requirements), original ID `B3-R8`. **Primary guide/section:** [Roles-Section-Permissions-and-MFA — Voluntary Enrolment And Eligible Removal](../how-tos/features-and-instructions/v2.2/Roles-Section-Permissions-and-MFA.md#voluntary-enrolment-and-eligible-removal). **Primary pack:** 7B.
 
 **Original contract:** Baseline Staff-only voluntary account; Start MFA enrolment, Confirm MFA, eligible Current Password/Current Authenticator Code/Confirm MFA Removal; mandatory account removal unavailable
 
@@ -719,7 +719,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B3-R9 — My Account → Overview → Personal Details → Verify Email
 
-**Source:** [Batch 3 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-3-Review.md#exact-outstanding-desktop-screenshot-requirements), original ID `B3-R9`. **Primary guide/section:** [Roles-Section-Permissions-and-MFA — Prepare Verified Email Recovery](../how-tos/features-and-instructions/v2.2-draft/Roles-Section-Permissions-and-MFA.md#prepare-verified-email-recovery). **Primary pack:** 7B.
+**Source:** [Batch 3 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-3-Review.md#exact-outstanding-desktop-screenshot-requirements), original ID `B3-R9`. **Primary guide/section:** [Roles-Section-Permissions-and-MFA — Prepare Verified Email Recovery](../how-tos/features-and-instructions/v2.2/Roles-Section-Permissions-and-MFA.md#prepare-verified-email-recovery). **Primary pack:** 7B.
 
 **Original contract:** Active account, saved unverified then verified email; Send/Resend Confirmation Code, eight-digit field, Verify Email Address/Cancel; administrator warning; empty/malformed/stale address
 
@@ -739,7 +739,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B3-R10 — Forgot Password? → Request a Recovery Code → Reset Your Password
 
-**Source:** [Batch 3 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-3-Review.md#exact-outstanding-desktop-screenshot-requirements), original ID `B3-R10`. **Primary guide/section:** [Roles-Section-Permissions-and-MFA — Recover Your Password From Sign-In](../how-tos/features-and-instructions/v2.2-draft/Roles-Section-Permissions-and-MFA.md#recover-your-password-from-sign-in). **Primary pack:** 7B.
+**Source:** [Batch 3 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-3-Review.md#exact-outstanding-desktop-screenshot-requirements), original ID `B3-R10`. **Primary guide/section:** [Roles-Section-Permissions-and-MFA — Recover Your Password From Sign-In](../how-tos/features-and-instructions/v2.2/Roles-Section-Permissions-and-MFA.md#recover-your-password-from-sign-in). **Primary pack:** 7B.
 
 **Original contract:** Signed-out fictional recovery-owner; neutral response, empty eight-digit code/new/confirm/authenticator, Request Another Code/Back To Sign In/Recover Password; mismatch, invalid/expired proof, Password Updated; return to preceding MFA
 
@@ -760,7 +760,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B3-R11 — My Account → Security → Change Password; ended-session sign-in
 
-**Source:** [Batch 3 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-3-Review.md#exact-outstanding-desktop-screenshot-requirements), original ID `B3-R11`. **Primary guide/section:** [Roles-Section-Permissions-and-MFA — Change Your Password From My Account](../how-tos/features-and-instructions/v2.2-draft/Roles-Section-Permissions-and-MFA.md#change-your-password-from-my-account). **Primary pack:** 7B.
+**Source:** [Batch 3 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-3-Review.md#exact-outstanding-desktop-screenshot-requirements), original ID `B3-R11`. **Primary guide/section:** [Roles-Section-Permissions-and-MFA — Change Your Password From My Account](../how-tos/features-and-instructions/v2.2/Roles-Section-Permissions-and-MFA.md#change-your-password-from-my-account). **Primary pack:** 7B.
 
 **Original contract:** Active user, empty current/new/confirm; invalid current/mismatch; Your Session Has Ended after revoked/expired session
 
@@ -779,7 +779,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B3-S1 — Staff → Staff Members
 
-**Source:** [Batch 3 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-3-Review.md#exact-outstanding-desktop-screenshot-requirements), original ID `B3-S1`. **Primary guide/section:** [Staff-Members — Find A Staff Member](../how-tos/features-and-instructions/v2.2-draft/Staff-Members.md#find-a-staff-member). **Primary pack:** 7B.
+**Source:** [Batch 3 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-3-Review.md#exact-outstanding-desktop-screenshot-requirements), original ID `B3-S1`. **Primary guide/section:** [Staff-Members — Find A Staff Member](../how-tos/features-and-instructions/v2.2/Staff-Members.md#find-a-staff-member). **Primary pack:** 7B.
 
 **Original contract:** Staff Read then Administrator; Alex, Taylor and a blank migrated name, Find A Staff Member, All Statuses/Active/Left Company, View Details/Edit, login badges only for administrator; No matching Staff Members
 
@@ -799,7 +799,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B3-S2 — + Add Staff Member / Edit Staff Member
 
-**Source:** [Batch 3 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-3-Review.md#exact-outstanding-desktop-screenshot-requirements), original ID `B3-S2`. **Primary guide/section:** [Staff-Members — Add A Person Without A Login](../how-tos/features-and-instructions/v2.2-draft/Staff-Members.md#add-a-person-without-a-login). **Primary pack:** 7B.
+**Source:** [Batch 3 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-3-Review.md#exact-outstanding-desktop-screenshot-requirements), original ID `B3-S2`. **Primary guide/section:** [Staff-Members — Add A Person Without A Login](../how-tos/features-and-instructions/v2.2/Staff-Members.md#add-a-person-without-a-login). **Primary pack:** 7B.
 
 **Original contract:** Staff Edit; Alex no login, required names/optional fields, active Department/No Department, Staff Status, Create Caffoot Login unavailable for non-admin, Save/Cancel/Back; empty names/invalid email
 
@@ -820,7 +820,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B3-S3 — Staff Details → Create Login
 
-**Source:** [Batch 3 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-3-Review.md#exact-outstanding-desktop-screenshot-requirements), original ID `B3-S3`. **Primary guide/section:** [Staff-Members — Create And Link An Optional Caffoot Login](../how-tos/features-and-instructions/v2.2-draft/Staff-Members.md#create-and-link-an-optional-caffoot-login). **Primary pack:** 7B.
+**Source:** [Batch 3 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-3-Review.md#exact-outstanding-desktop-screenshot-requirements), original ID `B3-S3`. **Primary guide/section:** [Staff-Members — Create And Link An Optional Caffoot Login](../how-tos/features-and-instructions/v2.2/Staff-Members.md#create-and-link-an-optional-caffoot-login). **Primary pack:** 7B.
 
 **Original contract:** Administrator with Staff Edit; active Alex, optional login on, unique username and empty initial/confirm password, default Staff Member; duplicate username rejection retaining nonsecrets and clearing passwords; Left Company link rejection
 
@@ -840,7 +840,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B3-S4 — Edit Staff Member → Resolve Difference / Refresh Current Details
 
-**Source:** [Batch 3 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-3-Review.md#exact-outstanding-desktop-screenshot-requirements), original ID `B3-S4`. **Primary guide/section:** [Staff-Members — Resolve A Difference Between Staff And Account Details](../how-tos/features-and-instructions/v2.2-draft/Staff-Members.md#resolve-a-difference-between-staff-and-account-details). **Primary pack:** 7B.
+**Source:** [Batch 3 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-3-Review.md#exact-outstanding-desktop-screenshot-requirements), original ID `B3-S4`. **Primary guide/section:** [Staff-Members — Resolve A Difference Between Staff And Account Details](../how-tos/features-and-instructions/v2.2/Staff-Members.md#resolve-a-difference-between-staff-and-account-details). **Primary pack:** 7B.
 
 **Original contract:** Administrator with Staff Edit; Taylor/Tay saved name and different fictional emails; Keep Staff/Account/Leave Unchanged, save confirmation; stale rejection and refresh confirmation
 
@@ -860,7 +860,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B3-S5 — Staff Details / Account Controls → Mark As Left Company / Reactivate
 
-**Source:** [Batch 3 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-3-Review.md#exact-outstanding-desktop-screenshot-requirements), original ID `B3-S5`. **Primary guide/section:** [Staff-Members — Mark As Left Company Or Reactivate](../how-tos/features-and-instructions/v2.2-draft/Staff-Members.md#mark-as-left-company-or-reactivate). **Primary pack:** 7B.
+**Source:** [Batch 3 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-3-Review.md#exact-outstanding-desktop-screenshot-requirements), original ID `B3-S5`. **Primary guide/section:** [Staff-Members — Mark As Left Company Or Reactivate](../how-tos/features-and-instructions/v2.2/Staff-Members.md#mark-as-left-company-or-reactivate). **Primary pack:** 7B.
 
 **Original contract:** Administrator + Staff Edit; Alex with AC-LAP-07, confirmation/Cancel; Left Company + Disabled after save, retained assignment; Reactivate then still Disabled/Enable Login; self/last-admin rejection
 
@@ -881,7 +881,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B3-D1 — Staff → Departments → Add/Manage
 
-**Source:** [Batch 3 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-3-Review.md#exact-outstanding-desktop-screenshot-requirements), original ID `B3-D1`. **Primary guide/section:** [Departments-and-Shared-Equipment — Add A Department](../how-tos/features-and-instructions/v2.2-draft/Departments-and-Shared-Equipment.md#add-a-department). **Primary pack:** 7D.
+**Source:** [Batch 3 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-3-Review.md#exact-outstanding-desktop-screenshot-requirements), original ID `B3-D1`. **Primary guide/section:** [Departments-and-Shared-Equipment — Add A Department](../how-tos/features-and-instructions/v2.2/Departments-and-Shared-Equipment.md#add-a-department). **Primary pack:** 7D.
 
 **Original contract:** Departments Edit; Accounts/Sales, list Active/Archived and 0 Departments, Department Name, Save/Cancel; blank/duplicate name, Archive/Reactivate confirmations, Delete Department unavailable/rejected with history
 
@@ -902,7 +902,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B3-D2 — Staff Members → Priya → Edit → Department
 
-**Source:** [Batch 3 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-3-Review.md#exact-outstanding-desktop-screenshot-requirements), original ID `B3-D2`. **Primary guide/section:** [Departments-and-Shared-Equipment — Add, Change Or Remove Staff Membership](../how-tos/features-and-instructions/v2.2-draft/Departments-and-Shared-Equipment.md#add-change-or-remove-staff-membership). **Primary pack:** 7D.
+**Source:** [Batch 3 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-3-Review.md#exact-outstanding-desktop-screenshot-requirements), original ID `B3-D2`. **Primary guide/section:** [Departments-and-Shared-Equipment — Add, Change Or Remove Staff Membership](../how-tos/features-and-instructions/v2.2/Departments-and-Shared-Equipment.md#add-change-or-remove-staff-membership). **Primary pack:** 7D.
 
 **Original contract:** Staff Edit; Accounts→Sales / No Department, archived existing membership retained, Save/Cancel; no role change
 
@@ -922,7 +922,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B3-D3 — Departments → Accounts → View Details, four tabs
 
-**Source:** [Batch 3 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-3-Review.md#exact-outstanding-desktop-screenshot-requirements), original ID `B3-D3`. **Primary guide/section:** [Departments-and-Shared-Equipment — Department Details — Unreleased v2.2](../how-tos/features-and-instructions/v2.2-draft/Departments-and-Shared-Equipment.md#department-details--unreleased-v22). **Primary pack:** 7D.
+**Source:** [Batch 3 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-3-Review.md#exact-outstanding-desktop-screenshot-requirements), original ID `B3-D3`. **Primary guide/section:** [Departments-and-Shared-Equipment — Department Details — Unreleased v2.2](../how-tos/features-and-instructions/v2.2/Departments-and-Shared-Equipment.md#department-details--unreleased-v22). **Primary pack:** 7D.
 
 **Original contract:** Departments Read + independent Staff/Devices/IT Assets Read and features; AC-PRN-01, adapters and retained Left Company member; View Staff Details/View Device; Not Available versus empty, ended Device custody in History
 
@@ -943,7 +943,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B3-D4 — Device → Assigned To → Manage Departments then Department Equipment
 
-**Source:** [Batch 3 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-3-Review.md#exact-outstanding-desktop-screenshot-requirements), original ID `B3-D4`. **Primary guide/section:** [Departments-and-Shared-Equipment — Change Which Departments Share A Device](../how-tos/features-and-instructions/v2.2-draft/Departments-and-Shared-Equipment.md#change-which-departments-share-a-device). **Primary pack:** 7D.
+**Source:** [Batch 3 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-3-Review.md#exact-outstanding-desktop-screenshot-requirements), original ID `B3-D4`. **Primary guide/section:** [Departments-and-Shared-Equipment — Change Which Departments Share A Device](../how-tos/features-and-instructions/v2.2/Departments-and-Shared-Equipment.md#change-which-departments-share-a-device). **Primary pack:** 7D.
 
 **Original contract:** Devices Edit; Accounts/Sales printer, tick/search, Save Changes/Cancel; at least one selection, no current no-op physical transfer; same-tab updated equipment/history after successful save
 
@@ -963,7 +963,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B3-E1 — Staff Details → Assign Equipment; Device → Assigned To → Assign Device
 
-**Source:** [Batch 3 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-3-Review.md#exact-outstanding-desktop-screenshot-requirements), original ID `B3-E1`. **Primary guide/section:** [Device-Assignments-and-My-Equipment — Assign From Staff Details](../how-tos/features-and-instructions/v2.2-draft/Device-Assignments-and-My-Equipment.md#assign-from-staff-details). **Primary pack:** 7D.
+**Source:** [Batch 3 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-3-Review.md#exact-outstanding-desktop-screenshot-requirements), original ID `B3-E1`. **Primary guide/section:** [Device-Assignments-and-My-Equipment — Assign From Staff Details](../how-tos/features-and-instructions/v2.2/Device-Assignments-and-My-Equipment.md#assign-from-staff-details). **Primary pack:** 7D.
 
 **Original contract:** Devices Edit, Staff Read for directory route; active Alex and eligible unused AC-LAP-07; Find Existing Devices/selected count/Confirm Assignment/Cancel; recipient kinds and Department checkboxes; stale/reserved/ineligible rejection
 
@@ -984,7 +984,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B3-E2 — Device → Assigned To
 
-**Source:** [Batch 3 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-3-Review.md#exact-outstanding-desktop-screenshot-requirements), original ID `B3-E2`. **Primary guide/section:** [Device-Assignments-and-My-Equipment — Read Current Assignments And History](../how-tos/features-and-instructions/v2.2-draft/Device-Assignments-and-My-Equipment.md#read-current-assignments-and-history). **Primary pack:** 7D.
+**Source:** [Batch 3 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-3-Review.md#exact-outstanding-desktop-screenshot-requirements), original ID `B3-E2`. **Primary guide/section:** [Device-Assignments-and-My-Equipment — Read Current Assignments And History](../how-tos/features-and-instructions/v2.2/Device-Assignments-and-My-Equipment.md#read-current-assignments-and-history). **Primary pack:** 7D.
 
 **Original contract:** Devices Read; personal laptop, shared printer and Unassigned example; original Issue/Return-End Date/actor, current versus historical labels; stock details only with IT Assets rights
 
@@ -1004,7 +1004,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B3-E3 — My Account → Overview → Open My Equipment; Workspace → My Equipment
 
-**Source:** [Batch 3 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-3-Review.md#exact-outstanding-desktop-screenshot-requirements), original ID `B3-E3`. **Primary guide/section:** [Device-Assignments-and-My-Equipment — My Equipment](../how-tos/features-and-instructions/v2.2-draft/Device-Assignments-and-My-Equipment.md#my-equipment). **Primary pack:** 7E.
+**Source:** [Batch 3 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-3-Review.md#exact-outstanding-desktop-screenshot-requirements), original ID `B3-E3`. **Primary guide/section:** [Device-Assignments-and-My-Equipment — My Equipment](../how-tos/features-and-instructions/v2.2/Device-Assignments-and-My-Equipment.md#my-equipment). **Primary pack:** 7E.
 
 **Original contract:** Active linked baseline Staff, Devices/IT Assets enabled, Priya personal laptop/adapters and Accounts printer; tables, Search Equipment, Equipment Type/Kind, Clear Filters, Details/Report A Problem; No matching equipment versus No equipment available
 
@@ -1024,7 +1024,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B3-E4 — My Equipment → Details
 
-**Source:** [Batch 3 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-3-Review.md#exact-outstanding-desktop-screenshot-requirements), original ID `B3-E4`. **Primary guide/section:** [Device-Assignments-and-My-Equipment — Find Equipment And Open Details](../how-tos/features-and-instructions/v2.2-draft/Device-Assignments-and-My-Equipment.md#find-equipment-and-open-details). **Primary pack:** 7E.
+**Source:** [Batch 3 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-3-Review.md#exact-outstanding-desktop-screenshot-requirements), original ID `B3-E4`. **Primary guide/section:** [Device-Assignments-and-My-Equipment — Find Equipment And Open Details](../how-tos/features-and-instructions/v2.2/Device-Assignments-and-My-Equipment.md#find-equipment-and-open-details). **Primary pack:** 7E.
 
 **Original contract:** Same baseline Staff; laptop with recognised software and missing-field example, IT Asset outstanding quantity, Close/Report A Problem, no restricted network/private fields; custody changed unavailable state
 
@@ -1044,7 +1044,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B3-E5 — Staff Department change / Device holder change / login disable
 
-**Source:** [Batch 3 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-3-Review.md#exact-outstanding-desktop-screenshot-requirements), original ID `B3-E5`. **Primary guide/section:** [Device-Assignments-and-My-Equipment — Visibility, Empty Results And Permission Changes](../how-tos/features-and-instructions/v2.2-draft/Device-Assignments-and-My-Equipment.md#visibility-empty-results-and-permission-changes). **Primary pack:** 7E.
+**Source:** [Batch 3 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-3-Review.md#exact-outstanding-desktop-screenshot-requirements), original ID `B3-E5`. **Primary guide/section:** [Device-Assignments-and-My-Equipment — Visibility, Empty Results And Permission Changes](../how-tos/features-and-instructions/v2.2/Device-Assignments-and-My-Equipment.md#visibility-empty-results-and-permission-changes). **Primary pack:** 7E.
 
 **Original contract:** Matched fictional Priya before/after; new membership list and next Details denial, old holder history IT-only, login revoked; no physical movement on membership change
 
@@ -1064,7 +1064,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B4-A1 — Dashboard: IT → IT Assets → Overview
 
-**Source:** [Batch 4 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-4-Review.md#existing-candidate-provenance), original ID `B4-A1`. **Primary guide/section:** [IT-Assets-Dashboard — Open And Read The Overview](../how-tos/features-and-instructions/v2.2-draft/IT-Assets-Dashboard.md#open-and-read-the-overview). **Primary pack:** 7C.
+**Source:** [Batch 4 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-4-Review.md#existing-candidate-provenance), original ID `B4-A1`. **Primary guide/section:** [IT-Assets-Dashboard — Open And Read The Overview](../how-tos/features-and-instructions/v2.2/IT-Assets-Dashboard.md#open-and-read-the-overview). **Primary pack:** 7C.
 
 **Original contract:** AR+DR; mixed quantity/registered/individual stock, current cards, classification, Data Tables, category/30/90-day controls.
 
@@ -1082,7 +1082,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B4-A2 — Dashboard: Overview → Low Stock / View Stock / Movement History
 
-**Source:** [Batch 4 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-4-Review.md#existing-candidate-provenance), original ID `B4-A2`. **Primary guide/section:** [IT-Assets-Dashboard — Configure An Optional Minimum Stock Level](../how-tos/features-and-instructions/v2.2-draft/IT-Assets-Dashboard.md#configure-an-optional-minimum-stock-level). **Primary pack:** 7C.
+**Source:** [Batch 4 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-4-Review.md#existing-candidate-provenance), original ID `B4-A2`. **Primary guide/section:** [IT-Assets-Dashboard — Configure An Optional Minimum Stock Level](../how-tos/features-and-instructions/v2.2/IT-Assets-Dashboard.md#configure-an-optional-minimum-stock-level). **Primary pack:** 7C.
 
 **Original contract:** AE+DE; minimum 10/Ready 8 then equality, awaiting stock, View / Update and Clear Dashboard Filters; AR version View Details.
 
@@ -1103,7 +1103,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B4-A3 — Dashboard: IT Assets-only and empty Overview
 
-**Source:** [Batch 4 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-4-Review.md#existing-candidate-provenance), original ID `B4-A3`. **Primary guide/section:** [IT-Assets-Dashboard — Permissions, Complete Totals And Privacy](../how-tos/features-and-instructions/v2.2-draft/IT-Assets-Dashboard.md#permissions-complete-totals-and-privacy). **Primary pack:** 7C.
+**Source:** [Batch 4 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-4-Review.md#existing-candidate-provenance), original ID `B4-A3`. **Primary guide/section:** [IT-Assets-Dashboard — Permissions, Complete Totals And Privacy](../how-tos/features-and-instructions/v2.2/IT-Assets-Dashboard.md#permissions-complete-totals-and-privacy). **Primary pack:** 7C.
 
 **Original contract:** AR without Devices; complete aggregates, no classification/Device drill-down; no data/held/attention and failed-load/Reload Stock states.
 
@@ -1122,7 +1122,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B4-B1 — Intake: Receive Stock → New Stock Entry
 
-**Source:** [Batch 4 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-4-Review.md#existing-candidate-provenance), original ID `B4-B1`. **Primary guide/section:** [IT-Assets-Stock-Intake — Record The First Receipt](../how-tos/features-and-instructions/v2.2-draft/IT-Assets-Stock-Intake.md#record-the-first-receipt). **Primary pack:** 7C.
+**Source:** [Batch 4 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-4-Review.md#existing-candidate-provenance), original ID `B4-B1`. **Primary guide/section:** [IT-Assets-Stock-Intake — Record The First Receipt](../how-tos/features-and-instructions/v2.2/IT-Assets-Stock-Intake.md#record-the-first-receipt). **Primary pack:** 7C.
 
 **Original contract:** AE; two laptops then individually tracked mouse, Server label, shared specs, units, quantity/date/Supplier/checks/summary, Record Receipt/Cancel; invalid capacity/quantity.
 
@@ -1143,7 +1143,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B4-B2 — Intake: Receive More Of An Existing Item
 
-**Source:** [Batch 4 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-4-Review.md#existing-candidate-provenance), original ID `B4-B2`. **Primary guide/section:** [IT-Assets-Stock-Intake — Receive More Of An Existing Item](../how-tos/features-and-instructions/v2.2-draft/IT-Assets-Stock-Intake.md#receive-more-of-an-existing-item). **Primary pack:** 7C.
+**Source:** [Batch 4 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-4-Review.md#existing-candidate-provenance), original ID `B4-B2`. **Primary guide/section:** [IT-Assets-Stock-Intake — Receive More Of An Existing Item](../how-tos/features-and-instructions/v2.2/IT-Assets-Stock-Intake.md#receive-more-of-an-existing-item). **Primary pack:** 7C.
 
 **Original contract:** AE; matching item, new date/Supplier, immutable specs, ready subset; duplicate New Stock Entry rejection and No Stock Items Recorded.
 
@@ -1164,7 +1164,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B4-B3 — Intake: Stock Inventory → View / Update
 
-**Source:** [Batch 4 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-4-Review.md#existing-candidate-provenance), original ID `B4-B3`. **Primary guide/section:** [IT-Assets-Stock-Intake — Complete Receipt Checks Later](../how-tos/features-and-instructions/v2.2-draft/IT-Assets-Stock-Intake.md#complete-receipt-checks-later). **Primary pack:** 7C.
+**Source:** [Batch 4 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-4-Review.md#existing-candidate-provenance), original ID `B4-B3`. **Primary guide/section:** [IT-Assets-Stock-Intake — Complete Receipt Checks Later](../how-tos/features-and-instructions/v2.2/IT-Assets-Stock-Intake.md#complete-receipt-checks-later). **Primary pack:** 7C.
 
 **Original contract:** AE+DE; mixed registered/unregistered, readiness total not increment, confirmed checks/units/minimum, Save Readiness Change/Cancel; reasoned reduction and blocked returned-unit bypass.
 
@@ -1185,7 +1185,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B4-B4 — Intake: Stock Inventory / Receipt History
 
-**Source:** [Batch 4 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-4-Review.md#existing-candidate-provenance), original ID `B4-B4`. **Primary guide/section:** [IT-Assets-Stock-Intake — Check History And Resolve Mistakes](../how-tos/features-and-instructions/v2.2-draft/IT-Assets-Stock-Intake.md#check-history-and-resolve-mistakes). **Primary pack:** 7C.
+**Source:** [Batch 4 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-4-Review.md#existing-candidate-provenance), original ID `B4-B4`. **Primary guide/section:** [IT-Assets-Stock-Intake — Check History And Resolve Mistakes](../how-tos/features-and-instructions/v2.2/IT-Assets-Stock-Intake.md#check-history-and-resolve-mistakes). **Primary pack:** 7C.
 
 **Original contract:** AR then AE; No Stock Received, dashboard filter/Clear, registered table; Receipt Checks, notes/actor/Supplier and separate Readiness Changes, read-only View Details.
 
@@ -1206,7 +1206,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B4-C1 — Circulation: Issue Equipment → Confirm Issue Equipment
 
-**Source:** [Batch 4 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-4-Review.md#existing-candidate-provenance), original ID `B4-C1`. **Primary guide/section:** [IT-Assets-Issue-Return-and-Write-Off — Issue Equipment](../how-tos/features-and-instructions/v2.2-draft/IT-Assets-Issue-Return-and-Write-Off.md#issue-equipment). **Primary pack:** 7D.
+**Source:** [Batch 4 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-4-Review.md#existing-candidate-provenance), original ID `B4-C1`. **Primary guide/section:** [IT-Assets-Issue-Return-and-Write-Off — Issue Equipment](../how-tos/features-and-instructions/v2.2/IT-Assets-Issue-Return-and-Write-Off.md#issue-equipment). **Primary pack:** 7D.
 
 **Original contract:** AE; quantity and individual-unit selections, exact holder/date/note, Back To Edit/Confirm Issue/Cancel; over-Ready and changed stock rejection.
 
@@ -1227,7 +1227,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B4-C2 — Circulation: Return Equipment
 
-**Source:** [Batch 4 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-4-Review.md#existing-candidate-provenance), original ID `B4-C2`. **Primary guide/section:** [IT-Assets-Issue-Return-and-Write-Off — Return Equipment](../how-tos/features-and-instructions/v2.2-draft/IT-Assets-Issue-Return-and-Write-Off.md#return-equipment). **Primary pack:** 7D.
+**Source:** [Batch 4 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-4-Review.md#existing-candidate-provenance), original ID `B4-C2`. **Primary guide/section:** [IT-Assets-Issue-Return-and-Write-Off — Return Equipment](../how-tos/features-and-instructions/v2.2/IT-Assets-Issue-Return-and-Write-Off.md#return-equipment). **Primary pack:** 7D.
 
 **Original contract:** AE; original quantity issue, 5 returned/3 Ready/2 damaged, remainder, checks/reason, Record Return/Cancel; over-return and sum rejection.
 
@@ -1247,7 +1247,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B4-C3 — Circulation: Device Assigned To → Return Equipment / preparation
 
-**Source:** [Batch 4 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-4-Review.md#existing-candidate-provenance), original ID `B4-C3`. **Primary guide/section:** [IT-Assets-Issue-Return-and-Write-Off — Return A Currently Unassigned Device](../how-tos/features-and-instructions/v2.2-draft/IT-Assets-Issue-Return-and-Write-Off.md#return-a-currently-unassigned-device). **Primary pack:** 7D.
+**Source:** [Batch 4 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-4-Review.md#existing-candidate-provenance), original ID `B4-C3`. **Primary guide/section:** [IT-Assets-Issue-Return-and-Write-Off — Return A Currently Unassigned Device](../how-tos/features-and-instructions/v2.2/IT-Assets-Issue-Return-and-Write-Off.md#return-a-currently-unassigned-device). **Primary pack:** 7D.
 
 **Original contract:** AE+DE; unassigned no-history fixed Device/one/Awaiting Preparation/physical statement, future return rejection; held Device Prepare Returned Equipment/Date Checked/checks/Mark Ready.
 
@@ -1268,7 +1268,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B4-C4 — Circulation: Write Off → Movement History
 
-**Source:** [Batch 4 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-4-Review.md#existing-candidate-provenance), original ID `B4-C4`. **Primary guide/section:** [IT-Assets-Issue-Return-and-Write-Off — Write Off Equipment](../how-tos/features-and-instructions/v2.2-draft/IT-Assets-Issue-Return-and-Write-Off.md#write-off-equipment). **Primary pack:** 7D.
+**Source:** [Batch 4 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-4-Review.md#existing-candidate-provenance), original ID `B4-C4`. **Primary guide/section:** [IT-Assets-Issue-Return-and-Write-Off — Write Off Equipment](../how-tos/features-and-instructions/v2.2/IT-Assets-Issue-Return-and-Write-Off.md#write-off-equipment). **Primary pack:** 7D.
 
 **Original contract:** AE(+DE for Device); held/issued/missing Device and accessory, state/qty/date/reason/Record Write Off; excess/blank reason; preserved identity/history.
 
@@ -1289,7 +1289,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B4-D1 — Registration: Devices → Add Device → Brand New — Get From Stock
 
-**Source:** [Batch 4 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-4-Review.md#existing-candidate-provenance), original ID `B4-D1`. **Primary guide/section:** [Device-Stock-Registration-and-Reissue — Register One Brand-New Device](../how-tos/features-and-instructions/v2.2-draft/Device-Stock-Registration-and-Reissue.md#register-one-brand-new-device). **Primary pack:** 7C.
+**Source:** [Batch 4 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-4-Review.md#existing-candidate-provenance), original ID `B4-D1`. **Primary guide/section:** [Device-Stock-Registration-and-Reissue — Register One Brand-New Device](../how-tos/features-and-instructions/v2.2/Device-Stock-Registration-and-Reissue.md#register-one-brand-new-device). **Primary pack:** 7C.
 
 **Original contract:** DE+AE; AST-LAP-014 source/specifications, name/optional serial, Save Device/Cancel/Use Direct Device Add; no compatible Ready stock/stale/duplicate rejection.
 
@@ -1309,7 +1309,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B4-D2 — Registration: Stock Inventory after registration / Reissue Existing Device
 
-**Source:** [Batch 4 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-4-Review.md#existing-candidate-provenance), original ID `B4-D2`. **Primary guide/section:** [Device-Stock-Registration-and-Reissue — Reissue An Existing Ready Device](../how-tos/features-and-instructions/v2.2-draft/Device-Stock-Registration-and-Reissue.md#reissue-an-existing-ready-device). **Primary pack:** 7C.
+**Source:** [Batch 4 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-4-Review.md#existing-candidate-provenance), original ID `B4-D2`. **Primary guide/section:** [Device-Stock-Registration-and-Reissue — Reissue An Existing Ready Device](../how-tos/features-and-instructions/v2.2/Device-Stock-Registration-and-Reissue.md#reissue-an-existing-ready-device). **Primary pack:** 7C.
 
 **Original contract:** DE+AE; original 2 held then 1 unregistered+1 registered; Ready registered chooser, eligible Staff/Departments/date/note, Reissue/Cancel; awaiting/accessory block.
 
@@ -1330,7 +1330,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B4-D3 — Registration: same Device return/preparation/reissue and history
 
-**Source:** [Batch 4 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-4-Review.md#existing-candidate-provenance), original ID `B4-D3`. **Primary guide/section:** [Device-Stock-Registration-and-Reissue — Return And Prepare The Same Device](../how-tos/features-and-instructions/v2.2-draft/Device-Stock-Registration-and-Reissue.md#return-and-prepare-the-same-device). **Primary pack:** 7C.
+**Source:** [Batch 4 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-4-Review.md#existing-candidate-provenance), original ID `B4-D3`. **Primary guide/section:** [Device-Stock-Registration-and-Reissue — Return And Prepare The Same Device](../how-tos/features-and-instructions/v2.2/Device-Stock-Registration-and-Reissue.md#return-and-prepare-the-same-device). **Primary pack:** 7C.
 
 **Original contract:** DE+AE; earlier holder closed, next holder, same identity/stock reference and first-service preserved; no duplicate/stock from mere unassignment.
 
@@ -1350,7 +1350,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B4-E1 — Associations: Device → Associated Equipment → Add Equipment
 
-**Source:** [Batch 4 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-4-Review.md#existing-candidate-provenance), original ID `B4-E1`. **Primary guide/section:** [Associated-Equipment — Issue And Associate Ready Equipment](../how-tos/features-and-instructions/v2.2-draft/Associated-Equipment.md#issue-and-associate-ready-equipment). **Primary pack:** 7D.
+**Source:** [Batch 4 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-4-Review.md#existing-candidate-provenance), original ID `B4-E1`. **Primary guide/section:** [Associated-Equipment — Issue And Associate Ready Equipment](../how-tos/features-and-instructions/v2.2/Associated-Equipment.md#issue-and-associate-ready-equipment). **Primary pack:** 7D.
 
 **Original contract:** DE+AE; current Alex custody, Ready stock/individual units and Issue And Associate, fixed holder/date/note/Add Equipment/Cancel; missing current holder/stock rejection.
 
@@ -1370,7 +1370,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B4-E2 — Associations: Associate Already Issued Equipment / Association History
 
-**Source:** [Batch 4 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-4-Review.md#existing-candidate-provenance), original ID `B4-E2`. **Primary guide/section:** [Associated-Equipment — Associate Already Issued Equipment](../how-tos/features-and-instructions/v2.2-draft/Associated-Equipment.md#associate-already-issued-equipment). **Primary pack:** 7D.
+**Source:** [Batch 4 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-4-Review.md#existing-candidate-provenance), original ID `B4-E2`. **Primary guide/section:** [Associated-Equipment — Associate Already Issued Equipment](../how-tos/features-and-instructions/v2.2/Associated-Equipment.md#associate-already-issued-equipment). **Primary pack:** 7D.
 
 **Original contract:** DE+AE; whole original outstanding issue, no stock deduction; wrong-holder/already-linked/No Eligible Issued Equipment; former unresolved accessory return/write-off.
 
@@ -1390,7 +1390,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B4-E3 — Associations: Assigned To → Reassign Device
 
-**Source:** [Batch 4 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-4-Review.md#existing-candidate-provenance), original ID `B4-E3`. **Primary guide/section:** [Associated-Equipment — Reassign A Workstation Directly](../how-tos/features-and-instructions/v2.2-draft/Associated-Equipment.md#reassign-a-workstation-directly). **Primary pack:** 7D.
+**Source:** [Batch 4 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-4-Review.md#existing-candidate-provenance), original ID `B4-E3`. **Primary guide/section:** [Associated-Equipment — Reassign A Workstation Directly](../how-tos/features-and-instructions/v2.2/Associated-Equipment.md#reassign-a-workstation-directly). **Primary pack:** 7D.
 
 **Original contract:** DE, plus AE for recorded stock; Sarah/new Department, old holder omitted, changed shared selection, unchecked preparation, Confirm Ready And Reassign/Cancel; accessory/stale/unchanged/date rejection.
 
@@ -1411,7 +1411,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B4-F1 — Correction: Movement History → Correct Movement
 
-**Source:** [Batch 4 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-4-Review.md#existing-candidate-provenance), original ID `B4-F1`. **Primary guide/section:** [IT-Assets-Correct-Movement — Preview And Save A Correction](../how-tos/features-and-instructions/v2.2-draft/IT-Assets-Correct-Movement.md#preview-and-save-a-correction). **Primary pack:** 7D.
+**Source:** [Batch 4 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-4-Review.md#existing-candidate-provenance), original ID `B4-F1`. **Primary guide/section:** [IT-Assets-Correct-Movement — Preview And Save A Correction](../how-tos/features-and-instructions/v2.2/IT-Assets-Correct-Movement.md#preview-and-save-a-correction). **Primary pack:** 7D.
 
 **Original contract:** AE(+DE for linked records); original receipt20/effective20→10, reason, before/after, Ready To Save/Save Correction/Cancel and history.
 
@@ -1430,7 +1430,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B4-F2 — Correction: blocked preview
 
-**Source:** [Batch 4 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-4-Review.md#existing-candidate-provenance), original ID `B4-F2`. **Primary guide/section:** [IT-Assets-Correct-Movement — Why A Correction May Be Blocked](../how-tos/features-and-instructions/v2.2-draft/IT-Assets-Correct-Movement.md#why-a-correction-may-be-blocked). **Primary pack:** 7D.
+**Source:** [Batch 4 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-4-Review.md#existing-candidate-provenance), original ID `B4-F2`. **Primary guide/section:** [IT-Assets-Correct-Movement — Why A Correction May Be Blocked](../how-tos/features-and-instructions/v2.2/IT-Assets-Correct-Movement.md#why-a-correction-may-be-blocked). **Primary pack:** 7D.
 
 **Original contract:** AE(+DE); zero/decimal/no-change/missing reason, later issue dependency, individual Device quantity and stale-version rejection.
 
@@ -1449,7 +1449,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B4-F3 — Correction: Return Equipment → Correct Movement → return draft
 
-**Source:** [Batch 4 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-4-Review.md#existing-candidate-provenance), original ID `B4-F3`. **Primary guide/section:** [IT-Assets-Correct-Movement — Correct An Issue While Returning Equipment](../how-tos/features-and-instructions/v2.2-draft/IT-Assets-Correct-Movement.md#correct-an-issue-while-returning-equipment). **Primary pack:** 7D.
+**Source:** [Batch 4 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-4-Review.md#existing-candidate-provenance), original ID `B4-F3`. **Primary guide/section:** [IT-Assets-Correct-Movement — Correct An Issue While Returning Equipment](../how-tos/features-and-instructions/v2.2/IT-Assets-Correct-Movement.md#correct-an-issue-while-returning-equipment). **Primary pack:** 7D.
 
 **Original contract:** AE(+DE); entered return fields retained, corrected original refreshed; Save Correction/Cancel/Escape, failed reload/excess retained amount and Reload Stock.
 
@@ -1469,7 +1469,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B4-G1 — Supplier: Purchasing → Suppliers → Add/Edit Supplier
 
-**Source:** [Batch 4 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-4-Review.md#existing-candidate-provenance), original ID `B4-G1`. **Primary guide/section:** [Supplier-Management — Add And Correct A Supplier](../how-tos/features-and-instructions/v2.2-draft/Supplier-Management.md#add-and-correct-a-supplier). **Primary pack:** 7C.
+**Source:** [Batch 4 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-4-Review.md#existing-candidate-provenance), original ID `B4-G1`. **Primary guide/section:** [Supplier-Management — Add And Correct A Supplier](../how-tos/features-and-instructions/v2.2/Supplier-Management.md#add-and-correct-a-supplier). **Primary pack:** 7C.
 
 **Original contract:** SE; Northlight, search/category filters, required name/full URL/optional address/categories/contact/Add Another Contact, Save/Cancel/discard; duplicates/invalid email/URL.
 
@@ -1489,7 +1489,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B4-G2 — Supplier: Details → Locations / Contacts
 
-**Source:** [Batch 4 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-4-Review.md#existing-candidate-provenance), original ID `B4-G2`. **Primary guide/section:** [Supplier-Management — Manage Locations And The Company Address](../how-tos/features-and-instructions/v2.2-draft/Supplier-Management.md#manage-locations-and-the-company-address). **Primary pack:** 7C.
+**Source:** [Batch 4 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-4-Review.md#existing-candidate-provenance), original ID `B4-G2`. **Primary guide/section:** [Supplier-Management — Manage Locations And The Company Address](../how-tos/features-and-instructions/v2.2/Supplier-Management.md#manage-locations-and-the-company-address). **Primary pack:** 7C.
 
 **Original contract:** SE; Main Office and Leeds, primary address/Make Main Office, company-wide/multiple-location contacts/professional links, Save/Cancel; linked/main deletion blocked and empty contact filter.
 
@@ -1510,7 +1510,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B4-G3 — Supplier: Notes & Issues → Notes / Contact Details → Contact Notes
 
-**Source:** [Batch 4 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-4-Review.md#existing-candidate-provenance), original ID `B4-G3`. **Primary guide/section:** [Supplier-Management — Record, Correct Or Delete Notes](../how-tos/features-and-instructions/v2.2-draft/Supplier-Management.md#record-correct-or-delete-notes). **Primary pack:** 7C.
+**Source:** [Batch 4 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-4-Review.md#existing-candidate-provenance), original ID `B4-G3`. **Primary guide/section:** [Supplier-Management — Record, Correct Or Delete Notes](../how-tos/features-and-instructions/v2.2/Supplier-Management.md#record-correct-or-delete-notes). **Primary pack:** 7C.
 
 **Original contract:** SE then SR; note ownership and filters, Save/Edit/Delete/confirm/Cancel, original creator and correction actor; No Notes Match Your Filter.
 
@@ -1531,7 +1531,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B4-G4 — Supplier: categories and lifecycle actions
 
-**Source:** [Batch 4 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-4-Review.md#existing-candidate-provenance), original ID `B4-G4`. **Primary guide/section:** [Supplier-Management — Archive, Reactivate Or Delete](../how-tos/features-and-instructions/v2.2-draft/Supplier-Management.md#archive-reactivate-or-delete). **Primary pack:** 7C.
+**Source:** [Batch 4 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-4-Review.md#existing-candidate-provenance), original ID `B4-G4`. **Primary guide/section:** [Supplier-Management — Archive, Reactivate Or Delete](../how-tos/features-and-instructions/v2.2/Supplier-Management.md#archive-reactivate-or-delete). **Primary pack:** 7C.
 
 **Original contract:** SE; archive/reactivate/delete unused company/contact/location, protected Note/Issue history; A+SE for supply-history Disable/Re-enable and affected-section confirmation incl off feature.
 
@@ -1552,7 +1552,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B4-H1 — Issues: Purchasing Dashboard / View All Issues
 
-**Source:** [Batch 4 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-4-Review.md#existing-candidate-provenance), original ID `B4-H1`. **Primary guide/section:** [Supplier-Issues-and-Purchasing — Read The Purchasing Dashboard](../how-tos/features-and-instructions/v2.2-draft/Supplier-Issues-and-Purchasing.md#read-the-purchasing-dashboard). **Primary pack:** 7C.
+**Source:** [Batch 4 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-4-Review.md#existing-candidate-provenance), original ID `B4-H1`. **Primary guide/section:** [Supplier-Issues-and-Purchasing — Read The Purchasing Dashboard](../how-tos/features-and-instructions/v2.2/Supplier-Issues-and-Purchasing.md#read-the-purchasing-dashboard). **Primary pack:** 7C.
 
 **Original contract:** SR; four totals/four statuses/recent five, title drill-down, both filters; No Active Supplier Issues vs no filtered Issues.
 
@@ -1571,7 +1571,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B4-H2 — Issues: Supplier Notes & Issues → Issues → Add Issue
 
-**Source:** [Batch 4 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-4-Review.md#existing-candidate-provenance), original ID `B4-H2`. **Primary guide/section:** [Supplier-Issues-and-Purchasing — Record An Issue](../how-tos/features-and-instructions/v2.2-draft/Supplier-Issues-and-Purchasing.md#record-an-issue). **Primary pack:** 7C.
+**Source:** [Batch 4 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-4-Review.md#existing-candidate-provenance), original ID `B4-H2`. **Primary guide/section:** [Supplier-Issues-and-Purchasing — Record An Issue](../how-tos/features-and-instructions/v2.2/Supplier-Issues-and-Purchasing.md#record-an-issue). **Primary pack:** 7C.
 
 **Original contract:** SE; title/description/category/active contacts, Add Issue/Cancel/discard, inline Add Issue Category saved separately; required-field rejection/No Contacts Available.
 
@@ -1592,7 +1592,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B4-H3 — Issues: Details → status/update/correct/contact handover
 
-**Source:** [Batch 4 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-4-Review.md#existing-candidate-provenance), original ID `B4-H3`. **Primary guide/section:** [Supplier-Issues-and-Purchasing — Find And Update An Existing Issue](../how-tos/features-and-instructions/v2.2-draft/Supplier-Issues-and-Purchasing.md#find-and-update-an-existing-issue). **Primary pack:** 7C.
+**Source:** [Batch 4 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-4-Review.md#existing-candidate-provenance), original ID `B4-H3`. **Primary guide/section:** [Supplier-Issues-and-Purchasing — Find And Update An Existing Issue](../how-tos/features-and-instructions/v2.2/Supplier-Issues-and-Purchasing.md#find-and-update-an-existing-issue). **Primary pack:** 7C.
 
 **Original contract:** SE then SR; all four statuses, Save Issue Changes/New Dated Update, Edit Issue Update/Save Changes, actor/date, Jo→Kim same-company contact link and Contact Details entry; stale save.
 
@@ -1613,7 +1613,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B4-H4 — Issues: Manage Issue Categories
 
-**Source:** [Batch 4 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-4-Review.md#existing-candidate-provenance), original ID `B4-H4`. **Primary guide/section:** [Supplier-Issues-and-Purchasing — Manage Issue Categories](../how-tos/features-and-instructions/v2.2-draft/Supplier-Issues-and-Purchasing.md#manage-issue-categories). **Primary pack:** 7C.
+**Source:** [Batch 4 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-4-Review.md#existing-candidate-provenance), original ID `B4-H4`. **Primary guide/section:** [Supplier-Issues-and-Purchasing — Manage Issue Categories](../how-tos/features-and-instructions/v2.2/Supplier-Issues-and-Purchasing.md#manage-issue-categories). **Primary pack:** 7C.
 
 **Original contract:** SE; add/rename/Retire/Reactivate, existing retired selection/filter, Cancel, duplicate/overlong rejection.
 
@@ -1633,7 +1633,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B4-I1 — Integration: Device Identity / Receipt Details Supplier chooser
 
-**Source:** [Batch 4 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-4-Review.md#existing-candidate-provenance), original ID `B4-I1`. **Primary guide/section:** [Equipment-Supplier-Integration — Record A Supplier On One Device](../how-tos/features-and-instructions/v2.2-draft/Equipment-Supplier-Integration.md#record-a-supplier-on-one-device). **Primary pack:** 7C.
+**Source:** [Batch 4 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-4-Review.md#existing-candidate-provenance), original ID `B4-I1`. **Primary guide/section:** [Equipment-Supplier-Integration — Record A Supplier On One Device](../how-tos/features-and-instructions/v2.2/Equipment-Supplier-Integration.md#record-a-supplier-on-one-device). **Primary pack:** 7C.
 
 **Original contract:** DE or AE, Suppliers on, no SR then SE; typed vs explicit canonical, keyboard selection, + Add Supplier and draft return; unavailable company and disabled-feature retained data.
 
@@ -1653,7 +1653,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B4-I2 — Integration: Device Inventory → Assign Supplier
 
-**Source:** [Batch 4 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-4-Review.md#existing-candidate-provenance), original ID `B4-I2`. **Primary guide/section:** [Equipment-Supplier-Integration — Assign A Supplier To Existing Devices](../how-tos/features-and-instructions/v2.2-draft/Equipment-Supplier-Integration.md#assign-a-supplier-to-existing-devices). **Primary pack:** 7C.
+**Source:** [Batch 4 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-4-Review.md#existing-candidate-provenance), original ID `B4-I2`. **Primary guide/section:** [Equipment-Supplier-Integration — Assign A Supplier To Existing Devices](../how-tos/features-and-instructions/v2.2/Equipment-Supplier-Integration.md#assign-a-supplier-to-existing-devices). **Primary pack:** 7C.
 
 **Original contract:** A+DE; two selected original Devices, replacement warning/Confirm Assignment/Cancel/discard; any stale/reserved Device rejects whole set.
 
@@ -1673,7 +1673,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B4-I3 — Integration: Receipt History → Stock Receipts
 
-**Source:** [Batch 4 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-4-Review.md#existing-candidate-provenance), original ID `B4-I3`. **Primary guide/section:** [Equipment-Supplier-Integration — Link, Correct Or Remove A Historical Receipt Association](../how-tos/features-and-instructions/v2.2-draft/Equipment-Supplier-Integration.md#link-correct-or-remove-a-historical-receipt-association). **Primary pack:** 7C.
+**Source:** [Batch 4 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-4-Review.md#existing-candidate-provenance), original ID `B4-I3`. **Primary guide/section:** [Equipment-Supplier-Integration — Link, Correct Or Remove A Historical Receipt Association](../how-tos/features-and-instructions/v2.2/Equipment-Supplier-Integration.md#link-correct-or-remove-a-historical-receipt-association). **Primary pack:** 7C.
 
 **Original contract:** AE; original Supplier plus current association, multi-select Assign Supplier, Link/Change/Remove/Confirm Removal/Cancel; one receipt removal only and stale rejection.
 
@@ -1694,7 +1694,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B4-I4 — Integration: Supplier Overview → Supplier Equipment / Supplied Equipment
 
-**Source:** [Batch 4 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-4-Review.md#existing-candidate-provenance), original ID `B4-I4`. **Primary guide/section:** [Equipment-Supplier-Integration — Review What A Supplier Provided](../how-tos/features-and-instructions/v2.2-draft/Equipment-Supplier-Integration.md#review-what-a-supplier-provided). **Primary pack:** 7C.
+**Source:** [Batch 4 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-4-Review.md#existing-candidate-provenance), original ID `B4-I4`. **Primary guide/section:** [Equipment-Supplier-Integration — Review What A Supplier Provided](../how-tos/features-and-instructions/v2.2/Equipment-Supplier-Integration.md#review-what-a-supplier-provided). **Primary pack:** 7C.
 
 **Original contract:** SR+DR/AR independently; 50 keyboard receipt+one independent Device=51, stock-derived row no quantity, Equipment Type/Visible Records/View Device/View Receipt/Back; restricted/empty, corrected effective stock differs.
 
@@ -1715,7 +1715,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B4-J1 — Lifecycle: Device Details/Edit → Hardware
 
-**Source:** [Batch 4 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-4-Review.md#existing-candidate-provenance), original ID `B4-J1`. **Primary guide/section:** [Equipment-Lifecycle — Review Or Update A Device](../how-tos/features-and-instructions/v2.2-draft/Equipment-Lifecycle.md#review-or-update-a-device). **Primary pack:** 7D.
+**Source:** [Batch 4 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-4-Review.md#existing-candidate-provenance), original ID `B4-J1`. **Primary guide/section:** [Equipment-Lifecycle — Review Or Update A Device](../how-tos/features-and-instructions/v2.2/Equipment-Lifecycle.md#review-or-update-a-device). **Primary pack:** 7D.
 
 **Original contract:** DR then DE, Lifecycle on; four optional dates, Suggestion/Use Suggestion, calculated/manual/Use Calculated Date, Save/Cancel; invalid leap/future purchase/service, missing dates.
 
@@ -1737,7 +1737,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B4-J2 — Lifecycle: Settings & Data → Optional Features → Lifecycle Settings
 
-**Source:** [Batch 4 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-4-Review.md#existing-candidate-provenance), original ID `B4-J2`. **Primary guide/section:** [Equipment-Lifecycle — Enable And Configure Equipment Lifecycle](../how-tos/features-and-instructions/v2.2-draft/Equipment-Lifecycle.md#enable-and-configure-equipment-lifecycle). **Primary pack:** 7D.
+**Source:** [Batch 4 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-4-Review.md#existing-candidate-provenance), original ID `B4-J2`. **Primary guide/section:** [Equipment-Lifecycle — Enable And Configure Equipment Lifecycle](../how-tos/features-and-instructions/v2.2/Equipment-Lifecycle.md#enable-and-configure-equipment-lifecycle). **Primary pack:** 7D.
 
 **Original contract:** A; 90/90 then 0/3650, lifespan1–100/blank/custom/archived, Save Settings/Cancel/Back; fractional/101/stale rejection.
 
@@ -1758,7 +1758,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B4-J3 — Lifecycle: IT → Lifecycle
 
-**Source:** [Batch 4 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-4-Review.md#existing-candidate-provenance), original ID `B4-J3`. **Primary guide/section:** [Equipment-Lifecycle — Use The IT Dashboard](../how-tos/features-and-instructions/v2.2-draft/Equipment-Lifecycle.md#use-the-it-dashboard). **Primary pack:** 7D.
+**Source:** [Batch 4 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-4-Review.md#existing-candidate-provenance), original ID `B4-J3`. **Primary guide/section:** [Equipment-Lifecycle — Use The IT Dashboard](../how-tos/features-and-instructions/v2.2/Equipment-Lifecycle.md#use-the-it-dashboard). **Primary pack:** 7D.
 
 **Original contract:** DR with Lifecycle; past/today/90/91-day examples, search/type/Attention/Clear/Include Retired/Hardware drill-down; Retired historical excluded from counters and No Devices match.
 
@@ -1778,7 +1778,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B4-J4 — Lifecycle: Device Types → Manage Device Types / first issue
 
-**Source:** [Batch 4 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-4-Review.md#existing-candidate-provenance), original ID `B4-J4`. **Primary guide/section:** [Equipment-Lifecycle — Record First Service From Stock](../how-tos/features-and-instructions/v2.2-draft/Equipment-Lifecycle.md#record-first-service-from-stock). **Primary pack:** 7D.
+**Source:** [Batch 4 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-4-Review.md#existing-candidate-provenance), original ID `B4-J4`. **Primary guide/section:** [Equipment-Lifecycle — Record First Service From Stock](../how-tos/features-and-instructions/v2.2/Equipment-Lifecycle.md#record-first-service-from-stock). **Primary pack:** 7D.
 
 **Original contract:** DE type archive/unarchive/rename with retained lifespan; DE+AE qualifying first issue with Lifecycle off, date later visible; reject future first capture and no inference for legacy/later reissue.
 
@@ -1799,7 +1799,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B4-K1 — Journey: Northlight receipt → AST-LAP-014 → Alex My Equipment
 
-**Source:** [Batch 4 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-4-Review.md#existing-candidate-provenance), original ID `B4-K1`. **Primary guide/section:** [Connected-Equipment-Journey — 1. Record The Supplier And Purchasing Context](../how-tos/features-and-instructions/v2.2-draft/Connected-Equipment-Journey.md#1-record-the-supplier-and-purchasing-context). **Primary pack:** 7C.
+**Source:** [Batch 4 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-4-Review.md#existing-candidate-provenance), original ID `B4-K1`. **Primary guide/section:** [Connected-Equipment-Journey — 1. Record The Supplier And Purchasing Context](../how-tos/features-and-instructions/v2.2/Connected-Equipment-Journey.md#1-record-the-supplier-and-purchasing-context). **Primary pack:** 7C.
 
 **Original contract:** SE/DE/AE then active baseline Alex; two laptops/two mice, same ID and expected totals, permitted personal details, roles/nav visible with no secrets.
 
@@ -1820,7 +1820,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B4-K2 — Journey: same laptop return/preparation/Sarah/lifecycle/write-off
 
-**Source:** [Batch 4 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-4-Review.md#existing-candidate-provenance), original ID `B4-K2`. **Primary guide/section:** [Connected-Equipment-Journey — 6. Return And Reissue, Or Hand Over Directly](../how-tos/features-and-instructions/v2.2-draft/Connected-Equipment-Journey.md#6-return-and-reissue-or-hand-over-directly). **Primary pack:** 7D.
+**Source:** [Batch 4 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-4-Review.md#existing-candidate-provenance), original ID `B4-K2`. **Primary guide/section:** [Connected-Equipment-Journey — 6. Return And Reissue, Or Hand Over Directly](../how-tos/features-and-instructions/v2.2/Connected-Equipment-Journey.md#6-return-and-reissue-or-hand-over-directly). **Primary pack:** 7D.
 
 **Original contract:** DE+AE then DR and authorised Retired edit; resolved accessories, same ID, dated assignment/movement records, warranty warning and final damaged disposition retained.
 
@@ -1841,7 +1841,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B5-T1 — My Equipment → Report A Problem
 
-**Source:** [Batch 5 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-5-Review.md#exact-outstanding-desktop-states--35-additional-groups), original ID `B5-T1`. **Primary guide/section:** [Service-Desk-Tickets — Check Which Equipment Is Assigned To You](../how-tos/features-and-instructions/v2.2-draft/Service-Desk-Tickets.md#check-which-equipment-is-assigned-to-you). **Primary pack:** 7E.
+**Source:** [Batch 5 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-5-Review.md#exact-outstanding-desktop-states--35-additional-groups), original ID `B5-T1`. **Primary guide/section:** [Service-Desk-Tickets — Check Which Equipment Is Assigned To You](../how-tos/features-and-instructions/v2.2/Service-Desk-Tickets.md#check-which-equipment-is-assigned-to-you). **Primary pack:** 7E.
 
 **Original contract:** Active linked employee, AST-LAP-014 selected, personal/shared rows, missing/changed equipment and Cancel.
 
@@ -1860,7 +1860,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B5-T2 — Employee Create Ticket
 
-**Source:** [Batch 5 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-5-Review.md#exact-outstanding-desktop-states--35-additional-groups), original ID `B5-T2`. **Primary guide/section:** [Service-Desk-Tickets — Raise A Support Request](../how-tos/features-and-instructions/v2.2-draft/Service-Desk-Tickets.md#raise-a-support-request). **Primary pack:** 7E.
+**Source:** [Batch 5 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-5-Review.md#exact-outstanding-desktop-states--35-additional-groups), original ID `B5-T2`. **Primary guide/section:** [Service-Desk-Tickets — Raise A Support Request](../how-tos/features-and-instructions/v2.2/Service-Desk-Tickets.md#raise-a-support-request). **Primary pack:** 7E.
 
 **Original contract:** Device/category/empty validation, Subject/Description limits, optional software recorded/Other/blank, Create Ticket/Cancel and saved reference.
 
@@ -1880,7 +1880,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B5-T3 — Shared confidentiality
 
-**Source:** [Batch 5 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-5-Review.md#exact-outstanding-desktop-states--35-additional-groups), original ID `B5-T3`. **Primary guide/section:** [Service-Desk-Tickets — Shared Device Ticket Confidentiality](../how-tos/features-and-instructions/v2.2-draft/Service-Desk-Tickets.md#shared-device-ticket-confidentiality). **Primary pack:** 7E.
+**Source:** [Batch 5 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-5-Review.md#exact-outstanding-desktop-states--35-additional-groups), original ID `B5-T3`. **Primary guide/section:** [Service-Desk-Tickets — Shared Device Ticket Confidentiality](../how-tos/features-and-instructions/v2.2/Service-Desk-Tickets.md#shared-device-ticket-confidentiality). **Primary pack:** 7E.
 
 **Original contract:** Department Device and linked accessory; warning before fields, Report A Problem preselection/picker change, equal added Department audience.
 
@@ -1900,7 +1900,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B5-T4 — Employee ticket navigation
 
-**Source:** [Batch 5 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-5-Review.md#exact-outstanding-desktop-states--35-additional-groups), original ID `B5-T4`. **Primary guide/section:** [Service-Desk-Tickets — Find And Review Your Tickets](../how-tos/features-and-instructions/v2.2-draft/Service-Desk-Tickets.md#find-and-review-your-tickets). **Primary pack:** 7E.
+**Source:** [Batch 5 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-5-Review.md#exact-outstanding-desktop-states--35-additional-groups), original ID `B5-T4`. **Primary guide/section:** [Service-Desk-Tickets — Find And Review Your Tickets](../how-tos/features-and-instructions/v2.2/Service-Desk-Tickets.md#find-and-review-your-tickets). **Primary pack:** 7E.
 
 **Original contract:** My Tickets/Department Tickets, default Open, Clear Filters/All Tickets, equipment/search/sort, pagination, Overview/History/Close Window.
 
@@ -1921,7 +1921,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B5-T5 — Unread lifecycle
 
-**Source:** [Batch 5 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-5-Review.md#exact-outstanding-desktop-states--35-additional-groups), original ID `B5-T5`. **Primary guide/section:** [Service-Desk-Tickets — Recognise And Read New Replies](../how-tos/features-and-instructions/v2.2-draft/Service-Desk-Tickets.md#recognise-and-read-new-replies). **Primary pack:** 7E.
+**Source:** [Batch 5 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-5-Review.md#exact-outstanding-desktop-states--35-additional-groups), original ID `B5-T5`. **Primary guide/section:** [Service-Desk-Tickets — Recognise And Read New Replies](../how-tos/features-and-instructions/v2.2/Service-Desk-Tickets.md#recognise-and-read-new-replies). **Primary pack:** 7E.
 
 **Original contract:** Employee sidebar/tab/ticket/Updates counts, Overview unchanged, successful Updates clears own state, second account unchanged, failed load retained and later reply unread.
 
@@ -1942,7 +1942,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B5-T6 — Employee reply/reopen
 
-**Source:** [Batch 5 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-5-Review.md#exact-outstanding-desktop-states--35-additional-groups), original ID `B5-T6`. **Primary guide/section:** [Service-Desk-Tickets — Reply To IT Or Reopen A Ticket](../how-tos/features-and-instructions/v2.2-draft/Service-Desk-Tickets.md#reply-to-it-or-reopen-a-ticket). **Primary pack:** 7E.
+**Source:** [Batch 5 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-5-Review.md#exact-outstanding-desktop-states--35-additional-groups), original ID `B5-T6`. **Primary guide/section:** [Service-Desk-Tickets — Reply To IT Or Reopen A Ticket](../how-tos/features-and-instructions/v2.2/Service-Desk-Tickets.md#reply-to-it-or-reopen-a-ticket). **Primary pack:** 7E.
 
 **Original contract:** Reply To IT/Send Reply/file, Closed restriction, Reopen Ticket/Cancel, retained reference/technician/history and rejected stale action.
 
@@ -1963,7 +1963,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B5-T7 — IT queue/read-only
 
-**Source:** [Batch 5 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-5-Review.md#exact-outstanding-desktop-states--35-additional-groups), original ID `B5-T7`. **Primary guide/section:** [Service-Desk-Tickets — Find Tickets In The IT Queue](../how-tos/features-and-instructions/v2.2-draft/Service-Desk-Tickets.md#find-tickets-in-the-it-queue). **Primary pack:** 7F.
+**Source:** [Batch 5 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-5-Review.md#exact-outstanding-desktop-states--35-additional-groups), original ID `B5-T7`. **Primary guide/section:** [Service-Desk-Tickets — Find Tickets In The IT Queue](../how-tos/features-and-instructions/v2.2/Service-Desk-Tickets.md#find-tickets-in-the-it-queue). **Primary pack:** 7F.
 
 **Original contract:** Service Desk Read + equipment Read, Current Workload/status/priority/assignment/technician/search/sort/paging, Open Details, no edit actions, scoped badges.
 
@@ -1983,7 +1983,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B5-T8 — IT Create Ticket
 
-**Source:** [Batch 5 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-5-Review.md#exact-outstanding-desktop-states--35-additional-groups), original ID `B5-T8`. **Primary guide/section:** [Service-Desk-Tickets — Create An Equipment Ticket](../how-tos/features-and-instructions/v2.2-draft/Service-Desk-Tickets.md#create-an-equipment-ticket). **Primary pack:** 7F.
+**Source:** [Batch 5 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-5-Review.md#exact-outstanding-desktop-states--35-additional-groups), original ID `B5-T8`. **Primary guide/section:** [Service-Desk-Tickets — Create An Equipment Ticket](../how-tos/features-and-instructions/v2.2/Service-Desk-Tickets.md#create-an-equipment-ticket). **Primary pack:** 7F.
 
 **Original contract:** Edit + equipment Read, Device/stock issue selection, required fields and multi-files, Open/Medium/Unassigned, Cancel/rejection.
 
@@ -2003,7 +2003,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B5-T9 — Classification and assignment
 
-**Source:** [Batch 5 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-5-Review.md#exact-outstanding-desktop-states--35-additional-groups), original ID `B5-T9`. **Primary guide/section:** [Service-Desk-Tickets — Review And Correct Ticket Details](../how-tos/features-and-instructions/v2.2-draft/Service-Desk-Tickets.md#review-and-correct-ticket-details). **Primary pack:** 7F.
+**Source:** [Batch 5 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-5-Review.md#exact-outstanding-desktop-states--35-additional-groups), original ID `B5-T9`. **Primary guide/section:** [Service-Desk-Tickets — Review And Correct Ticket Details](../how-tos/features-and-instructions/v2.2/Service-Desk-Tickets.md#review-and-correct-ticket-details). **Primary pack:** 7F.
 
 **Original contract:** Overview pencil Edit/Save/Cancel for category/priority; software clearing history, Assign To/Reassign To/reason, stale save.
 
@@ -2024,7 +2024,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B5-T10 — Hold/resume/closure
 
-**Source:** [Batch 5 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-5-Review.md#exact-outstanding-desktop-states--35-additional-groups), original ID `B5-T10`. **Primary guide/section:** [Service-Desk-Tickets — Assign, Pause, Resolve Or Reopen A Ticket](../how-tos/features-and-instructions/v2.2-draft/Service-Desk-Tickets.md#assign-pause-resolve-or-reopen-a-ticket). **Primary pack:** 7F.
+**Source:** [Batch 5 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-5-Review.md#exact-outstanding-desktop-states--35-additional-groups), original ID `B5-T10`. **Primary guide/section:** [Service-Desk-Tickets — Assign, Pause, Resolve Or Reopen A Ticket](../how-tos/features-and-instructions/v2.2/Service-Desk-Tickets.md#assign-pause-resolve-or-reopen-a-ticket). **Primary pack:** 7F.
 
 **Original contract:** Reason For On Hold/visibility, Cancel; exact resumed status; required visible Resolution Note/Close Ticket and immutable earlier closure.
 
@@ -2045,7 +2045,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B5-T11 — Updates/files
 
-**Source:** [Batch 5 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-5-Review.md#exact-outstanding-desktop-states--35-additional-groups), original ID `B5-T11`. **Primary guide/section:** [Service-Desk-Tickets — Add A Note, Share An Update Or Manage Files](../how-tos/features-and-instructions/v2.2-draft/Service-Desk-Tickets.md#add-a-note-share-an-update-or-manage-files). **Primary pack:** 7F.
+**Source:** [Batch 5 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-5-Review.md#exact-outstanding-desktop-states--35-additional-groups), original ID `B5-T11`. **Primary guide/section:** [Service-Desk-Tickets — Add A Note, Share An Update Or Manage Files](../how-tos/features-and-instructions/v2.2/Service-Desk-Tickets.md#add-a-note-share-an-update-or-manage-files). **Primary pack:** 7F.
 
 **Original contract:** Internal default/visible update, author correction/Save Correction/Cancel, file download/remove confirmation, format/10 MB/100 MB/stale rejection.
 
@@ -2066,7 +2066,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B5-T12 — Equipment-linked tickets
 
-**Source:** [Batch 5 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-5-Review.md#exact-outstanding-desktop-states--35-additional-groups), original ID `B5-T12`. **Primary guide/section:** [Service-Desk-Tickets — Find A Ticket From Equipment](../how-tos/features-and-instructions/v2.2-draft/Service-Desk-Tickets.md#find-a-ticket-from-equipment). **Primary pack:** 7F.
+**Source:** [Batch 5 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-5-Review.md#exact-outstanding-desktop-states--35-additional-groups), original ID `B5-T12`. **Primary guide/section:** [Service-Desk-Tickets — Find A Ticket From Equipment](../how-tos/features-and-instructions/v2.2/Service-Desk-Tickets.md#find-a-ticket-from-equipment). **Primary pack:** 7F.
 
 **Original contract:** Device Tickets and stock Linked Tickets, selected ticket, return to original list page, restricted equipment/no access.
 
@@ -2086,7 +2086,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B5-A1 — Effective permissions
 
-**Source:** [Batch 5 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-5-Review.md#exact-outstanding-desktop-states--35-additional-groups), original ID `B5-A1`. **Primary guide/section:** [Service-Desk-Administration — Give A Technician Access](../how-tos/features-and-instructions/v2.2-draft/Service-Desk-Administration.md#give-a-technician-access). **Primary pack:** 7F.
+**Source:** [Batch 5 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-5-Review.md#exact-outstanding-desktop-states--35-additional-groups), original ID `B5-A1`. **Primary guide/section:** [Service-Desk-Administration — Give A Technician Access](../how-tos/features-and-instructions/v2.2/Service-Desk-Administration.md#give-a-technician-access). **Primary pack:** 7F.
 
 **Original contract:** Admin Staff Details → Manage Permissions → Permissions, role/override/effective Desk/equipment, Read/Edit and confirm/cancel.
 
@@ -2105,7 +2105,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B5-A2 — Calendar defaults/save
 
-**Source:** [Batch 5 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-5-Review.md#exact-outstanding-desktop-states--35-additional-groups), original ID `B5-A2`. **Primary guide/section:** [Service-Desk-Administration — Configure Working Hours](../how-tos/features-and-instructions/v2.2-draft/Service-Desk-Administration.md#configure-working-hours). **Primary pack:** 7F.
+**Source:** [Batch 5 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-5-Review.md#exact-outstanding-desktop-states--35-additional-groups), original ID `B5-A2`. **Primary guide/section:** [Service-Desk-Administration — Configure Working Hours](../how-tos/features-and-instructions/v2.2/Service-Desk-Administration.md#configure-working-hours). **Primary pack:** 7F.
 
 **Original contract:** Admin Working Hours: M–F09–17, weekends closed, preview/TZ, Save/Cancel, invalid end and stale save.
 
@@ -2125,7 +2125,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B5-A3 — Excluded Dates
 
-**Source:** [Batch 5 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-5-Review.md#exact-outstanding-desktop-states--35-additional-groups), original ID `B5-A3`. **Primary guide/section:** [Service-Desk-Administration — Add Or Remove An Excluded Date](../how-tos/features-and-instructions/v2.2-draft/Service-Desk-Administration.md#add-or-remove-an-excluded-date). **Primary pack:** 7F.
+**Source:** [Batch 5 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-5-Review.md#exact-outstanding-desktop-states--35-additional-groups), original ID `B5-A3`. **Primary guide/section:** [Service-Desk-Administration — Add Or Remove An Excluded Date](../how-tos/features-and-instructions/v2.2/Service-Desk-Administration.md#add-or-remove-an-excluded-date). **Primary pack:** 7F.
 
 **Original contract:** Add date/reason, duplicate/invalid rejection, Remove/Remove Date/Cancel and retained earlier measurements.
 
@@ -2145,7 +2145,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B5-A4 — Categories
 
-**Source:** [Batch 5 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-5-Review.md#exact-outstanding-desktop-states--35-additional-groups), original ID `B5-A4`. **Primary guide/section:** [Service-Desk-Administration — Manage Ticket Categories](../how-tos/features-and-instructions/v2.2-draft/Service-Desk-Administration.md#manage-ticket-categories). **Primary pack:** 7F.
+**Source:** [Batch 5 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-5-Review.md#exact-outstanding-desktop-states--35-additional-groups), original ID `B5-A4`. **Primary guide/section:** [Service-Desk-Administration — Manage Ticket Categories](../how-tos/features-and-instructions/v2.2/Service-Desk-Administration.md#manage-ticket-categories). **Primary pack:** 7F.
 
 **Original contract:** Add/Rename/Save/Hide/Restore/Cancel, fixed Other, duplicate/hidden identity, retained ticket label.
 
@@ -2166,7 +2166,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B5-A5 — Reporting period/attempts
 
-**Source:** [Batch 5 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-5-Review.md#exact-outstanding-desktop-states--35-additional-groups), original ID `B5-A5`. **Primary guide/section:** [Service-Desk-Administration — Understand Working-Time Measurements](../how-tos/features-and-instructions/v2.2-draft/Service-Desk-Administration.md#understand-working-time-measurements). **Primary pack:** 7F.
+**Source:** [Batch 5 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-5-Review.md#exact-outstanding-desktop-states--35-additional-groups), original ID `B5-A5`. **Primary guide/section:** [Service-Desk-Administration — Understand Working-Time Measurements](../how-tos/features-and-instructions/v2.2/Service-Desk-Administration.md#understand-working-time-measurements). **Primary pack:** 7F.
 
 **Original contract:** Current Workload versus period/custom validation, one ticket/two reopens/two closures, scope and attribution.
 
@@ -2185,7 +2185,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B5-A6 — Working-time states
 
-**Source:** [Batch 5 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-5-Review.md#exact-outstanding-desktop-states--35-additional-groups), original ID `B5-A6`. **Primary guide/section:** [Service-Desk-Administration — Understand Working-Time Measurements](../how-tos/features-and-instructions/v2.2-draft/Service-Desk-Administration.md#understand-working-time-measurements). **Primary pack:** 7F.
+**Source:** [Batch 5 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-5-Review.md#exact-outstanding-desktop-states--35-additional-groups), original ID `B5-A6`. **Primary guide/section:** [Service-Desk-Administration — Understand Working-Time Measurements](../how-tos/features-and-instructions/v2.2/Service-Desk-Administration.md#understand-working-time-measurements). **Primary pack:** 7F.
 
 **Original contract:** No closures dash, genuine zero, incomplete average and missing/invalid TZ warning; ordinary queue available.
 
@@ -2204,7 +2204,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B5-A7 — Effective history/DST
 
-**Source:** [Batch 5 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-5-Review.md#exact-outstanding-desktop-states--35-additional-groups), original ID `B5-A7`. **Primary guide/section:** [Service-Desk-Administration — Understand Working-Time Measurements](../how-tos/features-and-instructions/v2.2-draft/Service-Desk-Administration.md#understand-working-time-measurements). **Primary pack:** 7F.
+**Source:** [Batch 5 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-5-Review.md#exact-outstanding-desktop-states--35-additional-groups), original ID `B5-A7`. **Primary guide/section:** [Service-Desk-Administration — Understand Working-Time Measurements](../how-tos/features-and-instructions/v2.2/Service-Desk-Administration.md#understand-working-time-measurements). **Primary pack:** 7F.
 
 **Original contract:** Saved calendar change/audit effective time, 3+5=8, UTC history/local period; UK spring/autumn full/partial windows.
 
@@ -2224,7 +2224,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B5-A8 — Custody/membership privacy
 
-**Source:** [Batch 5 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-5-Review.md#exact-outstanding-desktop-states--35-additional-groups), original ID `B5-A8`. **Primary guide/section:** [Service-Desk-Administration — What Happens to Service Desk Tickets When Equipment Changes Hands](../how-tos/features-and-instructions/v2.2-draft/Service-Desk-Administration.md#what-happens-to-service-desk-tickets-when-equipment-changes-hands). **Primary pack:** 7E.
+**Source:** [Batch 5 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-5-Review.md#exact-outstanding-desktop-states--35-additional-groups), original ID `B5-A8`. **Primary guide/section:** [Service-Desk-Administration — What Happens to Service Desk Tickets When Equipment Changes Hands](../how-tos/features-and-instructions/v2.2/Service-Desk-Administration.md#what-happens-to-service-desk-tickets-when-equipment-changes-hands). **Primary pack:** 7E.
 
 **Original contract:** Person→Department, Department→Department/person, equal add/remove/re-add, membership join/leave, associated/historical IT-only; employee versus IT comparison.
 
@@ -2245,7 +2245,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B5-A9 — Retention/protection/reset
 
-**Source:** [Batch 5 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-5-Review.md#exact-outstanding-desktop-states--35-additional-groups), original ID `B5-A9`. **Primary guide/section:** [Service-Desk-Administration — Keep Ticket-Linked Equipment During Deletion Or Import](../how-tos/features-and-instructions/v2.2-draft/Service-Desk-Administration.md#keep-ticket-linked-equipment-during-deletion-or-import). **Primary pack:** 7F.
+**Source:** [Batch 5 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-5-Review.md#exact-outstanding-desktop-states--35-additional-groups), original ID `B5-A9`. **Primary guide/section:** [Service-Desk-Administration — Keep Ticket-Linked Equipment During Deletion Or Import](../how-tos/features-and-instructions/v2.2/Service-Desk-Administration.md#keep-ticket-linked-equipment-during-deletion-or-import). **Primary pack:** 7F.
 
 **Original contract:** Ticket-linked deletion/import rejection, intact records; Clean Start scope/Cancel and retained central audit versus removed tickets/receipts.
 
@@ -2265,7 +2265,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B5-E1 — SMTP fields
 
-**Source:** [Batch 5 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-5-Review.md#exact-outstanding-desktop-states--35-additional-groups), original ID `B5-E1`. **Primary guide/section:** [Email-Templates-and-Company-Branding — Configure Outgoing Email (SMTP)](../how-tos/features-and-instructions/v2.2-draft/Email-Templates-and-Company-Branding.md#configure-outgoing-email-smtp). **Primary pack:** 7G.
+**Source:** [Batch 5 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-5-Review.md#exact-outstanding-desktop-states--35-additional-groups), original ID `B5-E1`. **Primary guide/section:** [Email-Templates-and-Company-Branding — Configure Outgoing Email (SMTP)](../how-tos/features-and-instructions/v2.2/Email-Templates-and-Company-Branding.md#configure-outgoing-email-smtp). **Primary pack:** 7G.
 
 **Original contract:** Admin server/port/TLS/auth/from/support fields, saved-password placeholder, Save/Discard, invalid/no-TLS auth rejection; no secrets exposed.
 
@@ -2285,7 +2285,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B5-E2 — SMTP test
 
-**Source:** [Batch 5 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-5-Review.md#exact-outstanding-desktop-states--35-additional-groups), original ID `B5-E2`. **Primary guide/section:** [Email-Templates-and-Company-Branding — Send A Test Through Your SMTP Service](../how-tos/features-and-instructions/v2.2-draft/Email-Templates-and-Company-Branding.md#send-a-test-through-your-smtp-service). **Primary pack:** 7G.
+**Source:** [Batch 5 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-5-Review.md#exact-outstanding-desktop-states--35-additional-groups), original ID `B5-E2`. **Primary guide/section:** [Email-Templates-and-Company-Branding — Send A Test Through Your SMTP Service](../how-tos/features-and-instructions/v2.2/Email-Templates-and-Company-Branding.md#send-a-test-through-your-smtp-service). **Primary pack:** 7G.
 
 **Original contract:** Saved config, Recipient Email Address/Send Test Email, accepted send/error/cooldown, separate account verification explanation.
 
@@ -2305,7 +2305,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B5-E3 — Ten-template list
 
-**Source:** [Batch 5 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-5-Review.md#exact-outstanding-desktop-states--35-additional-groups), original ID `B5-E3`. **Primary guide/section:** [Email-Templates-and-Company-Branding — Open Email Templates](../how-tos/features-and-instructions/v2.2-draft/Email-Templates-and-Company-Branding.md#open-email-templates). **Primary pack:** 7G.
+**Source:** [Batch 5 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-5-Review.md#exact-outstanding-desktop-states--35-additional-groups), original ID `B5-E3`. **Primary guide/section:** [Email-Templates-and-Company-Branding — Open Email Templates](../how-tos/features-and-instructions/v2.2/Email-Templates-and-Company-Branding.md#open-email-templates). **Primary pack:** 7G.
 
 **Original contract:** Seven Desk/three account types, notification/recipient, Ticket Created three variables and protected details.
 
@@ -2324,7 +2324,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B5-E4 — Subject/body/variables
 
-**Source:** [Batch 5 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-5-Review.md#exact-outstanding-desktop-states--35-additional-groups), original ID `B5-E4`. **Primary guide/section:** [Email-Templates-and-Company-Branding — Edit The Subject And Message](../how-tos/features-and-instructions/v2.2-draft/Email-Templates-and-Company-Branding.md#edit-the-subject-and-message). **Primary pack:** 7G.
+**Source:** [Batch 5 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-5-Review.md#exact-outstanding-desktop-states--35-additional-groups), original ID `B5-E4`. **Primary guide/section:** [Email-Templates-and-Company-Branding — Edit The Subject And Message](../how-tos/features-and-instructions/v2.2/Email-Templates-and-Company-Branding.md#edit-the-subject-and-message). **Primary pack:** 7G.
 
 **Original contract:** Five formatting buttons, Insert Placeholder, Insert/Copy, link Cancel/validation, live fictional preview and invalid variable.
 
@@ -2344,7 +2344,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B5-E5 — Draft/publish/default
 
-**Source:** [Batch 5 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-5-Review.md#exact-outstanding-desktop-states--35-additional-groups), original ID `B5-E5`. **Primary guide/section:** [Email-Templates-and-Company-Branding — Save A Draft And Publish](../how-tos/features-and-instructions/v2.2-draft/Email-Templates-and-Company-Branding.md#save-a-draft-and-publish). **Primary pack:** 7G.
+**Source:** [Batch 5 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-5-Review.md#exact-outstanding-desktop-states--35-additional-groups), original ID `B5-E5`. **Primary guide/section:** [Email-Templates-and-Company-Branding — Save A Draft And Publish](../how-tos/features-and-instructions/v2.2/Email-Templates-and-Company-Branding.md#save-a-draft-and-publish). **Primary pack:** 7G.
 
 **Original contract:** Unsaved Changes/discard/cancel, Save as Draft/Saved Draft Ready, Publish/Published Default, Restore Default confirmation.
 
@@ -2364,7 +2364,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B5-E6 — Concurrent edit
 
-**Source:** [Batch 5 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-5-Review.md#exact-outstanding-desktop-states--35-additional-groups), original ID `B5-E6`. **Primary guide/section:** [Email-Templates-and-Company-Branding — Troubleshoot](../how-tos/features-and-instructions/v2.2-draft/Email-Templates-and-Company-Branding.md#troubleshoot). **Primary pack:** 7G.
+**Source:** [Batch 5 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-5-Review.md#exact-outstanding-desktop-states--35-additional-groups), original ID `B5-E6`. **Primary guide/section:** [Email-Templates-and-Company-Branding — Troubleshoot](../how-tos/features-and-instructions/v2.2/Email-Templates-and-Company-Branding.md#troubleshoot). **Primary pack:** 7G.
 
 **Original contract:** Two administrators, stale template or branding save/publish, reload and retained live wording.
 
@@ -2382,7 +2382,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B5-E7 — Branding/logo
 
-**Source:** [Batch 5 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-5-Review.md#exact-outstanding-desktop-states--35-additional-groups), original ID `B5-E7`. **Primary guide/section:** [Email-Templates-and-Company-Branding — Set Company Branding](../how-tos/features-and-instructions/v2.2-draft/Email-Templates-and-Company-Branding.md#set-company-branding). **Primary pack:** 7G.
+**Source:** [Batch 5 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-5-Review.md#exact-outstanding-desktop-states--35-additional-groups), original ID `B5-E7`. **Primary guide/section:** [Email-Templates-and-Company-Branding — Set Company Branding](../how-tos/features-and-instructions/v2.2/Email-Templates-and-Company-Branding.md#set-company-branding). **Primary pack:** 7G.
 
 **Original contract:** Company Name/colours/footer/preview/Save, upload/replace/remove/Cancel-discard, no logo heading, invalid file/size.
 
@@ -2403,7 +2403,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B5-E8 — Template tests/account details
 
-**Source:** [Batch 5 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-5-Review.md#exact-outstanding-desktop-states--35-additional-groups), original ID `B5-E8`. **Primary guide/section:** [Email-Templates-and-Company-Branding — Review Account Security Emails](../how-tos/features-and-instructions/v2.2-draft/Email-Templates-and-Company-Branding.md#review-account-security-emails). **Primary pack:** 7G.
+**Source:** [Batch 5 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-5-Review.md#exact-outstanding-desktop-states--35-additional-groups), original ID `B5-E8`. **Primary guide/section:** [Email-Templates-and-Company-Branding — Review Account Security Emails](../how-tos/features-and-instructions/v2.2/Email-Templates-and-Company-Branding.md#review-account-security-emails). **Primary pack:** 7G.
 
 **Original contract:** Send Test Email To unsaved sample, [Test]/fictional code/expiry, protected details, cooldown/error, no real verification or recovery proof.
 
@@ -2423,7 +2423,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B5-H1 — Audit access/search
 
-**Source:** [Batch 5 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-5-Review.md#exact-outstanding-desktop-states--35-additional-groups), original ID `B5-H1`. **Primary guide/section:** [Audit-Trail — Find an event](../how-tos/features-and-instructions/v2.2-draft/Audit-Trail.md#find-an-event). **Primary pack:** 7G.
+**Source:** [Batch 5 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-5-Review.md#exact-outstanding-desktop-states--35-additional-groups), original ID `B5-H1`. **Primary guide/section:** [Audit-Trail — Find an event](../how-tos/features-and-instructions/v2.2/Audit-Trail.md#find-an-event). **Primary pack:** 7G.
 
 **Original contract:** Permitted user/admin All Activity, UTC/search/Area/Action/Performed by/Clear filters, empty result and restricted scope.
 
@@ -2443,7 +2443,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B5-H2 — Recorded identity/details
 
-**Source:** [Batch 5 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-5-Review.md#exact-outstanding-desktop-states--35-additional-groups), original ID `B5-H2`. **Primary guide/section:** [Audit-Trail — Understand the affected record](../how-tos/features-and-instructions/v2.2-draft/Audit-Trail.md#understand-the-affected-record). **Primary pack:** 7G.
+**Source:** [Batch 5 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-5-Review.md#exact-outstanding-desktop-states--35-additional-groups), original ID `B5-H2`. **Primary guide/section:** [Audit-Trail — Understand the affected record](../how-tos/features-and-instructions/v2.2/Audit-Trail.md#understand-the-affected-record). **Primary pack:** 7G.
 
 **Original contract:** View Details canonical/original/displayed/source, rename/deleted label, Close/Escape; unknown historical name.
 
@@ -2462,7 +2462,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B5-H3 — Asset History continuity
 
-**Source:** [Batch 5 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-5-Review.md#exact-outstanding-desktop-states--35-additional-groups), original ID `B5-H3`. **Primary guide/section:** [Audit-Trail — Follow history by record](../how-tos/features-and-instructions/v2.2-draft/Audit-Trail.md#follow-history-by-record). **Primary pack:** 7G.
+**Source:** [Batch 5 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-5-Review.md#exact-outstanding-desktop-states--35-additional-groups), original ID `B5-H3`. **Primary guide/section:** [Audit-Trail — Follow history by record](../how-tos/features-and-instructions/v2.2/Audit-Trail.md#follow-history-by-record). **Primary pack:** 7G.
 
 **Original contract:** Find a record, verified renamed identity versus same-name distinct/Identity not verified/No verified link.
 
@@ -2481,7 +2481,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B5-H4 — Redaction/features
 
-**Source:** [Batch 5 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-5-Review.md#exact-outstanding-desktop-states--35-additional-groups), original ID `B5-H4`. **Primary guide/section:** [Audit-Trail — Optional Feature Names](../how-tos/features-and-instructions/v2.2-draft/Audit-Trail.md#optional-feature-names). **Primary pack:** 7G.
+**Source:** [Batch 5 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-5-Review.md#exact-outstanding-desktop-states--35-additional-groups), original ID `B5-H4`. **Primary guide/section:** [Audit-Trail — Optional Feature Names](../how-tos/features-and-instructions/v2.2/Audit-Trail.md#optional-feature-names). **Primary pack:** 7G.
 
 **Original contract:** Restricted stock/Device and admin-only event views, disabled feature visibility, friendly known-feature label plus original values.
 
@@ -2500,7 +2500,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B5-H5 — Recording Coverage
 
-**Source:** [Batch 5 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-5-Review.md#exact-outstanding-desktop-states--35-additional-groups), original ID `B5-H5`. **Primary guide/section:** [Audit-Trail — Check Recording Coverage](../how-tos/features-and-instructions/v2.2-draft/Audit-Trail.md#check-recording-coverage). **Primary pack:** 7G.
+**Source:** [Batch 5 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-5-Review.md#exact-outstanding-desktop-states--35-additional-groups), original ID `B5-H5`. **Primary guide/section:** [Audit-Trail — Check Recording Coverage](../how-tos/features-and-instructions/v2.2/Audit-Trail.md#check-recording-coverage). **Primary pack:** 7G.
 
 **Original contract:** Actual broad In development panel labels, retention and source-verified limitations; separate ticket Updates/History.
 
@@ -2518,7 +2518,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B5-H6 — JSON export
 
-**Source:** [Batch 5 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-5-Review.md#exact-outstanding-desktop-states--35-additional-groups), original ID `B5-H6`. **Primary guide/section:** [Audit-Trail — Export and recording coverage](../how-tos/features-and-instructions/v2.2-draft/Audit-Trail.md#export-and-recording-coverage). **Primary pack:** 7G.
+**Source:** [Batch 5 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-5-Review.md#exact-outstanding-desktop-states--35-additional-groups), original ID `B5-H6`. **Primary guide/section:** [Audit-Trail — Export and recording coverage](../how-tos/features-and-instructions/v2.2/Audit-Trail.md#export-and-recording-coverage). **Primary pack:** 7G.
 
 **Original contract:** Export History (JSON), loaded authorised events despite table filter, original labels/IDs, safe fictional JSON and backup distinction.
 
@@ -2537,7 +2537,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B6-I1 — Installation choice/preflight
 
-**Source:** [Batch 6 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-6-Review.md#exact-outstanding-desktop-states--21-additional-groups), original ID `B6-I1`. **Primary guide/section:** [Installation — Decide Which Procedure Applies](../how-tos/features-and-instructions/v2.2-draft/Installation.md#decide-which-procedure-applies). **Primary pack:** 7H.
+**Source:** [Batch 6 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-6-Review.md#exact-outstanding-desktop-states--21-additional-groups), original ID `B6-I1`. **Primary guide/section:** [Installation — Decide Which Procedure Applies](../how-tos/features-and-instructions/v2.2/Installation.md#decide-which-procedure-applies). **Primary pack:** 7H.
 
 **Original contract:** Authorised new isolated versus existing source, actual selected image revision/architecture and distinct endpoint/storage with no private values.
 
@@ -2555,7 +2555,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B6-I2 — Portainer creation
 
-**Source:** [Batch 6 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-6-Review.md#exact-outstanding-desktop-states--21-additional-groups), original ID `B6-I2`. **Primary guide/section:** [Installation — Method 1 — Portainer Stack Editor](../how-tos/features-and-instructions/v2.2-draft/Installation.md#method-1--portainer-stack-editor). **Primary pack:** 7H.
+**Source:** [Batch 6 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-6-Review.md#exact-outstanding-desktop-states--21-additional-groups), original ID `B6-I2`. **Primary guide/section:** [Installation — Method 1 — Portainer Stack Editor](../how-tos/features-and-instructions/v2.2/Installation.md#method-1--portainer-stack-editor). **Primary pack:** 7H.
 
 **Original contract:** Stacks/Add stack/Web editor, private image parameter/local image route, changed example identity/port/TZ/storage, deployment failure/Cancel before deploy.
 
@@ -2575,7 +2575,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B6-I3 — Portainer existing update
 
-**Source:** [Batch 6 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-6-Review.md#exact-outstanding-desktop-states--21-additional-groups), original ID `B6-I3`. **Primary guide/section:** [Installation — Method 1 — Portainer Stack Editor](../how-tos/features-and-instructions/v2.2-draft/Installation.md#method-1--portainer-stack-editor). **Primary pack:** 7H.
+**Source:** [Batch 6 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-6-Review.md#exact-outstanding-desktop-states--21-additional-groups), original ID `B6-I3`. **Primary guide/section:** [Installation — Method 1 — Portainer Stack Editor](../how-tos/features-and-instructions/v2.2/Installation.md#method-1--portainer-stack-editor). **Primary pack:** 7H.
 
 **Original contract:** Existing Editor/Update the stack with preserved image/mount/HTTPS, local-image no-repull state and cancelled review.
 
@@ -2594,7 +2594,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B6-I4 — Compose preparation
 
-**Source:** [Batch 6 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-6-Review.md#exact-outstanding-desktop-states--21-additional-groups), original ID `B6-I4`. **Primary guide/section:** [Installation — Method 2 — Docker Compose Source Build](../how-tos/features-and-instructions/v2.2-draft/Installation.md#method-2--docker-compose-source-build). **Primary pack:** 7H.
+**Source:** [Batch 6 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-6-Review.md#exact-outstanding-desktop-states--21-additional-groups), original ID `B6-I4`. **Primary guide/section:** [Installation — Method 2 — Docker Compose Source Build](../how-tos/features-and-instructions/v2.2/Installation.md#method-2--docker-compose-source-build). **Primary pack:** 7H.
 
 **Original contract:** Correct private file/context, required origin/server/port/TZ, explicit -f/-p and config --quiet result; missing-variable rejection.
 
@@ -2613,7 +2613,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B6-I5 — Source/image verification
 
-**Source:** [Batch 6 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-6-Review.md#exact-outstanding-desktop-states--21-additional-groups), original ID `B6-I5`. **Primary guide/section:** [Installation — Method 2 — Docker Compose Source Build](../how-tos/features-and-instructions/v2.2-draft/Installation.md#method-2--docker-compose-source-build). **Primary pack:** 7H.
+**Source:** [Batch 6 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-6-Review.md#exact-outstanding-desktop-states--21-additional-groups), original ID `B6-I5`. **Primary guide/section:** [Installation — Method 2 — Docker Compose Source Build](../how-tos/features-and-instructions/v2.2/Installation.md#method-2--docker-compose-source-build). **Primary pack:** 7H.
 
 **Original contract:** Build arg/full revision, actual label/architecture/image, successful versus unavailable image/build trust error; no registry credentials.
 
@@ -2631,7 +2631,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B6-I6 — Storage mapping
 
-**Source:** [Batch 6 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-6-Review.md#exact-outstanding-desktop-states--21-additional-groups), original ID `B6-I6`. **Primary guide/section:** [Installation — Choose Persistent Storage](../how-tos/features-and-instructions/v2.2-draft/Installation.md#choose-persistent-storage). **Primary pack:** 7H.
+**Source:** [Batch 6 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-6-Review.md#exact-outstanding-desktop-states--21-additional-groups), original ID `B6-I6`. **Primary guide/section:** [Installation — Choose Persistent Storage](../how-tos/features-and-instructions/v2.2/Installation.md#choose-persistent-storage). **Primary pack:** 7H.
 
 **Original contract:** Named-volume actual prefixed name versus bind directory, mount root, UID/GID10001/rootless context, preserved mapping/permission rejection.
 
@@ -2650,7 +2650,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B6-I7 — Startup/health/network
 
-**Source:** [Batch 6 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-6-Review.md#exact-outstanding-desktop-states--21-additional-groups), original ID `B6-I7`. **Primary guide/section:** [Installation — Confirm Startup And Persistence](../how-tos/features-and-instructions/v2.2-draft/Installation.md#confirm-startup-and-persistence). **Primary pack:** 7H.
+**Source:** [Batch 6 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-6-Review.md#exact-outstanding-desktop-states--21-additional-groups), original ID `B6-I7`. **Primary guide/section:** [Installation — Confirm Startup And Persistence](../how-tos/features-and-instructions/v2.2/Installation.md#confirm-startup-and-persistence). **Primary pack:** 7H.
 
 **Original contract:** Correct container/port/mount, running/health/logs, URL mismatch or occupied port and local-probe trust limitation.
 
@@ -2669,7 +2669,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B6-I8 — HTTPS identity
 
-**Source:** [Batch 6 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-6-Review.md#exact-outstanding-desktop-states--21-additional-groups), original ID `B6-I8`. **Primary guide/section:** [Installation — Verify HTTPS Identity Before Setup](../how-tos/features-and-instructions/v2.2-draft/Installation.md#verify-https-identity-before-setup). **Primary pack:** 7H.
+**Source:** [Batch 6 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-6-Review.md#exact-outstanding-desktop-states--21-additional-groups), original ID `B6-I8`. **Primary guide/section:** [Installation — Verify HTTPS Identity Before Setup](../how-tos/features-and-instructions/v2.2/Installation.md#verify-https-identity-before-setup). **Primary pack:** 7H.
 
 **Original contract:** Browser certificate identity/SAN/expiry/fingerprint compared with independent trusted value; mismatch/incomplete pair safely stopped.
 
@@ -2688,7 +2688,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B6-I9 — First administrator setup
 
-**Source:** [Batch 6 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-6-Review.md#exact-outstanding-desktop-states--21-additional-groups), original ID `B6-I9`. **Primary guide/section:** [Installation — Create The Initial Administrator And First Sign-In](../how-tos/features-and-instructions/v2.2-draft/Installation.md#create-the-initial-administrator-and-first-sign-in). **Primary pack:** 7H.
+**Source:** [Batch 6 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-6-Review.md#exact-outstanding-desktop-states--21-additional-groups), original ID `B6-I9`. **Primary guide/section:** [Installation — Create The Initial Administrator And First Sign-In](../how-tos/features-and-instructions/v2.2/Installation.md#create-the-initial-administrator-and-first-sign-in). **Primary pack:** 7H.
 
 **Original contract:** Welcome/Get Started, Username/Password/Confirm Password/Continue, validation/Back, pending Finish Administrator Setup, Secure Your Account/Confirm MFA Setup and completion.
 
@@ -2709,7 +2709,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B6-I10 — First sign-in/persistence
 
-**Source:** [Batch 6 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-6-Review.md#exact-outstanding-desktop-states--21-additional-groups), original ID `B6-I10`. **Primary guide/section:** [Installation — Confirm Startup And Persistence](../how-tos/features-and-instructions/v2.2-draft/Installation.md#confirm-startup-and-persistence). **Primary pack:** 7H.
+**Source:** [Batch 6 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-6-Review.md#exact-outstanding-desktop-states--21-additional-groups), original ID `B6-I10`. **Primary guide/section:** [Installation — Confirm Startup And Persistence](../how-tos/features-and-instructions/v2.2/Installation.md#confirm-startup-and-persistence). **Primary pack:** 7H.
 
 **Original contract:** Sign In→Verify Your Identity→Verify & Sign In, initial My Account/feature choices/TZ, post-recreate same identity/records; wrong empty mount stopped.
 
@@ -2728,7 +2728,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B6-M1 — Published HTML export
 
-**Source:** [Batch 6 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-6-Review.md#exact-outstanding-desktop-states--21-additional-groups), original ID `B6-M1`. **Primary guide/section:** [Legacy-Import-and-Docker-Upgrade — Export, Review And Confirm](../how-tos/features-and-instructions/v2.2-draft/Legacy-Import-and-Docker-Upgrade.md#export-review-and-confirm). **Primary pack:** 7H.
+**Source:** [Batch 6 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-6-Review.md#exact-outstanding-desktop-states--21-additional-groups), original ID `B6-M1`. **Primary guide/section:** [Legacy-Import-and-Docker-Upgrade — Export, Review And Confirm](../how-tos/features-and-instructions/v2.2/Legacy-Import-and-Docker-Upgrade.md#export-review-and-confirm). **Primary pack:** 7H.
 
 **Original contract:** Exact v1.3.3 Settings & Data/Download Backup, downloaded original/version/date and protected copy, no secrets.
 
@@ -2746,7 +2746,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B6-M2 — Import reviews
 
-**Source:** [Batch 6 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-6-Review.md#exact-outstanding-desktop-states--21-additional-groups), original ID `B6-M2`. **Primary guide/section:** [Legacy-Import-and-Docker-Upgrade — Export, Review And Confirm](../how-tos/features-and-instructions/v2.2-draft/Legacy-Import-and-Docker-Upgrade.md#export-review-and-confirm). **Primary pack:** 7H.
+**Source:** [Batch 6 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-6-Review.md#exact-outstanding-desktop-states--21-additional-groups), original ID `B6-M2`. **Primary guide/section:** [Legacy-Import-and-Docker-Upgrade — Export, Review And Confirm](../how-tos/features-and-instructions/v2.2/Legacy-Import-and-Docker-Upgrade.md#export-review-and-confirm). **Primary pack:** 7H.
 
 **Original contract:** Admin enabled Devices/IPAM/Racks/Edit, Import v1.3.3 Inventory; AP mounting/Continue, Current/Import counts, legacy correction checkbox and final acknowledgement/Confirm Import/Cancel.
 
@@ -2766,7 +2766,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B6-M3 — Protected/late rejection
 
-**Source:** [Batch 6 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-6-Review.md#exact-outstanding-desktop-states--21-additional-groups), original ID `B6-M3`. **Primary guide/section:** [Legacy-Import-and-Docker-Upgrade — If A Device Is Protected](../how-tos/features-and-instructions/v2.2-draft/Legacy-Import-and-Docker-Upgrade.md#if-a-device-is-protected). **Primary pack:** 7H.
+**Source:** [Batch 6 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-6-Review.md#exact-outstanding-desktop-states--21-additional-groups), original ID `B6-M3`. **Primary guide/section:** [Legacy-Import-and-Docker-Upgrade — If A Device Is Protected](../how-tos/features-and-instructions/v2.2/Legacy-Import-and-Docker-Upgrade.md#if-a-device-is-protected). **Primary pack:** 7H.
 
 **Original contract:** Same protected Device retained; changed/missing lists and relationship reasons, feature-off case, post-preview dependency/permission change, no changes/Close.
 
@@ -2786,7 +2786,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B6-M4 — Import success/validation
 
-**Source:** [Batch 6 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-6-Review.md#exact-outstanding-desktop-states--21-additional-groups), original ID `B6-M4`. **Primary guide/section:** [Legacy-Import-and-Docker-Upgrade — Export, Review And Confirm](../how-tos/features-and-instructions/v2.2-draft/Legacy-Import-and-Docker-Upgrade.md#export-review-and-confirm). **Primary pack:** 7H.
+**Source:** [Batch 6 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-6-Review.md#exact-outstanding-desktop-states--21-additional-groups), original ID `B6-M4`. **Primary guide/section:** [Legacy-Import-and-Docker-Upgrade — Export, Review And Confirm](../how-tos/features-and-instructions/v2.2/Legacy-Import-and-Docker-Upgrade.md#export-review-and-confirm). **Primary pack:** 7H.
 
 **Original contract:** Inventory imported, original Device identity/revision plus representative saved links; invalid/oversize/expired review/cancel leaves current records.
 
@@ -2806,7 +2806,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B6-R1 — Backup identification
 
-**Source:** [Batch 6 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-6-Review.md#exact-outstanding-desktop-states--21-additional-groups), original ID `B6-R1`. **Primary guide/section:** [Legacy-Import-and-Docker-Upgrade — Back Up A Complete Installation](../how-tos/features-and-instructions/v2.2-draft/Legacy-Import-and-Docker-Upgrade.md#back-up-a-complete-installation). **Primary pack:** 7H.
+**Source:** [Batch 6 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-6-Review.md#exact-outstanding-desktop-states--21-additional-groups), original ID `B6-R1`. **Primary guide/section:** [Legacy-Import-and-Docker-Upgrade — Back Up A Complete Installation](../how-tos/features-and-instructions/v2.2/Legacy-Import-and-Docker-Upgrade.md#back-up-a-complete-installation). **Primary pack:** 7H.
 
 **Original contract:** Actual image/schema/architecture/configuration and named/bind source; stopped container/all writers, private file coverage and preserved source.
 
@@ -2824,7 +2824,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B6-R2 — Backup archive/off-host
 
-**Source:** [Batch 6 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-6-Review.md#exact-outstanding-desktop-states--21-additional-groups), original ID `B6-R2`. **Primary guide/section:** [Legacy-Import-and-Docker-Upgrade — Back Up A Complete Installation](../how-tos/features-and-instructions/v2.2-draft/Legacy-Import-and-Docker-Upgrade.md#back-up-a-complete-installation). **Primary pack:** 7H.
+**Source:** [Batch 6 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-6-Review.md#exact-outstanding-desktop-states--21-additional-groups), original ID `B6-R2`. **Primary guide/section:** [Legacy-Import-and-Docker-Upgrade — Back Up A Complete Installation](../how-tos/features-and-instructions/v2.2/Legacy-Import-and-Docker-Upgrade.md#back-up-a-complete-installation). **Primary pack:** 7H.
 
 **Original contract:** Complete mount-root file list/sidecars/layout/owners/modes/checksums with protected off-host copy and explicit untested status; no private content.
 
@@ -2843,7 +2843,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B6-R3 — Isolated restore/rollback mapping
 
-**Source:** [Batch 6 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-6-Review.md#exact-outstanding-desktop-states--21-additional-groups), original ID `B6-R3`. **Primary guide/section:** [Legacy-Import-and-Docker-Upgrade — Restore A Complete Installation](../how-tos/features-and-instructions/v2.2-draft/Legacy-Import-and-Docker-Upgrade.md#restore-a-complete-installation). **Primary pack:** 7H.
+**Source:** [Batch 6 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-6-Review.md#exact-outstanding-desktop-states--21-additional-groups), original ID `B6-R3`. **Primary guide/section:** [Legacy-Import-and-Docker-Upgrade — Restore A Complete Installation](../how-tos/features-and-instructions/v2.2/Legacy-Import-and-Docker-Upgrade.md#restore-a-complete-installation). **Primary pack:** 7H.
 
 **Original contract:** Empty distinct stopped target, matching image/saved settings, correct root not extra data directory, ownership/key protection; wrong schema/path rejected.
 
@@ -2863,7 +2863,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B6-R4 — Recovery verification
 
-**Source:** [Batch 6 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-6-Review.md#exact-outstanding-desktop-states--21-additional-groups), original ID `B6-R4`. **Primary guide/section:** [Legacy-Import-and-Docker-Upgrade — Restore A Complete Installation](../how-tos/features-and-instructions/v2.2-draft/Legacy-Import-and-Docker-Upgrade.md#restore-a-complete-installation). **Primary pack:** 7H.
+**Source:** [Batch 6 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-6-Review.md#exact-outstanding-desktop-states--21-additional-groups), original ID `B6-R4`. **Primary guide/section:** [Legacy-Import-and-Docker-Upgrade — Restore A Complete Installation](../how-tos/features-and-instructions/v2.2/Legacy-Import-and-Docker-Upgrade.md#restore-a-complete-installation). **Primary pack:** 7H.
 
 **Original contract:** Trusted fingerprint, MFA/permissions, inventory/custody, private-vs-visible ticket/attachment and repeated recreation; mismatch/first setup causes stop.
 
@@ -2884,7 +2884,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B6-Z1 — TZ configuration
 
-**Source:** [Batch 6 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-6-Review.md#exact-outstanding-desktop-states--21-additional-groups), original ID `B6-Z1`. **Primary guide/section:** [Service-Desk-Time-Zone — Update A Portainer Stack](../how-tos/features-and-instructions/v2.2-draft/Service-Desk-Time-Zone.md#update-a-portainer-stack). **Primary pack:** 7H.
+**Source:** [Batch 6 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-6-Review.md#exact-outstanding-desktop-states--21-additional-groups), original ID `B6-Z1`. **Primary guide/section:** [Service-Desk-Time-Zone — Update A Portainer Stack](../how-tos/features-and-instructions/v2.2/Service-Desk-Time-Zone.md#update-a-portainer-stack). **Primary pack:** 7H.
 
 **Original contract:** Portainer Editor/environment and Compose actual file, literal blank→correct UK/other IANA example; preserved mount/address/ports/image and recreation.
 
@@ -2903,7 +2903,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B6-Z2 — Warning/applied setting
 
-**Source:** [Batch 6 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-6-Review.md#exact-outstanding-desktop-states--21-additional-groups), original ID `B6-Z2`. **Primary guide/section:** [Service-Desk-Time-Zone — Check The Result](../how-tos/features-and-instructions/v2.2-draft/Service-Desk-Time-Zone.md#check-the-result). **Primary pack:** 7H.
+**Source:** [Batch 6 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-6-Review.md#exact-outstanding-desktop-states--21-additional-groups), original ID `B6-Z2`. **Primary guide/section:** [Service-Desk-Time-Zone — Check The Result](../how-tos/features-and-instructions/v2.2/Service-Desk-Time-Zone.md#check-the-result). **Primary pack:** 7H.
 
 **Original contract:** Admin missing/invalid warning, Working Hours→Weekly Schedule Preview→Installation Time Zone, corrected name, report restored but incomplete average, ordinary ticket controls available.
 
@@ -2921,7 +2921,7 @@ Each heading preserves one original group. Its **Original contract** is the exac
 
 ### B6-Z3 — Effective/DST history
 
-**Source:** [Batch 6 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-6-Review.md#exact-outstanding-desktop-states--21-additional-groups), original ID `B6-Z3`. **Primary guide/section:** [Service-Desk-Time-Zone — Automatic Clock Changes And Effective History](../how-tos/features-and-instructions/v2.2-draft/Service-Desk-Time-Zone.md#automatic-clock-changes-and-effective-history). **Primary pack:** 7H.
+**Source:** [Batch 6 original table](https://github.com/Caffoot/Caffoot-Lite/blob/cd418250587a9a2667f8204ec85b780161b24bad/docs/development-guide/Milestone-01-Batch-6-Review.md#exact-outstanding-desktop-states--21-additional-groups), original ID `B6-Z3`. **Primary guide/section:** [Service-Desk-Time-Zone — Automatic Clock Changes And Effective History](../how-tos/features-and-instructions/v2.2/Service-Desk-Time-Zone.md#automatic-clock-changes-and-effective-history). **Primary pack:** 7H.
 
 **Original contract:** Calendar effective audit/timezone startup event, known prior segments immutable, unknown duration remains unavailable; full/partial UK spring/autumn states and no manual clock correction.
 

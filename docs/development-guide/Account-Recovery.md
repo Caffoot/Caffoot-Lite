@@ -2,7 +2,7 @@
 
 These controls are included in published v2.1; they were not part of v2.0.3.
 
-Unreleased source has a stricter role-based MFA policy and additional enrolment/removal routes. Those do not change the published v2.1 recovery instructions below. See the separate [draft v2.2 account instructions](../how-tos/features-and-instructions/v2.2-draft/Roles-Section-Permissions-and-MFA.md) for that version.
+Unreleased source has a stricter role-based MFA policy and additional enrolment/removal routes. Those do not change the published v2.1 recovery instructions below. See the separate [draft v2.2 account instructions](../how-tos/features-and-instructions/v2.2/Roles-Section-Permissions-and-MFA.md) for that version.
 
 ## Normal Recovery
 

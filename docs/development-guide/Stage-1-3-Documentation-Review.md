@@ -4,7 +4,7 @@
 
 This documentation-only continuation was prepared on 17 November 2026 for independent review under [#366](https://github.com/Caffoot/Caffoot-Lite/issues/366). The verified remote `milestone-1` HEAD was **`753b3266893987addb11406ef8303adb03c3c112`**, matching the supplied starting checkpoint. The documentation branch is `docs/stage-1-3-comprehensive-guides`; its draft PR targets `milestone-1`.
 
-The source is schema 20. Stage 1 and Stage 2 are accepted; Stage 3 Batches 3.1–3.12 and subsequent focused corrections are integrated. [Development Status](Development-Status.md) records merge checkpoints without treating integration as completed manual or release acceptance. The [draft user index](../how-tos/features-and-instructions/v2.2-draft/README.md) remains separate from published v2.1 instructions.
+The source is schema 20. Stage 1 and Stage 2 are accepted; Stage 3 Batches 3.1–3.12 and subsequent focused corrections are integrated. [Development Status](Development-Status.md) records merge checkpoints without treating integration as completed manual or release acceptance. The [draft user index](../how-tos/features-and-instructions/v2.2/README.md) remains separate from published v2.1 instructions.
 
 ## Authoritative References
 

@@ -60,4 +60,4 @@ The dated acceptance checkpoints above are historical evidence rather than an ex
 
 ### Related reading
 
-[Database](02-Database.md) · [Frontend and API](03-Frontend-and-Backend.md) · [Testing](08-Testing-and-Maintenance.md) · [Draft v2.2 import and upgrade guide](../how-tos/features-and-instructions/v2.2-draft/Legacy-Import-and-Docker-Upgrade.md)
+[Database](02-Database.md) · [Frontend and API](03-Frontend-and-Backend.md) · [Testing](08-Testing-and-Maintenance.md) · [Draft v2.2 import and upgrade guide](../how-tos/features-and-instructions/v2.2/Legacy-Import-and-Docker-Upgrade.md)

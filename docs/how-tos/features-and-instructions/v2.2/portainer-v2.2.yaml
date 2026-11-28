@@ -1,0 +1,36 @@
+# IMPORTANT — CHANGE THE EXAMPLE IP ADDRESSES BEFORE DEPLOYING.
+# Replace 192.168.1.100 in CAFFOOT_WEB_ADDRESS and
+# CAFFOOT_SERVER_ADDRESS with your own Docker server's IP address.
+# These addresses are examples only, not installation defaults.
+# If you change port 8443, update all three port settings consistently.
+
+# Caffoot Lite v2.2 release candidate — UNRELEASED, private review only.
+# Future publication target only: ghcr.io/caffoot/caffoot-lite:v2.2
+# Replace image only after separate owner approval and public-image verification.
+# Use an authorised private v2.2 review image for your server architecture.
+# Change the example server IP address and port to suit your installation.
+# New installations use a Docker-managed named volume for persistent data.
+# IMPORTANT: Existing installations must keep their current /data mount.
+services:
+  caffoot-lite:
+    image: ${CAFFOOT_V22_PREVIEW_IMAGE:?Set CAFFOOT_V22_PREVIEW_IMAGE to your private review image}
+    container_name: caffoot-lite
+    restart: unless-stopped
+    environment:
+      # Set your organisation's IANA time zone. "Europe/London" is a UK example only.
+      TZ: "${TZ:?Set TZ to your organisation's IANA time zone}"
+      CAFFOOT_WEB_ADDRESS: "https://192.168.1.100:8443"
+      CAFFOOT_SERVER_ADDRESS: "192.168.1.100"
+      CAFFOOT_PORT: "8443"
+    ports:
+      - "8443:8080"
+    volumes:
+      - caffoot_data:/data
+    healthcheck:
+      test: ["CMD", "python", "-c", "import ssl,urllib.request; urllib.request.urlopen('https://127.0.0.1:8080/health',context=ssl._create_unverified_context(),timeout=3)"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+volumes:
+  caffoot_data:

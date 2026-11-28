@@ -97,7 +97,7 @@ Review the affected repository navigation, local links, README, release notes an
 
 ### Mandatory Long-Form User And Administrator Guides
 
-**Our standard for all current and future feature instructions is the comprehensive, beginner-friendly approach used in the [Stage 1–3 draft v2.2 guides](docs/how-tos/features-and-instructions/v2.2-draft/README.md).** Write and update the relevant instructions **alongside every new or materially changed feature**, rather than postponing them until release. This applies equally to maintainers, external contributors and AI-assisted drafts, and to published v2.1 guides whenever they are reviewed and improved.
+**Our standard for all current and future feature instructions is the comprehensive, beginner-friendly approach used in the [Stage 1–3 draft v2.2 guides](docs/how-tos/features-and-instructions/v2.2/README.md).** Write and update the relevant instructions **alongside every new or materially changed feature**, rather than postponing them until release. This applies equally to maintainers, external contributors and AI-assisted drafts, and to published v2.1 guides whenever they are reviewed and improved.
 
 Each applicable guide should give readers what they need to complete the task without guessing:
 

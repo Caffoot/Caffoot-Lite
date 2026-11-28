@@ -11,7 +11,7 @@ v2.2 brings people, equipment and support work together. Keep one permanent Devi
 - **Unified account administration:** manage a linked login from Staff Details, resolve saved profile differences, review permissions, reset an ordinary user's password and promote an eligible administrator. A temporary password requires a personal replacement before entering the workspace.
 - **Leavers:** Left Company disables a linked login and ends its sessions while retaining equipment and history. Reactivating employment leaves the login disabled until an administrator explicitly enables it.
 
-[Staff Members](how-tos/features-and-instructions/v2.2-draft/Staff-Members.md) · [Departments](how-tos/features-and-instructions/v2.2-draft/Departments-and-Shared-Equipment.md) · [Accounts, roles and MFA](how-tos/features-and-instructions/v2.2-draft/Roles-Section-Permissions-and-MFA.md)
+[Staff Members](../../how-tos/features-and-instructions/v2.2/Staff-Members.md) · [Departments](../../how-tos/features-and-instructions/v2.2/Departments-and-Shared-Equipment.md) · [Accounts, roles and MFA](../../how-tos/features-and-instructions/v2.2/Roles-Section-Permissions-and-MFA.md)
 
 ## Infrastructure And Optional Features
 
@@ -19,7 +19,7 @@ v2.2 brings people, equipment and support work together. Keep one permanent Devi
 - Save a Device without an IP address. Record an eligible basic IPv4 address separately from managed IPAM, then deliberately link the saved address to a suitable existing subnet when needed. Enabling IPAM or saving a Device does not create that link automatically.
 - Preserve rack and shelf relationships during unrelated Device editing while Network Racks is off. Review physical-server boot storage, ZFS descriptions and virtual-machine resources without configuring the real hardware.
 
-[Optional Features and Link to IPAM](how-tos/features-and-instructions/v2.2-draft/Optional-Features-and-Link-To-IPAM.md) · [Devices](how-tos/features-and-instructions/v2.2-draft/Devices.md) · [IPAM](how-tos/features-and-instructions/v2.2-draft/IPAM.md) · [Racks](how-tos/features-and-instructions/v2.2-draft/Racks.md)
+[Optional Features and Link to IPAM](../../how-tos/features-and-instructions/v2.2/Optional-Features-and-Link-To-IPAM.md) · [Devices](../../how-tos/features-and-instructions/v2.2/Devices.md) · [IPAM](../../how-tos/features-and-instructions/v2.2/IPAM.md) · [Racks](../../how-tos/features-and-instructions/v2.2/Racks.md)
 
 ## Equipment Custody And Stock
 
@@ -30,7 +30,7 @@ v2.2 brings people, equipment and support work together. Keep one permanent Devi
 - **Returns, write-offs and corrections:** record actual physical outcomes and correct eligible quantity errors with an attributed history. A correction retains the original movement and cannot make dependent history impossible.
 - **Stock reporting:** inspect current balances, category distribution and 30/90-day movement reporting. Optional per-item Low Stock warnings compare Ready quantities with the configured minimum.
 
-[Assignments and My Equipment](how-tos/features-and-instructions/v2.2-draft/Device-Assignments-and-My-Equipment.md) · [Stock intake](how-tos/features-and-instructions/v2.2-draft/IT-Assets-Stock-Intake.md) · [Registration and reissue](how-tos/features-and-instructions/v2.2-draft/Device-Stock-Registration-and-Reissue.md) · [Issue, return and write-off](how-tos/features-and-instructions/v2.2-draft/IT-Assets-Issue-Return-and-Write-Off.md) · [Accessories and handover](how-tos/features-and-instructions/v2.2-draft/Associated-Equipment.md) · [Corrections](how-tos/features-and-instructions/v2.2-draft/IT-Assets-Correct-Movement.md) · [Reporting](how-tos/features-and-instructions/v2.2-draft/IT-Assets-Dashboard.md)
+[Assignments and My Equipment](../../how-tos/features-and-instructions/v2.2/Device-Assignments-and-My-Equipment.md) · [Stock intake](../../how-tos/features-and-instructions/v2.2/IT-Assets-Stock-Intake.md) · [Registration and reissue](../../how-tos/features-and-instructions/v2.2/Device-Stock-Registration-and-Reissue.md) · [Issue, return and write-off](../../how-tos/features-and-instructions/v2.2/IT-Assets-Issue-Return-and-Write-Off.md) · [Accessories and handover](../../how-tos/features-and-instructions/v2.2/Associated-Equipment.md) · [Corrections](../../how-tos/features-and-instructions/v2.2/IT-Assets-Correct-Movement.md) · [Reporting](../../how-tos/features-and-instructions/v2.2/IT-Assets-Dashboard.md)
 
 ## Suppliers And Equipment Lifecycle
 
@@ -38,7 +38,7 @@ v2.2 brings people, equipment and support work together. Keep one permanent Devi
 - Explicitly link Suppliers to Devices and original receipts. Supplied Equipment measures original associated supply rather than current stock; registering a Device does not count the receipt twice.
 - Record purchase, first-service and warranty dates, calculate planned replacement dates and configure lifecycle warnings. Warnings do not buy, retire, return or replace equipment. A qualifying first issue from stock records first service even while Lifecycle is off.
 
-[Suppliers](how-tos/features-and-instructions/v2.2-draft/Supplier-Management.md) · [Supplier Issues and Purchasing](how-tos/features-and-instructions/v2.2-draft/Supplier-Issues-and-Purchasing.md) · [Equipment Supplier integration](how-tos/features-and-instructions/v2.2-draft/Equipment-Supplier-Integration.md) · [Lifecycle](how-tos/features-and-instructions/v2.2-draft/Equipment-Lifecycle.md)
+[Suppliers](../../how-tos/features-and-instructions/v2.2/Supplier-Management.md) · [Supplier Issues and Purchasing](../../how-tos/features-and-instructions/v2.2/Supplier-Issues-and-Purchasing.md) · [Equipment Supplier integration](../../how-tos/features-and-instructions/v2.2/Equipment-Supplier-Integration.md) · [Lifecycle](../../how-tos/features-and-instructions/v2.2/Equipment-Lifecycle.md)
 
 ## Service Desk And Email
 
@@ -48,7 +48,7 @@ v2.2 brings people, equipment and support work together. Keep one permanent Devi
 - Administrators configure Working Hours, Excluded Dates and Ticket Categories. Reporting separates live workload from activity over a selected period; working-time measurements use the installation's IANA time zone and retained calendar history.
 - Configure outgoing SMTP and the IT support mailbox. Edit seven Service Desk and three account/security email templates, preview fictional samples, save drafts and publish wording. Shared branding supports a company name, colours, footer and optional logo. Delivery and account verification remain separate.
 
-[Tickets](how-tos/features-and-instructions/v2.2-draft/Service-Desk-Tickets.md) · [Administration](how-tos/features-and-instructions/v2.2-draft/Service-Desk-Administration.md) · [Time zone](how-tos/features-and-instructions/v2.2-draft/Service-Desk-Time-Zone.md) · [Email and branding](how-tos/features-and-instructions/v2.2-draft/Email-Templates-and-Company-Branding.md)
+[Tickets](../../how-tos/features-and-instructions/v2.2/Service-Desk-Tickets.md) · [Administration](../../how-tos/features-and-instructions/v2.2/Service-Desk-Administration.md) · [Time zone](../../how-tos/features-and-instructions/v2.2/Service-Desk-Time-Zone.md) · [Email and branding](../../how-tos/features-and-instructions/v2.2/Email-Templates-and-Company-Branding.md)
 
 ## History, Import And Everyday Use
 
@@ -58,12 +58,12 @@ Legacy v1.3.3 inventory import reviews mounting corrections and replacement coun
 
 Date controls use **DD/MM/YYYY**, with keyboard-accessible calendars. Desktop navigation scrolls independently, and virtual machines have type-appropriate Details without a physical Assigned To tab.
 
-[Audit Trail](how-tos/features-and-instructions/v2.2-draft/Audit-Trail.md) · [Legacy import](how-tos/features-and-instructions/v2.2-draft/Legacy-Import-and-Docker-Upgrade.md#import-legacy-inventory) · [Navigation and dates](how-tos/features-and-instructions/v2.2-draft/README.md)
+[Audit Trail](../../how-tos/features-and-instructions/v2.2/Audit-Trail.md) · [Legacy import](../../how-tos/features-and-instructions/v2.2/Legacy-Import-and-Docker-Upgrade.md#import-legacy-inventory) · [Navigation and dates](../../how-tos/features-and-instructions/v2.2/README.md)
 
 ## Installation And Recovery Limits
 
-Published v2.1 uses schema 10; the v2.2 candidate uses schema 31. A supported production v2.1 → v2.2 upgrade and complete-volume recovery for the current candidate have not been established. The draft [installation](how-tos/features-and-instructions/v2.2-draft/Installation.md) and [upgrade/recovery](how-tos/features-and-instructions/v2.2-draft/Legacy-Import-and-Docker-Upgrade.md) guides are for separately authorised isolated review.
+Published v2.1 uses schema 10; the v2.2 candidate uses schema 31. A supported production v2.1 → v2.2 upgrade and complete-volume recovery for the current candidate have not been established. The draft [installation](../../how-tos/features-and-instructions/v2.2/Installation.md) and [upgrade/recovery](../../how-tos/features-and-instructions/v2.2/Legacy-Import-and-Docker-Upgrade.md) guides are for separately authorised isolated review.
 
 Preserve the complete stopped `/data` mount, private configuration and matching image before any authorised upgrade. An older image must not open an upgraded database; rollback needs its complete matching pre-upgrade backup. Inventory JSON cannot restore accounts, MFA, tickets, attachments, branding, TLS or private email settings.
 
-For public installation, use the [published v2.1 instructions](../INSTALLATION.md) and [v2.1 release notes](historical/release-notes/Release-Notes-v2.1.md).
+For public installation, use the [published v2.1 instructions](../installation/INSTALLATION-v2.1.md) and [v2.1 release notes](Release-Notes-v2.1.md).

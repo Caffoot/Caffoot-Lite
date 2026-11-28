@@ -14,7 +14,7 @@ Caffoot Lite v2.1 was published on **8 November 2026**. The current release incl
 - Multi-user access, administrator-managed permissions, MFA, account/email workflows and Audit Trail.
 - A modern, responsive light/dark interface and Docker/SQLite deployment with persistent data.
 
-**[Install Caffoot Lite](INSTALLATION.md)** · **[See the latest release](https://github.com/Caffoot/Caffoot-Lite/releases/latest)** · **[Explore the features](docs/how-tos/features-and-instructions/README.md)**
+**[Install Caffoot Lite](docs/historical/installation/INSTALLATION-v2.1.md)** · **[See the latest release](https://github.com/Caffoot/Caffoot-Lite/releases/latest)** · **[Explore the features](docs/how-tos/features-and-instructions/README.md)**
 
 ## In development — v2.2, not published
 
@@ -29,7 +29,7 @@ Caffoot Lite v2.1 was published on **8 November 2026**. The current release incl
 
 **v2.2 remains unreleased.** These features are integrated in development and are not included in published v2.1. Installation, upgrade and complete-volume recovery for the current candidate still require verification, alongside outstanding native/manual, security and release checks. No release date is promised.
 
-Read the [draft v2.2 guides](docs/how-tos/features-and-instructions/v2.2-draft/README.md) and [draft release notes](docs/Release-Notes-v2.2.md). The [six planning milestones](docs/product-direction/PROPOSED-MILESTONES.md) retain the longer-term context; proposals require their own agreed scope before development.
+Read the [draft v2.2 guides](docs/how-tos/features-and-instructions/v2.2/README.md) and [draft release notes](docs/historical/release-notes/Release-Notes-v2.2.md). The [six planning milestones](docs/product-direction/PROPOSED-MILESTONES.md) retain the longer-term context; proposals require their own agreed scope before development.
 
 ## Ideas under consideration — not yet scheduled
 
@@ -58,4 +58,4 @@ Please [report security vulnerabilities privately](SECURITY.md), not in public i
 
 ---
 
-*Updated: 27 November 2026. v2.1 is published; v2.2 is unreleased.*
+*Updated: 28 November 2026. v2.1 is published; v2.2 is unreleased.*

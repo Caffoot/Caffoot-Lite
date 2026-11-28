@@ -2,7 +2,7 @@
 
 ## Current Development — Section Permissions
 
-**Version boundary:** Published v2.1 uses schema 10. The owner-approved unreleased v2.2 application checkpoint is `0251b43a3b5d41d626aa022c6d7f9b4d860433da`, schema 31, including Stages 1–5 and subsequent integrated corrections. See [Development Status](Development-Status.md) for exact checkpoints and outstanding acceptance. Integration is not production upgrade or release approval. The core Staff Members/Departments and optional equipment sections retain independent access. IT Staff defaults to Devices, IPAM, Racks and IT Assets Edit, with existing account access preserved through overrides. Service Desk has its own technician permission; employee access follows current equipment custody and Department membership. The queue, employee views, calendar/reporting, templates and notifications are integrated. [Service Desk foundation](Service-Desk-Foundation.md) · [User permissions guide](../how-tos/features-and-instructions/v2.2-draft/Roles-Section-Permissions-and-MFA.md).
+**Version boundary:** Published v2.1 uses schema 10. The owner-approved unreleased v2.2 application checkpoint is `0251b43a3b5d41d626aa022c6d7f9b4d860433da`, schema 31, including Stages 1–5 and subsequent integrated corrections. See [Development Status](Development-Status.md) for exact checkpoints and outstanding acceptance. Integration is not production upgrade or release approval. The core Staff Members/Departments and optional equipment sections retain independent access. IT Staff defaults to Devices, IPAM, Racks and IT Assets Edit, with existing account access preserved through overrides. Service Desk has its own technician permission; employee access follows current equipment custody and Department membership. The queue, employee views, calendar/reporting, templates and notifications are integrated. [Service Desk foundation](Service-Desk-Foundation.md) · [User permissions guide](../how-tos/features-and-instructions/v2.2/Roles-Section-Permissions-and-MFA.md).
 
 The inventory importer remains dependent on Devices/IPAM/Racks Edit; it does not import Staff or stock. Default-deny and MFA remain in force. Batch 3.4 manual/native and Stage 6 acceptance remain deferred; this is not a published v2.2 release.
 
@@ -54,7 +54,7 @@ first-admin and new ordinary-account creation continue to assign Staff Member on
 
 Preserved overrides remain authoritative after future role edits. Selecting
 **Inherit** intentionally removes an override and resumes role-derived access.
-See the [draft v2.2 role and override examples](../how-tos/features-and-instructions/v2.2-draft/Roles-Section-Permissions-and-MFA.md).
+See the [draft v2.2 role and override examples](../how-tos/features-and-instructions/v2.2/Roles-Section-Permissions-and-MFA.md).
 
 ### Current IT Staff Defaults — Schema 20
 

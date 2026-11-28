@@ -1,10 +1,14 @@
 # Published And Development Versions
 
-## Current Boundary — 27 November 2026
+## Current Boundary — 28 November 2026
 
-Published v2.1 remains at tagged source `c3237114108cad9f7d4e57657b6aed5e0091a5ef`, schema 10. The owner-approved integrated v2.2 application is `0251b43a3b5d41d626aa022c6d7f9b4d860433da`, schema 31. It includes Stages 1–5, Stage 6 integration work and the merged corrections through PRs #486, #490 and #493. Documentation started Batch 8 from accepted checkpoint `5338f3903d39714999fab068025d99869be44c63` on `docs/milestone-01-release-preparation`.
+Published v2.1 remains at tagged source `c3237114108cad9f7d4e57657b6aed5e0091a5ef`, schema 10. The accepted documentation and repository preparation were merged through PR #472 into `milestone-1` at `a23670bdd2b520feda6003a35a45be6df7561fc5`, schema 31. All eight documentation batches are accepted; do not repeat the editorial review or recapture screenshots. [Acceptance and merge record](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7228963307).
 
-[Owner-approved Batch 8 scope](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7224076263) follows [7F–7H draft acceptance](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7224015412). PR #472 stays draft and issue #366 stays open. Independent documentation review and owner acceptance remain separate. Native acceptance is paused after Test 69 with Test 70 next; deferred manual checks, supported upgrade and complete-volume recovery, private exports, independent audit #443 and final release gates remain outstanding. No production, website, merge or publication approval follows from documentation completion.
+The [owner-approved repository transition](https://github.com/Caffoot/Caffoot-Lite/pull/494#issuecomment-7236001738) continues on draft PR #494 from `daa23a9bdc33b8967042383fc90ceb2b4391b754`. Active installation, Portainer, permanent v2.2 guides, release notes, About and read-only release checks prepare **unreleased v2.2**; published v2.1, compatibility guides and historical evidence remain preserved. Independent ChatGPT review and separate product-owner acceptance remain required.
+
+[The remaining programme](https://github.com/Caffoot/Caffoot-Lite/issues/351#issuecomment-7229043072) reuses native Tests 1–108 and affected reacceptance. Reconcile the current ledger and correction sign-offs before choosing the next test; the old “Test 70 next” wording is superseded. Outstanding work includes #480 dark-theme rejection prominence, #482 targeted queue/workload refresh, final-candidate confirmation of #491/#492 wording, deferred #382 manual coverage and overall native sign-off. Agree a new exact private ARM64 candidate after this transition is accepted and merged; the prior build approval was for `a23670bdd2b520feda6003a35a45be6df7561fc5` only.
+
+Then reconcile supported v2.1 upgrade, complete-volume recovery/matching-image rollback and private-export limitations, including explicit disposition of the unavailable real-production-export evidence. Final documentation reconciliation follows those results, then mandatory offline website/SEO/Umami/organic-launch preparation and owner acceptance, independent final audit #443, and separately authorised release. These are outstanding stages, not authority to perform them in this assignment. #366 and #351 remain open. No new acceptance, public image, main merge, deployment or publication is established.
 
 The dated records below retain their original revisions, results and pending decisions. They are historical checkpoints; the current boundary above takes precedence.
 
@@ -16,17 +20,17 @@ Focused local development verification passed. Independent review and product ow
 
 ## Historical Integration — 24 November 2026
 
-Caffoot Lite **v2.1 remains the published release**, at tagged source `c3237114108cad9f7d4e57657b6aed5e0091a5ef` (schema 10). Use the [published user guides](../how-tos/features-and-instructions/README.md) and [installation instructions](../../INSTALLATION.md) for that release.
+Caffoot Lite **v2.1 remains the published release**, at tagged source `c3237114108cad9f7d4e57657b6aed5e0091a5ef` (schema 10). Use the [published user guides](../how-tos/features-and-instructions/README.md) and [installation instructions](../historical/installation/INSTALLATION-v2.1.md) for that release.
 
 Shared Devices was owner-accepted and merged through PR #447. The verified `milestone-1` integration revision is `2380334970e1162ad6811f1703a91dcfc863b803` (unreleased v2.2, schema 29). Stage 6.5 uses that source to verify the integrated workflows. [Stage 6.4 sign-off](https://github.com/Caffoot/Caffoot-Lite/issues/431#issuecomment-7132417522) · [Stage 6.5 report](../development-handovers/evidence/stage-6-5/README.md)
 
-The historical Stage 6.2 starting checkpoint was `milestone-1` at `2107de3668b08c5abdfdae6fe231a3114bbfc380` (unreleased v2.2, schema 28), after the Stage 5.1–5.6 merges. The isolated schema-10 → 28 upgrade passed there. The import protection correction was reviewed in [PR #445](https://github.com/Caffoot/Caffoot-Lite/pull/445). [Stage 6.2 evidence](../development-handovers/evidence/stage-6-2/README.md) · [Draft administrator guide](../how-tos/features-and-instructions/v2.2-draft/Legacy-Import-and-Docker-Upgrade.md)
+The historical Stage 6.2 starting checkpoint was `milestone-1` at `2107de3668b08c5abdfdae6fe231a3114bbfc380` (unreleased v2.2, schema 28), after the Stage 5.1–5.6 merges. The isolated schema-10 → 28 upgrade passed there. The import protection correction was reviewed in [PR #445](https://github.com/Caffoot/Caffoot-Lite/pull/445). [Stage 6.2 evidence](../development-handovers/evidence/stage-6-2/README.md) · [Draft administrator guide](../how-tos/features-and-instructions/v2.2/Legacy-Import-and-Docker-Upgrade.md)
 
 ### Historical Stage 5.4 Checkpoint — 23 November 2026
 
 The owner accepted and merged Service Desk Batches 5.1–5.3 through [PRs #437](https://github.com/Caffoot/Caffoot-Lite/pull/437), [#438](https://github.com/Caffoot/Caffoot-Lite/pull/438) and [#439](https://github.com/Caffoot/Caffoot-Lite/pull/439). The verified `milestone-1` integration head for Batch 5.4 is `4600ec7bf6a0751af02fbcf003b7f299547cdfd9`, schema 26. [Stage 5.3 acceptance](https://github.com/Caffoot/Caffoot-Lite/issues/422#issuecomment-7103488704)
 
-Batch 5.4 adds the administrator support calendar, category management and live Service Desk reporting in schema 27 on its review branch. The draft guides and actual application evidence accompany the review. [Authorisation and scope](https://github.com/Caffoot/Caffoot-Lite/issues/423) · [PR #440](https://github.com/Caffoot/Caffoot-Lite/pull/440) · [Draft v2.2 guides](../how-tos/features-and-instructions/v2.2-draft/README.md)
+Batch 5.4 adds the administrator support calendar, category management and live Service Desk reporting in schema 27 on its review branch. The draft guides and actual application evidence accompany the review. [Authorisation and scope](https://github.com/Caffoot/Caffoot-Lite/issues/423) · [PR #440](https://github.com/Caffoot/Caffoot-Lite/pull/440) · [Draft v2.2 guides](../how-tos/features-and-instructions/v2.2/README.md)
 
 ### Stage 3 Development Integration — Historical Merge Ledger
 
@@ -91,7 +95,7 @@ pending-merge statements are superseded by the current integration status above.
 > Correct Movement is implemented on `feat/correct-stock-movement`,
 > [draft PR #392](https://github.com/Caffoot/Caffoot-Lite/pull/392), using schema 19
 > without a migration. See [the correction contract](IT-Assets-Correct-Movement.md),
-> [draft instructions](../how-tos/features-and-instructions/v2.2-draft/IT-Assets-Correct-Movement.md)
+> [draft instructions](../how-tos/features-and-instructions/v2.2/IT-Assets-Correct-Movement.md)
 > and [verification evidence](../development-handovers/evidence/stock-corrections/Report.md).
 > Owner visual review and explicit merge approval remain. No release, deployment
 > or Batch 3.12 work is included. Earlier dated checkpoints below are historical.
@@ -102,7 +106,7 @@ pending-merge statements are superseded by the current integration status above.
 > Batch 3.10 associations and prepared canonical reassignment are implemented
 > on [draft PR #391](https://github.com/Caffoot/Caffoot-Lite/pull/391), schema 19.
 > The [contract](Associated-Equipment.md), [approved direct sequence](Direct-Handover-Decision.md),
-> [draft instructions](../how-tos/features-and-instructions/v2.2-draft/Associated-Equipment.md)
+> [draft instructions](../how-tos/features-and-instructions/v2.2/Associated-Equipment.md)
 > and [36-capture final review report](../development-handovers/evidence/associated-equipment-final/Report.md)
 > record the actual implementation and verification. Final-head Actions are
 > reported in PR #391. Owner visual acceptance, merge and release are not claimed;
@@ -110,11 +114,11 @@ pending-merge statements are superseded by the current integration status above.
 > checkpoints below retain their historical scope.
 
 
-Caffoot Lite **v2.1 is the published release**. Its tagged source is [c3237114108cad9f7d4e57657b6aed5e0091a5ef](https://github.com/Caffoot/Caffoot-Lite/tree/v2.1); it uses schema 10. The [published user guides](../how-tos/features-and-instructions/README.md) and [installation instructions](../../INSTALLATION.md) describe that release.
+Caffoot Lite **v2.1 is the published release**. Its tagged source is [c3237114108cad9f7d4e57657b6aed5e0091a5ef](https://github.com/Caffoot/Caffoot-Lite/tree/v2.1); it uses schema 10. The [published user guides](../how-tos/features-and-instructions/README.md) and [installation instructions](../historical/installation/INSTALLATION-v2.1.md) describe that release.
 
 ## Historical Repository Checkpoints — Not Released Images
 
-The table below records the **15 November 2026 pre-synchronisation checkpoints**. Subsequently, approved public-documentation corrections were merged into `main` via PR #384 at `3d66c3ee6fd9d9c51ecbdd5822bc1c4fe98b8e7b` and synchronised to `milestone-1` via PR #385 at `47c2ebe3d9249199c0c42dc71fd571b9f6411641`. Those documentation merges did **not** publish v2.2 or change the milestone's schema-15 application behaviour. The draft v2.2 guides are [here](../how-tos/features-and-instructions/v2.2-draft/README.md).
+The table below records the **15 November 2026 pre-synchronisation checkpoints**. Subsequently, approved public-documentation corrections were merged into `main` via PR #384 at `3d66c3ee6fd9d9c51ecbdd5822bc1c4fe98b8e7b` and synchronised to `milestone-1` via PR #385 at `47c2ebe3d9249199c0c42dc71fd571b9f6411641`. Those documentation merges did **not** publish v2.2 or change the milestone's schema-15 application behaviour. The draft v2.2 guides are [here](../how-tos/features-and-instructions/v2.2/README.md).
 
 | Source | Status | Relevant behaviour |
 | --- | --- | --- |
@@ -131,4 +135,4 @@ The [milestone tracker #351](https://github.com/Caffoot/Caffoot-Lite/issues/351)
 - For published installation, security and recovery, use the v2.1 guides. Preserve the entire persistent `/data` mount and matching image; JSON import is not a Docker backup.
 - For source maintenance, match the guide and tests to the exact branch/revision. [Role Permissions](Role-Permissions.md) describes the unreleased Stage 1 contract; [the historical rehearsal](Upgrade-And-Restore-Rehearsal.md) is not a current milestone upgrade procedure.
 - Use [Optional Features](Optional-Features.md), [Device Assignments](Device-Assignments.md) and [Stock Circulation](IT-Assets-Issue-Return-and-Write-Off.md) with their stated unreleased source revisions; historical checkpoint evidence retains its original scope.
-- [Stage 6.2](../development-handovers/evidence/stage-6-2/README.md) records the isolated upgrade and import checks. [Stage 6.3](../development-handovers/evidence/stage-6-3/README.md) records isolated complete-volume restoration and matching-image rollback. The [v2.2 administrator procedure](../how-tos/features-and-instructions/v2.2-draft/Legacy-Import-and-Docker-Upgrade.md) is for review installations.
+- [Stage 6.2](../development-handovers/evidence/stage-6-2/README.md) records the isolated upgrade and import checks. [Stage 6.3](../development-handovers/evidence/stage-6-3/README.md) records isolated complete-volume restoration and matching-image rollback. The [v2.2 administrator procedure](../how-tos/features-and-instructions/v2.2/Legacy-Import-and-Docker-Upgrade.md) is for review installations.

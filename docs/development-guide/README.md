@@ -1,6 +1,6 @@
 # Caffoot Lite — Development Guide
 
-> **Version boundary:** Published v2.1 uses schema 10. The unreleased v2.2 application checkpoint is `0251b43a3b5d41d626aa022c6d7f9b4d860433da`, schema 31, including Stages 1–5 and subsequent integrated corrections. [Development Status](Development-Status.md) records exact checkpoints and outstanding acceptance; [draft v2.2 guides](../how-tos/features-and-instructions/v2.2-draft/README.md) explain the workflows.
+> **Version boundary:** Published v2.1 uses schema 10. The unreleased v2.2 application checkpoint is `a23670bdd2b520feda6003a35a45be6df7561fc5`, schema 31, including Stages 1–5 and subsequent integrated corrections. [Development Status](Development-Status.md) records exact checkpoints and outstanding acceptance; [draft v2.2 guides](../how-tos/features-and-instructions/v2.2/README.md) explain the workflows.
 
 Welcome. This guide explains **how Caffoot Lite actually works**, from the everyday user experience through to the Python backend, SQLite database and tests. It is written for the product owner, new contributors and maintainers.
 
@@ -8,7 +8,7 @@ Welcome. This guide explains **how Caffoot Lite actually works**, from the every
 
 ## In simple terms
 
-**Current development target: v2.2 (Milestone 01).** The integrated application includes roles and optional features; Staff/Departments and equipment custody; IT Assets stock/circulation; Suppliers and Lifecycle; and employee/technician Service Desk, reporting, templates and notifications. See [Development Status](Development-Status.md), the [active handover](../development-handovers/milestone-01.md), [release inventory](Milestone-01-Release-Inventory.md) and [draft release notes](../Release-Notes-v2.2.md). Integration does not complete outstanding native/manual, supported-upgrade, complete-volume recovery, security or release acceptance.
+**Current development target: v2.2 (Milestone 01).** The integrated application includes roles and optional features; Staff/Departments and equipment custody; IT Assets stock/circulation; Suppliers and Lifecycle; and employee/technician Service Desk, reporting, templates and notifications. See [Development Status](Development-Status.md), the [active handover](../development-handovers/milestone-01.md), [release inventory](Milestone-01-Release-Inventory.md) and [draft release notes](../historical/release-notes/Release-Notes-v2.2.md). Integration does not complete outstanding native/manual, supported-upgrade, complete-volume recovery, security or release acceptance.
 
 Caffoot Lite helps small IT teams manage infrastructure, people, equipment custody and support work. Devices, IPAM and Network Racks share identities and access checks with the Staff directory, stock, Suppliers, Lifecycle and Service Desk. The earlier HTML release saves its inventory in one browser. The Docker application keeps a **shared inventory** in a central SQLite database so authorised users see the same information.
 
@@ -49,7 +49,7 @@ All contributors should first read [CONTRIBUTING.md](../../CONTRIBUTING.md) and 
 - [`backend/schema.py`](../../backend/schema.py): SQLite tables and schema upgrades.
 - [`backend/`](../../backend/): permissions, saves, import and validation modules.
 - [`tests/`](../../tests/): backend and browser compatibility checks.
-- [`compose.yaml`](../../compose.yaml), [`portainer-v2.1.yaml`](../../portainer-v2.1.yaml) and [`Dockerfile`](../../Dockerfile): deployment configuration.
+- [`compose.yaml`](../../compose.yaml), [`portainer-v2.2.yaml`](../../portainer-v2.2.yaml) and [`Dockerfile`](../../Dockerfile): deployment configuration.
 - [`app/caffoot-lite.html` at v1.3.3](https://github.com/Caffoot/Caffoot-Lite/blob/v1.3.3/app/caffoot-lite.html): **published** inventory behaviour to preserve.
 
 For current installation instructions see [`INSTALLATION.md`](../../INSTALLATION.md). The [root README](../../README.md) introduces unreleased v2.2 and links separately to the published v2.1 download and installation guidance.

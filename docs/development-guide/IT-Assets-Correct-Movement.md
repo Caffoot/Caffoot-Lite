@@ -1,6 +1,6 @@
 # IT Assets: Correct Stock Movement
 
-> **Historical implementation contract.** The checkpoint, schema and pending-review wording below describe the original development stage. Use [Development Status](Development-Status.md) for the current integrated application and acceptance boundary, and the [v2.2 instructions](../how-tos/features-and-instructions/v2.2-draft/README.md) for current procedures. Original technical decisions and evidence are retained.
+> **Historical implementation contract.** The checkpoint, schema and pending-review wording below describe the original development stage. Use [Development Status](Development-Status.md) for the current integrated application and acceptance boundary, and the [v2.2 instructions](../how-tos/features-and-instructions/v2.2/README.md) for current procedures. Original technical decisions and evidence are retained.
 
 > **Unreleased v2.2 — Draft PR [#392](https://github.com/Caffoot/Caffoot-Lite/pull/392).**
 > Batch 3.11 starts from the verified remote `milestone-1` HEAD

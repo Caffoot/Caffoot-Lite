@@ -1,18 +1,22 @@
 # Milestone 01 Development Handover — v2.2 Target
 
-## Current Boundary — 27 November 2026
+## Current Boundary — 28 November 2026
 
-Published v2.1 remains at tagged source `c3237114108cad9f7d4e57657b6aed5e0091a5ef`, schema 10. The owner-approved integrated v2.2 application is `0251b43a3b5d41d626aa022c6d7f9b4d860433da`, schema 31. It includes Stages 1–5, Stage 6 integration work and the merged corrections through PRs #486, #490 and #493. Documentation started Batch 8 from accepted checkpoint `5338f3903d39714999fab068025d99869be44c63` on `docs/milestone-01-release-preparation`.
+Published v2.1 remains at tagged source `c3237114108cad9f7d4e57657b6aed5e0091a5ef`, schema 10. The accepted documentation and repository preparation were merged through PR #472 into `milestone-1` at `a23670bdd2b520feda6003a35a45be6df7561fc5`, schema 31. All eight documentation batches are accepted; do not repeat the editorial review or recapture screenshots. [Acceptance and merge record](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7228963307).
 
-[Owner-approved Batch 8 scope](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7224076263) follows [7F–7H draft acceptance](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7224015412). PR #472 stays draft and issue #366 stays open. Independent documentation review and owner acceptance remain separate. Native acceptance is paused after Test 69 with Test 70 next; deferred manual checks, supported upgrade and complete-volume recovery, private exports, independent audit #443 and final release gates remain outstanding. No production, website, merge or publication approval follows from documentation completion.
+The [owner-approved repository transition](https://github.com/Caffoot/Caffoot-Lite/pull/494#issuecomment-7236001738) continues on draft PR #494 from `daa23a9bdc33b8967042383fc90ceb2b4391b754`. Active installation, Portainer, permanent v2.2 guides, release notes, About and read-only release checks prepare **unreleased v2.2**; published v2.1, compatibility guides and historical evidence remain preserved. Independent ChatGPT review and separate product-owner acceptance remain required.
 
-### Repository Release-File Preparation — 27 November 2026
+[The remaining programme](https://github.com/Caffoot/Caffoot-Lite/issues/351#issuecomment-7229043072) reuses native Tests 1–108 and affected reacceptance. Reconcile the current ledger and correction sign-offs before choosing the next test; the old “Test 70 next” wording is superseded. Outstanding work includes #480 dark-theme rejection prominence, #482 targeted queue/workload refresh, final-candidate confirmation of #491/#492 wording, deferred #382 manual coverage and overall native sign-off. Agree a new exact private ARM64 candidate after this transition is accepted and merged; the prior build approval was for `a23670bdd2b520feda6003a35a45be6df7561fc5` only.
+
+Then reconcile supported v2.1 upgrade, complete-volume recovery/matching-image rollback and private-export limitations, including explicit disposition of the unavailable real-production-export evidence. Final documentation reconciliation follows those results, then mandatory offline website/SEO/Umami/organic-launch preparation and owner acceptance, independent final audit #443, and separately authorised release. These are outstanding stages, not authority to perform them in this assignment. #366 and #351 remain open. No new acceptance, public image, main merge, deployment or publication is established.
+
+### Historical Repository Release-File Preparation — 27 November 2026
 
 The owner [accepted all eight documentation batches](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7227585243) at `8c680f3cd540a91df50299b8243f480fc9857242` and [authorised this targeted release-file preparation](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7227639584). The existing draft Compose/Portainer candidates now require a supplied IANA time zone and retain source-build/private-image routes; root source-build Compose passes `TZ` through without a default or changed storage. Issue forms cover the forthcoming feature areas. About and built-in help describe the integrated product and link to accepted, explicitly unreleased guides; the published v2.1 label, legacy format identifiers, original artwork and both published guide paths remain intact.
 
 Configuration and template checks are recorded with the exact commits in the [existing PR #472 summary](https://github.com/Caffoot/Caffoot-Lite/pull/472), together with the remaining release-time file transitions and any separately approvable release-workflow changes. No functions, application feature behaviour, security or release checks are changed. This preparation awaits independent review and owner acceptance; it does not establish native, upgrade/recovery or production acceptance, a public image, merge or publication.
 
-### Final Batch 8 Documentation Correction — 27 November 2026
+### Historical Final Batch 8 Documentation Correction — 27 November 2026
 
 Continues documentation `7b70912e52941c828ecc20d8b6391348d938354b` under the [owner's final correction](https://github.com/Caffoot/Caffoot-Lite/issues/366#issuecomment-7224538338). The root README now introduces the complete implemented v2.2 product with four existing desktop-light images, clear unreleased status and published v2.1 installation guidance. Wider content corrections cover live summaries/navigation, domain references, source-build boundaries, account-permissions illustration, audit prerequisites and email guidance. [Existing documentation register](../development-guide/Milestone-01-Documentation-Register.md#owner-directed-final-batch-8-correction--27-november-2026) records scope, image provenance, focused checks and remaining gates. The first README checkpoint `73f4dd13589f20838171ed83b3376d01c48c9687` is pushed and remotely verified. The final correction commit is reported in PR #472 and the completion summary.
 
@@ -30,13 +34,13 @@ The five approved corrections are implemented on `fix/native-acceptance-correcti
 
 PR #465 targets `milestone-1` from `66917d12a79dbc232596b2ce8416841e82868c00`. It covers the six authorised navigation, sign-in, account administration and Device reassignment issues. The verified application source is `20cb447458065196a01fbca871d79c2c9f771af2` with schema 30. [PR #465](https://github.com/Caffoot/Caffoot-Lite/pull/465) · [Scope and authorisation](https://github.com/Caffoot/Caffoot-Lite/issues/351#issuecomment-7160163762)
 
-The local verification record covers authentication and permission checks, fresh and supported upgrade fixtures, Compose volume persistence, Device custody and Service Desk privacy. It links to the four approved design comparisons and genuine application screenshots in the draft guides. [Test results and acceptance gates](evidence/stage-6-6-batch-1/README.md) · [Draft user and administrator guides](../how-tos/features-and-instructions/v2.2-draft/README.md)
+The local verification record covers authentication and permission checks, fresh and supported upgrade fixtures, Compose volume persistence, Device custody and Service Desk privacy. It links to the four approved design comparisons and genuine application screenshots in the draft guides. [Test results and acceptance gates](evidence/stage-6-6-batch-1/README.md) · [Draft user and administrator guides](../how-tos/features-and-instructions/v2.2/README.md)
 
 ## Stage 6.6 Staff Administration Finding — 24 November 2026
 
 The owner paused native acceptance after finding that linked Staff records with blank names were hard to identify and individual login administration was split across screens. PR #453 implements the approved Staff Members workflow and shares personal details across the existing links. Schema 29 is sufficient. The original acceptance evidence remains available. [Finding #452](https://github.com/Caffoot/Caffoot-Lite/issues/452) · [Implementation and local verification](https://github.com/Caffoot/Caffoot-Lite/pull/453)
 
-The local checks cover linked profile edits and conflicts, email proofs, persisted data after a restart and SQLite restore, role controls, MFA, existing assignments and genuine Chromium desktop and mobile captures in both themes. Stage 6.6 is paused pending independent owner visual review and native re-acceptance. [Staff guide](../how-tos/features-and-instructions/v2.2-draft/Staff-Members.md) · [Capture record](../how-tos/features-and-instructions/v2.2-draft/screenshots/staff-administration/README.md)
+The local checks cover linked profile edits and conflicts, email proofs, persisted data after a restart and SQLite restore, role controls, MFA, existing assignments and genuine Chromium desktop and mobile captures in both themes. Stage 6.6 is paused pending independent owner visual review and native re-acceptance. [Staff guide](../how-tos/features-and-instructions/v2.2/Staff-Members.md) · [Capture record](../how-tos/features-and-instructions/v2.2/screenshots/staff-administration/README.md)
 
 ## Stage 6.5 Integrated Regression — 24 November 2026
 
@@ -48,7 +52,7 @@ Published v2.1 is the current release. Stage 6.6 native and private acceptance, 
 
 The Stage 6.4 review branch starts from `957969ba1b44465472765e47f91117ca7c87d177` on `milestone-1`. Schema 29 preserves one physical custody period per Device and keeps equal Department relationships with attributed history. Stock recipient changes apply only to new multi-Department Device custody issues, including explicitly associated accessories. Employee Device tickets use live Department membership and the saved custody ID. [PR #447](https://github.com/Caffoot/Caffoot-Lite/pull/447) · [Owner-approved technical decision](https://github.com/Caffoot/Caffoot-Lite/issues/431#issuecomment-7129437209)
 
-The branch carries the focused test results, genuine Chromium screenshots and the stopped-volume rehearsal, including schema 10 and schema 28 upgrades to 29 and restoration with the matching schema 28 image. [Evidence and limits](evidence/stage-6-4/README.md) · [Draft v2.2 guides](../how-tos/features-and-instructions/v2.2-draft/README.md)
+The branch carries the focused test results, genuine Chromium screenshots and the stopped-volume rehearsal, including schema 10 and schema 28 upgrades to 29 and restoration with the matching schema 28 image. [Evidence and limits](evidence/stage-6-4/README.md) · [Draft v2.2 guides](../how-tos/features-and-instructions/v2.2/README.md)
 
 The associated equipment correction keeps current accessory views with Device custody. New accessory tickets record their explicit association when created and use current custody and outstanding stock checks. Historical accessory tickets with unverifiable employee audiences remain available to authorised IT, including their original replies, attachments and audit history. The correction uses schema 29’s existing ticket creation event. [Owner approval](https://github.com/Caffoot/Caffoot-Lite/issues/431#issuecomment-7131158752) · [Privacy fallback](https://github.com/Caffoot/Caffoot-Lite/issues/431#issuecomment-7131342057)
 
@@ -56,19 +60,19 @@ Independent code review, owner visual acceptance, final-head CI and separate mer
 
 ## Historical Stage 6.3 Complete-Volume Recovery — 24 November 2026
 
-The isolated Compose rehearsal recovered the populated v2.2 schema-28 mount and rolled back a separate copy to published v2.1 schema 10 with its matching image. Stopped file and SQLite comparisons, trusted HTTPS and functional access, restart/recreation and a focused rootless bind-mount check passed. [PR #446](https://github.com/Caffoot/Caffoot-Lite/pull/446) · [Revision-pinned evidence and limitations](evidence/stage-6-3/README.md) · [Draft administrator procedure](../how-tos/features-and-instructions/v2.2-draft/Legacy-Import-and-Docker-Upgrade.md#back-up-a-complete-installation)
+The isolated Compose rehearsal recovered the populated v2.2 schema-28 mount and rolled back a separate copy to published v2.1 schema 10 with its matching image. Stopped file and SQLite comparisons, trusted HTTPS and functional access, restart/recreation and a focused rootless bind-mount check passed. [PR #446](https://github.com/Caffoot/Caffoot-Lite/pull/446) · [Revision-pinned evidence and limitations](evidence/stage-6-3/README.md) · [Draft administrator procedure](../how-tos/features-and-instructions/v2.2/Legacy-Import-and-Docker-Upgrade.md#back-up-a-complete-installation)
 
 Independent review and owner merge approval are pending. Native Raspberry Pi, Safari, Portainer and private-installation acceptance remain separate, as do off-host backup tooling and affected checks after #431.
 
 ## Stage 6.2 Legacy Import Protection — 24 November 2026
 
-The verified starting integration revision is `2107de3668b08c5abdfdae6fe231a3114bbfc380` (schema 28). The isolated published v2.1 schema-10 → 28 upgrade passed there. [PR #445](https://github.com/Caffoot/Caffoot-Lite/pull/445) corrects protected Device replacement and its error reporting. [Evidence and remaining checks](evidence/stage-6-2/README.md) · [Draft v2.2 administrator guide](../how-tos/features-and-instructions/v2.2-draft/Legacy-Import-and-Docker-Upgrade.md)
+The verified starting integration revision is `2107de3668b08c5abdfdae6fe231a3114bbfc380` (schema 28). The isolated published v2.1 schema-10 → 28 upgrade passed there. [PR #445](https://github.com/Caffoot/Caffoot-Lite/pull/445) corrects protected Device replacement and its error reporting. [Evidence and remaining checks](evidence/stage-6-2/README.md) · [Draft v2.2 administrator guide](../how-tos/features-and-instructions/v2.2/Legacy-Import-and-Docker-Upgrade.md)
 
 ## Historical Service Desk Notifications — 23 November 2026
 
 Stage 5.6 implements the seven authorised Service Desk notifications in [PR #442](https://github.com/Caffoot/Caffoot-Lite/pull/442) against `milestone-1`. It starts from `e708c2f5069ec5ff1a429e66bb1cc0d0769e36f3`, after owner acceptance of Stages 5.1–5.5. The private SMTP settings file accepts one optional IT support mailbox and remains readable when the field is absent in older settings. The existing central editor has ten templates. Schema 28 is sufficient. [Owner authorisation](https://github.com/Caffoot/Caffoot-Lite/issues/425#issuecomment-7109456682)
 
-Ticket events enter the existing bounded queue after commit, and use the published wording and existing SMTP sender. Employee recipients are checked against the live assignment and ticket permissions at delivery, with separate messages for current eligible Department members. Each link requires the recipient to sign in and pass the relevant ticket API checks. A missing destination or mail failure leaves the saved ticket available in the queue. [Administrator instructions](../how-tos/features-and-instructions/v2.2-draft/Service-Desk-Administration.md#configure-the-it-support-mailbox) · [Employee instructions](../how-tos/features-and-instructions/v2.2-draft/Service-Desk-Tickets.md#follow-service-desk-emails) · [Application captures and provenance](evidence/service-desk-notifications/README.md)
+Ticket events enter the existing bounded queue after commit, and use the published wording and existing SMTP sender. Employee recipients are checked against the live assignment and ticket permissions at delivery, with separate messages for current eligible Department members. Each link requires the recipient to sign in and pass the relevant ticket API checks. A missing destination or mail failure leaves the saved ticket available in the queue. [Administrator instructions](../how-tos/features-and-instructions/v2.2/Service-Desk-Administration.md#configure-the-it-support-mailbox) · [Employee instructions](../how-tos/features-and-instructions/v2.2/Service-Desk-Tickets.md#follow-service-desk-emails) · [Application captures and provenance](evidence/service-desk-notifications/README.md)
 
 The focused integrated backend run passed 203 tests, including loopback SMTP and the notification matrix. The Chromium notification and reporting tests and the local Docker Compose restart/recreate check passed. Final-head GitHub workflows run through Ready for Review. Independent review, owner visual acceptance and explicit merge approval remain pending. Raspberry Pi, native Safari, complete upgrade and restore acceptance and v2.2 publication remain separate gates.
 
@@ -76,7 +80,7 @@ The focused integrated backend run passed 203 tests, including loopback SMTP and
 
 [PR #441](https://github.com/Caffoot/Caffoot-Lite/pull/441) targets `milestone-1` from `7b651af631b18e68da4160d1e29ef1a957c8f7cc`, after owner acceptance of Batch 5.4. Administrators can edit and preview nine email templates, save drafts, publish and load the default wording for a single template. Shared branding and the managed logo are stored with the database in schema 28. Email verification, password recovery and account security notices use the published wording plus their required server-controlled content. The six Service Desk templates are available for editing and sample tests. Ticket event delivery is planned for Batch 5.6. [Scope and authorisation](https://github.com/Caffoot/Caffoot-Lite/issues/424#issuecomment-7107322049)
 
-The existing Email Settings, SMTP credentials and sender stay in their current locations. A loopback SMTP receiver accepted the fictional test message and the real account flows exercised by the tests. The focused backend checks and integrated Chromium test passed. [Draft administrator guide](../how-tos/features-and-instructions/v2.2-draft/Email-Templates-and-Company-Branding.md) · [Screenshots, Design 04 comparison and verification](evidence/email-templates-branding/README.md)
+The existing Email Settings, SMTP credentials and sender stay in their current locations. A loopback SMTP receiver accepted the fictional test message and the real account flows exercised by the tests. The focused backend checks and integrated Chromium test passed. [Draft administrator guide](../how-tos/features-and-instructions/v2.2/Email-Templates-and-Company-Branding.md) · [Screenshots, Design 04 comparison and verification](evidence/email-templates-branding/README.md)
 
 Pending acceptance includes independent visual approval, final-head CI review and separate product-owner merge approval. Native Safari, Raspberry Pi, full upgrade, backup/restore and release acceptance are deferred.
 
@@ -86,7 +90,7 @@ Batch 5.4 started from the verified `milestone-1` head `4600ec7bf6a0751af02fbcf0
 
 The administrator can save Working Hours, manage Excluded Dates and add, rename, hide or restore Ticket Categories. Schema 27 keeps the support calendar and its applied IANA rules in SQLite. Each closure retains the measured working time for its own attempt. Open attempts use the settings effective for each elapsed interval. The combined dashboard uses real events and actual actors, with live workload totals and per-technician reporting preferences. The owner agreed that period-based activity shows as unavailable while deployment `TZ` is missing or invalid.
 
-The first pushed checkpoint is `1578b36`. The tested implementation and screenshot source is `d831694484eb1b00b535e11bb4da2b6acdf9b75e`. The focused Python run passed 60 tests. The HTTPS Chromium journey passed, with desktop and mobile light and dark captures. The local Docker build, schema and time zone packaging checks and both draft Compose example configurations passed. [Screenshots and checks](evidence/service-desk-reporting/README.md) · [Draft administrator instructions](../how-tos/features-and-instructions/v2.2-draft/Service-Desk-Administration.md) · [Reporting instructions](../how-tos/features-and-instructions/v2.2-draft/Service-Desk-Tickets.md#read-service-desk-activity) · [Portainer and Compose time zone instructions](../how-tos/features-and-instructions/v2.2-draft/Service-Desk-Time-Zone.md)
+The first pushed checkpoint is `1578b36`. The tested implementation and screenshot source is `d831694484eb1b00b535e11bb4da2b6acdf9b75e`. The focused Python run passed 60 tests. The HTTPS Chromium journey passed, with desktop and mobile light and dark captures. The local Docker build, schema and time zone packaging checks and both draft Compose example configurations passed. [Screenshots and checks](evidence/service-desk-reporting/README.md) · [Draft administrator instructions](../how-tos/features-and-instructions/v2.2/Service-Desk-Administration.md) · [Reporting instructions](../how-tos/features-and-instructions/v2.2/Service-Desk-Tickets.md#read-service-desk-activity) · [Portainer and Compose time zone instructions](../how-tos/features-and-instructions/v2.2/Service-Desk-Time-Zone.md)
 
 Final-head CI runs through Ready For Review. Independent owner visual acceptance and separate merge approval are pending. Native Safari, Raspberry Pi and full milestone upgrade, backup and restore acceptance remain separate gates. Batches 5.5–5.6, Stage 6 and #431 remain outside the authorisation for this work.
 
@@ -94,7 +98,7 @@ Final-head CI runs through Ready For Review. Independent owner visual acceptance
 
 Batch 5.3 started from `milestone-1` at `d477256bd5ac12aa8f485deda7fa3b9d3fc69172`, after owner acceptance and merge of the Service Desk foundation and technician queue. The employee screens are in [PR #439](https://github.com/Caffoot/Caffoot-Lite/pull/439) for review. [Owner authorisation](https://github.com/Caffoot/Caffoot-Lite/issues/422#issuecomment-7101297069)
 
-**My Tickets** and **Department Tickets** use the current verified equipment assignment to govern every read and write. The shared modal provides employee-safe Overview, Updates and History, and **Report A Problem** in My Equipment opens the same Create Ticket form with the item selected. The schema 26 upgrade adds only the optional affected software label. Current authorised employees can reopen eligible Closed tickets while retaining the ticket identity, technician and closure history. [Employee instructions](../how-tos/features-and-instructions/v2.2-draft/Service-Desk-Tickets.md) · [Administrator guidance](../how-tos/features-and-instructions/v2.2-draft/Service-Desk-Administration.md)
+**My Tickets** and **Department Tickets** use the current verified equipment assignment to govern every read and write. The shared modal provides employee-safe Overview, Updates and History, and **Report A Problem** in My Equipment opens the same Create Ticket form with the item selected. The schema 26 upgrade adds only the optional affected software label. Current authorised employees can reopen eligible Closed tickets while retaining the ticket identity, technician and closure history. [Employee instructions](../how-tos/features-and-instructions/v2.2/Service-Desk-Tickets.md) · [Administrator guidance](../how-tos/features-and-instructions/v2.2/Service-Desk-Administration.md)
 
 The backend checkpoint is `c368eb4d8ba2ac1dc4c84b15b8ee01dd0dad9ef2`. The employee workspace checkpoint is `c0d18483649640dd760fc37a2b39a86753211e12`. The mobile navigation and original capture source is `86ad4c5c994190aceb4bcbe1b15973e1fc814fb5`. The verification record includes 64 focused Python tests, the live employee and technician Chromium journeys and the local Docker packaging and schema smoke check. [Original feature checks](evidence/employee-service-desk/README.md#original-feature-checks)
 
@@ -106,7 +110,7 @@ Batch 5.3 subsequently passed final-head CI, received independent owner visual a
 
 [PR #438](https://github.com/Caffoot/Caffoot-Lite/pull/438) targets `milestone-1` at `d2b7ead0027ba3579ea96c865a3a4b6cb63037a2`, using the integrated schema 25 foundation. The application includes authorised Current Workload and Ticket Queue views, Create Ticket, the Overview, Updates and History dialogue, technician actions, attachment handling and Device and IT Asset links. The [approved classification controls](https://github.com/Caffoot/Caffoot-Lite/issues/421#issuecomment-7095991698) are inside Ticket Information. Period-based reporting remains with Batch 5.4.
 
-The first backend checkpoint is `86f409c`. The integrated implementation and focused tests are at `6f5e08cf52d4092abb7fe817541728d5a2956f6d`, followed by the responsive checks and visual checkpoint at `165b22927639057cbf9bb4e6cd58c405f9cd6223`. The focused local run passed 62 Python checks. The HTTPS Chromium journey and local Docker build and packaging smoke check passed. The [application screenshots and verification record](evidence/it-service-desk/README.md) include the frozen source and Device Details comparison. [Draft technician instructions](../how-tos/features-and-instructions/v2.2-draft/Service-Desk-Tickets.md) · [Draft administrator instructions](../how-tos/features-and-instructions/v2.2-draft/Service-Desk-Administration.md)
+The first backend checkpoint is `86f409c`. The integrated implementation and focused tests are at `6f5e08cf52d4092abb7fe817541728d5a2956f6d`, followed by the responsive checks and visual checkpoint at `165b22927639057cbf9bb4e6cd58c405f9cd6223`. The focused local run passed 62 Python checks. The HTTPS Chromium journey and local Docker build and packaging smoke check passed. The [application screenshots and verification record](evidence/it-service-desk/README.md) include the frozen source and Device Details comparison. [Draft technician instructions](../how-tos/features-and-instructions/v2.2/Service-Desk-Tickets.md) · [Draft administrator instructions](../how-tos/features-and-instructions/v2.2/Service-Desk-Administration.md)
 
 The owner’s review correction moves Device-linked tickets to the **Tickets** tab and restores that tab and its current page on return. The Roles browser check now targets the Service Desk field inside its form. [Review decision](https://github.com/Caffoot/Caffoot-Lite/issues/421#issuecomment-7096963836) · [Updated screenshots and checks](evidence/it-service-desk/README.md#device-details-tickets-review)
 
@@ -114,7 +118,7 @@ Hosted CI and independent owner visual review are the final review handoff. Nati
 
 ## Clean Start Correction — 23 November 2026
 
-The owner reconfirmed that Clean Start clears all operational records, including saved assignment and stock history. It retains accounts, sign-in safeguards, account-linked Staff identity and eligibility, Optional Features choices and central Change History. The [administrator guide](../how-tos/features-and-instructions/v2.2-draft/Service-Desk-Administration.md#clear-operational-data-with-clean-start) records the affected modules and reset defaults.
+The owner reconfirmed that Clean Start clears all operational records, including saved assignment and stock history. It retains accounts, sign-in safeguards, account-linked Staff identity and eligibility, Optional Features choices and central Change History. The [administrator guide](../how-tos/features-and-instructions/v2.2/Service-Desk-Administration.md#clear-operational-data-with-clean-start) records the affected modules and reset defaults.
 
 Checkpoint `75aa4d5cacf32a8f0906368f904f890b2d8d01af` restores compatibility with earlier SQLite schemas. Checkpoint `b148067a18b9581488bf48abd41c225c9cbc33c8` implements the operational reset and narrows the Settings byte comparison to the authorised warning. The focused run passed 76 checks, and all four reset tests passed after adding the final relationship check and restart verification. [Updated visual evidence](evidence/service-desk-foundation/README.md) · [PR #437 and final verification](https://github.com/Caffoot/Caffoot-Lite/pull/437)
 
@@ -122,7 +126,7 @@ Checkpoint `75aa4d5cacf32a8f0906368f904f890b2d8d01af` restores compatibility wit
 
 Batch 5.1 has separate owner authorisation. [PR #437](https://github.com/Caffoot/Caffoot-Lite/pull/437) targets `milestone-1` from `8120c72054211217c3d0df8a27702da478d78e50`. The development branch adds schema 25, equipment-linked ticket history, the protected employee and technician API, compatible legacy import safeguards and transactional Clean Start for ticket records and attachments.
 
-The authorisation confirms that a stock correction cannot restore visibility to conversations from a previous assignment period. Clean Start removes ticket data and preserves accounts and central Change History. The [foundation technical guide](../development-guide/Service-Desk-Foundation.md) and [draft user](../how-tos/features-and-instructions/v2.2-draft/Service-Desk-Tickets.md) and [administrator](../how-tos/features-and-instructions/v2.2-draft/Service-Desk-Administration.md) guides record the resulting behaviour.
+The authorisation confirms that a stock correction cannot restore visibility to conversations from a previous assignment period. Clean Start removes ticket data and preserves accounts and central Change History. The [foundation technical guide](../development-guide/Service-Desk-Foundation.md) and [draft user](../how-tos/features-and-instructions/v2.2/Service-Desk-Tickets.md) and [administrator](../how-tos/features-and-instructions/v2.2/Service-Desk-Administration.md) guides record the resulting behaviour.
 
 The schema checkpoint is `32f818e65b0a22d1eea943e937b03eac35636032`, the access and API checkpoint is `d2ce2d907378b618dd037f9027e83a5b991bae7a`, and the inventory and reset checkpoint is `3201680eb0078ffb440e910e1840b4a30b4c253f`. The integrated local run reported 146 passes and one skipped opt-in complete-volume rehearsal. Chromium passed the Users and permissions journey and checked the updated Clean Start confirmation. [Screenshots and test evidence](evidence/service-desk-foundation/README.md)
 
@@ -140,7 +144,7 @@ Full CI, independent owner review and merge approval remain pending. Native Rasp
 
 Batch 4.1 was merged to `milestone-1` at `ea6e86c15e207d32795641b52685ae1ec6a828df`. The separately authorised Batch 4.2 adds company-owned Supplier Issues, the independent Issue Category catalogue, the live Purchasing Dashboard and sidebar navigation. The runtime checkpoint is `4055b8e612c262b461baf60954be84668d46ba79` (schema 22). The branch is `feat/stage-4-batch-4-2`. [Owner-approved scope](https://github.com/Caffoot/Caffoot-Lite/issues/411) · [Draft PR #415](https://github.com/Caffoot/Caffoot-Lite/pull/415)
 
-The [Batch 4.2 evidence](evidence/stage-4-batch-42/README.md) records the local checks and application captures. The [v2.2 draft user and administrator instructions](../how-tos/features-and-instructions/v2.2-draft/Supplier-Issues-and-Purchasing.md) explain access, retention, correction and handover. Full Ready For Review checks and owner acceptance remain pending. Batch 4.3 equipment integration and Batch 4.4 lifecycle require their own development authorisation.
+The [Batch 4.2 evidence](evidence/stage-4-batch-42/README.md) records the local checks and application captures. The [v2.2 draft user and administrator instructions](../how-tos/features-and-instructions/v2.2/Supplier-Issues-and-Purchasing.md) explain access, retention, correction and handover. Full Ready For Review checks and owner acceptance remain pending. Batch 4.3 equipment integration and Batch 4.4 lifecycle require their own development authorisation.
 
 ## Historical Integration And Documentation — 17 November 2026
 
@@ -269,7 +273,7 @@ was pushed as `ebff8ea`; the dashboard, tests and four captures were preserved
 as `27e1d31`. Schema 20 adds the owner-approved IT Staff default while preserving
 existing access. Complete aggregates and protected Device drill-downs follow the
 latest #396 decision. See the [technical contract](../development-guide/IT-Assets-Dashboard.md),
-[draft instructions](../how-tos/features-and-instructions/v2.2-draft/IT-Assets-Dashboard.md)
+[draft instructions](../how-tos/features-and-instructions/v2.2/IT-Assets-Dashboard.md)
 and [confirmed checks, screenshots and outstanding verification](evidence/stock-dashboard/Report.md).
 The final combined reporting/role test result was not retained across the usage-limit
 interruption. No checks were repeated when preserving the work. Independent review,
@@ -296,7 +300,7 @@ statements do not describe the current integration branch.
 > from verified `53b04328c4f895bfc1f72f0416c43a519b2e8b42` after accepted PR #391.
 > It reuses the reserved correction journal with no migration (schema 19).
 > [The technical contract](../development-guide/IT-Assets-Correct-Movement.md),
-> [draft instructions](../how-tos/features-and-instructions/v2.2-draft/IT-Assets-Correct-Movement.md)
+> [draft instructions](../how-tos/features-and-instructions/v2.2/IT-Assets-Correct-Movement.md)
 > and [evidence report](evidence/stock-corrections/Report.md) describe the final
 > behaviour, actual verification and review gates. Original movements, Supplier
 > provenance, canonical identities and later chronological records remain permanent.
@@ -405,7 +409,7 @@ statements do not describe the current integration branch.
 > reissue and approved optional hardware/manufacturer additions. Schema 16/17 and
 > initial-allocation restrictions are unchanged. See the
 > [source mapping and checkpoints](../development-guide/Device-Stock-Registration-and-Reissue.md),
-> [draft user guide](../how-tos/features-and-instructions/v2.2-draft/Device-Stock-Registration-and-Reissue.md)
+> [draft user guide](../how-tos/features-and-instructions/v2.2/Device-Stock-Registration-and-Reissue.md)
 > and [verification/gallery](evidence/device-stock-registration/Report.md).
 > Local final-source verification passed: 835 backend tests (831 passed, four documented skips), complete Chromium compatibility, both new browser flows, Docker lifecycle and documentation checks; 36 changed-screen captures are recorded. Final-head Actions remain separately recorded in PR #390. No Batch 3.9 visual acceptance, merge,
 > release, deployment or production change is claimed. The older dated notes below
@@ -430,7 +434,7 @@ Docker lifecycle **one passed**; complete real browser flow **passed with 24 cap
 existing Optional Features browser regression **passed**. The Function Index contains
 **901 checked definitions**. See [the evidence and limits](evidence/stock-intake/Report.md),
 [API guide](../development-guide/IT-Assets-Stock-Intake.md) and
-[draft user instructions](../how-tos/features-and-instructions/v2.2-draft/IT-Assets-Stock-Intake.md).
+[draft user instructions](../how-tos/features-and-instructions/v2.2/IT-Assets-Stock-Intake.md).
 
 Runtime/capture source is `4480d5df10d56e9d898629cec5ac37f1f1df8a18`.
 Product-owner visual acceptance and merge approval remain separate. No later stock
